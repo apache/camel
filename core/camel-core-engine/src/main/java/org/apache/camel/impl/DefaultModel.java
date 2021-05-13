@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.DefaultRouteTemplateContext;
@@ -385,9 +386,14 @@ public class DefaultModel implements Model {
                         () -> camelContext.getInjector().newInstance(clazz));
             } else if (b.getType() != null && b.getType().startsWith("#type:")) {
                 Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(6));
-                Set<?> set = camelContext.getRegistry().findByType(clazz);
-                if (set.size() == 1) {
-                    routeTemplateContext.bind(b.getName(), clazz, set.iterator().next());
+                Set<?> found = getCamelContext().getRegistry().findByType(clazz);
+                if (found == null || found.isEmpty()) {
+                    throw new NoSuchBeanException(null, clazz.getName());
+                } else if (found.size() > 1) {
+                    throw new NoSuchBeanException(
+                            "Found " + found.size() + " beans of type: " + clazz + ". Only one bean expected.");
+                } else {
+                    routeTemplateContext.bind(b.getName(), clazz, found.iterator().next());
                 }
             }
         }
