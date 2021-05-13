@@ -34,7 +34,7 @@ public final class IAM2ClientFactory {
      * @param  configuration configuration
      * @return               IamClient
      */
-    public static IAM2InternalClient getEventbridgeClient(IAM2Configuration configuration) {
+    public static IAM2InternalClient getIamClient(IAM2Configuration configuration) {
         return configuration.isUseDefaultCredentialsProvider()
                 ? new IAM2ClientOptimizedImpl(configuration) : new IAM2ClientStandardImpl(configuration);
     }
