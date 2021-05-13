@@ -16,23 +16,17 @@
  */
 package org.apache.camel.dsl.yaml.deserializers;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
-import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.nodes.Node;
-import org.snakeyaml.engine.v2.nodes.SequenceNode;
 
 @YamlIn
 @YamlType(
@@ -79,36 +73,13 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
                 break;
             }
             case "parameters": {
-                List<RouteTemplateParameterDefinition> val = asFlatList(node, RouteTemplateParameterDefinition.class);
-                target.setTemplateParameters(val);
+                List<RouteTemplateParameterDefinition> items = asFlatList(node, RouteTemplateParameterDefinition.class);
+                target.setTemplateParameters(items);
                 break;
             }
             case "beans": {
-                final SequenceNode sn = asSequenceNode(node);
-                final List<NamedBeanDefinition> beans = new ArrayList<>();
-                final YamlDeserializationContext dc = getDeserializationContext(node);
-
-                asFlatCollection(node, NamedBeanDefinition.class, beans);
-
-                target.configure(new Consumer<RouteTemplateContext>() {
-                    @Override
-                    public void accept(RouteTemplateContext context) {
-                        for (int i = 0; i < beans.size(); i++) {
-                            NamedBeanDefinition bean = beans.get(i);
-
-                            ObjectHelper.notNull(bean.getName(), "The bean name must be set");
-                            ObjectHelper.notNull(bean.getType(), "The bean type must be set");
-
-                            try {
-                                context.bind(
-                                        bean.getName(),
-                                        bean.newInstance(context.getCamelContext()));
-                            } catch (Exception e) {
-                                throw new RuntimeCamelException(e);
-                            }
-                        }
-                    }
-                });
+                List<RouteTemplateBeanDefinition> items = asFlatList(node, RouteTemplateBeanDefinition.class);
+                target.setTemplateBeans(items);
                 break;
             }
             default: {
