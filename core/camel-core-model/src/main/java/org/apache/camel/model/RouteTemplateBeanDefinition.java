@@ -255,6 +255,16 @@ public class RouteTemplateBeanDefinition {
     }
 
     /**
+     * Creates the bean from the given class type
+     *
+     * @param type the type of the class to create as bean
+     */
+    public RouteTemplateBeanDefinition type(Class<?> type) {
+        beanClass(type);
+        return this;
+    }
+
+    /**
      * Calls a MvEL script for creating the local template bean
      *
      * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,

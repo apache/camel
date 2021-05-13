@@ -46,7 +46,10 @@ public class KameletLocalBeanClassThreeTest extends CamelTestSupport {
             public void configure() throws Exception {
                 routeTemplate("whereTo")
                         .templateParameter("bar")
-                        .templateBean("myBar").property("bar", "{{bar}}").beanClass(MyBar.class)
+                        .templateBean("myBar")
+                            .type(MyBar.class)
+                            .property("bar", "{{bar}}")
+                        .end()
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");

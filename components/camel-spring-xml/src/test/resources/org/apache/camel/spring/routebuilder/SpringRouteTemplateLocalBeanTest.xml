@@ -32,6 +32,7 @@
             <templateParameter name="bar"/>
             <templateParameter name="greeting"/>
             <templateBean name="myBean" type="#class:org.apache.camel.spring.routebuilder.MyLocalBean">
+
                 <property key="prefix" value="{{greeting}}"/>
             </templateBean>
             <route>
