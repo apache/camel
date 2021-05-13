@@ -22,6 +22,7 @@ import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteTemplateDefinition
 import org.apache.camel.model.ToDefinition
+import org.apache.camel.spi.Resource
 import org.junit.jupiter.api.Assertions
 
 class RouteTemplateTest extends YamlTestSupport {
@@ -48,25 +49,9 @@ class RouteTemplateTest extends YamlTestSupport {
             }
     }
 
-    def "create template with beans"() {
+    def "create template with beans (#resource.location)"(Resource resource) {
         setup:
-            loadRoutes """
-                - template:
-                    id: "myTemplate"
-                    beans:
-                      - name: "myProcessor"
-                        type: "#class:${MyUppercaseProcessor.class.name}"
-                    from:
-                      uri: "direct:{{directName}}"
-                      steps:
-                        - process:
-                            ref: "{{myProcessor}}"
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - to: "direct:myId"
-                      - to: "mock:result"
-            """
+            context.routesLoader.loadRoutes(resource)
 
             withMock('mock:result') {
                 expectedMessageCount 1
@@ -88,49 +73,63 @@ class RouteTemplateTest extends YamlTestSupport {
             }
 
             MockEndpoint.assertIsSatisfied(context)
-    }
-
-    def "create template with script"() {
-        setup:
-            loadRoutes """
-                - template:
-                    id: "myTemplate"
-                    beans:
-                      - name: "myProcessor"
-                        type: "groovy"
-                        script: "new ${MyUppercaseProcessor.class.name}()"
-                    from:
-                      uri: "direct:{{directName}}"
-                      steps:
-                        - process:
-                            ref: "{{myProcessor}}"
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - to: "direct:myId"
-                      - to: "mock:result"
-            """
-
-            withMock('mock:result') {
-                expectedMessageCount 1
-                expectedBodiesReceived 'HELLO'
-            }
-        when:
-            context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
-            context.start()
-
-            withTemplate {
-                to('direct:start').withBody('hello').send()
-            }
-        then:
-            context.routeTemplateDefinitions.size() == 1
-
-            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
-                id == 'myTemplate'
-                templateBeans.size() == 1
-            }
-
-            MockEndpoint.assertIsSatisfied(context)
+        where:
+            resource << [
+                    asResource('beans', """
+                        - template:
+                            id: "myTemplate"
+                            beans:
+                              - name: "myProcessor"
+                                type: "#class:${MyUppercaseProcessor.class.name}"
+                            from:
+                              uri: "direct:{{directName}}"
+                              steps:
+                                - process:
+                                    ref: "{{myProcessor}}"
+                        - from:
+                            uri: "direct:start"
+                            steps:
+                              - to: "direct:myId"
+                              - to: "mock:result"
+                    """),
+                    asResource('script', """
+                        - template:
+                            id: "myTemplate"
+                            beans:
+                              - name: "myProcessor"
+                                type: "groovy"
+                                script: "new ${MyUppercaseProcessor.class.name}()"
+                            from:
+                              uri: "direct:{{directName}}"
+                              steps:
+                                - process:
+                                    ref: "{{myProcessor}}"
+                        - from:
+                            uri: "direct:start"
+                            steps:
+                              - to: "direct:myId"
+                              - to: "mock:result"
+                    """),
+                    asResource('script-block', """
+                        - template:
+                            id: "myTemplate"
+                            beans:
+                              - name: "myProcessor"
+                                type: "groovy"
+                                script: |
+                                    new ${MyUppercaseProcessor.class.name}()
+                            from:
+                              uri: "direct:{{directName}}"
+                              steps:
+                                - process:
+                                    ref: "{{myProcessor}}"
+                        - from:
+                            uri: "direct:start"
+                            steps:
+                              - to: "direct:myId"
+                              - to: "mock:result"
+                    """)
+            ]
     }
 
     def "create template with properties"() {
