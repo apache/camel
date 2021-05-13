@@ -11742,7 +11742,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "property", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "template-script", type = "object:org.apache.camel.model.RouteTemplateScriptDefinition"),
+                    @YamlProperty(name = "script", type = "object:org.apache.camel.model.RouteTemplateScriptDefinition"),
                     @YamlProperty(name = "type", type = "string", required = true)
             }
     )
@@ -11775,7 +11775,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setProperties(val);
                     break;
                 }
-                case "template-script": {
+                case "script": {
                     org.apache.camel.model.RouteTemplateScriptDefinition val = asType(node, org.apache.camel.model.RouteTemplateScriptDefinition.class);
                     target.setScript(val);
                     break;

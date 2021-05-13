@@ -2074,7 +2074,7 @@
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
             },
-            "template-script" : {
+            "script" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateScriptDefinition"
             },
             "type" : {
