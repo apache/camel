@@ -1,0 +1,22 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "avro-jackson",
+    "title": "Avro",
+    "description": "Serialize and deserialize messages using Apache Avro binary data format.",
+    "deprecated": false,
+    "firstVersion": "2.14.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.component.jackson.avro.JacksonAvroDataFormat",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jackson-avro",
+    "version": "3.10.0-SNAPSHOT",
+    "modelName": "avro",
+    "modelJavaType": "org.apache.camel.model.dataformat.AvroDataFormat"
+  },
+  "properties": {
+    "instanceClassName": { "kind": "attribute", "displayName": "Instance Class Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name to use for marshal and unmarshalling" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

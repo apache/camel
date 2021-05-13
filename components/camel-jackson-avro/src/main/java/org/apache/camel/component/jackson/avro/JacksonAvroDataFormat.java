@@ -14,83 +14,87 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jackson;
+package org.apache.camel.component.jackson.avro;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.avro.AvroMapper;
+import org.apache.camel.component.jackson.AbstractJacksonDataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 
 /**
- * Marshal POJOs to JSON and back using <a href="http://jackson.codehaus.org/">Jackson</a>
+ * Marshal POJOs to Avro and back using <a href="http://jackson.codehaus.org/">Jackson</a>
  */
-@Dataformat("json-jackson")
+@Dataformat("avro-jackson")
 @Metadata(excludeProperties = "library,permissions,dropRootNode")
-public class JacksonDataFormat extends AbstractJacksonDataFormat {
+public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
 
     /**
-     * Use the default Jackson {@link ObjectMapper} and {@link Object}
+     * Use the default Jackson {@link AvroMapper} and {@link Object}
      */
-    public JacksonDataFormat() {
+    public JacksonAvroDataFormat() {
     }
 
     /**
-     * Use the default Jackson {@link ObjectMapper} and with a custom unmarshal type
+     * Use the default Jackson {@link AvroMapper} and with a custom unmarshal type
      *
      * @param unmarshalType the custom unmarshal type
      */
-    public JacksonDataFormat(Class<?> unmarshalType) {
+    public JacksonAvroDataFormat(Class<?> unmarshalType) {
         super(unmarshalType);
     }
 
     /**
-     * Use the default Jackson {@link ObjectMapper} and with a custom unmarshal type and JSON view
+     * Use the default Jackson {@link AvroMapper} and with a custom unmarshal type and JSON view
      *
      * @param unmarshalType the custom unmarshal type
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
      */
-    public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
+    public JacksonAvroDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
         super(unmarshalType, jsonView);
     }
 
     /**
-     * Use a custom Jackson mapper and and unmarshal type
+     * Use a custom Jackson {@link AvroMapper} and and unmarshal type
      *
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
      */
-    public JacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType) {
+    public JacksonAvroDataFormat(AvroMapper mapper, Class<?> unmarshalType) {
         super(mapper, unmarshalType);
     }
 
     /**
-     * Use a custom Jackson mapper, unmarshal type and JSON view
+     * Use a custom Jackson {@link AvroMapper}, unmarshal type and JSON view
      *
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
      */
-    public JacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
+    public JacksonAvroDataFormat(AvroMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
         super(mapper, unmarshalType, jsonView);
     }
 
+
+
     @Override
     public String getDataFormatName() {
-        return "json-jackson";
-    }
-
-    @Override
-    protected ObjectMapper createNewObjectMapper() {
-        return new ObjectMapper();
-    }
-
-    @Override
-    protected Class<? extends ObjectMapper> getObjectMapperClass() {
-        return ObjectMapper.class;
+        return "avro-jackson";
     }
 
     @Override
     protected String getDefaultContentType() {
-        return "application/json";
+        return "application/avro";
+    }
+
+    @Override
+    protected AvroMapper createNewObjectMapper() {
+        return new AvroMapper();
+    }
+
+    @Override
+    protected Class<? extends ObjectMapper> getObjectMapperClass() {
+        return AvroMapper.class;
     }
 
 }
