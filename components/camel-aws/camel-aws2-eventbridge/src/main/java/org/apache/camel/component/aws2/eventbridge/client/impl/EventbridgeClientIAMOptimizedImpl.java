@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.eventbridge.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration;
 import org.apache.camel.component.aws2.eventbridge.client.EventbridgeInternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -30,11 +32,9 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS Eventbridge client for all users to use (enabling temporary creds). This implementation is for remote instances
- * to manage the credentials on their own (eliminating credential rotations)
+ * Manage an AWS Eventbridge client for all users to use (enabling temporary creds). This implementation is for remote
+ * instances to manage the credentials on their own (eliminating credential rotations)
  */
 public class EventbridgeClientIAMOptimizedImpl implements EventbridgeInternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(EventbridgeClientIAMOptimizedImpl.class);

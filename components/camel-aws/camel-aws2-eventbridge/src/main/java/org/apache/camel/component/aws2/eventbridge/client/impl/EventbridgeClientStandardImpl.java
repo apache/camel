@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.eventbridge.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration;
 import org.apache.camel.component.aws2.eventbridge.client.EventbridgeInternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -31,8 +33,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS EKS client for all users to use. This implementation is for local instances to use a static and solid
