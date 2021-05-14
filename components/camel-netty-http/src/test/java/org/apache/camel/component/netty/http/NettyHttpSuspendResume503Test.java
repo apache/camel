@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-@Disabled("TODO: leak error")
 public class NettyHttpSuspendResume503Test extends BaseNettyTest {
 
     private String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true";
