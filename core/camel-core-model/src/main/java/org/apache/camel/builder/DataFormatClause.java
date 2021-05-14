@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import org.apache.camel.model.dataformat.ProtobufJacksonDataFormat;
 import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
@@ -29,6 +30,7 @@ import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.Any23Type;
 import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.AvroJacksonDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
@@ -535,6 +537,22 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the Jackson Avro data format
+     */
+    public T avroJackson() {
+        return dataFormat(new AvroJacksonDataFormat());
+    }
+
+    /**
+     * Uses the Jackson Avro data format with given unmarshalType
+     */
+    public T avroJackson(Class<?> unmarshalType) {
+        AvroJacksonDataFormat avroJacksonDataFormat = new AvroJacksonDataFormat();
+        avroJacksonDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(avroJacksonDataFormat);
+    }
+
+    /**
      * Uses the JAXB data format
      */
     public T jaxb() {
@@ -726,6 +744,22 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
     public T protobuf(String instanceClassName, String contentTypeFormat) {
         return dataFormat(new ProtobufDataFormat(instanceClassName, contentTypeFormat));
+    }
+
+    /**
+     * Uses the Jackson Protobuf data format
+     */
+    public T protobufJackson() {
+        return dataFormat(new ProtobufDataFormat());
+    }
+
+    /**
+     * Uses the Jackson Protobuf data format with given unmarshalType
+     */
+    public T protobufJackson(Class<?> unmarshalType) {
+        ProtobufJacksonDataFormat protobufJacksonDataFormat = new ProtobufJacksonDataFormat();
+        protobufJacksonDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(protobufJacksonDataFormat);
     }
 
     /**

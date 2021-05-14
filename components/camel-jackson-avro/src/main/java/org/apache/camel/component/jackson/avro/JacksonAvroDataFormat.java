@@ -75,8 +75,6 @@ public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
         super(mapper, unmarshalType, jsonView);
     }
 
-
-
     @Override
     public String getDataFormatName() {
         return "avro-jackson";

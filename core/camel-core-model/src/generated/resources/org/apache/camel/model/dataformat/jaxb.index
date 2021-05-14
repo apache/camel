@@ -3,6 +3,7 @@ ASN1DataFormat
 Any23DataFormat
 Any23Type
 AvroDataFormat
+AvroJacksonDataFormat
 BarcodeDataFormat
 Base64DataFormat
 BeanioDataFormat
@@ -29,6 +30,7 @@ LZFDataFormat
 MimeMultipartDataFormat
 PGPDataFormat
 ProtobufDataFormat
+ProtobufJacksonDataFormat
 RssDataFormat
 SoapJaxbDataFormat
 SyslogDataFormat

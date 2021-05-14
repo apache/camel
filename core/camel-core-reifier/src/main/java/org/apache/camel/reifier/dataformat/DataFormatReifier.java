@@ -28,6 +28,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.AvroJacksonDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
@@ -53,6 +54,7 @@ import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
+import org.apache.camel.model.dataformat.ProtobufJacksonDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
@@ -183,6 +185,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new ASN1DataFormatReifier(camelContext, definition);
         } else if (definition instanceof AvroDataFormat) {
             return new AvroDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof AvroJacksonDataFormat) {
+            return new AvroJacksonDataFormatReifier(camelContext, definition);
         } else if (definition instanceof BarcodeDataFormat) {
             return new BarcodeDataFormatReifier(camelContext, definition);
         } else if (definition instanceof Base64DataFormat) {
@@ -231,6 +235,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new PGPDataFormatReifier(camelContext, definition);
         } else if (definition instanceof ProtobufDataFormat) {
             return new ProtobufDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof ProtobufJacksonDataFormat) {
+            return new ProtobufJacksonDataFormatReifier(camelContext, definition);
         } else if (definition instanceof RssDataFormat) {
             return new RssDataFormatReifier(camelContext, definition);
         } else if (definition instanceof SoapJaxbDataFormat) {
