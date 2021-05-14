@@ -35,11 +35,14 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Splunk HEC producer.
  */
 public class SplunkHECProducer extends DefaultProducer {
+    private static final Logger LOG = LoggerFactory.getLogger(SplunkHECProducer.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private SplunkHECEndpoint endpoint;
     private CloseableHttpClient httpClient;
@@ -99,7 +102,7 @@ public class SplunkHECProducer extends DefaultProducer {
     Map<String, Object> createPayload(Message message) {
         Object body = message.getBody();
         Map<String, Object> payload = new HashMap<>();
-        buildPayload(payload);
+        buildPayload(message, payload);
 
         if (endpoint.getConfiguration().isBodyOnly()) {
             payload.put("event", body);
@@ -115,7 +118,7 @@ public class SplunkHECProducer extends DefaultProducer {
         return payload;
     }
 
-    private void buildPayload(Map<String, Object> payload) {
+    private void buildPayload(Message message, Map<String, Object> payload) {
         if (endpoint.getConfiguration().getSourceType() != null) {
             payload.put("sourcetype", endpoint.getConfiguration().getSourceType());
         }
@@ -128,8 +131,25 @@ public class SplunkHECProducer extends DefaultProducer {
         if (endpoint.getConfiguration().getHost() != null) {
             payload.put("host", endpoint.getConfiguration().getHost());
         }
-        if (endpoint.getConfiguration().getTime() != null) {
-            payload.put("time", endpoint.getConfiguration().getTime());
+
+        Object timeInput = message.getHeader(SplunkHECComponent.INDEX_TIME, endpoint.getConfiguration().getTime());
+        if (timeInput != null) {
+            try {
+                Long time;
+                if (timeInput instanceof String) {
+                    time = Long.valueOf((String) timeInput);
+                } else if (timeInput instanceof Integer) {
+                    time = new Long((Integer) timeInput);
+                } else {
+                    time = (Long) timeInput;
+                }
+
+                payload.put("time", time);
+            } catch (NumberFormatException | ClassCastException e) {
+                LOG.info("We detected user input for setting the index time, but skipped setting it because : {} - {}",
+                        e.toString(),
+                        e.getMessage());
+            }
         }
     }
 }
