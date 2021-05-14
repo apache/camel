@@ -251,10 +251,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (strategy == null) {
             throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
         }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
 
         return strategy;
     }

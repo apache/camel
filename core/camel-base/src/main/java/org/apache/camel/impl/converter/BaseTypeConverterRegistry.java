@@ -101,12 +101,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     @Override
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         super.addFallbackTypeConverter(typeConverter, canPromote);
-        if (typeConverter instanceof CamelContextAware) {
-            CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
-            if (camelContext != null) {
-                camelContextAware.setCamelContext(camelContext);
-            }
-        }
+        CamelContextAware.trySetCamelContext(typeConverter, camelContext);
     }
 
     private void addCoreFallbackTypeConverterToList(
@@ -118,12 +113,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         converters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
 
-        if (typeConverter instanceof CamelContextAware) {
-            CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
-            if (camelContext != null) {
-                camelContextAware.setCamelContext(camelContext);
-            }
-        }
+        CamelContextAware.trySetCamelContext(typeConverter, camelContext);
     }
 
     @Override

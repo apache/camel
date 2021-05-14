@@ -901,9 +901,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             answer = getLanguageResolver().resolveLanguage(language, reference);
             // inject CamelContext if aware
             if (answer != null) {
-                if (answer instanceof CamelContextAware) {
-                    ((CamelContextAware) answer).setCamelContext(reference);
-                }
+                CamelContextAware.trySetCamelContext(answer, reference);
                 if (answer instanceof Service) {
                     try {
                         startService((Service) answer);
@@ -2081,10 +2079,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             StartupListener listener = (StartupListener) service;
             addStartupListener(listener);
         }
-        if (service instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware) service;
-            aware.setCamelContext(reference);
-        }
+        CamelContextAware.trySetCamelContext(service, reference);
         service.start();
     }
 }

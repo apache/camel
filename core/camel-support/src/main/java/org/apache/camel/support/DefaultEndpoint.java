@@ -457,9 +457,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     protected void configureConsumer(Consumer consumer) throws Exception {
         // inject CamelContext
-        if (consumer instanceof CamelContextAware) {
-            ((CamelContextAware) consumer).setCamelContext(getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(consumer, camelContext);
 
         if (bridgeErrorHandler) {
             if (consumer instanceof DefaultConsumer) {

@@ -45,9 +45,7 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
     }
 
     @Override

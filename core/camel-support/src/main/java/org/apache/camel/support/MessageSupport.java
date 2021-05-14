@@ -173,9 +173,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     public Message copy() {
         Message answer = newInstance();
         // must copy over CamelContext
-        if (answer instanceof CamelContextAware) {
-            ((CamelContextAware) answer).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(answer, camelContext);
         answer.copyFrom(this);
         return answer;
     }
@@ -188,9 +186,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         }
 
         // must copy over CamelContext
-        if (that instanceof CamelContextAware) {
-            setCamelContext(((CamelContextAware) that).getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(that, camelContext);
         if (that instanceof DataTypeAware && ((DataTypeAware) that).hasDataType()) {
             setDataType(((DataTypeAware) that).getDataType());
         }
@@ -210,9 +206,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         }
 
         // must copy over CamelContext
-        if (that instanceof CamelContextAware) {
-            setCamelContext(((CamelContextAware) that).getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(that, camelContext);
         // cover over exchange if none has been assigned
         if (getExchange() == null) {
             setExchange(that.getExchange());

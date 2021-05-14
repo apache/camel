@@ -122,10 +122,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
             }
         }
 
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
-
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
         return strategy;
     }
 
