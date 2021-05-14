@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.lambda.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.lambda.Lambda2Configuration;
 import org.apache.camel.component.aws2.lambda.client.Lambda2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -32,11 +34,9 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.LambdaClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS Lambda client for all users to use. This implementation is for local instances to use a static and solid
- * credential set.
+ * Manage an AWS Lambda client for all users to use. This implementation is for local instances to use a static and
+ * solid credential set.
  */
 public class Lambda2ClientStandardImpl implements Lambda2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(Lambda2ClientStandardImpl.class);

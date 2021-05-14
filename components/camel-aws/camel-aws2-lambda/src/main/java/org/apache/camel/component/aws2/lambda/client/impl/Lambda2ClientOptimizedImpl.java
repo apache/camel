@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.lambda.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.lambda.Lambda2Configuration;
 import org.apache.camel.component.aws2.lambda.client.Lambda2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -30,11 +32,9 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.LambdaClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS Lambda client for all users to use (enabling temporary creds). This implementation is for remote instances
- * to manage the credentials on their own (eliminating credential rotations)
+ * Manage an AWS Lambda client for all users to use (enabling temporary creds). This implementation is for remote
+ * instances to manage the credentials on their own (eliminating credential rotations)
  */
 public class Lambda2ClientOptimizedImpl implements Lambda2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(Lambda2ClientOptimizedImpl.class);

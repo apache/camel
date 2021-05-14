@@ -56,7 +56,8 @@ public class Lambda2Component extends DefaultComponent {
         endpoint.setFunction(remaining);
         if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAwsLambdaClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, accessKey/secretKey or awsLambdaClient must be specified");
+            throw new IllegalArgumentException(
+                    "useDefaultCredentialsProvider is set to false, accessKey/secretKey or awsLambdaClient must be specified");
         }
 
         return endpoint;
