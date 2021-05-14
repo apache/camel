@@ -20,7 +20,10 @@ RestSecuritiesDefinition
 RestSecuritiesRequirement
 RestSecurityApiKey
 RestSecurityBasicAuth
+RestSecurityBearerToken
+RestSecurityMutualTLS
 RestSecurityOAuth2
+RestSecurityOpenIdConnect
 RestsDefinition
 SecurityDefinition
 VerbDefinition
