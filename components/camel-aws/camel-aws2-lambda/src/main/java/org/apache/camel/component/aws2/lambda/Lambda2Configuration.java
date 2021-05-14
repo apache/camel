@@ -92,7 +92,7 @@ public class Lambda2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which ECS client needs to work. When using this parameter, the configuration will expect the
+     * The region in which Lambda client needs to work. When using this parameter, the configuration will expect the
      * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
