@@ -14,38 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.urlhandler.custom;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+package org.apache.camel.support;
 
 import org.apache.camel.spi.Resource;
-import org.apache.camel.support.ResourceResolverSupport;
 
-public class Handler extends ResourceResolverSupport {
-    public Handler() {
-        super("custom");
+/**
+ * Base class for {@link Resource} implementations.
+ */
+public abstract class ResourceSupport implements Resource {
+    private final String location;
+
+    protected ResourceSupport(String location) {
+        this.location = location;
     }
 
     @Override
-    protected Resource createResource(String location, String remaining) {
-        return new Resource() {
-            @Override
-            public String getLocation() {
-                return location;
-            }
+    public String getLocation() {
+        return location;
+    }
 
-            @Override
-            public boolean exists() {
-                return true;
-            }
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                return new ByteArrayInputStream(remaining.getBytes(StandardCharsets.UTF_8));
-            }
-        };
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" +
+               "location=" + getLocation() +
+               '}';
     }
 }

@@ -61,7 +61,7 @@ public class Handler extends ResourceResolverSupport {
     }
 
     @Override
-    protected Resource createResource(String location) {
+    protected Resource createResource(String location, String remaining) {
         return new Resource() {
             @Override
             public String getLocation() {
