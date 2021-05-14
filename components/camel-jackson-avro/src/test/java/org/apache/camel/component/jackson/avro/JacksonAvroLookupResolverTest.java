@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jackson.protobuf;
+package org.apache.camel.component.jackson.avro;
 
-import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchema;
-import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchemaLoader;
+import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import org.apache.avro.Schema;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.SchemaResolver;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.dataformat.ProtobufLibrary;
+import org.apache.camel.model.dataformat.AvroLibrary;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JacksonProtobufMarshalUnmarshalPojoTest extends CamelTestSupport {
+public class JacksonAvroLookupResolverTest extends CamelTestSupport {
 
     @Test
     public void testMarshalUnmarshalPojo() throws Exception {
@@ -44,7 +45,7 @@ public class JacksonProtobufMarshalUnmarshalPojoTest extends CamelTestSupport {
 
         byte[] serialized = mock1.getReceivedExchanges().get(0).getIn().getBody(byte[].class);
         assertNotNull(serialized);
-        assertEquals(7, serialized.length);
+        assertEquals(6, serialized.length);
 
         MockEndpoint mock2 = getMockEndpoint("mock:pojo");
         mock2.expectedMessageCount(1);
@@ -60,12 +61,21 @@ public class JacksonProtobufMarshalUnmarshalPojoTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        String protobuf_str = "message Pojo {\n"
-                              + " required string text = 1;\n"
-                              + "}\n";
-        ProtobufSchema schema = ProtobufSchemaLoader.std.parse(protobuf_str);
+        String SCHEMA_JSON = "{\n"
+                             + "\"type\": \"record\",\n"
+                             + "\"name\": \"Pojo\",\n"
+                             + "\"fields\": [\n"
+                             + " {\"name\": \"text\", \"type\": \"string\"}\n"
+                             + "]}";
+        Schema raw = new Schema.Parser().setValidate(true).parse(SCHEMA_JSON);
+        AvroSchema schema = new AvroSchema(raw);
         SchemaResolver resolver = ex -> schema;
-        registry.bind("schema-resolver", SchemaResolver.class, resolver);
+        registry.bind("schema-resolver-1", SchemaResolver.class, resolver);
+
+        SchemaResolver resolver2 = ex -> {
+            throw new RuntimeCamelException();
+        };
+        registry.bind("schema-resolver-2", SchemaResolver.class, resolver2);
     }
 
     @Override
@@ -73,8 +83,9 @@ public class JacksonProtobufMarshalUnmarshalPojoTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:serialized").unmarshal().protobuf(ProtobufLibrary.Jackson, Pojo.class).to("mock:pojo");
-                from("direct:pojo").marshal().protobuf(ProtobufLibrary.Jackson).to("mock:serialized");
+                from("direct:serialized").unmarshal().avro(AvroLibrary.Jackson, Pojo.class, "schema-resolver-1")
+                        .to("mock:pojo");
+                from("direct:pojo").marshal().avro(AvroLibrary.Jackson, Pojo.class, "schema-resolver-1").to("mock:serialized");
             }
         };
     }
