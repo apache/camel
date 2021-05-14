@@ -432,6 +432,10 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "bindy";
         } else if ("yaml-snakeyaml".equals(name)) {
             return "yaml";
+        } else if ("avro-jackson".equals(name)) {
+            return "avro";
+        } else if ("protobuf-jackson".equals(name)) {
+            return "protobuf";
         }
         return name;
     }

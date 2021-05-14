@@ -23,8 +23,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.Any23DataFormat": return new ModelDeserializers.Any23DataFormatDeserializer();
             case "avro": return new ModelDeserializers.AvroDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.AvroDataFormat": return new ModelDeserializers.AvroDataFormatDeserializer();
-            case "avro-jackson": return new ModelDeserializers.AvroJacksonDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.AvroJacksonDataFormat": return new ModelDeserializers.AvroJacksonDataFormatDeserializer();
             case "barcode": return new ModelDeserializers.BarcodeDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.BarcodeDataFormat": return new ModelDeserializers.BarcodeDataFormatDeserializer();
             case "base64": return new ModelDeserializers.Base64DataFormatDeserializer();
@@ -234,8 +232,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.PropertyDefinition": return new ModelDeserializers.PropertyDefinitionDeserializer();
             case "protobuf": return new ModelDeserializers.ProtobufDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ProtobufDataFormat": return new ModelDeserializers.ProtobufDataFormatDeserializer();
-            case "protobuf-jackson": return new ModelDeserializers.ProtobufJacksonDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.ProtobufJacksonDataFormat": return new ModelDeserializers.ProtobufJacksonDataFormatDeserializer();
             case "put": return new ModelDeserializers.PutVerbDefinitionDeserializer();
             case "org.apache.camel.model.rest.PutVerbDefinition": return new ModelDeserializers.PutVerbDefinitionDeserializer();
             case "random": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
