@@ -21,7 +21,7 @@ import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientOptimizedImpl;
 import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientStandardImpl;
 
 /**
- * Factory class to return the correct type of AWS Eventbridge client.
+ * Factory class to return the correct type of AWS KMS client.
  */
 public final class KMS2ClientFactory {
 
