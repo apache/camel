@@ -33,7 +33,6 @@
     <description>Camel Netty NIO based socket communication component</description>
 
     <properties>
-        <camel.surefire.parallel>true</camel.surefire.parallel>
         <io.netty.leakDetection.level>DISABLED</io.netty.leakDetection.level>
     </properties>
 
