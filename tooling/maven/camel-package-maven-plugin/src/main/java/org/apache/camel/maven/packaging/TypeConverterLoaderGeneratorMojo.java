@@ -515,9 +515,21 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             converterClasses.add(converter.declaringClass().toString());
             pfx = "get" + converter.declaringClass().simpleName() + "()." + converter.name();
         }
+
+        // the 2nd parameter is optional and can either be Exchange or CamelContext
+        String param = "";
+        String paramType
+                = converter.parameters().size() == 2 ? converter.parameters().get(1).asClassType().name().toString() : null;
+        if (paramType != null) {
+            if ("org.apache.camel.Exchange".equals(paramType)) {
+                param = ", exchange";
+            } else if ("org.apache.camel.CamelContext".equals(paramType)) {
+                param = ", camelContext";
+            }
+        }
         String type = toString(converter.parameters().get(0));
         String cast = type.equals("java.lang.Object") ? "" : "(" + type + ") ";
-        return pfx + "(" + cast + "value" + (converter.parameters().size() == 2 ? ", exchange" : "") + ")";
+        return pfx + "(" + cast + "value" + param + ")";
     }
 
     private String toJavaFallback(MethodInfo converter, Set<String> converterClasses) {
