@@ -23,10 +23,10 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 
 /**
- * Marshal POJOs to Avro and back using <a href="http://jackson.codehaus.org/">Jackson</a>
+ * Marshal POJOs to Avro and back using Jackson.
  */
 @Dataformat("avro-jackson")
-@Metadata(firstVersion = "3.10.0", excludeProperties = "library,instanceClassName,schema")
+@Metadata(firstVersion = "3.10.0", title = "Avro Jackson", excludeProperties = "library,instanceClassName,schema")
 public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
 
     /**
