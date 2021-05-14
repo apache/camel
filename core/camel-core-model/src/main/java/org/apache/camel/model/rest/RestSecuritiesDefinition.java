@@ -42,7 +42,10 @@ public class RestSecuritiesDefinition {
     @XmlElements({
             @XmlElement(name = "apiKey", type = RestSecurityApiKey.class),
             @XmlElement(name = "basicAuth", type = RestSecurityBasicAuth.class),
-            @XmlElement(name = "oauth2", type = RestSecurityOAuth2.class) })
+            @XmlElement(name = "bearer", type = RestSecurityBearerToken.class),
+            @XmlElement(name = "oauth2", type = RestSecurityOAuth2.class),
+            @XmlElement(name = "openIdConnect", type = RestSecurityOpenIdConnect.class),
+            @XmlElement(name = "mutualTLS", type = RestSecurityMutualTLS.class) })
     private List<RestSecurityDefinition> securityDefinitions = new ArrayList<>();
 
     public RestSecuritiesDefinition() {
@@ -84,6 +87,44 @@ public class RestSecuritiesDefinition {
         securityDefinitions.add(auth);
         auth.setKey(key);
         auth.setDescription(description);
+        return this;
+    }
+
+    public RestSecuritiesDefinition bearerToken(String key, String bearerFormat) {
+        return bearerToken(key, null, bearerFormat);
+    }
+
+    public RestSecuritiesDefinition bearerToken(String key, String description, String bearerFormat) {
+        RestSecurityBearerToken auth = new RestSecurityBearerToken(rest);
+        securityDefinitions.add(auth);
+        auth.setKey(key);
+        auth.setDescription(description);
+        auth.setFormat(bearerFormat);
+        return this;
+    }
+
+    public RestSecuritiesDefinition mutualTLS(String key) {
+        return mutualTLS(key, null);
+    }
+
+    public RestSecuritiesDefinition mutualTLS(String key, String description) {
+        RestSecurityMutualTLS auth = new RestSecurityMutualTLS(rest);
+        securityDefinitions.add(auth);
+        auth.setKey(key);
+        auth.setDescription(description);
+        return this;
+    }
+
+    public RestSecuritiesDefinition openIdConnect(String key, String url) {
+        return openIdConnect(key, null, url);
+    }
+
+    public RestSecuritiesDefinition openIdConnect(String key, String description, String url) {
+        RestSecurityOpenIdConnect auth = new RestSecurityOpenIdConnect(rest);
+        securityDefinitions.add(auth);
+        auth.setKey(key);
+        auth.setDescription(description);
+        auth.setUrl(url);
         return this;
     }
 

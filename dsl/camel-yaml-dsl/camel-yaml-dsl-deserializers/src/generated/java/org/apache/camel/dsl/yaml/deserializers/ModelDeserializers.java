@@ -215,7 +215,10 @@ import org.apache.camel.model.rest.RestSecuritiesDefinition;
 import org.apache.camel.model.rest.RestSecuritiesRequirement;
 import org.apache.camel.model.rest.RestSecurityApiKey;
 import org.apache.camel.model.rest.RestSecurityBasicAuth;
+import org.apache.camel.model.rest.RestSecurityBearerToken;
+import org.apache.camel.model.rest.RestSecurityMutualTLS;
 import org.apache.camel.model.rest.RestSecurityOAuth2;
+import org.apache.camel.model.rest.RestSecurityOpenIdConnect;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -11432,7 +11435,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "api-key", type = "object:org.apache.camel.model.rest.RestSecurityApiKey"),
                     @YamlProperty(name = "basic-auth", type = "object:org.apache.camel.model.rest.RestSecurityBasicAuth"),
-                    @YamlProperty(name = "oauth2", type = "object:org.apache.camel.model.rest.RestSecurityOAuth2")
+                    @YamlProperty(name = "bearer", type = "object:org.apache.camel.model.rest.RestSecurityBearerToken"),
+                    @YamlProperty(name = "oauth2", type = "object:org.apache.camel.model.rest.RestSecurityOAuth2"),
+                    @YamlProperty(name = "open-id-connect", type = "object:org.apache.camel.model.rest.RestSecurityOpenIdConnect"),
+                    @YamlProperty(name = "mutual-tls", type = "object:org.apache.camel.model.rest.RestSecurityMutualTLS")
             }
     )
     public static class RestSecuritiesDefinitionDeserializer extends YamlDeserializerBase<RestSecuritiesDefinition> {
@@ -11474,8 +11480,38 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSecurityDefinitions(existing);
                     break;
                 }
+                case "bearer": {
+                    org.apache.camel.model.rest.RestSecurityBearerToken val = asType(node, org.apache.camel.model.rest.RestSecurityBearerToken.class);
+                    java.util.List<org.apache.camel.model.rest.RestSecurityDefinition> existing = target.getSecurityDefinitions();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setSecurityDefinitions(existing);
+                    break;
+                }
                 case "oauth2": {
                     org.apache.camel.model.rest.RestSecurityOAuth2 val = asType(node, org.apache.camel.model.rest.RestSecurityOAuth2.class);
+                    java.util.List<org.apache.camel.model.rest.RestSecurityDefinition> existing = target.getSecurityDefinitions();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setSecurityDefinitions(existing);
+                    break;
+                }
+                case "open-id-connect": {
+                    org.apache.camel.model.rest.RestSecurityOpenIdConnect val = asType(node, org.apache.camel.model.rest.RestSecurityOpenIdConnect.class);
+                    java.util.List<org.apache.camel.model.rest.RestSecurityDefinition> existing = target.getSecurityDefinitions();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setSecurityDefinitions(existing);
+                    break;
+                }
+                case "mutual-tls": {
+                    org.apache.camel.model.rest.RestSecurityMutualTLS val = asType(node, org.apache.camel.model.rest.RestSecurityMutualTLS.class);
                     java.util.List<org.apache.camel.model.rest.RestSecurityDefinition> existing = target.getSecurityDefinitions();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -11536,6 +11572,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "api-key",
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "in-cookie", type = "boolean"),
                     @YamlProperty(name = "in-header", type = "boolean"),
                     @YamlProperty(name = "in-query", type = "boolean"),
                     @YamlProperty(name = "key", type = "string", required = true),
@@ -11559,6 +11596,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     String val = asText(node);
                     target.setDescription(val);
+                    break;
+                }
+                case "in-cookie": {
+                    String val = asText(node);
+                    target.setInCookie(val);
                     break;
                 }
                 case "in-header": {
@@ -11631,6 +11673,94 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            types = org.apache.camel.model.rest.RestSecurityBearerToken.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "bearer-token",
+            properties = {
+                    @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "format", type = "string"),
+                    @YamlProperty(name = "key", type = "string", required = true)
+            }
+    )
+    public static class RestSecurityBearerTokenDeserializer extends YamlDeserializerBase<RestSecurityBearerToken> {
+        public RestSecurityBearerTokenDeserializer() {
+            super(RestSecurityBearerToken.class);
+        }
+
+        @Override
+        protected RestSecurityBearerToken newInstance() {
+            return new RestSecurityBearerToken();
+        }
+
+        @Override
+        protected boolean setProperty(RestSecurityBearerToken target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                case "format": {
+                    String val = asText(node);
+                    target.setFormat(val);
+                    break;
+                }
+                case "key": {
+                    String val = asText(node);
+                    target.setKey(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.rest.RestSecurityMutualTLS.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "mutual-tls",
+            properties = {
+                    @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "key", type = "string", required = true)
+            }
+    )
+    public static class RestSecurityMutualTLSDeserializer extends YamlDeserializerBase<RestSecurityMutualTLS> {
+        public RestSecurityMutualTLSDeserializer() {
+            super(RestSecurityMutualTLS.class);
+        }
+
+        @Override
+        protected RestSecurityMutualTLS newInstance() {
+            return new RestSecurityMutualTLS();
+        }
+
+        @Override
+        protected boolean setProperty(RestSecurityMutualTLS target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                case "key": {
+                    String val = asText(node);
+                    target.setKey(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             types = org.apache.camel.model.rest.RestSecurityOAuth2.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "oauth2",
@@ -11639,6 +11769,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "flow", type = "string"),
                     @YamlProperty(name = "key", type = "string", required = true),
+                    @YamlProperty(name = "refresh-url", type = "string"),
                     @YamlProperty(name = "scopes", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "token-url", type = "string")
             }
@@ -11677,6 +11808,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setKey(val);
                     break;
                 }
+                case "refresh-url": {
+                    String val = asText(node);
+                    target.setRefreshUrl(val);
+                    break;
+                }
                 case "scopes": {
                     java.util.List<org.apache.camel.model.rest.RestPropertyDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestPropertyDefinition.class);
                     target.setScopes(val);
@@ -11685,6 +11821,53 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "token-url": {
                     String val = asText(node);
                     target.setTokenUrl(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.rest.RestSecurityOpenIdConnect.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "open-id-connect",
+            properties = {
+                    @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "key", type = "string", required = true),
+                    @YamlProperty(name = "url", type = "string", required = true)
+            }
+    )
+    public static class RestSecurityOpenIdConnectDeserializer extends YamlDeserializerBase<RestSecurityOpenIdConnect> {
+        public RestSecurityOpenIdConnectDeserializer() {
+            super(RestSecurityOpenIdConnect.class);
+        }
+
+        @Override
+        protected RestSecurityOpenIdConnect newInstance() {
+            return new RestSecurityOpenIdConnect();
+        }
+
+        @Override
+        protected boolean setProperty(RestSecurityOpenIdConnect target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                case "key": {
+                    String val = asText(node);
+                    target.setKey(val);
+                    break;
+                }
+                case "url": {
+                    String val = asText(node);
+                    target.setUrl(val);
                     break;
                 }
                 default: {

@@ -6653,8 +6653,17 @@
           "basic-auth" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityBasicAuth"
           },
+          "bearer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityBearerToken"
+          },
+          "mutual-tls" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityMutualTLS"
+          },
           "oauth2" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityOAuth2"
+          },
+          "open-id-connect" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityOpenIdConnect"
           }
         }
       },
@@ -6671,6 +6680,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "in-cookie" : {
+            "type" : "boolean"
           },
           "in-header" : {
             "type" : "boolean"
@@ -6699,6 +6711,33 @@
         },
         "required" : [ "key" ]
       },
+      "org.apache.camel.model.rest.RestSecurityBearerToken" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "format" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
+      "org.apache.camel.model.rest.RestSecurityMutualTLS" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
       "org.apache.camel.model.rest.RestSecurityOAuth2" : {
         "type" : "object",
         "properties" : {
@@ -6714,6 +6753,9 @@
           "key" : {
             "type" : "string"
           },
+          "refresh-url" : {
+            "type" : "string"
+          },
           "scopes" : {
             "type" : "array",
             "items" : {
@@ -6725,6 +6767,21 @@
           }
         },
         "required" : [ "key" ]
+      },
+      "org.apache.camel.model.rest.RestSecurityOpenIdConnect" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key", "url" ]
       },
       "org.apache.camel.model.rest.RestsDefinition" : {
         "type" : "object",
