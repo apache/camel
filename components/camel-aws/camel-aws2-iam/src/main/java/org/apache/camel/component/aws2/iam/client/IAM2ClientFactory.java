@@ -21,7 +21,7 @@ import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientOptimizedImpl;
 import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientStandardImpl;
 
 /**
- * Factory class to return the correct type of AWS Eventbridge client.
+ * Factory class to return the correct type of AWS IAM client.
  */
 public final class IAM2ClientFactory {
 
