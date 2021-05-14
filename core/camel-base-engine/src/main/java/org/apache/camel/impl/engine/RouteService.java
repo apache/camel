@@ -164,9 +164,7 @@ public class RouteService extends ChildServiceSupport {
                     ((RouteIdAware) service).setRouteId(route.getId());
                 }
                 // inject camel context
-                if (service instanceof CamelContextAware) {
-                    ((CamelContextAware) service).setCamelContext(camelContext);
-                }
+                CamelContextAware.trySetCamelContext(service, camelContext);
 
                 if (service instanceof Consumer) {
                     this.input = (Consumer) service;

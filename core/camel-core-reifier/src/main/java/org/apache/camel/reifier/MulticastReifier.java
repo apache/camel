@@ -106,10 +106,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
             // default to use latest aggregation strategy
             strategy = new UseLatestAggregationStrategy();
         }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
 
         if (parseBoolean(definition.getShareUnitOfWork(), false)) {
             // wrap strategy in share unit of work

@@ -167,9 +167,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
         if (bean != null) {
             // automatic inject camel context in bean if its aware
-            if (camelContext != null && bean instanceof CamelContextAware) {
-                ((CamelContextAware) bean).setCamelContext(camelContext);
-            }
+            CamelContextAware.trySetCamelContext(bean, camelContext);
             fallbackRegistry.bind(id, type, bean);
         }
     }

@@ -248,9 +248,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         if (aggregationStrategy == null) {
             aggregationStrategy = defaultAggregationStrategy();
         }
-        if (aggregationStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         ServiceHelper.buildService(processorExchangeFactory, sendDynamicProcessor);
     }
 

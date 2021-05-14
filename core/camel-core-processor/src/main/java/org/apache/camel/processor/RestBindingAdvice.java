@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -114,10 +113,10 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         if (jsonUnmarshal != null) {
             camelContext.addService(jsonUnmarshal, true);
         }
-        if (xmlMarshal instanceof CamelContextAware) {
+        if (xmlMarshal != null) {
             camelContext.addService(xmlMarshal, true);
         }
-        if (xmlUnmarshal instanceof CamelContextAware) {
+        if (xmlUnmarshal != null) {
             camelContext.addService(xmlUnmarshal, true);
         }
 

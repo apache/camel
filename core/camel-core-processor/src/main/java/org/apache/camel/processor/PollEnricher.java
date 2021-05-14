@@ -434,9 +434,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
             LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
         }
-        if (aggregationStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         ServiceHelper.buildService(consumerCache, aggregationStrategy);
     }
 

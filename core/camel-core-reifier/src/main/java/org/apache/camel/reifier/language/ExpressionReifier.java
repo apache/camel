@@ -198,9 +198,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             }
         }
         // inject CamelContext if its aware
-        if (expression instanceof CamelContextAware) {
-            ((CamelContextAware) expression).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(expression, camelContext);
         expression.init(camelContext);
         return expression;
     }
@@ -236,9 +234,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             }
         }
         // inject CamelContext if its aware
-        if (predicate instanceof CamelContextAware) {
-            ((CamelContextAware) predicate).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(predicate, camelContext);
         // if the predicate is created via a delegate then it would need to know if its a predicate or expression
         // when being initialized
         predicate.initPredicate(camelContext);
