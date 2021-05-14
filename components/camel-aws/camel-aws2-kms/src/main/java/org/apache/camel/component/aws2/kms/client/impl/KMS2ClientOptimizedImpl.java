@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.kms.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.kms.KMS2Configuration;
 import org.apache.camel.component.aws2.kms.client.KMS2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -29,8 +31,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS KMS client for all users to use (enabling temporary creds). This implementation is for remote instances

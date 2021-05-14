@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Key Management Service (KMS) component supports 15 options, which are listed below.
+The AWS 2 Key Management Service (KMS) component supports 16 options, which are listed below.
 
 
 
@@ -61,6 +61,7 @@ The AWS 2 Key Management Service (KMS) component supports 15 options, which are 
 | *region* (producer) | The region in which EKS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (producer) | Set whether the KMS client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -89,7 +90,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (13 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -106,6 +107,7 @@ with the following path and query parameters:
 | *region* (producer) | The region in which EKS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (producer) | Set whether the KMS client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
