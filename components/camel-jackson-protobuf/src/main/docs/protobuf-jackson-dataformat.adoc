@@ -1,10 +1,10 @@
 [[protobuf-jackson-dataformat]]
-= Protobuf DataFormat
-:docTitle: Protobuf
+= Protobuf Jackson DataFormat
+:docTitle: Protobuf Jackson
 :artifactId: camel-jackson-protobuf
 :description: Marshal POJOs to Protobuf and back using Jackson.
-:since: 2.2
-:supportLevel: Stable
+:since: 3.10
+:supportLevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/protobuf-jackson.adoc[opts=optional]
 
 *Since Camel {since}*
@@ -39,7 +39,7 @@ Or you can explicitly specify the reference to a custom SchemaResolver.
 == Protobuf Jackson Options
 
 // dataformat options: START
-The Protobuf dataformat supports 18 options, which are listed below.
+The Protobuf Jackson dataformat supports 18 options, which are listed below.
 
 
 

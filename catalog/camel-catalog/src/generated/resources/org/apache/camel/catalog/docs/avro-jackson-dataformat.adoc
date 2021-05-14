@@ -1,10 +1,10 @@
 [[avro-jackson-dataformat]]
-= Avro DataFormat
-:docTitle: Avro
+= Avro Jackson DataFormat
+:docTitle: Avro Jackson
 :artifactId: camel-jackson-avro
 :description: Marshal POJOs to Avro and back using Jackson.
-:since: 2.14
-:supportLevel: Stable
+:since: 3.10
+:supportLevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro-jackson.adoc[opts=optional]
 
 *Since Camel {since}*
@@ -39,7 +39,7 @@ Or you can explicitly specify the reference to a custom SchemaResolver.
 == Avro Jackson Options
 
 // dataformat options: START
-The Avro dataformat supports 18 options, which are listed below.
+The Avro Jackson dataformat supports 18 options, which are listed below.
 
 
 
