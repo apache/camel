@@ -197,7 +197,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
         } else if (to == java.lang.Class.class) {
             if (value instanceof java.lang.String) {
-                return org.apache.camel.converter.ObjectConverter.toClass((java.lang.String) value, exchange);
+                return org.apache.camel.converter.ObjectConverter.toClass((java.lang.String) value, camelContext);
             }
         } else if (to == java.lang.Double.class || to == double.class) {
             if (value instanceof java.lang.Number) {
