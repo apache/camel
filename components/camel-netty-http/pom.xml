@@ -32,7 +32,6 @@
     <description>Camel Netty HTTP support</description>
 
     <properties>
-        <camel.surefire.parallel>true</camel.surefire.parallel>
         <io.netty.leakDetection.level>DISABLED</io.netty.leakDetection.level>
     </properties>
 
