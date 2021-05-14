@@ -26,7 +26,7 @@ import org.apache.camel.spi.annotations.Dataformat;
  * Marshal POJOs to Avro and back using <a href="http://jackson.codehaus.org/">Jackson</a>
  */
 @Dataformat("avro-jackson")
-@Metadata(excludeProperties = "library,permissions,dropRootNode")
+@Metadata(firstVersion = "3.10.0", excludeProperties = "schema")
 public class JacksonAvroDataFormat extends AbstractJacksonDataFormat {
 
     /**
