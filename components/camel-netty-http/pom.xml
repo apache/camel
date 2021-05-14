@@ -31,10 +31,6 @@
     <name>Camel :: Netty HTTP</name>
     <description>Camel Netty HTTP support</description>
 
-    <properties>
-        <io.netty.leakDetection.level>DISABLED</io.netty.leakDetection.level>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -158,25 +154,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <io.netty.leakDetection.level>${io.netty.leakDetection.level}</io.netty.leakDetection.level>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>leaks</id>
-            <properties>
-                <camel.surefire.parallel>false</camel.surefire.parallel>
-                <io.netty.leakDetection.level>PARANOID</io.netty.leakDetection.level>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>
