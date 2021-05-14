@@ -1753,6 +1753,31 @@ public class ModelParser extends BaseParser {
             return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
+    protected AvroJacksonDataFormat doParseAvroJacksonDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new AvroJacksonDataFormat(), (def, key, val) -> {
+            switch (key) {
+                case "allowJmsType": def.setAllowJmsType(val); break;
+                case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
+                case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
+                case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
+                case "disableFeatures": def.setDisableFeatures(val); break;
+                case "enableFeatures": def.setEnableFeatures(val); break;
+                case "include": def.setInclude(val); break;
+                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
+                case "moduleClassNames": def.setModuleClassNames(val); break;
+                case "moduleRefs": def.setModuleRefs(val); break;
+                case "objectMapper": def.setObjectMapper(val); break;
+                case "prettyPrint": def.setPrettyPrint(val); break;
+                case "timezone": def.setTimezone(val); break;
+                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
+                case "useList": def.setUseList(val); break;
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
+    }
     protected BarcodeDataFormat doParseBarcodeDataFormat() throws IOException, XmlPullParserException {
         return doParse(new BarcodeDataFormat(), (def, key, val) -> {
             switch (key) {
@@ -2118,6 +2143,31 @@ public class ModelParser extends BaseParser {
                 case "contentTypeFormat": def.setContentTypeFormat(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "instanceClass": def.setInstanceClass(val); break;
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
+    }
+    protected ProtobufJacksonDataFormat doParseProtobufJacksonDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new ProtobufJacksonDataFormat(), (def, key, val) -> {
+            switch (key) {
+                case "allowJmsType": def.setAllowJmsType(val); break;
+                case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
+                case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
+                case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
+                case "disableFeatures": def.setDisableFeatures(val); break;
+                case "enableFeatures": def.setEnableFeatures(val); break;
+                case "include": def.setInclude(val); break;
+                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
+                case "moduleClassNames": def.setModuleClassNames(val); break;
+                case "moduleRefs": def.setModuleRefs(val); break;
+                case "objectMapper": def.setObjectMapper(val); break;
+                case "prettyPrint": def.setPrettyPrint(val); break;
+                case "timezone": def.setTimezone(val); break;
+                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
+                case "useList": def.setUseList(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -3062,6 +3112,7 @@ public class ModelParser extends BaseParser {
             case "asn1": return doParseASN1DataFormat();
             case "any23": return doParseAny23DataFormat();
             case "avro": return doParseAvroDataFormat();
+            case "avro-jackson": return doParseAvroJacksonDataFormat();
             case "barcode": return doParseBarcodeDataFormat();
             case "base64": return doParseBase64DataFormat();
             case "beanio": return doParseBeanioDataFormat();
@@ -3085,6 +3136,7 @@ public class ModelParser extends BaseParser {
             case "mime-multipart": return doParseMimeMultipartDataFormat();
             case "pgp": return doParsePGPDataFormat();
             case "protobuf": return doParseProtobufDataFormat();
+            case "protobuf-jackson": return doParseProtobufJacksonDataFormat();
             case "rss": return doParseRssDataFormat();
             case "soapjaxb": return doParseSoapJaxbDataFormat();
             case "syslog": return doParseSyslogDataFormat();

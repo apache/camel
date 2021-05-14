@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import org.apache.camel.model.dataformat.ProtobufJacksonDataFormat;
 import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
@@ -53,6 +52,7 @@ import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
+import org.apache.camel.model.dataformat.ProtobufJacksonDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;

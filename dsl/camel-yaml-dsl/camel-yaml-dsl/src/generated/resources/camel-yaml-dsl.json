@@ -3684,6 +3684,65 @@
         } ],
         "required" : [ "instance-class-name" ]
       },
+      "org.apache.camel.model.dataformat.AvroJacksonDataFormat" : {
+        "type" : "object",
+        "properties" : {
+          "allow-jms-type" : {
+            "type" : "boolean"
+          },
+          "allow-unmarshall-type" : {
+            "type" : "boolean"
+          },
+          "auto-discover-object-mapper" : {
+            "type" : "boolean"
+          },
+          "collection-type-name" : {
+            "type" : "string"
+          },
+          "content-type-header" : {
+            "type" : "boolean"
+          },
+          "disable-features" : {
+            "type" : "string"
+          },
+          "enable-features" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "include" : {
+            "type" : "string"
+          },
+          "json-view-type-name" : {
+            "type" : "string"
+          },
+          "module-class-names" : {
+            "type" : "string"
+          },
+          "module-refs" : {
+            "type" : "string"
+          },
+          "object-mapper" : {
+            "type" : "string"
+          },
+          "pretty-print" : {
+            "type" : "boolean"
+          },
+          "timezone" : {
+            "type" : "string"
+          },
+          "unmarshal-type-name" : {
+            "type" : "string"
+          },
+          "use-default-object-mapper" : {
+            "type" : "boolean"
+          },
+          "use-list" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "org.apache.camel.model.dataformat.BarcodeDataFormat" : {
         "type" : "object",
         "properties" : {
@@ -4592,6 +4651,65 @@
             }
           }
         } ]
+      },
+      "org.apache.camel.model.dataformat.ProtobufJacksonDataFormat" : {
+        "type" : "object",
+        "properties" : {
+          "allow-jms-type" : {
+            "type" : "boolean"
+          },
+          "allow-unmarshall-type" : {
+            "type" : "boolean"
+          },
+          "auto-discover-object-mapper" : {
+            "type" : "boolean"
+          },
+          "collection-type-name" : {
+            "type" : "string"
+          },
+          "content-type-header" : {
+            "type" : "boolean"
+          },
+          "disable-features" : {
+            "type" : "string"
+          },
+          "enable-features" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "include" : {
+            "type" : "string"
+          },
+          "json-view-type-name" : {
+            "type" : "string"
+          },
+          "module-class-names" : {
+            "type" : "string"
+          },
+          "module-refs" : {
+            "type" : "string"
+          },
+          "object-mapper" : {
+            "type" : "string"
+          },
+          "pretty-print" : {
+            "type" : "boolean"
+          },
+          "timezone" : {
+            "type" : "string"
+          },
+          "unmarshal-type-name" : {
+            "type" : "string"
+          },
+          "use-default-object-mapper" : {
+            "type" : "boolean"
+          },
+          "use-list" : {
+            "type" : "boolean"
+          }
+        }
       },
       "org.apache.camel.model.dataformat.RssDataFormat" : {
         "type" : "object",
