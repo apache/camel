@@ -10337,6 +10337,15 @@ inlined code in the script section, such as using groovy.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="beanType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+To set the type (fully qualified class name) of the returned bean created by the
+script. Knowing the type of the bean can be needed when dependency injection by
+type is in use, or when looking in registry via class type.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:simpleType name="routeTemplateScriptDefinition">
@@ -14050,6 +14059,7 @@ to refer to an existing data format instance.
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:element minOccurs="0" ref="tns:securityDefinitions"/>
+          <xs:element minOccurs="0" ref="tns:securityRequirements"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:verb"/>
             <xs:element ref="tns:delete"/>
