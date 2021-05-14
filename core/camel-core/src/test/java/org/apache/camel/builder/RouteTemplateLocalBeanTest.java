@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -650,6 +651,47 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
+    public void testLocalBeanMemorize() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar").templateParameter("hi")
+                        .templateBean("myBar").property("prefix", "{{hi}}").typeClass(BuilderThreeProcessor.class).end()
+                        .from("direct:{{foo}}")
+                        // use unique endpoints to force referring the to bean twice
+                        .to("bean:{{bar}}")
+                        .to("bean:{{bar}}?method=process")
+                        .to("mock:result");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .parameter("hi", "Davs")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("DavsBuilder3 DavsBuilder3 World");
+        mock.expectedHeaderReceived("counter", 2);
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("DavsBuilder3 DavsBuilder3 World", out);
+
+        assertMockEndpointsSatisfied();
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
     public static class BuilderTwoProcessor implements Processor {
 
         private String prefix = "";
@@ -670,6 +712,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public static class BuilderThreeProcessor implements Processor {
 
         private String prefix = "";
+        private int counter;
 
         public String getPrefix() {
             return prefix;
@@ -681,8 +724,11 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange exchange) throws Exception {
+            counter++;
             exchange.getMessage().setBody(prefix + "Builder3 " + exchange.getMessage().getBody());
+            exchange.getMessage().setHeader("counter", counter);
         }
+
     }
 
     public Processor createBuilderProcessor() {

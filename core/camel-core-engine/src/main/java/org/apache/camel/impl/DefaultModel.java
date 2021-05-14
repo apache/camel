@@ -66,6 +66,7 @@ import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.function.Suppliers;
 
 public class DefaultModel implements Model {
 
@@ -366,7 +367,9 @@ public class DefaultModel implements Model {
                 final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
                 if (slan != null) {
                     // scripting language should be evaluated with route template context as binding
-                    routeTemplateContext.bind(b.getName(), clazz, () -> {
+                    // and memorize so the script is only evaluated once and the local bean is the same
+                    // if a route template refers to the local bean multiple times
+                    routeTemplateContext.bind(b.getName(), clazz, Suppliers.memorize(() -> {
                         Map<String, Object> bindings = new HashMap<>();
                         // use rtx as the short-hand name, as context would imply its CamelContext
                         bindings.put("rtc", routeTemplateContext);
@@ -375,10 +378,12 @@ public class DefaultModel implements Model {
                             setPropertiesOnTarget(camelContext, local, props);
                         }
                         return local;
-                    });
+                    }));
                 } else {
                     // exchange based languages needs a dummy exchange to be evaluated
-                    routeTemplateContext.bind(b.getName(), clazz, () -> {
+                    // and memorize so the script is only evaluated once and the local bean is the same
+                    // if a route template refers to the local bean multiple times
+                    routeTemplateContext.bind(b.getName(), clazz, Suppliers.memorize(() -> {
                         ExchangeFactory ef = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory();
                         Exchange dummy = ef.create(false);
                         try {
@@ -396,20 +401,22 @@ public class DefaultModel implements Model {
                         } finally {
                             ef.release(dummy);
                         }
-                    });
+                    }));
                 }
             } else if (b.getBeanClass() != null || b.getType() != null && b.getType().startsWith("#class:")) {
                 Class<?> clazz = b.getBeanClass() != null
                         ? b.getBeanClass() : camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(7));
                 // we only have the bean class so we use that to create a new bean via the injector
+                // and memorize so the bean is only created once and the local bean is the same
+                // if a route template refers to the local bean multiple times
                 routeTemplateContext.bind(b.getName(), clazz,
-                        () -> {
+                        Suppliers.memorize(() -> {
                             Object local = camelContext.getInjector().newInstance(clazz);
                             if (!props.isEmpty()) {
                                 setPropertiesOnTarget(camelContext, local, props);
                             }
                             return local;
-                        });
+                        }));
             } else if (b.getType() != null && b.getType().startsWith("#type:")) {
                 Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(6));
                 Set<?> found = getCamelContext().getRegistry().findByType(clazz);
