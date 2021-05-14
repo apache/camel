@@ -5942,10 +5942,170 @@ Name of class to use when unmarshalling.
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
-        <xs:attribute name="instanceClassName" type="xs:string" use="required">
+        <xs:attribute name="instanceClassName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Class name to use for marshal and unmarshalling.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="library" type="tns:avroLibrary">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Which Avro library to use. Default value: ApacheAvro
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="objectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Lookup and use the existing ObjectMapper with the given id when using Jackson.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useDefaultObjectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to lookup and use default Jackson ObjectMapper from the registry.
+Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="unmarshalTypeName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Class name of the java type to use when unmarshalling.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="jsonViewTypeName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+When marshalling a POJO to JSON you might want to exclude certain fields from
+the JSON output. With Jackson you can use JSON views to accomplish this. This
+option is to refer to the class which has JsonView annotations.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="include" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If you want to marshal a pojo to JSON, and the pojo has some fields with null
+values. And you want to skip these null values, you can set this option to
+NON_NULL.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowJmsType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Used for JMS users to allow the JMSType header from the JMS spec to specify a
+FQN classname to use to unmarshal to. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="collectionTypeName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Refers to a custom collection type to lookup in the registry to use. This option
+should rarely be used, but allows to use different collection types than
+java.util.Collection based as default.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useList" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To unmarshal to a List of Map or a List of Pojo. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="moduleClassNames" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as
+a String with FQN class names. Multiple classes can be separated by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="moduleRefs" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use custom Jackson modules referred from the Camel registry. Multiple modules
+can be separated by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="enableFeatures" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Set of features to enable on the Jackson
+com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
+matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
+com.fasterxml.jackson.databind.DeserializationFeature, or
+com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
+by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="disableFeatures" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Set of features to disable on the Jackson
+com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
+matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
+com.fasterxml.jackson.databind.DeserializationFeature, or
+com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
+by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowUnmarshallType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If enabled then Jackson is allowed to attempt to use the
+CamelJacksonUnmarshalType header during the unmarshalling. This should only be
+enabled when desired to be used. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="timezone" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If set then Jackson will use the Timezone when marshalling/unmarshalling.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="autoDiscoverObjectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If set to true then Jackson will lookup for an objectMapper into the registry.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="schemaResolver" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Optional schema resolver used to lookup schemas for the data in transit.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="autoDiscoverSchemaResolver" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+When not disabled, the SchemaResolver will be looked up into the registry.
+Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7352,6 +7512,21 @@ true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="schemaResolver" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Optional schema resolver used to lookup schemas for the data in transit.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="autoDiscoverSchemaResolver" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+When not disabled, the SchemaResolver will be looked up into the registry.
+Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -7473,6 +7648,156 @@ Whether the data format should set the Content-Type header with the type from
 the data format. For example application/xml for data formats marshalling to
 XML, or application/json for data formats marshalling to JSON. Default value:
 true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="library" type="tns:protobufLibrary">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Which Protobuf library to use. Default value: GoogleProtobuf
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="objectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Lookup and use the existing ObjectMapper with the given id when using Jackson.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useDefaultObjectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to lookup and use default Jackson ObjectMapper from the registry.
+Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="unmarshalTypeName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Class name of the java type to use when unmarshalling.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="jsonViewTypeName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+When marshalling a POJO to JSON you might want to exclude certain fields from
+the JSON output. With Jackson you can use JSON views to accomplish this. This
+option is to refer to the class which has JsonView annotations.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="include" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If you want to marshal a pojo to JSON, and the pojo has some fields with null
+values. And you want to skip these null values, you can set this option to
+NON_NULL.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowJmsType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Used for JMS users to allow the JMSType header from the JMS spec to specify a
+FQN classname to use to unmarshal to. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="collectionTypeName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Refers to a custom collection type to lookup in the registry to use. This option
+should rarely be used, but allows to use different collection types than
+java.util.Collection based as default.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useList" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To unmarshal to a List of Map or a List of Pojo. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="moduleClassNames" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as
+a String with FQN class names. Multiple classes can be separated by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="moduleRefs" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use custom Jackson modules referred from the Camel registry. Multiple modules
+can be separated by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="enableFeatures" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Set of features to enable on the Jackson
+com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
+matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
+com.fasterxml.jackson.databind.DeserializationFeature, or
+com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
+by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="disableFeatures" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Set of features to disable on the Jackson
+com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
+matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
+com.fasterxml.jackson.databind.DeserializationFeature, or
+com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
+by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowUnmarshallType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If enabled then Jackson is allowed to attempt to use the
+CamelJacksonUnmarshalType header during the unmarshalling. This should only be
+enabled when desired to be used. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="timezone" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If set then Jackson will use the Timezone when marshalling/unmarshalling.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="autoDiscoverObjectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If set to true then Jackson will lookup for an objectMapper into the registry.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="schemaResolver" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Optional schema resolver used to lookup schemas for the data in transit.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="autoDiscoverSchemaResolver" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+When not disabled, the SchemaResolver will be looked up into the registry.
+Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15314,6 +15639,13 @@ multiple certificates.
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="avroLibrary">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ApacheAvro"/>
+      <xs:enumeration value="Jackson"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:simpleType name="jsonLibrary">
     <xs:restriction base="xs:string">
       <xs:enumeration value="XStream"/>
@@ -15322,6 +15654,13 @@ multiple certificates.
       <xs:enumeration value="Gson"/>
       <xs:enumeration value="Fastjson"/>
       <xs:enumeration value="Jsonb"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="protobufLibrary">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="GoogleProtobuf"/>
+      <xs:enumeration value="Jackson"/>
     </xs:restriction>
   </xs:simpleType>
 
