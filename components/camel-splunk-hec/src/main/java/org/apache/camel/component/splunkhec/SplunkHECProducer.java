@@ -132,24 +132,14 @@ public class SplunkHECProducer extends DefaultProducer {
             payload.put("host", endpoint.getConfiguration().getHost());
         }
 
-        Object timeInput = message.getHeader(SplunkHECComponent.INDEX_TIME, endpoint.getConfiguration().getTime());
-        if (timeInput != null) {
-            try {
-                Long time;
-                if (timeInput instanceof String) {
-                    time = Long.valueOf((String) timeInput);
-                } else if (timeInput instanceof Integer) {
-                    time = new Long((Integer) timeInput);
-                } else {
-                    time = (Long) timeInput;
-                }
+        Long time = message.getHeader(
+            SplunkHECComponent.INDEX_TIME,
+            endpoint.getConfiguration().getTime(),
+            Long.class
+        );
 
-                payload.put("time", time);
-            } catch (NumberFormatException | ClassCastException e) {
-                LOG.info("We detected user input for setting the index time, but skipped setting it because : {} - {}",
-                        e.toString(),
-                        e.getMessage());
-            }
+        if (time != null) {
+            payload.put("time", time);
         }
     }
 }
