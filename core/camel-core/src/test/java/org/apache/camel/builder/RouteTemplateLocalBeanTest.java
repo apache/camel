@@ -554,7 +554,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
-                        .templateBean("myBar").beanClass(BuilderProcessor.class)
+                        .templateBean("myBar").typeClass(BuilderProcessor.class).end()
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
             }
@@ -593,7 +593,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar").templateParameter("hi")
-                        .templateBean("myBar").property("prefix", "{{hi}}").beanClass(BuilderThreeProcessor.class)
+                        .templateBean("myBar").property("prefix", "{{hi}}").typeClass(BuilderThreeProcessor.class).end()
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
             }

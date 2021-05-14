@@ -247,7 +247,7 @@ routeTemplate("barTemplate")
     .templateParameter("bar")
     .templateParameter("street")
     .templateBean("myBar")
-        .type("com.foo.MyBar")
+        .typeClass("com.foo.MyBar")
         .property("name", "{{bar}}")
         .property("address", "{{street}}")
     .end()
@@ -260,7 +260,7 @@ With Java DSL you can also refer to the bean class using type safe way:
 [source,java]
 ----
     .templateBean("myBar")
-        .type(MyBar.class)
+        .typeClass(MyBar.class)
         .property("name", "{{bar}}")
         .property("address", "{{street}}")
     .end()
@@ -447,6 +447,44 @@ public static S3Client createS3Client(RouteTemplateContext rtc) {
 
 If you are using pure Java code (both template and creating local bean),
 then you can create the local bean using Java lambda style as previously documented.
+
+==== Configuring the type of the created bean
+
+When using scripting languages to create the local bean, then Camel would not know what type (fully qualified class name)
+then created bean is. The type is therefore unassigned (is set as `java.lang.Object`) which is a slight limitation.
+
+If you use dependency injection by type, or have the need for looking up the local bean from the Camel `Registry` via its type,
+then you must provide this information in the route template with `beanType` as shown:
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <templateBean name="myClient" type="bean" beanType="software.amazon.awssdk.services.s3.S3Client">
+        <script>com.foo.MyAwsHelper?method=createS3Client</script>
+    </templateBean>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+And in Java DSL you can do:
+
+[source,java]
+----
+routeTemplate("s3template")
+    .templateParameter("region")
+    .templateParameter("bucket")
+    .templateBean("myClient", S3Client.class, "bean", "com.foo.MyAwsHelper?method=createS3Client")
+    .from("direct:s3-store")
+     // must refer to the bean with {{myClient}}
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}")
+----
 
 == Configuring route templates when creating route
 

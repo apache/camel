@@ -1024,6 +1024,7 @@ public class ModelParser extends BaseParser {
     protected RouteTemplateBeanDefinition doParseRouteTemplateBeanDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateBeanDefinition(), (def, key, val) -> {
             switch (key) {
+                case "beanType": def.setBeanType(val); break;
                 case "name": def.setName(val); break;
                 case "type": def.setType(val); break;
                 default: return false;
