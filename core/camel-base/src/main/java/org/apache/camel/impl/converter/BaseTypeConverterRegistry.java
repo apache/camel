@@ -91,6 +91,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         try {
             // scan the class for @Converter and load them into this registry
             TypeConvertersLoader loader = new TypeConvertersLoader(typeConverters);
+            CamelContextAware.trySetCamelContext(loader, getCamelContext());
             loader.load(this);
         } catch (TypeConverterLoaderException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -163,6 +164,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
                 throw new ClassNotFoundException(name);
             }
             Object obj = getInjector().newInstance(clazz, false);
+            CamelContextAware.trySetCamelContext(obj, getCamelContext());
             if (obj instanceof TypeConverterLoader) {
                 TypeConverterLoader loader = (TypeConverterLoader) obj;
                 LOG.debug("TypeConverterLoader: {} loading converters", name);
