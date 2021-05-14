@@ -129,7 +129,6 @@ import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
-import org.apache.camel.model.dataformat.AvroJacksonDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
@@ -154,7 +153,6 @@ import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
-import org.apache.camel.model.dataformat.ProtobufJacksonDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
@@ -565,8 +563,27 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "avro",
             properties = {
+                    @YamlProperty(name = "allow-jms-type", type = "boolean"),
+                    @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
+                    @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
+                    @YamlProperty(name = "collection-type-name", type = "string"),
+                    @YamlProperty(name = "content-type-header", type = "boolean"),
+                    @YamlProperty(name = "disable-features", type = "string"),
+                    @YamlProperty(name = "enable-features", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "instance-class-name", type = "string", required = true)
+                    @YamlProperty(name = "include", type = "string"),
+                    @YamlProperty(name = "instance-class-name", type = "string"),
+                    @YamlProperty(name = "json-view-type-name", type = "string"),
+                    @YamlProperty(name = "library", type = "enum:ApacheAvro,Jackson,dataFormatName"),
+                    @YamlProperty(name = "module-class-names", type = "string"),
+                    @YamlProperty(name = "module-refs", type = "string"),
+                    @YamlProperty(name = "object-mapper", type = "string"),
+                    @YamlProperty(name = "schema-resolver", type = "string"),
+                    @YamlProperty(name = "timezone", type = "string"),
+                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "use-list", type = "boolean")
             }
     )
     public static class AvroDataFormatDeserializer extends YamlDeserializerBase<AvroDataFormat> {
@@ -586,65 +603,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
         @Override
         protected boolean setProperty(AvroDataFormat target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "instance-class-name": {
-                    String val = asText(node);
-                    target.setInstanceClassName(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.dataformat.AvroJacksonDataFormat.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "avro-jackson",
-            properties = {
-                    @YamlProperty(name = "allow-jms-type", type = "boolean"),
-                    @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
-                    @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
-                    @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
-                    @YamlProperty(name = "collection-type-name", type = "string"),
-                    @YamlProperty(name = "content-type-header", type = "boolean"),
-                    @YamlProperty(name = "disable-features", type = "string"),
-                    @YamlProperty(name = "enable-features", type = "string"),
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "include", type = "string"),
-                    @YamlProperty(name = "json-view-type-name", type = "string"),
-                    @YamlProperty(name = "module-class-names", type = "string"),
-                    @YamlProperty(name = "module-refs", type = "string"),
-                    @YamlProperty(name = "object-mapper", type = "string"),
-                    @YamlProperty(name = "pretty-print", type = "boolean"),
-                    @YamlProperty(name = "schema-resolver", type = "string"),
-                    @YamlProperty(name = "timezone", type = "string"),
-                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
-                    @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
-                    @YamlProperty(name = "use-list", type = "boolean")
-            }
-    )
-    public static class AvroJacksonDataFormatDeserializer extends YamlDeserializerBase<AvroJacksonDataFormat> {
-        public AvroJacksonDataFormatDeserializer() {
-            super(AvroJacksonDataFormat.class);
-        }
-
-        @Override
-        protected AvroJacksonDataFormat newInstance() {
-            return new AvroJacksonDataFormat();
-        }
-
-        @Override
-        protected boolean setProperty(AvroJacksonDataFormat target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "allow-jms-type": {
@@ -697,9 +655,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInclude(val);
                     break;
                 }
+                case "instance-class-name": {
+                    String val = asText(node);
+                    target.setInstanceClassName(val);
+                    break;
+                }
                 case "json-view-type-name": {
                     String val = asText(node);
                     target.setJsonViewTypeName(val);
+                    break;
+                }
+                case "library": {
+                    target.setLibrary(org.apache.camel.model.dataformat.AvroLibrary.valueOf(asText(node)));
                     break;
                 }
                 case "module-class-names": {
@@ -715,11 +682,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "object-mapper": {
                     String val = asText(node);
                     target.setObjectMapper(val);
-                    break;
-                }
-                case "pretty-print": {
-                    String val = asText(node);
-                    target.setPrettyPrint(val);
                     break;
                 }
                 case "schema-resolver": {
@@ -9679,10 +9641,28 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "protobuf",
             properties = {
+                    @YamlProperty(name = "allow-jms-type", type = "boolean"),
+                    @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
+                    @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
+                    @YamlProperty(name = "collection-type-name", type = "string"),
                     @YamlProperty(name = "content-type-format", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
+                    @YamlProperty(name = "disable-features", type = "string"),
+                    @YamlProperty(name = "enable-features", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "instance-class", type = "string")
+                    @YamlProperty(name = "include", type = "string"),
+                    @YamlProperty(name = "instance-class", type = "string"),
+                    @YamlProperty(name = "json-view-type-name", type = "string"),
+                    @YamlProperty(name = "library", type = "enum:GoogleProtobuf,Jackson,dataFormatName"),
+                    @YamlProperty(name = "module-class-names", type = "string"),
+                    @YamlProperty(name = "module-refs", type = "string"),
+                    @YamlProperty(name = "object-mapper", type = "string"),
+                    @YamlProperty(name = "schema-resolver", type = "string"),
+                    @YamlProperty(name = "timezone", type = "string"),
+                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "use-list", type = "boolean")
             }
     )
     public static class ProtobufDataFormatDeserializer extends YamlDeserializerBase<ProtobufDataFormat> {
@@ -9702,75 +9682,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
         @Override
         protected boolean setProperty(ProtobufDataFormat target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "content-type-format": {
-                    String val = asText(node);
-                    target.setContentTypeFormat(val);
-                    break;
-                }
-                case "content-type-header": {
-                    String val = asText(node);
-                    target.setContentTypeHeader(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "instance-class": {
-                    String val = asText(node);
-                    target.setInstanceClass(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.dataformat.ProtobufJacksonDataFormat.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "protobuf-jackson",
-            properties = {
-                    @YamlProperty(name = "allow-jms-type", type = "boolean"),
-                    @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
-                    @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
-                    @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
-                    @YamlProperty(name = "collection-type-name", type = "string"),
-                    @YamlProperty(name = "content-type-header", type = "boolean"),
-                    @YamlProperty(name = "disable-features", type = "string"),
-                    @YamlProperty(name = "enable-features", type = "string"),
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "include", type = "string"),
-                    @YamlProperty(name = "json-view-type-name", type = "string"),
-                    @YamlProperty(name = "module-class-names", type = "string"),
-                    @YamlProperty(name = "module-refs", type = "string"),
-                    @YamlProperty(name = "object-mapper", type = "string"),
-                    @YamlProperty(name = "pretty-print", type = "boolean"),
-                    @YamlProperty(name = "schema-resolver", type = "string"),
-                    @YamlProperty(name = "timezone", type = "string"),
-                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
-                    @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
-                    @YamlProperty(name = "use-list", type = "boolean")
-            }
-    )
-    public static class ProtobufJacksonDataFormatDeserializer extends YamlDeserializerBase<ProtobufJacksonDataFormat> {
-        public ProtobufJacksonDataFormatDeserializer() {
-            super(ProtobufJacksonDataFormat.class);
-        }
-
-        @Override
-        protected ProtobufJacksonDataFormat newInstance() {
-            return new ProtobufJacksonDataFormat();
-        }
-
-        @Override
-        protected boolean setProperty(ProtobufJacksonDataFormat target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "allow-jms-type": {
@@ -9798,6 +9709,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setCollectionTypeName(val);
                     break;
                 }
+                case "content-type-format": {
+                    String val = asText(node);
+                    target.setContentTypeFormat(val);
+                    break;
+                }
                 case "content-type-header": {
                     String val = asText(node);
                     target.setContentTypeHeader(val);
@@ -9823,9 +9739,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInclude(val);
                     break;
                 }
+                case "instance-class": {
+                    String val = asText(node);
+                    target.setInstanceClass(val);
+                    break;
+                }
                 case "json-view-type-name": {
                     String val = asText(node);
                     target.setJsonViewTypeName(val);
+                    break;
+                }
+                case "library": {
+                    target.setLibrary(org.apache.camel.model.dataformat.ProtobufLibrary.valueOf(asText(node)));
                     break;
                 }
                 case "module-class-names": {
@@ -9841,11 +9766,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "object-mapper": {
                     String val = asText(node);
                     target.setObjectMapper(val);
-                    break;
-                }
-                case "pretty-print": {
-                    String val = asText(node);
-                    target.setPrettyPrint(val);
                     break;
                 }
                 case "schema-resolver": {
