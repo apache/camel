@@ -2065,6 +2065,9 @@
         }, {
           "type" : "object",
           "properties" : {
+            "bean-type" : {
+              "type" : "string"
+            },
             "name" : {
               "type" : "string"
             },

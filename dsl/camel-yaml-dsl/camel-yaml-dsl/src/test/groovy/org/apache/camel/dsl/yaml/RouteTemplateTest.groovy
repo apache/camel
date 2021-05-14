@@ -110,6 +110,25 @@ class RouteTemplateTest extends YamlTestSupport {
                               - to: "direct:myId"
                               - to: "mock:result"
                     """),
+                    asResource('script-bean-type', """
+                        - template:
+                            id: "myTemplate"
+                            beans:
+                              - name: "myProcessor"
+                                type: "groovy"
+                                bean-type: "org.apache.camel.Processor"
+                                script: "new ${MyUppercaseProcessor.class.name}()"
+                            from:
+                              uri: "direct:{{directName}}"
+                              steps:
+                                - process:
+                                    ref: "{{myProcessor}}"
+                        - from:
+                            uri: "direct:start"
+                            steps:
+                              - to: "direct:myId"
+                              - to: "mock:result"
+                    """),
                     asResource('script-block', """
                         - template:
                             id: "myTemplate"

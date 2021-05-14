@@ -43,6 +43,8 @@ public class RouteTemplateBeanDefinition {
     private String name;
     @XmlAttribute(required = true)
     private String type;
+    @XmlAttribute
+    private String beanType;
     @XmlElement(name = "property")
     private List<PropertyDefinition> properties;
     @XmlElement(name = "script")
@@ -75,14 +77,6 @@ public class RouteTemplateBeanDefinition {
         this.name = name;
     }
 
-    public Class<?> getBeanClass() {
-        return beanClass;
-    }
-
-    public void setBeanType(Class<?> beanType) {
-        this.beanClass = beanType;
-    }
-
     public String getType() {
         return type;
     }
@@ -97,6 +91,34 @@ public class RouteTemplateBeanDefinition {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getBeanType() {
+        return beanType;
+    }
+
+    /**
+     * To set the type (fully qualified class name) of the returned bean created by the script.
+     *
+     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
+     * registry via class type.
+     */
+    public void setBeanType(String beanType) {
+        this.beanType = beanType;
+    }
+
+    /**
+     * To set the type (fully qualified class name) of the returned bean created by the script.
+     *
+     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
+     * registry via class type.
+     */
+    public void setBeanType(Class<?> beanType) {
+        this.beanClass = beanType;
+    }
+
+    public Class<?> getBeanClass() {
+        return beanClass;
     }
 
     public List<PropertyDefinition> getProperties() {
@@ -150,24 +172,87 @@ public class RouteTemplateBeanDefinition {
     // ----------------------------------------------------
 
     /**
+     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     *
+     * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
+     *
+     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
+     * section, such as using groovy.
+     */
+    public RouteTemplateBeanDefinition type(String prefix, Class<?> type) {
+        if (prefix.startsWith("#type") || prefix.startsWith("#class")) {
+            if (!prefix.endsWith(":")) {
+                prefix = prefix + ":";
+            }
+            setType(prefix + type.getName());
+        } else {
+            // its a script
+            setType(prefix);
+        }
+        setBeanType(type);
+        return this;
+    }
+
+    /**
+     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     *
+     * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
+     *
+     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
+     * section, such as using groovy.
+     */
+    public RouteTemplateBeanDefinition type(String type) {
+        if (!type.startsWith("#type:") && !type.startsWith("#class:")) {
+            type = "#class:" + type;
+        }
+        setType(type);
+        return this;
+    }
+
+    /**
      * Creates the bean from the given class type
      *
      * @param type the type of the class to create as bean
      */
-    public RouteTemplateDefinition beanClass(Class<?> type) {
+    public RouteTemplateBeanDefinition typeClass(Class<?> type) {
         setType("#class:" + type.getName());
-        return parent;
+        return this;
     }
 
     /**
-     * Lookup in the registry for bean instances of the given type, and if there is a single instance of the given type,
-     * then that bean will be used as the local bean (danger this bean is shared)
+     * Creates the bean from the given class type
      *
-     * @param type the type of the class to lookup in the registry
+     * @param type the type of the class to create as bean
      */
-    public RouteTemplateDefinition beanType(Class<?> type) {
-        setType("#type:" + type.getName());
-        return parent;
+    public RouteTemplateBeanDefinition typeClass(String type) {
+        setType("#class:" + type);
+        return this;
+    }
+
+    /**
+     * To set the return type of the script (fully qualified class name).
+     *
+     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
+     * registry via class type.
+     *
+     * @param type the fully qualified type of the returned bean from the script
+     */
+    public RouteTemplateBeanDefinition beanType(Class<?> type) {
+        setBeanType(type);
+        return this;
+    }
+
+    /**
+     * To set the return type of the script (fully qualified class name).
+     *
+     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
+     * registry via class type.
+     *
+     * @param type the fully qualified type of the returned bean from the script
+     */
+    public RouteTemplateBeanDefinition beanType(String type) {
+        setBeanType(type);
+        return this;
     }
 
     /**
@@ -236,32 +321,6 @@ public class RouteTemplateBeanDefinition {
         setType(language);
         setScript(script);
         return parent;
-    }
-
-    /**
-     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
-     *
-     * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
-     *
-     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
-     * section, such as using groovy.
-     */
-    public RouteTemplateBeanDefinition type(String type) {
-        if (!type.startsWith("#type:") && !type.startsWith("#class:")) {
-            type = "#class:" + type;
-        }
-        setType(type);
-        return this;
-    }
-
-    /**
-     * Creates the bean from the given class type
-     *
-     * @param type the type of the class to create as bean
-     */
-    public RouteTemplateBeanDefinition type(Class<?> type) {
-        beanClass(type);
-        return this;
     }
 
     /**

@@ -11785,6 +11785,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "template-bean",
             properties = {
+                    @YamlProperty(name = "bean-type", type = "string"),
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "property", type = "array:org.apache.camel.model.PropertyDefinition"),
                     @YamlProperty(name = "script", type = "object:org.apache.camel.model.RouteTemplateScriptDefinition"),
@@ -11810,6 +11811,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RouteTemplateBeanDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "bean-type": {
+                    String val = asText(node);
+                    target.setBeanType(val);
+                    break;
+                }
                 case "name": {
                     String val = asText(node);
                     target.setName(val);

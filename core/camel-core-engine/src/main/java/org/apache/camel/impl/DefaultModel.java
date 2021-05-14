@@ -360,7 +360,9 @@ public class DefaultModel implements Model {
             } else if (b.getScript() != null) {
                 final String script = b.getScript().getScript();
                 final Language lan = camelContext.resolveLanguage(b.getType());
-                final Class<?> clazz = b.getBeanClass() != null ? b.getBeanClass() : Object.class;
+                final Class<?> clazz = b.getBeanType() != null
+                        ? camelContext.getClassResolver().resolveMandatoryClass(b.getBeanType())
+                        : b.getBeanClass() != null ? b.getBeanClass() : Object.class;
                 final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
                 if (slan != null) {
                     // scripting language should be evaluated with route template context as binding

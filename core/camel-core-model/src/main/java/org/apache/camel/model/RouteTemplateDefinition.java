@@ -302,6 +302,27 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
+     * Adds a local bean the route template uses
+     *
+     * @param name     the name of the bean
+     * @param type     the type of the bean to associate the binding
+     * @param language the language to use
+     * @param script   the script to use for creating the local bean
+     */
+    public RouteTemplateDefinition templateBean(String name, Class<?> type, String language, String script) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        def.setBeanType(type);
+        def.setType(language);
+        def.setScript(script);
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
      * Adds a local bean the route template uses (via fluent builder)
      *
      * @param  name the name of the bean

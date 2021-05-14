@@ -47,7 +47,7 @@ public class KameletLocalBeanClassThreeTest extends CamelTestSupport {
                 routeTemplate("whereTo")
                         .templateParameter("bar")
                         .templateBean("myBar")
-                        .type(MyBar.class)
+                        .typeClass(MyBar.class)
                         .property("bar", "{{bar}}")
                         .end()
                         .from("kamelet:source")
