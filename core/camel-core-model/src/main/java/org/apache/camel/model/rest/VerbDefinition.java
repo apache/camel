@@ -114,12 +114,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private String routeId;
     @XmlAttribute
     private String apiDocs;
+    @XmlAttribute
+    private Boolean deprecated;
 
     @XmlTransient
     private Boolean usedForGeneratingNodeId = Boolean.FALSE;
-
-    @XmlAttribute
-    private Boolean deprecated = Boolean.FALSE;
 
     @Override
     public String getShortName() {
@@ -145,7 +144,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     public Boolean getDeprecated() {
-        return deprecated;
+        // default is not to be deprecated
+        return deprecated != null ? deprecated : Boolean.FALSE;
     }
 
     /**
