@@ -121,6 +121,23 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Host address of mongodb server in host:port format. It's possible
+         * also use more than one address, as comma separated list of hosts:
+         * host1:port1,host2:port2. If hosts parameter is specified, provided
+         * connectionBean is ignored.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hosts the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder hosts(String hosts) {
+            doSetProperty("hosts", hosts);
+            return this;
+        }
+        /**
          * Sets the connection bean used as a client for connecting to a
          * database.
          * 
@@ -293,6 +310,34 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder streamFilter(String streamFilter) {
             doSetProperty("streamFilter", streamFilter);
+            return this;
+        }
+        /**
+         * User password for mongodb connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username for mongodb connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -754,6 +799,23 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Host address of mongodb server in host:port format. It's possible
+         * also use more than one address, as comma separated list of hosts:
+         * host1:port1,host2:port2. If hosts parameter is specified, provided
+         * connectionBean is ignored.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hosts the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointProducerBuilder hosts(String hosts) {
+            doSetProperty("hosts", hosts);
+            return this;
+        }
+        /**
          * Sets the connection bean used as a client for connecting to a
          * database.
          * 
@@ -916,6 +978,34 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder streamFilter(String streamFilter) {
             doSetProperty("streamFilter", streamFilter);
+            return this;
+        }
+        /**
+         * User password for mongodb connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username for mongodb connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointProducerBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -1305,6 +1395,23 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Host address of mongodb server in host:port format. It's possible
+         * also use more than one address, as comma separated list of hosts:
+         * host1:port1,host2:port2. If hosts parameter is specified, provided
+         * connectionBean is ignored.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hosts the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointBuilder hosts(String hosts) {
+            doSetProperty("hosts", hosts);
+            return this;
+        }
+        /**
          * Sets the connection bean used as a client for connecting to a
          * database.
          * 
@@ -1414,6 +1521,34 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder streamFilter(String streamFilter) {
             doSetProperty("streamFilter", streamFilter);
+            return this;
+        }
+        /**
+         * User password for mongodb connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username for mongodb connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
         /**

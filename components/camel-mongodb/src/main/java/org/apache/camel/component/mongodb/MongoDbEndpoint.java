@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.camel.Category;
@@ -68,6 +69,13 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database.")
     @Metadata(required = true)
     private String connectionBean;
+
+    @UriParam(label = "security", secret = true)
+    private String username;
+    @UriParam(label = "security", secret = true)
+    private String password;
+    @UriParam
+    private String hosts;
     @UriParam
     private String database;
     @UriParam
@@ -327,9 +335,21 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     private MongoClient resolveMongoConnection() {
-        MongoClient mongoClient = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
-        LOG.debug("Resolved the connection provided by {} context reference as {}", connectionBean,
-                mongoConnection);
+        MongoClient mongoClient;
+        if (this.hosts != null) {
+            String credentials = username == null ? "" : username;
+
+            if (!credentials.equals("")) {
+                credentials += this.password == null ? "@" : ":" + password + "@";
+            }
+
+            mongoClient = MongoClients.create(String.format("mongodb://%s%s", credentials, hosts));
+            LOG.debug("Connection created using provided credentials");
+        } else {
+            mongoClient = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
+            LOG.debug("Resolved the connection provided by {} context reference as {}", connectionBean,
+                    mongoConnection);
+        }
 
         return mongoClient;
     }
@@ -436,10 +456,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * otherwise static endpoint URI. It is disabled by default to boost performance. Enabling it will take a minimal
      * performance hit.
      *
-     * @see              MongoDbConstants#DATABASE
-     * @see              MongoDbConstants#COLLECTION
      * @param dynamicity true or false indicated whether target database and collection should be calculated dynamically
      *                   based on Exchange properties.
+     * @see              MongoDbConstants#DATABASE
+     * @see              MongoDbConstants#COLLECTION
      */
     public void setDynamicity(boolean dynamicity) {
         this.dynamicity = dynamicity;
@@ -614,7 +634,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /**
      * Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or
      * MongoIterable applies to findAll and aggregate. Document applies to all other operations.
-     * 
+     *
      * @param outputType
      */
     public void setOutputType(MongoDbOutputType outputType) {
@@ -680,6 +700,47 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public ReadPreference getReadPreferenceBean() {
         // will throw an IllegalArgumentException if the input is incorrect
         return ReadPreference.valueOf(getReadPreference());
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Username for mongodb connection
+     *
+     * @param username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * User password for mongodb connection
+     *
+     * @param password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getHosts() {
+        return hosts;
+    }
+
+    /**
+     * Host address of mongodb server in `[host]:[port]` format. It's possible also use more than one address, as comma
+     * separated list of hosts: `[host1]:[port1],[host2]:[port2]`. If hosts parameter is specified, provided
+     * connectionBean is ignored.
+     *
+     * @param hosts
+     */
+    public void setHosts(String hosts) {
+        this.hosts = hosts;
     }
 
 }
