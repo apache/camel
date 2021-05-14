@@ -202,7 +202,8 @@ public class RouteTemplateBeanDefinition {
      * section, such as using groovy.
      */
     public RouteTemplateBeanDefinition type(String type) {
-        if (!type.startsWith("#type:") && !type.startsWith("#class:")) {
+        if (!type.startsWith("#")) {
+            // use #class as default
             type = "#class:" + type;
         }
         setType(type);
