@@ -1380,6 +1380,14 @@ To configure rest security definitions.
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="securityRequirements" type="tns:restSecuritiesRequirement">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+To configure global rest security requirements.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="serviceCall" type="tns:serviceCallDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -14042,6 +14050,7 @@ to refer to an existing data format instance.
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:element minOccurs="0" ref="tns:securityDefinitions"/>
+          <xs:element minOccurs="0" ref="tns:securityRequirements"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:verb"/>
             <xs:element ref="tns:delete"/>
@@ -14237,6 +14246,12 @@ password, application or accessCode.
         </xs:attribute>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="restSecuritiesRequirement">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="securityRequirement" type="tns:securityDefinition"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="restsDefinition">
