@@ -3696,6 +3696,9 @@
           "auto-discover-object-mapper" : {
             "type" : "boolean"
           },
+          "auto-discover-schema-resolver" : {
+            "type" : "boolean"
+          },
           "collection-type-name" : {
             "type" : "string"
           },
@@ -3728,6 +3731,9 @@
           },
           "pretty-print" : {
             "type" : "boolean"
+          },
+          "schema-resolver" : {
+            "type" : "string"
           },
           "timezone" : {
             "type" : "string"
@@ -4490,6 +4496,9 @@
           "auto-discover-object-mapper" : {
             "type" : "boolean"
           },
+          "auto-discover-schema-resolver" : {
+            "type" : "boolean"
+          },
           "collection-type-name" : {
             "type" : "string"
           },
@@ -4532,6 +4541,9 @@
           },
           "pretty-print" : {
             "type" : "boolean"
+          },
+          "schema-resolver" : {
+            "type" : "string"
           },
           "timezone" : {
             "type" : "string"
@@ -4664,6 +4676,9 @@
           "auto-discover-object-mapper" : {
             "type" : "boolean"
           },
+          "auto-discover-schema-resolver" : {
+            "type" : "boolean"
+          },
           "collection-type-name" : {
             "type" : "string"
           },
@@ -4696,6 +4711,9 @@
           },
           "pretty-print" : {
             "type" : "boolean"
+          },
+          "schema-resolver" : {
+            "type" : "string"
           },
           "timezone" : {
             "type" : "string"
