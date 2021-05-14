@@ -83,6 +83,10 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             // xstream has no unmarshalType option
             properties.remove("unmarshalType");
         }
+        if (definition.getLibrary() == JsonLibrary.Jackson) {
+            properties.put("schemaResolver", asRef(definition.getSchemaResolver()));
+            properties.put("autoDiscoverSchemaResolver", definition.isAutoDiscoverSchemaResolver());
+        }
     }
 
 }
