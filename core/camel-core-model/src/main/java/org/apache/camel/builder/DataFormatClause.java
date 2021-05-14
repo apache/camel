@@ -150,6 +150,17 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the Avro data format with given library, unmarshalType and schemaResolver
+     */
+    public T avro(AvroLibrary library, Class<?> unmarshalType, String schemaResolver) {
+        AvroDataFormat avroDataFormat = new AvroDataFormat();
+        avroDataFormat.setLibrary(library);
+        avroDataFormat.setUnmarshalType(unmarshalType);
+        avroDataFormat.setSchemaResolver(schemaResolver);
+        return dataFormat(avroDataFormat);
+    }
+
+    /**
      * Uses the base64 data format
      */
     public T base64() {
@@ -766,10 +777,21 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Protobuf data format with given library and unmarshalType
      */
-    public T protobufJackson(ProtobufLibrary library, Class<?> unmarshalType) {
+    public T protobuf(ProtobufLibrary library, Class<?> unmarshalType) {
         ProtobufDataFormat protobufDataFormat = new ProtobufDataFormat();
         protobufDataFormat.setLibrary(library);
         protobufDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(protobufDataFormat);
+    }
+
+    /**
+     * Uses the Protobuf data format with given library, unmarshalType and schemaResolver
+     */
+    public T protobuf(ProtobufLibrary library, Class<?> unmarshalType, String schemaResolver) {
+        ProtobufDataFormat protobufDataFormat = new ProtobufDataFormat();
+        protobufDataFormat.setLibrary(library);
+        protobufDataFormat.setUnmarshalType(unmarshalType);
+        protobufDataFormat.setSchemaResolver(schemaResolver);
         return dataFormat(protobufDataFormat);
     }
 

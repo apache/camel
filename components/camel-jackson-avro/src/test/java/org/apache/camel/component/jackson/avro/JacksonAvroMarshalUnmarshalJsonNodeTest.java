@@ -25,7 +25,7 @@ import org.apache.avro.Schema;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.SchemaResolver;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.DataFormat;
+import org.apache.camel.model.dataformat.AvroLibrary;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -129,10 +129,6 @@ public class JacksonAvroMarshalUnmarshalJsonNodeTest extends CamelTestSupport {
             return schema;
         };
         registry.bind("schema-resolver", SchemaResolver.class, resolver);
-
-        JacksonAvroDataFormat df = new JacksonAvroDataFormat();
-        df.setUnmarshalType(JsonNode.class);
-        registry.bind("custom-df", DataFormat.class, df);
     }
 
     @Override
@@ -140,8 +136,8 @@ public class JacksonAvroMarshalUnmarshalJsonNodeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:serialized").unmarshal().custom("custom-df").to("mock:pojo");
-                from("direct:pojo").marshal().custom("custom-df").to("mock:serialized");
+                from("direct:serialized").unmarshal().avro(AvroLibrary.Jackson, JsonNode.class).to("mock:pojo");
+                from("direct:pojo").marshal().avro(AvroLibrary.Jackson).to("mock:serialized");
             }
         };
     }

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchemaLoader;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.SchemaResolver;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.DataFormat;
+import org.apache.camel.model.dataformat.ProtobufLibrary;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -67,10 +67,6 @@ public class JacksonProtobufMarshalUnmarshalJsonNodeTest extends CamelTestSuppor
         ProtobufSchema schema = ProtobufSchemaLoader.std.parse(protobuf_str);
         SchemaResolver resolver = ex -> schema;
         registry.bind("schema-resolver", SchemaResolver.class, resolver);
-
-        JacksonProtobufDataFormat df = new JacksonProtobufDataFormat();
-        df.setUnmarshalType(JsonNode.class);
-        registry.bind("custom-df", DataFormat.class, df);
     }
 
     @Override
@@ -78,8 +74,8 @@ public class JacksonProtobufMarshalUnmarshalJsonNodeTest extends CamelTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:serialized").unmarshal().custom("custom-df").to("mock:pojo");
-                from("direct:pojo").marshal().custom("custom-df").to("mock:serialized");
+                from("direct:serialized").unmarshal().protobuf(ProtobufLibrary.Jackson, JsonNode.class).to("mock:pojo");
+                from("direct:pojo").marshal().protobuf(ProtobufLibrary.Jackson).to("mock:serialized");
             }
         };
     }
