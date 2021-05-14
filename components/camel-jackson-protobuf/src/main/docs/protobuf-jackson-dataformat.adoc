@@ -1,10 +1,11 @@
 [[protobuf-jackson-dataformat]]
-= Protobuf Jackson DataFormat
-:docTitle: Protobuf Jackson
+= Protobuf DataFormat
+:docTitle: Protobuf
 :artifactId: camel-jackson-protobuf
-:description: Marshal POJOs to Protobuf and back using Jackson
-:since: 3.10
+:description: Marshal POJOs to Protobuf and back using Jackson.
+:since: 2.2
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/protobuf-jackson.adoc[opts=optional]
 
 *Since Camel {since}*
 

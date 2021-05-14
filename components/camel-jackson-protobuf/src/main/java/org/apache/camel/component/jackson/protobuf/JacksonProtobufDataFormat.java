@@ -23,10 +23,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 
 /**
- * Marshal POJOs to Protobuf and back using <a href="http://jackson.codehaus.org/">Jackson</a>
+ * Marshal POJOs to Protobuf and back using Jackson.
  */
 @Dataformat("protobuf-jackson")
-@Metadata(firstVersion = "3.10.0", excludeProperties = "library,instanceClass,contentTypeFormat,defaultInstance")
+@Metadata(firstVersion = "3.10.0", title = "Protobuf Jackson",
+          excludeProperties = "library,instanceClass,contentTypeFormat,defaultInstance")
 public class JacksonProtobufDataFormat extends AbstractJacksonDataFormat {
 
     /**

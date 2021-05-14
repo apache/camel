@@ -98,27 +98,27 @@ public class JacksonAvroMarshalUnmarshalJsonNodeTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        String SCHEMA_JSON = "{\n"
-                             + "\"type\": \"record\",\n"
-                             + "\"name\": \"Pojo\",\n"
-                             + "\"fields\": [\n"
-                             + " {\"name\": \"text\", \"type\": \"string\"}\n"
-                             + "]}";
-        String LIST_SCHEMA_JSON = "{\n" +
-                                  "  \"type\": \"array\",  \n" +
-                                  "  \"items\":{\n" +
-                                  "    \"name\":\"Pojo\",\n" +
-                                  "    \"type\":\"record\",\n" +
-                                  "    \"fields\":[\n" +
-                                  "      {\"name\":\"text\", \"type\":\"string\"}\n" +
-                                  "    ]\n" +
-                                  "  }\n" +
-                                  "}";
+        String schemaJson = "{\n"
+                            + "\"type\": \"record\",\n"
+                            + "\"name\": \"Pojo\",\n"
+                            + "\"fields\": [\n"
+                            + " {\"name\": \"text\", \"type\": \"string\"}\n"
+                            + "]}";
+        String listSchemaJson = "{\n" +
+                                "  \"type\": \"array\",  \n" +
+                                "  \"items\":{\n" +
+                                "    \"name\":\"Pojo\",\n" +
+                                "    \"type\":\"record\",\n" +
+                                "    \"fields\":[\n" +
+                                "      {\"name\":\"text\", \"type\":\"string\"}\n" +
+                                "    ]\n" +
+                                "  }\n" +
+                                "}";
 
-        Schema raw = new Schema.Parser().setValidate(true).parse(SCHEMA_JSON);
+        Schema raw = new Schema.Parser().setValidate(true).parse(schemaJson);
         AvroSchema schema = new AvroSchema(raw);
 
-        Schema rawList = new Schema.Parser().setValidate(true).parse(LIST_SCHEMA_JSON);
+        Schema rawList = new Schema.Parser().setValidate(true).parse(listSchemaJson);
         AvroSchema schemaList = new AvroSchema(rawList);
 
         SchemaResolver resolver = ex -> {
@@ -144,14 +144,14 @@ public class JacksonAvroMarshalUnmarshalJsonNodeTest extends CamelTestSupport {
 
     public static class Pojo {
 
+        private String text;
+
         public Pojo() {
         }
 
         public Pojo(String text) {
             this.text = text;
         }
-
-        private String text;
 
         public String getText() {
             return text;

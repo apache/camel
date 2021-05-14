@@ -69,17 +69,17 @@ public class JacksonAvroMarshalUnmarshalPojoListTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        String SCHEMA_JSON = "{\n" +
-                             "  \"type\": \"array\",  \n" +
-                             "  \"items\":{\n" +
-                             "    \"name\":\"Pojo\",\n" +
-                             "    \"type\":\"record\",\n" +
-                             "    \"fields\":[\n" +
-                             "      {\"name\":\"text\", \"type\":\"string\"}\n" +
-                             "    ]\n" +
-                             "  }\n" +
-                             "}";
-        Schema raw = new Schema.Parser().setValidate(true).parse(SCHEMA_JSON);
+        String schemaJson = "{\n" +
+                            "  \"type\": \"array\",  \n" +
+                            "  \"items\":{\n" +
+                            "    \"name\":\"Pojo\",\n" +
+                            "    \"type\":\"record\",\n" +
+                            "    \"fields\":[\n" +
+                            "      {\"name\":\"text\", \"type\":\"string\"}\n" +
+                            "    ]\n" +
+                            "  }\n" +
+                            "}";
+        Schema raw = new Schema.Parser().setValidate(true).parse(schemaJson);
         AvroSchema schema = new AvroSchema(raw);
         SchemaResolver resolver = ex -> schema;
         registry.bind("schema-resolver", SchemaResolver.class, resolver);
@@ -103,14 +103,14 @@ public class JacksonAvroMarshalUnmarshalPojoListTest extends CamelTestSupport {
 
     public static class Pojo {
 
+        private String text;
+
         public Pojo() {
         }
 
         public Pojo(String text) {
             this.text = text;
         }
-
-        private String text;
 
         public String getText() {
             return text;
