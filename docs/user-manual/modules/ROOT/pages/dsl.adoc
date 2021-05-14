@@ -15,7 +15,7 @@ DSL in OSGi Blueprint XML files
 REST style in either Java or XML.
 * xref:bean-integration.adoc[Annotation DSL] - Use annotations in Java
 beans.
-* xref:others:yaml-dsl.adoc[Yaml DSL] for creating routes using YAML format.
+* xref:yaml-dsl-other[Yaml DSL] for creating routes using YAML format.
 
 
 The main entry points for the DSL are:
