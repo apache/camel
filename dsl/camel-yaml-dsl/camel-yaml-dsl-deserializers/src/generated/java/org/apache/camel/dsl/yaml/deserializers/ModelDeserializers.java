@@ -129,6 +129,7 @@ import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.AvroJacksonDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
@@ -153,6 +154,7 @@ import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
+import org.apache.camel.model.dataformat.ProtobufJacksonDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
@@ -594,6 +596,143 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "instance-class-name": {
                     String val = asText(node);
                     target.setInstanceClassName(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.dataformat.AvroJacksonDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "avro-jackson",
+            properties = {
+                    @YamlProperty(name = "allow-jms-type", type = "boolean"),
+                    @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
+                    @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "collection-type-name", type = "string"),
+                    @YamlProperty(name = "content-type-header", type = "boolean"),
+                    @YamlProperty(name = "disable-features", type = "string"),
+                    @YamlProperty(name = "enable-features", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "include", type = "string"),
+                    @YamlProperty(name = "json-view-type-name", type = "string"),
+                    @YamlProperty(name = "module-class-names", type = "string"),
+                    @YamlProperty(name = "module-refs", type = "string"),
+                    @YamlProperty(name = "object-mapper", type = "string"),
+                    @YamlProperty(name = "pretty-print", type = "boolean"),
+                    @YamlProperty(name = "timezone", type = "string"),
+                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "use-list", type = "boolean")
+            }
+    )
+    public static class AvroJacksonDataFormatDeserializer extends YamlDeserializerBase<AvroJacksonDataFormat> {
+        public AvroJacksonDataFormatDeserializer() {
+            super(AvroJacksonDataFormat.class);
+        }
+
+        @Override
+        protected AvroJacksonDataFormat newInstance() {
+            return new AvroJacksonDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(AvroJacksonDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "allow-jms-type": {
+                    String val = asText(node);
+                    target.setAllowJmsType(val);
+                    break;
+                }
+                case "allow-unmarshall-type": {
+                    String val = asText(node);
+                    target.setAllowUnmarshallType(val);
+                    break;
+                }
+                case "auto-discover-object-mapper": {
+                    String val = asText(node);
+                    target.setAutoDiscoverObjectMapper(val);
+                    break;
+                }
+                case "collection-type-name": {
+                    String val = asText(node);
+                    target.setCollectionTypeName(val);
+                    break;
+                }
+                case "content-type-header": {
+                    String val = asText(node);
+                    target.setContentTypeHeader(val);
+                    break;
+                }
+                case "disable-features": {
+                    String val = asText(node);
+                    target.setDisableFeatures(val);
+                    break;
+                }
+                case "enable-features": {
+                    String val = asText(node);
+                    target.setEnableFeatures(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "include": {
+                    String val = asText(node);
+                    target.setInclude(val);
+                    break;
+                }
+                case "json-view-type-name": {
+                    String val = asText(node);
+                    target.setJsonViewTypeName(val);
+                    break;
+                }
+                case "module-class-names": {
+                    String val = asText(node);
+                    target.setModuleClassNames(val);
+                    break;
+                }
+                case "module-refs": {
+                    String val = asText(node);
+                    target.setModuleRefs(val);
+                    break;
+                }
+                case "object-mapper": {
+                    String val = asText(node);
+                    target.setObjectMapper(val);
+                    break;
+                }
+                case "pretty-print": {
+                    String val = asText(node);
+                    target.setPrettyPrint(val);
+                    break;
+                }
+                case "timezone": {
+                    String val = asText(node);
+                    target.setTimezone(val);
+                    break;
+                }
+                case "unmarshal-type-name": {
+                    String val = asText(node);
+                    target.setUnmarshalTypeName(val);
+                    break;
+                }
+                case "use-default-object-mapper": {
+                    String val = asText(node);
+                    target.setUseDefaultObjectMapper(val);
+                    break;
+                }
+                case "use-list": {
+                    String val = asText(node);
+                    target.setUseList(val);
                     break;
                 }
                 default: {
@@ -9559,6 +9698,143 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "instance-class": {
                     String val = asText(node);
                     target.setInstanceClass(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.dataformat.ProtobufJacksonDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "protobuf-jackson",
+            properties = {
+                    @YamlProperty(name = "allow-jms-type", type = "boolean"),
+                    @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
+                    @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "collection-type-name", type = "string"),
+                    @YamlProperty(name = "content-type-header", type = "boolean"),
+                    @YamlProperty(name = "disable-features", type = "string"),
+                    @YamlProperty(name = "enable-features", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "include", type = "string"),
+                    @YamlProperty(name = "json-view-type-name", type = "string"),
+                    @YamlProperty(name = "module-class-names", type = "string"),
+                    @YamlProperty(name = "module-refs", type = "string"),
+                    @YamlProperty(name = "object-mapper", type = "string"),
+                    @YamlProperty(name = "pretty-print", type = "boolean"),
+                    @YamlProperty(name = "timezone", type = "string"),
+                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "use-list", type = "boolean")
+            }
+    )
+    public static class ProtobufJacksonDataFormatDeserializer extends YamlDeserializerBase<ProtobufJacksonDataFormat> {
+        public ProtobufJacksonDataFormatDeserializer() {
+            super(ProtobufJacksonDataFormat.class);
+        }
+
+        @Override
+        protected ProtobufJacksonDataFormat newInstance() {
+            return new ProtobufJacksonDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(ProtobufJacksonDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "allow-jms-type": {
+                    String val = asText(node);
+                    target.setAllowJmsType(val);
+                    break;
+                }
+                case "allow-unmarshall-type": {
+                    String val = asText(node);
+                    target.setAllowUnmarshallType(val);
+                    break;
+                }
+                case "auto-discover-object-mapper": {
+                    String val = asText(node);
+                    target.setAutoDiscoverObjectMapper(val);
+                    break;
+                }
+                case "collection-type-name": {
+                    String val = asText(node);
+                    target.setCollectionTypeName(val);
+                    break;
+                }
+                case "content-type-header": {
+                    String val = asText(node);
+                    target.setContentTypeHeader(val);
+                    break;
+                }
+                case "disable-features": {
+                    String val = asText(node);
+                    target.setDisableFeatures(val);
+                    break;
+                }
+                case "enable-features": {
+                    String val = asText(node);
+                    target.setEnableFeatures(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "include": {
+                    String val = asText(node);
+                    target.setInclude(val);
+                    break;
+                }
+                case "json-view-type-name": {
+                    String val = asText(node);
+                    target.setJsonViewTypeName(val);
+                    break;
+                }
+                case "module-class-names": {
+                    String val = asText(node);
+                    target.setModuleClassNames(val);
+                    break;
+                }
+                case "module-refs": {
+                    String val = asText(node);
+                    target.setModuleRefs(val);
+                    break;
+                }
+                case "object-mapper": {
+                    String val = asText(node);
+                    target.setObjectMapper(val);
+                    break;
+                }
+                case "pretty-print": {
+                    String val = asText(node);
+                    target.setPrettyPrint(val);
+                    break;
+                }
+                case "timezone": {
+                    String val = asText(node);
+                    target.setTimezone(val);
+                    break;
+                }
+                case "unmarshal-type-name": {
+                    String val = asText(node);
+                    target.setUnmarshalTypeName(val);
+                    break;
+                }
+                case "use-default-object-mapper": {
+                    String val = asText(node);
+                    target.setUseDefaultObjectMapper(val);
+                    break;
+                }
+                case "use-list": {
+                    String val = asText(node);
+                    target.setUseList(val);
                     break;
                 }
                 default: {
