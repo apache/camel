@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "protobuf-jackson",
     "title": "Protobuf",
-    "description": "Marshal POJOs to Protobuf and back using Jackson",
+    "description": "Marshal POJOs to Protobuf and back using Jackson.",
     "deprecated": false,
     "firstVersion": "2.2.0",
     "label": "dataformat,transformation",
