@@ -38,6 +38,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "hosts": target.setHosts(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mongoconnection":
@@ -45,6 +46,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.mongodb.MongoDbOperation.class, value)); return true;
         case "outputtype":
         case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.mongodb.MongoDbOutputType.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "persistentid":
         case "persistentId": target.setPersistentId(property(camelContext, java.lang.String.class, value)); return true;
         case "persistenttailtracking":
@@ -61,6 +63,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "tailTrackField": target.setTailTrackField(property(camelContext, java.lang.String.class, value)); return true;
         case "tailtrackincreasingfield":
         case "tailTrackIncreasingField": target.setTailTrackIncreasingField(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "writeconcern":
         case "writeConcern": target.setWriteConcern(property(camelContext, java.lang.String.class, value)); return true;
         case "writeresultasheader":
@@ -89,6 +92,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "hosts": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "mongoconnection":
@@ -96,6 +100,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "operation": return org.apache.camel.component.mongodb.MongoDbOperation.class;
         case "outputtype":
         case "outputType": return org.apache.camel.component.mongodb.MongoDbOutputType.class;
+        case "password": return java.lang.String.class;
         case "persistentid":
         case "persistentId": return java.lang.String.class;
         case "persistenttailtracking":
@@ -112,6 +117,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "tailTrackField": return java.lang.String.class;
         case "tailtrackincreasingfield":
         case "tailTrackIncreasingField": return java.lang.String.class;
+        case "username": return java.lang.String.class;
         case "writeconcern":
         case "writeConcern": return java.lang.String.class;
         case "writeresultasheader":
@@ -141,6 +147,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "hosts": return target.getHosts();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mongoconnection":
@@ -148,6 +155,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "operation": return target.getOperation();
         case "outputtype":
         case "outputType": return target.getOutputType();
+        case "password": return target.getPassword();
         case "persistentid":
         case "persistentId": return target.getPersistentId();
         case "persistenttailtracking":
@@ -164,6 +172,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "tailTrackField": return target.getTailTrackField();
         case "tailtrackincreasingfield":
         case "tailTrackIncreasingField": return target.getTailTrackIncreasingField();
+        case "username": return target.getUsername();
         case "writeconcern":
         case "writeConcern": return target.getWriteConcern();
         case "writeresultasheader":
