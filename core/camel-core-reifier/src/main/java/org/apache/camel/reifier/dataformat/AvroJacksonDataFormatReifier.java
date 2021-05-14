@@ -63,6 +63,8 @@ public class AvroJacksonDataFormatReifier extends DataFormatReifier<AvroJacksonD
         properties.put("enableFeatures", definition.getEnableFeatures());
         properties.put("disableFeatures", definition.getDisableFeatures());
         properties.put("allowUnmarshallType", definition.getAllowUnmarshallType());
+        properties.put("schemaResolver", asRef(definition.getSchemaResolver()));
+        properties.put("autoDiscoverSchemaResolver", definition.isAutoDiscoverSchemaResolver());
     }
 
 }

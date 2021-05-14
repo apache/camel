@@ -1759,6 +1759,7 @@ public class ModelParser extends BaseParser {
                 case "allowJmsType": def.setAllowJmsType(val); break;
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
+                case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
                 case "collectionTypeName": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
@@ -1769,6 +1770,7 @@ public class ModelParser extends BaseParser {
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "objectMapper": def.setObjectMapper(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
+                case "schemaResolver": def.setSchemaResolver(val); break;
                 case "timezone": def.setTimezone(val); break;
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
@@ -2071,6 +2073,7 @@ public class ModelParser extends BaseParser {
                 case "allowJmsType": def.setAllowJmsType(val); break;
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
+                case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
                 case "collectionTypeName": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
@@ -2084,6 +2087,7 @@ public class ModelParser extends BaseParser {
                 case "objectMapper": def.setObjectMapper(val); break;
                 case "permissions": def.setPermissions(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
+                case "schemaResolver": def.setSchemaResolver(val); break;
                 case "timezone": def.setTimezone(val); break;
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
@@ -2154,6 +2158,7 @@ public class ModelParser extends BaseParser {
                 case "allowJmsType": def.setAllowJmsType(val); break;
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
+                case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
                 case "collectionTypeName": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
@@ -2164,6 +2169,7 @@ public class ModelParser extends BaseParser {
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "objectMapper": def.setObjectMapper(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
+                case "schemaResolver": def.setSchemaResolver(val); break;
                 case "timezone": def.setTimezone(val); break;
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;

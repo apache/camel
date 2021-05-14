@@ -81,6 +81,11 @@ public class AvroJacksonDataFormat extends DataFormatDefinition implements Conte
               description = "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
+    @XmlAttribute
+    private String schemaResolver;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    private String autoDiscoverSchemaResolver;
 
     public AvroJacksonDataFormat() {
         super("avro-jackson");
@@ -329,6 +334,28 @@ public class AvroJacksonDataFormat extends DataFormatDefinition implements Conte
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
         return "avro-jackson";
+    }
+
+    /**
+     * Optional schema resolver used to lookup schemas for the data in transit.
+     */
+    public void setSchemaResolver(String schemaResolver) {
+        this.schemaResolver = schemaResolver;
+    }
+
+    public String getSchemaResolver() {
+        return schemaResolver;
+    }
+
+    public String getAutoDiscoverSchemaResolver() {
+        return autoDiscoverSchemaResolver;
+    }
+
+    /**
+     * When not disabled, the SchemaResolver will be looked up into the registry
+     */
+    public void setAutoDiscoverSchemaResolver(String autoDiscoverSchemaResolver) {
+        this.autoDiscoverSchemaResolver = autoDiscoverSchemaResolver;
     }
 
     //
