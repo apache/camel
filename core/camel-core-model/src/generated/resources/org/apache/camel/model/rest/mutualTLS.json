@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "mutualTLS",
+    "title": "Mutual TLS",
+    "description": "Rest security mutual TLS authentication definition",
+    "deprecated": false,
+    "label": "rest,security",
+    "javaType": "org.apache.camel.model.rest.RestSecurityMutualTLS",
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A short description for security scheme." }
+  }
+}

@@ -278,8 +278,14 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.rest.RestSecurityApiKey": return new ModelDeserializers.RestSecurityApiKeyDeserializer();
             case "basic-auth": return new ModelDeserializers.RestSecurityBasicAuthDeserializer();
             case "org.apache.camel.model.rest.RestSecurityBasicAuth": return new ModelDeserializers.RestSecurityBasicAuthDeserializer();
+            case "bearer-token": return new ModelDeserializers.RestSecurityBearerTokenDeserializer();
+            case "org.apache.camel.model.rest.RestSecurityBearerToken": return new ModelDeserializers.RestSecurityBearerTokenDeserializer();
+            case "mutual-tls": return new ModelDeserializers.RestSecurityMutualTLSDeserializer();
+            case "org.apache.camel.model.rest.RestSecurityMutualTLS": return new ModelDeserializers.RestSecurityMutualTLSDeserializer();
             case "oauth2": return new ModelDeserializers.RestSecurityOAuth2Deserializer();
             case "org.apache.camel.model.rest.RestSecurityOAuth2": return new ModelDeserializers.RestSecurityOAuth2Deserializer();
+            case "open-id-connect": return new ModelDeserializers.RestSecurityOpenIdConnectDeserializer();
+            case "org.apache.camel.model.rest.RestSecurityOpenIdConnect": return new ModelDeserializers.RestSecurityOpenIdConnectDeserializer();
             case "rests": return new ModelDeserializers.RestsDefinitionDeserializer();
             case "org.apache.camel.model.rest.RestsDefinition": return new ModelDeserializers.RestsDefinitionDeserializer();
             case "ribbon-load-balancer": return new ModelDeserializers.RibbonServiceCallServiceLoadBalancerConfigurationDeserializer();
