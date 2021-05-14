@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * For working with Amazon ECS SDK v2.
+ * For working with Amazon SES SDK v2.
  */
 @Component("aws2-ses")
 public class Ses2Component extends DefaultComponent {
