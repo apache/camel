@@ -454,6 +454,10 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 return "2.0.0";
             case "json-fastjson":
                 return "2.20.0";
+            case "avro-jackson":
+                return "3.10.0";
+            case "protobuf-jackson":
+                return "3.10.0";
             default:
                 return firstVersion;
         }
@@ -466,6 +470,10 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "JSON Gson";
         } else if ("json-jackson".equals(name)) {
             return "JSON Jackson";
+        } else if ("avro-jackson".equals(name)) {
+            return "Avro Jackson";
+        } else if ("protobuf-jackson".equals(name)) {
+            return "Protobuf Jackson";
         } else if ("json-johnzon".equals(name)) {
             return "JSON Johnzon";
         } else if ("json-jsonb".equals(name)) {
