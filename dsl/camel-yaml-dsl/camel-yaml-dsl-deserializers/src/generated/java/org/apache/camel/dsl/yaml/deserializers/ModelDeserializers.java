@@ -614,6 +614,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allow-jms-type", type = "boolean"),
                     @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
                     @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
                     @YamlProperty(name = "collection-type-name", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "disable-features", type = "string"),
@@ -625,6 +626,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "module-refs", type = "string"),
                     @YamlProperty(name = "object-mapper", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
+                    @YamlProperty(name = "schema-resolver", type = "string"),
                     @YamlProperty(name = "timezone", type = "string"),
                     @YamlProperty(name = "unmarshal-type-name", type = "string"),
                     @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
@@ -658,6 +660,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "auto-discover-object-mapper": {
                     String val = asText(node);
                     target.setAutoDiscoverObjectMapper(val);
+                    break;
+                }
+                case "auto-discover-schema-resolver": {
+                    String val = asText(node);
+                    target.setAutoDiscoverSchemaResolver(val);
                     break;
                 }
                 case "collection-type-name": {
@@ -713,6 +720,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "pretty-print": {
                     String val = asText(node);
                     target.setPrettyPrint(val);
+                    break;
+                }
+                case "schema-resolver": {
+                    String val = asText(node);
+                    target.setSchemaResolver(val);
                     break;
                 }
                 case "timezone": {
@@ -6951,6 +6963,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allow-jms-type", type = "boolean"),
                     @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
                     @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
                     @YamlProperty(name = "collection-type-name", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "disable-features", type = "string"),
@@ -6965,6 +6978,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "object-mapper", type = "string"),
                     @YamlProperty(name = "permissions", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
+                    @YamlProperty(name = "schema-resolver", type = "string"),
                     @YamlProperty(name = "timezone", type = "string"),
                     @YamlProperty(name = "unmarshal-type-name", type = "string"),
                     @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
@@ -6998,6 +7012,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "auto-discover-object-mapper": {
                     String val = asText(node);
                     target.setAutoDiscoverObjectMapper(val);
+                    break;
+                }
+                case "auto-discover-schema-resolver": {
+                    String val = asText(node);
+                    target.setAutoDiscoverSchemaResolver(val);
                     break;
                 }
                 case "collection-type-name": {
@@ -7067,6 +7086,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "pretty-print": {
                     String val = asText(node);
                     target.setPrettyPrint(val);
+                    break;
+                }
+                case "schema-resolver": {
+                    String val = asText(node);
+                    target.setSchemaResolver(val);
                     break;
                 }
                 case "timezone": {
@@ -9716,6 +9740,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allow-jms-type", type = "boolean"),
                     @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
                     @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
+                    @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
                     @YamlProperty(name = "collection-type-name", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "disable-features", type = "string"),
@@ -9727,6 +9752,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "module-refs", type = "string"),
                     @YamlProperty(name = "object-mapper", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
+                    @YamlProperty(name = "schema-resolver", type = "string"),
                     @YamlProperty(name = "timezone", type = "string"),
                     @YamlProperty(name = "unmarshal-type-name", type = "string"),
                     @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
@@ -9760,6 +9786,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "auto-discover-object-mapper": {
                     String val = asText(node);
                     target.setAutoDiscoverObjectMapper(val);
+                    break;
+                }
+                case "auto-discover-schema-resolver": {
+                    String val = asText(node);
+                    target.setAutoDiscoverSchemaResolver(val);
                     break;
                 }
                 case "collection-type-name": {
@@ -9815,6 +9846,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "pretty-print": {
                     String val = asText(node);
                     target.setPrettyPrint(val);
+                    break;
+                }
+                case "schema-resolver": {
+                    String val = asText(node);
+                    target.setSchemaResolver(val);
                     break;
                 }
                 case "timezone": {
