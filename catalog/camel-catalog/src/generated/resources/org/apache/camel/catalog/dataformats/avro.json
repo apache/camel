@@ -16,7 +16,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.AvroDataFormat"
   },
   "properties": {
-    "instanceClassName": { "kind": "attribute", "displayName": "Instance Class Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name to use for marshal and unmarshalling" },
+    "instanceClassName": { "kind": "attribute", "displayName": "Instance Class Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name to use for marshal and unmarshalling" },
     "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }
