@@ -272,6 +272,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.rest.RestPropertyDefinition": return new ModelDeserializers.RestPropertyDefinitionDeserializer();
             case "security-definitions": return new ModelDeserializers.RestSecuritiesDefinitionDeserializer();
             case "org.apache.camel.model.rest.RestSecuritiesDefinition": return new ModelDeserializers.RestSecuritiesDefinitionDeserializer();
+            case "security-requirements": return new ModelDeserializers.RestSecuritiesRequirementDeserializer();
+            case "org.apache.camel.model.rest.RestSecuritiesRequirement": return new ModelDeserializers.RestSecuritiesRequirementDeserializer();
             case "api-key": return new ModelDeserializers.RestSecurityApiKeyDeserializer();
             case "org.apache.camel.model.rest.RestSecurityApiKey": return new ModelDeserializers.RestSecurityApiKeyDeserializer();
             case "basic-auth": return new ModelDeserializers.RestSecurityBasicAuthDeserializer();

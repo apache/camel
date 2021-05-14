@@ -17,6 +17,7 @@ RestOperationResponseMsgDefinition
 RestParamType
 RestPropertyDefinition
 RestSecuritiesDefinition
+RestSecuritiesRequirement
 RestSecurityApiKey
 RestSecurityBasicAuth
 RestSecurityOAuth2
