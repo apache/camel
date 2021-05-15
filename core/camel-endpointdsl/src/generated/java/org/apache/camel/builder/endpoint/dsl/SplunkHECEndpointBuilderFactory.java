@@ -206,6 +206,37 @@ public interface SplunkHECEndpointBuilderFactory {
             return this;
         }
         /**
+         * Time this even occurred. By default, the time will be when this event
+         * hits the splunk server.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param time the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder time(Long time) {
+            doSetProperty("time", time);
+            return this;
+        }
+        /**
+         * Time this even occurred. By default, the time will be when this event
+         * hits the splunk server.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param time the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder time(String time) {
+            doSetProperty("time", time);
+            return this;
+        }
+        /**
          * Contact HEC over https.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
