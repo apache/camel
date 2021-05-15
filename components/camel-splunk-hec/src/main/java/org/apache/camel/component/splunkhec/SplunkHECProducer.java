@@ -133,7 +133,7 @@ public class SplunkHECProducer extends DefaultProducer {
         }
 
         Long time = message.getHeader(
-                SplunkHECComponent.INDEX_TIME,
+                SplunkHECConstants.INDEX_TIME,
                 endpoint.getConfiguration().getTime(),
                 Long.class);
 

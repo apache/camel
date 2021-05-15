@@ -95,7 +95,7 @@ with the following path and query parameters:
 |=======================================================================
 |Name |Type |Description
 
-|`SplunkComponent.INDEX_TIME` |`Long` | Epoch-formatted time.
+|`SplunkHECConstants.INDEX_TIME` |`Long` | Epoch-formatted time.
 Specify with the time query string parameter. Sets a default for all events in the request.
 The default time can be overridden.
 
@@ -129,7 +129,7 @@ you want to override the index time you can do so.
 [source,java]
 -------------------------------
 from("kafka:logs")
-        .setHeader(SplunkHECComponent.INDEX_TIME, simple("${headers[kafka.HEADERS].lastKey('TIME')}"))
+        .setHeader(SplunkHECConstants.INDEX_TIME, simple("${headers[kafka.HEADERS].lastKey('TIME')}"))
         .to("splunk-hec://localhost:8080/token");
 -------------------------------
 
