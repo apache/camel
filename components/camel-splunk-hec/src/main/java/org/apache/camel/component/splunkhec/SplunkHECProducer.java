@@ -133,10 +133,9 @@ public class SplunkHECProducer extends DefaultProducer {
         }
 
         Long time = message.getHeader(
-            SplunkHECComponent.INDEX_TIME,
-            endpoint.getConfiguration().getTime(),
-            Long.class
-        );
+                SplunkHECComponent.INDEX_TIME,
+                endpoint.getConfiguration().getTime(),
+                Long.class);
 
         if (time != null) {
             payload.put("time", time);
