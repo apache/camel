@@ -98,6 +98,14 @@ or fixed length formats).
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="bearerToken" type="tns:restSecurityBearerToken">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Rest security bearer token authentication definition
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="bindy" type="tns:bindyDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -821,6 +829,14 @@ Routes the same message to multiple paths either sequentially or in parallel.
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="mutualTLS" type="tns:restSecurityMutualTLS">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Rest security mutual TLS authentication definition
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="mvel" type="tns:mvelExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -866,6 +882,14 @@ Route to be executed when an exception is thrown
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Route to be executed when Hystrix EIP executes fallback
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="openIdConnect" type="tns:restSecurityOpenIdConnect">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Rest security OpenID Connect definition
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -14482,7 +14506,10 @@ is true.
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element ref="tns:apiKey"/>
         <xs:element ref="tns:basicAuth"/>
+        <xs:element name="bearer" type="tns:restSecurityBearerToken"/>
         <xs:element ref="tns:oauth2"/>
+        <xs:element ref="tns:openIdConnect"/>
+        <xs:element ref="tns:mutualTLS"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -14509,6 +14536,13 @@ To use header as the location of the API key. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To use query parameter as the location of the API key. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="inCookie" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use a cookie as the location of the API key. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14542,6 +14576,21 @@ A short description for security scheme.
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="restSecurityBearerToken">
+    <xs:complexContent>
+      <xs:extension base="tns:restSecurityDefinition">
+        <xs:sequence/>
+        <xs:attribute name="format" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+A hint to the client to identify how the bearer token is formatted.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="restSecurityOAuth2">
     <xs:complexContent>
       <xs:extension base="tns:restSecurityDefinition">
@@ -14570,6 +14619,14 @@ Required for password, application, and access code flows.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="refreshUrl" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The URL to be used for obtaining refresh tokens. This MUST be in the form of a
+URL.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="flow" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -14578,6 +14635,29 @@ password, application or accessCode.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="restSecurityOpenIdConnect">
+    <xs:complexContent>
+      <xs:extension base="tns:restSecurityDefinition">
+        <xs:sequence/>
+        <xs:attribute name="url" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+OpenId Connect URL to discover OAuth2 configuration values.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="restSecurityMutualTLS">
+    <xs:complexContent>
+      <xs:extension base="tns:restSecurityDefinition">
+        <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
