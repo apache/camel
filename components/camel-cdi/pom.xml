@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.10.0-SNAPSHOT</version>
+        <version>3.10.0</version>
     </parent>
 
     <artifactId>camel-cdi</artifactId>
@@ -58,8 +58,8 @@
                 version:Version="${camel.osgi.version}"
         </camel.osgi.provide.capability>
         <camel.osgi.require.capability>
-            osgi.extender;filter:="(&amp;(osgi.extender=osgi.cdi)(version>=1.0.0)(!(version>=2.0.0)))",
-            osgi.extender;filter:="(&amp;(osgi.extender=osgi.serviceloader.registrar)(version>=1.0.0)(!(version>=2.0.0)))",
+            osgi.extender;filter:="(&amp;(osgi.extender=osgi.cdi)(version&gt;=1.0.0)(!(version&gt;=2.0.0)))",
+            osgi.extender;filter:="(&amp;(osgi.extender=osgi.serviceloader.registrar)(version&gt;=1.0.0)(!(version&gt;=2.0.0)))",
             osgi.contract;osgi.contract=JavaInject;filter:="(&amp;(osgi.contract=JavaInject)(version=1.0.0))",
             osgi.contract;osgi.contract=JavaCDI;filter:="(&amp;(osgi.contract=JavaCDI)(version=2.0.0))",
             osgi.contract;osgi.contract=JavaAnnotation;filter:="(&amp;(osgi.contract=JavaAnnotation)(version=1.3.0))"
