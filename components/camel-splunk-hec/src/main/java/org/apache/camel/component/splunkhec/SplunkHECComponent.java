@@ -24,6 +24,7 @@ import org.apache.camel.support.DefaultComponent;
 
 @Component("splunk-hec")
 public class SplunkHECComponent extends DefaultComponent {
+    public static final String INDEX_TIME = "SplunkHECIndexTime";
 
     public SplunkHECComponent() {
     }
