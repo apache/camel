@@ -16,22 +16,8 @@
  */
 package org.apache.camel.component.splunkhec;
 
-import java.util.Map;
+public interface SplunkHECConstants {
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+    String INDEX_TIME = "CamelSplunkHECIndexTime";
 
-@Component("splunk-hec")
-public class SplunkHECComponent extends DefaultComponent {
-
-    public SplunkHECComponent() {
-    }
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SplunkHECEndpoint answer = new SplunkHECEndpoint(uri, this, new SplunkHECConfiguration());
-        setProperties(answer, parameters);
-        return answer;
-    }
 }
