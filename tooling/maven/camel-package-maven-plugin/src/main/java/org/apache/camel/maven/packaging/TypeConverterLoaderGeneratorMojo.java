@@ -185,6 +185,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("\n");
         writer.append("import org.apache.camel.CamelContext;\n");
         writer.append("import org.apache.camel.CamelContextAware;\n");
+        writer.append("import org.apache.camel.DeferredContextBinding;\n");
         writer.append("import org.apache.camel.Exchange;\n");
         writer.append("import org.apache.camel.Ordered;\n");
         writer.append("import org.apache.camel.TypeConversionException;\n");
@@ -198,6 +199,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append(" * ").append(GENERATED_MSG).append("\n");
         writer.append(" */\n");
         writer.append("@SuppressWarnings(\"unchecked\")\n");
+        writer.append("@DeferredContextBinding\n");
         writer.append("public final class ").append(c)
                 .append(" implements TypeConverterLoader, BulkTypeConverters, CamelContextAware {\n");
         writer.append("\n");
@@ -389,6 +391,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("\n");
         writer.append("import org.apache.camel.CamelContext;\n");
         writer.append("import org.apache.camel.CamelContextAware;\n");
+        writer.append("import org.apache.camel.DeferredContextBinding;\n");
         writer.append("import org.apache.camel.Exchange;\n");
         writer.append("import org.apache.camel.TypeConversionException;\n");
         writer.append("import org.apache.camel.TypeConverterLoaderException;\n");
@@ -402,6 +405,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append(" * ").append(GENERATED_MSG).append("\n");
         writer.append(" */\n");
         writer.append("@SuppressWarnings(\"unchecked\")\n");
+        writer.append("@DeferredContextBinding\n");
         writer.append("public final class ").append(c).append(" implements TypeConverterLoader, CamelContextAware {\n");
         writer.append("\n");
         writer.append("    private CamelContext camelContext;\n");
