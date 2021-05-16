@@ -157,6 +157,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
             CamelContextAware.trySetCamelContext(obj, getCamelContext());
             if (obj instanceof TypeConverterLoader) {
                 TypeConverterLoader loader = (TypeConverterLoader) obj;
+                CamelContextAware.trySetCamelContext(loader, getCamelContext());
                 LOG.debug("TypeConverterLoader: {} loading converters", name);
                 loader.load(this);
             }
@@ -208,8 +209,9 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
      * Checks if the registry is loaded and if not lazily load it
      */
     protected void loadTypeConverters() throws Exception {
-        for (TypeConverterLoader typeConverterLoader : getTypeConverterLoaders()) {
-            typeConverterLoader.load(this);
+        for (TypeConverterLoader loader : getTypeConverterLoaders()) {
+            CamelContextAware.trySetCamelContext(loader, getCamelContext());
+            loader.load(this);
         }
 
         // lets try load any other fallback converters
