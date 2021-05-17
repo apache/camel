@@ -445,7 +445,7 @@
     <okclient-version>3.14.9</okclient-version>
     <olingo2-version>2.0.11</olingo2-version>
     <olingo4-version>4.8.0</olingo4-version>
-    <openjpa-version>3.1.2</openjpa-version>
+    <openjpa-version>3.2.0</openjpa-version>
     <openstack4j-version>3.8</openstack4j-version>
     <opentelemetry-version>0.15.0</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
