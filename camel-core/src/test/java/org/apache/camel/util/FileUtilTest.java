@@ -279,5 +279,12 @@ public class FileUtilTest extends Assert {
         String out = FileUtil.compactPath(in, "/");
         assertEquals(in, out);
     }
+    
+    @Test
+    public void testCompactHttpsPath() {
+        String in = "https://foo.com/apps/func/schemas/part/myap/dummy-schema.xsd";
+        String out = FileUtil.compactPath(in, "/");
+        assertEquals(in, out);
+    }
 
 }
