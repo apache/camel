@@ -328,7 +328,7 @@
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
     <jetty9-version>9.4.40.v20210413</jetty9-version>
-    <jgit-version>5.11.0.202103091610-r</jgit-version>
+    <jgit-version>5.11.1.202105131744-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
     <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
