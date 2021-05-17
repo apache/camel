@@ -21,7 +21,7 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(40);
+        Set<String> props = new HashSet<>(42);
         props.add("serviceType");
         props.add("lazySessionCreation");
         props.add("initialReconnectDelay");
@@ -37,6 +37,7 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("sourceAddr");
         props.add("sourceAddrNpi");
         props.add("systemId");
+        props.add("pduProcessorDegree");
         props.add("addressRange");
         props.add("exchangePattern");
         props.add("sessionStateListener");
@@ -46,6 +47,7 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("reconnectDelay");
         props.add("encoding");
         props.add("httpProxyPassword");
+        props.add("pduProcessorQueueCapacity");
         props.add("transactionTimer");
         props.add("splittingPolicy");
         props.add("lazyStartProducer");

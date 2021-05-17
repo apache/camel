@@ -78,6 +78,8 @@ public class SmppConfigurationTest {
         assertEquals(null, configuration.getHttpProxyUsername());
         assertEquals(null, configuration.getHttpProxyPassword());
         assertEquals(null, configuration.getSessionStateListener());
+        assertEquals(3, configuration.getPduProcessorDegree());
+        assertEquals(100, configuration.getPduProcessorQueueCapacity());
     }
 
     @Test
@@ -114,6 +116,8 @@ public class SmppConfigurationTest {
         assertEquals("secret", configuration.getHttpProxyPassword());
         assertNotNull(configuration.getSessionStateListener());
         assertEquals("1", configuration.getProxyHeaders().get("X-Proxy-Header"));
+        assertEquals(80, configuration.getPduProcessorQueueCapacity());
+        assertEquals(1, configuration.getPduProcessorDegree());
     }
 
     @Test
@@ -189,6 +193,8 @@ public class SmppConfigurationTest {
                           + "alphabet=0, "
                           + "encoding=ISO-8859-1, "
                           + "transactionTimer=10000, "
+                          + "pduProcessorQueueCapacity=100, "
+                          + "pduProcessorDegree=3, "
                           + "registeredDelivery=1, "
                           + "serviceType=CMT, "
                           + "sourceAddrTon=0, "
@@ -253,5 +259,7 @@ public class SmppConfigurationTest {
         Map<String, String> proxyHeaders = new HashMap<>();
         proxyHeaders.put("X-Proxy-Header", "1");
         config.setProxyHeaders(proxyHeaders);
+        config.setPduProcessorQueueCapacity(80);
+        config.setPduProcessorDegree(1);
     }
 }
