@@ -32,10 +32,6 @@
     <name>Camel :: Infinispan :: Parent</name>
     <description>Camel Infinispan parent</description>
 
-    <properties>
-        <protostream-version>4.4.1.Final</protostream-version>
-    </properties>
-
     <modules>
         <module>camel-infinispan-common</module>
         <module>camel-infinispan-embedded</module>
