@@ -33,7 +33,7 @@
     <description>Camel Infinispan parent</description>
 
     <properties>
-        <protostream-version>4.4.0.Beta3</protostream-version>
+        <protostream-version>4.4.1.Final</protostream-version>
     </properties>
 
     <modules>
