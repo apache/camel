@@ -289,7 +289,7 @@ public final class FileUtil {
             return null;
         }
 
-        if (path.startsWith("http:")) {
+        if (path.startsWith("http:") || path.startsWith("https:")) {
             return path;
         }
 
