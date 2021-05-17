@@ -30,13 +30,14 @@ import java.nio.charset.StandardCharsets;
  * Describe a resource, such as a file or class path resource.
  */
 public interface Resource {
+
     /**
      * The location of the resource.
      */
     String getLocation();
 
     /**
-     * Whether this resource exists..
+     * Whether this resource exists.
      */
     boolean exists();
 
@@ -69,7 +70,9 @@ public interface Resource {
     /**
      * Returns a {@link Reader} that reads from the underlying resource using UTF-8 as charset.
      * </p>
-     * Each invocation must return a new {@link Reader}, @see #getInputStream()
+     * Each invocation must return a new {@link Reader}.
+     *
+     * @see #getInputStream()
      */
     default Reader getReader() throws Exception {
         return getReader(StandardCharsets.UTF_8);
@@ -78,7 +81,7 @@ public interface Resource {
     /**
      * Returns a {@link Reader} that reads from the underlying resource using the given {@link Charset}
      * </p>
-     * Each invocation must return a new {@link Reader}, @see #getInputStream()
+     * Each invocation must return a new {@link Reader}.
      *
      * @see #getInputStream()
      */
