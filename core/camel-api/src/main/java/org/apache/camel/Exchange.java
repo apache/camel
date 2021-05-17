@@ -630,9 +630,11 @@ public interface Exchange {
 
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message
-     * exchange, otherwise this property will be <tt>null</tt>, e.g. when this message exchange has been cloned through
-     * another parent message exchange (which itself has been created through the consumer of it's own endpoint). If
-     * desired one could still retrieve the consumer endpoint of such a parent message exchange as the following:
+     * exchange, otherwise his property will be <tt>null</tt>.
+     * 
+     * Note: In case this message exchange has been cloned through another parent message exchange (which itself has
+     * been created through the consumer of it's own endpoint), then if desired one could still retrieve the consumer
+     * endpoint of such a parent message exchange as the following:
      * 
      * <pre>
      * getContext().getRoute(getFromRouteId()).getEndpoint()
@@ -642,8 +644,10 @@ public interface Exchange {
 
     /**
      * Returns the route id which originated this message exchange if a route consumer on an endpoint created the
-     * message exchange or if this message exchange has been cloned through another parent message exchange, otherwise
-     * this property will be <tt>null</tt>
+     * message exchange, otherwise his property will be <tt>null</tt>.
+     * 
+     * Note: In case this message exchange has been cloned through another parent message exchange then this method
+     * would return the <tt>fromRouteId<tt> property of that exchange.
      */
     String getFromRouteId();
 
