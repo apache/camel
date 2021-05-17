@@ -102,7 +102,10 @@ public enum OperationName {
     COMPOSITE_UPDATE_SOBJECT_COLLECTIONS("compositeUpdateSObjectCollections"),
     COMPOSITE_UPSERT_SOBJECT_COLLECTIONS("compositeUpsertSObjectCollections"),
     COMPOSITE_RETRIEVE_SOBJECT_COLLECTIONS("compositeRetrieveSObjectCollections"),
-    COMPOSITE_DELETE_SOBJECT_COLLECTIONS("compositeDeleteSObjectCollections");
+    COMPOSITE_DELETE_SOBJECT_COLLECTIONS("compositeDeleteSObjectCollections"),
+
+    // Raw operation
+    RAW("raw");
 
     private final String value;
 

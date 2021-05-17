@@ -20,7 +20,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(52);
+        Set<String> props = new HashSet<>(56);
         props.add("initialReplayIdMap");
         props.add("notifyForOperations");
         props.add("sObjectQuery");
@@ -39,6 +39,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
         props.add("sObjectBlobFieldName");
         props.add("backoffIncrement");
         props.add("format");
+        props.add("rawHttpHeaders");
         props.add("sObjectId");
         props.add("defaultReplayId");
         props.add("jobId");
@@ -54,6 +55,8 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
         props.add("notifyForOperationUndelete");
         props.add("apexUrl");
         props.add("updateTopic");
+        props.add("rawMethod");
+        props.add("rawPath");
         props.add("instanceId");
         props.add("notifyForFields");
         props.add("sObjectIdValue");
@@ -69,6 +72,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
         props.add("exchangePattern");
         props.add("operationName");
         props.add("pkChunking");
+        props.add("rawQueryParameters");
         props.add("notFoundBehaviour");
         props.add("allOrNone");
         props.add("topicName");

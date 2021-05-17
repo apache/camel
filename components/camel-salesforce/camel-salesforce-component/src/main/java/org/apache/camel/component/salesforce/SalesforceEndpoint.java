@@ -54,7 +54,8 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             + "bulk2GetAllJobs,bulk2CreateJob,bulk2GetJob,bulk2CreateBatch,bulk2CloseJob,"
             + "bulk2AbortJob,bulk2DeleteJob,bulk2GetSuccessfulResults,bulk2GetFailedResults,"
             + "bulk2GetUnprocessedRecords,bulk2CreateQueryJob,bulk2GetQueryJob,"
-            + "bulk2GetAllQueryJobs,bulk2GetQueryJobResults,bulk2AbortQueryJob,bulk2DeleteQueryJob")
+            + "bulk2GetAllQueryJobs,bulk2GetQueryJobResults,bulk2AbortQueryJob,bulk2DeleteQueryJob,"
+            + "raw")
     private final OperationName operationName;
     //CHECKSTYLE:ON
     @UriPath(label = "consumer", description = "The name of the topic/channel to use")

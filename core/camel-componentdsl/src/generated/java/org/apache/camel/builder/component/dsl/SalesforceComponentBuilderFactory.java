@@ -942,6 +942,68 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Query Comma separated list of headers to include as query parameters
+         * for Raw operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawHttpHeaders the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder rawHttpHeaders(
+                java.lang.String rawHttpHeaders) {
+            doSetProperty("rawHttpHeaders", rawHttpHeaders);
+            return this;
+        }
+        /**
+         * HTTP method to use for the Raw operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawMethod the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder rawMethod(java.lang.String rawMethod) {
+            doSetProperty("rawMethod", rawMethod);
+            return this;
+        }
+        /**
+         * The portion of the endpoint URL after the domain name. E.g.,
+         * '/services/data/v52.0/sobjects/Account/'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawPath the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder rawPath(java.lang.String rawPath) {
+            doSetProperty("rawPath", rawPath);
+            return this;
+        }
+        /**
+         * Query Comma separated list of headers to include as query parameters
+         * for Raw operation. Do not url-encode values as this will be done
+         * automatically.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawQueryParameters the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder rawQueryParameters(
+                java.lang.String rawQueryParameters) {
+            doSetProperty("rawQueryParameters", rawQueryParameters);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -1443,6 +1505,10 @@ public interface SalesforceComponentBuilderFactory {
             case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
             case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;
             case "lazyStartProducer": ((SalesforceComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "rawHttpHeaders": getOrCreateConfiguration((SalesforceComponent) component).setRawHttpHeaders((java.lang.String) value); return true;
+            case "rawMethod": getOrCreateConfiguration((SalesforceComponent) component).setRawMethod((java.lang.String) value); return true;
+            case "rawPath": getOrCreateConfiguration((SalesforceComponent) component).setRawPath((java.lang.String) value); return true;
+            case "rawQueryParameters": getOrCreateConfiguration((SalesforceComponent) component).setRawQueryParameters((java.lang.String) value); return true;
             case "autowiredEnabled": ((SalesforceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "httpProxyExcludedAddresses": ((SalesforceComponent) component).setHttpProxyExcludedAddresses((java.util.Set) value); return true;
             case "httpProxyHost": ((SalesforceComponent) component).setHttpProxyHost((java.lang.String) value); return true;

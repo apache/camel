@@ -94,6 +94,12 @@ public class SalesforceEndpointConfig implements Cloneable {
     // parameters for Approval API
     public static final String APPROVAL = "approval";
 
+    // parameters for the RAW operation
+    public static final String RAW_PATH = "rawPath";
+    public static final String RAW_METHOD = "rawMethod";
+    public static final String RAW_QUERY_PARAMETERS = "rawQueryParameters";
+    public static final String RAW_HTTP_HEADERS = "rawHttpHeaders";
+
     // default maximum authentication retries on failed authentication or
     // expired session
     public static final int DEFAULT_MAX_AUTHENTICATION_RETRIES = 4;
@@ -198,6 +204,16 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // Approval API properties
     private ApprovalRequest approval;
+
+    // RAW operation properties
+    @UriParam(label = "producer")
+    private String rawPath;
+    @UriParam(label = "producer")
+    private String rawMethod;
+    @UriParam(label = "producer")
+    private String rawQueryParameters;
+    @UriParam(label = "producer")
+    private String rawHttpHeaders;
 
     // Salesforce Jetty9 HttpClient, set using reference
     @UriParam
@@ -744,6 +760,11 @@ public class SalesforceEndpointConfig implements Cloneable {
 
         valueMap.put(NOT_FOUND_BEHAVIOUR, notFoundBehaviour);
 
+        valueMap.put(RAW_PATH, rawPath);
+        valueMap.put(RAW_METHOD, rawMethod);
+        valueMap.put(RAW_HTTP_HEADERS, rawHttpHeaders);
+        valueMap.put(RAW_QUERY_PARAMETERS, rawQueryParameters);
+
         return Collections.unmodifiableMap(valueMap);
     }
 
@@ -958,5 +979,58 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setNotFoundBehaviour(final NotFoundBehaviour notFoundBehaviour) {
         this.notFoundBehaviour = notFoundBehaviour;
+    }
+
+    public String getRawPath() {
+        return rawPath;
+    }
+
+    /**
+     * The portion of the endpoint URL after the domain name. E.g., " + "'/services/data/v52.0/sobjects/Account/'
+     * 
+     * @param rawPath the path
+     */
+    public void setRawPath(String rawPath) {
+        this.rawPath = rawPath;
+    }
+
+    public String getRawMethod() {
+        return rawMethod;
+    }
+
+    /**
+     * HTTP method to use for the Raw operation
+     * 
+     * @param rawMethod http method
+     */
+    public void setRawMethod(String rawMethod) {
+        this.rawMethod = rawMethod;
+    }
+
+    public String getRawQueryParameters() {
+        return rawQueryParameters;
+    }
+
+    /**
+     * Query Comma separated list of headers to include as query parameters for Raw operation. Do not url-encode values
+     * as this will be done automatically.
+     * 
+     * @param rawQueryParameters
+     */
+    public void setRawQueryParameters(String rawQueryParameters) {
+        this.rawQueryParameters = rawQueryParameters;
+    }
+
+    public String getRawHttpHeaders() {
+        return rawHttpHeaders;
+    }
+
+    /**
+     * Query Comma separated list of headers to include as query parameters for Raw operation.
+     * 
+     * @param
+     */
+    public void setRawHttpHeaders(String rawHttpHeaders) {
+        this.rawHttpHeaders = rawHttpHeaders;
     }
 }
