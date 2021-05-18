@@ -505,6 +505,39 @@ public interface SmppsComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default SmppsComponentBuilder pduProcessorDegree(
+                java.lang.Integer pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default SmppsComponentBuilder pduProcessorQueueCapacity(
+                java.lang.Integer pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
+            return this;
+        }
+        /**
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          * 
@@ -764,6 +797,8 @@ public interface SmppsComponentBuilderFactory {
             case "autowiredEnabled": ((SmppComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((SmppComponent) component).setConfiguration((org.apache.camel.component.smpp.SmppConfiguration) value); return true;
             case "enquireLinkTimer": getOrCreateConfiguration((SmppComponent) component).setEnquireLinkTimer((java.lang.Integer) value); return true;
+            case "pduProcessorDegree": getOrCreateConfiguration((SmppComponent) component).setPduProcessorDegree((java.lang.Integer) value); return true;
+            case "pduProcessorQueueCapacity": getOrCreateConfiguration((SmppComponent) component).setPduProcessorQueueCapacity((java.lang.Integer) value); return true;
             case "sessionStateListener": getOrCreateConfiguration((SmppComponent) component).setSessionStateListener((org.jsmpp.session.SessionStateListener) value); return true;
             case "transactionTimer": getOrCreateConfiguration((SmppComponent) component).setTransactionTimer((java.lang.Integer) value); return true;
             case "alphabet": getOrCreateConfiguration((SmppComponent) component).setAlphabet((byte) value); return true;

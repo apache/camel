@@ -66,6 +66,10 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "numberingplanindicator":
         case "numberingPlanIndicator": getOrCreateConfiguration(target).setNumberingPlanIndicator(property(camelContext, byte.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pduprocessordegree":
+        case "pduProcessorDegree": getOrCreateConfiguration(target).setPduProcessorDegree(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pduprocessorqueuecapacity":
+        case "pduProcessorQueueCapacity": getOrCreateConfiguration(target).setPduProcessorQueueCapacity(property(camelContext, java.lang.Integer.class, value)); return true;
         case "priorityflag":
         case "priorityFlag": getOrCreateConfiguration(target).setPriorityFlag(property(camelContext, byte.class, value)); return true;
         case "protocolid":
@@ -145,6 +149,10 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "numberingplanindicator":
         case "numberingPlanIndicator": return byte.class;
         case "password": return java.lang.String.class;
+        case "pduprocessordegree":
+        case "pduProcessorDegree": return java.lang.Integer.class;
+        case "pduprocessorqueuecapacity":
+        case "pduProcessorQueueCapacity": return java.lang.Integer.class;
         case "priorityflag":
         case "priorityFlag": return byte.class;
         case "protocolid":
@@ -225,6 +233,10 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "numberingplanindicator":
         case "numberingPlanIndicator": return getOrCreateConfiguration(target).getNumberingPlanIndicator();
         case "password": return getOrCreateConfiguration(target).getPassword();
+        case "pduprocessordegree":
+        case "pduProcessorDegree": return getOrCreateConfiguration(target).getPduProcessorDegree();
+        case "pduprocessorqueuecapacity":
+        case "pduProcessorQueueCapacity": return getOrCreateConfiguration(target).getPduProcessorQueueCapacity();
         case "priorityflag":
         case "priorityFlag": return getOrCreateConfiguration(target).getPriorityFlag();
         case "protocolid":

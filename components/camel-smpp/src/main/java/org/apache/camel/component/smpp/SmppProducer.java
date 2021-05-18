@@ -89,6 +89,8 @@ public class SmppProducer extends DefaultProducer {
         SMPPSession session = createSMPPSession();
         session.setEnquireLinkTimer(this.configuration.getEnquireLinkTimer());
         session.setTransactionTimer(this.configuration.getTransactionTimer());
+        session.setPduProcessorDegree(this.configuration.getPduProcessorDegree());
+        session.setQueueCapacity(this.configuration.getPduProcessorQueueCapacity());
         session.addSessionStateListener(internalSessionStateListener);
         session.connectAndBind(
                 this.configuration.getHost(),
