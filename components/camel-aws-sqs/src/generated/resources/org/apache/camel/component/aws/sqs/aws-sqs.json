@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sqs",
-    "version": "3.7.4-SNAPSHOT",
+    "version": "3.7.5-SNAPSHOT",
     "scheme": "aws-sqs",
     "extendsScheme": "",
     "syntax": "aws-sqs:queueNameOrArn",
