@@ -84,7 +84,7 @@ The same hello world sample in Spring DSL would be:
 
 [source,xml]
 --------------------------------------
-<camelContext ...>
+<camelContext>
     <intercept>
         <to uri="log:hello"/>
     </intercept>
@@ -193,11 +193,11 @@ tag:
 
 [source,xml]
 --------------------------------------
-<camelContext ...>
+<camelContext>
     <interceptSendToEndpoint uri="mock:foo" skipSendToOriginalEndpoint="true">
         <when><simple>${body} == 'Hello World'</simple></when>
         <to uri="log:intercepted"/>
-    </intercept>
+    </interceptSendToEndpoint>
 
     <route>
         <from uri="jms:queue:order"/>
@@ -207,7 +207,7 @@ tag:
 </camelContext>
 --------------------------------------
 
-[[Intercept-InterceptSendToEndpoint with afterUrl]]
+[[Intercept-InterceptSendToEndpoint-with-afterUrl]]
 == InterceptSendToEndpoint with afterUrl
 
 The interceptor allows to call an endpoint after the intercepted message has been sent to the original endpoint, which allows you to process the response from the original endpoint. For example to log the request/response from sending to all JMS endpoints you can do:
@@ -222,11 +222,9 @@ And in XML DSL:
 
 [source,xml]
 --------------------------------------
-<camelContext ...>
-    <interceptSendToEndpoint uri="jms*" afterUrl="log:jms-reply">
-        <to uri="log:jms-request"/>
-    </intercept>
-</camelContext>
+<interceptSendToEndpoint uri="jms*" afterUrl="log:jms-reply">
+    <to uri="log:jms-request"/>
+</inteinterceptSendToEndpointcept>
 --------------------------------------
 
 
