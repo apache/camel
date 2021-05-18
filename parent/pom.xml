@@ -527,6 +527,7 @@
     <nekohtml-version>1.9.22</nekohtml-version>
     <neoscada-version>0.4.0</neoscada-version>
     <netty3-version>3.10.6.Final</netty3-version>
+    <netty-ahc-version>4.1.56.Final</netty-ahc-version>
     <netty-version>4.1.64.Final</netty-version>
     <netty40-version>4.0.56.Final</netty40-version>
     <networknt-json-schema-validator-version>0.1.25</networknt-json-schema-validator-version>

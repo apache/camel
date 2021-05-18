@@ -22,10 +22,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@Ignore
 public class CxfOperationExceptionTest extends CamelSpringTestSupport {
     private static final int PORT1 = CXFTestSupport.getPort1();
 
