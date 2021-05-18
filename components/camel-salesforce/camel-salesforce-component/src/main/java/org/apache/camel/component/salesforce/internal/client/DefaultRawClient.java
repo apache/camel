@@ -80,9 +80,13 @@ public class DefaultRawClient extends AbstractClientBase implements RawClient {
             ResponseCallback callback) {
         final Request request = getRequest(method, instanceUrl + path, headers);
         final String contentType = PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8;
-        request.header(HttpHeader.ACCEPT, contentType);
+        if (!request.getHeaders().contains(HttpHeader.ACCEPT)) {
+            request.header(HttpHeader.ACCEPT, contentType);
+        }
         request.header(HttpHeader.ACCEPT_CHARSET, StringUtil.__UTF8);
-        request.header(HttpHeader.CONTENT_TYPE, contentType);
+        if (!request.getHeaders().contains(HttpHeader.CONTENT_TYPE)) {
+            request.header(HttpHeader.CONTENT_TYPE, contentType);
+        }
         if (body != null) {
             request.content(new InputStreamContentProvider(body));
         }

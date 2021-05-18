@@ -73,6 +73,9 @@ public class RawProcessor extends AbstractSalesforceProcessor {
             if (params != null) {
                 path.append("?");
                 for (String p : params.split(",")) {
+                    if (!path.toString().endsWith("?")) {
+                        path.append("&");
+                    }
                     path.append(p).append("=");
                     path.append(urlEncode(exchange.getIn().getHeader(p).toString()));
                 }

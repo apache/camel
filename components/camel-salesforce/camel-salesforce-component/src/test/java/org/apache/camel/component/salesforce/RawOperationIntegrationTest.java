@@ -47,8 +47,7 @@ public class RawOperationIntegrationTest extends AbstractSalesforceTestBase {
                       "</Contact>";
 
         Exchange exchange = fluentTemplate.withBody(body)
-                .withHeader("rawPath", "/services/data/v51.0/sobjects/Contact")
-                .to("salesforce:raw?format=XML&rawMethod=POST")
+                .to("salesforce:raw?format=XML&rawMethod=POST&rawPath=/services/data/v51.0/sobjects/Contact")
                 .send();
 
         String response = exchange.getIn().getBody(String.class);
@@ -60,12 +59,8 @@ public class RawOperationIntegrationTest extends AbstractSalesforceTestBase {
     public void testQuery() {
 
         Exchange exchange = fluentTemplate
-                .withHeader("format", "JSON")
-                .withHeader("rawMethod", "GET")
-                .withHeader("rawPath", "/services/data/v51.0/query")
                 .withHeader("q", "SELECT Id FROM Contact LIMIT 10")
-                .withHeader("rawQueryParameters", "q")
-                .to("salesforce:raw")
+                .to("salesforce:raw?format=JSON&rawMethod=GET&rawQueryParameters=q&rawPath=/services/data/v51.0/query")
                 .send();
 
         String response = exchange.getIn().getBody(String.class);

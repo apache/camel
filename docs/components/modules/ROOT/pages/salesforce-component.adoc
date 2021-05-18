@@ -679,8 +679,8 @@ other available composite resources.
 
 == Using Raw Operation
 
-Send HTTP requests to salesforce with full, raw control of all aspects of the call. Any serialization or deserialization of request and response
-bodies must be performed in the route.
+Send HTTP requests to salesforce with full, raw control of all aspects of the call. Any serialization or deserialization of request and response bodies must be performed in the route. The `Content-Type` HTTP
+header will be automatically set based on the `format` option, but this can be overridden with the `rawHttpHeaders` option.
 
 |===
 | Parameter | Type | Description| Default| Required
@@ -688,9 +688,39 @@ bodies must be performed in the route.
 | request body | `String` or `InputStream` | Body of the HTTP request | |
 | rawPath | `String` | The portion of the endpoint URL after the domain name, e.g., '/services/data/v51.0/sobjects/Account/' | | x
 | rawMethod | `String` | The HTTP method | | x
-| rawQueryParameters | `String` | Query Comma separated list of headers to include as query parameters. Do not url-encode values as this will be done automatically. | |
-| rawHttpHeaders | `String` | Query Comma separated list of headers to include as query parameters for Raw operation. | |
+| rawQueryParameters | `String` | Query Comma separated list of message headers to include as query parameters. Do not url-encode values as this will be done automatically. | |
+| rawHttpHeaders | `String` | Query Comma separated list of message headers to include as HTTP headers for Raw operation. | |
 |===
+
+=== Query example
+
+In this example we'll send a query to the REST API. The query must be passed in a URL parameter called "q", so we'll create a message header called q and tell the
+raw operation to include that message header as a URL parameter:
+----
+from("direct:queryExample")
+  .setHeader("q", "SELECT Id, LastName FROM Contact")
+  .to("salesforce:raw?format=JSON&rawMethod=GET&rawQueryParameters=q&rawPath=/services/data/v51.0/query")
+  // deserialize JSON results or handle in some other way
+----
+
+=== SObject example
+
+In this example, we'll pass a Contact the REST API in a `create` operation. Since the `raw` operation does not perform any serialization,
+we make sure to pass XML in the message body
+
+----
+from("direct:createAContact")
+  .setBody(constant("<Contact><LastName>TestLast</LastName></Contact>"))
+  .to("salesforce:raw?format=XML&rawMethod=POST&rawPath=/services/data/v51.0/sobjects/Contact")
+----
+The response is:
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Result>
+    <id>0034x00000RnV6zAAF</id>
+    <success>true</success>
+</Result>
+----
 
 == Using Composite SObject Collections
 
