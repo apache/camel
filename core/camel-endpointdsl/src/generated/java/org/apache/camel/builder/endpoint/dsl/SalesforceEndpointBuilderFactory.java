@@ -2396,7 +2396,7 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Query Comma separated list of headers to include as query parameters
+         * Comma separated list of message headers to include as HTTP parameters
          * for Raw operation.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2441,9 +2441,9 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Query Comma separated list of headers to include as query parameters
-         * for Raw operation. Do not url-encode values as this will be done
-         * automatically.
+         * Comma separated list of message headers to include as query
+         * parameters for Raw operation. Do not url-encode values as this will
+         * be done automatically.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

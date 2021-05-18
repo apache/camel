@@ -686,8 +686,8 @@ header will be automatically set based on the `format` option, but this can be o
 | request body | `String` or `InputStream` | Body of the HTTP request | |
 | rawPath | `String` | The portion of the endpoint URL after the domain name, e.g., '/services/data/v51.0/sobjects/Account/' | | x
 | rawMethod | `String` | The HTTP method | | x
-| rawQueryParameters | `String` | Query Comma separated list of message headers to include as query parameters. Do not url-encode values as this will be done automatically. | |
-| rawHttpHeaders | `String` | Query Comma separated list of message headers to include as HTTP headers for Raw operation. | |
+| rawQueryParameters | `String` | Comma separated list of message headers to include as query parameters. Do not url-encode values as this will be done automatically. | |
+| rawHttpHeaders | `String` | Comma separated list of message headers to include as HTTP headers | |
 |===
 
 === Query example
@@ -885,10 +885,10 @@ The Salesforce component supports 84 options, which are listed below.
 | *apexUrl* (producer) | APEX method URL |  | String
 | *compositeMethod* (producer) | Composite (raw) method. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *rawHttpHeaders* (producer) | Query Comma separated list of headers to include as query parameters for Raw operation. |  | String
+| *rawHttpHeaders* (producer) | Comma separated list of message headers to include as HTTP parameters for Raw operation. |  | String
 | *rawMethod* (producer) | HTTP method to use for the Raw operation |  | String
 | *rawPath* (producer) | The portion of the endpoint URL after the domain name. E.g., '/services/data/v52.0/sobjects/Account/' |  | String
-| *rawQueryParameters* (producer) | Query Comma separated list of headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
+| *rawQueryParameters* (producer) | Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *httpProxyExcludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
 | *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
@@ -1002,10 +1002,10 @@ with the following path and query parameters:
 | *apexUrl* (producer) | APEX method URL |  | String
 | *compositeMethod* (producer) | Composite (raw) method. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *rawHttpHeaders* (producer) | Query Comma separated list of headers to include as query parameters for Raw operation. |  | String
+| *rawHttpHeaders* (producer) | Comma separated list of message headers to include as HTTP parameters for Raw operation. |  | String
 | *rawMethod* (producer) | HTTP method to use for the Raw operation |  | String
 | *rawPath* (producer) | The portion of the endpoint URL after the domain name. E.g., '/services/data/v52.0/sobjects/Account/' |  | String
-| *rawQueryParameters* (producer) | Query Comma separated list of headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
+| *rawQueryParameters* (producer) | Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
 |===
 // endpoint options: END
 

@@ -1012,8 +1012,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Query Comma separated list of headers to include as query parameters for Raw operation. Do not url-encode values
-     * as this will be done automatically.
+     * Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode
+     * values as this will be done automatically.
      * 
      * @param rawQueryParameters
      */
@@ -1026,7 +1026,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Query Comma separated list of headers to include as query parameters for Raw operation.
+     * Comma separated list of message headers to include as HTTP parameters for Raw operation.
      * 
      * @param
      */
