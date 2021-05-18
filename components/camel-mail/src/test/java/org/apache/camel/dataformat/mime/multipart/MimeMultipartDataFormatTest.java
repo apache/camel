@@ -420,6 +420,16 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         return att;
     }
 
+    private void addAttachment(DataSource ds, String attFileName, Map<String, String> headers) throws IOException {
+        DefaultAttachment attachment = new DefaultAttachment(ds);
+        if (headers != null) {
+            for (String headerName : headers.keySet()) {
+                attachment.addHeader(headerName, headers.get(headerName));
+            }
+        }
+        in.addAttachmentObject(attFileName, attachment);
+    }
+
     private void addAttachment(String attContentType, String attText, String attFileName) throws IOException {
         addAttachment(attContentType, attText, attFileName, null);
     }
