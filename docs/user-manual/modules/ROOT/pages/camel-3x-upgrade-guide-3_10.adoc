@@ -80,7 +80,7 @@ Therefore those configurations has renamed their configuration keys:
 | camel.component.jgroups.raft.cluster.service | camel.cluster.jgroups-raft
 | camel.component.kubernetes.cluster.service | camel.cluster.kubernetes
 | camel.component.servlet.mapping | camel.servlet.mapping
-| camel.component.undertow.spring.security |
+| camel.component.undertow.spring.security | camel.security.undertow
 | camel.component.zookeeper.cluster.service | camel.cluster.zookeeper
 | camel.component.zookeeper.service-registry | camel.cloud.zookeeper
 |====
