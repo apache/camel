@@ -1,7 +1,7 @@
 [[smpp-component]]
 = SMPP Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: componentscamel-smppsrcmaindocssmpp-component.adoc
+:page-source: components/camel-smpp/src/main/docs/smpp-component.adoc
 :docTitle: SMPP
 :artifactId: camel-smpp
 :description: Send and receive SMS messages using a SMSC (Short Message Service Center).
