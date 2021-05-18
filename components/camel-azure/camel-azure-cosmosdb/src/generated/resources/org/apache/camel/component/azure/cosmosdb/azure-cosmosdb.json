@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "azure-cosmosdb",
     "title": "Azure CosmosDB",
-    "description": "Azure Cosmos DB is Microsofts globally distributed, multi-model database service for operational and analytics workloads. It offers multi-mastering feature by automatically scaling throughput, compute, and storage. This component interacts with Azure CosmosDB through Azure SQL API",
+    "description": "To read and write records to the CosmosDB database on Azure cloud platform.",
     "deprecated": false,
     "firstVersion": "3.10.0",
     "label": "cloud,database",

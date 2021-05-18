@@ -29,9 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Azure Cosmos DB is Microsoft’s globally distributed, multi-model database service for operational and analytics
- * workloads. It offers multi-mastering feature by automatically scaling throughput, compute, and storage. This
- * component interacts with Azure CosmosDB through Azure SQL API
+ * To read and write records to the CosmosDB database on Azure cloud platform.
  */
 @UriEndpoint(firstVersion = "3.10.0", scheme = "azure-cosmosdb", title = "Azure CosmosDB",
              syntax = "azure-cosmosdb:databaseName/containerName", category = {
