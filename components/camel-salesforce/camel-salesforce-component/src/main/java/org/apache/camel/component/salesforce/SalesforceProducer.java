@@ -29,6 +29,7 @@ import org.apache.camel.component.salesforce.internal.processor.BulkApiV2Process
 import org.apache.camel.component.salesforce.internal.processor.CompositeApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.CompositeSObjectCollectionsProcessor;
 import org.apache.camel.component.salesforce.internal.processor.JsonRestProcessor;
+import org.apache.camel.component.salesforce.internal.processor.RawProcessor;
 import org.apache.camel.component.salesforce.internal.processor.SalesforceProcessor;
 import org.apache.camel.component.salesforce.internal.processor.XmlRestProcessor;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -63,6 +64,8 @@ public class SalesforceProducer extends DefaultAsyncProducer {
             processor = new CompositeApiProcessor(endpoint);
         } else if (isCompositeSObjectCollectionsOperation(operationName)) {
             processor = new CompositeSObjectCollectionsProcessor(endpoint);
+        } else if (isRawOperation(operationName)) {
+            processor = new RawProcessor(endpoint);
         } else {
             // create an appropriate processor
             if (payloadFormat == PayloadFormat.JSON) {
@@ -156,6 +159,10 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         }
     }
 
+    private static boolean isRawOperation(OperationName operationName) {
+        return operationName == OperationName.RAW;
+    }
+
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         SalesforceEndpoint endpoint = (SalesforceEndpoint) getEndpoint();
@@ -187,5 +194,4 @@ public class SalesforceProducer extends DefaultAsyncProducer {
 
         super.doStop();
     }
-
 }

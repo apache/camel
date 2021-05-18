@@ -2395,6 +2395,68 @@ public interface SalesforceEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Comma separated list of message headers to include as HTTP parameters
+         * for Raw operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawHttpHeaders the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder rawHttpHeaders(
+                String rawHttpHeaders) {
+            doSetProperty("rawHttpHeaders", rawHttpHeaders);
+            return this;
+        }
+        /**
+         * HTTP method to use for the Raw operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawMethod the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder rawMethod(String rawMethod) {
+            doSetProperty("rawMethod", rawMethod);
+            return this;
+        }
+        /**
+         * The portion of the endpoint URL after the domain name. E.g.,
+         * '/services/data/v52.0/sobjects/Account/'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawPath the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder rawPath(String rawPath) {
+            doSetProperty("rawPath", rawPath);
+            return this;
+        }
+        /**
+         * Comma separated list of message headers to include as query
+         * parameters for Raw operation. Do not url-encode values as this will
+         * be done automatically.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawQueryParameters the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder rawQueryParameters(
+                String rawQueryParameters) {
+            doSetProperty("rawQueryParameters", rawQueryParameters);
+            return this;
+        }
     }
 
     /**
@@ -3518,7 +3580,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Path parameter: operationName
          * The operation to use
-         * There are 64 enums and the value can be one of: getVersions,
+         * There are 65 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
@@ -3536,7 +3598,7 @@ public interface SalesforceEndpointBuilderFactory {
          * bulk2GetSuccessfulResults, bulk2GetFailedResults,
          * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
          * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-         * bulk2DeleteQueryJob
+         * bulk2DeleteQueryJob, raw
          * 
          * Path parameter: topicName
          * The name of the topic/channel to use
@@ -3559,7 +3621,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Path parameter: operationName
          * The operation to use
-         * There are 64 enums and the value can be one of: getVersions,
+         * There are 65 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
@@ -3577,7 +3639,7 @@ public interface SalesforceEndpointBuilderFactory {
          * bulk2GetSuccessfulResults, bulk2GetFailedResults,
          * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
          * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-         * bulk2DeleteQueryJob
+         * bulk2DeleteQueryJob, raw
          * 
          * Path parameter: topicName
          * The name of the topic/channel to use
