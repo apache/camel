@@ -26,24 +26,27 @@ import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Connection;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.util.ReflectionHelper;
+import org.apache.commons.pool.impl.GenericObjectPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 public class RabbitMQProducerTest {
 
+    private CamelContext context = new DefaultCamelContext();
     private RabbitMQEndpoint endpoint = Mockito.mock(RabbitMQEndpoint.class);
     private Exchange exchange = Mockito.mock(Exchange.class);
-    private Message message = new DefaultMessage(new DefaultCamelContext());
+    private Message message = new DefaultMessage(context);
     private Connection conn = Mockito.mock(Connection.class);
 
     @BeforeEach
@@ -55,6 +58,7 @@ public class RabbitMQProducerTest {
         Mockito.when(endpoint.connect(any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(null);
         Mockito.when(endpoint.getMessageConverter()).thenReturn(converter);
+        Mockito.when(endpoint.getCamelContext()).thenReturn(context);
     }
 
     @Test
@@ -200,6 +204,21 @@ public class RabbitMQProducerTest {
         assertEquals(new Date(0), props.getHeaders().get("dateHeader"));
         assertArrayEquals("foo".getBytes(), (byte[]) props.getHeaders().get("byteArrayHeader"));
         assertNull(props.getHeaders().get("invalidHeader"));
+    }
+
+    @Test
+    public void testChannelPoolConfiguration() throws Exception {
+        RabbitMQProducer producer = new RabbitMQProducer(endpoint);
+        Mockito.when(endpoint.getChannelPoolMaxSize()).thenReturn(123);
+        Mockito.when(endpoint.getChannelPoolMaxWait()).thenReturn(321L);
+        producer.doStart();
+        Object channelPool = ReflectionHelper.getField(producer.getClass().getDeclaredField("channelPool"), producer);
+        assertNotNull(channelPool);
+        assertTrue(channelPool instanceof GenericObjectPool);
+        GenericObjectPool<Channel> genericObjectPool = (GenericObjectPool<Channel>) channelPool;
+        assertEquals(123, genericObjectPool.getMaxActive());
+        assertEquals(123, genericObjectPool.getMaxIdle());
+        assertEquals(321L, genericObjectPool.getMaxWait());
     }
 
     private static class Something {
