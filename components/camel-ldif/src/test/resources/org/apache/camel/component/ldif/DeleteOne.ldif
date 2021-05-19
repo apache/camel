@@ -22,6 +22,5 @@ version: 1
 #   http://www.rfc-editor.org/rfc/rfc2606.txt
 #
 
-dn: uid=test2,ou=test,ou=system
+dn: uid=test2,ou=test,dc=example,dc=org
 changetype: delete
-

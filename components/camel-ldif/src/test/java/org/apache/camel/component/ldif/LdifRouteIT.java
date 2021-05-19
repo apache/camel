@@ -20,13 +20,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
+import javax.naming.Context;
 import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 
 import org.apache.camel.CamelContext;
@@ -36,34 +41,30 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.directory.server.annotations.CreateLdapServer;
-import org.apache.directory.server.annotations.CreateTransport;
-import org.apache.directory.server.core.annotations.ApplyLdifFiles;
-import org.apache.directory.server.core.integ.AbstractLdapTestUnit;
-import org.apache.directory.server.core.integ5.DirectoryExtension;
+import org.apache.camel.test.infra.openldap.services.OpenldapService;
+import org.apache.directory.api.ldap.model.exception.LdapException;
+import org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory;
+import org.apache.directory.ldap.client.api.LdapConnection;
+import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredConnection;
-import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredContext;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(DirectoryExtension.class)
-@CreateLdapServer(transports = { @CreateTransport(protocol = "LDAP") })
-@EnabledIfSystemProperty(named = "enable.ldif.itests", matches = "true",
-                         disabledReason = "the tests does not work due to complex ldap server environment")
-public class LdifRouteIT extends AbstractLdapTestUnit {
+public class LdifRouteIT extends LdifTestSupport {
     // Constants
     private static final String LDAP_CONN_NAME = "conn";
     private static final String ENDPOINT_LDIF = "ldif:" + LDAP_CONN_NAME;
     private static final String ENDPOINT_START = "direct:start";
+    private static final String ENDPOINT_SETUP_START = "direct:setup";
     private static final SearchControls SEARCH_CONTROLS
             = new SearchControls(SearchControls.SUBTREE_SCOPE, 0, 0, null, true, true);
 
@@ -72,15 +73,41 @@ public class LdifRouteIT extends AbstractLdapTestUnit {
     private ProducerTemplate template;
     private LdapContext ldapContext;
 
+    private static LdapContext getWiredContext(OpenldapService ldapServer) throws NamingException {
+        Hashtable<String, String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, "ldap://" + ldapServer.getHost() + ":" + ldapServer.getPort());
+        env.put(Context.SECURITY_PRINCIPAL, "cn=admin,dc=example,dc=org");
+        env.put(Context.SECURITY_CREDENTIALS, "admin");
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+
+        return new InitialLdapContext(env, null);
+    }
+
     @BeforeEach
     public void setup() throws Exception {
         // Create the LDAPConnection
-        ldapContext = getWiredContext(ldapServer);
+        ldapContext = getWiredContext(service);
 
-        SimpleRegistry reg = new SimpleRegistry();
-        reg.bind(LDAP_CONN_NAME, getWiredConnection(ldapServer));
+        SimpleRegistry reg = getSimpleRegistry();
         camel = new DefaultCamelContext(reg);
         template = camel.createProducerTemplate();
+    }
+
+    private SimpleRegistry getSimpleRegistry() throws LdapException {
+        final LdapConnectionConfig ldapConnectionConfig = new LdapConnectionConfig();
+        ldapConnectionConfig.setLdapHost(service.getHost());
+        ldapConnectionConfig.setLdapPort(service.getPort());
+        ldapConnectionConfig.setName("cn=admin,dc=example,dc=org");
+        ldapConnectionConfig.setCredentials("admin");
+        ldapConnectionConfig.setUseSsl(false);
+        ldapConnectionConfig.setUseTls(false);
+
+        LdapConnection ldapConnection = new DefaultLdapConnectionFactory(ldapConnectionConfig).newLdapConnection();
+
+        SimpleRegistry reg = new SimpleRegistry();
+        reg.bind(LDAP_CONN_NAME, ldapConnection);
+        return reg;
     }
 
     @AfterEach
@@ -115,50 +142,16 @@ public class LdifRouteIT extends AbstractLdapTestUnit {
 
         // Check LDAP
         SearchResult sr;
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("", "(uid=test*)", SEARCH_CONTROLS);
+        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
         assertNotNull(searchResults);
-        sr = searchResults.next();
-        assertNotNull(sr);
-        assertThat("uid=test1,ou=test,ou=system", equalTo(sr.getName()));
-        assertThat(false, equalTo(searchResults.hasMore()));
+
+        checkDN("uid=test1", searchResults);
     }
 
     @Test
-    public void addOneInline() throws Exception {
-        camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
-        camel.start();
-
-        Endpoint endpoint = camel.getEndpoint(ENDPOINT_START);
-        Exchange exchange = endpoint.createExchange();
-
-        // then we set the LDAP filter on the in body
-        URL loc = this.getClass().getResource("/org/apache/camel/component/ldif/AddOne.ldif");
-        exchange.getIn().setBody(readUrl(loc));
-
-        // now we send the exchange to the endpoint, and receives the response
-        // from Camel
-        Exchange out = template.send(endpoint, exchange);
-
-        // Check the results
-        List<String> ldifResults = defaultLdapModuleOutAssertions(out);
-        assertThat(ldifResults, notNullValue());
-        assertThat(ldifResults.size(), equalTo(2)); // Container and user
-        assertThat(ldifResults.get(0), equalTo("success"));
-        assertThat(ldifResults.get(1), equalTo("success"));
-
-        // Check LDAP
-        SearchResult sr;
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("", "(uid=test*)", SEARCH_CONTROLS);
-        assertNotNull(searchResults);
-        sr = searchResults.next();
-        assertNotNull(sr);
-        assertThat("uid=test1,ou=test,ou=system", equalTo(sr.getName()));
-        assertThat(false, equalTo(searchResults.hasMore()));
-    }
-
-    @Test
-    @ApplyLdifFiles({ "org/apache/camel/component/ldif/DeleteOneSetup.ldif" })
     public void deleteOne() throws Exception {
+        setupData("/org/apache/camel/component/ldif/DeleteOneSetup.ldif");
+
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
 
@@ -180,13 +173,17 @@ public class LdifRouteIT extends AbstractLdapTestUnit {
         assertThat(ldifResults.get(0), equalTo("success"));
 
         // Check LDAP
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("", "(uid=test*)", SEARCH_CONTROLS);
-        assertThat(false, equalTo(searchResults.hasMore()));
+        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
+        // test2
+        while (searchResults.hasMore()) {
+            assertThat(searchResults.next().getName(), not(containsString("test2")));
+        }
     }
 
     @Test
-    @ApplyLdifFiles({ "org/apache/camel/component/ldif/AddDuplicateSetup.ldif" })
     public void addDuplicate() throws Exception {
+        setupData("/org/apache/camel/component/ldif/AddDuplicateSetup.ldif");
+
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
 
@@ -209,8 +206,9 @@ public class LdifRouteIT extends AbstractLdapTestUnit {
     }
 
     @Test
-    @ApplyLdifFiles({ "org/apache/camel/component/ldif/ModifySetup.ldif" })
     public void modify() throws Exception {
+        setupData("/org/apache/camel/component/ldif/ModifySetup.ldif");
+
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
 
@@ -233,27 +231,32 @@ public class LdifRouteIT extends AbstractLdapTestUnit {
 
         // Check LDAP
         SearchResult sr;
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("", "(uid=test*)", SEARCH_CONTROLS);
+        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
         assertNotNull(searchResults);
-        sr = searchResults.next();
-        assertNotNull(sr);
-        assertThat("uid=test4,ou=test,ou=system", equalTo(sr.getName()));
 
-        // Check the attributes of the search result
-        Attributes attribs = sr.getAttributes();
-        assertNotNull(attribs);
-        Attribute attrib = attribs.get("sn");
-        assertNotNull(attribs);
-        assertThat(1, equalTo(attrib.size()));
-        assertThat("5", equalTo(attrib.get(0).toString()));
+        boolean uidFound = false;
+        while (searchResults.hasMore()) {
+            sr = searchResults.next();
+            if (sr.getName().contains("uid=test4")) {
+                uidFound = true;
 
-        // Check no more results
-        assertThat(false, equalTo(searchResults.hasMore()));
+                // Check the attributes of the search result
+                Attributes attribs = sr.getAttributes();
+                assertNotNull(attribs);
+                Attribute attrib = attribs.get("sn");
+                assertNotNull(attribs);
+                assertThat(1, equalTo(attrib.size()));
+                assertThat("5", equalTo(attrib.get(0).toString()));
+            }
+        }
+
+        assertThat("uid=test4 not found", uidFound, equalTo(true));
     }
 
     @Test
-    @ApplyLdifFiles({ "org/apache/camel/component/ldif/ModRdnSetup.ldif" })
     public void modRdn() throws Exception {
+        setupData("/org/apache/camel/component/ldif/ModRdnSetup.ldif");
+
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
 
@@ -275,22 +278,16 @@ public class LdifRouteIT extends AbstractLdapTestUnit {
         assertThat(ldifResults.get(0), equalTo("success"));
 
         // Check LDAP
-        SearchResult sr;
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("", "(uid=test*)", SEARCH_CONTROLS);
+        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
         assertNotNull(searchResults);
-        sr = searchResults.next();
-        assertNotNull(sr);
 
-        // Check the DN
-        assertThat("uid=test6,ou=test,ou=system", equalTo(sr.getName()));
-
-        // Check no more results
-        assertThat(false, equalTo(searchResults.hasMore()));
+        checkDN("uid=test6", searchResults);
     }
 
     @Test
-    @ApplyLdifFiles({ "org/apache/camel/component/ldif/ModDnSetup.ldif" })
     public void modDn() throws Exception {
+        setupData("/org/apache/camel/component/ldif/ModDnSetup.ldif");
+
         camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
         camel.start();
 
@@ -312,17 +309,10 @@ public class LdifRouteIT extends AbstractLdapTestUnit {
         assertThat(ldifResults.get(0), equalTo("success"));
 
         // Check LDAP
-        SearchResult sr;
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("", "(uid=test*)", SEARCH_CONTROLS);
+        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
         assertNotNull(searchResults);
-        sr = searchResults.next();
-        assertNotNull(sr);
 
-        // Check the DN
-        assertThat("uid=test7,ou=testnew,ou=system", equalTo(sr.getName()));
-
-        // Check no more results
-        assertThat(false, equalTo(searchResults.hasMore()));
+        checkDN("uid=test7", searchResults);
     }
 
     @SuppressWarnings("unchecked")
@@ -348,7 +338,7 @@ public class LdifRouteIT extends AbstractLdapTestUnit {
 
     /**
      * Read the contents of a URL into a String
-     * 
+     *
      * @param  in
      * @return
      * @throws IOException
@@ -363,5 +353,40 @@ public class LdifRouteIT extends AbstractLdapTestUnit {
             sb.append('\n');
         }
         return sb.toString();
+    }
+
+    private void setupData(String loc) throws Exception {
+        SimpleRegistry reg = getSimpleRegistry();
+        CamelContext setupCamel = new DefaultCamelContext(reg);
+        ProducerTemplate setupTemplate = setupCamel.createProducerTemplate();
+
+        setupCamel.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(ENDPOINT_SETUP_START).to(ENDPOINT_LDIF);
+            }
+        });
+        setupCamel.start();
+
+        Endpoint endpoint = setupCamel.getEndpoint(ENDPOINT_SETUP_START);
+        Exchange exchange = endpoint.createExchange();
+
+        URL setupLoc = this.getClass().getResource(loc);
+        exchange.getIn().setBody(readUrl(setupLoc));
+        Exchange setupOut = setupTemplate.send(endpoint, exchange);
+        List<String> setupResults = defaultLdapModuleOutAssertions(setupOut);
+
+        setupResults.forEach(result -> assertThat(result, anyOf(equalTo("success"), equalTo(""))));
+
+        setupCamel.stop();
+    }
+
+    private void checkDN(String dn, NamingEnumeration<SearchResult> searchResults) throws NamingException {
+        List<String> resultNames = new ArrayList<>();
+        while (searchResults.hasMore()) {
+            resultNames.add(searchResults.next().getName());
+        }
+
+        assertThat(resultNames, hasItem(containsString(dn)));
     }
 }
