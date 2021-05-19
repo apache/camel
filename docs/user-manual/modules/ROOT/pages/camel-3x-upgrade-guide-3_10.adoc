@@ -40,6 +40,8 @@ The `camel-jdbc` is using plain Java JDBC API only.
 
 === camel-jsonpath
 
+This component now uses Jackson as the default json parser instead of json-smart.
+
 Usage of `JacksonJsonAdapter` has been slightly changed.
 
 Component was trying to use `JacksonJsonAdapter` ahead of automatic conversion of the payload to the `InputStream`
