@@ -9,7 +9,7 @@ enhanced tracer with a debugger framework so that tooling can be
 developed to easily monitor Camel routes, trace messages and set
 breakpoints at points in a route etc.
 
-TIP:There is also a BacklogDebugger which allows
+TIP: There is also a BacklogDebugger which allows
 to debug from JMX, and 3rd party tooling.
 
 [[Debugger-AbouttheDebugger]]
