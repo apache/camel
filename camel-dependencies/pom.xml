@@ -167,10 +167,10 @@
     <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
     <directory-watcher-version>0.15.0</directory-watcher-version>
     <disruptor-version>3.4.4</disruptor-version>
-    <djl-mxnet-native-version>1.7.0-backport</djl-mxnet-native-version>
-    <djl-pytorch-native-version>1.7.1</djl-pytorch-native-version>
-    <djl-tensorflow-native-version>2.3.1</djl-tensorflow-native-version>
-    <djl-version>0.10.0</djl-version>
+    <djl-mxnet-native-version>1.8.0</djl-mxnet-native-version>
+    <djl-pytorch-native-version>1.8.1</djl-pytorch-native-version>
+    <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
+    <djl-version>0.11.0</djl-version>
     <dnsjava-version>3.3.1</dnsjava-version>
     <docker-java-version>3.2.7</docker-java-version>
     <dozer-version>6.5.2</dozer-version>
