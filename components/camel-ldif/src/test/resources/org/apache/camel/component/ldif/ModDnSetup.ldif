@@ -22,19 +22,19 @@ version: 1
 #   http://www.rfc-editor.org/rfc/rfc2606.txt
 #
 
-dn: ou=test,ou=system
+dn: ou=test,dc=example,dc=org
 changetype: add
 objectClass: top
 objectClass: organizationalUnit
 ou: test
 
-dn: ou=testnew,ou=system
+dn: ou=testnew,dc=example,dc=org
 changetype: add
 objectClass: top
 objectClass: organizationalUnit
 ou: testnew
 
-dn: uid=test7,ou=test,ou=system
+dn: uid=test7,ou=test,dc=example,dc=org
 changetype: add
 objectClass: top
 objectClass: organizationalPerson
