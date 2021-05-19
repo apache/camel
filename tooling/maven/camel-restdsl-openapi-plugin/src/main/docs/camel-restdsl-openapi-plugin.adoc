@@ -99,11 +99,6 @@ The DTO classes may require additional dependencies such as:
       <version>2.8.6</version>
     </dependency>
     <dependency>
-      <groupId>org.threeten</groupId>
-      <artifactId>threetenbp</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-    <dependency>
       <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-core</artifactId>
       <version>2.1.9</version>
@@ -173,11 +168,6 @@ The DTO classes may require additional dependencies such as:
       <version>2.8.6</version>
     </dependency>
     <dependency>
-      <groupId>org.threeten</groupId>
-      <artifactId>threetenbp</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-    <dependency>
       <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-core</artifactId>
       <version>2.1.9</version>
@@ -190,7 +180,7 @@ The plugin supports the following *additional* options
 
 |========================================
 | Parameter | Default Value | Description
-| `swaggerCodegenMavenPluginVersion` | 3.0.19 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
+| `swaggerCodegenMavenPluginVersion` | 3.0.25 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
 | `modelOutput` | | Target output path (default is ${project.build.directory}/generated-sources/openapi)
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 | `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums

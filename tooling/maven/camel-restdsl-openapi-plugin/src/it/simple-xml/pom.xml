@@ -41,7 +41,7 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>simple</id>
+            <id>simple-xml</id>
             <goals>
               <goal>generate-xml</goal>
             </goals>
