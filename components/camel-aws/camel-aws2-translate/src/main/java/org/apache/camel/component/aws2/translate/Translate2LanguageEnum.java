@@ -18,7 +18,12 @@ package org.apache.camel.component.aws2.translate;
 
 public enum Translate2LanguageEnum {
 
+    AFRIKAANS("af"),
+    ALBANIAN("sq"),
+    AMHARIC("am"),
+    ARMENIAN("hy"),
     ARABIC("ar"),
+    AZERBAIJANI("az"),
     CHINESE_SIMPLIFIED("zh"),
     CHINESE_TRADITIONAL("zh-TW"),
     CZECH("cs"),
