@@ -152,7 +152,7 @@
         <djl-mxnet-native-version>1.8.0</djl-mxnet-native-version>
         <djl-pytorch-native-version>1.8.1</djl-pytorch-native-version>
         <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
-        <docker-java-version>3.2.7</docker-java-version>
+        <docker-java-version>3.2.8</docker-java-version>
         <dozer-version>6.5.2</dozer-version>
         <dropbox-version>3.2.0</dropbox-version>
         <debezium-version>1.5.0.Final</debezium-version>
