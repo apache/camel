@@ -4,7 +4,7 @@
 :artifactId: camel-google-storage
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
 :since: 3.9
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-storage.adoc[opts=optional]
 //Manually maintained attributes
