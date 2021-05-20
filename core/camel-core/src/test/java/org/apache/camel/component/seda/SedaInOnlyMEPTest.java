@@ -42,9 +42,9 @@ public class SedaInOnlyMEPTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(ExchangePattern.InOnly, "seda:foo")
-                    .setBody(body().prepend("Hello "))
-                    .to("mock:result");
+                        .to(ExchangePattern.InOnly, "seda:foo")
+                        .setBody(body().prepend("Hello "))
+                        .to("mock:result");
 
                 from("seda:foo").setBody(body().prepend("InOnly ")).to("mock:foo");
             }

@@ -43,11 +43,11 @@ public class SedaInOutMEPTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // force MEP back to InOnly as we want the next to define the MEP as InOut
-                    .setExchangePattern(ExchangePattern.InOnly)
-                    .to(ExchangePattern.InOut, "seda:foo")
-                    .setBody(body().prepend("Hello "))
-                    .to("mock:result");
+                        // force MEP back to InOnly as we want the next to define the MEP as InOut
+                        .setExchangePattern(ExchangePattern.InOnly)
+                        .to(ExchangePattern.InOut, "seda:foo")
+                        .setBody(body().prepend("Hello "))
+                        .to("mock:result");
 
                 from("seda:foo").setBody(body().prepend("InOut ")).to("mock:foo");
             }
