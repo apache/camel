@@ -72,8 +72,8 @@
         <module>camel-test-infra-mosquitto</module>
         <module>camel-test-infra-activemq</module>
         <module>camel-test-infra-chatscript</module>
-		<module>camel-test-infra-openldap</module>
-	</modules>
+        <module>camel-test-infra-openldap</module>
+    </modules>
 
     <build>
         <plugins>
