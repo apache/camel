@@ -32,9 +32,6 @@
     <description>The grape component allows you to fetch, load and manage additional jars when CamelContext is running
     </description>
 
-    <properties>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>commons-io</groupId>
