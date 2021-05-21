@@ -2141,6 +2141,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-resourceloader-github</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-rest-openapi</artifactId>
 				<version>${project.version}</version>
 			</dependency>
