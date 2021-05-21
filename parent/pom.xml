@@ -2141,7 +2141,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-resourceloader-github</artifactId>
+				<artifactId>camel-resourceresolver-github</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

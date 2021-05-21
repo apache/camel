@@ -26,10 +26,10 @@
         <version>3.11.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-resourceloader-github</artifactId>
+    <artifactId>camel-resourceresolver-github</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: ResourceLoader GitHub</name>
-    <description>Resource loader to load from GitHub</description>
+    <name>Camel :: ResourceResolver GitHub</name>
+    <description>Resource resolver to load files from GitHub</description>
 
     <properties>
         <firstVersion>3.11.0</firstVersion>
@@ -43,27 +43,6 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
-        <!-- testing -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mock</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>

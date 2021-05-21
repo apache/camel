@@ -272,6 +272,7 @@
         <module>camel-reactor</module>
         <module>camel-redis</module>
         <module>camel-resilience4j</module>
+        <module>camel-resourceresolver-github</module>
         <module>camel-resteasy</module>
         <module>camel-rest-swagger</module>
         <module>camel-rest-openapi</module>

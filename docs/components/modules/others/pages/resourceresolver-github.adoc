@@ -1,11 +1,13 @@
-[[resourceloader-github-other]]
-= Resourceloader Github Component
-:docTitle: Resourceloader Github
-:artifactId: camel-resourceloader-github
-:description: Resource loader to load from GitHub
+[[resourceresolver-github-other]]
+= Resourceresolver Github Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-resourceresolver-github/src/main/docs/resourceresolver-github.adoc
+:docTitle: Resourceresolver Github
+:artifactId: camel-resourceresolver-github
+:description: Resource resolver to load files from GitHub
 :since: 3.11
 :supportLevel: Preview
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/resourceloader-github.adoc[opts=optional]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/resourceresolver-github.adoc[opts=optional]
 
 *Since Camel {since}*
 
