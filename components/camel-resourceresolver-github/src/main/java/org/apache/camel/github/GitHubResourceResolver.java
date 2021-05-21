@@ -48,7 +48,7 @@ public class GitHubResourceResolver extends ServiceSupport implements org.apache
     @Override
     public Resource resolve(String location) {
         String[] parts = location.split(":");
-        String scheme = null; // not in use
+        // scheme not in use as its github
         String org = null;
         String rep = null;
         String branch = "main"; // default branch is main
@@ -64,9 +64,7 @@ public class GitHubResourceResolver extends ServiceSupport implements org.apache
         } else if (parts.length == 4) {
             org = parts[1];
             rep = parts[2];
-            branch = parts[3];
-            name = StringHelper.after(branch, "/");
-            branch = StringHelper.before(branch, "/");
+            name = parts[3];
         } else if (parts.length == 5) {
             org = parts[1];
             rep = parts[2];

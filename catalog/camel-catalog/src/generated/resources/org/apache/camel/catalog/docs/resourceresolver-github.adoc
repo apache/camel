@@ -9,13 +9,13 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/resourceresolv
 
 *Since Camel {since}*
 
-A pluggable resource loader that allows to load resources from github over the internet via `https` protocol.
+A pluggable resource resolver that allows to load files from github over the internet via `https` protocol.
 
 The syntax is
 
 [source,text]
 ----
-github:organization:repository:branch:name
+github:organization:repository:branch:filename
 ----
 
 The default branch is `main` so if you want to load from this branch you can use a shorter syntax
@@ -27,9 +27,18 @@ github:organization:repository:name
 
 For example to load: `https://github.com/apache/camel-kamelets/blob/main/aws-ddb-streams-source.kamelet.yaml`
 
+[source,text]
+----
+github:apache:camel-kamelets:main:aws-ddb-streams-source.kamelet.yaml
+----
+
+Because the file is in the main branch we can omit this:
+
+[source,text]
 ----
 github:apache:camel-kamelets:aws-ddb-streams-source.kamelet.yaml
 ----
 
-IMPORTANT: This resource loader can potentially load any resources from GitHub that are in public repositories.
+
+IMPORTANT: This resource resolver can potentially load any resources from GitHub that are in public repositories.
 It's not recommended for production usage, but is great for development and demo purposes.

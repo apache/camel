@@ -23,7 +23,6 @@ import java.net.URL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceSupport;
-import org.apache.camel.util.IOHelper;
 
 public final class GitHubResource extends ResourceSupport {
 
@@ -41,9 +40,9 @@ public final class GitHubResource extends ResourceSupport {
         if (!init) {
             try {
                 URL u = new URL(getLocation());
-                InputStream is = u.openStream();
-                cache = camelContext.getTypeConverter().tryConvertTo(byte[].class, is);
-                IOHelper.close(is);
+                try (InputStream is = u.openStream()) {
+                    cache = camelContext.getTypeConverter().tryConvertTo(byte[].class, is);
+                }
             } catch (Exception e) {
                 // ignore
             }
