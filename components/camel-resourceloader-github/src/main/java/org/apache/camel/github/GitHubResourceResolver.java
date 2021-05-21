@@ -18,12 +18,11 @@ package org.apache.camel.github;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.annotations.ResourceResolver;
 import org.apache.camel.support.service.ServiceSupport;
 
 @ResourceResolver("github")
-public class GitHubResourceLoader extends ServiceSupport implements ResourceLoader {
+public class GitHubResourceResolver extends ServiceSupport implements org.apache.camel.spi.ResourceResolver {
 
     // github:apache:camel:aws-ddb-streams-source.kamelet.yaml
     // https://raw.githubusercontent.com/apache/camel-kamelets/main/aws-ddb-streams-source.kamelet.yaml
@@ -41,10 +40,15 @@ public class GitHubResourceLoader extends ServiceSupport implements ResourceLoad
     }
 
     @Override
-    public Resource resolveResource(String uri) {
-        String[] parts = uri.split(":");
+    public String getSupportedScheme() {
+        return "github";
+    }
+
+    @Override
+    public Resource resolve(String location) {
+        String[] parts = location.split(":");
         if (parts.length < 4) {
-            throw new IllegalArgumentException("Illegal syntax: " + uri);
+            throw new IllegalArgumentException("Illegal syntax: " + location);
         }
 
         String scheme = null; // not in use
@@ -62,5 +66,4 @@ public class GitHubResourceLoader extends ServiceSupport implements ResourceLoad
         String target = String.format(GITHUB_URL, org, rep, branch, name);
         return new GitHubResource(camelContext, target);
     }
-
 }
