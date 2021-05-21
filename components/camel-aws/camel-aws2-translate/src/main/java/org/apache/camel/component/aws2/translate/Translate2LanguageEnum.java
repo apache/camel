@@ -36,6 +36,7 @@ public enum Translate2LanguageEnum {
     DARI("fa-AF"),
     DUTCH("nl"),
     ENGLISH("en"),
+    ESTONIAN("et"),
     FINNISH("fi"),
     FRENCH("fr"),
     GERMAN("de"),
