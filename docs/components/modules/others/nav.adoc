@@ -15,6 +15,7 @@
 ** xref:jasypt.adoc[Jasypt]
 ** xref:jfr.adoc[Jfr]
 ** xref:jta.adoc[JTA]
+** xref:kamelet-main.adoc[Kamelet Main]
 ** xref:leveldb.adoc[LevelDB]
 ** xref:leveldb-legacy.adoc[LevelDB-legacy]
 ** xref:lra.adoc[LRA]

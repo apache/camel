@@ -1,0 +1,14 @@
+[[kamelet-main-other]]
+= Kamelet Main Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-kamelet-main/src/main/docs/kamelet-main.adoc
+:docTitle: Kamelet Main
+:artifactId: camel-kamelet-main
+:description: Main to run Kamelet standalone
+:since: 3.11
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kamelet-main.adoc[opts=optional]
+
+*Since Camel {since}*
+
+A `main` class that is opinionated to boostrap and run Camel standalone with Kameleets for development and demo purposes.
