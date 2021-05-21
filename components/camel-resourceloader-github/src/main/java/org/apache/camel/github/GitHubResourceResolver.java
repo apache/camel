@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.ResourceResolver;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 
 @ResourceResolver("github")
 public class GitHubResourceResolver extends ServiceSupport implements org.apache.camel.spi.ResourceResolver {
@@ -47,20 +48,33 @@ public class GitHubResourceResolver extends ServiceSupport implements org.apache
     @Override
     public Resource resolve(String location) {
         String[] parts = location.split(":");
-        if (parts.length < 4) {
-            throw new IllegalArgumentException("Illegal syntax: " + location);
-        }
-
         String scheme = null; // not in use
-        String org = parts[1];
-        String rep = parts[2];
+        String org = null;
+        String rep = null;
         String branch = "main"; // default branch is main
-        String name;
-        if (parts.length > 4) {
+        String name = null;
+
+        if (parts.length == 3) {
+            org = parts[1];
+            rep = parts[2];
+            if (rep.contains("/")) {
+                name = StringHelper.after(rep, "/");
+                rep = StringHelper.before(rep, "/");
+            }
+        } else if (parts.length == 4) {
+            org = parts[1];
+            rep = parts[2];
+            branch = parts[3];
+            name = StringHelper.after(branch, "/");
+            branch = StringHelper.before(branch, "/");
+        } else if (parts.length == 5) {
+            org = parts[1];
+            rep = parts[2];
             branch = parts[3];
             name = parts[4];
-        } else {
-            name = parts[3];
+        }
+        if (org == null || rep == null || branch == null || name == null) {
+            throw new IllegalArgumentException(location);
         }
 
         String target = String.format(GITHUB_URL, org, rep, branch, name);
