@@ -19,10 +19,10 @@ package org.apache.camel.github;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
-import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.spi.annotations.ResourceResolver;
 import org.apache.camel.support.service.ServiceSupport;
 
-@JdkService("resource-loader-github")
+@ResourceResolver("github")
 public class GitHubResourceLoader extends ServiceSupport implements ResourceLoader {
 
     // github:apache:camel:aws-ddb-streams-source.kamelet.yaml
