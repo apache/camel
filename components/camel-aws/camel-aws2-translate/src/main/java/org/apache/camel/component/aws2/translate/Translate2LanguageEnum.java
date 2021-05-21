@@ -33,6 +33,7 @@ public enum Translate2LanguageEnum {
     CROATIAN("cr"),
     CZECH("cs"),
     DANISH("da"),
+    DARI("fa-AF"),
     DUTCH("nl"),
     ENGLISH("en"),
     FINNISH("fi"),
