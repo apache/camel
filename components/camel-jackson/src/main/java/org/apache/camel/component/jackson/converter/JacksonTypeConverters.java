@@ -145,7 +145,7 @@ public final class JacksonTypeConverters {
 
     private ObjectMapper resolveObjectMapper(CamelContext camelContext) throws Exception {
         Set<ObjectMapper> mappers = camelContext.getRegistry().findByType(ObjectMapper.class);
-        if (mappers.size() == 1) {
+        if (mappers.size() >= 1) {
             return mappers.iterator().next();
         }
 
