@@ -30,7 +30,7 @@
 ** xref:reactor.adoc[Reactor]
 ** xref:redis.adoc[Redis]
 ** xref:resilience4j.adoc[Resilience4j]
-** xref:resourceloader-github.adoc[Resourceloader Github]
+** xref:resourceresolver-github.adoc[Resourceresolver Github]
 ** xref:ribbon.adoc[Ribbon]
 ** xref:rxjava.adoc[RxJava]
 ** xref:shiro.adoc[Shiro]
