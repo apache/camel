@@ -39,7 +39,7 @@ public enum Translate2LanguageEnum {
     ESTONIAN("et"),
     FARSI_PERSIAN("fa"),
     FILIPINO_TAGALOG("tl"),
-    FRENCH_CANADA("fr-CA")
+    FRENCH_CANADA("fr-CA"),
     FINNISH("fi"),
     FRENCH("fr"),
     GERMAN("de"),
