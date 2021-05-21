@@ -1,0 +1,25 @@
+[[kamelet-main-other]]
+= Kamelet Main Component
+:docTitle: Kamelet Main
+:artifactId: camel-kamelet-main
+:description: Main to run Kamelet standalone
+:since: 3.11
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kamelet-main.adoc[opts=optional]
+
+*Since Camel {since}*
+
+A `main` class that is opinionated to boostrap and run Camel standalone with Kameleets for development and demo purposes.
+
+== Initial configuration
+
+The `KameletMain` is pre-configured with the following properties:
+
+[source,properties]
+----
+camel.component.kamelet.location = classpath:/kamelets,github:apache:camel-kamelets
+camel.main.routes-include-pattern = classpath:camel/*
+camel.main.lightweight = true
+----
+
+These settings can be overridden by configuration in `application.properties`.
