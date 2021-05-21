@@ -159,7 +159,7 @@
         <debezium-mysql-connector-version>8.0.22</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
-        <ehcache3-version>3.9.3</ehcache3-version>
+        <ehcache3-version>3.9.4</ehcache3-version>
         <elasticsearch-rest-sniffer-version>7.8.0</elasticsearch-rest-sniffer-version>
         <elasticsearch-rest-cluster-runner-version>7.8.0.0</elasticsearch-rest-cluster-runner-version>
         <elasticsearch-rest-version>7.8.0</elasticsearch-rest-version>
