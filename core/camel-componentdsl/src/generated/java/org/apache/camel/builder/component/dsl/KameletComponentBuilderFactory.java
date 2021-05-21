@@ -51,7 +51,8 @@ public interface KameletComponentBuilderFactory {
             extends
                 ComponentBuilder<KameletComponent> {
         /**
-         * The location of the Kamelets on the file system.
+         * The location(s) of the Kamelets on the file system. Multiple
+         * locations can be set separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
