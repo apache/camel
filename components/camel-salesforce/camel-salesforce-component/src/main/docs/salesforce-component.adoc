@@ -164,7 +164,8 @@ results) using result link returned from the 'query' API
 * compositeUpsertSObjectCollections - Create or update (upsert) up to 200 records based on an external ID field.
 Returns a list of UpsertSObjectResult objects.
 * compositeDeleteSObjectCollections - Delete up to 200 records, returning a list of SaveSObjectResult objects.
-* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge or delete. Also returns
+* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge (merges up to three records into one of the records, deletes the others, and reparents any related records) or delete.
+Also returns
 the  information about archived Task and Event records.
 * getBlobField - Retrieves the specified blob field from an individual record.
 * apexCall - Executes a user defined APEX REST API call.
