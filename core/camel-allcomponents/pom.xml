@@ -1079,6 +1079,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-resourceloader-github</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-rest-openapi</artifactId>
 		</dependency>
 		<dependency>
