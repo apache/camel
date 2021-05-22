@@ -27,7 +27,7 @@ kamelet:templateId/routeId[?options]
 
 
 // component options: START
-The Kamelet component supports 8 options, which are listed below.
+The Kamelet component supports 9 options, which are listed below.
 
 
 
@@ -42,6 +42,7 @@ The Kamelet component supports 8 options, which are listed below.
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *timeout* (producer) | The timeout value to use if block is enabled. | 30000 | long
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *kameletResourceLoaderListener* (advanced) | To plugin a custom listener for when the Kamelet component is loading Kamelets from external resources. |  | KameletResourceLoaderListener
 |===
 // component options: END
 

@@ -60,6 +60,9 @@ public class KameletComponent extends DefaultComponent {
     // active kamelet EIPs
     private final Map<String, Processor> kameletEips = new ConcurrentHashMap<>();
 
+    @Metadata(label = "advanced")
+    private KameletResourceLoaderListener kameletResourceLoaderListener;
+
     // counter that is used for producers to keep track if any consumer was added/removed since they last checked
     // this is used for optimization to avoid each producer to get consumer for each message processed
     // (locking via synchronized, and then lookup in the map as the cost)
@@ -278,6 +281,17 @@ public class KameletComponent extends DefaultComponent {
         this.location = location;
     }
 
+    public KameletResourceLoaderListener getKameletResourceLoaderListener() {
+        return kameletResourceLoaderListener;
+    }
+
+    /**
+     * To plugin a custom listener for when the Kamelet component is loading Kamelets from external resources.
+     */
+    public void setKameletResourceLoaderListener(KameletResourceLoaderListener kameletResourceLoaderListener) {
+        this.kameletResourceLoaderListener = kameletResourceLoaderListener;
+    }
+
     int getStateCounter() {
         return stateCounter;
     }
@@ -380,6 +394,15 @@ public class KameletComponent extends DefaultComponent {
                     String name = path + templateId + ".kamelet.yaml";
                     Resource res = ecc.getResourceLoader().resolveResource(name);
                     if (res.exists()) {
+                        try {
+                            if (kameletResourceLoaderListener != null) {
+                                kameletResourceLoaderListener.loadKamelets(res);
+                            }
+                        } catch (Exception e) {
+                            LOGGER.warn("KameletResourceLoaderListener error due to " + e.getMessage()
+                                        + ". This exception is ignored",
+                                    e);
+                        }
                         ecc.getRoutesLoader().loadRoutes(res);
                         found = true;
                         break;

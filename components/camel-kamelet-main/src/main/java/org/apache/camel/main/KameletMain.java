@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 
@@ -30,6 +31,7 @@ public class KameletMain extends MainCommandLineSupport {
 
     protected static KameletMain instance;
     protected final MainRegistry registry = new MainRegistry();
+    private boolean download = true;
 
     public static void main(String... args) throws Exception {
         KameletMain main = new KameletMain();
@@ -91,6 +93,18 @@ public class KameletMain extends MainCommandLineSupport {
         return registry.findByTypeWithName(type);
     }
 
+    public boolean isDownload() {
+        return download;
+    }
+
+    /**
+     * Whether to allow automatic downloaded JAR dependencies, over the internet, that Kamelets requires. This is by
+     * default enabled.
+     */
+    public void setDownload(boolean download) {
+        this.download = download;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -136,10 +150,20 @@ public class KameletMain extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
+        answer.setApplicationContextClassLoader(KameletMain.class.getClassLoader());
         answer.setRegistry(registry);
         instance.addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
         instance.addInitialProperty("camel.main.routes-include-pattern", "classpath:camel/*");
         instance.addInitialProperty("camel.main.lightweight", "true");
+
+        if (download) {
+            try {
+                answer.addService(new DependencyDownloader());
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+
         return answer;
     }
 
