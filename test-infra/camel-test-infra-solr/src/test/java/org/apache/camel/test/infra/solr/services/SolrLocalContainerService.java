@@ -84,7 +84,7 @@ public class SolrLocalContainerService implements SolrService, ContainerService<
 
     @Override
     public String getSolrBaseUrl() {
-        return String.format("%s:%d", getHost(), getPort());
+        return String.format("http://%s:%d/solr", getHost(), getPort());
     }
 
     @Override

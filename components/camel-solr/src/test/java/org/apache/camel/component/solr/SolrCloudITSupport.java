@@ -16,10 +16,16 @@
  */
 package org.apache.camel.component.solr;
 
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.solr.services.SolrLocalContainerCloudService;
 import org.apache.camel.test.infra.solr.services.SolrLocalContainerService;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SolrCloudITSupport extends CamelTestSupport {
@@ -30,12 +36,26 @@ public class SolrCloudITSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        createCollection("collection1");
         SolrComponent solr = context.getComponent("solr", SolrComponent.class);
         return context;
     }
 
-    protected String getSolrBaseUrl() {
-        return service.getSolrBaseUrl();
+    protected String getSolrUri(String collection) {
+        return getSolrUrl(collection).replace("http:", "solr:");
+    }
+
+    protected String getSolrUrl(String collection) {
+        String collectionPath = collection == null ? "" : "/".concat(collection);
+        return service
+                .getSolrBaseUrl()
+                .concat(collectionPath);
+    }
+
+    public void createCollection(String collection) throws SolrServerException, IOException {
+        SolrClient solrClient = new HttpSolrClient.Builder(service.getSolrBaseUrl()).build();
+        CollectionAdminRequest.Create creator = CollectionAdminRequest.createCollection(collection, "_default", 1, 1);
+        creator.process(solrClient);
     }
 
 }

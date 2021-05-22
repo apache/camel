@@ -75,7 +75,7 @@ public class SolrConfiguration {
     private boolean autoCommit;
 
     private String endpointUri;
-    private Boolean useConcurrentUpdateSolrClient;
+    private boolean useConcurrentUpdateSolrClient;
     private SolrEndpoint solrEndpoint;
 
     public SolrConfiguration(String endpointUri, String remaining) throws Exception {
@@ -88,6 +88,7 @@ public class SolrConfiguration {
             solrScheme = SolrScheme.SOLR;
         }
         this.url = remaining;
+        useConcurrentUpdateSolrClient = false;
         getUrlListFrom(this.url);
     }
 

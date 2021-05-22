@@ -71,7 +71,7 @@ public class SolrEndpoint extends DefaultEndpoint {
     }
 
     protected void onProducerShutdown(SolrProducer producer) {
-        getComponent().closeSolrClient(solrConfiguration);
+        getComponent().closeSolrClient(producer);
     }
 
     @Override

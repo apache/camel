@@ -17,8 +17,7 @@
 package org.apache.camel.component.solr;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
@@ -39,7 +38,31 @@ public class SolrComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
 
-    private final Map<String, SolrClient> solrClients = new HashMap<>();
+    private final Map<String, SolrClientReference> solrClientMap = new HashMap<>();
+
+    protected static final class SolrClientReference {
+        private final SolrClient solrClient;
+        private final List<SolrProducer> solrProducerList = new ArrayList<>();
+
+        public SolrClientReference(SolrClient solrClient) {
+            this.solrClient = solrClient;
+        }
+
+        public SolrClient getSolrClient() {
+            return solrClient;
+        }
+
+        public int unRegisterSolrProducer(SolrProducer solrProducer) {
+            solrProducerList.remove(solrProducer);
+            return solrProducerList.size();
+        }
+
+        public int registerSolrProducer(SolrProducer solrProducer) {
+            solrProducerList.add(solrProducer);
+            return solrProducerList.size();
+        }
+
+    }
 
     @Deprecated
     private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<>();
@@ -96,22 +119,60 @@ public class SolrComponent extends DefaultComponent {
         return endpoint;
     }
 
-    public SolrClient getSolrClient(SolrConfiguration solrConfiguration) throws Exception {
+    public SolrClient getSolrClient(SolrProducer solrProducer, SolrConfiguration solrConfiguration) throws Exception {
         String signature = solrConfiguration.getSignature();
-        if (!solrClients.containsKey(signature)) {
-            SolrClient solrClient = solrConfiguration.initSolrClient();
-            solrClients.put(signature, solrClient);
-            return solrClient;
+        SolrClientReference solrClientReference;
+        if (!solrClientMap.containsKey(signature)) {
+            solrClientReference = new SolrClientReference(solrConfiguration.initSolrClient());
+            solrClientMap.put(signature, solrClientReference);
+            // backward compatibility
+            addSolrClientToSolrServerReference(solrConfiguration, solrClientReference.getSolrClient());
+        } else {
+            solrClientReference = solrClientMap.get(signature);
         }
-        return solrClients.get(signature);
+        // register producer against solrClient (for later close of client)
+        solrClientReference.registerSolrProducer(solrProducer);
+        return solrClientReference.getSolrClient();
     }
 
-    public void closeSolrClient(SolrConfiguration solrConfiguration) {
+    private void addSolrClientToSolrServerReference(SolrConfiguration solrConfiguration, SolrClient solrClient) {
+        SolrEndpoint solrEndpoint = solrConfiguration.getSolrEndpoint();
+        if (solrEndpoint != null) {
+            SolrServerReference solrServerReference = servers.get(solrEndpoint);
+            if (solrServerReference == null) {
+                solrServerReference = new SolrServerReference();
+                servers.put(solrEndpoint, solrServerReference);
+            }
+            if (solrClient instanceof CloudSolrClient) {
+                solrServerReference.setCloudSolrServer((CloudSolrClient) solrClient);
+            }
+            if (solrClient instanceof ConcurrentUpdateSolrClient) {
+                solrServerReference.setUpdateSolrServer((ConcurrentUpdateSolrClient) solrClient);
+            }
+            if (solrClient instanceof HttpSolrClient) {
+                solrServerReference.setSolrServer((HttpSolrClient) solrClient);
+            }
+        }
+    }
+
+    public void closeSolrClient(SolrProducer solrProducer) {
         // close when generated for endpoint
-        if (solrConfiguration.getSolrEndpoint() != null) {
-            solrClients.remove(solrConfiguration.getSignature());
+        List<String> signatureToRemoveList = new ArrayList<>();
+        for (Map.Entry<String, SolrClientReference> entry : solrClientMap.entrySet()) {
+            SolrClientReference solrClientReference = entry.getValue();
+            if (solrClientReference.unRegisterSolrProducer(solrProducer) == 0) {
+                signatureToRemoveList.add(entry.getKey());
+            }
+        }
+        removeFromSolrClientMap(signatureToRemoveList);
+    }
+
+    private void removeFromSolrClientMap(Collection<String> signatureToRemoveList) {
+        for (String signature : signatureToRemoveList) {
+            SolrClientReference solrClientReference = solrClientMap.get(signature);
+            solrClientMap.remove(signature);
             try {
-                solrClients.get(solrConfiguration.getSignature()).close();
+                solrClientReference.getSolrClient().close();
             } catch (IOException e) {
                 LOG.warn("Error shutting down solr client. This exception is ignored.", e);
             }
@@ -130,10 +191,7 @@ public class SolrComponent extends DefaultComponent {
 
     @Override
     protected void doShutdown() throws Exception {
-        for (SolrClient solrClient : solrClients.values()) {
-            solrClient.close();
-        }
-        solrClients.clear();
+        removeFromSolrClientMap(solrClientMap.keySet());
         for (SolrServerReference server : servers.values()) {
             shutdownServers(server);
         }

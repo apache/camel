@@ -69,7 +69,7 @@ public class SolrProducer extends DefaultProducer {
         // solr client
         SolrClient solrClient = exchange.getIn().getHeader(SolrConstants.CLIENT, SolrClient.class);
         if (solrClient == null) {
-            solrClient = getEndpoint().getComponent().getSolrClient(solrConfiguration);
+            solrClient = getEndpoint().getComponent().getSolrClient(this, solrConfiguration);
         }
 
         // solr parameters
@@ -98,7 +98,7 @@ public class SolrProducer extends DefaultProducer {
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_ID)) {
             UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
             updateRequest.deleteById(exchange.getIn().getBody(String.class));
-            updateRequest.process(getEndpoint().getComponent().getSolrClient(solrConfiguration), solrCollection);
+            updateRequest.process(solrClient, solrCollection);
             if (solrConfiguration.isAutoCommit()) {
                 commit(exchange, solrClient, solrConfiguration, solrParams);
             }
@@ -286,7 +286,7 @@ public class SolrProducer extends DefaultProducer {
     }
 
     private UpdateRequest createUpdateRequest(SolrConfiguration solrConfiguration, ModifiableSolrParams solrParams) {
-        UpdateRequest updateRequest = new UpdateRequest(solrConfiguration.getRequestHandler());
+        UpdateRequest updateRequest = new UpdateRequest(getRequestHandler(solrConfiguration));
         updateRequest.setParams(solrParams);
         updateRequest.setBasicAuthCredentials(solrConfiguration.getUsername(), solrConfiguration.getPassword());
         return updateRequest;

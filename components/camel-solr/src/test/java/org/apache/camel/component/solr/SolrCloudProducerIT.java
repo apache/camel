@@ -28,7 +28,7 @@ public class SolrCloudProducerIT extends SolrCloudITSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        String endpointUri = String.format("solr:%s", service.getSolrBaseUrl());
+        String endpointUri = getSolrUri("collection1");
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
