@@ -39,8 +39,12 @@ public class SolrComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
 
+    private final Map<String, SolrClient> solrClients = new HashMap<>();
+
+    @Deprecated
     private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<>();
 
+    @Deprecated
     protected static final class SolrServerReference {
 
         private final AtomicInteger referenceCounter = new AtomicInteger();
@@ -86,31 +90,62 @@ public class SolrComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new SolrEndpoint(uri, this, remaining);
+        SolrConfiguration configuration = new SolrConfiguration(uri, remaining);
+        Endpoint endpoint = new SolrEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
     }
 
+    public SolrClient getSolrClient(SolrConfiguration solrConfiguration) throws Exception {
+        String signature = solrConfiguration.getSignature();
+        if (!solrClients.containsKey(signature)) {
+            SolrClient solrClient = solrConfiguration.initSolrClient();
+            solrClients.put(signature, solrClient);
+            return solrClient;
+        }
+        return solrClients.get(signature);
+    }
+
+    public void closeSolrClient(SolrConfiguration solrConfiguration) {
+        // close when generated for endpoint
+        if (solrConfiguration.getSolrEndpoint() != null) {
+            solrClients.remove(solrConfiguration.getSignature());
+            try {
+                solrClients.get(solrConfiguration.getSignature()).close();
+            } catch (IOException e) {
+                LOG.warn("Error shutting down solr client. This exception is ignored.", e);
+            }
+        }
+    }
+
+    @Deprecated
     public SolrServerReference getSolrServers(SolrEndpoint endpoint) {
         return servers.get(endpoint);
     }
 
+    @Deprecated
     public void addSolrServers(SolrEndpoint endpoint, SolrServerReference servers) {
         this.servers.put(endpoint, servers);
     }
 
     @Override
     protected void doShutdown() throws Exception {
+        for (SolrClient solrClient : solrClients.values()) {
+            solrClient.close();
+        }
+        solrClients.clear();
         for (SolrServerReference server : servers.values()) {
             shutdownServers(server);
         }
         servers.clear();
     }
 
+    @Deprecated
     void shutdownServers(SolrServerReference ref) {
         shutdownServers(ref, false);
     }
 
+    @Deprecated
     private void shutdownServer(SolrClient server) throws IOException {
         if (server != null) {
             LOG.info("Shutting down solr server: {}", server);
@@ -118,6 +153,7 @@ public class SolrComponent extends DefaultComponent {
         }
     }
 
+    @Deprecated
     void shutdownServers(SolrServerReference ref, boolean remove) {
         try {
             shutdownServer(ref.getSolrServer());
@@ -150,4 +186,5 @@ public class SolrComponent extends DefaultComponent {
         }
 
     }
+
 }

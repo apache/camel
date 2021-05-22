@@ -30,8 +30,8 @@ public class InitSolrEndpointTest extends SolrTestSupport {
     @Test
     public void endpointCreatedCorrectlyWithAllOptions() throws Exception {
         SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl + getFullOptions(), SolrEndpoint.class);
-        assertEquals(5, solrEndpoint.getStreamingQueueSize(), "queue size incorrect");
-        assertEquals(1, solrEndpoint.getStreamingThreadCount(), "thread count incorrect");
+        assertEquals(5, solrEndpoint.getSolrConfiguration().getStreamingQueueSize(), "queue size incorrect");
+        assertEquals(1, solrEndpoint.getSolrConfiguration().getStreamingThreadCount(), "thread count incorrect");
         assertNotNull(solrEndpoint);
     }
 
@@ -39,8 +39,10 @@ public class InitSolrEndpointTest extends SolrTestSupport {
     public void streamingEndpointCreatedCorrectly() throws Exception {
         SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl, SolrEndpoint.class);
         assertNotNull(solrEndpoint);
-        assertEquals(SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE, solrEndpoint.getStreamingQueueSize(), "queue size incorrect");
-        assertEquals(SolrConstants.DEFAULT_STREAMING_THREAD_COUNT, solrEndpoint.getStreamingThreadCount(),
+        assertEquals(SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE, solrEndpoint.getSolrConfiguration().getStreamingQueueSize(),
+                "queue size incorrect");
+        assertEquals(SolrConstants.DEFAULT_STREAMING_THREAD_COUNT,
+                solrEndpoint.getSolrConfiguration().getStreamingThreadCount(),
                 "thread count incorrect");
     }
 
@@ -52,8 +54,7 @@ public class InitSolrEndpointTest extends SolrTestSupport {
 
     private String getFullOptions() {
         return "?streamingQueueSize=5&streamingThreadCount=1"
-               + "&maxRetries=1&soTimeout=100&connectionTimeout=100"
-               + "&defaultMaxConnectionsPerHost=100&maxTotalConnections=100"
+               + "&soTimeout=100&connectionTimeout=100"
                + "&followRedirects=false&allowCompression=true"
                + "&requestHandler=/update"
                + "&username=solr&password=SolrRocks";

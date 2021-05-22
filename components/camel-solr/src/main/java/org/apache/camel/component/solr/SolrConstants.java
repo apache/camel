@@ -18,9 +18,10 @@ package org.apache.camel.component.solr;
 
 public final class SolrConstants {
 
+    public static final String CLIENT = "CamelSolrClient";
+    public static final String COLLECTION = "CamelSolrCollection";
     public static final String FIELD = "SolrField.";
     public static final String OPERATION = "SolrOperation";
-    public static final String PARAM = "SolrParam.";
     public static final String OPERATION_COMMIT = "COMMIT";
     public static final String OPERATION_SOFT_COMMIT = "SOFT_COMMIT";
     public static final String OPERATION_ROLLBACK = "ROLLBACK";
@@ -32,12 +33,10 @@ public final class SolrConstants {
     public static final String OPERATION_DELETE_BY_ID = "DELETE_BY_ID";
     public static final String OPERATION_DELETE_BY_QUERY = "DELETE_BY_QUERY";
     public static final String OPERATION_QUERY = "QUERY";
+    public static final String PARAM = "SolrParam.";
     public static final String QUERY_STRING = "CamelSolrQueryString";
 
-    public static final String PARAM_STREAMING_QUEUE_SIZE = "streamingQueueSize";
-    public static final String PARAM_STREAMING_THREAD_COUNT = "streamingThreadCount";
     public static final int DEFUALT_STREAMING_QUEUE_SIZE = 10;
-    public static final boolean DEFAULT_SHOULD_HTTPS = false;
     public static final int DEFAULT_STREAMING_THREAD_COUNT = 2;
 
     private SolrConstants() {
