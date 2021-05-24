@@ -72,6 +72,7 @@ public enum Translate2LanguageEnum {
     PASHTO("ps"),
     POLISH("pl"),
     PORTUGUESE("pt"),
+    ROMANIAN("ro"),
     RUSSIAN("ru"),
     SPANISH("es"),
     SWEDISH("sv"),
