@@ -91,7 +91,8 @@ public enum Translate2LanguageEnum {
     UKRAINIAN("uk"),
     URDU("ur"),
     UZBEK("uz"),
-    VIETNAMESE("vi");
+    VIETNAMESE("vi"),
+    WELSH("cy");
 
     private final String language;
 
