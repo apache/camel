@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components-starter</artifactId>
-    <version>2.25.4-SNAPSHOT</version>
+    <version>2.25.4</version>
   </parent>
   <artifactId>camel-ahc-ws-starter</artifactId>
   <packaging>jar</packaging>
@@ -38,18 +38,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ahc-ws</artifactId>
       <version>${project.version}</version>
-      <!--START OF GENERATED CODE-->
-      <exclusions>
-        <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-core</artifactId>
-        </exclusion>
-      </exclusions>
-      <!--END OF GENERATED CODE-->
     </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>
