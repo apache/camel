@@ -214,7 +214,6 @@
         <module>camel-jta</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
-        <module>camel-kamelet-main</module>
         <module>camel-kamelet-reify</module>
         <module>camel-kubernetes</module>
         <module>camel-kudu</module>
