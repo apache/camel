@@ -38,9 +38,15 @@ public class SolrConfiguration {
 
     private final SolrScheme solrScheme;
 
-    @UriPath(description = "Hostname and port for the solr server. " +
-                           "Multiple hosts can be specified, separated with a comma." +
-                           "In that case, the scheme decides between CloudSolrClient and LBHttpSolrClient.")
+    private boolean useConcurrentUpdateSolrClient;
+    private boolean isZookeeperHost;
+    private SolrEndpoint solrEndpoint;
+
+    @UriPath(description = "Hostname and port for the server. " +
+                           "Multiple hosts can be specified, separated with a comma. " +
+                           "The host/port can be for the solr endpoint (solrhost:solrport/solr) " +
+                           "or for the zookeeper endpoint (zkhost:zkport(optional: /chroot)). " +
+                           "See the solrClient for more information on what SolrClient is used.")
     @Metadata(required = true)
     private String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
@@ -74,12 +80,7 @@ public class SolrConfiguration {
     @UriParam(defaultValue = "false")
     private boolean autoCommit;
 
-    private String endpointUri;
-    private boolean useConcurrentUpdateSolrClient;
-    private SolrEndpoint solrEndpoint;
-
     public SolrConfiguration(String endpointUri, String remaining) throws Exception {
-        this.endpointUri = endpointUri;
         if (endpointUri.startsWith("solrs")) {
             solrScheme = SolrScheme.SOLRS;
         } else if (endpointUri.startsWith("solrCloud")) {
@@ -88,7 +89,6 @@ public class SolrConfiguration {
             solrScheme = SolrScheme.SOLR;
         }
         this.url = remaining;
-        useConcurrentUpdateSolrClient = false;
         getUrlListFrom(this.url);
     }
 
@@ -167,17 +167,27 @@ public class SolrConfiguration {
     }
 
     /**
-     * Set the ZooKeeper host urls which the CloudSolrClient uses, e.g. "zkhost=localhost:8123,localhost:8124".
-     * Optionally add the chroot, e.g. "zkhost=localhost:8123,localhost:8124/mysolr".
+     * Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g. "zkHost=localhost:8123,localhost:8124".
+     * Optionally add the chroot, e.g. "zkHost=localhost:8123,localhost:8124/rootformysolr". When first part of the path
+     * in the zkHost parameter is "solr" (e.g. "localhost:8123/solr" or "localhost:8123/solr/.."), then the host in
+     * zkHost is considered as a solr endpoint and not as a zookeeper endpoint for backward compatibility; Specify
+     * zkChroot=solr when the zkhost should anyway be considered as a zookeeper endpoint.
      */
     public void setZkHost(String zkHost) {
+        String zkHostUrl = zkHost;
+        isZookeeperHost = true;
         if (zkHost.contains("/")) {
             String[] parts = zkHost.split("/");
-            this.zkHost = parts[0];
-            this.zkChroot = parts[1];
-        } else {
-            this.zkHost = zkHost;
+            if (parts.length > 1) {
+                if (parts[1].equals("solr")) {
+                    isZookeeperHost = false;
+                } else {
+                    zkHostUrl = parts[0];
+                    zkChroot = parts[1];
+                }
+            }
         }
+        this.zkHost = zkHostUrl;
     }
 
     public String getZkChroot() {
@@ -185,7 +195,7 @@ public class SolrConfiguration {
     }
 
     /**
-     * Set the chroot of the zookeeper connections
+     * Set the chroot of the zookeeper connection without the leading slash
      */
     public void setZkChroot(String zkChroot) {
         this.zkChroot = zkChroot;
@@ -240,7 +250,7 @@ public class SolrConfiguration {
     }
 
     /**
-     * If true, each producer operation will be committed automatically
+     * If true, each producer operation will be followed by a commit automatically
      */
     public void setAutoCommit(boolean autoCommit) {
         this.autoCommit = autoCommit;
@@ -251,7 +261,13 @@ public class SolrConfiguration {
     }
 
     /**
-     * Uses provided solr client to connect to solr
+     * Uses the provided solr client to connect to solr When this parameter is not specified, the following logic is
+     * applied to determine the SolrClient being used: - when both zkHost and collection (=default collection)
+     * parameters are set, the CloudSolrClient is used - when zkChroot (=zookeeper root) parameter is set, the
+     * CloudSolrClient is used - when multiple hosts are specified (in zkHost or in uri; separated with a comma) then
+     * the following SolrClient is used: - CloudSolrClient when the uri is solrCloud - LBHttpSolrClient when the uri is
+     * not solrCloud (solr or solrs) - when the solr operation is INSERT_STREAMING, then the ConcurrentUpdateSolrClient
+     * is used - otherwise, the HttpSolrClient is used
      */
     public void setSolrClient(SolrClient solrClient) {
         this.solrClient = solrClient;
@@ -292,10 +308,10 @@ public class SolrConfiguration {
         List<String> urlList = Arrays
                 .asList(url.split(","))
                 .stream()
-                .map(s -> solrScheme.getScheme().concat(s))
+                .map(s -> solrScheme.getScheme(isZookeeperHost).concat(s))
                 .collect(Collectors.toList());
-        // validate url syntax when scheme available (=not solrCloud)
-        if (!SolrScheme.SOLRCLOUD.equals(solrScheme)) {
+        // validate url syntax when scheme available (=not solrCloud with zkHost(s))
+        if (!(isZookeeperHost && SolrScheme.SOLRCLOUD.equals(solrScheme))) {
             for (String s : urlList) {
                 new URL(s);
             }
@@ -327,19 +343,20 @@ public class SolrConfiguration {
         if (solrClient != null) {
             return solrClient;
         }
+        List<String> urlList = getUrlListFrom(zkHost != null ? zkHost : url);
         // backward compatibility (CloudSolrClient only used when
         //      zkHost and collection are not null
-        if (zkHost != null && collection != null && zkChroot == null) {
-            return getCloudSolrClient(Arrays.asList(zkHost));
+        if ((zkHost != null && collection != null)
+                || (zkChroot != null && !zkChroot.isEmpty())) {
+            return getCloudSolrClient(urlList);
         }
         // more than 1 server provided:
         //      if solrCloud uri then CloudSolrClient else LBHttpSolrClient
-        List<String> serverUrls = getUrlListFrom(zkHost != null ? zkHost : url);
-        if (serverUrls.size() > 1) {
+        if (urlList.size() > 1) {
             if (SolrScheme.SOLRCLOUD.equals(solrScheme)) {
-                return getCloudSolrClient(serverUrls);
+                return getCloudSolrClient(urlList);
             } else {
-                return getLBHttpSolrClient(serverUrls);
+                return getLBHttpSolrClient(urlList);
             }
         }
         // config with ConcurrentUpdateSolrClient
@@ -350,10 +367,9 @@ public class SolrConfiguration {
         return getHttpSolrClient();
     }
 
-    private SolrClient getCloudSolrClient(List<String> serverUrls) {
-        CloudSolrClient.Builder builder = zkHost != null
-                ? new CloudSolrClient.Builder(serverUrls, zkChroot == null ? Optional.empty() : Optional.of(zkChroot))
-                : new CloudSolrClient.Builder(serverUrls);
+    private SolrClient getCloudSolrClient(List<String> urlList) {
+        Optional<String> zkChrootOptional = zkChroot == null || zkChroot.isEmpty() ? Optional.empty() : Optional.of(zkChroot);
+        CloudSolrClient.Builder builder = new CloudSolrClient.Builder(urlList, zkChrootOptional);
         if (connectionTimeout != null) {
             builder.withConnectionTimeout(connectionTimeout);
         }
@@ -440,7 +456,10 @@ public class SolrConfiguration {
             this.scheme = scheme;
         }
 
-        public String getScheme() {
+        public String getScheme(boolean isUrlWithZkHost) {
+            if (!isUrlWithZkHost && SOLRCLOUD.equals(this)) {
+                return SOLR.scheme;
+            }
             return scheme;
         }
     }
