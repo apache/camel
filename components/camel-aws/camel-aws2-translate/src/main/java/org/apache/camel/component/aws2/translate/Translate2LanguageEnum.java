@@ -83,6 +83,9 @@ public enum Translate2LanguageEnum {
     SPANISH_MEXICO("es-MX"),
     SWAHILI("sw"),
     SWEDISH("sv"),
+    TAGALOG("tl"),
+    TAMIL("ta"),
+    TELUGU("te"),
     TURKISH("tr");
 
     private final String language;
