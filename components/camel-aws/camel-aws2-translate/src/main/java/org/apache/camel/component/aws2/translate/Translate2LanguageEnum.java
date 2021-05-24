@@ -52,6 +52,7 @@ public enum Translate2LanguageEnum {
            "he"),
     HINDI("hi"),
     HUNGARIAN("hu"),
+    ICELANDIC("is"),
     INDONESIAN("id"),
     ITALIAN("it"),
     JAPANESE(
