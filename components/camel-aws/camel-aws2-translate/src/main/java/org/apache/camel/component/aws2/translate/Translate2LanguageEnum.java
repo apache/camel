@@ -74,7 +74,14 @@ public enum Translate2LanguageEnum {
     PORTUGUESE("pt"),
     ROMANIAN("ro"),
     RUSSIAN("ru"),
+    SERBIAN("sr"),
+    SINHALA("si"),
+    SLOVAK("sk"),
+    SLOVENIAN("sl"),
+    SOMALI("so"),
     SPANISH("es"),
+    SPANISH_MEXICO("es-MX"),
+    SWAHILI("sw"),
     SWEDISH("sv"),
     TURKISH("tr");
 
