@@ -57,6 +57,8 @@ public enum Translate2LanguageEnum {
     ITALIAN("it"),
     JAPANESE(
              "ja"),
+    KANNADA("kn"),
+    KAZAKH("kk"),
     KOREAN("ko"),
     MALAY("ms"),
     NORWEGIAN("no"),
