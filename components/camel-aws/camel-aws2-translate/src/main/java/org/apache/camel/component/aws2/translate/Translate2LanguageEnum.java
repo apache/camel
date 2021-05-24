@@ -46,9 +46,12 @@ public enum Translate2LanguageEnum {
     GERMAN("de"),
     GREEK("el"),
     GUJARATI("gu"),
+    HAITIAN_CREOLE("ht"),
+    HAUSA("ha"),
     HEBREW(
            "he"),
     HINDI("hi"),
+    HUNGARIAN("hu"),
     INDONESIAN("id"),
     ITALIAN("it"),
     JAPANESE(
