@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.util.Map;
 
+import groovy.lang.GroovyClassLoader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
@@ -30,6 +31,7 @@ import org.apache.camel.spi.Registry;
 public class KameletMain extends MainCommandLineSupport {
 
     protected static KameletMain instance;
+    private static ClassLoader kameletClassLoader;
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
 
@@ -150,7 +152,10 @@ public class KameletMain extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
-        answer.setApplicationContextClassLoader(KameletMain.class.getClassLoader());
+        if (kameletClassLoader == null) {
+            kameletClassLoader = new GroovyClassLoader(KameletMain.class.getClassLoader());
+        }
+        answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
         instance.addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
         instance.addInitialProperty("camel.main.routes-include-pattern", "classpath:camel/*");
