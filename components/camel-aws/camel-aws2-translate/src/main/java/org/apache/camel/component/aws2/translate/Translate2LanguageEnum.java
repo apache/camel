@@ -42,7 +42,10 @@ public enum Translate2LanguageEnum {
     FRENCH_CANADA("fr-CA"),
     FINNISH("fi"),
     FRENCH("fr"),
+    GEORGIAN("ka"),
     GERMAN("de"),
+    GREEK("el"),
+    GUJARATI("gu"),
     HEBREW(
            "he"),
     HINDI("hi"),
