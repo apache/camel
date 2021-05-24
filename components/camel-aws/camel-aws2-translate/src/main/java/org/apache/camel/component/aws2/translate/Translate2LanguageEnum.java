@@ -86,6 +86,7 @@ public enum Translate2LanguageEnum {
     TAGALOG("tl"),
     TAMIL("ta"),
     TELUGU("te"),
+    THAI("th"),
     TURKISH("tr");
 
     private final String language;
