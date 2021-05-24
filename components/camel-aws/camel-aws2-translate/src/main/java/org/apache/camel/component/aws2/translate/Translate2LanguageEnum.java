@@ -60,6 +60,8 @@ public enum Translate2LanguageEnum {
     KANNADA("kn"),
     KAZAKH("kk"),
     KOREAN("ko"),
+    LATVIAN("lv"),
+    LITHUANIAN("lt"),
     MALAY("ms"),
     NORWEGIAN("no"),
     PERSIAN("fa"),
