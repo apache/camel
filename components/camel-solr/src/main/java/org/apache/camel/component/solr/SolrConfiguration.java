@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.solr;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.StringHelper;
 import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
@@ -34,12 +36,11 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
 
 @UriParams
-public class SolrConfiguration {
+public class SolrConfiguration implements Cloneable {
 
     private final SolrScheme solrScheme;
 
     private boolean useConcurrentUpdateSolrClient;
-    private boolean isZookeeperHost;
     private SolrEndpoint solrEndpoint;
 
     @UriPath(description = "Hostname and port for the server. " +
@@ -81,15 +82,14 @@ public class SolrConfiguration {
     private boolean autoCommit;
 
     public SolrConfiguration(String endpointUri, String remaining) throws Exception {
-        if (endpointUri.startsWith("solrs")) {
-            solrScheme = SolrScheme.SOLRS;
-        } else if (endpointUri.startsWith("solrCloud")) {
-            solrScheme = SolrScheme.SOLRCLOUD;
-        } else {
-            solrScheme = SolrScheme.SOLR;
+        solrScheme = SolrScheme.SOLR.getFrom(endpointUri);
+        Optional<String> chroot = getChrootFromPath(remaining);
+        if (chroot.isPresent()) {
+            zkChroot = chroot.get();
         }
-        this.url = remaining;
-        getUrlListFrom(this.url);
+        url = parseHostsFromUrl(remaining, chroot);
+        // validate url
+        getUrlListFrom(url);
     }
 
     public SolrScheme getSolrScheme() {
@@ -168,26 +168,17 @@ public class SolrConfiguration {
 
     /**
      * Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g. "zkHost=localhost:8123,localhost:8124".
-     * Optionally add the chroot, e.g. "zkHost=localhost:8123,localhost:8124/rootformysolr". When first part of the path
-     * in the zkHost parameter is "solr" (e.g. "localhost:8123/solr" or "localhost:8123/solr/.."), then the host in
-     * zkHost is considered as a solr endpoint and not as a zookeeper endpoint for backward compatibility; Specify
-     * zkChroot=solr when the zkhost should anyway be considered as a zookeeper endpoint.
+     * Optionally add the chroot, e.g. "zkHost=localhost:8123,localhost:8124/rootformysolr". When first part of the
+     * chroot path in the zkHost parameter is "solr" (e.g. "localhost:8123/solr" or "localhost:8123/solr/.."), then that
+     * path is not considered as zookeeper chroot for backward compatibility; Specify explicitly the zkChroot parameter
+     * (zkChroot=solr or zkChroot=solr/..) when this 'solr' path should be considered a zookeeper chroot anyway.
      */
     public void setZkHost(String zkHost) {
-        String zkHostUrl = zkHost;
-        isZookeeperHost = true;
-        if (zkHost.contains("/")) {
-            String[] parts = zkHost.split("/");
-            if (parts.length > 1) {
-                if (parts[1].equals("solr")) {
-                    isZookeeperHost = false;
-                } else {
-                    zkHostUrl = parts[0];
-                    zkChroot = parts[1];
-                }
-            }
+        Optional<String> chroot = getChrootFromPath(zkHost);
+        if (chroot.isPresent()) {
+            this.zkChroot = chroot.get();
         }
-        this.zkHost = zkHostUrl;
+        this.zkHost = parseHostsFromUrl(zkHost, chroot);
     }
 
     public String getZkChroot() {
@@ -195,7 +186,7 @@ public class SolrConfiguration {
     }
 
     /**
-     * Set the chroot of the zookeeper connection without the leading slash
+     * Set the chroot of the zookeeper connection (including the leading slash; e.g. '/mychroot')
      */
     public void setZkChroot(String zkChroot) {
         this.zkChroot = zkChroot;
@@ -305,15 +296,24 @@ public class SolrConfiguration {
     }
 
     private List<String> getUrlListFrom(String url) throws Exception {
+        // add scheme when required
         List<String> urlList = Arrays
                 .asList(url.split(","))
                 .stream()
-                .map(s -> solrScheme.getScheme(isZookeeperHost).concat(s))
+                .map(s -> solrScheme.getScheme().concat(s))
                 .collect(Collectors.toList());
-        // validate url syntax when scheme available (=not solrCloud with zkHost(s))
-        if (!(isZookeeperHost && SolrScheme.SOLRCLOUD.equals(solrScheme))) {
-            for (String s : urlList) {
-                new URL(s);
+        // validate url syntax via parsing in URL instance
+        // (solrCloud requires addition of HTTP scheme to be considered a valid URL scheme
+        for (String s : urlList) {
+            try {
+                new URL(
+                        SolrScheme.SOLRCLOUD.equals(solrScheme) ? SolrScheme.SOLR.getScheme().concat(s) : s);
+            } catch (MalformedURLException e) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "Url '%s' not valid for endpoint with uri=%s",
+                                s,
+                                solrScheme.getUri()));
             }
         }
         return urlList;
@@ -368,7 +368,7 @@ public class SolrConfiguration {
     }
 
     private SolrClient getCloudSolrClient(List<String> urlList) {
-        Optional<String> zkChrootOptional = zkChroot == null || zkChroot.isEmpty() ? Optional.empty() : Optional.of(zkChroot);
+        Optional<String> zkChrootOptional = Optional.ofNullable(zkChroot);
         CloudSolrClient.Builder builder = new CloudSolrClient.Builder(urlList, zkChrootOptional);
         if (connectionTimeout != null) {
             builder.withConnectionTimeout(connectionTimeout);
@@ -444,22 +444,48 @@ public class SolrConfiguration {
         return (SolrConfiguration) super.clone();
     }
 
+    private static Optional<String> getChrootFromPath(String path) {
+        // check further slash characters for 1st subPath = 'solr'
+        if (!path.contains("/")) {
+            return Optional.empty();
+        }
+        return Arrays.asList(path.split("/")).get(1).equals("solr")
+                ? Optional.empty() : Optional.of(path.substring(path.indexOf('/')));
+    }
+
+    private static String parseHostsFromUrl(String path, Optional<String> chroot) {
+        String hostsPath = StringHelper.removeStartingCharacters(path, '/');
+        return (chroot.isPresent()) ? hostsPath.substring(0, hostsPath.indexOf('/') - 1) : hostsPath;
+    }
+
     public enum SolrScheme {
 
-        SOLR("http://"),
-        SOLRS("https://"),
-        SOLRCLOUD("");
+        SOLR("solr:", "http://"),
+        SOLRS("solrs:", "https://"),
+        SOLRCLOUD("solrCloud:", "");
 
+        private final String uri;
         private final String scheme;
 
-        SolrScheme(String scheme) {
+        SolrScheme(String uri, String scheme) {
+            this.uri = uri;
             this.scheme = scheme;
         }
 
-        public String getScheme(boolean isUrlWithZkHost) {
-            if (!isUrlWithZkHost && SOLRCLOUD.equals(this)) {
-                return SOLR.scheme;
+        public SolrScheme getFrom(String endpointUri) {
+            for (SolrScheme solrScheme : SolrScheme.values()) {
+                if (endpointUri.startsWith(solrScheme.getUri())) {
+                    return solrScheme;
+                }
             }
+            throw new IllegalArgumentException("Invalid endpoint uri");
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public String getScheme() {
             return scheme;
         }
     }
