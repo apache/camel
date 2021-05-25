@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.mq.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.mq.MQ2Configuration;
 import org.apache.camel.component.aws2.mq.client.MQ2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -30,11 +32,9 @@ import software.amazon.awssdk.services.mq.MqClient;
 import software.amazon.awssdk.services.mq.MqClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS MQ client for all users to use (enabling temporary creds). This implementation is for remote
- * instances to manage the credentials on their own (eliminating credential rotations)
+ * Manage an AWS MQ client for all users to use (enabling temporary creds). This implementation is for remote instances
+ * to manage the credentials on their own (eliminating credential rotations)
  */
 public class MQ2ClientOptimizedImpl implements MQ2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(MQ2ClientOptimizedImpl.class);
