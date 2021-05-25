@@ -22,7 +22,7 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
+        <artifactId>dsl</artifactId>
         <version>3.11.0-SNAPSHOT</version>
     </parent>
 

@@ -1777,11 +1777,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-kamelet-main</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-kamelet-reify</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -2768,6 +2763,11 @@
 				<artifactId>camel-groovy-dsl-common</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-kamelet-main</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
             <!-- camel catalog -->
             <dependency>
@@ -2793,11 +2793,6 @@
 
             <!-- camel misc -->
             <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-manual</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.camel.tests</groupId>
                 <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
                 <version>${project.version}</version>
@@ -2821,6 +2816,7 @@
                 <version>${project.version}</version>
                 <type>test-jar</type>
             </dependency>
+
             <!-- cassandra -->
             <dependency>
                 <groupId>org.apache.cassandra</groupId>
