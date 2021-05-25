@@ -194,8 +194,8 @@ public class MQ2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the MQ client should expect to load credentials through a default credentials provider or to
-     * expect static credentials to be passed in.
+     * Set whether the MQ client should expect to load credentials through a default credentials provider or to expect
+     * static credentials to be passed in.
      */
     public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
