@@ -706,10 +706,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     private boolean doStoreFile(String name, String targetName, Exchange exchange) throws GenericFileOperationFailedException {
         log.trace("doStoreFile({})", targetName);
 
+        boolean existFile = false;
         // if an existing file already exists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail
-                || endpoint.getFileExist() == GenericFileExist.Move) {
-            boolean existFile = existsFile(targetName);
+                || endpoint.getFileExist() == GenericFileExist.Move || endpoint.getFileExist() == GenericFileExist.Append) {
+            existFile = existsFile(targetName);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
                 log.trace("An existing file already exists: {}. Ignore and do not override it.", name);
@@ -749,7 +750,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             final StopWatch watch = new StopWatch();
             boolean answer;
             log.debug("About to store file: {} using stream: {}", targetName, is);
-            if (endpoint.getFileExist() == GenericFileExist.Append) {
+            if (existFile && endpoint.getFileExist() == GenericFileExist.Append) {
                 log.trace("Client appendFile: {}", targetName);
                 answer = client.appendFile(targetName, is);
             } else {
