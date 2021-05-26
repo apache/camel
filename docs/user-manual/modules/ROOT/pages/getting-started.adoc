@@ -52,7 +52,7 @@ available to them when they started learning Camel.
 * https://dzone.com/articles/open-source-integration-apache[Open
 Source Integration with Apache Camel and How Fuse IDE Can Help] by
 Jonathan Anstey. Updated article of the
-http://architects.dzone.com/articles/apache-camel-integration[Apache
+https://dzone.com/articles/apache-camel-integration[Apache
 Camel: Integration Nirvana]. Great article to learn what Camel is and
 has a good use case example.
 
