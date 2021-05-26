@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.msk.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.msk.MSK2Configuration;
 import org.apache.camel.component.aws2.msk.client.MSK2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -31,8 +33,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kafka.KafkaClient;
 import software.amazon.awssdk.services.kafka.KafkaClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS MQ client for all users to use. This implementation is for local instances to use a static and solid
