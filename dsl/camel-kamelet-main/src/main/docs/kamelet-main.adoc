@@ -44,6 +44,8 @@ For example a Camel route can be _coded_ in YAML which uses the Earthquake Kamel
 
 In this use-case the earthquake kamelet will be downloaded from github, and as well its required dependencies.
 
+NOTE: The dependencies are downloaded to `~/.groovy/grapes` directory. To force re-download then this directory can be deleted.
+
 You can find an example with this at
 https://github.com/apache/camel-examples/tree/main/examples/kamelet-main[kamelet-main].
 
