@@ -56,7 +56,7 @@ public class SaxonUriResolverTest extends CamelTestSupport {
         assertEquals(XML_RESP, writer.toString());
     }
 
-    protected Source fromString(String data) throws IOException {
+    protected Source fromString(String data) {
         return new StreamSource(new StringReader(data));
     }
 

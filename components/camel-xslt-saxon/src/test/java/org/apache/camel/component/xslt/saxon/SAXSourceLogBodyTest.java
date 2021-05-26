@@ -19,11 +19,11 @@ package org.apache.camel.component.xslt.saxon;
 import java.io.File;
 import java.io.InputStream;
 
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -55,7 +55,7 @@ public class SAXSourceLogBodyTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 byte[] data = exchange.getIn().getBody(byte[].class);
                                 InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, data);
-                                XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+                                XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
                                 exchange.getIn().setBody(new SAXSource(xmlReader, new InputSource(is)));
                             }
                         })

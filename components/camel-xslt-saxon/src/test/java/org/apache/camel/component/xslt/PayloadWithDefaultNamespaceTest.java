@@ -25,17 +25,17 @@ public class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
             = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Message xmlns=\"http://www.camel.apache.org/envelope\"><Version>2.0</Version></Message>";
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("xslt-saxon:org/apache/camel/component/xslt/transform.xsl");
             }
         };
     }
 
     @Test
-    public void testTransformWithDefaultNamespace() throws Exception {
+    public void testTransformWithDefaultNamespace() {
         template.sendBody("direct:start", PAYLOAD);
     }
 }

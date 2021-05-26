@@ -29,23 +29,24 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SaxonInvalidXsltFileTest {
 
     @Test
-    public void testInvalidStylesheet() throws Exception {
+    public void testInvalidStylesheet() {
         try {
             RouteBuilder builder = createRouteBuilder();
-            CamelContext context = new DefaultCamelContext();
-            context.addRoutes(builder);
-            context.start();
+            try (CamelContext context = new DefaultCamelContext()) {
+                context.addRoutes(builder);
+                context.start();
 
-            fail("Should have thrown an exception due XSL compilation error");
+                fail("Should have thrown an exception due XSL compilation error");
+            }
         } catch (Exception e) {
             // expected
             assertIsInstanceOf(TransformerException.class, e.getCause().getCause().getCause());
         }
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:a").to(
                         "xslt-saxon:org/apache/camel/component/xslt/notfound.xsl?transformerFactoryClass=net.sf.saxon.TransformerFactoryImpl");
             }
