@@ -20,23 +20,17 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.xquery.TestBean;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XsltRouteAllowStAXTest extends CamelTestSupport {
-
-    @BindToRegistry
-    private TestBean testBean = new TestBean();
 
     @Test
     public void testSendStringMessage() throws Exception {
@@ -73,19 +67,15 @@ public class XsltRouteAllowStAXTest extends CamelTestSupport {
         assertTrue(xml.contains("cheese"));
         assertTrue(xml.contains("<subject>Hey</subject>"));
         assertTrue(xml.contains("<body>Hello world!</body>"));
-
-        TestBean bean = context.getRegistry().lookupByNameAndType("testBean", TestBean.class);
-        assertNotNull(bean);
-        assertEquals("Hey", bean.getSubject(), "bean.subject");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("xslt-saxon:org/apache/camel/component/xslt/transform.xsl?allowStAX=true").multicast()
-                        .bean("testBean").to("mock:result");
+                        .to("mock:result");
             }
         };
     }

@@ -23,8 +23,6 @@ import org.junit.jupiter.api.Test;
 
 public class SaxonXslIncludeEmptyHrefTest extends CamelTestSupport {
 
-    //TODO: fix
-    //@Ignore("To Fix")
     @Test
     public void testXsltOutput() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -38,10 +36,10 @@ public class SaxonXslIncludeEmptyHrefTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("xslt-saxon:org/apache/camel/component/xslt/transform_includes_data.xsl")
                         .to("mock:result");

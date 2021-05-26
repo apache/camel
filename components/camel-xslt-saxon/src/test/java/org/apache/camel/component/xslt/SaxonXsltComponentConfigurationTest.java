@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.xslt;
 
-import java.util.Map;
-
-import net.sf.saxon.Configuration;
-import org.apache.camel.Endpoint;
 import org.apache.camel.component.xslt.saxon.XsltSaxonComponent;
 import org.apache.camel.component.xslt.saxon.XsltSaxonEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
@@ -27,40 +23,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SaxonXsltEndpointConfigurationTest extends CamelSpringTestSupport {
+public class SaxonXsltComponentConfigurationTest extends CamelSpringTestSupport {
     @Test
-    public void testConfiguration() throws Exception {
-        Configuration configuration = context.getRegistry().lookupByNameAndType("saxon-configuration", Configuration.class);
-        Map<String, Object> properties = context.getRegistry().lookupByNameAndType("saxon-properties", Map.class);
+    public void testConfiguration() {
         XsltSaxonComponent component = context.getComponent("xslt-saxon", XsltSaxonComponent.class);
-        XsltSaxonEndpoint endpoint = null;
+        XsltSaxonEndpoint endpoint
+                = context.getEndpoint("xslt-saxon:org/apache/camel/component/xslt/transform.xsl", XsltSaxonEndpoint.class);
 
-        assertNotNull(configuration);
-        assertNotNull(properties);
-
-        for (Endpoint ep : context.getEndpoints()) {
-            if (ep instanceof XsltSaxonEndpoint) {
-                endpoint = (XsltSaxonEndpoint) ep;
-                break;
-            }
-        }
-
-        assertNotNull(component);
-        assertNotNull(endpoint);
-        assertNull(component.getSaxonConfiguration());
-        assertTrue(component.getSaxonConfigurationProperties().isEmpty());
-        assertNotNull(endpoint.getSaxonConfiguration());
-        assertNotNull(endpoint.getSaxonConfigurationProperties());
-        assertEquals(configuration, endpoint.getSaxonConfiguration());
-        assertEquals(properties, endpoint.getSaxonConfigurationProperties());
+        assertNotNull(component.getSaxonConfiguration());
+        assertNotNull(component.getSaxonConfigurationProperties());
+        assertFalse(component.getSaxonConfigurationProperties().isEmpty());
+        assertEquals(component.getSaxonConfiguration(), endpoint.getSaxonConfiguration());
+        assertEquals(component.getSaxonConfigurationProperties(), endpoint.getSaxonConfigurationProperties());
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return newAppContext("SaxonXsltEndpointConfigurationTest.xml");
+        return newAppContext("SaxonXsltComponentConfigurationTest.xml");
     }
 }
