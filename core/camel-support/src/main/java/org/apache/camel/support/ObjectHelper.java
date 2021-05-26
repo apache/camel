@@ -119,8 +119,8 @@ public final class ObjectHelper {
                 Long rightNum = (Long) rightValue;
                 return leftNum.compareTo(rightNum) == 0;
             }
-        } else if ((rightValue instanceof String) &&
-                (leftValue instanceof Integer || leftValue instanceof Long)) {
+        } else if (rightValue instanceof String &&
+                ((leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue))) {
             if (leftValue instanceof Integer) {
                 Integer leftNum = (Integer) leftValue;
                 Integer rightNum = Integer.valueOf((String) rightValue);
@@ -219,8 +219,8 @@ public final class ObjectHelper {
                 Long rightNum = (Long) rightValue;
                 return leftNum.compareTo(rightNum);
             }
-        } else if ((rightValue instanceof String) &&
-                (leftValue instanceof Integer || leftValue instanceof Long)) {
+        } else if (rightValue instanceof String &&
+                ((leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue))) {
             if (leftValue instanceof Integer) {
                 Integer leftNum = (Integer) leftValue;
                 Integer rightNum = Integer.valueOf((String) rightValue);
@@ -295,6 +295,9 @@ public final class ObjectHelper {
         if (text == null || text.isEmpty()) {
             return false;
         }
+        if (text.equals("-")) {
+            return false;
+        }
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
             if (i == 0 && ch == '-') {
@@ -311,6 +314,9 @@ public final class ObjectHelper {
      */
     public static boolean isFloatingNumber(String text) {
         if (text == null || text.isEmpty()) {
+            return false;
+        }
+        if (text.equals("-")) {
             return false;
         }
         boolean dots = false;
