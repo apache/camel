@@ -51,6 +51,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
         case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -93,6 +95,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
         case "uriEndpointOverride": return java.lang.String.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         default: return null;
         }
     }
@@ -131,6 +135,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "uriendpointoverride":
         case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         default: return null;
         }
     }

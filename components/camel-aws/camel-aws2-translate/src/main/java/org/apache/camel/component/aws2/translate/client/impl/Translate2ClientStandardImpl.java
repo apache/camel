@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.translate.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.translate.Translate2Configuration;
 import org.apache.camel.component.aws2.translate.client.Translate2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -32,11 +34,9 @@ import software.amazon.awssdk.services.translate.TranslateClient;
 import software.amazon.awssdk.services.translate.TranslateClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS Translate client for all users to use. This implementation is for local instances to use a static and solid
- * credential set.
+ * Manage an AWS Translate client for all users to use. This implementation is for local instances to use a static and
+ * solid credential set.
  */
 public class Translate2ClientStandardImpl implements Translate2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(Translate2ClientStandardImpl.class);

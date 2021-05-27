@@ -299,6 +299,24 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Translate client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2TranslateComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -388,6 +406,7 @@ public interface Aws2TranslateComponentBuilderFactory {
             case "translateClient": getOrCreateConfiguration((Translate2Component) component).setTranslateClient((software.amazon.awssdk.services.translate.TranslateClient) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Translate2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Translate2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Translate2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((Translate2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Translate2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Translate2Component) component).setSecretKey((java.lang.String) value); return true;

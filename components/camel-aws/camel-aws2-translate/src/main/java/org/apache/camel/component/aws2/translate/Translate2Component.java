@@ -56,7 +56,8 @@ public class Translate2Component extends DefaultComponent {
         setProperties(endpoint, parameters);
         if (!configuration.isUseDefaultCredentialsProvider() && configuration.getTranslateClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, Amazon translate client or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException(
+                    "useDefaultCredentialsProvider is set to false, Amazon translate client or accessKey and secretKey must be specified");
         }
         return endpoint;
     }
