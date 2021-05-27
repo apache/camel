@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.ses.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.ses.Ses2Configuration;
 import org.apache.camel.component.aws2.ses.client.Ses2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -29,8 +31,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.SesClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS MSK client for all users to use (enabling temporary creds). This implementation is for remote instances
