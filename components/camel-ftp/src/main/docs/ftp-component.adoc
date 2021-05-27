@@ -372,9 +372,7 @@ used as the filename instead.
 This header is set by Camel and its purpose is providing end-users the
 name of the file that was written.
 
-|`CamelFileIndex` |Current index out of total number of files being consumed in this batch.
-
-|`CamelFileSize` |Total number of files being consumed in this batch.
+|`CamelFileNameConsumed` |The file name of the file consumed
 
 |`CamelFileHost` |The remote hostname.
 
@@ -391,6 +389,21 @@ In addition the FTP/FTPS consumer and producer will enrich the Camel
 |`CamelFtpReplyCode` |The FTP client reply code (the type is a integer)
 
 |`CamelFtpReplyString` |The FTP client reply string
+|=======================================================================
+
+== Exchange Properties
+
+Camel sets the following exchange properties
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`CamelBatchIndex` |Current index out of total number of files being consumed in this batch.
+
+|`CamelBatchSize` |Total number of files being consumed in this batch.
+
+|`CamelBatchComplete` |True if there are no more files in this batch.
 |=======================================================================
 
 == About timeouts
