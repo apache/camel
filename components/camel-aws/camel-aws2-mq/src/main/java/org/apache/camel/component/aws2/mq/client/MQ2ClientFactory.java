@@ -21,7 +21,7 @@ import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientOptimizedImpl;
 import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientStandardImpl;
 
 /**
- * Factory class to return the correct type of AWS Lambda client.
+ * Factory class to return the correct type of AWS MQ client.
  */
 public final class MQ2ClientFactory {
 
