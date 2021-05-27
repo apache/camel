@@ -49,9 +49,9 @@ public class MSK2ClientOptimizedImpl implements MSK2InternalClient {
     }
 
     /**
-     * Getting the Lambda aws client that is used.
+     * Getting the Kafka aws client that is used.
      * 
-     * @return Lambda Client.
+     * @return Kafka Client.
      */
     @Override
     public KafkaClient getKafkaClient() {
