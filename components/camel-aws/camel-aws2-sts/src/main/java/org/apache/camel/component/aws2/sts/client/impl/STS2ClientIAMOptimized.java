@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.sts.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.sts.STS2Configuration;
 import org.apache.camel.component.aws2.sts.client.STS2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -29,8 +31,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.StsClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS STS client for all users to use. This implementation is for remote instances to manage the credentials
