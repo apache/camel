@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.translate.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.translate.Translate2Configuration;
 import org.apache.camel.component.aws2.translate.client.Translate2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -30,11 +32,9 @@ import software.amazon.awssdk.services.translate.TranslateClient;
 import software.amazon.awssdk.services.translate.TranslateClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS Translate client for all users to use. This implementation is for remote instances to manage the credentials
- * on their own (eliminating credential rotations)
+ * Manage an AWS Translate client for all users to use. This implementation is for remote instances to manage the
+ * credentials on their own (eliminating credential rotations)
  */
 public class Translate2ClientIAMOptimized implements Translate2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(Translate2ClientIAMOptimized.class);
