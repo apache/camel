@@ -326,7 +326,7 @@
         <jolokia-version>1.6.2</jolokia-version>
         <jolt-version>0.1.1</jolt-version>
         <jool-version>0.9.12</jool-version>
-        <jooq-version>3.14.9</jooq-version>
+        <jooq-version>3.14.11</jooq-version>
         <joor-version>0.9.13</joor-version>
         <johnzon-version>1.2.12</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
