@@ -34,7 +34,7 @@ public final class Translate2ClientFactory {
      * @param  configuration configuration
      * @return               TranslateClient
      */
-    public static Translate2InternalClient getStsClient(Translate2Configuration configuration) {
+    public static Translate2InternalClient getTranslateClient(Translate2Configuration configuration) {
         return configuration.isUseDefaultCredentialsProvider()
                 ? new Translate2ClientIAMOptimized(configuration) : new Translate2ClientStandardImpl(configuration);
     }
