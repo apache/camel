@@ -42,7 +42,7 @@ public class Ses2ClientFactoryTest {
     }
 
     @Test
-    public void getSESOptimizedMSKClient() {
+    public void getSESOptimizedIAMClient() {
         Ses2Configuration ses2Configuration = new Ses2Configuration();
         ses2Configuration.setUseDefaultCredentialsProvider(true);
         Ses2InternalClient sesClient = Ses2ClientFactory.getSesClient(ses2Configuration);
