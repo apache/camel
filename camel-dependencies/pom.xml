@@ -194,7 +194,7 @@
     <felix-scr-annotations-version>1.12.0</felix-scr-annotations-version>
     <felix-scr-version>2.1.26</felix-scr-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
-    <flatpack-version>4.0.4</flatpack-version>
+    <flatpack-version>4.0.5</flatpack-version>
     <flink-version>1.13.0</flink-version>
     <fop-version>2.6</fop-version>
     <formatter-maven-plugin-version>2.14.0</formatter-maven-plugin-version>
@@ -433,8 +433,8 @@
     <neoscada-version>0.4.0</neoscada-version>
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
+    <netty-bom-version>4.1.65.Final</netty-bom-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-    <netty-version>4.1.65.Final</netty-version>
     <netty3-version>3.10.6.Final</netty3-version>
     <networknt-json-schema-validator-version>1.0.52</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
