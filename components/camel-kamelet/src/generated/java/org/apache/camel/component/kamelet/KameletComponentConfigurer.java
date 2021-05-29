@@ -26,8 +26,11 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
         case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "kameletresourceloaderlistener":
+        case "kameletResourceLoaderListener": target.setKameletResourceLoaderListener(property(camelContext, org.apache.camel.component.kamelet.KameletResourceLoaderListener.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "location": target.setLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "routeproperties":
         case "routeProperties": target.setRouteProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "templateproperties":
@@ -45,8 +48,11 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
         case "block": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "kameletresourceloaderlistener":
+        case "kameletResourceLoaderListener": return org.apache.camel.component.kamelet.KameletResourceLoaderListener.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "location": return java.lang.String.class;
         case "routeproperties":
         case "routeProperties": return java.util.Map.class;
         case "templateproperties":
@@ -65,8 +71,11 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
         case "block": return target.isBlock();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "kameletresourceloaderlistener":
+        case "kameletResourceLoaderListener": return target.getKameletResourceLoaderListener();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "location": return target.getLocation();
         case "routeproperties":
         case "routeProperties": return target.getRouteProperties();
         case "templateproperties":

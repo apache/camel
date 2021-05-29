@@ -23,6 +23,14 @@ public class MyInjectBar {
     @PropertyInject("{{bar}}")
     private String bar;
 
+    public String getBar() {
+        return bar;
+    }
+
+    public void setBar(String bar) {
+        this.bar = bar;
+    }
+
     public String where(String name) {
         return "Hi " + name + " we are going to " + bar;
     }

@@ -50,6 +50,10 @@ public class JacksonDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "timezone": dataformat.setTimezone(property(camelContext, java.util.TimeZone.class, value)); return true;
         case "autodiscoverobjectmapper":
         case "autoDiscoverObjectMapper": dataformat.setAutoDiscoverObjectMapper(property(camelContext, boolean.class, value)); return true;
+        case "schemaresolver":
+        case "schemaResolver": dataformat.setSchemaResolver(property(camelContext, org.apache.camel.component.jackson.SchemaResolver.class, value)); return true;
+        case "autodiscoverschemaresolver":
+        case "autoDiscoverSchemaResolver": dataformat.setAutoDiscoverSchemaResolver(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

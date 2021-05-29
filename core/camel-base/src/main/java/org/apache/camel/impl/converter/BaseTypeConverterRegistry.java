@@ -91,6 +91,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         try {
             // scan the class for @Converter and load them into this registry
             TypeConvertersLoader loader = new TypeConvertersLoader(typeConverters);
+            CamelContextAware.trySetCamelContext(loader, getCamelContext());
             loader.load(this);
         } catch (TypeConverterLoaderException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -100,12 +101,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     @Override
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         super.addFallbackTypeConverter(typeConverter, canPromote);
-        if (typeConverter instanceof CamelContextAware) {
-            CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
-            if (camelContext != null) {
-                camelContextAware.setCamelContext(camelContext);
-            }
-        }
+        CamelContextAware.trySetCamelContext(typeConverter, camelContext);
     }
 
     private void addCoreFallbackTypeConverterToList(
@@ -117,12 +113,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         converters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
 
-        if (typeConverter instanceof CamelContextAware) {
-            CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
-            if (camelContext != null) {
-                camelContextAware.setCamelContext(camelContext);
-            }
-        }
+        CamelContextAware.trySetCamelContext(typeConverter, camelContext);
     }
 
     @Override
@@ -163,8 +154,10 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
                 throw new ClassNotFoundException(name);
             }
             Object obj = getInjector().newInstance(clazz, false);
+            CamelContextAware.trySetCamelContext(obj, getCamelContext());
             if (obj instanceof TypeConverterLoader) {
                 TypeConverterLoader loader = (TypeConverterLoader) obj;
+                CamelContextAware.trySetCamelContext(loader, getCamelContext());
                 LOG.debug("TypeConverterLoader: {} loading converters", name);
                 loader.load(this);
             }
@@ -216,8 +209,9 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
      * Checks if the registry is loaded and if not lazily load it
      */
     protected void loadTypeConverters() throws Exception {
-        for (TypeConverterLoader typeConverterLoader : getTypeConverterLoaders()) {
-            typeConverterLoader.load(this);
+        for (TypeConverterLoader loader : getTypeConverterLoaders()) {
+            CamelContextAware.trySetCamelContext(loader, getCamelContext());
+            loader.load(this);
         }
 
         // lets try load any other fallback converters

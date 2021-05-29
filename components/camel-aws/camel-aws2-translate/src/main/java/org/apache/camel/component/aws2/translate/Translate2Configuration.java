@@ -62,6 +62,8 @@ public class Translate2Configuration implements Cloneable {
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
+    @UriParam(defaultValue = "false")
+    private boolean useDefaultCredentialsProvider;
 
     public TranslateClient getTranslateClient() {
         return translateClient;
@@ -230,6 +232,17 @@ public class Translate2Configuration implements Cloneable {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 
+    /**
+     * Set whether the Translate client should expect to load credentials through a default credentials provider or to
+     * expect static credentials to be passed in.
+     */
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
+    }
     // *************************************************
     //
     // *************************************************

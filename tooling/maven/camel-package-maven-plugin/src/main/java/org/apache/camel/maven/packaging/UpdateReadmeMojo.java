@@ -17,8 +17,11 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,8 +35,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.tooling.model.AnnotationModel;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -52,6 +57,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
+import org.jboss.forge.roaster.model.source.AnnotationElementSource;
+import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
@@ -109,6 +120,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
      */
     @Parameter
     protected Boolean failFast;
+
+    protected List<Path> sourceRoots;
 
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
@@ -236,7 +249,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
         // only if there is components we should update the documentation files
         if (!jsonFiles.isEmpty()) {
-            getLog().debug("Found " + jsonFiles.size() + "miscellaneous components");
+            getLog().debug("Found " + jsonFiles.size() + " miscellaneous components");
             for (File jsonFile : jsonFiles) {
                 final String kind = "other";
                 String json = loadJsonFrom(jsonFile, kind);
@@ -329,6 +342,12 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     String options = evaluateTemplate("dataformat-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
+
+                    // optional annotation processings
+                    // for now it's only applied to bindy but can be unlocked for other dataformats if needed
+                    if ("bindy".equals(dataFormatName)) {
+                        updated |= updateAnnotationsIn(file);
+                    }
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -800,6 +819,59 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         }
     }
 
+    private boolean updateAnnotationsIn(final File file) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = PackageHelper.loadText(file);
+            String updated = updateAnnotationRecursivelyIn(text);
+            if (text.equals(updated)) {
+                return false;
+            }
+            PackageHelper.writeText(file, updated);
+            return true;
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
+    private String updateAnnotationRecursivelyIn(String text) throws MojoExecutionException {
+        String annotationInterface = Strings.between(text, "// annotation interface:", "// annotation options: START");
+        if (annotationInterface == null) {
+            return text;
+        }
+        annotationInterface = annotationInterface.trim();
+
+        Class<?> annotation = loadClass(annotationInterface);
+        if (!annotation.isAnnotation()) {
+            throw new MojoExecutionException("Interface " + annotationInterface + " is not an annotation");
+        }
+        getLog().debug("Processing annotation " + annotationInterface);
+        AnnotationModel model = generateAnnotationModel(annotation);
+        String options = evaluateTemplate("annotation-options.mvel", model);
+        String updated = options.trim();
+
+        String existing = Strings.between(text, "// annotation options: START", "// annotation options: END");
+        if (existing == null) {
+            return text;
+        }
+        // remove leading line breaks etc
+        existing = existing.trim();
+
+        String after = Strings.after(text, "// annotation options: END");
+        // process subsequent annotations
+        String afterUpdated = updateAnnotationRecursivelyIn(after);
+
+        if (existing.equals(updated) && Objects.equals(after, afterUpdated)) {
+            return text;
+        }
+
+        String before = Strings.before(text, "// annotation options: START");
+        return before + "// annotation options: START\n" + updated + "\n// annotation options: END" + afterUpdated;
+    }
+
     private static String loadJsonFrom(Set<File> jsonFiles, String kind, String name) {
         for (File file : jsonFiles) {
             if (file.getName().equals(name + PackageHelper.JSON_SUFIX)) {
@@ -915,6 +987,92 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             option.setDescription(desc);
         });
         return model;
+    }
+
+    private AnnotationModel generateAnnotationModel(Class<?> annotation) {
+        String source = loadJavaSource(annotation.getName());
+        JavaAnnotationSource annotationSource = parseAnnotationSource(source);
+
+        AnnotationModel model = new AnnotationModel();
+        for (Method method : annotation.getDeclaredMethods()) {
+            AnnotationModel.AnnotationOptionModel option = new AnnotationModel.AnnotationOptionModel();
+            option.setName(method.getName());
+            option.setType(method.getReturnType().getSimpleName());
+            if (method.getDefaultValue() != null) {
+                option.setOptional(true);
+                option.setDefaultValue(method.getDefaultValue().toString());
+            }
+
+            String javadoc = findJavaDoc(source, annotationSource, method);
+            if (!Strings.isNullOrEmpty(javadoc)) {
+                option.setDescription(javadoc.trim());
+            }
+
+            model.addOption(option);
+        }
+        return model;
+    }
+
+    private String loadJavaSource(String className) {
+        try {
+            Path file = getSourceRoots().stream()
+                    .map(d -> d.resolve(className.replace('.', '/') + ".java"))
+                    .filter(Files::isRegularFile)
+                    .findFirst()
+                    .orElse(null);
+
+            if (file == null) {
+                throw new FileNotFoundException("Unable to find source for " + className);
+            }
+            return PackageHelper.loadText(file);
+        } catch (IOException e) {
+            String classpath;
+            try {
+                classpath = project.getCompileClasspathElements().toString();
+            } catch (Exception e2) {
+                classpath = e2.toString();
+            }
+            throw new RuntimeException(
+                    "Unable to load source for class " + className + " in folders " + getSourceRoots()
+                                       + " (classpath: " + classpath + ")");
+        }
+    }
+
+    private JavaAnnotationSource parseAnnotationSource(String source) {
+        return Roaster.parse(JavaAnnotationSource.class, source);
+    }
+
+    private List<Path> getSourceRoots() {
+        if (sourceRoots == null) {
+            sourceRoots = project.getCompileSourceRoots().stream()
+                    .map(Paths::get)
+                    .collect(Collectors.toList());
+        }
+        return sourceRoots;
+    }
+
+    private String findJavaDoc(String source, JavaAnnotationSource annotationSource, Method method) {
+        AnnotationElementSource element = annotationSource.getAnnotationElement(method.getName());
+        if (element == null) {
+            return null;
+        }
+        return getJavaDocText(source, element);
+    }
+
+    static String getJavaDocText(String source, AnnotationElementSource member) {
+        if (member == null) {
+            return null;
+        }
+        AnnotationTypeMemberDeclaration decl = (AnnotationTypeMemberDeclaration) member.getInternal();
+        Javadoc jd = decl.getJavadoc();
+        if (source == null || jd.tags().isEmpty()) {
+            return null;
+        }
+        ASTNode n = (ASTNode) jd.tags().get(0);
+        String txt = source.substring(n.getStartPosition(), n.getStartPosition() + n.getLength());
+        return txt
+                .replaceAll(" *\n *\\* *\n", "\n\n")
+                .replaceAll(" *\n *\\* +", "\n");
     }
 
     private static String evaluateTemplate(final String templateName, final Object model) throws MojoExecutionException {

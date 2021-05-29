@@ -17,7 +17,10 @@
 package org.apache.camel.component.mongodb.integration;
 
 import java.util.Formatter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -62,7 +65,9 @@ public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
         super.doPreSetup();
 
         mongo = MongoClients.create(service.getReplicaSetUrl());
+        //    mongo = MongoClients.create("mongodb://admin:password@localhost:27017");
         db = mongo.getDatabase(dbName);
+        //    createAuthorizationUser();
     }
 
     @Override
@@ -110,23 +115,14 @@ public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
         MongoDatabase admin = mongo.getDatabase("admin");
         MongoCollection<Document> usersCollection = admin.getCollection("system.users");
         if (usersCollection.countDocuments() == 0) {
-            usersCollection.insertOne(Document.parse("{\n"
-                                                     + "    \"_id\": \"admin.test-user\",\n"
-                                                     + "    \"user\": \"test-user\",\n"
-                                                     + "    \"db\": \"admin\",\n"
-                                                     + "    \"credentials\": {\n"
-                                                     + "        \"SCRAM-SHA-1\": {\n"
-                                                     + "            \"iterationCount\": 10000,\n"
-                                                     + "            \"salt\": \"gmmPAoNdvFSWCV6PGnNcAw==\",\n"
-                                                     + "            \"storedKey\": \"qE9u1Ax7Y40hisNHL2b8/LAvG7s=\",\n"
-                                                     + "            \"serverKey\": \"RefeJcxClt9JbOP/VnrQ7YeQh6w=\"\n"
-                                                     + "        }\n" + "    },\n"
-                                                     + "    \"roles\": [\n" + "        {\n"
-                                                     + "            \"role\": \"readWrite\",\n"
-                                                     + "            \"db\": \"test\"\n"
-                                                     + "        }\n"
-                                                     + "    ]\n"
-                                                     + "}"));
+
+            Map<String, Object> commandArguments = new LinkedHashMap<>();
+            commandArguments.put("createUser", USER);
+            commandArguments.put("pwd", PASSWORD);
+            String[] roles = { "readWrite" };
+            commandArguments.put("roles", roles);
+            BasicDBObject command = new BasicDBObject(commandArguments);
+            admin.runCommand(command);
         }
     }
 

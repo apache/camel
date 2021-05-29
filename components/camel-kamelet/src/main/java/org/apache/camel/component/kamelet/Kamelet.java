@@ -42,6 +42,7 @@ public final class Kamelet {
     public static final String SINK_ID = "sink";
     public static final String PARAM_ROUTE_ID = "routeId";
     public static final String PARAM_TEMPLATE_ID = "templateId";
+    public static final String DEFAULT_LOCATION = "classpath:/kamelets";
 
     // use a running counter as uuid
     private static final UuidGenerator UUID = new SimpleUuidGenerator();

@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Predicate;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -94,7 +95,14 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         boolean shouldSkip = skip;
 
         // if then interceptor had a when predicate, then we should only skip if it matched
-        Boolean whenMatches = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+        Boolean whenMatches;
+        if (endpoint.getAfter() != null) {
+            // only get the property as after also needs to check this property
+            whenMatches = (Boolean) exchange.getProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+        } else {
+            // remove property as its not longer needed
+            whenMatches = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+        }
         if (whenMatches != null) {
             shouldSkip = skip && whenMatches;
         }
@@ -142,12 +150,18 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
                     return callback(exchange, callback, true);
                 }
             };
+            // only execute the after if the intercept when predicate matches
+            Predicate predicate = exchange -> {
+                Boolean whenMatches
+                        = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+                return whenMatches == null || whenMatches;
+            };
             AsyncProcessor after = null;
             if (endpoint.getAfter() != null) {
                 after = AsyncProcessorConverterHelper.convert(endpoint.getAfter());
             }
-
-            pipeline = new Pipeline(getEndpoint().getCamelContext(), Arrays.asList(before, ascb, after));
+            FilterProcessor filter = new FilterProcessor(getEndpoint().getCamelContext(), predicate, after);
+            pipeline = new Pipeline(getEndpoint().getCamelContext(), Arrays.asList(before, ascb, filter));
         }
 
         ServiceHelper.buildService(producer, pipeline);

@@ -23,18 +23,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.10.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-netty-http</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Netty HTTP</name>
     <description>Camel Netty HTTP support</description>
-
-    <properties>
-        <camel.surefire.parallel>true</camel.surefire.parallel>
-        <io.netty.leakDetection.level>DISABLED</io.netty.leakDetection.level>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -44,8 +39,39 @@
 
         <dependency>
             <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-unix-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
             <artifactId>netty-codec-http</artifactId>
-            <version>${netty-version}</version>
         </dependency>
 
         <dependency>
@@ -159,25 +185,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <io.netty.leakDetection.level>${io.netty.leakDetection.level}</io.netty.leakDetection.level>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>leaks</id>
-            <properties>
-                <camel.surefire.parallel>false</camel.surefire.parallel>
-                <io.netty.leakDetection.level>PARANOID</io.netty.leakDetection.level>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>

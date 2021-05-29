@@ -22,7 +22,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.10.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -73,6 +73,7 @@
         <module>camel-test-infra-mosquitto</module>
         <module>camel-test-infra-activemq</module>
         <module>camel-test-infra-chatscript</module>
+        <module>camel-test-infra-openldap</module>
     </modules>
 
     <build>

@@ -116,9 +116,7 @@ public class MarshalProcessor extends AsyncProcessorSupport implements Traceable
     @Override
     protected void doStart() throws Exception {
         // inject CamelContext on data format
-        if (dataFormat instanceof CamelContextAware) {
-            ((CamelContextAware) dataFormat).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(dataFormat, camelContext);
         // add dataFormat as service which will also start the service
         // (false => we handle the lifecycle of the dataFormat)
         getCamelContext().addService(dataFormat, false, true);

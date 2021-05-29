@@ -52,9 +52,10 @@ public class IAM2Component extends DefaultComponent {
         IAM2Configuration configuration = this.configuration != null ? this.configuration.copy() : new IAM2Configuration();
         IAM2Endpoint endpoint = new IAM2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (configuration.getIamClient() == null
+        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getIamClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("Amazon IAM client or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException(
+                    "seDefaultCredentialsProvider is set to false, Amazon IAM client or accessKey and secretKey must be specified");
         }
 
         return endpoint;

@@ -248,6 +248,24 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the EKS client should expect to load credentials through
+         * a default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2EksComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -332,6 +350,7 @@ public interface Aws2EksComponentBuilderFactory {
             case "region": getOrCreateConfiguration((EKS2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((EKS2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((EKS2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((EKS2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((EKS2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((EKS2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((EKS2Component) component).setSecretKey((java.lang.String) value); return true;

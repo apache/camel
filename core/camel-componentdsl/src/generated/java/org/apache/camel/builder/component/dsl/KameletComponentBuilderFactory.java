@@ -51,6 +51,22 @@ public interface KameletComponentBuilderFactory {
             extends
                 ComponentBuilder<KameletComponent> {
         /**
+         * The location(s) of the Kamelets on the file system. Multiple
+         * locations can be set separated by comma.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: classpath:/kamelets
+         * Group: common
+         * 
+         * @param location the value to set
+         * @return the dsl builder
+         */
+        default KameletComponentBuilder location(java.lang.String location) {
+            doSetProperty("location", location);
+            return this;
+        }
+        /**
          * Set route local parameters.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
@@ -181,6 +197,23 @@ public interface KameletComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * To plugin a custom listener for when the Kamelet component is loading
+         * Kamelets from external resources.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kamelet.KameletResourceLoaderListener&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param kameletResourceLoaderListener the value to set
+         * @return the dsl builder
+         */
+        default KameletComponentBuilder kameletResourceLoaderListener(
+                org.apache.camel.component.kamelet.KameletResourceLoaderListener kameletResourceLoaderListener) {
+            doSetProperty("kameletResourceLoaderListener", kameletResourceLoaderListener);
+            return this;
+        }
     }
 
     class KameletComponentBuilderImpl
@@ -198,6 +231,7 @@ public interface KameletComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "location": ((KameletComponent) component).setLocation((java.lang.String) value); return true;
             case "routeProperties": ((KameletComponent) component).setRouteProperties((java.util.Map) value); return true;
             case "templateProperties": ((KameletComponent) component).setTemplateProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((KameletComponent) component).setBridgeErrorHandler((boolean) value); return true;
@@ -205,6 +239,7 @@ public interface KameletComponentBuilderFactory {
             case "lazyStartProducer": ((KameletComponent) component).setLazyStartProducer((boolean) value); return true;
             case "timeout": ((KameletComponent) component).setTimeout((long) value); return true;
             case "autowiredEnabled": ((KameletComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "kameletResourceLoaderListener": ((KameletComponent) component).setKameletResourceLoaderListener((org.apache.camel.component.kamelet.KameletResourceLoaderListener) value); return true;
             default: return false;
             }
         }

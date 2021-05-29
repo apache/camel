@@ -540,9 +540,7 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     public void addPropertiesSource(PropertiesSource propertiesSource) {
-        if (propertiesSource instanceof CamelContextAware) {
-            ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(propertiesSource, getCamelContext());
         synchronized (lock) {
             sources.add(propertiesSource);
             if (!isNew()) {

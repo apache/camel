@@ -600,11 +600,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
-     * Azure Cosmos DB is Microsofts globally distributed, multi-model database
-     * service for operational and analytics workloads. It offers
-     * multi-mastering feature by automatically scaling throughput, compute, and
-     * storage. This component interacts with Azure CosmosDB through Azure SQL
-     * API
+     * To read and write records to the CosmosDB database on Azure cloud
+     * platform.
      * 
      * Category: cloud,database
      * Since: 3.10
@@ -2539,6 +2536,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.KameletComponentBuilderFactory.KameletComponentBuilder kamelet() {
         return org.apache.camel.builder.component.dsl.KameletComponentBuilderFactory.kamelet();
+    }
+    /**
+     * Kamelet Reify (camel-kamelet-reify)
+     * To call Kamelets (indirectly)
+     * 
+     * Category: core
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-kamelet-reify
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KameletReifyComponentBuilderFactory.KameletReifyComponentBuilder kameletReify() {
+        return org.apache.camel.builder.component.dsl.KameletReifyComponentBuilderFactory.kameletReify();
     }
     /**
      * Kubernetes ConfigMap (camel-kubernetes)

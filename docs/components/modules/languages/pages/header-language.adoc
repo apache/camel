@@ -30,13 +30,30 @@ The Header language supports 1 options, which are listed below.
 
 == Example usage
 
+== Example usage
+
 The recipientList element of the Spring DSL can utilize a header
 expression like:
+
+[source,xml]
+----
+      <route>
+        <from uri="direct:a" />
+        <recipientList>
+          <header>myHeader</header>
+        </recipientList>
+      </route>
+----
 
 In this case, the list of recipients are contained in the header
 'myHeader'.
 
 And the same example in Java DSL:
+
+[source,java]
+----
+from("direct:a").recipientList(header("myHeader"));
+----
 
 And with a slightly different syntax where you use the builder to the
 fullest (i.e. avoid using parameters but using stacked operations,

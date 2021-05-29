@@ -155,9 +155,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         this.nextProcessor = nextProcessor;
 
         // init CamelContextAware as early as possible on nextProcessor
-        if (nextProcessor instanceof CamelContextAware) {
-            ((CamelContextAware) nextProcessor).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(nextProcessor, camelContext);
 
         // the definition to wrap should be the fine grained,
         // so if a child is set then use it, if not then its the original output used

@@ -87,6 +87,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlElement(name = "securityDefinitions") // use the name swagger uses
     private RestSecuritiesDefinition securityDefinitions;
 
+    @XmlElement(name = "securityRequirements") // use the name swagger/OpenAPI uses
+    private RestSecuritiesRequirement securityRequirements;
+
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
 
@@ -172,6 +175,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public void setSecurityDefinitions(RestSecuritiesDefinition securityDefinitions) {
         this.securityDefinitions = securityDefinitions;
+    }
+
+    public RestSecuritiesRequirement getSecurityRequirements() {
+        return securityRequirements;
+    }
+
+    /**
+     * Sets the security requirement(s) for all endpoints.
+     */
+    public void setSecurityRequirements(RestSecuritiesRequirement securityRequirements) {
+        this.securityRequirements = securityRequirements;
     }
 
     /**
@@ -562,14 +576,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public RestDefinition security(String key, String scopes) {
         // add to last verb
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            if (securityRequirements == null) {
+                securityRequirements = new RestSecuritiesRequirement();
+            }
+            securityRequirements.securityRequirement(key, scopes);
+        } else {
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            SecurityDefinition sd = new SecurityDefinition();
+            sd.setKey(key);
+            sd.setScopes(scopes);
+            verb.getSecurity().add(sd);
         }
 
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        SecurityDefinition sd = new SecurityDefinition();
-        sd.setKey(key);
-        sd.setScopes(scopes);
-        verb.getSecurity().add(sd);
         return this;
     }
 

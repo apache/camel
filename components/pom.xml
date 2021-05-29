@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.10.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -181,6 +181,8 @@
         <module>camel-irc</module>
         <module>camel-ironmq</module>
         <module>camel-jackson</module>
+        <module>camel-jackson-avro</module>
+        <module>camel-jackson-protobuf</module>
         <module>camel-jacksonxml</module>
         <module>camel-jasypt</module>
         <module>camel-jaxb</module>
@@ -212,6 +214,7 @@
         <module>camel-jta</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
+        <module>camel-kamelet-reify</module>
         <module>camel-kubernetes</module>
         <module>camel-kudu</module>
         <module>camel-ldap</module>
@@ -269,6 +272,7 @@
         <module>camel-reactor</module>
         <module>camel-redis</module>
         <module>camel-resilience4j</module>
+        <module>camel-resourceresolver-github</module>
         <module>camel-resteasy</module>
         <module>camel-rest-swagger</module>
         <module>camel-rest-openapi</module>

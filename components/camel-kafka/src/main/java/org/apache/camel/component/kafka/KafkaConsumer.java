@@ -234,6 +234,10 @@ public class KafkaConsumer extends DefaultConsumer {
 
                 first = false;
 
+                if (!isRunAllowed() || isStoppingOrStopped() || isSuspendingOrSuspended()) {
+                    return;
+                }
+
                 // doRun keeps running until we either shutdown or is told to re-connect
                 doRun(reTry, reConnect);
             }

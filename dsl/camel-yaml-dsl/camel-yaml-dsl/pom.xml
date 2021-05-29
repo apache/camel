@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-dsl-parent</artifactId>
-        <version>3.10.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-yaml-dsl</artifactId>
@@ -132,6 +132,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-kamelet</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-groovy</artifactId>
             <scope>test</scope>
         </dependency>
 

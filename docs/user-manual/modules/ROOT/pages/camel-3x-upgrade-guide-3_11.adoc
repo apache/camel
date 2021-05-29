@@ -1,0 +1,12 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.10 to 3.11
+
+=== camel-saxon
+
+The camel-saxon component no longer depends on camel-xslt-saxon.
+Any applications in needs of XSLT transformation with saxon should now declare an explicit dependency upon camel-xslt-saxon.

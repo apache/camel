@@ -34,6 +34,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -41,6 +42,10 @@ import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.IOUtils;
 
 @Dataformat("protobuf")
+@Metadata(excludeProperties = "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType," +
+                              "collectionTypeName,collectionType,useList,moduleClassNames,moduleRefs,enableFeatures," +
+                              "disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
+                              "schemaResolver,autoDiscoverSchemaResolver,unmarshalTypeName")
 public class ProtobufDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

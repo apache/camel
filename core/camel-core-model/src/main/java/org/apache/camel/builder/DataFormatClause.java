@@ -29,6 +29,7 @@ import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.Any23Type;
 import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.AvroLibrary;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
@@ -51,6 +52,7 @@ import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
+import org.apache.camel.model.dataformat.ProtobufLibrary;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
@@ -119,6 +121,43 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
     public T avro(String instanceClassName) {
         return dataFormat(new AvroDataFormat(instanceClassName));
+    }
+
+    /**
+     * Uses Avro data format with library
+     */
+    public T avro(AvroLibrary library) {
+        return dataFormat(new AvroDataFormat(library));
+    }
+
+    /**
+     * Uses the Avro data format with given unmarshalType
+     */
+    public T avro(Class<?> unmarshalType) {
+        AvroDataFormat avroDataFormat = new AvroDataFormat();
+        avroDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(avroDataFormat);
+    }
+
+    /**
+     * Uses the Avro data format with given library and unmarshalType
+     */
+    public T avro(AvroLibrary library, Class<?> unmarshalType) {
+        AvroDataFormat avroDataFormat = new AvroDataFormat();
+        avroDataFormat.setLibrary(library);
+        avroDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(avroDataFormat);
+    }
+
+    /**
+     * Uses the Avro data format with given library, unmarshalType and schemaResolver
+     */
+    public T avro(AvroLibrary library, Class<?> unmarshalType, String schemaResolver) {
+        AvroDataFormat avroDataFormat = new AvroDataFormat();
+        avroDataFormat.setLibrary(library);
+        avroDataFormat.setUnmarshalType(unmarshalType);
+        avroDataFormat.setSchemaResolver(schemaResolver);
+        return dataFormat(avroDataFormat);
     }
 
     /**
@@ -726,6 +765,34 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
     public T protobuf(String instanceClassName, String contentTypeFormat) {
         return dataFormat(new ProtobufDataFormat(instanceClassName, contentTypeFormat));
+    }
+
+    /**
+     * Uses the Protobuf data format with given library
+     */
+    public T protobuf(ProtobufLibrary library) {
+        return dataFormat(new ProtobufDataFormat(library));
+    }
+
+    /**
+     * Uses the Protobuf data format with given library and unmarshalType
+     */
+    public T protobuf(ProtobufLibrary library, Class<?> unmarshalType) {
+        ProtobufDataFormat protobufDataFormat = new ProtobufDataFormat();
+        protobufDataFormat.setLibrary(library);
+        protobufDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(protobufDataFormat);
+    }
+
+    /**
+     * Uses the Protobuf data format with given library, unmarshalType and schemaResolver
+     */
+    public T protobuf(ProtobufLibrary library, Class<?> unmarshalType, String schemaResolver) {
+        ProtobufDataFormat protobufDataFormat = new ProtobufDataFormat();
+        protobufDataFormat.setLibrary(library);
+        protobufDataFormat.setUnmarshalType(unmarshalType);
+        protobufDataFormat.setSchemaResolver(schemaResolver);
+        return dataFormat(protobufDataFormat);
     }
 
     /**

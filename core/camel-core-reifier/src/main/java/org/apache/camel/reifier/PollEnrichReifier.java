@@ -92,10 +92,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
             }
         }
 
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
-
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
         return strategy;
     }
 

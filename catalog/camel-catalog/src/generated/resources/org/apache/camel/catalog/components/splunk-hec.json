@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-splunk-hec",
-    "version": "3.10.0-SNAPSHOT",
+    "version": "3.11.0-SNAPSHOT",
     "scheme": "splunk-hec",
     "extendsScheme": "",
     "syntax": "splunk-hec:splunkURL\/token",
@@ -35,6 +35,7 @@
     "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
     "source": { "kind": "parameter", "displayName": "Source", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "camel", "configurationClass": "org.apache.camel.component.splunkhec.SplunkHECConfiguration", "configurationField": "configuration", "description": "Splunk source argument" },
     "sourceType": { "kind": "parameter", "displayName": "Source Type", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "camel", "configurationClass": "org.apache.camel.component.splunkhec.SplunkHECConfiguration", "configurationField": "configuration", "description": "Splunk sourcetype argument" },
+    "time": { "kind": "parameter", "displayName": "Time", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.splunkhec.SplunkHECConfiguration", "configurationField": "configuration", "description": "Time this even occurred. By default, the time will be when this event hits the splunk server." },
     "https": { "kind": "parameter", "displayName": "Https", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "configurationClass": "org.apache.camel.component.splunkhec.SplunkHECConfiguration", "configurationField": "configuration", "description": "Contact HEC over https." },
     "skipTlsVerify": { "kind": "parameter", "displayName": "Skip Tls Verify", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.splunkhec.SplunkHECConfiguration", "configurationField": "configuration", "description": "Splunk HEC TLS verification." }
   }

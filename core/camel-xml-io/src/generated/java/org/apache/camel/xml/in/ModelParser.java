@@ -998,6 +998,7 @@ public class ModelParser extends BaseParser {
                 case "post": doAdd(doParsePostVerbDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "put": doAdd(doParsePutVerbDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "securityDefinitions": def.setSecurityDefinitions(doParseRestSecuritiesDefinition()); break;
+                case "securityRequirements": def.setSecurityRequirements(doParseRestSecuritiesRequirement()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
             return true;
@@ -1025,10 +1026,22 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "beanType": def.setBeanType(val); break;
                 case "name": def.setName(val); break;
+                case "type": def.setType(val); break;
                 default: return false;
             }
             return true;
-        }, noElementHandler(), noValueHandler());
+        }, (def, key) -> {
+            switch (key) {
+                case "property": doAdd(doParsePropertyDefinition(), def.getProperties(), def::setProperties); break;
+                case "script": def.setScript(doParseRouteTemplateScriptDefinition()); break;
+                default: return false;
+            }
+            return true;
+        }, noValueHandler());
+    }
+    protected RouteTemplateScriptDefinition doParseRouteTemplateScriptDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplateScriptDefinition(),
+            noAttributeHandler(), noElementHandler(), (def, val) -> def.setScript(val));
     }
     protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> {
@@ -1057,6 +1070,7 @@ public class ModelParser extends BaseParser {
                 case "defaultValue": def.setDefaultValue(val); break;
                 case "description": def.setDescription(val); break;
                 case "name": def.setName(val); break;
+                case "required": def.setRequired(Boolean.valueOf(val)); break;
                 default: return false;
             }
             return true;
@@ -1732,11 +1746,30 @@ public class ModelParser extends BaseParser {
     }
     protected AvroDataFormat doParseAvroDataFormat() throws IOException, XmlPullParserException {
         return doParse(new AvroDataFormat(), (def, key, val) -> {
-            if ("instanceClassName".equals(key)) {
-                def.setInstanceClassName(val);
-                return true;
+            switch (key) {
+                case "allowJmsType": def.setAllowJmsType(val); break;
+                case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
+                case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
+                case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
+                case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
+                case "disableFeatures": def.setDisableFeatures(val); break;
+                case "enableFeatures": def.setEnableFeatures(val); break;
+                case "include": def.setInclude(val); break;
+                case "instanceClassName": def.setInstanceClassName(val); break;
+                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
+                case "library": def.setLibrary(AvroLibrary.valueOf(val)); break;
+                case "moduleClassNames": def.setModuleClassNames(val); break;
+                case "moduleRefs": def.setModuleRefs(val); break;
+                case "objectMapper": def.setObjectMapper(val); break;
+                case "schemaResolver": def.setSchemaResolver(val); break;
+                case "timezone": def.setTimezone(val); break;
+                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
+                case "useList": def.setUseList(val); break;
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
-            return identifiedTypeAttributeHandler().accept(def, key, val);
+            return true;
         }, noElementHandler(), noValueHandler());
     }
     protected BarcodeDataFormat doParseBarcodeDataFormat() throws IOException, XmlPullParserException {
@@ -2032,6 +2065,7 @@ public class ModelParser extends BaseParser {
                 case "allowJmsType": def.setAllowJmsType(val); break;
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
+                case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
                 case "collectionTypeName": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
@@ -2045,6 +2079,7 @@ public class ModelParser extends BaseParser {
                 case "objectMapper": def.setObjectMapper(val); break;
                 case "permissions": def.setPermissions(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
+                case "schemaResolver": def.setSchemaResolver(val); break;
                 case "timezone": def.setTimezone(val); break;
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
@@ -2101,9 +2136,27 @@ public class ModelParser extends BaseParser {
     protected ProtobufDataFormat doParseProtobufDataFormat() throws IOException, XmlPullParserException {
         return doParse(new ProtobufDataFormat(), (def, key, val) -> {
             switch (key) {
+                case "allowJmsType": def.setAllowJmsType(val); break;
+                case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
+                case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
+                case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
+                case "collectionTypeName": def.setCollectionTypeName(val); break;
                 case "contentTypeFormat": def.setContentTypeFormat(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
+                case "disableFeatures": def.setDisableFeatures(val); break;
+                case "enableFeatures": def.setEnableFeatures(val); break;
+                case "include": def.setInclude(val); break;
                 case "instanceClass": def.setInstanceClass(val); break;
+                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
+                case "library": def.setLibrary(ProtobufLibrary.valueOf(val)); break;
+                case "moduleClassNames": def.setModuleClassNames(val); break;
+                case "moduleRefs": def.setModuleRefs(val); break;
+                case "objectMapper": def.setObjectMapper(val); break;
+                case "schemaResolver": def.setSchemaResolver(val); break;
+                case "timezone": def.setTimezone(val); break;
+                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
+                case "useList": def.setUseList(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -2742,10 +2795,23 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "apiKey": doAdd(doParseRestSecurityApiKey(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
                 case "basicAuth": doAdd(doParseRestSecurityBasicAuth(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
+                case "bearer": doAdd(doParseRestSecurityBearerToken(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
                 case "oauth2": doAdd(doParseRestSecurityOAuth2(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
+                case "openIdConnect": doAdd(doParseRestSecurityOpenIdConnect(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
+                case "mutualTLS": doAdd(doParseRestSecurityMutualTLS(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
                 default: return false;
             }
             return true;
+        }, noValueHandler());
+    }
+    protected RestSecuritiesRequirement doParseRestSecuritiesRequirement() throws IOException, XmlPullParserException {
+        return doParse(new RestSecuritiesRequirement(),
+            noAttributeHandler(), (def, key) -> {
+            if ("securityRequirement".equals(key)) {
+                doAdd(doParseSecurityDefinition(), def.getSecurityRequirements(), def::setSecurityRequirements);
+                return true;
+            }
+            return false;
         }, noValueHandler());
     }
     protected RestOperationResponseHeaderDefinition doParseRestOperationResponseHeaderDefinition() throws IOException, XmlPullParserException {
@@ -2782,6 +2848,7 @@ public class ModelParser extends BaseParser {
     protected RestSecurityApiKey doParseRestSecurityApiKey() throws IOException, XmlPullParserException {
         return doParse(new RestSecurityApiKey(), (def, key, val) -> {
             switch (key) {
+                case "inCookie": def.setInCookie(val); break;
                 case "inHeader": def.setInHeader(val); break;
                 case "inQuery": def.setInQuery(val); break;
                 case "name": def.setName(val); break;
@@ -2794,11 +2861,25 @@ public class ModelParser extends BaseParser {
         return doParse(new RestSecurityBasicAuth(),
             restSecurityDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
     }
+    protected RestSecurityBearerToken doParseRestSecurityBearerToken() throws IOException, XmlPullParserException {
+        return doParse(new RestSecurityBearerToken(), (def, key, val) -> {
+            if ("format".equals(key)) {
+                def.setFormat(val);
+                return true;
+            }
+            return restSecurityDefinitionAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), noValueHandler());
+    }
+    protected RestSecurityMutualTLS doParseRestSecurityMutualTLS() throws IOException, XmlPullParserException {
+        return doParse(new RestSecurityMutualTLS(),
+            restSecurityDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+    }
     protected RestSecurityOAuth2 doParseRestSecurityOAuth2() throws IOException, XmlPullParserException {
         return doParse(new RestSecurityOAuth2(), (def, key, val) -> {
             switch (key) {
                 case "authorizationUrl": def.setAuthorizationUrl(val); break;
                 case "flow": def.setFlow(val); break;
+                case "refreshUrl": def.setRefreshUrl(val); break;
                 case "tokenUrl": def.setTokenUrl(val); break;
                 default: return restSecurityDefinitionAttributeHandler().accept(def, key, val);
             }
@@ -2810,6 +2891,15 @@ public class ModelParser extends BaseParser {
             }
             return false;
         }, noValueHandler());
+    }
+    protected RestSecurityOpenIdConnect doParseRestSecurityOpenIdConnect() throws IOException, XmlPullParserException {
+        return doParse(new RestSecurityOpenIdConnect(), (def, key, val) -> {
+            if ("url".equals(key)) {
+                def.setUrl(val);
+                return true;
+            }
+            return restSecurityDefinitionAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), noValueHandler());
     }
     public Optional<RestsDefinition> parseRestsDefinition()
             throws IOException, XmlPullParserException {

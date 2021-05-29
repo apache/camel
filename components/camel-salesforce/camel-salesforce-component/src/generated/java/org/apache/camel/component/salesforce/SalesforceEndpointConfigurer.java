@@ -89,8 +89,16 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "pkChunkingStartRow": target.getConfiguration().setPkChunkingStartRow(property(camelContext, java.lang.String.class, value)); return true;
         case "querylocator":
         case "queryLocator": target.getConfiguration().setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": target.getConfiguration().setRawHttpHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawmethod":
+        case "rawMethod": target.getConfiguration().setRawMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawpath":
+        case "rawPath": target.getConfiguration().setRawPath(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
         case "rawPayload": target.getConfiguration().setRawPayload(property(camelContext, boolean.class, value)); return true;
+        case "rawqueryparameters":
+        case "rawQueryParameters": target.getConfiguration().setRawQueryParameters(property(camelContext, java.lang.String.class, value)); return true;
         case "replayid":
         case "replayId": target.setReplayId(property(camelContext, java.lang.Long.class, value)); return true;
         case "reportid":
@@ -194,8 +202,16 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "pkChunkingStartRow": return java.lang.String.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return java.lang.String.class;
+        case "rawmethod":
+        case "rawMethod": return java.lang.String.class;
+        case "rawpath":
+        case "rawPath": return java.lang.String.class;
         case "rawpayload":
         case "rawPayload": return boolean.class;
+        case "rawqueryparameters":
+        case "rawQueryParameters": return java.lang.String.class;
         case "replayid":
         case "replayId": return java.lang.Long.class;
         case "reportid":
@@ -300,8 +316,16 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "pkChunkingStartRow": return target.getConfiguration().getPkChunkingStartRow();
         case "querylocator":
         case "queryLocator": return target.getConfiguration().getQueryLocator();
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return target.getConfiguration().getRawHttpHeaders();
+        case "rawmethod":
+        case "rawMethod": return target.getConfiguration().getRawMethod();
+        case "rawpath":
+        case "rawPath": return target.getConfiguration().getRawPath();
         case "rawpayload":
         case "rawPayload": return target.getConfiguration().isRawPayload();
+        case "rawqueryparameters":
+        case "rawQueryParameters": return target.getConfiguration().getRawQueryParameters();
         case "replayid":
         case "replayId": return target.getReplayId();
         case "reportid":

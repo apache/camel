@@ -28,7 +28,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>3.10.0-SNAPSHOT</version>
+    <version>3.11.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -283,15 +283,12 @@
                             <exclude>**/*.bat</exclude>
                             <exclude>**/java9-maven-settings</exclude>
                             <exclude>**/*.pfx</exclude>
-                            <!-- tooling json-simple parser -->
-                            <exclude>**/src/main/java/org/json/simple/**</exclude>
-                            <!-- tooling/camel-manual/src/styles/print.css use a different license -->
-                            <exclude>**/src/styles/print.css</exclude>
                             <!-- tooling for component docs -->
                             <exclude>**/component-header.mvel</exclude>
                             <exclude>**/component-options.mvel</exclude>
                             <exclude>**/endpoint-options.mvel</exclude>
                             <exclude>**/dataformat-options.mvel</exclude>
+                            <exclude>**/annotation-options.mvel</exclude>
                             <exclude>**/eip-options.mvel</exclude>
                             <exclude>**/language-options.mvel</exclude>
                             <exclude>**/main-options.mvel</exclude>
@@ -300,9 +297,7 @@
                             <exclude>**/website-others-list.mvel</exclude>
                             <exclude>**/website-dataformats-list.mvel</exclude>
                             <exclude>**/readme-examples.mvel</exclude>
-                            <exclude>**/spring-boot-auto-configure-options.mvel</exclude>
                             <exclude>**/camel-NOTICE.txt</exclude>
-                            <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
                             <!-- cxf does not handle comments here -->
                             <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
                             <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
@@ -321,11 +316,9 @@
                             <exclude>**/node_modules/**</exclude>
                             <exclude>**/user-manual/**</exclude>
                             <exclude>**/yarn.lock</exclude>
-                            <!-- examples -->
-                            <exclude>**/fabric8/*.yaml</exclude>
-                            <exclude>**/src/main/data/*.patient</exclude>
-                            <exclude>**/src/main/data/*.csv</exclude>
-                            <exclude>**/src/main/resources/avro/*.avsc</exclude>
+                            <exclude>**/docs/**/*</exclude>
+                            <exclude>**/yarn-berry.cjs</exclude>
+                            <exclude>**/build-state.yml</exclude>
                             <!-- generated files -->
                             <exclude>**/target/**/*</exclude>
                             <exclude>**/eclipse-classes/**/*</exclude>
@@ -345,9 +338,7 @@
                             <exclude>**/file-sig-api.txt</exclude>
                             <exclude>**/Tasks__c.java</exclude>
                             <exclude>**/*.proto</exclude>
-                            <exclude>
-                                **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
-                            </exclude>
+                            <exclude>**/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension</exclude>
                             <exclude>**/META-INF/MANIFEST.MF</exclude>
                             <exclude>**/openapi.yaml</exclude>
                             <exclude>**/ignite/work/**/*</exclude>
@@ -381,7 +372,7 @@
                         <preparationGoals>clean install</preparationGoals>
                         <goals>deploy</goals>
                         <!-- The profile we want to use when doing the release -->
-                        <arguments>-Prelease,apache-release,enable-schemagen,sourcecheck,hibernate</arguments>
+                        <arguments>-Prelease,apache-release,sourcecheck,hibernate</arguments>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
@@ -793,6 +784,13 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipITs>true</skipITs>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

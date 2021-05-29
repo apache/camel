@@ -16,10 +16,8 @@
  */
 package org.apache.camel.support;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceResolver;
 import org.apache.camel.support.service.ServiceSupport;
@@ -31,13 +29,13 @@ import org.slf4j.LoggerFactory;
  * Base class for {@link ResourceResolver} implementations.
  */
 public abstract class ResourceResolverSupport extends ServiceSupport implements ResourceResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceResolverSupport.class);
-
     private final String scheme;
+    private final Logger logger;
     private CamelContext camelContext;
 
     protected ResourceResolverSupport(String scheme) {
         this.scheme = scheme;
+        this.logger = LoggerFactory.getLogger(getClass());
     }
 
     public String getSupportedScheme() {
@@ -60,24 +58,25 @@ public abstract class ResourceResolverSupport extends ServiceSupport implements 
             throw new IllegalArgumentException("Unsupported scheme: " + location);
         }
 
-        return createResource(location);
-    }
-
-    protected abstract Resource createResource(String location);
-
-    protected String tryDecodeUri(String uri) {
-        try {
-            // try to decode as the uri may contain %20 for spaces etc
-            uri = URLDecoder.decode(uri, StandardCharsets.UTF_8.name());
-        } catch (Exception e) {
-            LOGGER.trace("Error URL decoding uri using UTF-8 encoding: {}. This exception is ignored.", uri);
-            // ignore
+        String context = StringHelper.after(location, ":");
+        if (context == null) {
+            throw new IllegalArgumentException("No context path provided: " + location);
         }
 
-        return uri;
+        if (context.contains(PropertiesComponent.PREFIX_TOKEN) && context.contains(PropertiesComponent.SUFFIX_TOKEN)) {
+            context = camelContext.getPropertiesComponent().parseUri(context);
+        }
+
+        return createResource(location, context);
     }
+
+    protected abstract Resource createResource(String location, String remaining);
 
     protected String getRemaining(String location) {
         return StringHelper.after(location, getSupportedScheme() + ":");
+    }
+
+    protected Logger getLogger() {
+        return this.logger;
     }
 }

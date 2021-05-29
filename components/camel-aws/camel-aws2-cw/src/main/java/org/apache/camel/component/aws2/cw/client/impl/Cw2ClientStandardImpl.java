@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
 /**
- * Manage an AWS Athena client for all users to use. This implementation is for local instances to use a static and
+ * Manage an AWS Cloud Watch client for all users to use. This implementation is for local instances to use a static and
  * solid credential set.
  */
 public class Cw2ClientStandardImpl implements Cw2InternalClient {
@@ -51,9 +51,9 @@ public class Cw2ClientStandardImpl implements Cw2InternalClient {
     }
 
     /**
-     * Getting the Athena AWS client that is used.
+     * Getting the Cloud Watch AWS client that is used.
      * 
-     * @return Amazon Athena Client.
+     * @return Amazon Cloud Watch Client.
      */
     @Override
     public CloudWatchClient getCloudWatchClient() {

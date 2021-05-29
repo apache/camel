@@ -1,15 +1,13 @@
 [[Debugger-Debugger]]
 = Debugger
 
-*Since Camel 2.6*
-
 Camel Debugger is much related to
 Tracer, in fact they are sisters. Debugger is a
 enhanced tracer with a debugger framework so that tooling can be
 developed to easily monitor Camel routes, trace messages and set
 breakpoints at points in a route etc.
 
-TIP:There is also a BacklogDebugger which allows
+TIP: There is also a BacklogDebugger which allows
 to debug from JMX, and 3rd party tooling.
 
 [[Debugger-AbouttheDebugger]]
@@ -96,7 +94,7 @@ routing. The `ProcessorDefinition` and the `id` and `shortName`
 parameters is all information which tells you where in the route the
 breakpoint was hit. 
 
-TIP:There is also a `debugAfter` method which is invoked after the processor
+TIP: There is also a `debugAfter` method which is invoked after the processor
 has been invoked. This allows you to _see_ what happens to the
 Exchange right after it has invoked a processor in
 the route.

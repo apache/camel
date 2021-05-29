@@ -39,10 +39,8 @@ public class BeanResourceResolver extends ResourceResolverSupport {
     }
 
     @Override
-    public Resource createResource(String location) {
-        final String expression = getRemaining(location);
-
-        LOGGER.trace("Creating resource from expression {}", expression);
+    public Resource createResource(String location, String remaining) {
+        LOGGER.trace("Creating resource from expression {}", remaining);
 
         return new Resource() {
             @Override
@@ -61,7 +59,7 @@ public class BeanResourceResolver extends ResourceResolverSupport {
                 final Exchange dummy = new DefaultExchange(context);
 
                 InputStream answer = null;
-                Object out = evaluate(dummy, expression);
+                Object out = evaluate(dummy, remaining);
 
                 if (dummy.getException() != null) {
                     throw new IOException(

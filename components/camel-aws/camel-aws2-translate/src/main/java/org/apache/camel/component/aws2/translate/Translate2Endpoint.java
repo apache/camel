@@ -16,27 +16,17 @@
  */
 package org.apache.camel.component.aws2.translate;
 
-import java.net.URI;
-
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws2.translate.client.Translate2ClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.http.apache.ProxyConfiguration;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.translate.TranslateClient;
-import software.amazon.awssdk.services.translate.TranslateClientBuilder;
-import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Translate texts using AWS Translate and AWS SDK version 2.x.
@@ -70,7 +60,9 @@ public class Translate2Endpoint extends ScheduledPollEndpoint {
         super.doStart();
 
         translateClient
-                = configuration.getTranslateClient() != null ? configuration.getTranslateClient() : createTranslateClient();
+                = configuration.getTranslateClient() != null
+                        ? configuration.getTranslateClient()
+                        : Translate2ClientFactory.getTranslateClient(configuration).getTranslateClient();
     }
 
     @Override
@@ -89,51 +81,5 @@ public class Translate2Endpoint extends ScheduledPollEndpoint {
 
     public TranslateClient getTranslateClient() {
         return translateClient;
-    }
-
-    TranslateClient createTranslateClient() {
-        TranslateClient client = null;
-        TranslateClientBuilder clientBuilder = TranslateClient.builder();
-        ProxyConfiguration.Builder proxyConfig = null;
-        ApacheHttpClient.Builder httpClientBuilder = null;
-        boolean isClientConfigFound = false;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
-            proxyConfig.endpoint(proxyEndpoint);
-            httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
-            isClientConfigFound = true;
-        }
-        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-            if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
-                        .credentialsProvider(StaticCredentialsProvider.create(cred));
-            } else {
-                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
-            }
-        } else {
-            if (!isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
-            }
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
-        }
-        if (configuration.isOverrideEndpoint()) {
-            clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
-        }
-        if (configuration.isTrustAllCertificates()) {
-            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
-                    .builder()
-                    .put(
-                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE)
-                    .build());
-            clientBuilder.httpClient(ahc);
-        }
-        client = clientBuilder.build();
-        return client;
     }
 }

@@ -25,46 +25,42 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.ResourceResolver;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ResourceResolverSupport;
+import org.apache.camel.support.ResourceSupport;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class DefaultResourceResolvers {
     private DefaultResourceResolvers() {
     }
 
+    /**
+     * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from a file.
+     */
     @ResourceResolver(FileResolver.SCHEME)
     public static class FileResolver extends ResourceResolverSupport {
         public static final String SCHEME = "file";
-        private static final Logger LOGGER = LoggerFactory.getLogger(FileResolver.class);
 
         public FileResolver() {
             super(SCHEME);
         }
 
         @Override
-        public Resource createResource(String location) {
-            final String remaining = getRemaining(location);
+        public Resource createResource(String location, String remaining) {
             final Path path = Paths.get(tryDecodeUri(remaining));
 
-            LOGGER.trace("Creating resource: {} from file system", path);
-
-            return new Resource() {
-                @Override
-                public String getLocation() {
-                    return location;
-                }
-
+            return new ResourceSupport(location) {
                 @Override
                 public boolean exists() {
                     return Files.exists(path);
@@ -78,44 +74,44 @@ public final class DefaultResourceResolvers {
                 @Override
                 public InputStream getInputStream() throws IOException {
                     if (!exists()) {
-                        throw new FileNotFoundException(path.toString() + " does not exists");
+                        throw new FileNotFoundException(path + " does not exists");
                     }
                     if (Files.isDirectory(path)) {
-                        throw new FileNotFoundException(path.toString() + " is a directory");
+                        throw new FileNotFoundException(path + " is a directory");
                     }
 
                     return Files.newInputStream(path);
                 }
-
-                @Override
-                public String toString() {
-                    return "Resource{" +
-                           "location=" + getLocation() +
-                           '}';
-                }
             };
+        }
+
+        protected String tryDecodeUri(String uri) {
+            try {
+                // try to decode as the uri may contain %20 for spaces etc
+                uri = URLDecoder.decode(uri, StandardCharsets.UTF_8.name());
+            } catch (Exception e) {
+                getLogger().trace("Error URL decoding uri using UTF-8 encoding: {}. This exception is ignored.", uri);
+                // ignore
+            }
+
+            return uri;
         }
     }
 
+    /**
+     * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from http.
+     */
     @ResourceResolver(HttpResolver.SCHEME)
     public static class HttpResolver extends ResourceResolverSupport {
         public static final String SCHEME = "http";
-        private static final Logger LOGGER = LoggerFactory.getLogger(HttpResolver.class);
 
         public HttpResolver() {
             super(SCHEME);
         }
 
         @Override
-        public Resource createResource(String location) {
-            LOGGER.trace("Creating resource: {} from HTTP", location);
-
-            return new Resource() {
-                @Override
-                public String getLocation() {
-                    return location;
-                }
-
+        public Resource createResource(String location, String remaining) {
+            return new ResourceSupport(location) {
                 @Override
                 public boolean exists() {
                     URLConnection connection = null;
@@ -155,38 +151,26 @@ public final class DefaultResourceResolvers {
                         throw e;
                     }
                 }
-
-                @Override
-                public String toString() {
-                    return "Resource{" +
-                           "location=" + getLocation() +
-                           '}';
-                }
             };
         }
     }
 
+    /**
+     * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from the classpath.
+     */
     @ResourceResolver(ClasspathResolver.SCHEME)
     public static class ClasspathResolver extends ResourceResolverSupport {
         public static final String SCHEME = "classpath";
-        private static final Logger LOGGER = LoggerFactory.getLogger(ClasspathResolver.class);
 
         public ClasspathResolver() {
             super(SCHEME);
         }
 
         @Override
-        public Resource createResource(String location) {
-            final String path = getPath(location);
+        public Resource createResource(String location, String remaining) {
+            final String path = getPath(remaining);
 
-            LOGGER.trace("Creating resource: {} from classpath", path);
-
-            return new Resource() {
-                @Override
-                public String getLocation() {
-                    return location;
-                }
-
+            return new ResourceSupport(location) {
                 @Override
                 public boolean exists() {
                     return getURI() != null;
@@ -214,47 +198,44 @@ public final class DefaultResourceResolvers {
                             .getClassResolver()
                             .loadResourceAsStream(path);
                 }
-
-                @Override
-                public String toString() {
-                    return "Resource{" +
-                           "location=" + getLocation() +
-                           '}';
-                }
             };
         }
 
         private String getPath(String location) {
-            String uri = StringHelper.after(location, "classpath:");
-            uri = tryDecodeUri(uri);
-            uri = FileUtil.compactPath(uri, '/');
+            String uri = tryDecodeUri(location);
+            return FileUtil.compactPath(uri, '/');
+        }
+
+        protected String tryDecodeUri(String uri) {
+            try {
+                // try to decode as the uri may contain %20 for spaces etc
+                uri = URLDecoder.decode(uri, StandardCharsets.UTF_8.name());
+            } catch (Exception e) {
+                getLogger().trace("Error URL decoding uri using UTF-8 encoding: {}. This exception is ignored.", uri);
+                // ignore
+            }
 
             return uri;
         }
     }
 
+    /**
+     * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from a bean in the registry of
+     * type String.
+     */
     @ResourceResolver(RefResolver.SCHEME)
     public static class RefResolver extends ResourceResolverSupport {
         public static final String SCHEME = "ref";
-        private static final Logger LOGGER = LoggerFactory.getLogger(RefResolver.class);
 
         public RefResolver() {
             super(SCHEME);
         }
 
         @Override
-        public Resource createResource(String location) {
-            final String key = getRemaining(location);
-            final String val = CamelContextHelper.lookup(getCamelContext(), key, String.class);
+        public Resource createResource(String location, String remaining) {
+            final String val = CamelContextHelper.lookup(getCamelContext(), remaining, String.class);
 
-            LOGGER.trace("Creating resource: {} from registry", key);
-
-            return new Resource() {
-                @Override
-                public String getLocation() {
-                    return location;
-                }
-
+            return new ResourceSupport(location) {
                 @Override
                 public boolean exists() {
                     return val != null;
@@ -263,17 +244,110 @@ public final class DefaultResourceResolvers {
                 @Override
                 public InputStream getInputStream() throws IOException {
                     if (!exists()) {
-                        throw new IOException("There is no bean in the registry with name " + key + "and type String");
+                        throw new IOException("There is no bean in the registry with name " + remaining + "and type String");
                     }
 
                     return new ByteArrayInputStream(val.getBytes());
                 }
+            };
+        }
+    }
+
+    /**
+     * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from a base64 encoded string.
+     */
+    @ResourceResolver(Base64Resolver.SCHEME)
+    public static class Base64Resolver extends ResourceResolverSupport {
+        public static final String SCHEME = "base64";
+
+        public Base64Resolver() {
+            super(SCHEME);
+        }
+
+        @Override
+        public Resource createResource(String location, String remaining) {
+            return new ResourceSupport(location) {
+                @Override
+                public boolean exists() {
+                    return remaining != null;
+                }
 
                 @Override
-                public String toString() {
-                    return "Resource{" +
-                           "location=" + getLocation() +
-                           '}';
+                public InputStream getInputStream() throws IOException {
+                    if (!exists()) {
+                        throw new IOException("No base64 content defined");
+                    }
+
+                    final byte[] decoded = Base64.getDecoder().decode(remaining);
+                    final InputStream is = new ByteArrayInputStream(decoded);
+
+                    return is;
+                }
+            };
+        }
+    }
+
+    /**
+     * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from a gzip+base64 encoded
+     * string.
+     */
+    @ResourceResolver(GzipResolver.SCHEME)
+    public static class GzipResolver extends ResourceResolverSupport {
+        public static final String SCHEME = "gzip";
+
+        public GzipResolver() {
+            super(SCHEME);
+        }
+
+        @Override
+        public Resource createResource(String location, String remaining) {
+            return new ResourceSupport(location) {
+                @Override
+                public boolean exists() {
+                    return remaining != null;
+                }
+
+                @Override
+                public InputStream getInputStream() throws IOException {
+                    if (!exists()) {
+                        throw new IOException("No gzip content defined");
+                    }
+
+                    final byte[] decoded = Base64.getDecoder().decode(remaining);
+                    final InputStream is = new ByteArrayInputStream(decoded);
+
+                    return new GZIPInputStream(is);
+                }
+            };
+        }
+    }
+
+    /**
+     * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from a string.
+     */
+    @ResourceResolver(MemResolver.SCHEME)
+    public static class MemResolver extends ResourceResolverSupport {
+        public static final String SCHEME = "mem";
+
+        public MemResolver() {
+            super(SCHEME);
+        }
+
+        @Override
+        public Resource createResource(String location, String remaining) {
+            return new ResourceSupport(location) {
+                @Override
+                public boolean exists() {
+                    return remaining != null;
+                }
+
+                @Override
+                public InputStream getInputStream() throws IOException {
+                    if (!exists()) {
+                        throw new IOException("No memory content defined");
+                    }
+
+                    return new ByteArrayInputStream(remaining.getBytes());
                 }
             };
         }

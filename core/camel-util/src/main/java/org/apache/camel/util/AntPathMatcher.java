@@ -401,6 +401,9 @@ public class AntPathMatcher {
      * does <strong>not</strong> enforce this.
      */
     public String extractPathWithinPattern(String pattern, String path) {
+        if (path == null) {
+            return null;
+        }
         String[] patternParts = tokenizeToStringArray(pattern, this.pathSeparator);
         String[] pathParts = tokenizeToStringArray(path, this.pathSeparator);
 

@@ -43,6 +43,10 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String inQuery;
 
+    @XmlAttribute(name = "inCookie")
+    @Metadata(javaType = "java.lang.Boolean")
+    private String inCookie;
+
     public RestSecurityApiKey() {
     }
 
@@ -83,10 +87,22 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
         this.inQuery = inQuery;
     }
 
+    public String getInCookie() {
+        return inCookie;
+    }
+
+    /**
+     * To use a cookie as the location of the API key.
+     */
+    public void setInCookie(String inCookie) {
+        this.inCookie = inCookie;
+    }
+
     public RestSecurityApiKey withHeader(String name) {
         setName(name);
         setInHeader(Boolean.toString(true));
         setInQuery(Boolean.toString(false));
+        setInCookie(Boolean.toString(false));
         return this;
     }
 
@@ -94,6 +110,15 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
         setName(name);
         setInQuery(Boolean.toString(true));
         setInHeader(Boolean.toString(false));
+        setInCookie(Boolean.toString(false));
+        return this;
+    }
+
+    public RestSecurityApiKey withCookie(String name) {
+        setName(name);
+        setInCookie(Boolean.toString(true));
+        setInHeader(Boolean.toString(false));
+        setInQuery(Boolean.toString(false));
         return this;
     }
 

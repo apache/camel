@@ -1878,11 +1878,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
-     * Azure Cosmos DB is Microsofts globally distributed, multi-model database
-     * service for operational and analytics workloads. It offers
-     * multi-mastering feature by automatically scaling throughput, compute, and
-     * storage. This component interacts with Azure CosmosDB through Azure SQL
-     * API
+     * To read and write records to the CosmosDB database on Azure cloud
+     * platform.
      * 
      * Category: cloud,database
      * Since: 3.10
@@ -1909,11 +1906,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
-     * Azure Cosmos DB is Microsofts globally distributed, multi-model database
-     * service for operational and analytics workloads. It offers
-     * multi-mastering feature by automatically scaling throughput, compute, and
-     * storage. This component interacts with Azure CosmosDB through Azure SQL
-     * API
+     * To read and write records to the CosmosDB database on Azure cloud
+     * platform.
      * 
      * Category: cloud,database
      * Since: 3.10
@@ -8647,6 +8641,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Kamelet Reify (camel-kamelet-reify)
+     * To call Kamelets (indirectly)
+     * 
+     * Category: core
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-kamelet-reify
+     * 
+     * Syntax: <code>kamelet-reify:delegateUri</code>
+     * 
+     * Path parameter: delegateUri (required)
+     * The delegated uri
+     * 
+     * @param path delegateUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.KameletReifyEndpointBuilder kameletReify(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.endpointBuilder("kamelet-reify", path);
+    }
+    /**
+     * Kamelet Reify (camel-kamelet-reify)
+     * To call Kamelets (indirectly)
+     * 
+     * Category: core
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-kamelet-reify
+     * 
+     * Syntax: <code>kamelet-reify:delegateUri</code>
+     * 
+     * Path parameter: delegateUri (required)
+     * The delegated uri
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path delegateUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.KameletReifyEndpointBuilder kameletReify(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
@@ -12559,7 +12596,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName
      * The operation to use
-     * There are 64 enums and the value can be one of: getVersions,
+     * There are 65 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
@@ -12576,7 +12613,7 @@ public class StaticEndpointBuilders {
      * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
      * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
      * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-     * bulk2DeleteQueryJob
+     * bulk2DeleteQueryJob, raw
      * 
      * Path parameter: topicName
      * The name of the topic/channel to use
@@ -12600,7 +12637,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName
      * The operation to use
-     * There are 64 enums and the value can be one of: getVersions,
+     * There are 65 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
@@ -12617,7 +12654,7 @@ public class StaticEndpointBuilders {
      * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
      * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
      * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-     * bulk2DeleteQueryJob
+     * bulk2DeleteQueryJob, raw
      * 
      * Path parameter: topicName
      * The name of the topic/channel to use
