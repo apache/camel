@@ -21,7 +21,6 @@ import javax.xml.xpath.XPathFactory;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
@@ -75,20 +74,6 @@ public class XPathTest extends CamelTestSupport {
         // END SNIPPET: e1
     }
 
-    @Disabled("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
-    @Test
-    public void testXPathFunctionTokenizeUsingObjectModel() throws Exception {
-        // START SNIPPET: e2
-        // create a builder to evaluate the xpath using saxon based on its object model uri
-        XPathBuilder builder
-                = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]").objectModel("http://saxon.sf.net/jaxp/xpath/om");
-
-        // evaluate as a String result
-        String result = builder.evaluate(context, "<foo><bar>abc_def_ghi</bar></foo>");
-        assertEquals("def", result);
-        // END SNIPPET: e2
-    }
-
     @Test
     public void testXPathFunctionTokenizeUsingSaxon() throws Exception {
         // START SNIPPET: e3
@@ -101,19 +86,4 @@ public class XPathTest extends CamelTestSupport {
         // END SNIPPET: e3
     }
 
-    @Test
-    public void testXPathFunctionTokenizeUsingSystemProperty() throws Exception {
-        // START SNIPPET: e4
-        // set system property with the XPath factory to use which is Saxon 
-        System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://saxon.sf.net/jaxp/xpath/om",
-                "net.sf.saxon.xpath.XPathFactoryImpl");
-
-        // create a builder to evaluate the xpath using saxon
-        XPathBuilder builder = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]");
-
-        // evaluate as a String result
-        String result = builder.evaluate(context, "<foo><bar>abc_def_ghi</bar></foo>");
-        assertEquals("def", result);
-        // END SNIPPET: e4
-    }
 }
