@@ -292,6 +292,10 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         template.send("direct:start", exchange);
         solrCommit();
 
+        // reset request handler (previously Map-based insert request didn't respect
+        // requesthandler that was explicitly set on endpoint (was using '/update' even
+        // when '/update/csv' was set on endpoint))
+        solrEndpoint.setRequestHandler(null);
         // 0553579908,book,A Clash of Kings,7.99,true,George R.R. Martin,"A Song of Ice and Fire",2,fantasy
         Exchange exchange1 = createExchangeWithBody(null);
         Map<String, String> map = new HashMap<>();
