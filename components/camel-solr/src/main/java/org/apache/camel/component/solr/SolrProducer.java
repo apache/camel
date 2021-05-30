@@ -256,6 +256,7 @@ public class SolrProducer extends DefaultProducer {
                         bodyAsString = "<add>" + bodyAsString + "</add>";
                     }
                     DirectXmlRequest xmlRequest = new DirectXmlRequest(getRequestHandler(solrConfiguration), bodyAsString);
+                    xmlRequest.setParams(solrParams);
                     xmlRequest.setBasicAuthCredentials(solrConfiguration.getUsername(), solrConfiguration.getPassword());
                     xmlRequest.process(solrClient, solrCollection);
                 } else if (body instanceof Map) {
