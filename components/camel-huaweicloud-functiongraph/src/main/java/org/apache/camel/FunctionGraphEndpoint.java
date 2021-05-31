@@ -1,0 +1,244 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel;
+
+import com.huaweicloud.sdk.functiongraph.v2.FunctionGraphClient;
+import org.apache.camel.Category;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.models.ServiceKeys;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+
+import java.util.concurrent.ExecutorService;
+
+/**
+ * Huawei Cloud component to integrate with FunctionGraph services
+ */
+@UriEndpoint(firstVersion = "3.11.0-SNAPSHOT", scheme = "hwcloud-functiongraph", title = "FunctionGraph", syntax="hwcloud-functiongraph:operation",
+             category = {Category.CLOUD, Category.SERVERLESS}, producerOnly = true)
+public class FunctionGraphEndpoint extends DefaultEndpoint {
+
+    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
+    @Metadata(required = true)
+    private String operation;
+
+    @UriParam(description = "FunctionGraph service region. This is lower precedence than endpoint based configuration",
+            displayName = "Service region", secret = false)
+    @Metadata(required = true)
+    private String region;
+
+    @UriParam(description = "Cloud project ID", displayName = "Project ID", secret = false)
+    @Metadata(required = true)
+    private String projectId;
+
+    @UriParam(description = "Functions that can be logically grouped together",
+            displayName = "Function package", secret = false)
+    @Metadata(required = false)
+    private String functionPackage;
+
+    @UriParam(description = "Name of the function to invoke",
+            displayName = "Function name", secret = false)
+    @Metadata(required = false)
+    private String functionName;
+
+    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", secret = false)
+    @Metadata(required = false)
+    private String proxyHost;
+
+    @UriParam(description = "Proxy server port", displayName = "Proxy server port", secret = false)
+    @Metadata(required = false)
+    private int proxyPort;
+
+    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", secret = true)
+    @Metadata(required = false)
+    private String proxyUser;
+
+    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true)
+    @Metadata(required = false)
+    private String proxyPassword;
+
+    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
+            defaultValue = "false")
+    @Metadata(required = false)
+    private boolean ignoreSslVerification;
+
+    @UriParam(description = "FunctionGraph url. Carries higher precedence than region parameter based client initialization",
+            displayName = "Service endpoint", secret = false)
+    @Metadata(required = false)
+    private String endpoint;
+
+    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
+            secret = true)
+    @Metadata(required = false)
+    private ServiceKeys serviceKeys;
+
+    @UriParam(description = "Authentication key for the cloud user", displayName = "API authentication key (AK)", secret = true)
+    @Metadata(required = true)
+    private String authenticationKey;
+
+    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true)
+    @Metadata(required = true)
+    private String secretKey;
+
+    private FunctionGraphClient functionGraphClient;
+
+    public FunctionGraphEndpoint() {
+    }
+
+    public FunctionGraphEndpoint(String uri, String operation, FunctionGraphComponent component) {
+        super(uri, component);
+        this.operation = operation;
+    }
+
+    public Producer createProducer() throws Exception {
+        return new FunctionGraphProducer(this);
+    }
+
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getFunctionPackage() {
+        return functionPackage;
+    }
+
+    public void setFunctionPackage(String functionPackage) {
+        this.functionPackage = functionPackage;
+    }
+
+    public String getFunctionName() {
+        return functionName;
+    }
+
+    public void setFunctionName(String functionName) {
+        this.functionName = functionName;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public String getProxyUser() {
+        return proxyUser;
+    }
+
+    public void setProxyUser(String proxyUser) {
+        this.proxyUser = proxyUser;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+    }
+
+    public boolean isIgnoreSslVerification() {
+        return ignoreSslVerification;
+    }
+
+    public void setIgnoreSslVerification(boolean ignoreSslVerification) {
+        this.ignoreSslVerification = ignoreSslVerification;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public ServiceKeys getServiceKeys() {
+        return serviceKeys;
+    }
+
+    public void setServiceKeys(ServiceKeys serviceKeys) {
+        this.serviceKeys = serviceKeys;
+    }
+
+    public String getAuthenticationKey() {
+        return authenticationKey;
+    }
+
+    public void setAuthenticationKey(String authenticationKey) {
+        this.authenticationKey = authenticationKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public FunctionGraphClient getFunctionGraphClient() {
+        return functionGraphClient;
+    }
+
+    public void setFunctionGraphClient(FunctionGraphClient functionGraphClient) {
+        this.functionGraphClient = functionGraphClient;
+    }
+
+    public ExecutorService createExecutor() {
+        // TODO: Delete me when you implemented your custom component
+        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "FunctionGraphConsumer");
+    }
+}
