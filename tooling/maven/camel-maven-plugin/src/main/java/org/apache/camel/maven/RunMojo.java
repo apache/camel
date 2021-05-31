@@ -63,9 +63,8 @@ import org.codehaus.mojo.exec.ExecutableDependency;
 import org.codehaus.mojo.exec.Property;
 
 /**
- * Runs a CamelContext using any Spring or Blueprint XML configuration files found in
- * <code>META-INF/spring/*.xml</code>, and <code>OSGI-INF/blueprint/*.xml</code>, and <code>camel-*.xml</code> and
- * starting up the context.
+ * Runs a CamelContext using any Spring configuration files found in <code>META-INF/spring/*.xml</code>, and
+ * <code>camel-*.xml</code> and starting up the context.
  */
 @Mojo(name = "run", defaultPhase = LifecyclePhase.PREPARE_PACKAGE,
       requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
@@ -112,12 +111,6 @@ public class RunMojo extends AbstractExecMojo {
      */
     @Parameter(property = "camel.logClasspath", defaultValue = "false")
     protected boolean logClasspath;
-
-    /**
-     * Whether to use Blueprint when running, instead of Spring
-     */
-    @Parameter(property = "camel.useBlueprint")
-    protected Boolean useBlueprint;
 
     /**
      * Whether to use CDI when running, instead of Spring
@@ -325,14 +318,6 @@ public class RunMojo extends AbstractExecMojo {
             // auto detect if we have cdi
             useCdiMain = detectCDIOnClassPath();
         }
-        boolean usingBlueprintMain;
-        if (useBlueprint != null) {
-            // use configured value
-            usingBlueprintMain = useBlueprint;
-        } else {
-            // auto detect if we have blueprint
-            usingBlueprintMain = detectBlueprintOnClassPathOrBlueprintXMLFiles();
-        }
         boolean usingKameletMain;
         if (useKamelet != null) {
             // use configured value
@@ -395,20 +380,6 @@ public class RunMojo extends AbstractExecMojo {
             // must include plugin dependencies for cdi
             extraPluginDependencyArtifactId = "camel-cdi";
             getLog().info("Using " + mainClass + " to initiate a CamelContext");
-        } else if (usingBlueprintMain) {
-            mainClass = "org.apache.camel.blueprint.Main";
-            // set the configAdmin pid
-            if (configAdminPid != null) {
-                args.add("-pid");
-                args.add(configAdminPid);
-            }
-            // set the configAdmin pFile
-            if (configAdminFileName != null) {
-                args.add("-pf");
-                args.add(configAdminFileName);
-            }
-            extraPluginDependencyArtifactId = "camel-blueprint-main";
-            getLog().info("Using org.apache.camel.blueprint.Main to initiate a CamelContext");
         } else if (usingKameletMain) {
             mainClass = "org.apache.camel.main.KameletMain";
             // must include plugin dependencies for kamelet
@@ -442,10 +413,6 @@ public class RunMojo extends AbstractExecMojo {
         final ClassLoader loader = getClassLoader();
         IsolatedThreadGroup threadGroup = new IsolatedThreadGroup(mainClass /* name */);
 
-        if (usingBlueprintMain && !detectBlueprintMainOnClassPath()) {
-            throw new MojoFailureException(
-                    "Cannot run OSGi Blueprint Main because camel-blueprint-main JAR is not available on classpath");
-        }
         if (usingKameletMain && !detectKameletOnClassPath()) {
             throw new MojoFailureException(
                     "Cannot run Kamelet Main because camel-kamelet-main JAR is not available on classpath");
@@ -687,30 +654,6 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean detectBlueprintOnClassPathOrBlueprintXMLFiles() {
-        List<Dependency> deps = project.getCompileDependencies();
-        for (Dependency dep : deps) {
-            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-blueprint".equals(dep.getArtifactId())) {
-                getLog().info("camel-blueprint detected on classpath");
-                return true;
-            }
-        }
-
-        // maybe there is blueprint XML files
-        List<Resource> resources = project.getResources();
-        for (Resource res : resources) {
-            File dir = new File(res.getDirectory());
-            File xml = new File(dir, "OSGI-INF/blueprint");
-            if (xml.exists() && xml.isDirectory()) {
-                getLog().info("OSGi Blueprint XML files detected in directory " + xml);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @SuppressWarnings("unchecked")
     private boolean detectKameletOnClassPath() {
         List<Dependency> deps = project.getCompileDependencies();
         for (Dependency dep : deps) {
@@ -727,18 +670,6 @@ public class RunMojo extends AbstractExecMojo {
             File kamelets = new File(dir, "kamelets");
             if (kamelets.exists() && kamelets.isDirectory()) {
                 getLog().info("Kamelets YAML files detected in directory " + kamelets);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    private boolean detectBlueprintMainOnClassPath() {
-        List<Dependency> deps = project.getCompileDependencies();
-        for (Dependency dep : deps) {
-            if ("org.apache.camel.karaf".equals(dep.getGroupId()) && "camel-blueprint-main".equals(dep.getArtifactId())) {
                 return true;
             }
         }
