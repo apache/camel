@@ -407,6 +407,7 @@ public class RunMojo extends AbstractExecMojo {
                 args.add("-pf");
                 args.add(configAdminFileName);
             }
+            extraPluginDependencyArtifactId = "camel-blueprint-main";
             getLog().info("Using org.apache.camel.blueprint.Main to initiate a CamelContext");
         } else if (usingKameletMain) {
             mainClass = "org.apache.camel.main.KameletMain";
@@ -444,6 +445,10 @@ public class RunMojo extends AbstractExecMojo {
         if (usingBlueprintMain && !detectBlueprintMainOnClassPath()) {
             throw new MojoFailureException(
                     "Cannot run OSGi Blueprint Main because camel-blueprint-main JAR is not available on classpath");
+        }
+        if (usingKameletMain && !detectKameletOnClassPath()) {
+            throw new MojoFailureException(
+                    "Cannot run Kamelet Main because camel-kamelet-main JAR is not available on classpath");
         }
 
         final Thread bootstrapThread = new Thread(threadGroup, new Runnable() {
