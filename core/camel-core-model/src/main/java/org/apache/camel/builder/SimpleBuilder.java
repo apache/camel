@@ -31,7 +31,7 @@ import org.apache.camel.spi.Language;
  */
 public class SimpleBuilder implements Predicate, Expression, ExpressionResultTypeAware {
 
-    private final String text;
+    private String text;
     private Class<?> resultType;
     // cache the expression/predicate
     private Language simple;
@@ -121,5 +121,6 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
     @Override
     public void init(CamelContext context) {
         simple = context.resolveLanguage("simple");
+        text = context.resolvePropertyPlaceholders(text);
     }
 }
