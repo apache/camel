@@ -154,7 +154,7 @@
         <docker-java-version>3.2.8</docker-java-version>
         <dozer-version>6.5.2</dozer-version>
         <dropbox-version>3.2.0</dropbox-version>
-        <debezium-version>1.5.0.Final</debezium-version>
+        <debezium-version>1.5.1.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.22</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
