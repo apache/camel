@@ -29,7 +29,8 @@ public class SecretsManagerClientFactoryTest {
     @Test
     public void getStandardSecretsManagerClientDefault() {
         SecretsManagerConfiguration secretsManagerConfiguration = new SecretsManagerConfiguration();
-        SecretsManagerInternalClient secretsManagerClient = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
+        SecretsManagerInternalClient secretsManagerClient
+                = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
         assertTrue(secretsManagerClient instanceof SecretsManagerClientStandardImpl);
     }
 
@@ -37,7 +38,8 @@ public class SecretsManagerClientFactoryTest {
     public void getStandardSecretsManagerClient() {
         SecretsManagerConfiguration secretsManagerConfiguration = new SecretsManagerConfiguration();
         secretsManagerConfiguration.setUseDefaultCredentialsProvider(false);
-        SecretsManagerInternalClient secretsManagerClient = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
+        SecretsManagerInternalClient secretsManagerClient
+                = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
         assertTrue(secretsManagerClient instanceof SecretsManagerClientStandardImpl);
     }
 
@@ -45,7 +47,8 @@ public class SecretsManagerClientFactoryTest {
     public void getSecretsManagerOptimizedIAMClient() {
         SecretsManagerConfiguration secretsManagerConfiguration = new SecretsManagerConfiguration();
         secretsManagerConfiguration.setUseDefaultCredentialsProvider(true);
-        SecretsManagerInternalClient secretsManagerClient = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
+        SecretsManagerInternalClient secretsManagerClient
+                = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerConfiguration);
         assertTrue(secretsManagerClient instanceof SecretsManagerClientIAMOptimized);
     }
 }
