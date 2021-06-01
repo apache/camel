@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.secretsmanager.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws.secretsmanager.SecretsManagerConfiguration;
 import org.apache.camel.component.aws.secretsmanager.client.SecretsManagerInternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -29,8 +31,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS Secrets Manager client for all users to use. This implementation is for remote instances to manage the
