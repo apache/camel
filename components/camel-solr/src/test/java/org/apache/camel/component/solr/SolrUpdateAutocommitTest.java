@@ -271,9 +271,10 @@ public class SolrUpdateAutocommitTest extends SolrComponentTestSupport {
         exchange.getIn().setHeader(SolrConstants.PARAM + UpdateParams.ASSUME_CONTENT_TYPE, "text/csv");
         template.send("direct:startAutoCommit", exchange);
 
-        // reset request handler (previously Map-based insert request didn't respect
-        // requesthandler that was explicitly set on endpoint (was using '/update' even
-        // when '/update/csv' was set on endpoint))
+        // Required to reset request handler:
+        // The Map-based insert request used to not respect the requesthandler that was explicitly set on the endpoint:
+        // The insert-request was always using '/update' even when '/update/csv' was set on the endpoint.
+        // This has now been changed: the explicitly set requesthandler is used.
         solrEndpoint.setRequestHandler(null);
         // 0553579908,book,A Clash of Kings,7.99,true,George R.R. Martin,"A Song of Ice and Fire",2,fantasy
         Exchange exchange1 = createExchangeWithBody(null);
