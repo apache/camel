@@ -387,15 +387,18 @@ from("file:tmp/test?fileName=test.txt")
 
 In this way you'll ask to S3, to use the KMS key 3f0637ad-296a-3dfe-a796-e60654fb128c, to encrypt the file test.txt. When you'll ask to download this file, the decryption will be done directly before the download.
 
-=== Use "useDefaultCredentialsProvider" with the s3 component and IAM
+=== Static credentials vs Default Credential Provider
 
-To use AWS Default Credentials Provider, you must first verify that the EC2 in which you are launching the Camel application on has an IAM role associated with it containing the appropriate policies attached to run effectively.
-Keep in mind that this feature should only be set to "true" on remote instances. To clarify even further, you must still use static credentials locally since IAM is an AWS specific component,
-but AWS environments should now be easier to manage. After this is implemented and understood, you can set the query parameter "useDefaultCredentialsProvider" to "true" for AWS environments! To effectively toggle this
-on and off based on local and remote environments, you can consider enabling this query parameter with system environment variables. For example, your code could set the "useDefaultCredentialsProvider" query parameter to "true",
-when the system environment variable called "isRemote" is set to true (there are many other ways to do this and this should act as a simple example). Although it doesn't take away the need for static credentials completely,
-using IAM credentials on AWS environments takes away the need to refresh on remote environments and adds a major security boost (IAM credentials are refreshed automatically every 6 hours and update when their
-policies are updated). This is the AWS recommended way to manage credentials and therefore should be used as often as possible.
+You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+
+ - Java system properties - aws.accessKeyId and aws.secretKey
+ - Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
+ - Amazon EC2 Instance profile credentials. 
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
 === S3 Producer Operation examples
 
