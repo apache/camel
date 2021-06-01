@@ -69,4 +69,27 @@ public class XmlLoadTest {
             bar.assertIsSatisfied();
         }
     }
+
+    @Test
+    public void testLoadRoutesBuilderFromXmlNoNamespace() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            // load route from XML and add them to the existing camel context
+            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            Resource resource = ecc.getResourceLoader().resolveResource(
+                    "/org/apache/camel/dsl/xml/io/bar2.xml");
+
+            ecc.getRoutesLoader().loadRoutes(resource);
+
+            assertNotNull(context.getRoute("bar2"), "Loaded bar2 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint bar = context.getEndpoint("mock:bar2", MockEndpoint.class);
+            bar.expectedBodiesReceived("Hi World");
+            context.createProducerTemplate().sendBody("direct:bar2", "Hi World");
+            bar.assertIsSatisfied();
+        }
+    }
 }

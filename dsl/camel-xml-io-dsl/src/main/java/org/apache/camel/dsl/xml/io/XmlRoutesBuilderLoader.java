@@ -43,7 +43,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // we use configure to load the routes
+                // we use configure to load the routes (with namespace and without namespace)
                 try (InputStream is = resource.getInputStream()) {
                     new ModelParser(is, NAMESPACE)
                             .parseRouteTemplatesDefinition()
@@ -56,6 +56,21 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 }
                 try (InputStream is = resource.getInputStream()) {
                     new ModelParser(is, NAMESPACE)
+                            .parseRoutesDefinition()
+                            .ifPresent(this::addRoutes);
+                }
+                try (InputStream is = resource.getInputStream()) {
+                    new ModelParser(is)
+                            .parseRouteTemplatesDefinition()
+                            .ifPresent(this::setRouteTemplateCollection);
+                }
+                try (InputStream is = resource.getInputStream()) {
+                    new ModelParser(is)
+                            .parseRestsDefinition()
+                            .ifPresent(this::setRestCollection);
+                }
+                try (InputStream is = resource.getInputStream()) {
+                    new ModelParser(is)
                             .parseRoutesDefinition()
                             .ifPresent(this::addRoutes);
                 }

@@ -79,7 +79,7 @@
         <avro-ipc-jetty-version>1.10.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
         <awaitility-version>4.1.0</awaitility-version>
-        <aws-java-sdk2-version>2.16.73</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.16.74</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.0.2</azure-sdk-bom-version>
@@ -154,7 +154,7 @@
         <docker-java-version>3.2.8</docker-java-version>
         <dozer-version>6.5.2</dozer-version>
         <dropbox-version>3.2.0</dropbox-version>
-        <debezium-version>1.5.1.Final</debezium-version>
+        <debezium-version>1.5.2.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.22</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
@@ -376,7 +376,7 @@
         <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
         <maven-checkstyle-plugin-version>3.1.2</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.40</maven-checkstyle-version>
-        <maven-owasp-plugin-version>6.1.6</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>6.2.0</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.2.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
