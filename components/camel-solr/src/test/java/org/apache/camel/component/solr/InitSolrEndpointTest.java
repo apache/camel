@@ -54,7 +54,8 @@ public class InitSolrEndpointTest extends SolrTestSupport {
 
     private String getFullOptions() {
         return "?streamingQueueSize=5&streamingThreadCount=1"
-               + "&soTimeout=100&connectionTimeout=100"
+               + "&maxRetries=1&soTimeout=100&connectionTimeout=100"
+               + "&defaultMaxConnectionsPerHost=100&maxTotalConnections=100"
                + "&followRedirects=false&allowCompression=true"
                + "&requestHandler=/update"
                + "&username=solr&password=SolrRocks";

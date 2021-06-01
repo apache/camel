@@ -43,11 +43,9 @@ public class SolrConfiguration implements Cloneable {
     private boolean useConcurrentUpdateSolrClient;
     private SolrEndpoint solrEndpoint;
 
-    @UriPath(description = "Hostname and port for the server. " +
+    @UriPath(description = "Hostname and port for the Solr server(s). " +
                            "Multiple hosts can be specified, separated with a comma. " +
-                           "The host/port can be for the solr endpoint (solrhost:solrport/solr) " +
-                           "or for the zookeeper endpoint (zkhost:zkport(optional: /chroot)). " +
-                           "See the solrClient for more information on what SolrClient is used.")
+                           "See the solrClient parameter for more information on the SolrClient used to connect to Solr.")
     @Metadata(required = true)
     private String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
@@ -58,19 +56,19 @@ public class SolrConfiguration implements Cloneable {
     private Integer soTimeout;
     @UriParam
     private Integer connectionTimeout;
-    @UriParam
+    @UriParam(label = "HttpSolrClient")
     private Boolean followRedirects;
-    @UriParam
+    @UriParam(label = "HttpSolrClient")
     private Boolean allowCompression;
-    @UriParam(label = "solrCloud")
+    @UriParam(label = "CloudSolrClient")
     private String zkHost;
-    @UriParam(label = "solrCloud")
+    @UriParam(label = "CloudSolrClient")
     private String zkChroot;
-    @UriParam(label = "solrCloud")
+    @UriParam(label = "CloudSolrClient")
     private String collection;
-    @UriParam(label = "solrClient")
+    @UriParam
     private SolrClient solrClient;
-    @UriParam(label = "httpClient")
+    @UriParam
     private HttpClient httpClient;
     @UriParam
     private String requestHandler;
@@ -80,6 +78,15 @@ public class SolrConfiguration implements Cloneable {
     private String password;
     @UriParam(defaultValue = "false")
     private boolean autoCommit;
+    @Deprecated
+    @UriParam
+    private Integer maxRetries;
+    @Deprecated
+    @UriParam
+    private Integer defaultMaxConnectionsPerHost;
+    @Deprecated
+    @UriParam
+    private Integer maxTotalConnections;
 
     public SolrConfiguration(String endpointUri, String remaining) throws Exception {
         solrScheme = SolrScheme.SOLR.getFrom(endpointUri);
@@ -101,7 +108,7 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * Set the queue size for the StreamingUpdateSolrServer
+     * Sets the queue size for the ConcurrentUpdateSolrClient
      */
     public void setStreamingQueueSize(int streamingQueueSize) {
         this.streamingQueueSize = streamingQueueSize;
@@ -112,10 +119,21 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * Set the number of threads for the StreamingUpdateSolrServer
+     * Sets the number of threads for the ConcurrentUpdateSolrClient
      */
     public void setStreamingThreadCount(int streamingThreadCount) {
         this.streamingThreadCount = streamingThreadCount;
+    }
+
+    public Integer getMaxRetries() {
+        return maxRetries;
+    }
+
+    /**
+     * Maximum number of retries to attempt in the event of transient errors
+     */
+    public void setMaxRetries(Integer maxRetries) {
+        this.maxRetries = maxRetries;
     }
 
     public Integer getSoTimeout() {
@@ -123,7 +141,7 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * Read timeout on the SolrClient
+     * Sets the socket timeout on the SolrClient
      */
     public void setSoTimeout(Integer soTimeout) {
         this.soTimeout = soTimeout;
@@ -134,10 +152,32 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * connectionTimeout on the SolrClient
+     * Sets the connection timeout on the SolrClient
      */
     public void setConnectionTimeout(Integer connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
+    }
+
+    public Integer getDefaultMaxConnectionsPerHost() {
+        return defaultMaxConnectionsPerHost;
+    }
+
+    /**
+     * maxConnectionsPerHost on the underlying HttpConnectionManager
+     */
+    public void setDefaultMaxConnectionsPerHost(Integer defaultMaxConnectionsPerHost) {
+        this.defaultMaxConnectionsPerHost = defaultMaxConnectionsPerHost;
+    }
+
+    public Integer getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    /**
+     * maxTotalConnection on the underlying HttpConnectionManager
+     */
+    public void setMaxTotalConnections(Integer maxTotalConnections) {
+        this.maxTotalConnections = maxTotalConnections;
     }
 
     public Boolean getFollowRedirects() {
@@ -145,7 +185,7 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * indicates whether redirects are used to get to the Solr server
+     * Indicates whether redirects are used to get to the Solr server
      */
     public void setFollowRedirects(Boolean followRedirects) {
         this.followRedirects = followRedirects;
@@ -168,10 +208,10 @@ public class SolrConfiguration implements Cloneable {
 
     /**
      * Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g. "zkHost=localhost:8123,localhost:8124".
-     * Optionally add the chroot, e.g. "zkHost=localhost:8123,localhost:8124/rootformysolr". When first part of the
-     * chroot path in the zkHost parameter is "solr" (e.g. "localhost:8123/solr" or "localhost:8123/solr/.."), then that
-     * path is not considered as zookeeper chroot for backward compatibility; Specify explicitly the zkChroot parameter
-     * (zkChroot=solr or zkChroot=solr/..) when this 'solr' path should be considered a zookeeper chroot anyway.
+     * Optionally add the chroot, e.g. "zkHost=localhost:8123,localhost:8124/rootformysolr". In case the first part of
+     * the chroot path in the zkHost parameter is set to 'solr' (e.g. 'localhost:8123/solr' or
+     * 'localhost:8123/solr/..'), then that path is not considered as zookeeper chroot for backward compatibility
+     * reasons (this behaviour can be overridden via zkChroot parameter).
      */
     public void setZkHost(String zkHost) {
         Optional<String> chroot = getChrootFromPath(zkHost);
@@ -186,7 +226,7 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * Set the chroot of the zookeeper connection (including the leading slash; e.g. '/mychroot')
+     * Set the chroot of the zookeeper connection (include the leading slash; e.g. '/mychroot')
      */
     public void setZkChroot(String zkChroot) {
         this.zkChroot = zkChroot;
@@ -241,7 +281,7 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * If true, each producer operation will be followed by a commit automatically
+     * If true, each producer operation will be automatically followed by a commit
      */
     public void setAutoCommit(boolean autoCommit) {
         this.autoCommit = autoCommit;
@@ -252,13 +292,13 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * Uses the provided solr client to connect to solr When this parameter is not specified, the following logic is
-     * applied to determine the SolrClient being used: - when both zkHost and collection (=default collection)
-     * parameters are set, the CloudSolrClient is used - when zkChroot (=zookeeper root) parameter is set, the
-     * CloudSolrClient is used - when multiple hosts are specified (in zkHost or in uri; separated with a comma) then
-     * the following SolrClient is used: - CloudSolrClient when the uri is solrCloud - LBHttpSolrClient when the uri is
-     * not solrCloud (solr or solrs) - when the solr operation is INSERT_STREAMING, then the ConcurrentUpdateSolrClient
-     * is used - otherwise, the HttpSolrClient is used
+     * Uses the provided solr client to connect to solr. When this parameter is not specified, camel applies the
+     * following rules to determine the SolrClient. A CloudSolrClient should point to a zookeeper endpoint. Other
+     * clients point to a Solr endpoint. 1) when zkHost or zkChroot (=zookeeper root) parameter is set, then the
+     * CloudSolrClient is used. 2) when multiple hosts are specified in the uri (separated with a comma), then the
+     * CloudSolrClient (uri scheme is 'solrCloud') or the LBHttpSolrClient (uri scheme is not 'solrCloud') is used. 3)
+     * when the solr operation is INSERT_STREAMING, then the ConcurrentUpdateSolrClient is used. 4) otherwise, the
+     * HttpSolrClient is used.
      */
     public void setSolrClient(SolrClient solrClient) {
         this.solrClient = solrClient;
@@ -269,7 +309,7 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * Uses provided http client to generate the solr client
+     * Sets the http client to be used by the solrClient
      */
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
@@ -303,9 +343,9 @@ public class SolrConfiguration implements Cloneable {
                 .map(s -> solrScheme.getScheme().concat(s))
                 .collect(Collectors.toList());
         // validate url syntax via parsing in URL instance
-        // (solrCloud requires addition of HTTP scheme to be considered a valid URL scheme
         for (String s : urlList) {
             try {
+                // solrCloud requires addition of HTTP scheme to be able to consider it as a valid URL scheme
                 new URL(
                         SolrScheme.SOLRCLOUD.equals(solrScheme) ? SolrScheme.SOLR.getScheme().concat(s) : s);
             } catch (MalformedURLException e) {
@@ -343,11 +383,10 @@ public class SolrConfiguration implements Cloneable {
         if (solrClient != null) {
             return solrClient;
         }
-        List<String> urlList = getUrlListFrom(zkHost != null ? zkHost : url);
-        // backward compatibility (CloudSolrClient only used when
-        //      zkHost and collection are not null
-        if ((zkHost != null && collection != null)
-                || (zkChroot != null && !zkChroot.isEmpty())) {
+        List<String> urlList = getUrlListFrom((zkHost != null && !zkHost.isEmpty()) ? zkHost : url);
+        // zkHost or zkChroot is set
+        if (zkHost != null
+                || zkChroot != null) {
             return getCloudSolrClient(urlList);
         }
         // more than 1 server provided:
@@ -380,7 +419,7 @@ public class SolrConfiguration implements Cloneable {
             builder.withHttpClient(httpClient);
         }
         CloudSolrClient cloudSolrClient = builder.build();
-        if (collection != null) {
+        if (collection != null && !collection.isEmpty()) {
             cloudSolrClient.setDefaultCollection(collection);
         }
         return cloudSolrClient;
