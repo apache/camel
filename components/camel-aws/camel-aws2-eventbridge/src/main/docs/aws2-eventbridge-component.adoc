@@ -120,6 +120,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
 === Static credentials vs Default Credential Provider
 
 You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
