@@ -22,6 +22,8 @@ package org.apache.camel.xml.in;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import javax.annotation.Generated;
 import org.apache.camel.model.*;
@@ -1078,7 +1080,26 @@ public class ModelParser extends BaseParser {
     }
     public Optional<RouteTemplatesDefinition> parseRouteTemplatesDefinition()
             throws IOException, XmlPullParserException {
-        return hasTag("routeTemplates") ? Optional.of(doParseRouteTemplatesDefinition()) : Optional.empty();
+        String tag = getNextTag("routeTemplates", "routeTemplate");
+        if (tag != null) {
+            switch (tag) {
+                case "routeTemplates" : return Optional.of(doParseRouteTemplatesDefinition());
+                case "routeTemplate" : return parseSingleRouteTemplatesDefinition();
+            }
+        }
+        return Optional.empty();
+    }
+    private Optional<RouteTemplatesDefinition> parseSingleRouteTemplatesDefinition()
+            throws IOException, XmlPullParserException {
+        Optional<RouteTemplateDefinition> single = Optional.of(doParseRouteTemplateDefinition());
+        if (single.isPresent()) {
+            List<RouteTemplateDefinition> list = new ArrayList<>();
+            list.add(single.get());
+            RouteTemplatesDefinition def = new RouteTemplatesDefinition();
+            def.setRouteTemplates(list);
+            return Optional.of(def);
+        }
+        return Optional.empty();
     }
     protected RouteTemplatesDefinition doParseRouteTemplatesDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplatesDefinition(),
@@ -1092,7 +1113,26 @@ public class ModelParser extends BaseParser {
     }
     public Optional<RoutesDefinition> parseRoutesDefinition()
             throws IOException, XmlPullParserException {
-        return hasTag("routes") ? Optional.of(doParseRoutesDefinition()) : Optional.empty();
+        String tag = getNextTag("routes", "route");
+        if (tag != null) {
+            switch (tag) {
+                case "routes" : return Optional.of(doParseRoutesDefinition());
+                case "route" : return parseSingleRoutesDefinition();
+            }
+        }
+        return Optional.empty();
+    }
+    private Optional<RoutesDefinition> parseSingleRoutesDefinition()
+            throws IOException, XmlPullParserException {
+        Optional<RouteDefinition> single = Optional.of(doParseRouteDefinition());
+        if (single.isPresent()) {
+            List<RouteDefinition> list = new ArrayList<>();
+            list.add(single.get());
+            RoutesDefinition def = new RoutesDefinition();
+            def.setRoutes(list);
+            return Optional.of(def);
+        }
+        return Optional.empty();
     }
     protected RoutesDefinition doParseRoutesDefinition() throws IOException, XmlPullParserException {
         return doParse(new RoutesDefinition(),
@@ -2903,7 +2943,26 @@ public class ModelParser extends BaseParser {
     }
     public Optional<RestsDefinition> parseRestsDefinition()
             throws IOException, XmlPullParserException {
-        return hasTag("rests") ? Optional.of(doParseRestsDefinition()) : Optional.empty();
+        String tag = getNextTag("rests", "rest");
+        if (tag != null) {
+            switch (tag) {
+                case "rests" : return Optional.of(doParseRestsDefinition());
+                case "rest" : return parseSingleRestsDefinition();
+            }
+        }
+        return Optional.empty();
+    }
+    private Optional<RestsDefinition> parseSingleRestsDefinition()
+            throws IOException, XmlPullParserException {
+        Optional<RestDefinition> single = Optional.of(doParseRestDefinition());
+        if (single.isPresent()) {
+            List<RestDefinition> list = new ArrayList<>();
+            list.add(single.get());
+            RestsDefinition def = new RestsDefinition();
+            def.setRests(list);
+            return Optional.of(def);
+        }
+        return Optional.empty();
     }
     protected RestsDefinition doParseRestsDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestsDefinition(),
