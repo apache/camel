@@ -32,7 +32,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,11 +53,10 @@ public class ModelParserTest {
     }
 
     @Test
-    @Disabled
-    public void testDefaultNamespace() throws Exception {
+    public void testSingleRouteNoNamespace() throws Exception {
         Path dir = getResourceFolder();
-        Path path = new File(dir.toFile(), "nonamespace/routeNoNamespace.xml").toPath();
-        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        Path path = new File(dir.toFile(), "nonamespace/singleRouteNoNamespace.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path));
         RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
         assertNotNull(routes);
     }

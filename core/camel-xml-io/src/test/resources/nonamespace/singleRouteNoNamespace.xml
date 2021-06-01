@@ -17,21 +17,7 @@
     limitations under the License.
 
 -->
-<routes id="camel">
-  <route>
-    <from uri="seda:a"/>
-    <choice>
-      <when>
-        <simple>${header.foo} == 'bar'</simple>
-        <to uri="seda:b"/>
-      </when>
-      <when>
-        <ognl>header[foo] == 'cheese'</ognl>
-        <to uri="seda:c"/>
-      </when>
-      <otherwise>
-        <to uri="seda:d"/>
-      </otherwise>
-    </choice>
-  </route>
-</routes>
+<route id="route-b">
+  <from uri="seda:b"/>
+    <to uri="mock:b"/>
+</route>
