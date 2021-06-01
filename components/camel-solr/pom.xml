@@ -142,18 +142,6 @@
             <artifactId>xml-apis</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.13.0</version>
-            <scope>runtime</scope>
-        </dependency>
         <!-- test infra -->
         <dependency>
             <groupId>org.apache.camel</groupId>
