@@ -47,9 +47,9 @@ public class SecretsManagerComponent extends DefaultComponent {
                 = this.configuration != null ? this.configuration.copy() : new SecretsManagerConfiguration();
         SecretsManagerEndpoint endpoint = new SecretsManagerEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (configuration.getSecretsManagerClient() == null
+        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getSecretsManagerClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("Amazon Secrets Manager client or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, Amazon Secrets Manager client or accessKey and secretKey must be specified");
         }
 
         return endpoint;

@@ -34,7 +34,7 @@ public final class SecretsManagerClientFactory {
      * @param  configuration configuration
      * @return               SecretsManagerClient
      */
-    public static SecretsManagerInternalClient getTranslateClient(SecretsManagerConfiguration configuration) {
+    public static SecretsManagerInternalClient getSecretsManagerClient(SecretsManagerConfiguration configuration) {
         return configuration.isUseDefaultCredentialsProvider()
                 ? new SecretsManagerClientIAMOptimized(configuration) : new SecretsManagerClientStandardImpl(configuration);
     }
