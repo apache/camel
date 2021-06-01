@@ -16,6 +16,7 @@
  */
 package org.apache.camel.xml.in;
 
+import java.io.File;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +32,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,6 +43,25 @@ public class ModelParserTest {
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
     private static final List<String> REST_XMLS = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml");
     private static final List<String> TEMPLATE_XMLS = Arrays.asList("barTemplate.xml");
+
+    @Test
+    public void testNoNamespace() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "nonamespace/routeNoNamespace.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path));
+        RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
+        assertNotNull(routes);
+    }
+
+    @Test
+    @Disabled
+    public void testDefaultNamespace() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "nonamespace/routeNoNamespace.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
+        assertNotNull(routes);
+    }
 
     @Test
     public void testFiles() throws Exception {

@@ -28,6 +28,7 @@ import org.apache.camel.xml.jaxb.JaxbHelper;
  * parser is a light-weight alternative.
  */
 @JdkService(XMLRoutesDefinitionLoader.FACTORY)
+@Deprecated
 public class JaxbXmlRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {
 
     @Override
