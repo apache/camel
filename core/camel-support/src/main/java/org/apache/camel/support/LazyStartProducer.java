@@ -44,10 +44,10 @@ public final class LazyStartProducer extends DefaultAsyncProducer implements Del
                     if (delegate == null) {
                         delegate = AsyncProcessorConverterHelper.convert(getEndpoint().createProducer());
                     }
+                    if (!ServiceHelper.isStarted(delegate)) {
+                        ServiceHelper.startService(delegate);
+                    }
                 }
-            }
-            if (!ServiceHelper.isStarted(delegate)) {
-                ServiceHelper.startService(delegate);
             }
         } catch (Throwable e) {
             exchange.setException(e);
