@@ -16,15 +16,14 @@
  */
 package org.apache.camel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sun.rmi.runtime.Log;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(TestConfiguration.class.getName());

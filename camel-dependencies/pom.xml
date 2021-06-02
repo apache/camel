@@ -265,7 +265,7 @@
     <httpclient4-version>4.5.13</httpclient4-version>
     <httpcore4-version>4.4.14</httpcore4-version>
     <httpunit-version>1.7</httpunit-version>
-    <huaweicloud-sdk-version>3.0.32-rc</huaweicloud-sdk-version>
+    <huaweicloud-sdk-version>3.0.43-rc</huaweicloud-sdk-version>
     <hystrix-version>1.5.18</hystrix-version>
     <ical4j-version>1.0.7</ical4j-version>
     <icu4j-version>69.1</icu4j-version>

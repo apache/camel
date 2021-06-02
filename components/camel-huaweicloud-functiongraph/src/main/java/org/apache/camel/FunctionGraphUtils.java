@@ -31,8 +31,8 @@ public final class FunctionGraphUtils {
     /**
      * Gets the fieldName from the jsonString and returns it as a String
      *
-     * @param jsonString
-     * @param fieldName
+     * @param  jsonString
+     * @param  fieldName
      * @return
      */
     public static String extractJsonFieldAsString(String jsonString, String fieldName) {
@@ -43,8 +43,8 @@ public final class FunctionGraphUtils {
     /**
      * returns the urn based on urnFormat and clientConfigurations
      *
-     * @param urnFormat
-     * @param clientConfigurations
+     * @param  urnFormat
+     * @param  clientConfigurations
      * @return
      */
     public static String composeUrn(String urnFormat, ClientConfigurations clientConfigurations) {

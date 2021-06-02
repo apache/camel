@@ -16,25 +16,24 @@
  */
 package org.apache.camel;
 
+import com.huaweicloud.sdk.core.auth.BasicCredentials;
+import com.huaweicloud.sdk.core.http.HttpConfig;
 import com.huaweicloud.sdk.functiongraph.v2.FunctionGraphClient;
-import org.apache.camel.Category;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
+import com.huaweicloud.sdk.functiongraph.v2.region.FunctionGraphRegion;
 import org.apache.camel.models.ServiceKeys;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-
-import java.util.concurrent.ExecutorService;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Huawei Cloud component to integrate with FunctionGraph services
  */
-@UriEndpoint(firstVersion = "3.11.0-SNAPSHOT", scheme = "hwcloud-functiongraph", title = "FunctionGraph", syntax="hwcloud-functiongraph:operation",
-             category = {Category.CLOUD, Category.SERVERLESS}, producerOnly = true)
+@UriEndpoint(firstVersion = "3.11.0-SNAPSHOT", scheme = "hwcloud-functiongraph", title = "FunctionGraph",
+             syntax = "hwcloud-functiongraph:operation",
+             category = { Category.CLOUD, Category.SERVERLESS }, producerOnly = true)
 public class FunctionGraphEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
@@ -42,7 +41,7 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     private String operation;
 
     @UriParam(description = "FunctionGraph service region. This is lower precedence than endpoint based configuration",
-            displayName = "Service region", secret = false)
+              displayName = "Service region", secret = false)
     @Metadata(required = true)
     private String region;
 
@@ -51,12 +50,12 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     private String projectId;
 
     @UriParam(description = "Functions that can be logically grouped together",
-            displayName = "Function package", secret = false)
+              displayName = "Function package", secret = false)
     @Metadata(required = false)
     private String functionPackage;
 
     @UriParam(description = "Name of the function to invoke",
-            displayName = "Function name", secret = false)
+              displayName = "Function name", secret = false)
     @Metadata(required = false)
     private String functionName;
 
@@ -77,17 +76,17 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     private String proxyPassword;
 
     @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-            defaultValue = "false")
+              defaultValue = "false")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
     @UriParam(description = "FunctionGraph url. Carries higher precedence than region parameter based client initialization",
-            displayName = "Service endpoint", secret = false)
+              displayName = "Service endpoint", secret = false)
     @Metadata(required = false)
     private String endpoint;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-            secret = true)
+              secret = true)
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
@@ -237,8 +236,47 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
         this.functionGraphClient = functionGraphClient;
     }
 
-    public ExecutorService createExecutor() {
-        // TODO: Delete me when you implemented your custom component
-        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "FunctionGraphConsumer");
+    /**
+     * Initialize the client
+     */
+    public FunctionGraphClient initClient() {
+        if (functionGraphClient != null) {
+            return functionGraphClient;
+        }
+
+        BasicCredentials auth = new BasicCredentials()
+                .withAk(getAuthenticationKey())
+                .withSk(getSecretKey())
+                .withProjectId(getProjectId());
+
+        HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig();
+        httpConfig.withIgnoreSSLVerification(isIgnoreSslVerification());
+        if (ObjectHelper.isNotEmpty(getProxyHost())
+                && ObjectHelper.isNotEmpty(getProxyPort())) {
+            httpConfig.withProxyHost(getProxyHost())
+                    .withProxyPort(getProxyPort());
+
+            if (ObjectHelper.isNotEmpty(getProxyUser())) {
+                httpConfig.withProxyUsername(getProxyUser());
+                if (ObjectHelper.isNotEmpty(getProxyPassword())) {
+                    httpConfig.withProxyPassword(getProxyPassword());
+                }
+            }
+        }
+
+        if (ObjectHelper.isNotEmpty(getEndpoint())) {
+            return FunctionGraphClient.newBuilder()
+                    .withCredential(auth)
+                    .withHttpConfig(httpConfig)
+                    .withEndpoint(getEndpoint())
+                    .build();
+        } else {
+            return FunctionGraphClient.newBuilder()
+                    .withCredential(auth)
+                    .withHttpConfig(httpConfig)
+                    .withRegion(FunctionGraphRegion.valueOf(getRegion()))
+                    .build();
+        }
     }
+
 }

@@ -39,14 +39,14 @@ public class InvokeFunctionEndpointTest extends CamelTestSupport {
                 from("direct:invoke_function")
                         .setProperty(FunctionGraphProperties.XCFFLOGTYPE, constant("tail"))
                         .to("hwcloud-functiongraph:invokeFunction?" +
-                                "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
-                                "&secretKey=" + testConfiguration.getProperty("secretKey") +
-                                "&projectId=" + testConfiguration.getProperty("projectId") +
-                                "&endpoint=" + testConfiguration.getProperty("endpoint") +
-                                "&functionName=" + testConfiguration.getProperty("functionName") +
-                                "&functionPackage=" + testConfiguration.getProperty("functionPackage") +
-                                "&ignoreSslVerification=true" +
-                                "&functionGraphClient=#functionGraphClient")
+                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "&secretKey=" + testConfiguration.getProperty("secretKey") +
+                            "&projectId=" + testConfiguration.getProperty("projectId") +
+                            "&endpoint=" + testConfiguration.getProperty("endpoint") +
+                            "&functionName=" + testConfiguration.getProperty("functionName") +
+                            "&functionPackage=" + testConfiguration.getProperty("functionPackage") +
+                            "&ignoreSslVerification=true" +
+                            "&functionGraphClient=#functionGraphClient")
                         .log("Invoke function successful")
                         .to("mock:invoke_function_result");
             }
@@ -58,12 +58,12 @@ public class InvokeFunctionEndpointTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:invoke_function_result");
         mock.expectedMinimumMessageCount(1);
         String sampleBody = "{\n" +
-                "  \"department\": \"sales\",\n" +
-                "  \"vendor\": \"huawei\",\n" +
-                "  \"product\": \"monitors\",\n" +
-                "  \"price\": 20.13,\n" +
-                "  \"quantity\": 20\n" +
-                "}\n";
+                            "  \"department\": \"sales\",\n" +
+                            "  \"vendor\": \"huawei\",\n" +
+                            "  \"product\": \"monitors\",\n" +
+                            "  \"price\": 20.13,\n" +
+                            "  \"quantity\": 20\n" +
+                            "}\n";
         template.sendBody("direct:invoke_function", sampleBody);
         Exchange responseExchange = mock.getExchanges().get(0);
 
@@ -72,15 +72,17 @@ public class InvokeFunctionEndpointTest extends CamelTestSupport {
         assertNotNull(responseExchange.getProperty(FunctionGraphProperties.XCFFLOGS));
         assertTrue(responseExchange.getProperty(FunctionGraphProperties.XCFFLOGS).toString().length() > 0);
 
-        assertEquals("{\"orderId\":1621950031517,\"department\":\"sales\",\"vendor\":\"huawei\",\"product\":\"monitors\",\"price\":20.13,\"quantity\":20,\"status\":\"order submitted successfully\"}",
+        assertEquals(
+                "{\"orderId\":1621950031517,\"department\":\"sales\",\"vendor\":\"huawei\",\"product\":\"monitors\",\"price\":20.13,\"quantity\":20,\"status\":\"order submitted successfully\"}",
                 responseExchange.getIn().getBody(String.class));
-        assertEquals("2021-05-25 21:40:31.472+08:00 Start invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', version: latest\n" +
-                        "    { product: 'monitors',\n" +
-                        "      quantity: 20,\n" +
-                        "      vendor: 'huawei',\n" +
-                        "      price: 20.13,\n" +
-                        "      department: 'sales' }\n" +
-                        "    2021-05-25 21:40:31.518+08:00 Finish invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', duration: 45.204ms, billing duration: 100ms, memory used: 64.383MB.",
+        assertEquals(
+                "2021-05-25 21:40:31.472+08:00 Start invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', version: latest\n" +
+                     "    { product: 'monitors',\n" +
+                     "      quantity: 20,\n" +
+                     "      vendor: 'huawei',\n" +
+                     "      price: 20.13,\n" +
+                     "      department: 'sales' }\n" +
+                     "    2021-05-25 21:40:31.518+08:00 Finish invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', duration: 45.204ms, billing duration: 100ms, memory used: 64.383MB.",
                 responseExchange.getProperty(FunctionGraphProperties.XCFFLOGS));
     }
 }
