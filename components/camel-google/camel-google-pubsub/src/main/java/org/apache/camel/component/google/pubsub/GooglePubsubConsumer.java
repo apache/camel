@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import com.google.api.core.AbstractApiService;
+import com.google.api.gax.rpc.ApiException;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.pubsub.v1.stub.SubscriberStub;
@@ -177,6 +178,12 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                     }
                 } catch (IOException e) {
                     localLog.error("Failure getting messages from PubSub", e);
+                } catch (ApiException e) {
+                    if (e.isRetryable()) {
+                        localLog.error("Retryable API exception in getting messages from PubSub", e);
+                    } else {
+                        throw e;
+                    }
                 }
             }
         }
