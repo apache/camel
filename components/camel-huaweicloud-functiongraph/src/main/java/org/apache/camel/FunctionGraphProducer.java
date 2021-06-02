@@ -16,14 +16,14 @@
  */
 package org.apache.camel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.huaweicloud.sdk.core.auth.BasicCredentials;
-import com.huaweicloud.sdk.core.http.HttpConfig;
 import com.huaweicloud.sdk.functiongraph.v2.FunctionGraphClient;
 import com.huaweicloud.sdk.functiongraph.v2.model.InvokeFunctionRequest;
 import com.huaweicloud.sdk.functiongraph.v2.model.InvokeFunctionResponse;
-import com.huaweicloud.sdk.functiongraph.v2.region.FunctionGraphRegion;
 import org.apache.camel.constants.FunctionGraphConstants;
 import org.apache.camel.constants.FunctionGraphOperations;
 import org.apache.camel.constants.FunctionGraphProperties;
@@ -33,22 +33,17 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class FunctionGraphProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(FunctionGraphProducer.class);
     private FunctionGraphEndpoint endpoint;
     private ClientConfigurations clientConfigurations;
     private FunctionGraphClient functionGraphClient;
-    private BasicCredentials auth;
-    private HttpConfig httpConfig;
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         this.clientConfigurations = new ClientConfigurations(this.endpoint);
-        initClient();
+        this.functionGraphClient = this.endpoint.initClient();
     }
 
     public FunctionGraphProducer(FunctionGraphEndpoint endpoint) {
@@ -64,7 +59,8 @@ public class FunctionGraphProducer extends DefaultProducer {
                 invokeFunction(exchange);
                 break;
             default:
-                throw new UnsupportedOperationException(String.format("%s is not a supported operation", clientConfigurations.getOperation()));
+                throw new UnsupportedOperationException(
+                        String.format("%s is not a supported operation", clientConfigurations.getOperation()));
         }
     }
 
@@ -73,14 +69,9 @@ public class FunctionGraphProducer extends DefaultProducer {
         // convert exchange body to Map object
         Object body = exchange.getMessage().getBody();
         Map request;
-        if (body == null) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Exchange body is null");
-            }
-            throw new IllegalArgumentException("Exchange body is mandatory and should be a valid Map or JSON string");
-        } else if (body instanceof Map) {
+        if (body instanceof Map) {
             request = exchange.getMessage().getBody(Map.class);
-        } else {
+        } else if (body instanceof String) {
             String strBody = exchange.getMessage().getBody(String.class);
             try {
                 request = new ObjectMapper().readValue(strBody, HashMap.class);
@@ -90,6 +81,11 @@ public class FunctionGraphProducer extends DefaultProducer {
                 }
                 throw new IllegalArgumentException("Request body must be a JSON or a HashMap");
             }
+        } else {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Exchange body is not valid");
+            }
+            throw new IllegalArgumentException("Exchange body is mandatory and should be a valid Map or JSON string");
         }
 
         // checking for function name and function package
@@ -117,61 +113,13 @@ public class FunctionGraphProducer extends DefaultProducer {
         }
 
         InvokeFunctionResponse response = functionGraphClient.invokeFunction(invokeFunctionRequest);
-        String responseBody = FunctionGraphUtils.extractJsonFieldAsString(response.getResult(), FunctionGraphConstants.RESPONSE_BODY);
+        String responseBody
+                = FunctionGraphUtils.extractJsonFieldAsString(response.getResult(), FunctionGraphConstants.RESPONSE_BODY);
         exchange.getMessage().setBody(responseBody);
         if (ObjectHelper.isNotEmpty(clientConfigurations.getXCffLogType())) {
             exchange.setProperty(FunctionGraphProperties.XCFFLOGS, response.getLog());
         }
         LOG.info("Invoke Function results: " + response);
-    }
-
-    /**
-     * Initialize the client
-     */
-    private void initClient() {
-        if (endpoint.getFunctionGraphClient() != null) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("An instance of FunctionGraphClient was set on the endpoint. Skipping creation of FunctionGraphClient" +
-                        "from endpoint parameters");
-            }
-            functionGraphClient = endpoint.getFunctionGraphClient();
-            return;
-        }
-
-        auth = new BasicCredentials()
-                .withAk(clientConfigurations.getAuthenticationKey())
-                .withSk(clientConfigurations.getSecretKey())
-                .withProjectId(clientConfigurations.getProjectId());
-
-        httpConfig = HttpConfig.getDefaultHttpConfig();
-        httpConfig.withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
-        if (ObjectHelper.isNotEmpty(clientConfigurations.getProxyHost())
-                && ObjectHelper.isNotEmpty(clientConfigurations.getProxyPort())) {
-            httpConfig.withProxyHost(clientConfigurations.getProxyHost())
-                    .withProxyPort(clientConfigurations.getProxyPort());
-
-            if (ObjectHelper.isNotEmpty(clientConfigurations.getProxyUser())){
-                httpConfig.withProxyUsername(clientConfigurations.getProxyUser());
-                if (ObjectHelper.isNotEmpty(clientConfigurations.getProxyPassword())) {
-                    httpConfig.withProxyPassword(clientConfigurations.getProxyPassword());
-                }
-            }
-        }
-
-        if (ObjectHelper.isNotEmpty(clientConfigurations.getEndpoint())) {
-            functionGraphClient = FunctionGraphClient.newBuilder()
-                    .withCredential(auth)
-                    .withHttpConfig(httpConfig)
-                    .withEndpoint(clientConfigurations.getEndpoint())
-                    .build();
-        } else {
-            functionGraphClient = FunctionGraphClient.newBuilder()
-                    .withCredential(auth)
-                    .withHttpConfig(httpConfig)
-                    .withRegion(FunctionGraphRegion.valueOf(clientConfigurations.getRegion()))
-                    .build();
-        }
-
     }
 
     /**

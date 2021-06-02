@@ -57,7 +57,7 @@ public class ClientConfigurations {
             this.setProxyHost(endpoint.getProxyHost());
             this.setProxyPort(endpoint.getProxyPort());
         }
-        if (ObjectHelper.isNotEmpty(endpoint.getProxyUser())){
+        if (ObjectHelper.isNotEmpty(endpoint.getProxyUser())) {
             this.setProxyUser(endpoint.getProxyUser());
             if (ObjectHelper.isNotEmpty(endpoint.getProxyPassword())) {
                 this.setProxyPassword(endpoint.getProxyPassword());
