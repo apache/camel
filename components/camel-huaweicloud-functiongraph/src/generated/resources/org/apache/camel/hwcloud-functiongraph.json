@@ -5,7 +5,7 @@
     "title": "FunctionGraph",
     "description": "Huawei Cloud component to integrate with FunctionGraph services",
     "deprecated": false,
-    "firstVersion": "3.11.0-SNAPSHOT",
+    "firstVersion": "3.11.0",
     "label": "cloud,serverless",
     "javaType": "org.apache.camel.FunctionGraphComponent",
     "supportLevel": "Preview",
