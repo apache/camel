@@ -16,7 +16,7 @@
  */
 package org.apache.camel.constants;
 
-public class FunctionGraphProperties {
+public final class FunctionGraphProperties {
     public static final String OPERATION = "CamelHwCloudFgOperation";
     public static final String FUNCTION_NAME = "CamelHwCloudFgFunction";
     public static final String FUNCTION_PACKAGE = "CamelHwCloudFgPackage";

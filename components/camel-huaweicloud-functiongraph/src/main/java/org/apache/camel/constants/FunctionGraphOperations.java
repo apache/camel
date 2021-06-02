@@ -16,7 +16,7 @@
  */
 package org.apache.camel.constants;
 
-public class FunctionGraphOperations {
+public final class FunctionGraphOperations {
     public static final String INVOKE_FUNCTION = "invokeFunction";
 
     private FunctionGraphOperations() {
