@@ -41,7 +41,7 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
      */
     public int getVertxServerRandomPort() {
         VertxWebsocketComponent component = context.getComponent("vertx-websocket", VertxWebsocketComponent.class);
-        Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = component.getVerxHostRegistry();
+        Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = component.getVertxHostRegistry();
         return registry.values()
                 .stream()
                 .filter(wsHost -> wsHost.getPort() != port)

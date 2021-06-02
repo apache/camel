@@ -32,6 +32,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.vertx.common.VertxHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -101,7 +102,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
 
             SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
             if (sslContextParameters != null) {
-                VertxWebsocketHelper.setupSSLOptions(sslContextParameters, options);
+                VertxHelper.setupSSLOptions(getCamelContext(), sslContextParameters, options);
             }
 
             client = getVertx().createHttpClient(options);
@@ -134,7 +135,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
     }
 
     protected Map<VertxWebsocketHostKey, VertxWebsocketHost> getVertxHostRegistry() {
-        return getComponent().getVerxHostRegistry();
+        return getComponent().getVertxHostRegistry();
     }
 
     /**

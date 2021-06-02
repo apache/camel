@@ -16,36 +16,23 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509KeyManager;
-
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.net.KeyCertOptions;
-import io.vertx.core.net.TrustOptions;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import org.apache.camel.CamelContext;
-import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.component.vertx.common.VertxHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.util.ObjectHelper;
 
 public final class VertxPlatformHttpServerSupport {
@@ -169,134 +156,15 @@ public final class VertxPlatformHttpServerSupport {
 
     static HttpServerOptions configureSSL(
             HttpServerOptions options, VertxPlatformHttpServerConfiguration configuration, CamelContext camelContext)
-            throws GeneralSecurityException, IOException {
+            throws Exception {
         final SSLContextParameters sslParameters = configuration.getSslContextParameters() != null
                 ? configuration.getSslContextParameters()
                 : configuration.isUseGlobalSslContextParameters() ? camelContext.getSSLContextParameters() : null;
 
         if (sslParameters != null) {
-            options.setSsl(true);
-            options.setKeyCertOptions(new KeyManagerFactoryOptions(createKeyManagerFactory(camelContext, sslParameters)));
-            options.setTrustOptions(new TrustManagerFactoryOptions(createTrustManagerFactory(camelContext, sslParameters)));
+            VertxHelper.setupSSLOptions(camelContext, sslParameters, options);
         }
 
         return options;
-    }
-
-    private static class KeyManagerFactoryOptions implements KeyCertOptions {
-        private final KeyManagerFactory keyManagerFactory;
-
-        public KeyManagerFactoryOptions(KeyManagerFactory keyManagerFactory) {
-            this.keyManagerFactory = keyManagerFactory;
-        }
-
-        private KeyManagerFactoryOptions(KeyManagerFactoryOptions other) {
-            this.keyManagerFactory = other.keyManagerFactory;
-        }
-
-        @Override
-        public KeyCertOptions copy() {
-            return new KeyManagerFactoryOptions(this);
-        }
-
-        @Override
-        public KeyManagerFactory getKeyManagerFactory(Vertx vertx) {
-            return keyManagerFactory;
-        }
-
-        @Override
-        public Function<String, X509KeyManager> keyManagerMapper(Vertx vertx) {
-            return keyManagerFactory.getKeyManagers()[0] instanceof X509KeyManager
-                    ? serverName -> (X509KeyManager) keyManagerFactory.getKeyManagers()[0] : null;
-        }
-    }
-
-    private static class TrustManagerFactoryOptions implements TrustOptions {
-        private final TrustManagerFactory trustManagerFactory;
-
-        public TrustManagerFactoryOptions(TrustManagerFactory trustManagerFactory) {
-            this.trustManagerFactory = trustManagerFactory;
-        }
-
-        private TrustManagerFactoryOptions(TrustManagerFactoryOptions other) {
-            trustManagerFactory = other.trustManagerFactory;
-        }
-
-        @Override
-        public TrustOptions copy() {
-            return new TrustManagerFactoryOptions(this);
-        }
-
-        @Override
-        public TrustManagerFactory getTrustManagerFactory(Vertx vertx) {
-            return trustManagerFactory;
-        }
-
-        @Override
-        public Function<String, TrustManager[]> trustManagerMapper(Vertx vertx) {
-            return serverName -> trustManagerFactory.getTrustManagers();
-        }
-    }
-
-    private static KeyManagerFactory createKeyManagerFactory(
-            CamelContext camelContext, SSLContextParameters sslContextParameters)
-            throws GeneralSecurityException, IOException {
-        final KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
-        if (keyManagers == null) {
-            return null;
-        }
-
-        String kmfAlgorithm = camelContext.resolvePropertyPlaceholders(keyManagers.getAlgorithm());
-        if (kmfAlgorithm == null) {
-            kmfAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-        }
-
-        KeyManagerFactory kmf;
-        if (keyManagers.getProvider() == null) {
-            kmf = KeyManagerFactory.getInstance(kmfAlgorithm);
-        } else {
-            kmf = KeyManagerFactory.getInstance(kmfAlgorithm,
-                    camelContext.resolvePropertyPlaceholders(keyManagers.getProvider()));
-        }
-
-        char[] kmfPassword = null;
-        if (keyManagers.getKeyPassword() != null) {
-            kmfPassword = camelContext.resolvePropertyPlaceholders(keyManagers.getKeyPassword()).toCharArray();
-        }
-
-        KeyStore ks = keyManagers.getKeyStore() == null ? null : keyManagers.getKeyStore().createKeyStore();
-
-        kmf.init(ks, kmfPassword);
-        return kmf;
-    }
-
-    private static TrustManagerFactory createTrustManagerFactory(
-            CamelContext camelContext, SSLContextParameters sslContextParameters)
-            throws GeneralSecurityException, IOException {
-        final TrustManagersParameters trustManagers = sslContextParameters.getTrustManagers();
-        if (trustManagers == null) {
-            return null;
-        }
-
-        TrustManagerFactory tmf = null;
-
-        if (trustManagers.getKeyStore() != null) {
-            String tmfAlgorithm = camelContext.resolvePropertyPlaceholders(trustManagers.getAlgorithm());
-            if (tmfAlgorithm == null) {
-                tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            }
-
-            if (trustManagers.getProvider() == null) {
-                tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            } else {
-                tmf = TrustManagerFactory.getInstance(tmfAlgorithm,
-                        camelContext.resolvePropertyPlaceholders(trustManagers.getProvider()));
-            }
-
-            KeyStore ks = trustManagers.getKeyStore() == null ? null : trustManagers.getKeyStore().createKeyStore();
-            tmf.init(ks);
-        }
-
-        return tmf;
     }
 }

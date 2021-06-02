@@ -195,12 +195,12 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    protected Map<VertxWebsocketHostKey, VertxWebsocketHost> getVerxHostRegistry() {
+    protected Map<VertxWebsocketHostKey, VertxWebsocketHost> getVertxHostRegistry() {
         return this.vertxHostRegistry;
     }
 
     protected VertxWebsocketHost createVertxWebsocketHost(
             VertxWebsocketHostConfiguration hostConfiguration, VertxWebsocketHostKey hostKey) {
-        return new VertxWebsocketHost(hostConfiguration, hostKey);
+        return new VertxWebsocketHost(getCamelContext(), hostConfiguration, hostKey);
     }
 }

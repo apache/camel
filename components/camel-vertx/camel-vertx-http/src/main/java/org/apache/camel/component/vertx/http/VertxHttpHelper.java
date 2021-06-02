@@ -23,21 +23,11 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.KeyStore;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManagerFactory;
-
-import io.vertx.core.Vertx;
-import io.vertx.core.net.KeyStoreOptions;
-import io.vertx.core.net.TCPSSLOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.http.base.HttpHelper;
-import org.apache.camel.support.jsse.KeyManagersParameters;
-import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -46,25 +36,6 @@ public final class VertxHttpHelper {
 
     private VertxHttpHelper() {
         // Utility class
-    }
-
-    /**
-     * Configures key store and trust store options for the Vert.x client and server
-     */
-    public static void setupSSLOptions(SSLContextParameters sslContextParameters, TCPSSLOptions options) {
-        options.setSsl(true);
-        options.setKeyCertOptions(new KeyStoreOptions() {
-            @Override
-            public KeyManagerFactory getKeyManagerFactory(Vertx vertx) throws Exception {
-                return createKeyManagerFactory(sslContextParameters);
-            }
-        });
-        options.setTrustOptions(new KeyStoreOptions() {
-            @Override
-            public TrustManagerFactory getTrustManagerFactory(Vertx vertx) throws Exception {
-                return createTrustManagerFactory(sslContextParameters);
-            }
-        });
     }
 
     /**
@@ -174,66 +145,5 @@ public final class VertxHttpHelper {
             }
         }
         return charset;
-    }
-
-    /**
-     * Creates a KeyManagerFactory from a given SSLContextParameters
-     */
-    private static KeyManagerFactory createKeyManagerFactory(SSLContextParameters sslContextParameters) throws Exception {
-        final KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
-        if (keyManagers == null) {
-            return null;
-        }
-
-        String kmfAlgorithm = keyManagers.getAlgorithm();
-        if (kmfAlgorithm == null) {
-            kmfAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-        }
-
-        KeyManagerFactory kmf;
-        if (keyManagers.getProvider() == null) {
-            kmf = KeyManagerFactory.getInstance(kmfAlgorithm);
-        } else {
-            kmf = KeyManagerFactory.getInstance(kmfAlgorithm, keyManagers.getProvider());
-        }
-
-        char[] kmfPassword = null;
-        if (keyManagers.getKeyPassword() != null) {
-            kmfPassword = keyManagers.getKeyPassword().toCharArray();
-        }
-
-        KeyStore ks = keyManagers.getKeyStore() == null ? null : keyManagers.getKeyStore().createKeyStore();
-
-        kmf.init(ks, kmfPassword);
-        return kmf;
-    }
-
-    /**
-     * Creates a TrustManagerFactory from a given SSLContextParameters
-     */
-    private static TrustManagerFactory createTrustManagerFactory(SSLContextParameters sslContextParameters) throws Exception {
-        final TrustManagersParameters trustManagers = sslContextParameters.getTrustManagers();
-        if (trustManagers == null) {
-            return null;
-        }
-
-        TrustManagerFactory tmf = null;
-
-        if (trustManagers.getKeyStore() != null) {
-            String tmfAlgorithm = trustManagers.getAlgorithm();
-            if (tmfAlgorithm == null) {
-                tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            }
-
-            if (trustManagers.getProvider() == null) {
-                tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            } else {
-                tmf = TrustManagerFactory.getInstance(tmfAlgorithm, trustManagers.getProvider());
-            }
-
-            KeyStore ks = trustManagers.getKeyStore() == null ? null : trustManagers.getKeyStore().createKeyStore();
-            tmf.init(ks);
-        }
-        return tmf;
     }
 }
