@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import io.smallrye.faulttolerance.core.FaultToleranceStrategy;
 import io.smallrye.faulttolerance.core.InvocationContext;
-import io.smallrye.faulttolerance.core.bulkhead.ThreadPoolBulkhead;
+import io.smallrye.faulttolerance.core.bulkhead.FutureThreadPoolBulkhead;
 import io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker;
 import io.smallrye.faulttolerance.core.fallback.Fallback;
 import io.smallrye.faulttolerance.core.stopwatch.SystemStopwatch;
@@ -237,7 +237,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
 
         // 1. bulkhead
         if (config.isBulkheadEnabled()) {
-            target = new ThreadPoolBulkhead(
+            target = new FutureThreadPoolBulkhead(
                     target, "bulkhead", config.getBulkheadMaxConcurrentCalls(),
                     config.getBulkheadWaitingTaskQueue());
         }
