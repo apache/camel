@@ -31,7 +31,9 @@ public class FunctionGraphMockClient extends FunctionGraphClient {
         InvokeFunctionResponse response = new InvokeFunctionResponse()
                 .withRequestId("1939bbbb-4009-4685-bcc0-2ff0381fa911")
                 .withResult(
-                        "{\"headers\":{\"Content-Type\":\"application/json\"},\"statusCode\":200,\"isBase64Encoded\":false,\"body\":{\"orderId\":1621950031517,\"department\":\"sales\",\"vendor\":\"huawei\",\"product\":\"monitors\",\"price\":20.13,\"quantity\":20,\"status\":\"order submitted successfully\"}}\n")
+                        "{\"headers\":{\"Content-Type\":\"application/json\"},\"statusCode\":200,\"isBase64Encoded\":false,\"body\":{\"orderId\":1621950031517,"
+                            +
+                            "\"department\":\"sales\",\"vendor\":\"huawei\",\"product\":\"monitors\",\"price\":20.13,\"quantity\":20,\"status\":\"order submitted successfully\"}}\n")
                 .withStatus(200);
         if (request.getXCffLogType().equals("tail")) {
             response.withLog(

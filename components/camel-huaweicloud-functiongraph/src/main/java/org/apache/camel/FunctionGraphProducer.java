@@ -39,16 +39,16 @@ public class FunctionGraphProducer extends DefaultProducer {
     private ClientConfigurations clientConfigurations;
     private FunctionGraphClient functionGraphClient;
 
+    public FunctionGraphProducer(FunctionGraphEndpoint endpoint) {
+        super(endpoint);
+        this.endpoint = endpoint;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         this.clientConfigurations = new ClientConfigurations(this.endpoint);
         this.functionGraphClient = this.endpoint.initClient();
-    }
-
-    public FunctionGraphProducer(FunctionGraphEndpoint endpoint) {
-        super(endpoint);
-        this.endpoint = endpoint;
     }
 
     public void process(Exchange exchange) throws Exception {

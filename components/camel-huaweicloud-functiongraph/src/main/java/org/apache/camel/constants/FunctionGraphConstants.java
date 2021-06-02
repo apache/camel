@@ -16,7 +16,7 @@
  */
 package org.apache.camel.constants;
 
-public class FunctionGraphConstants {
+public final class FunctionGraphConstants {
     public static final String DEFAULT_FUNCTION_PACKAGE = "default";
     public static final String URN_FORMAT = "urn:fss:%s:%s:function:%s:%s:latest";
     public static final String REQUEST_VERSION = "v1";

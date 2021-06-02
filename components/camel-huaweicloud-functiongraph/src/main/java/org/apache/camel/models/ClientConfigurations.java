@@ -36,7 +36,7 @@ public class ClientConfigurations {
     private String endpoint;
     private String authenticationKey;
     private String secretKey;
-    private String XCffLogType;
+    private String xcffLogType;
 
     public ClientConfigurations(FunctionGraphEndpoint endpoint) {
 
@@ -218,10 +218,10 @@ public class ClientConfigurations {
     }
 
     public String getXCffLogType() {
-        return XCffLogType;
+        return xcffLogType;
     }
 
-    public void setXCffLogType(String XCffLogType) {
-        this.XCffLogType = XCffLogType;
+    public void setXCffLogType(String xcffLogType) {
+        this.xcffLogType = xcffLogType;
     }
 }
