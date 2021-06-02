@@ -31,9 +31,9 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Huawei Cloud component to integrate with FunctionGraph services
  */
-@UriEndpoint(firstVersion = "3.11.0-SNAPSHOT", scheme = "hwcloud-functiongraph", title = "FunctionGraph",
-        syntax = "hwcloud-functiongraph:operation",
-        category = { Category.CLOUD, Category.SERVERLESS }, producerOnly = true)
+@UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-functiongraph", title = "FunctionGraph",
+             syntax = "hwcloud-functiongraph:operation",
+             category = { Category.CLOUD, Category.SERVERLESS }, producerOnly = true)
 public class FunctionGraphEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
@@ -41,7 +41,7 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     private String operation;
 
     @UriParam(description = "FunctionGraph service region. This is lower precedence than endpoint based configuration",
-            displayName = "Service region", secret = false)
+              displayName = "Service region", secret = false)
     @Metadata(required = true)
     private String region;
 
@@ -50,12 +50,12 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     private String projectId;
 
     @UriParam(description = "Functions that can be logically grouped together",
-            displayName = "Function package", secret = false)
+              displayName = "Function package", secret = false)
     @Metadata(required = false)
     private String functionPackage;
 
     @UriParam(description = "Name of the function to invoke",
-            displayName = "Function name", secret = false)
+              displayName = "Function name", secret = false)
     @Metadata(required = false)
     private String functionName;
 
@@ -76,17 +76,17 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     private String proxyPassword;
 
     @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-            defaultValue = "false")
+              defaultValue = "false")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
     @UriParam(description = "FunctionGraph url. Carries higher precedence than region parameter based client initialization",
-            displayName = "Service endpoint", secret = false)
+              displayName = "Service endpoint", secret = false)
     @Metadata(required = false)
     private String endpoint;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-            secret = true)
+              secret = true)
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
@@ -245,9 +245,11 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
         }
 
         BasicCredentials auth = new BasicCredentials()
-                .withAk(getServiceKeys() != null ? getServiceKeys().getAuthenticationKey()
+                .withAk(getServiceKeys() != null
+                        ? getServiceKeys().getAuthenticationKey()
                         : getAuthenticationKey())
-                .withSk(getServiceKeys() != null ? getServiceKeys().getSecretKey()
+                .withSk(getServiceKeys() != null
+                        ? getServiceKeys().getSecretKey()
                         : getSecretKey())
                 .withProjectId(getProjectId());
 
