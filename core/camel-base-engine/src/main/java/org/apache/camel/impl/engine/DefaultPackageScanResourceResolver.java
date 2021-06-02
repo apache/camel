@@ -227,15 +227,37 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
      * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the
      * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.
      *
-     * @param stream  the inputstream of the jar file to be examined for classes
-     * @param urlPath the url of the jar file to be examined for classes
+     * @param packageName the root package name
+     * @param subPattern  optional pattern to use for matching resource names
+     * @param stream      the inputstream of the jar file to be examined for classes
+     * @param urlPath     the url of the jar file to be examined for classes
+     * @param resources   the list to add loaded resources
      */
-    private void loadImplementationsInJar(
+    protected void loadImplementationsInJar(
             String packageName,
             String subPattern,
             InputStream stream,
             String urlPath,
             Set<Resource> resources) {
+
+        List<String> entries = doLoadImplementationsInJar(packageName, stream, urlPath);
+        for (String name : entries) {
+            String shortName = name.substring(packageName.length());
+            boolean match = PATH_MATCHER.match(subPattern, shortName);
+            log.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
+            if (match) {
+                final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+                final ResourceLoader loader = ecc.getResourceLoader();
+
+                resources.add(loader.resolveResource(name));
+            }
+        }
+    }
+
+    protected List<String> doLoadImplementationsInJar(
+            String packageName,
+            InputStream stream,
+            String urlPath) {
 
         List<String> entries = new ArrayList<>();
 
@@ -262,17 +284,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             IOHelper.close(jarStream, urlPath, log);
         }
 
-        for (String name : entries) {
-            String shortName = name.substring(packageName.length());
-            boolean match = PATH_MATCHER.match(subPattern, shortName);
-            log.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
-            if (match) {
-                final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
-                final ResourceLoader loader = ecc.getResourceLoader();
-
-                resources.add(loader.resolveResource(name));
-            }
-        }
+        return entries;
     }
 
     /**
