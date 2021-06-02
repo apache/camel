@@ -218,7 +218,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         VertxWebsocketComponent component = context.getComponent("vertx-websocket", VertxWebsocketComponent.class);
-        Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = component.getVerxHostRegistry();
+        Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = component.getVertxHostRegistry();
         VertxWebsocketHost host = registry.values()
                 .stream()
                 .filter(wsHost -> wsHost.getPort() != port)
