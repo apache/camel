@@ -171,7 +171,7 @@
         <module>camel-hdfs</module>
         <module>camel-headersmap</module>
         <module>camel-hl7</module>
-	<module>camel-huaweicloud-functiongraph</module>
+		<module>camel-huaweicloud-functiongraph</module>
         <module>camel-huaweicloud-smn</module>
         <module>camel-ical</module>
         <module>camel-iec60870</module>
