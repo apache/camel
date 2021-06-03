@@ -18,7 +18,11 @@ package org.apache.camel.impl.engine;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -181,6 +185,29 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
     public boolean isDynamic(K key) {
         return dynamicMap.containsKey(key);
+    }
+
+    public Collection<V> getReadOnlyValues() {
+        if (isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        // we want to avoid any kind of locking in get/put methods
+        // as getReadOnlyValues is only seldom used, such as when camel-mock
+        // is asserting endpoints at end of testing
+        // so this code will then just retry in case of a concurrency update
+        Collection<V> answer = new ArrayList<>();
+        boolean done = false;
+        while (!done) {
+            try {
+                answer.addAll(values());
+                done = true;
+            } catch (ConcurrentModificationException e) {
+                answer.clear();
+                // try again
+            }
+        }
+        return Collections.unmodifiableCollection(answer);
     }
 
     @Override
