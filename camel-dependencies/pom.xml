@@ -66,7 +66,7 @@
     <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.1.0</awaitility-version>
-    <aws-java-sdk2-version>2.16.74</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.16.76</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -117,7 +117,7 @@
     <cglib-version>3.2.12</cglib-version>
     <chunk-templates-version>3.6.1</chunk-templates-version>
     <citrus-version>2.8.0</citrus-version>
-    <classgraph-version>4.8.105</classgraph-version>
+    <classgraph-version>4.8.107</classgraph-version>
     <cmis-version>1.1.0</cmis-version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <cometd-java-client-version>4.0.4</cometd-java-client-version>
@@ -287,7 +287,7 @@
     <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
     <jakarta-mail-version>1.6.6</jakarta-mail-version>
     <jakarta.el-version>3.0.3</jakarta.el-version>
-    <jandex-version>2.2.3.Final</jandex-version>
+    <jandex-version>2.3.0.Final</jandex-version>
     <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
     <jasn1-version>1.11.3</jasn1-version>
     <jasypt-version>1.9.3</jasypt-version>
@@ -336,7 +336,7 @@
     <jira-guava-version>26.0-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>
     <jmh-version>1.31</jmh-version>
-    <jnats-version>2.11.3</jnats-version>
+    <jnats-version>2.11.4</jnats-version>
     <jodatime2-bundle-version>2.10.6</jodatime2-bundle-version>
     <johnzon-version>1.2.12</johnzon-version>
     <jolokia-version>1.6.2</jolokia-version>
@@ -351,7 +351,7 @@
     <jslt-version>0.1.11</jslt-version>
     <jsmpp-version>2.3.11</jsmpp-version>
     <json-api>1.0</json-api>
-    <json-path-version>2.4.0</json-path-version>
+    <json-path-version>2.6.0</json-path-version>
     <json-schema-validator-version>2.2.14</json-schema-validator-version>
     <json-simple-version>1.1.1</json-simple-version>
     <jsonassert-version>1.5.0</jsonassert-version>
@@ -368,8 +368,8 @@
     <jzlib-version>1.1.3</jzlib-version>
     <kafka-version>2.8.0</kafka-version>
     <kotlin-version>1.5.0</kotlin-version>
-    <kubernetes-client-version>5.3.1</kubernetes-client-version>
-    <kubernetes-model-version>5.3.1</kubernetes-model-version>
+    <kubernetes-client-version>5.4.1</kubernetes-client-version>
+    <kubernetes-model-version>5.4.1</kubernetes-model-version>
     <kudu-version>1.14.0</kudu-version>
     <lettuce-version>5.1.0.RELEASE</lettuce-version>
     <leveldb-api-version>0.12</leveldb-api-version>

@@ -438,7 +438,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType);
 
     /**
-     * Returns a new {@link Collection} of all of the endpoints from the {@link org.apache.camel.spi.EndpointRegistry}
+     * Returns a read-only {@link Collection} of all of the endpoints from the
+     * {@link org.apache.camel.spi.EndpointRegistry}
      *
      * @return all endpoints
      */

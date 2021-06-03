@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +27,8 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -166,16 +169,24 @@ public class RoutesConfigurer {
                 LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
 
                 // add discovered routes from registry
-                routes.addAll(getRoutesCollector().collectRoutesFromRegistry(
+                Collection<RoutesBuilder> routesFromRegistry = getRoutesCollector().collectRoutesFromRegistry(
                         camelContext,
                         getJavaRoutesExcludePattern(),
-                        getJavaRoutesIncludePattern()));
+                        getJavaRoutesIncludePattern());
+                routes.addAll(routesFromRegistry);
+
                 // add discovered routes from directories
-                routes.addAll(getRoutesCollector().collectRoutesFromDirectory(
+                StopWatch watch = new StopWatch();
+                Collection<RoutesBuilder> routesFromDirectory = getRoutesCollector().collectRoutesFromDirectory(
                         camelContext,
                         getRoutesExcludePattern(),
-                        getRoutesIncludePattern()));
+                        getRoutesIncludePattern());
+                routes.addAll(routesFromDirectory);
 
+                if (!routesFromDirectory.isEmpty()) {
+                    LOG.info("Loaded {} additional RoutesBuilder from: {} (took {})", routesFromDirectory.size(),
+                            getRoutesIncludePattern(), TimeUtils.printDuration(watch.taken()));
+                }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
