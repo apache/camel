@@ -102,6 +102,18 @@ public class SpringCamelContext extends DefaultCamelContext
     }
 
     @Override
+    public void doBuild() throws Exception {
+        super.doBuild();
+        if (applicationContext instanceof ConfigurableApplicationContext) {
+            // only add if not already added
+            if (hasComponent("spring-event") == null) {
+                eventComponent = new EventComponent(applicationContext);
+                addComponent("spring-event", eventComponent);
+            }
+        }
+    }
+
+    @Override
     public void start() {
         try {
             super.start();
@@ -176,14 +188,6 @@ public class SpringCamelContext extends DefaultCamelContext
         }
         LOG.debug("Set the application context classloader to: {}", cl);
         this.setApplicationContextClassLoader(cl);
-
-        if (applicationContext instanceof ConfigurableApplicationContext) {
-            // only add if not already added
-            if (hasComponent("spring-event") == null) {
-                eventComponent = new EventComponent(applicationContext);
-                addComponent("spring-event", eventComponent);
-            }
-        }
     }
 
     /**
