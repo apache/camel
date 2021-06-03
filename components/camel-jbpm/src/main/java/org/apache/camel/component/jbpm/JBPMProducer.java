@@ -19,6 +19,7 @@ package org.apache.camel.component.jbpm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,344 +53,42 @@ public class JBPMProducer extends DefaultProducer {
 
     private JBPMConfiguration configuration;
     private KieServicesClient kieServicesClient;
+    private Map<JBPMOperation, JBPMOperationProcessor> operations;
+    private Map<String, JBPMOperation> operationCachedToLowerOperation;
 
     public JBPMProducer(JBPMEndpoint endpoint, KieServicesClient kieServicesClient) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
         this.kieServicesClient = kieServicesClient;
+        this.operations = new HashMap<>();
+        this.operationCachedToLowerOperation = new HashMap<>();
+        cacheJBPMOperationToLowerCase();
+        initOperationProcessors();
+    }
+
+    private void cacheJBPMOperationToLowerCase() {
+        for (JBPMOperation operation : JBPMOperation.values()) {
+            operationCachedToLowerOperation.put(operation.toString().toLowerCase(), operation);
+        }
     }
 
     public void process(Exchange exchange) throws Exception {
         getOperation(exchange).execute(kieServicesClient, configuration, exchange);
     }
 
-    Operation getOperation(Exchange exchange) {
+    JBPMOperationProcessor getOperation(Exchange exchange) {
         String operation = exchange.getIn().getHeader(JBPMConstants.OPERATION, String.class);
         if (operation == null && configuration.getOperation() != null) {
             operation = JBPMConstants.OPERATION + configuration.getOperation();
         }
         if (operation == null) {
-            operation = JBPMConstants.OPERATION + Operation.startProcess;
+            operation = JBPMConstants.OPERATION + JBPMOperation.startProcess;
         }
         LOGGER.trace("Operation: [{}]", operation);
-        return Operation.valueOf(operation.substring(JBPMConstants.OPERATION.length()));
+        return operations.get(operationCachedToLowerOperation.get(operation.toLowerCase()));
     }
 
-    enum Operation {
-
-        // PROCESS OPERATIONS
-        startProcess {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
-                Long processInstance = processClient.startProcess(configuration.getDeploymentId(),
-                        getProcessId(configuration, exchange), getParameters(configuration, exchange));
-                setResult(exchange, processInstance);
-            }
-        },
-        abortProcessInstance {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
-                processClient.abortProcessInstance(configuration.getDeploymentId(),
-                        safe(getProcessInstanceId(configuration, exchange)));
-            }
-        },
-        signalEvent {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
-                Long processInstanceId = getProcessInstanceId(configuration, exchange);
-                if (processInstanceId != null) {
-                    processClient.signalProcessInstance(configuration.getDeploymentId(), processInstanceId,
-                            getEventType(configuration, exchange),
-                            getEvent(configuration, exchange));
-                } else {
-                    processClient.signal(configuration.getDeploymentId(), getEventType(configuration, exchange),
-                            getEvent(configuration, exchange));
-                }
-            }
-        },
-        getProcessInstance {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
-                ProcessInstance processInstance = processClient.getProcessInstance(configuration.getDeploymentId(),
-                        safe(getProcessInstanceId(configuration, exchange)));
-                setResult(exchange, processInstance);
-            }
-        },
-        getProcessInstances {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                QueryServicesClient queryClient = kieServicesClient.getServicesClient(QueryServicesClient.class);
-                Collection<ProcessInstance> processInstances = queryClient
-                        .findProcessInstances(getPage(configuration, exchange), getPageSize(configuration, exchange));
-                setResult(exchange, processInstances);
-            }
-        },
-
-        // RULE OPERATIONS
-        fireAllRules {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                RuleServicesClient ruleClient = kieServicesClient.getServicesClient(RuleServicesClient.class);
-                List<Command<?>> commands = new ArrayList<Command<?>>();
-                BatchExecutionCommand executionCommand = commandsFactory.newBatchExecution(commands);
-
-                Integer max = getMaxNumber(configuration, exchange);
-                if (max != null) {
-                    commands.add(commandsFactory.newFireAllRules(max));
-                } else {
-                    commands.add(commandsFactory.newFireAllRules());
-                }
-                ServiceResponse<ExecutionResults> reply
-                        = ruleClient.executeCommandsWithResults(configuration.getDeploymentId(), executionCommand);
-                setResult(exchange, reply.getResult());
-            }
-        },
-        getGlobal {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                RuleServicesClient ruleClient = kieServicesClient.getServicesClient(RuleServicesClient.class);
-                List<Command<?>> commands = new ArrayList<Command<?>>();
-                BatchExecutionCommand executionCommand = commandsFactory.newBatchExecution(commands);
-                String identifier = getIdentifier(configuration, exchange);
-                commands.add(commandsFactory.newGetGlobal(identifier, identifier));
-
-                ServiceResponse<ExecutionResults> reply
-                        = ruleClient.executeCommandsWithResults(configuration.getDeploymentId(), executionCommand);
-                setResult(exchange, reply.getResult().getValue(identifier));
-            }
-        },
-        setGlobal {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                RuleServicesClient ruleClient = kieServicesClient.getServicesClient(RuleServicesClient.class);
-                List<Command<?>> commands = new ArrayList<Command<?>>();
-                BatchExecutionCommand executionCommand = commandsFactory.newBatchExecution(commands);
-
-                commands.add(commandsFactory.newSetGlobal(getIdentifier(configuration, exchange),
-                        getValue(configuration, exchange)));
-
-                ruleClient.executeCommandsWithResults(configuration.getDeploymentId(), executionCommand);
-            }
-        },
-
-        // WORK ITEM OPERATIONS
-        abortWorkItem {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
-                processClient.abortWorkItem(configuration.getDeploymentId(),
-                        safe(getProcessInstanceId(configuration, exchange)), safe(getWorkItemId(configuration, exchange)));
-            }
-        },
-        completeWorkItem {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
-                processClient.completeWorkItem(configuration.getDeploymentId(),
-                        safe(getProcessInstanceId(configuration, exchange)), safe(getWorkItemId(configuration, exchange)),
-                        getParameters(configuration, exchange));
-            }
-        },
-
-        // TASK OPERATIONS
-        activateTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.activateTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange));
-            }
-        },
-        claimTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.claimTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange));
-            }
-        },
-        completeTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.completeAutoProgress(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange),
-                        getParameters(configuration, exchange));
-            }
-        },
-        delegateTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.delegateTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange),
-                        getTargetUserId(configuration, exchange));
-            }
-        },
-        exitTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.exitTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange));
-            }
-        },
-        failTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.failTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange),
-                        getParameters(configuration, exchange));
-            }
-        },
-        getAttachment {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                TaskAttachment attachment = taskClient.getTaskAttachmentById(configuration.getDeploymentId(),
-                        safe(getTaskId(configuration, exchange)),
-                        safe(getAttachmentId(configuration, exchange)));
-                setResult(exchange, attachment);
-            }
-        },
-        getTasksAssignedAsBusinessAdministrator {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                List<TaskSummary> taskSummaries = taskClient.findTasksAssignedAsBusinessAdministrator(
-                        getUserId(configuration, exchange), getPage(configuration, exchange),
-                        getPageSize(configuration, exchange));
-                setResult(exchange, taskSummaries);
-            }
-        },
-        getTasksAssignedAsPotentialOwnerByStatus {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                List<TaskSummary> taskSummaries = taskClient.findTasksAssignedAsPotentialOwner(
-                        getUserId(configuration, exchange), getStatuses(configuration, exchange),
-                        getPage(configuration, exchange), getPageSize(configuration, exchange));
-                setResult(exchange, taskSummaries);
-            }
-        },
-        getTaskByWorkItem {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                TaskInstance task = taskClient.findTaskByWorkItemId(safe(getWorkItemId(configuration, exchange)));
-                setResult(exchange, task);
-            }
-        },
-        getTaskBy {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                TaskInstance task = taskClient.findTaskById(safe(getTaskId(configuration, exchange)));
-                setResult(exchange, task);
-            }
-        },
-        getTaskContent {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                Map<String, Object> content = taskClient.getTaskOutputContentByTaskId(configuration.getDeploymentId(),
-                        safe(getTaskId(configuration, exchange)));
-                setResult(exchange, content);
-            }
-        },
-        getTasksByProcessInstance {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                List<TaskSummary> processInstanceIds = taskClient.findTasksByStatusByProcessInstanceId(
-                        safe(getProcessInstanceId(configuration, exchange)), Collections.emptyList(),
-                        getPage(configuration, exchange), getPageSize(configuration, exchange));
-                setResult(exchange, processInstanceIds);
-            }
-        },
-        getTasksByStatusByProcessInstance {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                List<TaskSummary> taskSummaryList
-                        = taskClient.findTasksByStatusByProcessInstanceId(safe(getProcessInstanceId(configuration, exchange)),
-                                getStatuses(configuration, exchange), getPage(configuration, exchange),
-                                getPageSize(configuration, exchange));
-                setResult(exchange, taskSummaryList);
-            }
-        },
-        getTasksOwned {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                List<TaskSummary> summaryList
-                        = taskClient.findTasksOwned(getUserId(configuration, exchange), getPage(configuration, exchange),
-                                getPageSize(configuration, exchange));
-                setResult(exchange, summaryList);
-            }
-        },
-        nominateTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.nominateTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange),
-                        getEntities(configuration, exchange));
-            }
-        },
-        releaseTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.releaseTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange));
-            }
-        },
-        resumeTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.resumeTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange));
-            }
-        },
-        skipTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.skipTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange));
-            }
-        },
-        startTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.startTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange));
-            }
-        },
-        stopTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.stopTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange));
-            }
-        },
-        suspendTask {
-            @Override
-            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
-                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
-                taskClient.suspendTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
-                        getUserId(configuration, exchange));
-            }
-        };
+    private abstract class JBPMOperationProcessor {
 
         List<String> getStatuses(JBPMConfiguration configuration, Exchange exchange) {
             List<String> statusList = exchange.getIn().getHeader(JBPMConstants.STATUS_LIST, List.class);
@@ -557,4 +256,323 @@ public class JBPMProducer extends DefaultProducer {
 
         abstract void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange);
     }
+
+    private void initOperationProcessors() {
+        // PROCESS OPERATIONS
+        operations.put(JBPMOperation.startProcess, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
+                Long processInstance = processClient.startProcess(configuration.getDeploymentId(),
+                        getProcessId(configuration, exchange), getParameters(configuration, exchange));
+                setResult(exchange, processInstance);
+            }
+        });
+        operations.put(JBPMOperation.abortProcessInstance, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
+                processClient.abortProcessInstance(configuration.getDeploymentId(),
+                        safe(getProcessInstanceId(configuration, exchange)));
+            }
+        });
+        operations.put(JBPMOperation.signalEvent, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
+                Long processInstanceId = getProcessInstanceId(configuration, exchange);
+                if (processInstanceId != null) {
+                    processClient.signalProcessInstance(configuration.getDeploymentId(), processInstanceId,
+                            getEventType(configuration, exchange),
+                            getEvent(configuration, exchange));
+                } else {
+                    processClient.signal(configuration.getDeploymentId(), getEventType(configuration, exchange),
+                            getEvent(configuration, exchange));
+                }
+            }
+        });
+        operations.put(JBPMOperation.getProcessInstance, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
+                ProcessInstance processInstance = processClient.getProcessInstance(configuration.getDeploymentId(),
+                        safe(getProcessInstanceId(configuration, exchange)));
+                setResult(exchange, processInstance);
+            }
+        });
+
+        operations.put(JBPMOperation.getProcessInstances, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                QueryServicesClient queryClient = kieServicesClient.getServicesClient(QueryServicesClient.class);
+                Collection<ProcessInstance> processInstances = queryClient
+                        .findProcessInstances(getPage(configuration, exchange), getPageSize(configuration, exchange));
+                setResult(exchange, processInstances);
+            }
+        });
+
+        // RULE OPERATIONS
+        operations.put(JBPMOperation.fireAllRules, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                RuleServicesClient ruleClient = kieServicesClient.getServicesClient(RuleServicesClient.class);
+                List<Command<?>> commands = new ArrayList<Command<?>>();
+                BatchExecutionCommand executionCommand = commandsFactory.newBatchExecution(commands);
+
+                Integer max = getMaxNumber(configuration, exchange);
+                if (max != null) {
+                    commands.add(commandsFactory.newFireAllRules(max));
+                } else {
+                    commands.add(commandsFactory.newFireAllRules());
+                }
+                ServiceResponse<ExecutionResults> reply
+                        = ruleClient.executeCommandsWithResults(configuration.getDeploymentId(), executionCommand);
+                setResult(exchange, reply.getResult());
+            }
+        });
+        operations.put(JBPMOperation.getGlobal, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                RuleServicesClient ruleClient = kieServicesClient.getServicesClient(RuleServicesClient.class);
+                List<Command<?>> commands = new ArrayList<Command<?>>();
+                BatchExecutionCommand executionCommand = commandsFactory.newBatchExecution(commands);
+                String identifier = getIdentifier(configuration, exchange);
+                commands.add(commandsFactory.newGetGlobal(identifier, identifier));
+
+                ServiceResponse<ExecutionResults> reply
+                        = ruleClient.executeCommandsWithResults(configuration.getDeploymentId(), executionCommand);
+                setResult(exchange, reply.getResult().getValue(identifier));
+            }
+        });
+        operations.put(JBPMOperation.setGlobal, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                RuleServicesClient ruleClient = kieServicesClient.getServicesClient(RuleServicesClient.class);
+                List<Command<?>> commands = new ArrayList<Command<?>>();
+                BatchExecutionCommand executionCommand = commandsFactory.newBatchExecution(commands);
+
+                commands.add(commandsFactory.newSetGlobal(getIdentifier(configuration, exchange),
+                        getValue(configuration, exchange)));
+
+                ruleClient.executeCommandsWithResults(configuration.getDeploymentId(), executionCommand);
+            }
+        });
+
+        // WORK ITEM OPERATIONS
+        operations.put(JBPMOperation.abortWorkItem, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
+                processClient.abortWorkItem(configuration.getDeploymentId(),
+                        safe(getProcessInstanceId(configuration, exchange)), safe(getWorkItemId(configuration, exchange)));
+            }
+        });
+        operations.put(JBPMOperation.completeWorkItem, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                ProcessServicesClient processClient = kieServicesClient.getServicesClient(ProcessServicesClient.class);
+                processClient.completeWorkItem(configuration.getDeploymentId(),
+                        safe(getProcessInstanceId(configuration, exchange)), safe(getWorkItemId(configuration, exchange)),
+                        getParameters(configuration, exchange));
+            }
+        });
+
+        // TASK OPERATIONS
+        operations.put(JBPMOperation.activateTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.activateTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.claimTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.claimTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.completeTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.completeAutoProgress(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange),
+                        getParameters(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.delegateTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.delegateTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange),
+                        getTargetUserId(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.exitTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.exitTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.failTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.failTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange),
+                        getParameters(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.getAttachment, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                TaskAttachment attachment = taskClient.getTaskAttachmentById(configuration.getDeploymentId(),
+                        safe(getTaskId(configuration, exchange)),
+                        safe(getAttachmentId(configuration, exchange)));
+                setResult(exchange, attachment);
+            }
+        });
+        operations.put(JBPMOperation.getTasksAssignedAsBusinessAdministrator, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                List<TaskSummary> taskSummaries = taskClient.findTasksAssignedAsBusinessAdministrator(
+                        getUserId(configuration, exchange), getPage(configuration, exchange),
+                        getPageSize(configuration, exchange));
+                setResult(exchange, taskSummaries);
+            }
+        });
+        operations.put(JBPMOperation.getTasksAssignedAsPotentialOwnerByStatus, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                List<TaskSummary> taskSummaries = taskClient.findTasksAssignedAsPotentialOwner(
+                        getUserId(configuration, exchange), getStatuses(configuration, exchange),
+                        getPage(configuration, exchange), getPageSize(configuration, exchange));
+                setResult(exchange, taskSummaries);
+            }
+        });
+        operations.put(JBPMOperation.getTaskByWorkItem, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                TaskInstance task = taskClient.findTaskByWorkItemId(safe(getWorkItemId(configuration, exchange)));
+                setResult(exchange, task);
+            }
+        });
+        operations.put(JBPMOperation.getTaskBy, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                TaskInstance task = taskClient.findTaskById(safe(getTaskId(configuration, exchange)));
+                setResult(exchange, task);
+            }
+        });
+        operations.put(JBPMOperation.getTaskContent, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                Map<String, Object> content = taskClient.getTaskOutputContentByTaskId(configuration.getDeploymentId(),
+                        safe(getTaskId(configuration, exchange)));
+                setResult(exchange, content);
+            }
+        });
+        operations.put(JBPMOperation.getTasksByProcessInstance, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                List<TaskSummary> processInstanceIds = taskClient.findTasksByStatusByProcessInstanceId(
+                        safe(getProcessInstanceId(configuration, exchange)), Collections.emptyList(),
+                        getPage(configuration, exchange), getPageSize(configuration, exchange));
+                setResult(exchange, processInstanceIds);
+            }
+        });
+        operations.put(JBPMOperation.getTasksByStatusByProcessInstance, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                List<TaskSummary> taskSummaryList
+                        = taskClient.findTasksByStatusByProcessInstanceId(safe(getProcessInstanceId(configuration, exchange)),
+                                getStatuses(configuration, exchange), getPage(configuration, exchange),
+                                getPageSize(configuration, exchange));
+                setResult(exchange, taskSummaryList);
+            }
+        });
+        operations.put(JBPMOperation.getTasksOwned, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                List<TaskSummary> summaryList
+                        = taskClient.findTasksOwned(getUserId(configuration, exchange), getPage(configuration, exchange),
+                                getPageSize(configuration, exchange));
+                setResult(exchange, summaryList);
+            }
+        });
+        operations.put(JBPMOperation.nominateTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.nominateTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange),
+                        getEntities(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.releaseTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.releaseTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.resumeTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.resumeTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.skipTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.skipTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.startTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.startTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.stopTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.stopTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange));
+            }
+        });
+        operations.put(JBPMOperation.suspendTask, new JBPMOperationProcessor() {
+            @Override
+            void execute(KieServicesClient kieServicesClient, JBPMConfiguration configuration, Exchange exchange) {
+                UserTaskServicesClient taskClient = kieServicesClient.getServicesClient(UserTaskServicesClient.class);
+                taskClient.suspendTask(configuration.getDeploymentId(), safe(getTaskId(configuration, exchange)),
+                        getUserId(configuration, exchange));
+            }
+        });
+
+    }
+
 }
