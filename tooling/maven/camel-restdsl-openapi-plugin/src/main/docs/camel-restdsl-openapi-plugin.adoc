@@ -42,7 +42,7 @@ for example in a Spring Boot application:
 
 The plugin can then be executed via its prefix `camel-restdsl-openapi` as shown
 
-    $mvn camel-restdsl-openapi generate
+    $mvn camel-restdsl-openapi:generate
 
 == camel-restdsl-openapi:generate
 
