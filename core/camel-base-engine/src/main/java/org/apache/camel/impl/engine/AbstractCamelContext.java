@@ -734,7 +734,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public Collection<Endpoint> getEndpoints() {
-        return new ArrayList<>(endpoints.values());
+        return endpoints.getReadOnlyValues();
     }
 
     @Override
