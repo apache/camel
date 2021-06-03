@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>3.10.0-SNAPSHOT</version>
+    <version>3.11.0-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
   <artifactId>camel-bom</artifactId>
@@ -984,6 +984,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jackson-avro</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jackson-protobuf</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jacksonxml</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1159,6 +1169,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-kamelet-main</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-kamelet-reify</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1251,11 +1266,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-management-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-manual</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1546,6 +1556,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-resilience4j</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-resourceresolver-github</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

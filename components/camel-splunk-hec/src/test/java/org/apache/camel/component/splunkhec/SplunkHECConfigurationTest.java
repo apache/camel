@@ -77,4 +77,10 @@ public class SplunkHECConfigurationTest {
         SplunkHECConfiguration config = new SplunkHECConfiguration();
         assertEquals(false, config.isHeadersOnly());
     }
+
+    @Test
+    public void testDefaultTime() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertEquals(null, config.getTime());
+    }
 }

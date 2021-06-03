@@ -51,6 +51,8 @@ public class Lambda2Configuration implements Cloneable {
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
+    @UriParam(defaultValue = "false")
+    private boolean useDefaultCredentialsProvider;
 
     public LambdaClient getAwsLambdaClient() {
         return awsLambdaClient;
@@ -90,7 +92,7 @@ public class Lambda2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which ECS client needs to work. When using this parameter, the configuration will expect the
+     * The region in which Lambda client needs to work. When using this parameter, the configuration will expect the
      * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
@@ -186,6 +188,17 @@ public class Lambda2Configuration implements Cloneable {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 
+    /**
+     * Set whether the Lambda client should expect to load credentials through a default credentials provider or to
+     * expect static credentials to be passed in.
+     */
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
+    }
     // *************************************************
     //
     // *************************************************

@@ -11,6 +11,6 @@
     "output": false
   },
   "properties": {
-    "securityDefinitions": { "kind": "element", "displayName": "Security Definitions", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestSecurityDefinition>", "oneOf": [ "apiKey", "basicAuth", "oauth2" ], "deprecated": false, "autowired": false, "secret": false, "description": "Security definitions" }
+    "securityDefinitions": { "kind": "element", "displayName": "Security Definitions", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestSecurityDefinition>", "oneOf": [ "apiKey", "basicAuth", "bearer", "mutualTLS", "oauth2", "openIdConnect" ], "deprecated": false, "autowired": false, "secret": false, "description": "Security definitions" }
   }
 }

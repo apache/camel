@@ -20,6 +20,8 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,8 +40,10 @@ import io.apicurio.datamodels.core.models.ExtensibleNode;
 import io.apicurio.datamodels.core.models.Extension;
 import io.apicurio.datamodels.core.models.Node;
 import io.apicurio.datamodels.core.models.common.AuthorizationCodeOAuthFlow;
+import io.apicurio.datamodels.core.models.common.ClientCredentialsOAuthFlow;
 import io.apicurio.datamodels.core.models.common.ImplicitOAuthFlow;
 import io.apicurio.datamodels.core.models.common.OAuthFlow;
+import io.apicurio.datamodels.core.models.common.PasswordOAuthFlow;
 import io.apicurio.datamodels.core.models.common.SecurityRequirement;
 import io.apicurio.datamodels.core.models.common.Tag;
 import io.apicurio.datamodels.core.visitors.TraverserDirection;
@@ -48,6 +52,7 @@ import io.apicurio.datamodels.openapi.models.OasOperation;
 import io.apicurio.datamodels.openapi.models.OasParameter;
 import io.apicurio.datamodels.openapi.models.OasPathItem;
 import io.apicurio.datamodels.openapi.models.OasSchema;
+import io.apicurio.datamodels.openapi.models.OasSecurityRequirement;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Header;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Items;
@@ -76,10 +81,14 @@ import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
+import org.apache.camel.model.rest.RestSecuritiesRequirement;
 import org.apache.camel.model.rest.RestSecurityApiKey;
 import org.apache.camel.model.rest.RestSecurityBasicAuth;
+import org.apache.camel.model.rest.RestSecurityBearerToken;
 import org.apache.camel.model.rest.RestSecurityDefinition;
+import org.apache.camel.model.rest.RestSecurityMutualTLS;
 import org.apache.camel.model.rest.RestSecurityOAuth2;
+import org.apache.camel.model.rest.RestSecurityOpenIdConnect;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
@@ -249,6 +258,23 @@ public class RestOpenApiReader {
         }
 
         doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTag);
+
+        // setup root security node if necessary
+        RestSecuritiesRequirement securitiesRequirement = rest.getSecurityRequirements();
+        if (securitiesRequirement != null) {
+            Collection<SecurityDefinition> securityRequirements = securitiesRequirement.securityRequirements();
+            securityRequirements.forEach(requirement -> {
+                OasSecurityRequirement oasRequirement = openApi.createSecurityRequirement();
+                List<String> scopes;
+                if (requirement.getScopes() == null || requirement.getScopes().trim().isEmpty()) {
+                    scopes = Collections.emptyList();
+                } else {
+                    scopes = Arrays.asList(requirement.getScopes().trim().split("\\s*,\\s*"));
+                }
+                oasRequirement.addSecurityRequirementItem(requirement.getKey(), scopes);
+                openApi.addSecurityRequirement(oasRequirement);
+            });
+        }
     }
 
     private void parseOas30(Oas30Document openApi, RestDefinition rest, String pathAsTag) {
@@ -273,7 +299,14 @@ public class RestOpenApiReader {
                     auth.type = "http";
                     auth.scheme = "basic";
                     auth.description = def.getDescription();
-                    openApi.components.addSecurityScheme("BasicAuth", auth);
+                    openApi.components.addSecurityScheme(def.getKey(), auth);
+                } else if (def instanceof RestSecurityBearerToken) {
+                    Oas30SecurityScheme auth = openApi.components.createSecurityScheme(def.getKey());
+                    auth.type = "http";
+                    auth.scheme = "bearer";
+                    auth.description = def.getDescription();
+                    auth.bearerFormat = ((RestSecurityBearerToken) def).getFormat();
+                    openApi.components.addSecurityScheme(def.getKey(), auth);
                 } else if (def instanceof RestSecurityApiKey) {
                     RestSecurityApiKey rs = (RestSecurityApiKey) def;
                     Oas30SecurityScheme auth = openApi.components
@@ -283,8 +316,12 @@ public class RestOpenApiReader {
                     auth.name = rs.getName();
                     if (rs.getInHeader() != null && Boolean.parseBoolean(rs.getInHeader())) {
                         auth.in = "header";
-                    } else {
+                    } else if (rs.getInQuery() != null && Boolean.parseBoolean(rs.getInQuery())) {
                         auth.in = "query";
+                    } else if (rs.getInCookie() != null && Boolean.parseBoolean(rs.getInCookie())) {
+                        auth.in = "cookie";
+                    } else {
+                        throw new IllegalStateException("No API Key location specified.");
                     }
                     openApi.components.addSecurityScheme(def.getKey(), auth);
                 } else if (def instanceof RestSecurityOAuth2) {
@@ -296,29 +333,56 @@ public class RestOpenApiReader {
                     auth.description = rs.getDescription();
                     String flow = rs.getFlow();
                     if (flow == null) {
-                        if (rs.getAuthorizationUrl() != null && rs.getTokenUrl() != null) {
-                            flow = "accessCode";
-                        } else if (rs.getTokenUrl() == null && rs.getAuthorizationUrl() != null) {
-                            flow = "implicit";
-                        }
+                        flow = inferOauthFlow(rs);
                     }
-                    OAuthFlow oauthFlow = null;
+                    OAuthFlow oauthFlow;
                     if (auth.flows == null) {
                         auth.flows = auth.createOAuthFlows();
                     }
-                    if (flow.equals("accessCode")) {
-                        oauthFlow = auth.flows.createAuthorizationCodeOAuthFlow();
-                        auth.flows.authorizationCode = (AuthorizationCodeOAuthFlow) oauthFlow;
-                    } else if (flow.equals("implicit")) {
-                        oauthFlow = auth.flows.createImplicitOAuthFlow();
-                        auth.flows.implicit = (ImplicitOAuthFlow) oauthFlow;
+                    switch (flow) {
+                        case "authorizationCode":
+                        case "accessCode":
+                            AuthorizationCodeOAuthFlow authorizationCodeOAuthFlow
+                                    = auth.flows.createAuthorizationCodeOAuthFlow();
+                            oauthFlow = authorizationCodeOAuthFlow;
+                            auth.flows.authorizationCode = authorizationCodeOAuthFlow;
+                            break;
+                        case "implicit":
+                            ImplicitOAuthFlow implicitOAuthFlow = auth.flows.createImplicitOAuthFlow();
+                            oauthFlow = implicitOAuthFlow;
+                            auth.flows.implicit = implicitOAuthFlow;
+                            break;
+                        case "clientCredentials":
+                        case "application":
+                            ClientCredentialsOAuthFlow clientCredentialsOAuthFlow
+                                    = auth.flows.createClientCredentialsOAuthFlow();
+                            oauthFlow = clientCredentialsOAuthFlow;
+                            auth.flows.clientCredentials = clientCredentialsOAuthFlow;
+                            break;
+                        case "password":
+                            PasswordOAuthFlow passwordOAuthFlow = auth.flows.createPasswordOAuthFlow();
+                            oauthFlow = passwordOAuthFlow;
+                            auth.flows.password = passwordOAuthFlow;
+                            break;
+                        default:
+                            throw new IllegalStateException("Invalid OAuth flow '" + flow + "' specified");
                     }
                     oauthFlow.authorizationUrl = rs.getAuthorizationUrl();
                     oauthFlow.tokenUrl = rs.getTokenUrl();
+                    oauthFlow.refreshUrl = rs.getRefreshUrl();
                     for (RestPropertyDefinition scope : rs.getScopes()) {
                         oauthFlow.addScope(scope.getKey(), scope.getValue());
                     }
 
+                    openApi.components.addSecurityScheme(def.getKey(), auth);
+                } else if (def instanceof RestSecurityMutualTLS) {
+                    Oas30SecurityScheme auth = openApi.components.createSecurityScheme(def.getKey());
+                    auth.type = "mutualTLS";
+                    openApi.components.addSecurityScheme(def.getKey(), auth);
+                } else if (def instanceof RestSecurityOpenIdConnect) {
+                    Oas30SecurityScheme auth = openApi.components.createSecurityScheme(def.getKey());
+                    auth.type = "openIdConnect";
+                    auth.openIdConnectUrl = ((RestSecurityOpenIdConnect) def).getUrl();
                     openApi.components.addSecurityScheme(def.getKey(), auth);
                 }
             }
@@ -345,7 +409,9 @@ public class RestOpenApiReader {
                             = openApi.securityDefinitions.createSecurityScheme(getValue(camelContext, def.getKey()));
                     auth.type = "basicAuth";
                     auth.description = getValue(camelContext, def.getDescription());
-                    openApi.securityDefinitions.addSecurityScheme("BasicAuth", auth);
+                    openApi.securityDefinitions.addSecurityScheme(getValue(camelContext, def.getKey()), auth);
+                } else if (def instanceof RestSecurityBearerToken) {
+                    throw new IllegalStateException("OpenAPI 2.0 does not support bearer token security schemes.");
                 } else if (def instanceof RestSecurityApiKey) {
                     RestSecurityApiKey rs = (RestSecurityApiKey) def;
                     Oas20SecurityScheme auth
@@ -355,8 +421,10 @@ public class RestOpenApiReader {
                     auth.name = getValue(camelContext, rs.getName());
                     if (rs.getInHeader() != null && CamelContextHelper.parseBoolean(camelContext, rs.getInHeader())) {
                         auth.in = "header";
-                    } else {
+                    } else if (rs.getInQuery() != null && CamelContextHelper.parseBoolean(camelContext, rs.getInQuery())) {
                         auth.in = "query";
+                    } else {
+                        throw new IllegalStateException("Invalid 'in' value for API Key security scheme");
                     }
                     openApi.securityDefinitions.addSecurityScheme(getValue(camelContext, def.getKey()), auth);
                 } else if (def instanceof RestSecurityOAuth2) {
@@ -367,13 +435,24 @@ public class RestOpenApiReader {
                     auth.description = getValue(camelContext, rs.getDescription());
                     String flow = rs.getFlow();
                     if (flow == null) {
-                        if (rs.getAuthorizationUrl() != null && rs.getTokenUrl() != null) {
-                            flow = "accessCode";
-                        } else if (rs.getTokenUrl() == null && rs.getAuthorizationUrl() != null) {
-                            flow = "implicit";
-                        }
+                        flow = inferOauthFlow(rs);
                     }
-                    auth.flow = flow;
+                    switch (flow) {
+                        case "accessCode":
+                        case "authorizationCode":
+                            auth.flow = "accessCode";
+                            break;
+                        case "application":
+                        case "clientCredentials":
+                            auth.flow = "application";
+                            break;
+                        case "password":
+                        case "implicit":
+                            auth.flow = flow;
+                            break;
+                        default:
+                            throw new IllegalStateException("Invalid OAuth flow `" + flow + "'");
+                    }
                     auth.authorizationUrl = getValue(camelContext, rs.getAuthorizationUrl());
                     auth.tokenUrl = getValue(camelContext, rs.getTokenUrl());
                     if (!rs.getScopes().isEmpty() && auth.scopes == null) {
@@ -386,6 +465,10 @@ public class RestOpenApiReader {
                         openApi.securityDefinitions = openApi.createSecurityDefinitions();
                     }
                     openApi.securityDefinitions.addSecurityScheme(getValue(camelContext, def.getKey()), auth);
+                } else if (def instanceof RestSecurityMutualTLS) {
+                    throw new IllegalStateException("Mutual TLS security scheme is not supported");
+                } else if (def instanceof RestSecurityOpenIdConnect) {
+                    throw new IllegalStateException("OpenId Connect security scheme is not supported");
                 }
             }
         }
@@ -1481,6 +1564,18 @@ public class RestOpenApiReader {
 
         String name = names.get(ref);
         return name == null ? ref : name;
+    }
+
+    private String inferOauthFlow(RestSecurityOAuth2 rs) {
+        String flow;
+        if (rs.getAuthorizationUrl() != null && rs.getTokenUrl() != null) {
+            flow = "authorizationCode";
+        } else if (rs.getTokenUrl() == null && rs.getAuthorizationUrl() != null) {
+            flow = "implicit";
+        } else {
+            throw new IllegalStateException("Error inferring OAuth flow");
+        }
+        return flow;
     }
 
 }

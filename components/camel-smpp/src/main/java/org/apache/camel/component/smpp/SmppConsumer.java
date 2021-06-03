@@ -90,6 +90,8 @@ public class SmppConsumer extends DefaultConsumer {
         SMPPSession session = createSMPPSession();
         session.setEnquireLinkTimer(configuration.getEnquireLinkTimer());
         session.setTransactionTimer(configuration.getTransactionTimer());
+        session.setPduProcessorDegree(this.configuration.getPduProcessorDegree());
+        session.setQueueCapacity(this.configuration.getPduProcessorQueueCapacity());
         session.addSessionStateListener(internalSessionStateListener);
         session.setMessageReceiverListener(messageReceiverListener);
         session.connectAndBind(this.configuration.getHost(), this.configuration.getPort(),

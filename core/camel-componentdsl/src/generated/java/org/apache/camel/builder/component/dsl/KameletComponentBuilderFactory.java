@@ -51,7 +51,8 @@ public interface KameletComponentBuilderFactory {
             extends
                 ComponentBuilder<KameletComponent> {
         /**
-         * The location of the Kamelets on the file system.
+         * The location(s) of the Kamelets on the file system. Multiple
+         * locations can be set separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -196,6 +197,23 @@ public interface KameletComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * To plugin a custom listener for when the Kamelet component is loading
+         * Kamelets from external resources.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kamelet.KameletResourceLoaderListener&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param kameletResourceLoaderListener the value to set
+         * @return the dsl builder
+         */
+        default KameletComponentBuilder kameletResourceLoaderListener(
+                org.apache.camel.component.kamelet.KameletResourceLoaderListener kameletResourceLoaderListener) {
+            doSetProperty("kameletResourceLoaderListener", kameletResourceLoaderListener);
+            return this;
+        }
     }
 
     class KameletComponentBuilderImpl
@@ -221,6 +239,7 @@ public interface KameletComponentBuilderFactory {
             case "lazyStartProducer": ((KameletComponent) component).setLazyStartProducer((boolean) value); return true;
             case "timeout": ((KameletComponent) component).setTimeout((long) value); return true;
             case "autowiredEnabled": ((KameletComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "kameletResourceLoaderListener": ((KameletComponent) component).setKameletResourceLoaderListener((org.apache.camel.component.kamelet.KameletResourceLoaderListener) value); return true;
             default: return false;
             }
         }

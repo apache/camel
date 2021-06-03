@@ -47,7 +47,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Eventbridge component supports 16 options, which are listed below.
+The AWS 2 Eventbridge component supports 17 options, which are listed below.
 
 
 
@@ -67,6 +67,7 @@ The AWS 2 Eventbridge component supports 16 options, which are listed below.
 | *region* (producer) | The region in which Eventbridge client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (producer) | Set whether the Eventbridge client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -95,7 +96,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -113,10 +114,25 @@ with the following path and query parameters:
 | *region* (producer) | The region in which Eventbridge client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (producer) | Set whether the Eventbridge client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
+
+
+=== Static credentials vs Default Credential Provider
+
+You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+
+ - Java system properties - aws.accessKeyId and aws.secretKey
+ - Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
+ - Amazon EC2 Instance profile credentials. 
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
 === AWS2-Eventbridge Producer operations
 

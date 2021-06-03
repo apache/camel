@@ -17,10 +17,14 @@
 package org.apache.camel.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -30,6 +34,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ResourceResolverSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.util.CollectionHelper.propertiesOf;
 import static org.apache.camel.util.FileUtil.copyFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -113,7 +118,7 @@ public class ResourceLoaderTest extends TestSupport {
                 }
 
                 @Override
-                protected Resource createResource(String location) {
+                protected Resource createResource(String location, String remaining) {
                     throw new UnsupportedOperationException();
                 }
             });
@@ -245,5 +250,81 @@ public class ResourceLoaderTest extends TestSupport {
         assertTrue(text.contains("rootLogger"));
 
         context.stop();
+    }
+
+    @Test
+    public void testLoadMem() throws Exception {
+        final String raw = "to-be-encoded";
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        Resource resource = context.getResourceLoader().resolveResource("mem:" + raw);
+
+        try (InputStream is = resource.getInputStream()) {
+            assertNotNull(is);
+
+            String content = context.getTypeConverter().convertTo(String.class, is);
+            assertNotNull(content);
+            assertEquals(raw, content);
+        }
+    }
+
+    @Test
+    public void testLoadBase64() throws Exception {
+        final String raw = "to-be-encoded";
+        final String encoded = Base64.getEncoder().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        Resource resource = context.getResourceLoader().resolveResource("base64:" + encoded);
+
+        try (InputStream is = resource.getInputStream()) {
+            assertNotNull(is);
+
+            String content = context.getTypeConverter().convertTo(String.class, is);
+            assertNotNull(content);
+            assertEquals(raw, content);
+        }
+    }
+
+    @Test
+    public void testLoadBase64WithPlaceholders() throws Exception {
+        final String raw = "to-be-encoded";
+        final String encoded = Base64.getEncoder().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.getPropertiesComponent().setInitialProperties(propertiesOf("my.encoded", encoded));
+        Resource resource = context.getResourceLoader().resolveResource("base64:{{my.encoded}}");
+
+        try (InputStream is = resource.getInputStream()) {
+            assertNotNull(is);
+
+            String content = context.getTypeConverter().convertTo(String.class, is);
+            assertNotNull(content);
+            assertEquals(raw, content);
+        }
+    }
+
+    @Test
+    public void testLoadGzip() throws Exception {
+        final String raw = "to-be-encoded";
+        final String encoded;
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
+                gzip.write(raw.getBytes(StandardCharsets.UTF_8));
+            }
+
+            encoded = Base64.getEncoder().encodeToString(out.toByteArray());
+        }
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        Resource resource = context.getResourceLoader().resolveResource("gzip:" + encoded);
+
+        try (InputStream is = resource.getInputStream()) {
+            assertNotNull(is);
+
+            String content = context.getTypeConverter().convertTo(String.class, is);
+            assertNotNull(content);
+            assertEquals(raw, content);
+        }
     }
 }

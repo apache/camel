@@ -97,10 +97,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             }
         }
 
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
-
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
         if (strategy != null && parseBoolean(definition.getShareUnitOfWork(), false)) {
             // wrap strategy in share unit of work
             strategy = new ShareUnitOfWorkAggregationStrategy(strategy);

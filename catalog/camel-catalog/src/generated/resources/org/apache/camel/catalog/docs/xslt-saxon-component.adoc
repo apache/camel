@@ -129,7 +129,7 @@ destination you could use the following route:
 [source,java]
 ----
 from("activemq:My.Queue").
-  to("xslt:com/acme/mytransform.xsl").
+  to("xslt-saxon:com/acme/mytransform.xsl").
   to("activemq:Another.Queue");
 ----
 
@@ -259,7 +259,7 @@ keys `Exchange.XSLT_ERROR`, `Exchange.XSLT_FATAL_ERROR`,
 or `Exchange.XSLT_WARNING` which allows end users to get hold of any
 errors happening during transformation.
 
-For example in the stylesheet below, we want to terminate if a staff has
+For example in the stylesheet below, we want to determinate whether a staff has
 an empty dob field. And to include a custom error message using
 xsl:message.
 

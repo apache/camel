@@ -112,6 +112,10 @@ public class SmppConfiguration implements Cloneable {
     private SessionStateListener sessionStateListener;
     @UriParam(defaultValue = "ALLOW")
     private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
+    @UriParam(label = "advanced", defaultValue = "3")
+    private Integer pduProcessorDegree = 3;
+    @UriParam(label = "advanced", defaultValue = "100")
+    private Integer pduProcessorQueueCapacity = 100;
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -676,6 +680,28 @@ public class SmppConfiguration implements Cloneable {
         return proxyHeaders;
     }
 
+    public Integer getPduProcessorDegree() {
+        return pduProcessorDegree;
+    }
+
+    /**
+     * Sets the number of threads which can read PDU and process them in parallel.
+     */
+    public void setPduProcessorDegree(Integer pduProcessorDegree) {
+        this.pduProcessorDegree = pduProcessorDegree;
+    }
+
+    public Integer getPduProcessorQueueCapacity() {
+        return pduProcessorQueueCapacity;
+    }
+
+    /**
+     * Sets the capacity of the working queue for PDU processing.
+     */
+    public void setPduProcessorQueueCapacity(Integer pduProcessorQueueCapacity) {
+        this.pduProcessorQueueCapacity = pduProcessorQueueCapacity;
+    }
+
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL
@@ -689,6 +715,8 @@ public class SmppConfiguration implements Cloneable {
                + ", alphabet=" + alphabet
                + ", encoding=" + encoding
                + ", transactionTimer=" + transactionTimer
+               + ", pduProcessorQueueCapacity=" + pduProcessorQueueCapacity
+               + ", pduProcessorDegree=" + pduProcessorDegree
                + ", registeredDelivery=" + registeredDelivery
                + ", serviceType=" + serviceType
                + ", sourceAddrTon=" + sourceAddrTon

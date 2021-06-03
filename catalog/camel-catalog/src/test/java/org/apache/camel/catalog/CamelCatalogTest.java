@@ -1158,7 +1158,7 @@ public class CamelCatalogTest {
     public void testLanguageAsciiDoc() {
         String doc = catalog.languageAsciiDoc("jsonpath");
         assertNotNull(doc);
-        assertTrue(doc.contains("JSonPath language"));
+        assertTrue(doc.contains("JsonPath language"));
     }
 
     @Test

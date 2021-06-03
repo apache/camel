@@ -64,6 +64,8 @@ import static org.apache.camel.component.bean.ParameterMappingStrategyHelper.cre
 public class BeanInfo {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
+    private static final String CGLIB_METHOD_MARKER = "CGLIB$";
+    private static final String BYTE_BUDDY_METHOD_MARKER = "$accessor$";
     private static final String[] EXCLUDED_METHOD_NAMES = new String[] {
             "clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
             "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
@@ -915,6 +917,11 @@ public class BeanInfo {
 
         // return type must not be an Exchange and it should not be a bridge method
         if (Exchange.class.isAssignableFrom(method.getReturnType()) || method.isBridge()) {
+            return false;
+        }
+
+        // must not be a method added by Mockito (CGLIB or Byte Buddy)
+        if (name.contains(CGLIB_METHOD_MARKER) || name.contains(BYTE_BUDDY_METHOD_MARKER)) {
             return false;
         }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -80,5 +81,10 @@ public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
      * Cleanup the cache (purging stale entries)
      */
     void cleanUp();
+
+    /**
+     * Gets a read-only collection of the endpoints currently in the registry.
+     */
+    Collection<Endpoint> getReadOnlyValues();
 
 }

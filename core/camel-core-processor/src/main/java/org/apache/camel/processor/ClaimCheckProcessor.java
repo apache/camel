@@ -189,9 +189,7 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
         if (aggregationStrategy == null) {
             aggregationStrategy = createAggregationStrategy();
         }
-        if (aggregationStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
 
         if (LanguageSupport.hasSimpleFunction(key)) {
             keyExpression = camelContext.resolveLanguage("simple").createExpression(key);

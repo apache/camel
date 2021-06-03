@@ -455,9 +455,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
                     ThreadPoolFactory.class)
                     .orElseGet(DefaultThreadPoolFactory::new);
         }
-        if (threadPoolFactory instanceof CamelContextAware) {
-            ((CamelContextAware) threadPoolFactory).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(threadPoolFactory, camelContext);
         ServiceHelper.initService(threadPoolFactory);
     }
 

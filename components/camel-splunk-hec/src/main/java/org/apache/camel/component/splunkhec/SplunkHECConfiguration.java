@@ -44,6 +44,8 @@ public class SplunkHECConfiguration {
     private boolean bodyOnly;
     @UriParam
     private boolean headersOnly;
+    @UriParam
+    private Long time;
 
     public String getSourceType() {
         return sourceType;
@@ -139,5 +141,16 @@ public class SplunkHECConfiguration {
 
     public void setHeadersOnly(boolean headersOnly) {
         this.headersOnly = headersOnly;
+    }
+
+    /**
+     * Time this even occurred. By default, the time will be when this event hits the splunk server.
+     */
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 }

@@ -9,4 +9,4 @@ of such tests is done automatically by checking either the docker socket or the 
 It is also possible to run the tests using an embedded Qpid broker, for interoperability test. To run such tests,
 execute maven with the `-Drabbitmq.instance.type=qpid`
 
-```mvn Drabbitmq.instance.type=qpid verify```
+```mvn -Drabbitmq.instance.type=qpid verify```

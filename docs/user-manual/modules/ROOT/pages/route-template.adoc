@@ -215,6 +215,77 @@ You should prefer to create the local beans directly from within the template (i
 ensures the route template has this out of the box. Otherwise the bean must be created or provided every time
 a new route is created from the route template. However the latter gives freedom to create the bean in any other custom way.
 
+=== Binding beans to route templates using bean types
+
+You can create a local bean by referring to a fully qualified class name which Camel will use to create
+a new local bean instance. When using this the created bean is created via default constructor of the class.
+
+The bean instance can be configured with properties via getter/setter style.
+The previous example with creating the AWS S3Client would not support this kind as this uses _fluent builder_ pattern (not getter/setter).
+
+So suppose we have a class as follows
+
+[source,java]
+----
+public class MyBar {
+    private String name;
+    private String address;
+
+    // getter/setter omitted
+
+    public String location() {
+        return "The bar " + name + " is located at " + address;
+    }
+}
+----
+
+Then we can use the `MyBar` class as a local bean in a route template as follows:
+
+[source,java]
+----
+routeTemplate("barTemplate")
+    .templateParameter("bar")
+    .templateParameter("street")
+    .templateBean("myBar")
+        .typeClass("com.foo.MyBar")
+        .property("name", "{{bar}}")
+        .property("address", "{{street}}")
+    .end()
+    .from("direct:going-out")
+    .to("bean:{{myBar}}")
+----
+
+With Java DSL you can also refer to the bean class using type safe way:
+
+[source,java]
+----
+    .templateBean("myBar")
+        .typeClass(MyBar.class)
+        .property("name", "{{bar}}")
+        .property("address", "{{street}}")
+    .end()
+----
+
+In XML DSL you would do:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <routeTemplate id="myBar">
+        <templateParameter name="bar"/>
+        <templateParameter name="street"/>
+        <templateBean name="myBean" type="#class:com.foo.MyBar">
+            <property key="name" value="{{bar}}"/>
+            <property key="address" value="{{street}}"/>
+        </templateBean>
+        <route>
+            <from uri="direct:going-out"/>
+            <to uri="bean:{{myBar}}"/>
+        </route>
+    </routeTemplate>
+</camelContext>
+----
+
 === Binding beans to route templates using scripting languages
 
 You can use scripting languages like groovy, joor, mvel which creates the bean.
@@ -268,13 +339,13 @@ The route template in XML DSL can then also use groovy language to create the be
   <routeTemplate id="s3template">
     <templateParameter name="region"/>
     <templateParameter name="bucket"/>
-    <templateBean name="myClient">
-        <templateBeanFactory language="groovy">
+    <templateBean name="myClient" type="groovy">
+        <script>
             import software.amazon.awssdk.services.s3.S3Client
             S3Client.builder()
                 .region(rtc.getProperty("region", Region.class))
                 .build()
-        </templateBeanFactory>
+        </script>
     </templateBean>
     <route>
       <from uri="direct:s3-store"/>
@@ -293,10 +364,8 @@ the bean creation code to an external file, by using `resource:` as prefix:
   <routeTemplate id="s3template">
     <templateParameter name="region"/>
     <templateParameter name="bucket"/>
-    <templateBean name="myClient">
-        <templateBeanFactory language="groovy">
-          resource:classpath:s3bean.groovy
-        </templateBeanFactory>
+    <templateBean name="myClient" type="groovy">
+        <script>resource:classpath:s3bean.groovy</script>
     </templateBean>
     <route>
       <from uri="direct:s3-store"/>
@@ -310,13 +379,13 @@ The languages supported are:
 
 [width="100%",cols="2s,8",options="header"]
 |===
-| Language | Description
-| bean | Calling a method on a Java class.
+| Type | Description
+| bean | Calling a method on a Java class to create the bean.
 | groovy | Using groovy script to create the bean.
 | joor | Using joor (Java code which are runtime compiled) to create the bean.
-| language | To use a 3rd party language to create the bean.
 | mvel | To use Mvel template script to create the bean.
 | ognl | To use OGNL template script to create the bean.
+| _name_ | To use a 3rd party language by the given _name_ to create the bean.
 |===
 
 Camel will bind `RouteTemplateContext` as the root object with name `rtc` when evaluating the script.
@@ -354,10 +423,8 @@ then you can call this method from the route template in XML DSL:
   <routeTemplate id="s3template">
     <templateParameter name="region"/>
     <templateParameter name="bucket"/>
-    <templateBean name="myClient">
-        <templateBeanFactory language="bean">
-          com.foo.MyAwsHelper?method=createS3Client
-        </templateBeanFactory>
+    <templateBean name="myClient" type="bean">
+        <script>com.foo.MyAwsHelper?method=createS3Client</script>
     </templateBean>
     <route>
       <from uri="direct:s3-store"/>
@@ -380,6 +447,44 @@ public static S3Client createS3Client(RouteTemplateContext rtc) {
 
 If you are using pure Java code (both template and creating local bean),
 then you can create the local bean using Java lambda style as previously documented.
+
+==== Configuring the type of the created bean
+
+When using scripting languages to create the local bean, then Camel would not know what type (fully qualified class name)
+then created bean is. The type is therefore unassigned (is set as `java.lang.Object`) which is a slight limitation.
+
+If you use dependency injection by type, or have the need for looking up the local bean from the Camel `Registry` via its type,
+then you must provide this information in the route template with `beanType` as shown:
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <templateBean name="myClient" type="bean" beanType="software.amazon.awssdk.services.s3.S3Client">
+        <script>com.foo.MyAwsHelper?method=createS3Client</script>
+    </templateBean>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+And in Java DSL you can do:
+
+[source,java]
+----
+routeTemplate("s3template")
+    .templateParameter("region")
+    .templateParameter("bucket")
+    .templateBean("myClient", S3Client.class, "bean", "com.foo.MyAwsHelper?method=createS3Client")
+    .from("direct:s3-store")
+     // must refer to the bean with {{myClient}}
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}")
+----
 
 == Configuring route templates when creating route
 

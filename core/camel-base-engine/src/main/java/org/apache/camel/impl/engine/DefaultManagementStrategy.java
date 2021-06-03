@@ -185,26 +185,20 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         }
         for (EventNotifier notifier : eventNotifiers) {
             // inject CamelContext if the service is aware
-            if (notifier instanceof CamelContextAware) {
-                CamelContextAware aware = (CamelContextAware) notifier;
-                aware.setCamelContext(camelContext);
-            }
+            CamelContextAware.trySetCamelContext(notifier, camelContext);
         }
         ServiceHelper.initService(eventNotifiers, managementAgent);
 
         if (managementObjectStrategy == null) {
             managementObjectStrategy = createManagementObjectStrategy();
         }
-        if (managementObjectStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) managementObjectStrategy).setCamelContext(getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(managementObjectStrategy, getCamelContext());
 
         if (managementObjectNameStrategy == null) {
             managementObjectNameStrategy = createManagementObjectNameStrategy();
         }
-        if (managementObjectNameStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) managementObjectNameStrategy).setCamelContext(getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(managementObjectNameStrategy, getCamelContext());
+
         ServiceHelper.initService(managementObjectStrategy, managementObjectNameStrategy);
     }
 

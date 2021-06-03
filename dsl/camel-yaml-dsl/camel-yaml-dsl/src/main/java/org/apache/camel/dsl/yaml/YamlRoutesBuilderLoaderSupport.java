@@ -39,7 +39,7 @@ import org.snakeyaml.engine.v2.parser.Parser;
 import org.snakeyaml.engine.v2.parser.ParserImpl;
 import org.snakeyaml.engine.v2.scanner.StreamReader;
 
-abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderSupport {
+public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderSupport {
     public static final String DESERIALIZATION_MODE = "CamelYamlDslDeserializationMode";
 
     private LoadSettings settings;

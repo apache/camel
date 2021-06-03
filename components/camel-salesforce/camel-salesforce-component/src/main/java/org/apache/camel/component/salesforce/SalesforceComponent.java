@@ -36,7 +36,9 @@ import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.component.salesforce.internal.client.DefaultRawClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
+import org.apache.camel.component.salesforce.internal.client.RawClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.spi.Metadata;
@@ -786,6 +788,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         httpClient.setSession(session);
 
         return new DefaultRestClient(httpClient, config.getApiVersion(), config.getFormat(), session, loginConfig);
+    }
+
+    public RawClient createRawClientFor(SalesforceEndpoint endpoint) throws SalesforceException {
+        SalesforceEndpointConfig endpointConfig = endpoint.getConfiguration();
+        return new DefaultRawClient(httpClient, "", session, loginConfig);
     }
 
     static SalesforceHttpClient createHttpClient(final SslContextFactory sslContextFactory) throws Exception {

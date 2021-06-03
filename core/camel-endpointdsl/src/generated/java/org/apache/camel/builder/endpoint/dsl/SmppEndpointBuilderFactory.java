@@ -642,6 +642,74 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder pduProcessorDegree(
+                Integer pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder pduProcessorDegree(
+                String pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder pduProcessorQueueCapacity(
+                Integer pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder pduProcessorQueueCapacity(
+                String pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
+            return this;
+        }
+        /**
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          * 
@@ -1691,6 +1759,74 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder pduProcessorDegree(
+                Integer pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder pduProcessorDegree(
+                String pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder pduProcessorQueueCapacity(
+                Integer pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder pduProcessorQueueCapacity(
+                String pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
+            return this;
+        }
+        /**
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          * 
@@ -2238,6 +2374,74 @@ public interface SmppEndpointBuilderFactory {
         default AdvancedSmppEndpointBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
             doSetProperty("enquireLinkTimer", enquireLinkTimer);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder pduProcessorDegree(
+                Integer pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder pduProcessorDegree(
+                String pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder pduProcessorQueueCapacity(
+                Integer pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder pduProcessorQueueCapacity(
+                String pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
             return this;
         }
         /**

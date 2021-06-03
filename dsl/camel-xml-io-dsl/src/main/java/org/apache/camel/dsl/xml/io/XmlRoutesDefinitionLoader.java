@@ -28,6 +28,7 @@ import org.apache.camel.xml.in.ModelParser;
  * and light-weight compared to the default that uses JAXB.
  */
 @JdkService(XMLRoutesDefinitionLoader.FACTORY)
+@Deprecated
 public class XmlRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";

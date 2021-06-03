@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.10.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -56,30 +56,4 @@
             </plugin>
         </plugins>
     </build>
-    <!-- profiles>
-      <profile>
-        <id>build.manual</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-      <profile>
-        <id>assembly</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-      <profile>
-        <id>deploy</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-      <profile>
-        <id>apache-release</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-    </profiles -->
 </project>

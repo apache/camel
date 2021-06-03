@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.10.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -43,6 +43,7 @@
         <module>camel-yaml-dsl</module>
         <module>camel-js-dsl</module>
         <module>camel-kotlin-dsl</module>
+        <module>camel-kamelet-main</module>
     </modules>
 
     <properties>

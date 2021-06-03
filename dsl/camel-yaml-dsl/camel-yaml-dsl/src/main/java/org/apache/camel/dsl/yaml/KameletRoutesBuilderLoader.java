@@ -16,15 +16,21 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
+
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringSet;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 
@@ -48,6 +54,11 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             throw new IllegalArgumentException("No template defined");
         }
 
+        Set<String> required = asStringSet(nodeAt(node, "/spec/definition/required"));
+        if (required == null) {
+            required = Collections.emptySet();
+        }
+
         final YamlDeserializationContext context = this.getDeserializationContext();
         final RouteTemplateDefinition rtd = context.construct(template, RouteTemplateDefinition.class);
 
@@ -55,11 +66,19 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         Node properties = nodeAt(node, "/spec/definition/properties");
         if (properties != null) {
+
+            rtd.setTemplateParameters(new ArrayList<>());
+
             for (NodeTuple p : asMappingNode(properties).getValue()) {
                 final String key = asText(p.getKeyNode());
                 final Node def = nodeAt(p.getValueNode(), "/default");
 
-                rtd.templateParameter(key, asText(def));
+                RouteTemplateParameterDefinition rtpd = new RouteTemplateParameterDefinition();
+                rtpd.setName(key);
+                rtpd.setDefaultValue(asText(def));
+                rtpd.setRequired(required.contains(key));
+
+                rtd.getTemplateParameters().add(rtpd);
             }
         }
 

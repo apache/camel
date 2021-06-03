@@ -38,55 +38,7 @@ The maven plugin *run* goal supports the following options which can be configur
 
 === Running OSGi Blueprint
 
-The `camel:run` plugin also supports running a Blueprint application, and by default it scans for OSGi blueprint files in
-`OSGI-INF/blueprint/*.xml`
-
-You would need to configure the camel:run plugin to use blueprint, by setting useBlueprint to true as shown below
-
-[source,xml]
-----
-<plugin>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-maven-plugin</artifactId>
-  <configuration>
-    <useBlueprint>true</useBlueprint>
-  </configuration>
-</plugin>
-----
-
-This allows you to boot up any Blueprint services you wish - whether they are Camel-related, or any other Blueprint.
-
-The `camel:run` goal is able to auto detect if camel-blueprint is on the classpath or there is blueprint XML files
-in the project, and therefore you no longer have to configure the useBlueprint option.
-
-=== Using limited Blueprint container
-
-We use the Felix Connector project as the blueprint container. This project is not a full fledged blueprint container.
-For that you can use Apache Karaf or Apache ServiceMix.
-You can use the applicationContextUri configuration to specify an explicit blueprint XML file, such as:
-
-[source,xml]
-----
-<plugin>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-maven-plugin</artifactId>
-  <configuration>
-    <useBlueprint>true</useBlueprint>
-    <applicationContextUri>myBlueprint.xml</applicationContextUri>
-    <!-- ConfigAdmin options which have been added since Camel 2.12.0 -->
-    <configAdminPid>test</configAdminPid>
-    <configAdminFileName>/user/test/etc/test.cfg</configAdminFileName>
-  </configuration>
-</plugin>
-----
-
-The `applicationContextUri` will currently load the file from the classpath, so in the example above the
-`myBlueprint.xml` file must be in the root of the classpath.
-
-The `configAdminPid` is the pid name which will be used as the pid name for configuration admin service when
-loading the persistence properties file.
-
-The `configAdminFileName` is the file name which will be used to load the configuration admin service properties file.
+Use the `camel-karaf-maven-plugin` which is intended for Apache Camel on Karaf/OSGi.
 
 === Running CDI
 

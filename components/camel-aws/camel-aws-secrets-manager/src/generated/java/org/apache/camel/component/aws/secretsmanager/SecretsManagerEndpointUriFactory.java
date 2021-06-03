@@ -20,10 +20,11 @@ public class SecretsManagerEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(16);
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("uriEndpointOverride");
+        props.add("useDefaultCredentialsProvider");
         props.add("label");
         props.add("pojoRequest");
         props.add("proxyHost");

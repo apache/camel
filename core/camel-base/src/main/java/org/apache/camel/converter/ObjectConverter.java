@@ -19,8 +19,8 @@ package org.apache.camel.converter;
 import java.math.BigInteger;
 import java.util.Iterator;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
 import org.apache.camel.support.ObjectHelper;
 
 /**
@@ -117,10 +117,10 @@ public final class ObjectConverter {
      * Returns the converted value, or null if the value is null
      */
     @Converter(order = 11)
-    public static Class<?> toClass(String value, Exchange exchange) {
+    public static Class<?> toClass(String value, CamelContext camelContext) {
         // prefer to use class resolver API
-        if (exchange != null) {
-            return exchange.getContext().getClassResolver().resolveClass(value);
+        if (camelContext != null) {
+            return camelContext.getClassResolver().resolveClass(value);
         } else {
             return org.apache.camel.util.ObjectHelper.loadClass(value);
         }

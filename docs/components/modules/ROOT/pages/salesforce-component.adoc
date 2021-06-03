@@ -166,10 +166,12 @@ results) using result link returned from the 'query' API
 * compositeUpsertSObjectCollections - Create or update (upsert) up to 200 records based on an external ID field.
 Returns a list of UpsertSObjectResult objects.
 * compositeDeleteSObjectCollections - Delete up to 200 records, returning a list of SaveSObjectResult objects.
-* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge or delete. Also returns
+* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge (merges up to three records into one of the records, deletes the others, and reparents any related records) or delete.
+Also returns
 the  information about archived Task and Event records.
 * getBlobField - Retrieves the specified blob field from an individual record.
 * apexCall - Executes a user defined APEX REST API call.
+* raw - Send requests to salesforce and have full, raw control over endpoint, parameters, body, etc.
 
 For example, the following producer endpoint uses the upsertSObject API,
 with the sObjectIdName parameter specifying 'Name' as the external id
@@ -676,6 +678,51 @@ With this approach, you have the complete control on the Salesforce request.
 `compositeMethod` option to override to the other supported value, `GET`, which returns a list of
 other available composite resources.
 
+== Using Raw Operation
+
+Send HTTP requests to salesforce with full, raw control of all aspects of the call. Any serialization or deserialization of request and response bodies must be performed in the route. The `Content-Type` HTTP
+header will be automatically set based on the `format` option, but this can be overridden with the `rawHttpHeaders` option.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| request body | `String` or `InputStream` | Body of the HTTP request | |
+| rawPath | `String` | The portion of the endpoint URL after the domain name, e.g., '/services/data/v51.0/sobjects/Account/' | | x
+| rawMethod | `String` | The HTTP method | | x
+| rawQueryParameters | `String` | Comma separated list of message headers to include as query parameters. Do not url-encode values as this will be done automatically. | |
+| rawHttpHeaders | `String` | Comma separated list of message headers to include as HTTP headers | |
+|===
+
+=== Query example
+
+In this example we'll send a query to the REST API. The query must be passed in a URL parameter called "q", so we'll create a message header called q and tell the
+raw operation to include that message header as a URL parameter:
+----
+from("direct:queryExample")
+  .setHeader("q", "SELECT Id, LastName FROM Contact")
+  .to("salesforce:raw?format=JSON&rawMethod=GET&rawQueryParameters=q&rawPath=/services/data/v51.0/query")
+  // deserialize JSON results or handle in some other way
+----
+
+=== SObject example
+
+In this example, we'll pass a Contact the REST API in a `create` operation. Since the `raw` operation does not perform any serialization,
+we make sure to pass XML in the message body
+
+----
+from("direct:createAContact")
+  .setBody(constant("<Contact><LastName>TestLast</LastName></Contact>"))
+  .to("salesforce:raw?format=XML&rawMethod=POST&rawPath=/services/data/v51.0/sobjects/Contact")
+----
+The response is:
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Result>
+    <id>0034x00000RnV6zAAF</id>
+    <success>true</success>
+</Result>
+----
+
 == Using Composite SObject Collections
 
 The SObject Collections API executes actions on multiple records in one request. Use sObject Collections to reduce the number of round-trips between the client and server. The entire request counts as a single call toward your API limits. This resource is available in API version 42.0 and later. `SObject` records (aka DTOs) supplied to these operations must be instances of subclasses of `AbstractDescribedSObjectBase`. See the Maven Plugin section for information on generating these DTO classes. These operations serialize supplied DTOs to JSON.
@@ -779,7 +826,7 @@ for details on how to generate the DTO.
 == Options
 
 // component options: START
-The Salesforce component supports 80 options, which are listed below.
+The Salesforce component supports 84 options, which are listed below.
 
 
 
@@ -841,6 +888,10 @@ The Salesforce component supports 80 options, which are listed below.
 | *apexUrl* (producer) | APEX method URL |  | String
 | *compositeMethod* (producer) | Composite (raw) method. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *rawHttpHeaders* (producer) | Comma separated list of message headers to include as HTTP parameters for Raw operation. |  | String
+| *rawMethod* (producer) | HTTP method to use for the Raw operation |  | String
+| *rawPath* (producer) | The portion of the endpoint URL after the domain name. E.g., '/services/data/v52.0/sobjects/Account/' |  | String
+| *rawQueryParameters* (producer) | Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *httpProxyExcludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
 | *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
@@ -893,12 +944,12 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operationName* | The operation to use. There are 64 enums and the value can be one of: getVersions, getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject, createSObject, updateSObject, deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore, queryAll, search, apexCall, recent, createJob, getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults, createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports, getReportDescription, executeSyncReport, executeAsyncReport, getReportInstances, getReportResults, limits, approval, approvals, composite-tree, composite-batch, composite, compositeRetrieveSObjectCollections, compositeCreateSObjectCollections, compositeUpdateSObjectCollections, compositeUpsertSObjectCollections, compositeDeleteSObjectCollections, bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob, bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults, bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob, bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob, bulk2DeleteQueryJob |  | OperationName
+| *operationName* | The operation to use. There are 65 enums and the value can be one of: getVersions, getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject, createSObject, updateSObject, deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore, queryAll, search, apexCall, recent, createJob, getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults, createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports, getReportDescription, executeSyncReport, executeAsyncReport, getReportInstances, getReportResults, limits, approval, approvals, composite-tree, composite-batch, composite, compositeRetrieveSObjectCollections, compositeCreateSObjectCollections, compositeUpdateSObjectCollections, compositeUpsertSObjectCollections, compositeDeleteSObjectCollections, bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob, bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults, bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob, bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob, bulk2DeleteQueryJob, raw |  | OperationName
 | *topicName* | The name of the topic/channel to use |  | String
 |===
 
 
-=== Query Parameters (50 parameters):
+=== Query Parameters (54 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -954,6 +1005,10 @@ with the following path and query parameters:
 | *apexUrl* (producer) | APEX method URL |  | String
 | *compositeMethod* (producer) | Composite (raw) method. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *rawHttpHeaders* (producer) | Comma separated list of message headers to include as HTTP parameters for Raw operation. |  | String
+| *rawMethod* (producer) | HTTP method to use for the Raw operation |  | String
+| *rawPath* (producer) | The portion of the endpoint URL after the domain name. E.g., '/services/data/v52.0/sobjects/Account/' |  | String
+| *rawQueryParameters* (producer) | Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
 |===
 // endpoint options: END
 

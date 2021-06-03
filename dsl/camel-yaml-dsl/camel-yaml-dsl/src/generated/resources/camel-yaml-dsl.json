@@ -2065,18 +2065,27 @@
         }, {
           "type" : "object",
           "properties" : {
-            "language" : {
+            "bean-type" : {
               "type" : "string"
             },
             "name" : {
               "type" : "string"
             },
+            "property" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+              }
+            },
             "script" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateScriptDefinition"
+            },
+            "type" : {
               "type" : "string"
             }
           }
         } ],
-        "required" : [ "language", "name", "script" ]
+        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",
@@ -2113,9 +2122,24 @@
           },
           "name" : {
             "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
           }
         },
         "required" : [ "name" ]
+      },
+      "org.apache.camel.model.RouteTemplateScriptDefinition" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "script" : {
+              "type" : "string"
+            }
+          }
+        } ]
       },
       "org.apache.camel.model.RoutingSlipDefinition" : {
         "oneOf" : [ {
@@ -3650,15 +3674,72 @@
         }, {
           "type" : "object",
           "properties" : {
+            "allow-jms-type" : {
+              "type" : "boolean"
+            },
+            "allow-unmarshall-type" : {
+              "type" : "boolean"
+            },
+            "auto-discover-object-mapper" : {
+              "type" : "boolean"
+            },
+            "auto-discover-schema-resolver" : {
+              "type" : "boolean"
+            },
+            "collection-type-name" : {
+              "type" : "string"
+            },
+            "content-type-header" : {
+              "type" : "boolean"
+            },
+            "disable-features" : {
+              "type" : "string"
+            },
+            "enable-features" : {
+              "type" : "string"
+            },
             "id" : {
+              "type" : "string"
+            },
+            "include" : {
               "type" : "string"
             },
             "instance-class-name" : {
               "type" : "string"
+            },
+            "json-view-type-name" : {
+              "type" : "string"
+            },
+            "library" : {
+              "type" : "string",
+              "enum" : [ "ApacheAvro", "Jackson", "dataFormatName" ]
+            },
+            "module-class-names" : {
+              "type" : "string"
+            },
+            "module-refs" : {
+              "type" : "string"
+            },
+            "object-mapper" : {
+              "type" : "string"
+            },
+            "schema-resolver" : {
+              "type" : "string"
+            },
+            "timezone" : {
+              "type" : "string"
+            },
+            "unmarshal-type-name" : {
+              "type" : "string"
+            },
+            "use-default-object-mapper" : {
+              "type" : "boolean"
+            },
+            "use-list" : {
+              "type" : "boolean"
             }
           }
-        } ],
-        "required" : [ "instance-class-name" ]
+        } ]
       },
       "org.apache.camel.model.dataformat.BarcodeDataFormat" : {
         "type" : "object",
@@ -4407,6 +4488,9 @@
           "auto-discover-object-mapper" : {
             "type" : "boolean"
           },
+          "auto-discover-schema-resolver" : {
+            "type" : "boolean"
+          },
           "collection-type-name" : {
             "type" : "string"
           },
@@ -4449,6 +4533,9 @@
           },
           "pretty-print" : {
             "type" : "boolean"
+          },
+          "schema-resolver" : {
+            "type" : "string"
           },
           "timezone" : {
             "type" : "string"
@@ -4554,17 +4641,72 @@
         }, {
           "type" : "object",
           "properties" : {
+            "allow-jms-type" : {
+              "type" : "boolean"
+            },
+            "allow-unmarshall-type" : {
+              "type" : "boolean"
+            },
+            "auto-discover-object-mapper" : {
+              "type" : "boolean"
+            },
+            "auto-discover-schema-resolver" : {
+              "type" : "boolean"
+            },
+            "collection-type-name" : {
+              "type" : "string"
+            },
             "content-type-format" : {
               "type" : "string"
             },
             "content-type-header" : {
               "type" : "boolean"
             },
+            "disable-features" : {
+              "type" : "string"
+            },
+            "enable-features" : {
+              "type" : "string"
+            },
             "id" : {
+              "type" : "string"
+            },
+            "include" : {
               "type" : "string"
             },
             "instance-class" : {
               "type" : "string"
+            },
+            "json-view-type-name" : {
+              "type" : "string"
+            },
+            "library" : {
+              "type" : "string",
+              "enum" : [ "GoogleProtobuf", "Jackson", "dataFormatName" ]
+            },
+            "module-class-names" : {
+              "type" : "string"
+            },
+            "module-refs" : {
+              "type" : "string"
+            },
+            "object-mapper" : {
+              "type" : "string"
+            },
+            "schema-resolver" : {
+              "type" : "string"
+            },
+            "timezone" : {
+              "type" : "string"
+            },
+            "unmarshal-type-name" : {
+              "type" : "string"
+            },
+            "use-default-object-mapper" : {
+              "type" : "boolean"
+            },
+            "use-list" : {
+              "type" : "boolean"
             }
           }
         } ]
@@ -6365,6 +6507,9 @@
           "security-definitions" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesDefinition"
           },
+          "security-requirements" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesRequirement"
+          },
           "skip-binding-on-error-code" : {
             "type" : "string"
           },
@@ -6508,8 +6653,25 @@
           "basic-auth" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityBasicAuth"
           },
+          "bearer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityBearerToken"
+          },
+          "mutual-tls" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityMutualTLS"
+          },
           "oauth2" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityOAuth2"
+          },
+          "open-id-connect" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityOpenIdConnect"
+          }
+        }
+      },
+      "org.apache.camel.model.rest.RestSecuritiesRequirement" : {
+        "type" : "object",
+        "properties" : {
+          "security-requirement" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
           }
         }
       },
@@ -6518,6 +6680,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "in-cookie" : {
+            "type" : "boolean"
           },
           "in-header" : {
             "type" : "boolean"
@@ -6546,6 +6711,33 @@
         },
         "required" : [ "key" ]
       },
+      "org.apache.camel.model.rest.RestSecurityBearerToken" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "format" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
+      "org.apache.camel.model.rest.RestSecurityMutualTLS" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
       "org.apache.camel.model.rest.RestSecurityOAuth2" : {
         "type" : "object",
         "properties" : {
@@ -6561,6 +6753,9 @@
           "key" : {
             "type" : "string"
           },
+          "refresh-url" : {
+            "type" : "string"
+          },
           "scopes" : {
             "type" : "array",
             "items" : {
@@ -6572,6 +6767,21 @@
           }
         },
         "required" : [ "key" ]
+      },
+      "org.apache.camel.model.rest.RestSecurityOpenIdConnect" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key", "url" ]
       },
       "org.apache.camel.model.rest.RestsDefinition" : {
         "type" : "object",

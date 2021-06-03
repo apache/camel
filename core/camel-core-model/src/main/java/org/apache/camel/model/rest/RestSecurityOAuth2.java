@@ -42,7 +42,10 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
     private String tokenUrl;
 
     @XmlAttribute
-    @Metadata(enums = "implicit,password,application,accessCode")
+    private String refreshUrl;
+
+    @XmlAttribute
+    @Metadata(enums = "implicit,password,application,clientCredentials,accessCode,authorizationCode")
     private String flow;
 
     @XmlElement(name = "scopes")
@@ -79,6 +82,17 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
         this.tokenUrl = tokenUrl;
     }
 
+    public String getRefreshUrl() {
+        return refreshUrl;
+    }
+
+    /**
+     * The URL to be used for obtaining refresh tokens. This MUST be in the form of a URL.
+     */
+    public void setRefreshUrl(String refreshUrl) {
+        this.refreshUrl = refreshUrl;
+    }
+
     public String getFlow() {
         return flow;
     }
@@ -102,9 +116,23 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
         this.scopes = scopes;
     }
 
+    public RestSecurityOAuth2 flow(String flow) {
+        setFlow(flow);
+        return this;
+    }
+
     public RestSecurityOAuth2 authorizationUrl(String authorizationUrl) {
         setAuthorizationUrl(authorizationUrl);
-        setFlow("implicit");
+        return this;
+    }
+
+    public RestSecurityOAuth2 tokenUrl(String tokenUrl) {
+        setTokenUrl(tokenUrl);
+        return this;
+    }
+
+    public RestSecurityOAuth2 refreshUrl(String refreshUrl) {
+        setRefreshUrl(refreshUrl);
         return this;
     }
 
@@ -115,15 +143,23 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
     }
 
     public RestSecurityOAuth2 application(String tokenUrl) {
+        return clientCredentials(tokenUrl);
+    }
+
+    public RestSecurityOAuth2 clientCredentials(String tokenUrl) {
         setTokenUrl(tokenUrl);
-        setFlow("application");
+        setFlow("clientCredentials");
         return this;
     }
 
     public RestSecurityOAuth2 accessCode(String authorizationUrl, String tokenUrl) {
+        return authorizationCode(authorizationUrl, tokenUrl);
+    }
+
+    public RestSecurityOAuth2 authorizationCode(String authorizationUrl, String tokenUrl) {
         setAuthorizationUrl(authorizationUrl);
         setTokenUrl(tokenUrl);
-        setFlow("accessCode");
+        setFlow("authorizationCode");
         return this;
     }
 

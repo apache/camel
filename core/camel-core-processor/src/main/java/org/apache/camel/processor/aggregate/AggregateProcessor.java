@@ -1457,9 +1457,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
     @Override
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
-        if (aggregationStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         if (aggregationStrategy.canPreComplete()) {
             preCompletion = true;
             LOG.info("PreCompletionAwareAggregationStrategy detected. Aggregator {} is in pre-completion mode.", getId());

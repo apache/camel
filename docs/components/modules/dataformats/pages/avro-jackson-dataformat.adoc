@@ -1,0 +1,96 @@
+[[avro-jackson-dataformat]]
+= Avro Jackson DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jackson-avro/src/main/docs/avro-jackson-dataformat.adoc
+:docTitle: Avro Jackson
+:artifactId: camel-jackson-avro
+:description: Marshal POJOs to Avro and back using Jackson.
+:since: 3.10
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro-jackson.adoc[opts=optional]
+
+*Since Camel {since}*
+
+Jackson Avro is a Data Format which uses the
+http://wiki.fasterxml.com/JacksonHome/[Jackson library] with the https://github.com/FasterXML/jackson-dataformats-binary[Avro extension]
+to unmarshal an Avro payload into Java objects or to marshal Java objects
+into an Avro payload.
+
+[TIP]
+====
+If you are familiar with Jackson, this Avro data format behaves in the
+same way as its JSON counterpart, and thus can be used with classes
+annotated for JSON serialization/deserialization.
+====
+
+[source,java]
+-------------------------------
+from("kafka:topic").
+  unmarshal().avro(AvroLibrary.Jackson, JsonNode.class).
+  to("log:info");
+-------------------------------
+
+== Configuring the SchemaResolver
+
+Since Avro serialization is schema-based, this data format requires that you provide a SchemaResolver object
+that is able to lookup the schema for each exchange that is going to be marshalled/unmarshalled.
+
+You can add a single SchemaResolver to the registry and it will be looked up automatically.
+Or you can explicitly specify the reference to a custom SchemaResolver.
+
+== Avro Jackson Options
+
+// dataformat options: START
+The Avro Jackson dataformat supports 18 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
+| useDefaultObjectMapper | true | Boolean | Whether to lookup and use default Jackson ObjectMapper from the registry.
+| unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
+| jsonViewTypeName |  | String | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
+| include |  | String | If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL
+| allowJmsType | false | Boolean | Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.
+| collectionTypeName |  | String | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.
+| useList | false | Boolean | To unmarshal to a List of Map or a List of Pojo.
+| moduleClassNames |  | String | To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.
+| moduleRefs |  | String | To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
+| enableFeatures |  | String | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+| disableFeatures |  | String | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+| allowUnmarshallType | false | Boolean | If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
+| timezone |  | String | If set then Jackson will use the Timezone when marshalling/unmarshalling.
+| autoDiscoverObjectMapper | false | Boolean | If set to true then Jackson will lookup for an objectMapper into the registry
+| contentTypeHeader | true | Boolean | Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
+| schemaResolver |  | String | Optional schema resolver used to lookup schemas for the data in transit.
+| autoDiscoverSchemaResolver | true | Boolean | When not disabled, the SchemaResolver will be looked up into the registry
+|===
+// dataformat options: END
+
+
+== Using custom AvroMapper
+
+You can configure `JacksonAvroDataFormat` to use a custom `AvroMapper` in case you need more control of the mapping configuration.
+
+If you setup a single `AvroMapper` in the registry, then Camel will automatic lookup and use this `AvroMapper`.
+
+== Dependencies
+
+To use Avro Jackson in your camel routes you need to add the dependency
+on *camel-jackson-avro* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jackson-avro</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------

@@ -35,6 +35,7 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         case "source": target.getConfiguration().setSource(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcetype":
         case "sourceType": target.getConfiguration().setSourceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "time": target.getConfiguration().setTime(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
     }
@@ -56,6 +57,7 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         case "source": return java.lang.String.class;
         case "sourcetype":
         case "sourceType": return java.lang.String.class;
+        case "time": return java.lang.Long.class;
         default: return null;
         }
     }
@@ -78,6 +80,7 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         case "source": return target.getConfiguration().getSource();
         case "sourcetype":
         case "sourceType": return target.getConfiguration().getSourceType();
+        case "time": return target.getConfiguration().getTime();
         default: return null;
         }
     }

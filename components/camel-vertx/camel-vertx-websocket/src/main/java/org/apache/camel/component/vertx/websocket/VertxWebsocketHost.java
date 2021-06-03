@@ -33,6 +33,8 @@ import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.vertx.common.VertxHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -48,10 +50,13 @@ public class VertxWebsocketHost {
     private final VertxWebsocketHostKey hostKey;
     private final Map<String, Route> routeRegistry = new HashMap<>();
     private final Map<String, ServerWebSocket> connectedPeers = new ConcurrentHashMap<>();
+    private final CamelContext camelContext;
     private HttpServer server;
     private int port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
 
-    public VertxWebsocketHost(VertxWebsocketHostConfiguration websocketHostConfiguration, VertxWebsocketHostKey key) {
+    public VertxWebsocketHost(CamelContext camelContext, VertxWebsocketHostConfiguration websocketHostConfiguration,
+                              VertxWebsocketHostKey key) {
+        this.camelContext = camelContext;
         this.hostConfiguration = websocketHostConfiguration;
         this.hostKey = key;
     }
@@ -161,7 +166,7 @@ public class VertxWebsocketHost {
                     options = new HttpServerOptions();
                 }
 
-                VertxWebsocketHelper.setupSSLOptions(sslContextParameters, options);
+                VertxHelper.setupSSLOptions(camelContext, sslContextParameters, options);
             }
 
             if (options != null) {

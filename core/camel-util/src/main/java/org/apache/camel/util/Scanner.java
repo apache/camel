@@ -120,7 +120,9 @@ public final class Scanner implements Iterator<String>, Closeable {
 
     @Override
     public boolean hasNext() {
-        checkClosed();
+        if (closed) {
+            return false;
+        }
         saveState();
         while (!inputExhausted) {
             if (hasTokenInBuffer()) {

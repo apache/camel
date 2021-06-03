@@ -146,8 +146,16 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pkChunkingStartRow": getOrCreateConfig(target).setPkChunkingStartRow(property(camelContext, java.lang.String.class, value)); return true;
         case "querylocator":
         case "queryLocator": getOrCreateConfig(target).setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": getOrCreateConfig(target).setRawHttpHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawmethod":
+        case "rawMethod": getOrCreateConfig(target).setRawMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawpath":
+        case "rawPath": getOrCreateConfig(target).setRawPath(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
         case "rawPayload": getOrCreateConfig(target).setRawPayload(property(camelContext, boolean.class, value)); return true;
+        case "rawqueryparameters":
+        case "rawQueryParameters": getOrCreateConfig(target).setRawQueryParameters(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "reportid":
@@ -307,8 +315,16 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pkChunkingStartRow": return java.lang.String.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return java.lang.String.class;
+        case "rawmethod":
+        case "rawMethod": return java.lang.String.class;
+        case "rawpath":
+        case "rawPath": return java.lang.String.class;
         case "rawpayload":
         case "rawPayload": return boolean.class;
+        case "rawqueryparameters":
+        case "rawQueryParameters": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "reportid":
@@ -469,8 +485,16 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pkChunkingStartRow": return getOrCreateConfig(target).getPkChunkingStartRow();
         case "querylocator":
         case "queryLocator": return getOrCreateConfig(target).getQueryLocator();
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return getOrCreateConfig(target).getRawHttpHeaders();
+        case "rawmethod":
+        case "rawMethod": return getOrCreateConfig(target).getRawMethod();
+        case "rawpath":
+        case "rawPath": return getOrCreateConfig(target).getRawPath();
         case "rawpayload":
         case "rawPayload": return getOrCreateConfig(target).isRawPayload();
+        case "rawqueryparameters":
+        case "rawQueryParameters": return getOrCreateConfig(target).getRawQueryParameters();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "reportid":

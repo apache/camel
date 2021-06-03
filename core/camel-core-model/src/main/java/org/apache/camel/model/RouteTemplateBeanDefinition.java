@@ -16,12 +16,16 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.spi.Metadata;
@@ -37,16 +41,17 @@ public class RouteTemplateBeanDefinition {
     private RouteTemplateDefinition parent;
     @XmlAttribute(required = true)
     private String name;
+    @XmlAttribute(required = true)
+    private String type;
+    @XmlAttribute
+    private String beanType;
+    @XmlElement(name = "property")
+    private List<PropertyDefinition> properties;
+    @XmlElement(name = "script")
+    private RouteTemplateScriptDefinition script;
+    // special for java-dsl to allow using lambda style
     @XmlTransient
     private Class<?> beanClass;
-    // it only makes sense to use the languages that are general purpose scripting languages
-    @XmlAttribute(required = true)
-    @Metadata(enums = "bean,groovy,joor,language,mvel,ognl")
-    private String language;
-    @XmlValue
-    @Metadata(required = true)
-    private String script;
-    // special for java-dsl to allow using lambda style
     @XmlTransient
     private RouteTemplateContext.BeanSupplier<Object> beanSupplier;
 
@@ -72,37 +77,59 @@ public class RouteTemplateBeanDefinition {
         this.name = name;
     }
 
-    public Class<?> getBeanClass() {
-        return beanClass;
+    public String getType() {
+        return type;
     }
 
+    /**
+     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     *
+     * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
+     *
+     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
+     * section, such as using groovy.
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getBeanType() {
+        return beanType;
+    }
+
+    /**
+     * To set the type (fully qualified class name) of the returned bean created by the script.
+     *
+     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
+     * registry via class type.
+     */
+    public void setBeanType(String beanType) {
+        this.beanType = beanType;
+    }
+
+    /**
+     * To set the type (fully qualified class name) of the returned bean created by the script.
+     *
+     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
+     * registry via class type.
+     */
     public void setBeanType(Class<?> beanType) {
         this.beanClass = beanType;
     }
 
-    public String getLanguage() {
-        return language;
+    public Class<?> getBeanClass() {
+        return beanClass;
+    }
+
+    public List<PropertyDefinition> getProperties() {
+        return properties;
     }
 
     /**
-     * The language to use for creating the bean (such as groovy, joor)
+     * Optional properties to set on the created local bean
      */
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getScript() {
-        return script;
-    }
-
-    /**
-     * The script to execute that creates the bean.
-     *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
-     */
-    public void setScript(String script) {
-        this.script = script;
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
     }
 
     public RouteTemplateContext.BeanSupplier<Object> getBeanSupplier() {
@@ -116,8 +143,118 @@ public class RouteTemplateBeanDefinition {
         this.beanSupplier = beanSupplier;
     }
 
+    public RouteTemplateScriptDefinition getScript() {
+        return script;
+    }
+
+    /**
+     * The script to execute that creates the bean when using scripting languages.
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     */
+    public void setScript(RouteTemplateScriptDefinition script) {
+        this.script = script;
+    }
+
+    /**
+     * The script to execute that creates the bean when using scripting languages.
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     */
+    public void setScript(String script) {
+        this.script = new RouteTemplateScriptDefinition();
+        this.script.setScript(script);
+    }
+
     // fluent builders
     // ----------------------------------------------------
+
+    /**
+     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     *
+     * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
+     *
+     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
+     * section, such as using groovy.
+     */
+    public RouteTemplateBeanDefinition type(String prefix, Class<?> type) {
+        if (prefix.startsWith("#type") || prefix.startsWith("#class")) {
+            if (!prefix.endsWith(":")) {
+                prefix = prefix + ":";
+            }
+            setType(prefix + type.getName());
+        } else {
+            // its a script
+            setType(prefix);
+        }
+        setBeanType(type);
+        return this;
+    }
+
+    /**
+     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     *
+     * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
+     *
+     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
+     * section, such as using groovy.
+     */
+    public RouteTemplateBeanDefinition type(String type) {
+        if (!type.startsWith("#")) {
+            // use #class as default
+            type = "#class:" + type;
+        }
+        setType(type);
+        return this;
+    }
+
+    /**
+     * Creates the bean from the given class type
+     *
+     * @param type the type of the class to create as bean
+     */
+    public RouteTemplateBeanDefinition typeClass(Class<?> type) {
+        setType("#class:" + type.getName());
+        return this;
+    }
+
+    /**
+     * Creates the bean from the given class type
+     *
+     * @param type the type of the class to create as bean
+     */
+    public RouteTemplateBeanDefinition typeClass(String type) {
+        setType("#class:" + type);
+        return this;
+    }
+
+    /**
+     * To set the return type of the script (fully qualified class name).
+     *
+     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
+     * registry via class type.
+     *
+     * @param type the fully qualified type of the returned bean from the script
+     */
+    public RouteTemplateBeanDefinition beanType(Class<?> type) {
+        setBeanType(type);
+        return this;
+    }
+
+    /**
+     * To set the return type of the script (fully qualified class name).
+     *
+     * Knowing the type of the bean can be needed when dependency injection by type is in use, or when looking in
+     * registry via class type.
+     *
+     * @param type the fully qualified type of the returned bean from the script
+     */
+    public RouteTemplateBeanDefinition beanType(String type) {
+        setBeanType(type);
+        return this;
+    }
 
     /**
      * Calls a method on a bean for creating the local template bean
@@ -135,7 +272,7 @@ public class RouteTemplateBeanDefinition {
      * @param method the name of the method to call
      */
     public RouteTemplateDefinition bean(Class<?> type, String method) {
-        setLanguage("bean");
+        setType("bean");
         if (method != null) {
             setScript(type.getName() + "?method=" + method);
         } else {
@@ -153,7 +290,7 @@ public class RouteTemplateBeanDefinition {
      * @param script the script
      */
     public RouteTemplateDefinition groovy(String script) {
-        setLanguage("groovy");
+        setType("groovy");
         setScript(script);
         return parent;
     }
@@ -167,7 +304,7 @@ public class RouteTemplateBeanDefinition {
      * @param script the script
      */
     public RouteTemplateDefinition joor(String script) {
-        setLanguage("joor");
+        setType("joor");
         setScript(script);
         return parent;
     }
@@ -178,11 +315,11 @@ public class RouteTemplateBeanDefinition {
      * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
      * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
      *
-     * @param language the custom language (a language not provided out of the box from Camel)
+     * @param language the language
      * @param script   the script
      */
     public RouteTemplateDefinition language(String language, String script) {
-        setLanguage(language);
+        setType(language);
         setScript(script);
         return parent;
     }
@@ -196,7 +333,7 @@ public class RouteTemplateBeanDefinition {
      * @param script the script
      */
     public RouteTemplateDefinition mvel(String script) {
-        setLanguage("mvel");
+        setType("mvel");
         setScript(script);
         return parent;
     }
@@ -210,8 +347,37 @@ public class RouteTemplateBeanDefinition {
      * @param script the script
      */
     public RouteTemplateDefinition ognl(String script) {
-        setLanguage("ognl");
+        setType("ognl");
         setScript(script);
+        return parent;
+    }
+
+    /**
+     * Sets a property to set on the created local bean
+     *
+     * @param key   the property name
+     * @param value the property value
+     */
+    public RouteTemplateBeanDefinition property(String key, String value) {
+        if (properties == null) {
+            properties = new ArrayList<>();
+        }
+        properties.add(new PropertyDefinition(key, value));
+        return this;
+    }
+
+    /**
+     * Sets properties to set on the created local bean
+     */
+    public RouteTemplateBeanDefinition properties(Map<String, String> properties) {
+        if (this.properties == null) {
+            this.properties = new ArrayList<>();
+        }
+        properties.forEach((k, v) -> this.properties.add(new PropertyDefinition(k, v)));
+        return this;
+    }
+
+    public RouteTemplateDefinition end() {
         return parent;
     }
 

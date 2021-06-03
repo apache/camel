@@ -36,7 +36,9 @@ public interface Registry extends BeanRepository {
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
     default void bind(String id, Object bean) throws RuntimeCamelException {
-        bind(id, bean.getClass(), bean);
+        if (bean != null) {
+            bind(id, bean.getClass(), bean);
+        }
     }
 
     /**

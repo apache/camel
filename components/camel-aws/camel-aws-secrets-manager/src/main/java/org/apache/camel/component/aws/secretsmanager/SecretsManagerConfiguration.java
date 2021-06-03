@@ -58,6 +58,8 @@ public class SecretsManagerConfiguration implements Cloneable {
     private String uriEndpointOverride;
     @UriParam(defaultValue = "false")
     private boolean binaryPayload;
+    @UriParam(defaultValue = "false")
+    private boolean useDefaultCredentialsProvider;
 
     public SecretsManagerClient getSecretsManagerClient() {
         return secretsManagerClient;
@@ -204,6 +206,17 @@ public class SecretsManagerConfiguration implements Cloneable {
         this.binaryPayload = binaryPayload;
     }
 
+    /**
+     * Set whether the Translate client should expect to load credentials through a default credentials provider or to
+     * expect static credentials to be passed in.
+     */
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
+    }
     // *************************************************
     //
     // *************************************************

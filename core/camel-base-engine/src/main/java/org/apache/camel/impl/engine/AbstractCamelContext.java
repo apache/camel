@@ -734,7 +734,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public Collection<Endpoint> getEndpoints() {
-        return new ArrayList<>(endpoints.values());
+        return endpoints.getReadOnlyValues();
     }
 
     @Override
@@ -1411,10 +1411,7 @@ public abstract class AbstractCamelContext extends BaseService
             throws Exception {
 
         // inject CamelContext
-        if (object instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware) object;
-            aware.setCamelContext(getCamelContextReference());
-        }
+        CamelContextAware.trySetCamelContext(object, getCamelContextReference());
 
         if (object instanceof Service) {
             Service service = (Service) object;
@@ -1984,9 +1981,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setRegistry(Registry registry) {
-        if (registry instanceof CamelContextAware) {
-            ((CamelContextAware) registry).setCamelContext(getCamelContextReference());
-        }
+        CamelContextAware.trySetCamelContext(registry, getCamelContextReference());
         this.registry = registry;
     }
 
@@ -3464,11 +3459,7 @@ public abstract class AbstractCamelContext extends BaseService
             addStartupListener(listener);
         }
 
-        if (service instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware) service;
-            aware.setCamelContext(getCamelContextReference());
-        }
-
+        CamelContextAware.trySetCamelContext(service, getCamelContextReference());
         ServiceHelper.startService(service);
     }
 

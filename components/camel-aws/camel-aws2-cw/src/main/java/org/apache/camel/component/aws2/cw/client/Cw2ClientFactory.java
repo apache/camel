@@ -21,7 +21,7 @@ import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientIAMOptimizedImpl;
 import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientStandardImpl;
 
 /**
- * Factory class to return the correct type of AWS Athena client.
+ * Factory class to return the correct type of AWS Cloud Watch client.
  */
 public final class Cw2ClientFactory {
 
@@ -29,7 +29,7 @@ public final class Cw2ClientFactory {
     }
 
     /**
-     * Return the correct AWS Athena client (based on remote vs local).
+     * Return the correct AWS Cloud Watch client (based on remote vs local).
      * 
      * @param  configuration configuration
      * @return               CloudWatchClient

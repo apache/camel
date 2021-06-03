@@ -6,7 +6,7 @@
 :artifactId: camel-google-functions
 :description: Manage and invoke Google Cloud Functions
 :since: 3.9
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-functions.adoc[opts=optional]
 //Manually maintained attributes
