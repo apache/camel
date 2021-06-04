@@ -829,6 +829,26 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * An upper bound on the time to report success or failure after a call
+         * to send() returns. This limits the total time that a record will be
+         * delayed prior to sending, the time to await acknowledgement from the
+         * broker (if expected), and the time allowed for retriable send
+         * failures.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: producer
+         * 
+         * @param deliveryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder deliveryTimeoutMs(
+                java.lang.Integer deliveryTimeoutMs) {
+            doSetProperty("deliveryTimeoutMs", deliveryTimeoutMs);
+            return this;
+        }
+        /**
          * If set to 'true' the producer will ensure that exactly one copy of
          * each message is written in the stream. If 'false', producer retries
          * may write duplicates of the retried message in the stream. If set to
@@ -1980,6 +2000,7 @@ public interface KafkaComponentBuilderFactory {
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
             case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;
+            case "deliveryTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setDeliveryTimeoutMs((java.lang.Integer) value); return true;
             case "enableIdempotence": getOrCreateConfiguration((KafkaComponent) component).setEnableIdempotence((boolean) value); return true;
             case "headerSerializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderSerializer((org.apache.camel.component.kafka.serde.KafkaHeaderSerializer) value); return true;
             case "key": getOrCreateConfiguration((KafkaComponent) component).setKey((java.lang.String) value); return true;
