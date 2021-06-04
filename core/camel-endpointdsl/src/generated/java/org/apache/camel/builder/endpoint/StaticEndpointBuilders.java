@@ -13411,7 +13411,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>solr:url</code>
      * 
      * Path parameter: url (required)
-     * Hostname and port for the solr server
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
      * 
      * @param path url
      * @return the dsl builder
@@ -13431,7 +13433,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>solr:url</code>
      * 
      * Path parameter: url (required)
-     * Hostname and port for the solr server
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

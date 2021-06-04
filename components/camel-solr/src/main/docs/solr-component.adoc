@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (16 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,16 +82,19 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *autoCommit* (producer) | If true, each producer operation will be automatically followed by a commit | false | boolean
 | *connectionTimeout* (producer) | Sets the connection timeout on the SolrClient |  | Integer
+| *defaultMaxConnectionsPerHost* (producer) | *Deprecated* maxConnectionsPerHost on the underlying HttpConnectionManager |  | Integer
 | *httpClient* (producer) | Sets the http client to be used by the solrClient |  | HttpClient
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *maxRetries* (producer) | *Deprecated* Maximum number of retries to attempt in the event of transient errors |  | Integer
+| *maxTotalConnections* (producer) | *Deprecated* maxTotalConnection on the underlying HttpConnectionManager |  | Integer
 | *requestHandler* (producer) | Set the request handler to be used |  | String
 | *solrClient* (producer) | Uses the provided solr client to connect to solr. When this parameter is not specified, camel applies the following rules to determine the SolrClient. A CloudSolrClient should point to a zookeeper endpoint. Other clients point to a Solr endpoint. 1) when zkHost or zkChroot (=zookeeper root) parameter is set, then the CloudSolrClient is used. 2) when multiple hosts are specified in the uri (separated with a comma), then the CloudSolrClient (uri scheme is 'solrCloud') or the LBHttpSolrClient (uri scheme is not 'solrCloud') is used. 3) when the solr operation is INSERT_STREAMING, then the ConcurrentUpdateSolrClient is used. 4) otherwise, the HttpSolrClient is used. |  | SolrClient
 | *soTimeout* (producer) | Sets the socket timeout on the SolrClient |  | Integer
 | *streamingQueueSize* (producer) | Sets the queue size for the ConcurrentUpdateSolrClient | 10 | int
 | *streamingThreadCount* (producer) | Sets the number of threads for the ConcurrentUpdateSolrClient | 2 | int
 | *collection* (CloudSolrClient) | Set the default collection for SolrCloud |  | String
-| *zkChroot* (CloudSolrClient) | Set the chroot of the zookeeper connection (including the leading slash; e.g. '/mychroot') |  | String
-| *zkHost* (CloudSolrClient) | Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g. zkHost=localhost:8123,localhost:8124. Optionally add the chroot, e.g. zkHost=localhost:8123,localhost:8124/rootformysolr. In case the first part of the chroot path in the zkHost parameter is set to 'solr' (e.g. localhost:8123/solr or localhost:8123/solr/..), then that path is not considered as zookeeper chroot for backward compatibility reasons (can be overridden via zkChroot parameter). |  | String
+| *zkChroot* (CloudSolrClient) | Set the chroot of the zookeeper connection (include the leading slash; e.g. '/mychroot') |  | String
+| *zkHost* (CloudSolrClient) | Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g. zkHost=localhost:8123,localhost:8124. Optionally add the chroot, e.g. zkHost=localhost:8123,localhost:8124/rootformysolr. In case the first part of the chroot path in the zkHost parameter is set to 'solr' (e.g. 'localhost:8123/solr' or 'localhost:8123/solr/..'), then that path is not considered as zookeeper chroot for backward compatibility reasons (this behaviour can be overridden via zkChroot parameter). |  | String
 | *allowCompression* (HttpSolrClient) | Server side must support gzip or deflate for this to have any effect |  | Boolean
 | *followRedirects* (HttpSolrClient) | Indicates whether redirects are used to get to the Solr server |  | Boolean
 | *password* (security) | Sets password for basic auth plugin enabled servers |  | String
