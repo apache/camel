@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract superclass of <a href="http://jackson.codehaus.org/">Jackson</a> based data formats.
+ * Abstract superclass of Jackson based data formats.
  */
 public abstract class AbstractJacksonDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
@@ -530,7 +530,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                     Set<? extends ObjectMapper> set = camelContext.getRegistry().findByType(getObjectMapperClass());
                     if (set.size() == 1) {
                         objectMapper = set.iterator().next();
-                        LOG.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
+                        LOG.debug("Found single ObjectMapper in Registry to use: {}", objectMapper);
                         objectMapperFoundRegistry = true;
                     } else if (set.size() > 1) {
                         LOG.debug(
@@ -538,7 +538,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                                 set.size());
                     }
                 } else {
-                    LOG.info("The option autoDiscoverObjectMapper is set to false, Camel won't search in the registry");
+                    LOG.debug("The option autoDiscoverObjectMapper is set to false, Camel won't search in the registry");
                 }
             }
             if (objectMapper == null) {
@@ -648,7 +648,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                 objectMapper.setTimeZone(timezone);
             }
         } else {
-            LOG.info("The objectMapper was already found in the registry, no customizations will be applied");
+            LOG.debug("The objectMapper was already found in the registry, no customizations will be applied");
         }
 
         if (schemaResolver == null && isAutoDiscoverSchemaResolver()) {
@@ -656,7 +656,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                 Set<SchemaResolver> set = camelContext.getRegistry().findByType(SchemaResolver.class);
                 if (set.size() == 1) {
                     schemaResolver = set.iterator().next();
-                    LOG.info("Found single SchemaResolver in Registry to use: {}", schemaResolver);
+                    LOG.debug("Found single SchemaResolver in Registry to use: {}", schemaResolver);
                 } else if (set.size() > 1) {
                     LOG.debug(
                             "Found {} SchemaResolver in Registry cannot use as default as there are more than one instance.",
@@ -664,7 +664,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                 }
             }
         } else {
-            LOG.info("The option autoDiscoverSchemaResolver is set to false, Camel won't search in the registry");
+            LOG.debug("The option autoDiscoverSchemaResolver is set to false, Camel won't search in the registry");
         }
     }
 
