@@ -44,6 +44,7 @@
         <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
         <cxf.xjc.jvmArgs/>
         <trimStackTrace>false</trimStackTrace>
+        <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
@@ -4179,7 +4180,7 @@
                                 <excludes>${sourcecheckExcludesComma}**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java</excludes>
                             </configuration>
                             <goals>
-                                <goal>checkstyle</goal>
+                                <goal>check</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -4711,6 +4712,9 @@
                     </plugin>
                 </plugins>
             </build>
+            <properties>
+                <checkstyle.failOnViolation>true</checkstyle.failOnViolation>
+            </properties>
         </profile>
 
         <profile>
