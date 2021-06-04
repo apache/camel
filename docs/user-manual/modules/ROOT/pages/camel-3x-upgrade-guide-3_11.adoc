@@ -6,6 +6,23 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.10 to 3.11
 
+=== Routes loader
+
+The default pattern for discovering Camel routes et all from the classpath has changed from only including XML files to now include all files.
+
+The option `routesIncludePattern` is changed  from:
+----
+classpath:camel/*.xml,classpath:camel-template/*.xml,classpath:camel-rest/*.xml`
+----
+
+to:
+
+----
+classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*
+----
+
+This is from the `camel-main` module which is for running Camel standalone, but also reused for Camel on Spring Boot, or Camel on Quarkus.
+
 === camel-saxon
 
 The camel-saxon component no longer depends on camel-xslt-saxon.

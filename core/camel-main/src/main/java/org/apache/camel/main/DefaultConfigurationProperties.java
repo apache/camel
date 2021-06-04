@@ -86,7 +86,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean routesCollectorEnabled = true;
     private String javaRoutesIncludePattern;
     private String javaRoutesExcludePattern;
-    private String routesIncludePattern = "classpath:camel/*.xml,classpath:camel-template/*.xml,classpath:camel-rest/*.xml";
+    private String routesIncludePattern = "classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*";
     private String routesExcludePattern;
     private boolean lightweight;
     private boolean eagerClassloading;
