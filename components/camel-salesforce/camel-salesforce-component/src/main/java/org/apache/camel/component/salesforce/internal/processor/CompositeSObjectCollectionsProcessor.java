@@ -180,14 +180,13 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
         try {
             if (!responseBody.isPresent()) {
                 exchange.setException(exception);
+            } else {
+                Message in = exchange.getIn();
+                Message out = exchange.getOut();
+                List<?> response = responseBody.get();
+                out.copyFromWithNewBody(in, response);
+                out.getHeaders().putAll(headers);
             }
-            final Message in = exchange.getIn();
-            final Message out = exchange.getOut();
-
-            final List<?> response = responseBody.get();
-
-            out.copyFromWithNewBody(in, response);
-            out.getHeaders().putAll(headers);
         } finally {
             callback.done(false);
         }
@@ -196,7 +195,6 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
     private boolean processException(final Exchange exchange, final AsyncCallback callback, final Exception e) {
         exchange.setException(e);
         callback.done(true);
-
         return true;
     }
 }
