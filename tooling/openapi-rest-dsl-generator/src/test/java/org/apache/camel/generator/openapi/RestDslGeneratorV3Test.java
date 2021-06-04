@@ -62,7 +62,6 @@ public class RestDslGeneratorV3Test {
         final URI file = RestDslGeneratorV3Test.class.getResource("/OpenApiV3Petstore.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
         assertThat(code.toString()).isEqualTo(expectedContent);
-
     }
 
     @Test
