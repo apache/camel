@@ -158,7 +158,6 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
         instance.addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
-        instance.addInitialProperty("camel.main.routes-include-pattern", "classpath:camel/*");
         instance.addInitialProperty("camel.main.lightweight", "true");
 
         if (download) {
