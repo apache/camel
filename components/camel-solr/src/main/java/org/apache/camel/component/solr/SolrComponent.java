@@ -18,19 +18,15 @@ package org.apache.camel.component.solr;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,50 +64,6 @@ public class SolrComponent extends DefaultComponent {
 
     }
 
-    @Deprecated
-    private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<>();
-
-    @Deprecated
-    protected static final class SolrServerReference {
-
-        private final AtomicInteger referenceCounter = new AtomicInteger();
-        private HttpSolrClient solrServer;
-        private ConcurrentUpdateSolrClient updateSolrServer;
-        private CloudSolrClient cloudSolrServer;
-
-        public HttpSolrClient getSolrServer() {
-            return solrServer;
-        }
-
-        public void setSolrServer(HttpSolrClient solrServer) {
-            this.solrServer = solrServer;
-        }
-
-        public ConcurrentUpdateSolrClient getUpdateSolrServer() {
-            return updateSolrServer;
-        }
-
-        public void setUpdateSolrServer(ConcurrentUpdateSolrClient updateSolrServer) {
-            this.updateSolrServer = updateSolrServer;
-        }
-
-        public CloudSolrClient getCloudSolrServer() {
-            return cloudSolrServer;
-        }
-
-        public void setCloudSolrServer(CloudSolrClient cloudServer) {
-            cloudSolrServer = cloudServer;
-        }
-
-        public int addReference() {
-            return referenceCounter.incrementAndGet();
-        }
-
-        public int decReference() {
-            return referenceCounter.decrementAndGet();
-        }
-    }
-
     public SolrComponent() {
     }
 
@@ -129,34 +81,12 @@ public class SolrComponent extends DefaultComponent {
         if (!solrClientMap.containsKey(signature)) {
             solrClientReference = new SolrClientReference(solrConfiguration.initSolrClient());
             solrClientMap.put(signature, solrClientReference);
-            // backward compatibility
-            addSolrClientToSolrServerReference(solrConfiguration, solrClientReference.getSolrClient());
         } else {
             solrClientReference = solrClientMap.get(signature);
         }
         // register producer against solrClient (for later close of client)
         solrClientReference.registerSolrProducer(solrProducer);
         return solrClientReference.getSolrClient();
-    }
-
-    private void addSolrClientToSolrServerReference(SolrConfiguration solrConfiguration, SolrClient solrClient) {
-        SolrEndpoint solrEndpoint = solrConfiguration.getSolrEndpoint();
-        if (solrEndpoint != null) {
-            SolrServerReference solrServerReference = servers.get(solrEndpoint);
-            if (solrServerReference == null) {
-                solrServerReference = new SolrServerReference();
-                servers.put(solrEndpoint, solrServerReference);
-            }
-            if (solrClient instanceof CloudSolrClient) {
-                solrServerReference.setCloudSolrServer((CloudSolrClient) solrClient);
-            }
-            if (solrClient instanceof ConcurrentUpdateSolrClient) {
-                solrServerReference.setUpdateSolrServer((ConcurrentUpdateSolrClient) solrClient);
-            }
-            if (solrClient instanceof HttpSolrClient) {
-                solrServerReference.setSolrServer((HttpSolrClient) solrClient);
-            }
-        }
     }
 
     public void closeSolrClient(SolrProducer solrProducer) {
@@ -183,70 +113,9 @@ public class SolrComponent extends DefaultComponent {
         }
     }
 
-    @Deprecated
-    public SolrServerReference getSolrServers(SolrEndpoint endpoint) {
-        return servers.get(endpoint);
-    }
-
-    @Deprecated
-    public void addSolrServers(SolrEndpoint endpoint, SolrServerReference servers) {
-        this.servers.put(endpoint, servers);
-    }
-
     @Override
     protected void doShutdown() throws Exception {
         removeFromSolrClientMap(solrClientMap.keySet());
-        for (SolrServerReference server : servers.values()) {
-            shutdownServers(server);
-        }
-        servers.clear();
-    }
-
-    @Deprecated
-    void shutdownServers(SolrServerReference ref) {
-        shutdownServers(ref, false);
-    }
-
-    @Deprecated
-    private void shutdownServer(SolrClient server) throws IOException {
-        if (server != null) {
-            LOG.info("Shutting down solr server: {}", server);
-            server.close();
-        }
-    }
-
-    @Deprecated
-    void shutdownServers(SolrServerReference ref, boolean remove) {
-        try {
-            shutdownServer(ref.getSolrServer());
-        } catch (Exception e) {
-            LOG.warn("Error shutting down solr server. This exception is ignored.", e);
-        }
-        try {
-            shutdownServer(ref.getUpdateSolrServer());
-        } catch (Exception e) {
-            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
-        }
-
-        try {
-            shutdownServer(ref.getCloudSolrServer());
-        } catch (Exception e) {
-            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
-        }
-
-        if (remove) {
-            SolrEndpoint key = null;
-            for (Map.Entry<SolrEndpoint, SolrServerReference> entry : servers.entrySet()) {
-                if (entry.getValue() == ref) {
-                    key = entry.getKey();
-                    break;
-                }
-            }
-            if (key != null) {
-                servers.remove(key);
-            }
-        }
-
     }
 
 }
