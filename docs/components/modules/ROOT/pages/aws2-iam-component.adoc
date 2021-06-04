@@ -150,6 +150,20 @@ the https://aws.amazon.com/iam/[Amazon IAM] service.
 The AWS2 IAM component works on the aws-global region and it has aws-global as default region
 ====
 
+
+=== Static credentials vs Default Credential Provider
+
+You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+
+ - Java system properties - aws.accessKeyId and aws.secretKey
+ - Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
+ - Amazon EC2 Instance profile credentials. 
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
 === IAM Producer operations
 
 Camel-AWS2 IAM component provides the following operation on the producer side:

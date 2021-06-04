@@ -26,6 +26,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.vertx.common.VertxHelper;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -88,7 +89,7 @@ public class VertxHttpEndpoint extends DefaultEndpoint {
 
             SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
             if (sslContextParameters != null) {
-                VertxHttpHelper.setupSSLOptions(sslContextParameters, options);
+                VertxHelper.setupSSLOptions(getCamelContext(), sslContextParameters, options);
             }
 
             webClient = WebClient.create(getVertx(), options);

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 
 import org.apache.camel.Endpoint;
@@ -72,5 +76,29 @@ class ProvisionalEndpointRegistry extends HashMap<NormalizedUri, Endpoint> imple
     @Override
     public void cleanUp() {
         // noop
+    }
+
+    @Override
+    public Collection<Endpoint> getReadOnlyValues() {
+        if (isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        // we want to avoid any kind of locking in get/put methods
+        // as getReadOnlyValues is only seldom used, such as when camel-mock
+        // is asserting endpoints at end of testing
+        // so this code will then just retry in case of a concurrency update
+        Collection<Endpoint> answer = new ArrayList<>();
+        boolean done = false;
+        while (!done) {
+            try {
+                answer.addAll(values());
+                done = true;
+            } catch (ConcurrentModificationException e) {
+                answer.clear();
+                // try again
+            }
+        }
+        return Collections.unmodifiableCollection(answer);
     }
 }

@@ -36,7 +36,6 @@ import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -72,8 +71,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         this.includePattern = endpoint.getIncludePattern();
         this.excludePattern = endpoint.getExcludePattern();
-        this.includeExt = endpoint.getIncludeExt() != null ? endpoint.getIncludeExt().split(",") : null;
-        this.excludeExt = endpoint.getExcludeExt() != null ? endpoint.getExcludeExt().split(",") : null;
+        this.includeExt = endpoint.getIncludeExt() != null ? endpoint.getIncludeExt().toLowerCase().split(",") : null;
+        this.excludeExt = endpoint.getExcludeExt() != null ? endpoint.getExcludeExt().toLowerCase().split(",") : null;
     }
 
     public Processor getCustomProcessor() {
@@ -679,9 +678,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
         if (excludeExt != null) {
-            String ext = FileUtil.onlyExt(file.getFileName());
+            String fname = file.getFileName().toLowerCase();
             for (String exclude : excludeExt) {
-                if (exclude.equalsIgnoreCase(ext)) {
+                if (fname.endsWith("." + exclude)) {
                     return false;
                 }
             }
@@ -692,10 +691,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
         if (includeExt != null) {
-            String ext = FileUtil.onlyExt(file.getFileName());
+            String fname = file.getFileName().toLowerCase();
             boolean any = false;
             for (String include : includeExt) {
-                any |= include.equalsIgnoreCase(ext);
+                any |= fname.endsWith("." + include);
             }
             if (!any) {
                 return false;

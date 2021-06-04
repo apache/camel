@@ -270,6 +270,24 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Translate client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -357,6 +375,7 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             case "secretsManagerClient": getOrCreateConfiguration((SecretsManagerComponent) component).setSecretsManagerClient((software.amazon.awssdk.services.secretsmanager.SecretsManagerClient) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((SecretsManagerComponent) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((SecretsManagerComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((SecretsManagerComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((SecretsManagerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((SecretsManagerComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((SecretsManagerComponent) component).setSecretKey((java.lang.String) value); return true;

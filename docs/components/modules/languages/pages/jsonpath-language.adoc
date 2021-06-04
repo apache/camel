@@ -16,7 +16,7 @@ using Expression or Predicate
 on json messages.
 
 [source,java]
------------------------------------------------------
+----
 from("queue:books.new")
   .choice()
     .when().jsonpath("$.store.book[?(@.price < 10)]")
@@ -24,8 +24,8 @@ from("queue:books.new")
     .when().jsonpath("$.store.book[?(@.price < 30)]")
       .to("jms:queue:book.average")
     .otherwise()
-      .to("jms:queue:book.expensive")
------------------------------------------------------
+      .to("jms:queue:book.expensive");
+----
 
 == JSonPath Options
 
@@ -84,9 +84,6 @@ follows
 
 See the https://github.com/json-path/JsonPath[JSonPath] project page for
 further examples.
-
-WARNING: The `concat` function in https://github.com/json-path/JsonPath[JSonPath] has a https://issues.apache.org/jira/browse/CAMEL-16393[bug] and does not work. Do not use this function.
-You can instead store information in Camel exchange properties or headers and then concat those together afterwards using Camel's simple language.
 
 == Easy Syntax
 
@@ -329,24 +326,6 @@ The same example in XML DSL would be:
   </transform>
   <to uri="mock:result"/>
 </route>
-----
-
-== Dependencies
-
-To use JSonPath in your camel routes you need to add the a dependency on
-*camel-jsonpath* which implements the JSonPath language.
-
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-jsonpath</artifactId>
-  <version>x.x.x</version>
-</dependency>
 ----
 
 include::{page-component-version}@camel-spring-boot::page$jsonpath-starter.adoc[]

@@ -18,6 +18,8 @@ package org.apache.camel.generator.openapi;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
@@ -109,13 +111,26 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             if (ObjectHelper.isNotEmpty(apiContextPath)) {
                 configure.addCode(".apiContextPath(\"" + apiContextPath + "\")");
             }
-            configure.addCode(";\n\n");
+            configure.addCode(";\n");
         }
 
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
-
-        final PathVisitor<MethodSpec> restDslStatement = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
-        document.paths.getItems().forEach(restDslStatement::visit);
+        document.paths.getItems().forEach(s -> {
+            // there must be at least one verb
+            if (s.get != null || s.delete != null || s.head != null || s.options != null || s.put != null || s.patch != null
+                    || s.post != null) {
+                // there must be at least one operation accepted by the filter (otherwise we generate empty rest methods)
+                boolean anyAccepted = filter == null || ofNullable(s.get, s.delete, s.head, s.options, s.put, s.patch, s.post)
+                        .stream().anyMatch(o -> filter.accept(o.operationId));
+                if (anyAccepted) {
+                    // create new rest statement per path to avoid a giant chained single method
+                    PathVisitor<MethodSpec> restDslStatement
+                            = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
+                    restDslStatement.visit(s);
+                    emitter.endEmit();
+                }
+            }
+        });
         return emitter.result();
     }
 
@@ -204,4 +219,15 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
         return DEFAULT_PACKAGE_NAME;
     }
+
+    private static <T> List<T> ofNullable(T... t) {
+        List<T> list = new ArrayList<>();
+        for (T o : t) {
+            if (o != null) {
+                list.add(o);
+            }
+        }
+        return list;
+    }
+
 }

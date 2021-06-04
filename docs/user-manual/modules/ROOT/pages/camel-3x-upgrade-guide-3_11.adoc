@@ -6,7 +6,59 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.10 to 3.11
 
+=== Routes loader
+
+The default pattern for discovering Camel routes et all from the classpath has changed from only including XML files to now include all files.
+
+The option `routesIncludePattern` is changed  from:
+----
+classpath:camel/*.xml,classpath:camel-template/*.xml,classpath:camel-rest/*.xml`
+----
+
+to:
+
+----
+classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*
+----
+
+This is from the `camel-main` module which is for running Camel standalone, but also reused for Camel on Spring Boot, or Camel on Quarkus.
+
 === camel-saxon
 
 The camel-saxon component no longer depends on camel-xslt-saxon.
 Any applications in needs of XSLT transformation with saxon should now declare an explicit dependency upon camel-xslt-saxon.
+
+=== camel-maven-plugin with OSGi blueprint
+
+The `run` goal of the `camel-maven-plugin` has moved its OSGi Blueprint support out to its own `camel-karaf-maven-plugin`.
+
+This means if you use Camel on OSGi Blueprint then you need to migrate from:
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-maven-plugin</artifactId>
+    <version>3.11.0</version>
+</plugin>
+----
+
+to
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.camel.karaf</groupId>
+    <artifactId>camel-karaf-maven-plugin</artifactId>
+    <version>3.11.0</version>
+</plugin>
+----
+
+In the `pom.xml` file.
+
+Also remember to execute the `run` goal, you should use `camel-karaf:run` instead of `camel:run` as shown:
+
+[source,bash]
+----
+mvn camel-karaf:run
+----
+
