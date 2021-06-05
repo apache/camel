@@ -64,6 +64,9 @@ public class JBPMProducer extends DefaultProducer {
         this.operationCachedToLowerOperation = new HashMap<>();
         cacheJBPMOperationToLowerCase();
         initOperationProcessors();
+        initOperationRules();
+        initTaskOperation();
+        initWorkItemOperation();
     }
 
     private void cacheJBPMOperationToLowerCase() {
@@ -310,7 +313,9 @@ public class JBPMProducer extends DefaultProducer {
                 setResult(exchange, processInstances);
             }
         });
+    }
 
+    private void initOperationRules() {
         // RULE OPERATIONS
         operations.put(JBPMOperation.fireAllRules, new JBPMOperationProcessor() {
             @Override
@@ -357,7 +362,9 @@ public class JBPMProducer extends DefaultProducer {
                 ruleClient.executeCommandsWithResults(configuration.getDeploymentId(), executionCommand);
             }
         });
+    }
 
+    private void initWorkItemOperation() {
         // WORK ITEM OPERATIONS
         operations.put(JBPMOperation.abortWorkItem, new JBPMOperationProcessor() {
             @Override
@@ -376,7 +383,9 @@ public class JBPMProducer extends DefaultProducer {
                         getParameters(configuration, exchange));
             }
         });
+    }
 
+    private void initTaskOperation() {
         // TASK OPERATIONS
         operations.put(JBPMOperation.activateTask, new JBPMOperationProcessor() {
             @Override
