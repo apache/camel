@@ -1,7 +1,7 @@
 [[kafka-component]]
 = Kafka Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: componentscamel-kafkasrcmaindocskafka-component.adoc
+:page-source: components/camel-kafka/src/main/docs/kafka-component.adoc
 :docTitle: Kafka
 :artifactId: camel-kafka
 :description: Sent and receive messages to/from an Apache Kafka broker.
