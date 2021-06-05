@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jbpm.JBPMProducer.Operation;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,7 @@ public class JBPMComponentIT extends CamelTestSupport {
 
         // now let's collect user tasks
         headers = new HashMap<>();
-        headers.put(JBPMConstants.OPERATION, JBPMConstants.OPERATION + Operation.getTasksOwned);
+        headers.put(JBPMConstants.OPERATION, JBPMConstants.OPERATION + JBPMOperation.getTasksOwned);
 
         template.sendBodyAndHeaders("direct:start", null, headers);
         getMockEndpoint("mock:result").expectedMessageCount(2);
@@ -70,7 +69,7 @@ public class JBPMComponentIT extends CamelTestSupport {
         // let's complete first user task
         headers = new HashMap<>();
         headers.put(JBPMConstants.TASK_ID, tasks.get(0).getId());
-        headers.put(JBPMConstants.OPERATION, JBPMConstants.OPERATION + Operation.completeTask);
+        headers.put(JBPMConstants.OPERATION, JBPMConstants.OPERATION + JBPMOperation.completeTask);
 
         template.sendBodyAndHeaders("direct:start", null, headers);
         getMockEndpoint("mock:result").expectedMessageCount(3);
@@ -79,7 +78,7 @@ public class JBPMComponentIT extends CamelTestSupport {
         // lastly let's abort process instance we just created
         headers = new HashMap<>();
         headers.put(JBPMConstants.PROCESS_INSTANCE_ID, processInstanceId);
-        headers.put(JBPMConstants.OPERATION, JBPMConstants.OPERATION + Operation.abortProcessInstance);
+        headers.put(JBPMConstants.OPERATION, JBPMConstants.OPERATION + JBPMOperation.abortProcessInstance);
 
         template.sendBodyAndHeaders("direct:start", null, headers);
         getMockEndpoint("mock:result").expectedMessageCount(4);
