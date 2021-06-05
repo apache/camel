@@ -64,6 +64,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "consumerStreams": getOrCreateConfiguration(target).setConsumerStreams(property(camelContext, int.class, value)); return true;
         case "consumerscount":
         case "consumersCount": getOrCreateConfiguration(target).setConsumersCount(property(camelContext, int.class, value)); return true;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": getOrCreateConfiguration(target).setDeliveryTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "enableidempotence":
         case "enableIdempotence": getOrCreateConfiguration(target).setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
         case "fetchmaxbytes":
@@ -272,6 +274,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "consumerStreams": return int.class;
         case "consumerscount":
         case "consumersCount": return int.class;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return java.lang.Integer.class;
         case "enableidempotence":
         case "enableIdempotence": return boolean.class;
         case "fetchmaxbytes":
@@ -476,6 +480,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "consumerStreams": return getOrCreateConfiguration(target).getConsumerStreams();
         case "consumerscount":
         case "consumersCount": return getOrCreateConfiguration(target).getConsumersCount();
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return getOrCreateConfiguration(target).getDeliveryTimeoutMs();
         case "enableidempotence":
         case "enableIdempotence": return getOrCreateConfiguration(target).isEnableIdempotence();
         case "fetchmaxbytes":

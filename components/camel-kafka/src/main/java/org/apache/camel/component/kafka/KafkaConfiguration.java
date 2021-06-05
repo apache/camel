@@ -200,6 +200,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // request.timeout.ms
     @UriParam(label = "producer", defaultValue = "30000")
     private Integer requestTimeoutMs = 30000;
+    // delivery.timeout.ms
+    @UriParam(label = "producer", defaultValue = "120000")
+    private Integer deliveryTimeoutMs = 120000;
     // send.buffer.bytes
     @UriParam(label = "producer", defaultValue = "131072")
     private Integer sendBufferBytes = 131072;
@@ -362,6 +365,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, getPartitioner());
         addPropertyIfNotNull(props, ProducerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotNull(props, ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, getRequestTimeoutMs());
+        addPropertyIfNotNull(props, ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, getDeliveryTimeoutMs());
         addPropertyIfNotNull(props, ProducerConfig.SEND_BUFFER_CONFIG, getSendBufferBytes());
         addPropertyIfNotNull(props, ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, getMaxInFlightRequest());
         addPropertyIfNotNull(props, ProducerConfig.METADATA_MAX_AGE_CONFIG, getMetadataMaxAgeMs());
@@ -867,6 +871,19 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setRequestTimeoutMs(Integer requestTimeoutMs) {
         this.requestTimeoutMs = requestTimeoutMs;
+    }
+
+    public Integer getDeliveryTimeoutMs() {
+        return deliveryTimeoutMs;
+    }
+
+    /**
+     * An upper bound on the time to report success or failure after a call to send() returns. This limits the total
+     * time that a record will be delayed prior to sending, the time to await acknowledgement from the broker (if
+     * expected), and the time allowed for retriable send failures.
+     */
+    public void setDeliveryTimeoutMs(Integer deliveryTimeoutMs) {
+        this.deliveryTimeoutMs = deliveryTimeoutMs;
     }
 
     public Integer getQueueBufferingMaxMessages() {

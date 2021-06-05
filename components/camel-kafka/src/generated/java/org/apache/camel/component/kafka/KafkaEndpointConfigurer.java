@@ -54,6 +54,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "consumerStreams": target.getConfiguration().setConsumerStreams(property(camelContext, int.class, value)); return true;
         case "consumerscount":
         case "consumersCount": target.getConfiguration().setConsumersCount(property(camelContext, int.class, value)); return true;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": target.getConfiguration().setDeliveryTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "enableidempotence":
         case "enableIdempotence": target.getConfiguration().setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -250,6 +252,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "consumerStreams": return int.class;
         case "consumerscount":
         case "consumersCount": return int.class;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return java.lang.Integer.class;
         case "enableidempotence":
         case "enableIdempotence": return boolean.class;
         case "exceptionhandler":
@@ -447,6 +451,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "consumerStreams": return target.getConfiguration().getConsumerStreams();
         case "consumerscount":
         case "consumersCount": return target.getConfiguration().getConsumersCount();
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return target.getConfiguration().getDeliveryTimeoutMs();
         case "enableidempotence":
         case "enableIdempotence": return target.getConfiguration().isEnableIdempotence();
         case "exceptionhandler":

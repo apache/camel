@@ -2111,6 +2111,47 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * An upper bound on the time to report success or failure after a call
+         * to send() returns. This limits the total time that a record will be
+         * delayed prior to sending, the time to await acknowledgement from the
+         * broker (if expected), and the time allowed for retriable send
+         * failures.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: producer
+         * 
+         * @param deliveryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder deliveryTimeoutMs(
+                Integer deliveryTimeoutMs) {
+            doSetProperty("deliveryTimeoutMs", deliveryTimeoutMs);
+            return this;
+        }
+        /**
+         * An upper bound on the time to report success or failure after a call
+         * to send() returns. This limits the total time that a record will be
+         * delayed prior to sending, the time to await acknowledgement from the
+         * broker (if expected), and the time allowed for retriable send
+         * failures.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: producer
+         * 
+         * @param deliveryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder deliveryTimeoutMs(
+                String deliveryTimeoutMs) {
+            doSetProperty("deliveryTimeoutMs", deliveryTimeoutMs);
+            return this;
+        }
+        /**
          * If set to 'true' the producer will ensure that exactly one copy of
          * each message is written in the stream. If 'false', producer retries
          * may write duplicates of the retried message in the stream. If set to
