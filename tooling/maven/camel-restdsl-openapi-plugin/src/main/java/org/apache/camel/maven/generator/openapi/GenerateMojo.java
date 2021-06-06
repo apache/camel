@@ -48,6 +48,9 @@ public class GenerateMojo extends AbstractGenerateMojo {
     @Parameter
     private String packageName;
 
+    @Parameter(defaultValue = "/**", required = true)
+    private String[] requestMappingValues;
+
     @Override
     public void execute() throws MojoExecutionException {
         if (skip) {
@@ -69,10 +72,6 @@ public class GenerateMojo extends AbstractGenerateMojo {
         }
 
         final RestDslSourceCodeGenerator<Path> generator = RestDslGenerator.toPath(openapi);
-
-        if (ObjectHelper.isNotEmpty(basePath)) {
-            generator.withBasePath(basePath);
-        }
 
         if (ObjectHelper.isNotEmpty(filterOperation)) {
             generator.withOperationFilter(filterOperation);
@@ -121,7 +120,8 @@ public class GenerateMojo extends AbstractGenerateMojo {
                     }
                     getLog().info("Generating Camel Rest Controller source with package name " + packageName
                                   + " in source directory: " + outputPath);
-                    SpringBootProjectSourceCodeGenerator.generator().withPackageName(packageName).generate(outputPath);
+                    SpringBootProjectSourceCodeGenerator.generator().withPackageName(packageName)
+                            .withMappingValues(requestMappingValues).generate(outputPath);
                     // the Camel Rest Controller allows to use root as context-path
                     generator.withRestContextPath("/");
                 } catch (final IOException e) {
