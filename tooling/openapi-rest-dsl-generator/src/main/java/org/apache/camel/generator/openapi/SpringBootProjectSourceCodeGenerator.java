@@ -62,15 +62,16 @@ public class SpringBootProjectSourceCodeGenerator {
     }
 
     public SpringBootProjectSourceCodeGenerator withMappingValues(final String... mappingValues) {
-        if (!ArrayUtils.isEmpty(mappingValues))
+        if (!ArrayUtils.isEmpty(mappingValues)) {
             this.mappingValues = mappingValues;
-
+        }
         return this;
     }
 
     String genereateMappingValues() {
-        if (ArrayUtils.isEmpty(mappingValues))
+        if (ArrayUtils.isEmpty(mappingValues)) {
             return StringUtils.wrap("/**", '"');
+        }
 
         StringBuilder sb = new StringBuilder("{");
         Arrays.stream(mappingValues)
