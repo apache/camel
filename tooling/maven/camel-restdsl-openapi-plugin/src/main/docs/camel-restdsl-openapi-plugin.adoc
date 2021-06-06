@@ -70,6 +70,7 @@ in the `<configuration>` tag.
 | `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used. 
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
 | `basePath` | | Overrides the api base path as defined in the OpenAPI specification. |
+| `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as &lt;requestMappingValues&gt;&lt;param&gt;/my-api-path/**&lt;/param&gt;&lt;param&gt;/my-other-path/**&lt;/param&gt;&lt;/requestMappingValues&gt;
 |========================================
 
 === Spring Boot Project with Servlet component
@@ -146,6 +147,7 @@ in the `<configuration>` tag.
 | `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used.
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
 | `basePath` | | Overrides the api base path as defined in the OpenAPI specification. |
+| `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as &lt;requestMappingValues&gt;&lt;param&gt;/my-api-path/**&lt;/param&gt;&lt;param&gt;/my-other-path/**&lt;/param&gt;&lt;/requestMappingValues&gt;
 |========================================
 
 == camel-restdsl-openapi:generate-xml-with-dto
