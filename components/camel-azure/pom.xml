@@ -38,6 +38,7 @@
         <module>camel-azure-storage-datalake</module>
         <module>camel-azure-storage-queue</module>
         <module>camel-azure-cosmosdb</module>
+        <module>camel-azure-servicebus</module>
     </modules>
 
 </project>

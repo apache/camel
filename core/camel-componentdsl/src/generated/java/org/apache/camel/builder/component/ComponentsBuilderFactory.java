@@ -615,6 +615,24 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.azureEventhubs();
     }
     /**
+     * Azure ServiceBus (camel-azure-servicebus)
+     * The azure-servicebus component that integrates Azure ServiceBus. Azure
+     * ServiceBus is a fully managed enterprise integration message broker.
+     * Service Bus can decouple applications and services. Service Bus offers a
+     * reliable and secure platform for asynchronous transfer of data and state.
+     * Data is transferred between different applications and services using
+     * messages.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.11
+     * Maven coordinates: org.apache.camel:camel-azure-servicebus
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AzureServicebusComponentBuilderFactory.AzureServicebusComponentBuilder azureServicebus() {
+        return org.apache.camel.builder.component.dsl.AzureServicebusComponentBuilderFactory.azureServicebus();
+    }
+    /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
      * Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
      * 

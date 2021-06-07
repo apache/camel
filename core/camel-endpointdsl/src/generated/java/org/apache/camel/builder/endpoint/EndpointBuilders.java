@@ -290,6 +290,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ServiceEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ServiceNowEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory,
