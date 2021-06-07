@@ -336,7 +336,7 @@
     <jing-version>20030619</jing-version>
     <jira-guava-version>26.0-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>
-    <jmh-version>1.31</jmh-version>
+    <jmh-version>1.32</jmh-version>
     <jnats-version>2.11.4</jnats-version>
     <jodatime2-bundle-version>2.10.6</jodatime2-bundle-version>
     <johnzon-version>1.2.12</johnzon-version>
