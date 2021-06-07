@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "google-functions",
-    "title": "GoogleCloudFunctions",
+    "title": "Google Cloud Functions",
     "description": "Manage and invoke Google Cloud Functions",
     "deprecated": false,
     "firstVersion": "3.9.0",
