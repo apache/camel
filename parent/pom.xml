@@ -42,7 +42,7 @@
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
-        <activemq-version>5.15.14</activemq-version>
+        <activemq-version>5.15.15</activemq-version>
         <activemq-artemis-version>2.13.0</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.12.1</ahc-version>
@@ -135,9 +135,9 @@
         <corda-version>4.4</corda-version>
         <couchbase-client-version>1.4.13</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
-        <cxf-version>3.3.6</cxf-version>
+        <cxf-version>3.3.10</cxf-version>
         <cxf-version-range>[3.3,4.0)</cxf-version-range>
-        <cxf-codegen-plugin-version>3.3.5</cxf-codegen-plugin-version>
+        <cxf-codegen-plugin-version>3.3.10</cxf-codegen-plugin-version>
         <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
         <deltaspike-version>1.9.4</deltaspike-version>
@@ -181,7 +181,7 @@
         <flink-version>1.10.1</flink-version>
         <fop-version>2.3</fop-version>
         <ftpserver-version>1.1.1</ftpserver-version>
-        <freemarker-version>2.3.30</freemarker-version>
+        <freemarker-version>2.3.31</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
         <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
@@ -314,7 +314,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.1.0</jedis-client-version>
         <jersey-version>2.28</jersey-version>
-        <jetty9-version>9.4.39.v20210325</jetty9-version>
+        <jetty9-version>9.4.41.v20210516</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -335,7 +335,7 @@
         <jolt-version>0.1.1</jolt-version>
         <jool-version>0.9.12</jool-version>
         <jooq-version>3.13.6</jooq-version>
-        <johnzon-version>1.2.10</johnzon-version>
+        <johnzon-version>1.2.13</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
         <jslt-version>0.1.9</jslt-version>
@@ -404,7 +404,7 @@
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.2.3</maven-war-plugin-version>
         <metrics-version>4.1.11</metrics-version>
-        <micrometer-version>1.5.13</micrometer-version>
+        <micrometer-version>1.5.14</micrometer-version>
         <microprofile-config-version>1.4</microprofile-config-version>
         <microprofile-metrics-version>2.3</microprofile-metrics-version>
         <microprofile-health-version>2.2</microprofile-health-version>
@@ -430,7 +430,7 @@
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty3-version>3.10.6.Final</netty3-version>
-        <netty-version>4.1.63.Final</netty-version>
+        <netty-version>4.1.64.Final</netty-version>
         <netty-reactive-streams-version>2.0.3</netty-reactive-streams-version>
         <netty40-version>4.0.56.Final</netty40-version>
         <networknt-json-schema-validator-version>1.0.40</networknt-json-schema-validator-version>
@@ -543,7 +543,7 @@
         <vavr-version>0.10.2</vavr-version>
         <velocity-tools-version>2.0</velocity-tools-version>
         <velocity-version>2.1</velocity-version>
-        <vertx-version>3.9.1</vertx-version>
+        <vertx-version>3.9.7</vertx-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>

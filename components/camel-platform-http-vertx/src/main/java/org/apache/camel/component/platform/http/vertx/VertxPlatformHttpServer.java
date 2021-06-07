@@ -153,7 +153,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         );
     }
 
-    protected void startServer() {
+    protected void startServer() throws Exception {
         HttpServerOptions options = new HttpServerOptions();
 
         configureSSL(options, configuration, context);
