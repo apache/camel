@@ -1653,7 +1653,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GoogleDriveComponentBuilderFactory.googleDrive();
     }
     /**
-     * GoogleCloudFunctions (camel-google-functions)
+     * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 
      * Category: cloud
