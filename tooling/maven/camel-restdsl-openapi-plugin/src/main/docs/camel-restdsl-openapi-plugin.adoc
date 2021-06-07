@@ -69,8 +69,15 @@ in the `<configuration>` tag.
 | `destinationGenerator` | | Fully qualified class name of the class that implements `org.apache.camel.generator.openapi.DestinationGenerator` interface for customizing destination endpoint
 | `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used. 
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
-| `basePath` | | Overrides the api base path as defined in the OpenAPI specification. |
-| `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as &lt;requestMappingValues&gt;&lt;param&gt;/my-api-path/**&lt;/param&gt;&lt;param&gt;/my-other-path/**&lt;/param&gt;&lt;/requestMappingValues&gt;
+| `basePath` | | Overrides the api base path as defined in the OpenAPI specification. 
+| `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as:
+``
+<requestMappingValues>
+    <param>/my-api-path/\****</param>
+    <param>/my-other-path/**</param>
+</requestMappingValues>
+``
+|
 |========================================
 
 === Spring Boot Project with Servlet component
@@ -146,8 +153,15 @@ in the `<configuration>` tag.
 | `destinationGenerator` | | Fully qualified class name of the class that implements `org.apache.camel.generator.openapi.DestinationGenerator` interface for customizing destination endpoint
 | `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used.
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
-| `basePath` | | Overrides the api base path as defined in the OpenAPI specification. |
-| `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as &lt;requestMappingValues&gt;&lt;param&gt;/my-api-path/**&lt;/param&gt;&lt;param&gt;/my-other-path/**&lt;/param&gt;&lt;/requestMappingValues&gt;
+| `basePath` | | Overrides the api base path as defined in the OpenAPI specification. 
+| `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as:
+``
+<requestMappingValues>
+    <param>/my-api-path/\****</param>
+    <param>/my-other-path/**</param>
+</requestMappingValues>
+``
+|
 |========================================
 
 == camel-restdsl-openapi:generate-xml-with-dto
@@ -190,4 +204,3 @@ The plugin supports the following *additional* options
 | `modelWithXml` | false | Enable XML annotations inside the generated models (only works with libraries that provide support for JSON and XML)
 | `configOptions` | | Pass a map of language-specific parameters to `swagger-codegen-maven-plugin`
 |========================================
-
