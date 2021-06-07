@@ -1,6 +1,6 @@
 [[google-functions-component]]
-= GoogleCloudFunctions Component
-:docTitle: GoogleCloudFunctions
+= Google Cloud Functions Component
+:docTitle: Google Cloud Functions
 :artifactId: camel-google-functions
 :description: Manage and invoke Google Cloud Functions
 :since: 3.9
@@ -75,7 +75,7 @@ from("google-functions://myCamelFunction?project=myProject&location=us-central1&
 == URI Options
 
 // component options: START
-The GoogleCloudFunctions component supports 2 options, which are listed below.
+The Google Cloud Functions component supports 2 options, which are listed below.
 
 
 
@@ -88,7 +88,7 @@ The GoogleCloudFunctions component supports 2 options, which are listed below.
 // component options: END
 
 // endpoint options: START
-The GoogleCloudFunctions endpoint is configured using URI syntax:
+The Google Cloud Functions endpoint is configured using URI syntax:
 
 ----
 google-functions:functionName

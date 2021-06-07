@@ -5598,7 +5598,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * GoogleCloudFunctions (camel-google-functions)
+     * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 
      * Category: cloud
@@ -5618,7 +5618,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory.endpointBuilder("google-functions", path);
     }
     /**
-     * GoogleCloudFunctions (camel-google-functions)
+     * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 
      * Category: cloud
