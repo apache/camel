@@ -446,7 +446,8 @@
     <olingo4-version>4.8.0</olingo4-version>
     <openjpa-version>3.2.0</openjpa-version>
     <openstack4j-version>3.8</openstack4j-version>
-    <opentelemetry-version>0.15.0</opentelemetry-version>
+    <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
+    <opentelemetry-version>1.2.0</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>

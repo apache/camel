@@ -16,10 +16,10 @@
  */
 package org.apache.camel.opentelemetry.propagators;
 
-import io.opentelemetry.context.propagation.TextMapPropagator;
+import io.opentelemetry.context.propagation.TextMapGetter;
 import org.apache.camel.tracing.ExtractAdapter;
 
-public class OpenTelemetryGetter implements TextMapPropagator.Getter<ExtractAdapter> {
+public class OpenTelemetryGetter implements TextMapGetter<ExtractAdapter> {
 
     ExtractAdapter adapter;
 
