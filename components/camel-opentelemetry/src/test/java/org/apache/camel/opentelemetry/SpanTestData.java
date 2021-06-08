@@ -22,14 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
 
 public class SpanTestData {
 
     private String label;
     private String uri;
     private String operation;
-    private Span.Kind kind = Span.Kind.INTERNAL;
+    private SpanKind kind = SpanKind.INTERNAL;
     private int parentId = -1;
     private List<String> logMessages = new ArrayList<>();
     private Map<String, String> tags = new HashMap<>();
@@ -63,11 +63,11 @@ public class SpanTestData {
         return this;
     }
 
-    public Span.Kind getKind() {
+    public SpanKind getKind() {
         return kind;
     }
 
-    public SpanTestData setKind(Span.Kind kind) {
+    public SpanTestData setKind(SpanKind kind) {
         this.kind = kind;
         return this;
     }

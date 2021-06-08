@@ -23,7 +23,6 @@ import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.baggage.BaggageBuilder;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
-import io.opentelemetry.context.Context;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
@@ -144,7 +143,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     public void setCorrelationContextItem(String key, String value) {
         BaggageBuilder builder = Baggage.builder();
         if (baggage != null) {
-            builder = builder.setParent(Context.current().with(baggage));
+            builder = Baggage.current().toBuilder();
         }
         baggage = builder.put(key, value).build();
     }
