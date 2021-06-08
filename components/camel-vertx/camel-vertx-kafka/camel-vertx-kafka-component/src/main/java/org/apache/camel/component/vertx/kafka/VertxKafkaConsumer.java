@@ -151,6 +151,7 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
         message.setHeader(VertxKafkaConstants.OFFSET, record.offset());
         message.setHeader(VertxKafkaConstants.HEADERS, record.headers());
         message.setHeader(VertxKafkaConstants.TIMESTAMP, record.timestamp());
+        message.setHeader(Exchange.MESSAGE_TIMESTAMP, record.timestamp());
         message.setHeader(VertxKafkaConstants.MESSAGE_KEY, record.key());
 
         // set headers for the manual offsets commit

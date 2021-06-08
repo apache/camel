@@ -258,6 +258,11 @@ public class SjmsMessage extends DefaultMessage {
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (jmsMessage != null && map != null) {
             map.putAll(getBinding().extractHeadersFromJms(jmsMessage, getExchange()));
+            try {
+                map.put(Exchange.MESSAGE_TIMESTAMP, jmsMessage.getJMSTimestamp());
+            } catch (JMSException e) {
+                // ignore
+            }
         }
     }
 

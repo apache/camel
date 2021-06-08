@@ -53,6 +53,16 @@ public interface Message {
     String getMessageId();
 
     /**
+     * Returns the timestamp that this messages originates from.
+     * <p/>
+     * Some systems like JMS, Kafka, AWS have a timestamp on the event/message, that Camel received. This method returns
+     * the timestamp, if a timestamp exists.
+     *
+     * @return the timestamp, or <tt>0</tt> if the message has no source timestamp.
+     */
+    long getMessageTimestamp();
+
+    /**
      * Sets the id of the message
      *
      * @param messageId id of the message

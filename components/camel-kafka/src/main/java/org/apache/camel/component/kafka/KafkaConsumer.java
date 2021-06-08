@@ -660,6 +660,7 @@ public class KafkaConsumer extends DefaultConsumer {
         message.setHeader(KafkaConstants.OFFSET, record.offset());
         message.setHeader(KafkaConstants.HEADERS, record.headers());
         message.setHeader(KafkaConstants.TIMESTAMP, record.timestamp());
+        message.setHeader(Exchange.MESSAGE_TIMESTAMP, record.timestamp());
         if (record.key() != null) {
             message.setHeader(KafkaConstants.KEY, record.key());
         }
