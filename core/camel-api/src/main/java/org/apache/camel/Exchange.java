@@ -669,6 +669,8 @@ public interface Exchange {
 
     /**
      * Gets the timestamp in millis when this exchange was created.
+     *
+     * @see Message#getMessageTimestamp()
      */
     long getCreated();
 
