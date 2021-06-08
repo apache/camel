@@ -31,7 +31,7 @@ import org.apache.camel.component.google.functions.GoogleCloudFunctionsComponent
 public interface GoogleFunctionsComponentBuilderFactory {
 
     /**
-     * GoogleCloudFunctions (camel-google-functions)
+     * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 
      * Category: cloud
@@ -45,7 +45,7 @@ public interface GoogleFunctionsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the GoogleCloudFunctions component.
+     * Builder for the Google Cloud Functions component.
      */
     interface GoogleFunctionsComponentBuilder
             extends

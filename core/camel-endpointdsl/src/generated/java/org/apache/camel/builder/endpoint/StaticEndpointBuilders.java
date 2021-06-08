@@ -224,51 +224,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * APNS (camel-apns)
-     * Send notifications to Apple iOS devices.
-     * 
-     * Category: eventbus,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-apns
-     * 
-     * Syntax: <code>apns:name</code>
-     * 
-     * Path parameter: name
-     * Name of the endpoint
-     * 
-     * @param path name
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.ApnsEndpointBuilder apns(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.endpointBuilder("apns", path);
-    }
-    /**
-     * APNS (camel-apns)
-     * Send notifications to Apple iOS devices.
-     * 
-     * Category: eventbus,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-apns
-     * 
-     * Syntax: <code>apns:name</code>
-     * 
-     * Path parameter: name
-     * Name of the endpoint
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path name
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.ApnsEndpointBuilder apns(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
@@ -5598,7 +5553,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * GoogleCloudFunctions (camel-google-functions)
+     * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 
      * Category: cloud
@@ -5618,7 +5573,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory.endpointBuilder("google-functions", path);
     }
     /**
-     * GoogleCloudFunctions (camel-google-functions)
+     * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 
      * Category: cloud

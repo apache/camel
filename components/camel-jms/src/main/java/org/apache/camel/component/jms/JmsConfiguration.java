@@ -353,8 +353,8 @@ public class JmsConfiguration implements Cloneable {
                             + " exchange properties, exchange exception."
                             + " This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level."
                             + " You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload."
-                            + " Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level, "
-                            + " which forces a strong coupling between the producers and consumer having to use compatible Camel versions!")
+                            + " Use this with caution as the data is using Java Object serialization and requires the receiver to be able to deserialize the data at Class level, "
+                            + " which forces a strong coupling between the producers and consumers having to use compatible Camel versions!")
     private boolean transferExchange;
     @UriParam(label = "advanced",
               description = "Controls whether or not to include serialized headers."
@@ -1911,8 +1911,8 @@ public class JmsConfiguration implements Cloneable {
      * exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and
      * log it at WARN level. You must enable this option on both the producer and consumer side, so Camel knows the
      * payloads is an Exchange and not a regular payload. Use this with caution as the data is using Java Object
-     * serialization and requires the received to be able to deserialize the data at Class level, which forces a strong
-     * coupling between the producers and consumer having to use compatible Camel versions!
+     * serialization and requires the receiver to be able to deserialize the data at Class level, which forces a strong
+     * coupling between the producers and consumers having to use compatible Camel versions!
      */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;

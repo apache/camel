@@ -184,6 +184,7 @@ public interface Exchange {
     String MESSAGE_HISTORY = "CamelMessageHistory";
     String MESSAGE_HISTORY_HEADER_FORMAT = "CamelMessageHistoryHeaderFormat";
     String MESSAGE_HISTORY_OUTPUT_FORMAT = "CamelMessageHistoryOutputFormat";
+    String MESSAGE_TIMESTAMP = "CamelMessageTimestamp";
     String MULTICAST_INDEX = "CamelMulticastIndex";
     String MULTICAST_COMPLETE = "CamelMulticastComplete";
 
@@ -668,6 +669,8 @@ public interface Exchange {
 
     /**
      * Gets the timestamp in millis when this exchange was created.
+     *
+     * @see Message#getMessageTimestamp()
      */
     long getCreated();
 

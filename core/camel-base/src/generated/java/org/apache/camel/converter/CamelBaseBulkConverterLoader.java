@@ -42,7 +42,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
 
     @Override
     public int size() {
-        return 104;
+        return 109;
     }
 
     @Override
@@ -70,6 +70,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         if (to == byte[].class) {
             if (value instanceof java.nio.ByteBuffer) {
                 return org.apache.camel.converter.NIOConverter.toByteArray((java.nio.ByteBuffer) value);
+            }
+            if (value instanceof org.apache.camel.spi.Resource) {
+                return org.apache.camel.converter.ResourceConverter.toByteArray((org.apache.camel.spi.Resource) value, camelContext);
             }
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.IOConverter.toByteArray((java.io.File) value);
@@ -121,6 +124,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.util.stream.Stream) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.util.stream.Stream) value, exchange);
             }
+            if (value instanceof org.apache.camel.spi.Resource) {
+                return org.apache.camel.converter.ResourceConverter.toInputStream((org.apache.camel.spi.Resource) value);
+            }
             if (value instanceof java.net.URL) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.net.URL) value);
             }
@@ -161,6 +167,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return org.apache.camel.converter.IOConverter.toOutputStream((java.io.File) value);
             }
         } else if (to == java.io.Reader.class) {
+            if (value instanceof org.apache.camel.spi.Resource) {
+                return org.apache.camel.converter.ResourceConverter.toReader((org.apache.camel.spi.Resource) value);
+            }
             if (value instanceof java.io.InputStream) {
                 return org.apache.camel.converter.IOConverter.toReader((java.io.InputStream) value, exchange);
             }
@@ -274,6 +283,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.nio.ByteBuffer) {
                 return org.apache.camel.converter.NIOConverter.toString((java.nio.ByteBuffer) value, exchange);
+            }
+            if (value instanceof org.apache.camel.spi.Resource) {
+                return org.apache.camel.converter.ResourceConverter.toString((org.apache.camel.spi.Resource) value, camelContext);
             }
             if (value instanceof java.time.Duration) {
                 return org.apache.camel.converter.DurationConverter.toString((java.time.Duration) value);
@@ -446,6 +458,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof org.apache.camel.Predicate) {
                 return org.apache.camel.converter.CamelConverter.toProcessor((org.apache.camel.Predicate) value);
             }
+        } else if (to == org.apache.camel.spi.Resource.class) {
+            if (value instanceof java.lang.String) {
+                return org.apache.camel.converter.ResourceConverter.toResource((java.lang.String) value, camelContext);
+            }
         }
         return null;
     }
@@ -453,6 +469,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
     public TypeConverter lookup(Class<?> to, Class<?> from) {
         if (to == byte[].class) {
             if (from == java.nio.ByteBuffer.class) {
+                return this;
+            }
+            if (from == org.apache.camel.spi.Resource.class) {
                 return this;
             }
             if (from == java.io.File.class) {
@@ -505,6 +524,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.util.stream.Stream.class) {
                 return this;
             }
+            if (from == org.apache.camel.spi.Resource.class) {
+                return this;
+            }
             if (from == java.net.URL.class) {
                 return this;
             }
@@ -545,6 +567,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
         } else if (to == java.io.Reader.class) {
+            if (from == org.apache.camel.spi.Resource.class) {
+                return this;
+            }
             if (from == java.io.InputStream.class) {
                 return this;
             }
@@ -637,6 +662,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.nio.ByteBuffer.class) {
+                return this;
+            }
+            if (from == org.apache.camel.spi.Resource.class) {
                 return this;
             }
             if (from == java.time.Duration.class) {
@@ -803,6 +831,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == org.apache.camel.Predicate.class) {
+                return this;
+            }
+        } else if (to == org.apache.camel.spi.Resource.class) {
+            if (from == java.lang.String.class) {
                 return this;
             }
         }

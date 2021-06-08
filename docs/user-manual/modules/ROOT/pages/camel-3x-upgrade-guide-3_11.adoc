@@ -62,3 +62,14 @@ Also remember to execute the `run` goal, you should use `camel-karaf:run` instea
 mvn camel-karaf:run
 ----
 
+=== Spring Boot Starters
+
+Some of the Camel Spring Boot starters have additional auto configuration options that clashed with component.
+Therefore those configurations has renamed their configuration keys:
+
+|====
+| *Old Key prefix* | *New key prefix*
+| camel.component.consul.service-registry | camel.cloud.consul
+| camel.cloud.consul.service-registry | camel.cloud.consul
+|====
+

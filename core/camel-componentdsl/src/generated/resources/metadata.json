@@ -111,28 +111,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "ApnsComponentBuilderFactory": {
-    "kind": "component",
-    "name": "apns",
-    "title": "APNS",
-    "description": "Send notifications to Apple iOS devices.",
-    "deprecated": true,
-    "firstVersion": "2.8.0",
-    "label": "eventbus,mobile",
-    "javaType": "org.apache.camel.component.apns.ApnsComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-apns",
-    "version": "3.11.0-SNAPSHOT",
-    "scheme": "apns",
-    "extendsScheme": "",
-    "syntax": "apns:name",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "ArangodbComponentBuilderFactory": {
     "kind": "component",
     "name": "arangodb",
@@ -2687,7 +2665,7 @@
   "GoogleFunctionsComponentBuilderFactory": {
     "kind": "component",
     "name": "google-functions",
-    "title": "GoogleCloudFunctions",
+    "title": "Google Cloud Functions",
     "description": "Manage and invoke Google Cloud Functions",
     "deprecated": false,
     "firstVersion": "3.9.0",

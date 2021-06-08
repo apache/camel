@@ -267,7 +267,6 @@
         <jandex-version>2.3.0.Final</jandex-version>
         <jasn1-version>1.11.3</jasn1-version>
         <jasypt-version>1.9.3</jasypt-version>
-        <java-apns-version>1.0.0.Beta6</java-apns-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>1.64.0</java-util-version>
         <jnats-version>2.11.4</jnats-version>
@@ -312,7 +311,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.1</jettison-version>
         <jgit-version>5.11.1.202105131744-r</jgit-version>
-        <jgroups-version>4.2.14.Final</jgroups-version>
+        <jgroups-version>4.2.15.Final</jgroups-version>
         <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -422,7 +421,7 @@
         <netty3-version>3.10.6.Final</netty3-version>
         <netty-version>4.1.65.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-        <networknt-json-schema-validator-version>1.0.52</networknt-json-schema-validator-version>
+        <networknt-json-schema-validator-version>1.0.53</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
         <nitrite-version>3.4.3</nitrite-version>
         <!-- should be in-sync with deltaspike -->
@@ -565,7 +564,7 @@
         <xmlsec-version>2.1.4</xmlsec-version>
         <xmlunit-version>2.6.3</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
-        <xstream-version>1.4.16</xstream-version>
+        <xstream-version>1.4.17</xstream-version>
         <yetus-audience-annotations-version>0.11.0</yetus-audience-annotations-version>
         <zendesk-client-version>0.14.1</zendesk-client-version>
         <zipkin-reporter-version>2.16.3</zipkin-reporter-version>
@@ -791,11 +790,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-any23</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-apns</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

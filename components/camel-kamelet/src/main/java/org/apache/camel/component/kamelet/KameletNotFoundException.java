@@ -14,12 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.apns.model;
+package org.apache.camel.component.kamelet;
 
-public enum MessageType {
+import org.apache.camel.CamelException;
 
-    STRING,
-    PAYLOAD,
-    APNS_NOTIFICATION;
+public class KameletNotFoundException extends CamelException {
 
+    private final String templateId;
+
+    public KameletNotFoundException(String templateId, String locations, Throwable cause) {
+        super("Kamelet with id " + templateId + " not found in locations: " + locations, cause);
+        this.templateId = templateId;
+    }
+
+    public String getTemplateId() {
+        return templateId;
+    }
 }

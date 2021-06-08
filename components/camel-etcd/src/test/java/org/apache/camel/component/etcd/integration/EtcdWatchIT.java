@@ -84,10 +84,9 @@ public class EtcdWatchIT extends EtcdTestSupport {
         }
 
         MockEndpoint mock = getMockEndpoint(mockEndpoint);
-        mock.expectedMessageCount(2);
         mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, "watch");
         mock.expectedHeaderReceived(EtcdConstants.ETCD_PATH, key);
-        mock.expectedBodiesReceived(values);
+        mock.expectedBodiesReceivedInAnyOrder(values);
 
         final EtcdClient client = getClient();
         for (int i = 0; i < updates; i++) {

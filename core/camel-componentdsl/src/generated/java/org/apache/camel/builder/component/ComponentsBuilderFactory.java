@@ -110,20 +110,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AmqpComponentBuilderFactory.amqp();
     }
     /**
-     * APNS (camel-apns)
-     * Send notifications to Apple iOS devices.
-     * 
-     * Category: eventbus,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-apns
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.ApnsComponentBuilderFactory.ApnsComponentBuilder apns() {
-        return org.apache.camel.builder.component.dsl.ApnsComponentBuilderFactory.apns();
-    }
-    /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
@@ -1653,7 +1639,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GoogleDriveComponentBuilderFactory.googleDrive();
     }
     /**
-     * GoogleCloudFunctions (camel-google-functions)
+     * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 
      * Category: cloud

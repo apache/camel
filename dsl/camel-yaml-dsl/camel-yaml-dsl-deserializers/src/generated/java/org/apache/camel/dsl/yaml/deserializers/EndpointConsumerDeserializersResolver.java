@@ -19,7 +19,6 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "ahc-ws":
             case "ahc-wss":
             case "amqp":
-            case "apns":
             case "as2":
             case "asterisk":
             case "atmos":

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.FilterDefinition
 import org.apache.camel.model.ToDefinition
@@ -81,6 +82,36 @@ class FilterTest extends YamlTestSupport {
                 expectedMessageCount 2
                 expectedBodiesReceived 'a', 'b'
             }
+            withMock('mock:filter') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'a'
+            }
+
+        when:
+            context.start()
+
+            withTemplate {
+                to('direct:route').withBody('a').send()
+                to('direct:route').withBody('b').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "filter (flow)"() {
+        setup:
+            setFlowMode(YamlDeserializationMode.FLOW)
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - filter:
+                          simple: "${body.startsWith(\\"a\\")}"
+                      - to: "mock:filter"
+            '''
+
             withMock('mock:filter') {
                 expectedMessageCount 1
                 expectedBodiesReceived 'a'

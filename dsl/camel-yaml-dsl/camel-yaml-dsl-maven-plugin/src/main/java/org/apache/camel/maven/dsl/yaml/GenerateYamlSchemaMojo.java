@@ -18,6 +18,7 @@ package org.apache.camel.maven.dsl.yaml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -32,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.maven.dsl.yaml.support.ToolingSupport;
+import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.plugin.MojoFailureException;
@@ -120,7 +122,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         try {
             ToolingSupport.mkparents(outputFile);
 
-            mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, root);
+            StringWriter sw = new StringWriter();
+            mapper.writerWithDefaultPrettyPrinter().writeValue(sw, root);
+            FileUtil.updateFile(outputFile.toPath(), sw.toString());
         } catch (IOException e) {
             throw new MojoFailureException(e.getMessage(), e);
         }
