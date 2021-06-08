@@ -35,6 +35,8 @@
     <properties>
         <firstVersion>3.0.0</firstVersion>
         <label>eip,microservice</label>
+
+        <camel.surefire.forkCount>4</camel.surefire.forkCount>
     </properties>
 
     <dependencies>
