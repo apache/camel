@@ -49,6 +49,7 @@ public class SchedulerConsumer extends ScheduledPollConsumer {
 
         Date now = new Date();
         exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
+        exchange.getIn().setHeader(Exchange.MESSAGE_TIMESTAMP, now.getTime());
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Timer {} is firing", getEndpoint().getName());
