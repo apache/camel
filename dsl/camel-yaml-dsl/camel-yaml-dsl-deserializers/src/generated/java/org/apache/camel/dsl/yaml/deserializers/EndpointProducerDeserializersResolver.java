@@ -20,7 +20,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "ahc-ws":
             case "ahc-wss":
             case "amqp":
-            case "apns":
             case "arangodb":
             case "as2":
             case "asterisk":

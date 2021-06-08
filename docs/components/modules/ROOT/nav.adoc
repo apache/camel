@@ -4,7 +4,6 @@
 * xref:ROOT:index.adoc[Components]
 ** xref:activemq-component.adoc[ActiveMQ]
 ** xref:amqp-component.adoc[AMQP]
-** xref:apns-component.adoc[APNS]
 ** xref:arangodb-component.adoc[ArangoDb]
 ** xref:as2-component.adoc[AS2]
 ** xref:asterisk-component.adoc[Asterisk]
