@@ -63,6 +63,11 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
     }
 
     @Override
+    public long getMessageTimestamp() {
+        return delegate.getMessageTimestamp();
+    }
+
+    @Override
     public Exchange getExchange() {
         return delegate.getExchange();
     }
