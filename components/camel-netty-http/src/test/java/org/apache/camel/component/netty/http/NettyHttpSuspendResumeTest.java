@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class NettyHttpSuspendResumeTest extends BaseNettyTest {
 
-    private String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
+    private String serverUri = "netty-http:http://localhost:{{port}}/cool?disconnect=true&send503whenSuspended=false";
 
     @Test
     public void testNettySuspendResume() throws Exception {

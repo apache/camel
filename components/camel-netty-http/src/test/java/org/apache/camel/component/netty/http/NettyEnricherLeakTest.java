@@ -35,11 +35,11 @@ public class NettyEnricherLeakTest extends BaseNettyTest {
             public void configure() throws Exception {
                 ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
-                from("netty-http:http://localhost:" + getPort() + "/test")
+                from("netty-http:http://localhost:{{port}}/test")
                         .transform().simple("${body}");
 
                 from("direct:outer")
-                        .to("netty-http:http://localhost:" + getPort() + "/test?disconnect=true");
+                        .to("netty-http:http://localhost:{{port}}/test?disconnect=true");
             }
         });
         context.start();
@@ -57,11 +57,11 @@ public class NettyEnricherLeakTest extends BaseNettyTest {
             public void configure() throws Exception {
                 ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
-                from("netty-http:http://localhost:" + getPort() + "/test")
+                from("netty-http:http://localhost:{{port}}/test")
                         .transform().simple("${body}");
 
                 from("direct:outer")
-                        .enrich("netty-http:http://localhost:" + getPort() + "/test?disconnect=true",
+                        .enrich("netty-http:http://localhost:{{port}}/test?disconnect=true",
                                 AggregationStrategies.string(), false, false);
             }
         });

@@ -22,30 +22,28 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.resources.AvailablePort;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
-    AvailablePortFinder.Port port1 = port;
-    @RegisterExtension
-    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
-    @RegisterExtension
-    AvailablePortFinder.Port port3 = AvailablePortFinder.find();
-    @RegisterExtension
-    AvailablePortFinder.Port port4 = AvailablePortFinder.find();
+    @AvailablePort
+    int port2;
+    @AvailablePort
+    int port3;
+    @AvailablePort
+    int port4;
 
     @Test
     public void testEncodedQuery() throws Exception {
-        String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=%2B447777111222", null,
+        String response = template.requestBody("http://localhost:{{port2}}/nettyTestRouteA?param1=%2B447777111222", null,
                 String.class);
         assertEquals("param1=+447777111222", response, "Get a wrong response");
     }
@@ -87,21 +85,19 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                     exchange.getMessage().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
                 };
 
-                from("netty-http:http://localhost:" + port2 + "/nettyTestRouteA?matchOnUriPrefix=true")
+                from("netty-http:http://localhost:{{port2}}/nettyTestRouteA?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
-                        .to("netty-http:http://localhost:" + port1
-                            + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                        .to("netty-http:http://localhost:{{port}}/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
-                from("netty-http:http://localhost:" + port1 + "/nettyTestRouteB?matchOnUriPrefix=true")
+                from("netty-http:http://localhost:{{port}}/nettyTestRouteB?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .process(serviceProc);
 
-                from("netty-http:http://localhost:" + port4 + "/nettyTestRouteC?matchOnUriPrefix=true")
+                from("netty-http:http://localhost:{{port4}}/nettyTestRouteC?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteC route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
-                        .to("netty-http:http://localhost:" + port3
-                            + "/nettyTestRouteD?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                        .to("netty-http:http://localhost:{{port3}}/nettyTestRouteD?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
-                from("netty-http:http://localhost:" + port3 + "/nettyTestRouteD?matchOnUriPrefix=true")
+                from("netty-http:http://localhost:{{port3}}/nettyTestRouteD?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteD route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .setBody(constant("test"))
                         .to("mock:encodedPath");

@@ -17,16 +17,15 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.resources.AvailablePort;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyRouteSimpleDynamicURITest extends BaseNettyTest {
 
-    @RegisterExtension
-    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @AvailablePort
+    int port2;
 
     @Test
     public void testHttpSimple() throws Exception {
@@ -48,8 +47,8 @@ public class NettyRouteSimpleDynamicURITest extends BaseNettyTest {
                         .to("mock:input1")
                         .setHeader("id", constant("bar"))
                         .setHeader("host", constant("localhost"))
-                        .toD("netty-http:http://${header.host}:" + port2 + "/${header.id}");
-                from("netty-http:http://0.0.0.0:" + port2 + "/bar")
+                        .toD("netty-http:http://${header.host}:{{port2}}/${header.id}");
+                from("netty-http:http://0.0.0.0:{{port2}}/bar")
                         .to("mock:input2")
                         .transform().constant("Bye World");
             }

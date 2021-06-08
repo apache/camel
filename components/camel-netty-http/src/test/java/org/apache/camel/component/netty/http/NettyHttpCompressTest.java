@@ -24,12 +24,12 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Isolated
+@Disabled("flaky test")
 public class NettyHttpCompressTest extends BaseNettyTest {
 
     @Test

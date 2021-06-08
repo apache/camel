@@ -60,11 +60,13 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.test.CamelRouteCoverageDumper;
+import org.apache.camel.test.junit5.properties.PropertiesSource;
+import org.apache.camel.test.junit5.properties.TestPropertiesSource;
+import org.apache.camel.test.junit5.resources.Resources;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -80,6 +82,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.platform.commons.util.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +94,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * {@link org.apache.camel.ProducerTemplate} for use in the test case Do <tt>not</tt> use this class for Spring Boot
  * testing.
  */
+@Resources
 public abstract class CamelTestSupport
         implements BeforeEachCallback, AfterEachCallback, AfterAllCallback, BeforeAllCallback, BeforeTestExecutionCallback,
         AfterTestExecutionCallback {
@@ -479,17 +483,9 @@ public abstract class CamelTestSupport
         if (extra != null && !extra.isEmpty()) {
             pc.setOverrideProperties(extra);
         }
-        pc.addPropertiesSource(new PropertiesSource() {
-            @Override
-            public String getName() {
-                return "junit-store";
-            }
-
-            @Override
-            public String getProperty(String name) {
-                return globalStore.get(name, String.class);
-            }
-        });
+        if (AnnotationUtils.isAnnotated(getClass(), PropertiesSource.class)) {
+            pc.addPropertiesSource(new TestPropertiesSource(context, this));
+        }
         Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
         if (ignore != null) {
             pc.setIgnoreMissingLocation(ignore);

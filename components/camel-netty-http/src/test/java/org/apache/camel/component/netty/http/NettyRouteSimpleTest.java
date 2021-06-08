@@ -17,16 +17,15 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.resources.AvailablePort;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyRouteSimpleTest extends BaseNettyTest {
 
-    @RegisterExtension
-    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @AvailablePort
+    int port2;
 
     @Test
     public void testHttpSimple() throws Exception {
@@ -46,9 +45,9 @@ public class NettyRouteSimpleTest extends BaseNettyTest {
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input1")
-                        .to("netty-http:http://localhost:" + port2 + "/bar");
+                        .to("netty-http:http://localhost:{{port2}}/bar");
 
-                from("netty-http:http://0.0.0.0:" + port2 + "/bar")
+                from("netty-http:http://0.0.0.0:{{port2}}/bar")
                         .to("mock:input2")
                         .transform().constant("Bye World");
             }

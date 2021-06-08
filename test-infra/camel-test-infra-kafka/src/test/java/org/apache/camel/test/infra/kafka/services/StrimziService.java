@@ -20,14 +20,13 @@ package org.apache.camel.test.infra.kafka.services;
 import java.util.function.BiConsumer;
 
 import org.apache.camel.test.infra.common.TestUtils;
-import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 
-public class StrimziService extends AbstractTestService implements KafkaService, ContainerService<StrimziContainer> {
+public class StrimziService extends AbstractKafkaService implements ContainerService<StrimziContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(StrimziService.class);
 
     private final ZookeeperContainer zookeeperContainer;

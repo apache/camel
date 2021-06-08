@@ -14,25 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.junit5.resources;
 
-package org.apache.camel.test.infra.kafka.services;
+import java.lang.reflect.Field;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public final class KafkaServiceFactory {
-    private KafkaServiceFactory() {
+public interface ResourceManager {
 
-    }
+    void inject(ExtensionContext context, Object testInstance, Field field);
 
-    public static SimpleTestServiceBuilder<AbstractKafkaService> builder() {
-        return new SimpleTestServiceBuilder<>("kafka");
-    }
-
-    public static KafkaService createService() {
-        return builder()
-                .addLocalMapping(ContainerLocalKafkaService::new)
-                .addMapping("local-strimzi-container", StrimziService::new)
-                .addRemoteMapping(RemoteKafkaService::new)
-                .build();
-    }
 }

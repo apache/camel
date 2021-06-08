@@ -17,22 +17,21 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.resources.AvailablePort;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpTraceDisabledTest extends BaseNettyTest {
 
-    @RegisterExtension
-    AvailablePortFinder.Port portTraceOn = AvailablePortFinder.find();
-    @RegisterExtension
-    AvailablePortFinder.Port portTraceOff = AvailablePortFinder.find();
+    @AvailablePort
+    int portTraceOn;
+    @AvailablePort
+    int portTraceOff;
 
     @Test
     public void testTraceDisabled() throws Exception {

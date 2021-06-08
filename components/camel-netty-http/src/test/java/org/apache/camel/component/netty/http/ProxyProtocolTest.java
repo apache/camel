@@ -27,49 +27,46 @@ import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.util.ResourceLeakDetector;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ShutdownStrategy;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.resources.AvailablePort;
+import org.apache.camel.test.junit5.resources.Resources;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.core.LogEvent;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Resources
+@ExtendWith(LeakDetection.class)
 @Disabled("TODO: https://issues.apache.org/jira/projects/CAMEL/issues/CAMEL-16718")
 // this test was working before due to a netty ref count exception was ignored (seems we attempt to write 2 times)
 // now this real caused exception is detected by Camel
 public class ProxyProtocolTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProxyProtocolTest.class);
-
-    private static final int ORIGIN_PORT = AvailablePortFinder.getNextAvailable();
-
-    private static final int PROXY_PORT = AvailablePortFinder.getNextAvailable();
-
     private DefaultCamelContext context;
 
     private String url;
+
+    @AvailablePort
+    static int originPort;
+
+    @AvailablePort
+    static int proxyPort;
 
     public void createContext(final Function<RouteBuilder, RouteDefinition> variant, final String url) throws Exception {
         this.url = url;
@@ -85,7 +82,7 @@ public class ProxyProtocolTest {
 
                 // origin service that serves `"origin server"` on
                 // http://localhost:originPort/path
-                from("netty-http:http://localhost:" + ORIGIN_PORT + "/path")
+                from("netty-http:http://localhost:" + originPort + "/path")
                         .process(ProxyProtocolTest::origin);
             }
         });
@@ -161,17 +158,17 @@ public class ProxyProtocolTest {
     }
 
     public static Iterable<Object[]> routeOptions() {
-        final Function<RouteBuilder, RouteDefinition> single = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
+        final Function<RouteBuilder, RouteDefinition> single = r -> r.from("netty-http:proxy://localhost:" + proxyPort)
                 .process(ProxyProtocolTest::uppercase)
-                .to("netty-http:http://localhost:" + ORIGIN_PORT)
+                .to("netty-http:http://localhost:" + originPort)
                 .process(ProxyProtocolTest::uppercase);
 
-        final Function<RouteBuilder, RouteDefinition> dynamicPath = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
+        final Function<RouteBuilder, RouteDefinition> dynamicPath = r -> r.from("netty-http:proxy://localhost:" + proxyPort)
                 .process(ProxyProtocolTest::uppercase)
-                .toD("netty-http:http://localhost:" + ORIGIN_PORT + "/${headers." + Exchange.HTTP_PATH + "}")
+                .toD("netty-http:http://localhost:" + originPort + "/${headers." + Exchange.HTTP_PATH + "}")
                 .process(ProxyProtocolTest::uppercase);
 
-        final Function<RouteBuilder, RouteDefinition> dynamicUrl = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
+        final Function<RouteBuilder, RouteDefinition> dynamicUrl = r -> r.from("netty-http:proxy://localhost:" + proxyPort)
                 .process(ProxyProtocolTest::uppercase)
                 .toD("netty-http:"
                      + "${headers." + Exchange.HTTP_SCHEME + "}://"
@@ -183,32 +180,7 @@ public class ProxyProtocolTest {
         return Arrays.asList(
                 new Object[] { single, "http://test/path" },
                 new Object[] { dynamicPath, "http://test/path" },
-                new Object[] { dynamicUrl, "http://localhost:" + ORIGIN_PORT + "/path" });
-    }
-
-    @BeforeAll
-    public static void startLeakDetection() {
-        System.setProperty("io.netty.leakDetection.maxRecords", "100");
-        System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-    }
-
-    @AfterAll
-    public static void verifyNoLeaks() throws Exception {
-        // Force GC to bring up leaks
-        System.gc();
-        // Kick leak detection logging
-        ByteBufAllocator.DEFAULT.buffer(1).release();
-        final Collection<LogEvent> events = LogCaptureAppender.getEvents();
-        if (!events.isEmpty()) {
-            final String message = "Leaks detected while running tests: " + events;
-            // Just write the message into log to help debug
-            for (final LogEvent event : events) {
-                LOG.info(event.getMessage().getFormattedMessage());
-            }
-            LogCaptureAppender.reset();
-            throw new AssertionError(message);
-        }
+                new Object[] { dynamicUrl, "http://localhost:" + originPort + "/path" });
     }
 
     private static void origin(final Exchange exchange) {
@@ -233,7 +205,7 @@ public class ProxyProtocolTest {
     }
 
     private static InputStream request(final String url) throws IOException, MalformedURLException {
-        final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", PROXY_PORT));
+        final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", proxyPort));
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(proxy);
         // when debugging comment out the following two lines otherwise
@@ -247,7 +219,7 @@ public class ProxyProtocolTest {
 
     private static InputStream request(final String url, final String payload, final String contentType)
             throws IOException, MalformedURLException {
-        final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", PROXY_PORT));
+        final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", proxyPort));
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(proxy);
         connection.addRequestProperty("Content-Type", contentType);

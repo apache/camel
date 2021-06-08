@@ -16,74 +16,23 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.util.Collection;
-import java.util.Properties;
-
-import io.netty.buffer.ByteBufAllocator;
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelContext;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.logging.log4j.core.LogEvent;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.junit5.properties.PropertiesSource;
+import org.apache.camel.test.junit5.resources.AvailablePort;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  *
  */
+@PropertiesSource
+@ExtendWith(LeakDetection.class)
 public class BaseNettyTest extends CamelTestSupport {
-    protected static final Logger LOG = LoggerFactory.getLogger(BaseNettyTest.class);
 
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
-
-    @BeforeAll
-    public static void startLeakDetection() {
-        System.setProperty("io.netty.leakDetection.maxRecords", "100");
-        System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
-        System.setProperty("io.netty.leakDetection.targetRecords", "100");
-        LogCaptureAppender.reset();
-    }
-
-    @AfterAll
-    public static void verifyNoLeaks() throws Exception {
-        //Force GC to bring up leaks
-        System.gc();
-        //Kick leak detection logging
-        ByteBufAllocator.DEFAULT.buffer(1).release();
-        Collection<LogEvent> events = LogCaptureAppender.getEvents();
-        if (!events.isEmpty()) {
-            String message = "Leaks detected while running tests: " + events;
-            // Just write the message into log to help debug
-            for (LogEvent event : events) {
-                LOG.info(event.getMessage().getFormattedMessage());
-            }
-            LogCaptureAppender.reset();
-            throw new AssertionError(message);
-        }
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("ref:prop");
-        return context;
-    }
-
-    @BindToRegistry("prop")
-    public Properties loadProp() throws Exception {
-
-        Properties prop = new Properties();
-        prop.setProperty("port", "" + getPort());
-
-        return prop;
-    }
+    @AvailablePort
+    int port;
 
     protected int getPort() {
-        return port.getPort();
+        return port;
     }
 
 }

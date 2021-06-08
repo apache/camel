@@ -21,24 +21,23 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConstants;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
-import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.resources.SuiteScope;
+import org.apache.camel.test.junit5.resources.TestService;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    public static KafkaServiceExtension service = new KafkaServiceExtension();
+
+    @TestService
+    @SuiteScope
+    public static KafkaService service;
 
     protected static AdminClient kafkaAdminClient;
 
@@ -93,54 +92,4 @@ public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
         return KafkaAdminClient.create(properties);
     }
 
-    static class KafkaServiceExtension implements BeforeAllCallback {
-
-        ExtensionContext.Store store;
-
-        public String getBootstrapServers() {
-            return store.get(KafkaServiceHolder.class, KafkaServiceHolder.class).getService().getBootstrapServers();
-        }
-
-        @Override
-        public void beforeAll(ExtensionContext context) throws Exception {
-            ExtensionContext root = context.getRoot();
-            store = root.getStore(ExtensionContext.Namespace.GLOBAL);
-            store.getOrComputeIfAbsent(KafkaServiceHolder.class, o -> new KafkaServiceHolder(root), KafkaServiceHolder.class);
-        }
-    }
-
-    static class KafkaServiceHolder implements ExtensionContext.Store.CloseableResource {
-        final ExtensionContext context;
-        volatile KafkaService kafka;
-
-        public KafkaServiceHolder(ExtensionContext context) {
-            this.context = context;
-        }
-
-        public KafkaService getService() {
-            if (kafka == null) {
-                synchronized (this) {
-                    if (kafka == null) {
-                        kafka = create();
-                    }
-                }
-            }
-            return kafka;
-        }
-
-        private KafkaService create() {
-            KafkaService kafka = KafkaServiceFactory.createService();
-            try {
-                kafka.beforeAll(context);
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Unable to initialize kafka service", e);
-            }
-            return kafka;
-        }
-
-        @Override
-        public void close() throws Throwable {
-            getService().close();
-        }
-    }
 }

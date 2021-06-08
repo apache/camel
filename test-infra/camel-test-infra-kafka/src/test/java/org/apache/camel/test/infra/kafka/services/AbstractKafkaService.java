@@ -14,25 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.infra.kafka.services;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.AbstractTestService;
 
-public final class KafkaServiceFactory {
-    private KafkaServiceFactory() {
-
-    }
-
-    public static SimpleTestServiceBuilder<AbstractKafkaService> builder() {
-        return new SimpleTestServiceBuilder<>("kafka");
-    }
-
-    public static KafkaService createService() {
-        return builder()
-                .addLocalMapping(ContainerLocalKafkaService::new)
-                .addMapping("local-strimzi-container", StrimziService::new)
-                .addRemoteMapping(RemoteKafkaService::new)
-                .build();
-    }
+public abstract class AbstractKafkaService extends AbstractTestService implements KafkaService {
 }
