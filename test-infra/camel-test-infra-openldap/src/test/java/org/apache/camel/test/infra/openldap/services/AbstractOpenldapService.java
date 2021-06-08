@@ -16,21 +16,17 @@
  */
 package org.apache.camel.test.infra.openldap.services;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import java.util.function.BiConsumer;
 
-public final class OpenldapServiceFactory {
-    private OpenldapServiceFactory() {
+import org.apache.camel.test.infra.common.services.AbstractTestService;
+import org.apache.camel.test.infra.openldap.common.OpenldapProperties;
 
+public abstract class AbstractOpenldapService extends AbstractTestService implements OpenldapService {
+
+    @Override
+    protected void registerProperties(BiConsumer<String, String> store) {
+        store.accept(OpenldapProperties.PORT_LDAP, String.valueOf(getPort()));
+        store.accept(OpenldapProperties.PORT_LDAP_OVER_SSL, String.valueOf(getSslPort()));
     }
 
-    public static SimpleTestServiceBuilder<AbstractOpenldapService> builder() {
-        return new SimpleTestServiceBuilder<>("openldap");
-    }
-
-    public static OpenldapService createService() {
-        return builder()
-                .addLocalMapping(OpenldapLocalContainerService::new)
-                .addRemoteMapping(OpenldapRemoteService::new)
-                .build();
-    }
 }

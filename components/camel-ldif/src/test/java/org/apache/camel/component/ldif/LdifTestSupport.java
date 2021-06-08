@@ -19,10 +19,13 @@ package org.apache.camel.component.ldif;
 import org.apache.camel.test.infra.openldap.services.OpenldapService;
 import org.apache.camel.test.infra.openldap.services.OpenldapServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.junit5.resources.SuiteScope;
+import org.apache.camel.test.junit5.resources.TestService;
 
 public class LdifTestSupport extends CamelTestSupport {
-    @RegisterExtension
+
+    @TestService
+    @SuiteScope
     public static OpenldapService service = OpenldapServiceFactory.createService();
 
     protected int port;

@@ -18,7 +18,7 @@ package org.apache.camel.test.infra.openldap.services;
 
 import org.apache.camel.test.infra.openldap.common.OpenldapProperties;
 
-public class OpenldapRemoteService implements OpenldapService {
+public class OpenldapRemoteService extends AbstractOpenldapService {
 
     public OpenldapRemoteService() {
     }
@@ -27,20 +27,6 @@ public class OpenldapRemoteService implements OpenldapService {
         System.setProperty(OpenldapProperties.HOST, host);
         System.setProperty(OpenldapProperties.PORT_LDAP, String.valueOf(port));
         System.setProperty(OpenldapProperties.PORT_LDAP_OVER_SSL, String.valueOf(sslPort));
-    }
-
-    public void registerProperties() {
-        // NO-OP
-    }
-
-    @Override
-    public void initialize() {
-        registerProperties();
-    }
-
-    @Override
-    public void shutdown() {
-        // NO-OP
     }
 
     @Override

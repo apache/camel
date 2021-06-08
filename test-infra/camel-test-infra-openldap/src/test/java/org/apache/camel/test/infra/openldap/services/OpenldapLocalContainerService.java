@@ -16,14 +16,13 @@
  */
 package org.apache.camel.test.infra.openldap.services;
 
-import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.openldap.common.OpenldapProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.GenericContainer;
 
-public class OpenldapLocalContainerService implements OpenldapService, ContainerService<GenericContainer> {
+public class OpenldapLocalContainerService extends AbstractOpenldapService {
     public static final String CONTAINER_IMAGE = "osixia/openldap:1.5.0";
     public static final String CONTAINER_NAME = "openldap";
     public static final int CONTAINER_PORT_LDAP = 389;
@@ -31,7 +30,7 @@ public class OpenldapLocalContainerService implements OpenldapService, Container
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenldapLocalContainerService.class);
 
-    private final GenericContainer container;
+    private final GenericContainer<?> container;
 
     public OpenldapLocalContainerService() {
         this(CONTAINER_IMAGE);
@@ -47,19 +46,19 @@ public class OpenldapLocalContainerService implements OpenldapService, Container
         container = initContainer(imageName, null, null);
     }
 
-    public OpenldapLocalContainerService(GenericContainer container) {
+    public OpenldapLocalContainerService(GenericContainer<?> container) {
         this.container = container;
     }
 
-    protected GenericContainer initContainer(String imageName, Integer port, Integer sslPort) {
-        GenericContainer ret;
+    protected GenericContainer<?> initContainer(String imageName, Integer port, Integer sslPort) {
+        GenericContainer<?> ret;
 
         if (port == null) {
-            ret = new GenericContainer(imageName)
+            ret = new GenericContainer<>(imageName)
                     .withExposedPorts(CONTAINER_PORT_LDAP, CONTAINER_PORT_LDAP_OVER_SSL);
         } else {
             @SuppressWarnings("deprecation")
-            FixedHostPortGenericContainer fixedPortContainer = new FixedHostPortGenericContainer(imageName)
+            FixedHostPortGenericContainer<?> fixedPortContainer = new FixedHostPortGenericContainer<>(imageName)
                     .withFixedExposedPort(port, CONTAINER_PORT_LDAP);
 
             if (sslPort != null) {
@@ -74,29 +73,17 @@ public class OpenldapLocalContainerService implements OpenldapService, Container
         return ret;
     }
 
-    public void registerProperties() {
-        System.setProperty(OpenldapProperties.PORT_LDAP, String.valueOf(getPort()));
-        System.setProperty(OpenldapProperties.PORT_LDAP_OVER_SSL, String.valueOf(getSslPort()));
-    }
-
     @Override
-    public void initialize() {
+    protected void setUp() {
         LOG.info("Trying to start the Openldap container");
         container.start();
-
-        registerProperties();
         LOG.info("Openldap instance running at {}", getPort());
     }
 
     @Override
-    public void shutdown() {
+    protected void tearDown() {
         LOG.info("Stopping the Openldap container");
         container.stop();
-    }
-
-    @Override
-    public GenericContainer getContainer() {
-        return container;
     }
 
     @Override
