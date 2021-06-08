@@ -21,7 +21,6 @@ import org.apache.camel.test.infra.consul.common.ConsulProperties;
 
 public class ConsulRemoteService implements ConsulService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

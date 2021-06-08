@@ -46,7 +46,6 @@ public class PulsarLocalContainerService implements PulsarService, ContainerServ
         return new PulsarContainer(DockerImageName.parse(imageName));
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(PulsarProperties.PULSAR_ADMIN_URL, getPulsarAdminUrl());
         System.setProperty(PulsarProperties.PULSAR_BROKER_URL, getPulsarBrokerUrl());

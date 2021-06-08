@@ -62,7 +62,6 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
         return container.getHttpHostAddress();
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(ElasticSearchProperties.ELASTIC_SEARCH_HOST, getElasticSearchHost());
         System.setProperty(ElasticSearchProperties.ELASTIC_SEARCH_PORT, String.valueOf(getPort()));

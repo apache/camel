@@ -36,7 +36,6 @@ public class ChatScriptLocalContainerService implements ChatScriptService, Conta
                 .withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withTty(true));
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(ChatScriptProperties.CHATSCRIPT_ADDRESS, serviceAddress());
     }
@@ -46,6 +45,7 @@ public class ChatScriptLocalContainerService implements ChatScriptService, Conta
         LOG.info("Trying to start the ChatScript container");
         container.start();
 
+        registerProperties();
         LOG.info("ChatScript instance running at {}", serviceAddress());
     }
 

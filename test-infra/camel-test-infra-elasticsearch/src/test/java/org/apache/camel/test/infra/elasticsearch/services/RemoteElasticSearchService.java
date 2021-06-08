@@ -38,7 +38,6 @@ public class RemoteElasticSearchService implements ElasticSearchService {
         return System.getProperty(ElasticSearchProperties.ELASTIC_SEARCH_HOST);
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

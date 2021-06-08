@@ -20,13 +20,6 @@ package org.apache.camel.test.infra.common.services;
 public interface TestService extends AutoCloseable {
 
     /**
-     * Register service properties (such as using System.setProperties) so that they can be resolved at distance (ie.:
-     * when using Spring's PropertySourcesPlaceholderConfigurer or simply when trying to collect test infra information
-     * outside of the test class itself).
-     */
-    void registerProperties();
-
-    /**
      * Perform any initialization necessary
      */
     void initialize();

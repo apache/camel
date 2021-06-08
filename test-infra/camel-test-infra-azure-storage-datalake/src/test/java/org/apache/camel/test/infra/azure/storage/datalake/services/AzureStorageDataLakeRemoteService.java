@@ -37,7 +37,6 @@ public class AzureStorageDataLakeRemoteService implements AzureService {
         };
     }
 
-    @Override
     public void registerProperties() {
 
     }

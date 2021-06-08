@@ -49,7 +49,6 @@ public class MessagingLocalContainerService<T extends GenericContainer<T>> imple
         return endpointFunction.apply(container);
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(MessagingProperties.MESSAGING_BROKER_ADDRESS, defaultEndpoint());
     }

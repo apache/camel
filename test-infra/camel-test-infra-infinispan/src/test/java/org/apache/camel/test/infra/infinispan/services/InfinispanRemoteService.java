@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 
 public class InfinispanRemoteService implements InfinispanService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

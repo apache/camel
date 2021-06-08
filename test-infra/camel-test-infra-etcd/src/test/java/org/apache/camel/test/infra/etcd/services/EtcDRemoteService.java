@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.etcd.common.EtcDProperties;
 
 public class EtcDRemoteService implements EtcDService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

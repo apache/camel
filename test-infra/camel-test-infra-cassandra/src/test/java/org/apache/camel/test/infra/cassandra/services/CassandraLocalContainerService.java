@@ -57,7 +57,6 @@ public class CassandraLocalContainerService implements CassandraService, Contain
         return container.getHost();
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(CassandraProperties.CASSANDRA_HOST, getCassandraHost());
         System.setProperty(CassandraProperties.CASSANDRA_CQL3_PORT, String.valueOf(getCQL3Port()));

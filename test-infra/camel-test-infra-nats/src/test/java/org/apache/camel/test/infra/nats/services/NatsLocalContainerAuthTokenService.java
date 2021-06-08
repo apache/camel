@@ -33,7 +33,6 @@ public class NatsLocalContainerAuthTokenService extends NatsLocalContainerServic
         return container;
     }
 
-    @Override
     public void registerProperties() {
         super.registerProperties();
 

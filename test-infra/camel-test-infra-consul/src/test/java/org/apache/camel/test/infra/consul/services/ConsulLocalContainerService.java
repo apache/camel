@@ -52,7 +52,6 @@ public class ConsulLocalContainerService implements ConsulService, ContainerServ
                 .withCommand("agent", "-dev", "-server", "-bootstrap", "-client", "0.0.0.0", "-log-level", "trace");
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(ConsulProperties.CONSUL_URL, getConsulUrl());
         System.setProperty(ConsulProperties.CONSUL_HOST, host());

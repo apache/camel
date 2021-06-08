@@ -46,7 +46,6 @@ public class ZooKeeperLocalContainerService implements ZooKeeperService, Contain
         }
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(ZooKeeperProperties.CONNECTION_STRING, getConnectionString());
     }

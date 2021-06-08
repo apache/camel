@@ -52,7 +52,6 @@ public class ArangoDBLocalContainerService implements ArangoDBService, Container
         return container.getHost();
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(ArangoDBProperties.ARANGODB_HOST, container.getHost());
         System.setProperty(ArangoDBProperties.ARANGODB_PORT, String.valueOf(container.getServicePort()));

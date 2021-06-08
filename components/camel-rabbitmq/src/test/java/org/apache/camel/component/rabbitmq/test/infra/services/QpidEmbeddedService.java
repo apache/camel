@@ -79,7 +79,6 @@ public class QpidEmbeddedService implements RabbitMQService {
         throw new UnsupportedOperationException("Qpid embedded broker does not have a HTTP admin service");
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

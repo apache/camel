@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.nsq.common.NsqProperties;
 
 public class NsqRemoteService implements NsqService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

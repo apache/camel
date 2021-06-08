@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 
 public class XmppRemoteService implements XmppService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

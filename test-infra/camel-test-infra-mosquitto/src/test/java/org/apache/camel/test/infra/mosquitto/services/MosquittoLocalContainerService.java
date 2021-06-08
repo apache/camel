@@ -73,7 +73,6 @@ public class MosquittoLocalContainerService implements MosquittoService, Contain
         return ret;
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(MosquittoProperties.PORT, String.valueOf(getPort()));
     }

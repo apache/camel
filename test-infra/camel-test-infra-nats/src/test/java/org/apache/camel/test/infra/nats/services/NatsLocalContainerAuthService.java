@@ -34,7 +34,6 @@ public class NatsLocalContainerAuthService extends NatsLocalContainerService {
         return container;
     }
 
-    @Override
     public void registerProperties() {
         super.registerProperties();
 

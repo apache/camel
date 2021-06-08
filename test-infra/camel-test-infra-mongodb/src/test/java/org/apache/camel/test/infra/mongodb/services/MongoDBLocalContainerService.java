@@ -59,7 +59,6 @@ public class MongoDBLocalContainerService implements MongoDBService, ContainerSe
         return container.getContainerIpAddress() + ":" + container.getMappedPort(DEFAULT_MONGODB_PORT);
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(MongoDBProperties.MONGODB_URL, getReplicaSetUrl());
         System.setProperty(MongoDBProperties.MONGODB_CONNECTION_ADDRESS, getConnectionAddress());

@@ -30,7 +30,6 @@ public class SolrRemoteService implements SolrService {
         return System.getProperty(SolrProperties.SOLR_MODE).equals("solrcloud");
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

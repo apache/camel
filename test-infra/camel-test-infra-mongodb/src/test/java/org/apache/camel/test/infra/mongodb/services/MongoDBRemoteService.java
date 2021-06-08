@@ -30,7 +30,6 @@ public class MongoDBRemoteService implements MongoDBService {
         return System.getProperty(MongoDBProperties.MONGODB_URL);
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

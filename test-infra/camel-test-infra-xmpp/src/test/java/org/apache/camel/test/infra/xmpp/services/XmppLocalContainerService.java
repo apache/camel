@@ -42,7 +42,6 @@ public class XmppLocalContainerService implements XmppService, ContainerService<
         return new XmppServerContainer();
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(XmppProperties.XMPP_URL, getUrl());
         System.setProperty(XmppProperties.XMPP_HOST, container.getHost());

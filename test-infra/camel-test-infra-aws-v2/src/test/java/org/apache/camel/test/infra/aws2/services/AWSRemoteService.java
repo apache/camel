@@ -40,7 +40,6 @@ public class AWSRemoteService implements AWSService {
         return properties;
     }
 
-    @Override
     public void registerProperties() {
 
     }

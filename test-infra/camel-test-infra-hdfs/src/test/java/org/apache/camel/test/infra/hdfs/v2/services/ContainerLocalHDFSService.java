@@ -63,7 +63,6 @@ public class ContainerLocalHDFSService implements HDFSService, ContainerService<
         return nameNodeContainer;
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(HDFSProperties.HDFS_HOST, getHDFSHost());
         System.getProperty(HDFSProperties.HDFS_PORT, String.valueOf(getPort()));

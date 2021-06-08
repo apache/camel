@@ -21,7 +21,6 @@ import org.apache.camel.test.infra.messaging.common.MessagingProperties;
 
 public class MessagingRemoteService implements MessagingService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

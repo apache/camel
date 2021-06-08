@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.redis.common.RedisProperties;
 
 public class RedisRemoteService implements RedisService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

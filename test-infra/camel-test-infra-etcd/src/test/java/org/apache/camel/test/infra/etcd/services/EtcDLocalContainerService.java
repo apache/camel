@@ -58,7 +58,6 @@ public class EtcDLocalContainerService implements EtcDService, ContainerService<
                         "-listen-client-urls", "http://0.0.0.0:" + ETCD_CLIENT_PORT);
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(EtcDProperties.SERVICE_ADDRESS, getServiceAddress());
     }

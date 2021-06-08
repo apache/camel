@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.google.pubsub.common.GooglePubSubProperties;
 
 public class GooglePubSubRemoteService implements GooglePubSubService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

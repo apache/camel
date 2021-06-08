@@ -49,7 +49,6 @@ public class SolrLocalContainerService implements SolrService, ContainerService<
                 .withCommand(isCloudMode() ? "-c" : "");
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(SolrProperties.SERVICE_ADDRESS, getSolrBaseUrl());
     }

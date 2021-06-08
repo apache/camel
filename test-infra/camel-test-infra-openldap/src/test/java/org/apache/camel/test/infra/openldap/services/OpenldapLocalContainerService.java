@@ -74,7 +74,6 @@ public class OpenldapLocalContainerService implements OpenldapService, Container
         return ret;
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(OpenldapProperties.PORT_LDAP, String.valueOf(getPort()));
         System.setProperty(OpenldapProperties.PORT_LDAP_OVER_SSL, String.valueOf(getSslPort()));

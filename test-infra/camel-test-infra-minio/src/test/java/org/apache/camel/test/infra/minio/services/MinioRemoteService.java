@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.minio.common.MinioProperties;
 
 public class MinioRemoteService implements MinioService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

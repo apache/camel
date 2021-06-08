@@ -48,7 +48,6 @@ public class CouchbaseRemoteService implements CouchbaseService {
         return Integer.parseInt(portValue);
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

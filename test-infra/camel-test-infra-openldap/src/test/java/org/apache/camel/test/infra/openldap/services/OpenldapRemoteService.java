@@ -29,7 +29,6 @@ public class OpenldapRemoteService implements OpenldapService {
         System.setProperty(OpenldapProperties.PORT_LDAP_OVER_SSL, String.valueOf(sslPort));
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.pulsar.common.PulsarProperties;
 
 public class PulsarRemoteService implements PulsarService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

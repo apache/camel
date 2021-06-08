@@ -54,7 +54,6 @@ public class FhirLocalContainerService implements FhirService, ContainerService<
                 .waitingFor(Wait.forHttp("/hapi-fhir-jpaserver/fhir/metadata"));
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(FhirProperties.SERVICE_BASE_URL, getServiceBaseURL());
         System.setProperty(FhirProperties.SERVICE_HOST, getHost());

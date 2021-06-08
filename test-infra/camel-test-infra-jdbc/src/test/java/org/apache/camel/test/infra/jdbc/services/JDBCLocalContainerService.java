@@ -32,7 +32,6 @@ public class JDBCLocalContainerService<T extends JdbcDatabaseContainer<T>> imple
         this.container = container;
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(JDBCProperties.JDBC_CONNECTION_URL, jdbcUrl());
     }
