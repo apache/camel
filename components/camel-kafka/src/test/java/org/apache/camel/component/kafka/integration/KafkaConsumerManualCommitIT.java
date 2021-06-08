@@ -44,6 +44,9 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
+    @EndpointInject("mock:resultBar")
+    private MockEndpoint toBar;
+
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
     @BeforeEach
@@ -72,8 +75,57 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
                     assertNotNull(manual);
                     manual.commitSync();
                 });
+                from(from).routeId("bar").autoStartup(false).to(toBar);
             }
         };
+    }
+
+    @Test
+    public void kafkaAutoCommitDisabledDuringRebalance() throws Exception {
+        to.expectedMessageCount(1);
+        String firstMessage = "message-0";
+        to.expectedBodiesReceivedInAnyOrder(firstMessage);
+
+        ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", firstMessage);
+        producer.send(data);
+
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        context.getRouteController().stopRoute("foo");
+        to.expectedMessageCount(0);
+
+        String secondMessage = "message-1";
+        data = new ProducerRecord<>(TOPIC, "1", secondMessage);
+        producer.send(data);
+
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        // start a new route in order to rebalance kafka
+        context.getRouteController().startRoute("bar");
+        toBar.expectedMessageCount(1);
+        synchronized (this) {
+            Thread.sleep(1000);
+        }
+
+        toBar.assertIsSatisfied();
+
+        context.getRouteController().stopRoute("bar");
+
+        // The route bar is not committing the offset, so by restarting foo, last 3 items will be processed
+        context.getRouteController().startRoute("foo");
+        to.expectedMessageCount(1);
+        to.expectedBodiesReceivedInAnyOrder("message-1");
+
+        // give some time for the route to start again
+        synchronized (this) {
+            Thread.sleep(1000);
+        }
+
+        to.assertIsSatisfied(3000);
     }
 
     @Test
