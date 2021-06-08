@@ -84,6 +84,14 @@ OGNL expression.
 
 |id |String |the input message id
 
+|messageTimestamp |String |the input message timestamp (millis since epoc) that this message originates from.
+Some systems like JMS, Kafka, AWS have a timestamp on the event/message, that Camel received. This method returns
+the timestamp, if a timestamp exists.
+The message timestamp and exchange created are not the same. An exchange always have a created timestamp which is the
+local timestamp when Camel created the exchange. The message timestamp is only available in some Camel components
+when the consumer is able to extract the timestamp from the source event.
+If the message has no timestamp then 0 is returned.
+
 |body |Object |the input body
 
 |in.body |Object |*deprecated* the input body
