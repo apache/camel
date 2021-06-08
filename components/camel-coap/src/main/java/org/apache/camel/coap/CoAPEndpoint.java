@@ -108,7 +108,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new CoAPConsumer(this, processor);
+        CoAPConsumer consumer = new CoAPConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public void setUri(URI u) {
