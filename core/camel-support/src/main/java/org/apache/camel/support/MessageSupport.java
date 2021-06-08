@@ -39,6 +39,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     private Exchange exchange;
     private Object body;
     private String messageId;
+    private long messageTimestamp;
     private DataType dataType;
 
     @Override
@@ -276,6 +277,15 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
             messageId = createMessageId();
         }
         return this.messageId;
+    }
+
+    @Override
+    public long getMessageTimestamp() {
+        if (messageTimestamp == 0) {
+            // use -1 to indicate no timestamp exists
+            messageTimestamp = getHeader(Exchange.MESSAGE_TIMESTAMP, -1L, long.class);
+        }
+        return messageTimestamp <= 0 ? 0 : messageTimestamp;
     }
 
     @Override
