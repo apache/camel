@@ -16,35 +16,34 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.Properties;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
+public class PropertiesComponentNegateTest extends ContextTestSupport {
 
     @Test
-    public void testLoadProperties() throws Exception {
-        context.start();
+    public void testNegate() throws Exception {
+        assertTrue(context.getRoute("ftp").isAutoStartup());
+        assertFalse(context.getRoute("jms").isAutoStartup());
+    }
 
-        org.apache.camel.spi.PropertiesComponent pc = context.getPropertiesComponent();
-        Properties prop = pc.loadProperties();
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:ftp").routeId("ftp").autoStartup("{{integration.ftpEnabled}}")
+                        .to("mock:ftp");
 
-        assertNotNull(prop);
-        assertEquals(20, prop.size());
-
-        assertEquals("{{cool.b}}", prop.getProperty("cool.a"));
-        assertEquals("10", prop.getProperty("myQueueSize"));
-        assertEquals("true", prop.getProperty("integration.ftpEnabled"));
+                from("direct:jms").routeId("jms").autoStartup("{{!integration.ftpEnabled}}")
+                        .to("mock:jms");
+            }
+        };
     }
 
     @Override
