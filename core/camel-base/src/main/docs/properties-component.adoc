@@ -308,6 +308,26 @@ from("direct:start")
     .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
 ----
 
+== Negate boolean value
+
+If a property placeholder is a boolean value, then it is possible to negate (reverse) the value by using `!` as prefix in the key.
+
+[source,java]
+----
+// properties
+integration.ftpEnabled=true
+
+// route
+from("ftp:....").autoStartup("{{integration.ftpEnabled}}")
+    .to("kafka:cheese")
+
+from("jms:....").autoStartup("{{!integration.ftpEnabled}}")
+    .to("kafka:cheese")
+----
+
+In the example above then the FTP route or the JMS route should only be started. So if the FTP is enabled then JMS should be disable, and vise-versa.
+We can do this be negating the `autoStartup` in the JMS route, by using `!integration.ftpEnabled` as the key.
+
 == Additional property placeholder supported in Spring XML
 
 The property placeholders is also supported in many of the Camel Spring
@@ -358,10 +378,10 @@ as values which can either be used as override or fallback values.
 The default mode is that both of them are in override mode, and they are check in the following order:
 
 1. OS environment variable (override mode)
-2. JVM system property  (override mode)
+2. JVM system property (override mode)
 3. Property files and other locations
 4. OS environment variable (fallback mode)
-5. JVM system property  (fallback mode)
+5. JVM system property (fallback mode)
 
 The check stops at first found property value for the key.
 
