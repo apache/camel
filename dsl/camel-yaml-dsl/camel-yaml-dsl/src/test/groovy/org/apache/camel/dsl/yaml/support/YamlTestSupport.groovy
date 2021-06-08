@@ -124,7 +124,7 @@ class YamlTestSupport extends Specification implements HasCamelContext {
 
             @Override
             boolean exists() {
-                return false
+                return true
             }
 
             @Override
