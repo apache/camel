@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Map;
@@ -102,6 +103,10 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
         ObjectHelper.notNull(deserializationContext, "constructor");
         ObjectHelper.notNull(settings, "settings");
+
+        if (!resource.exists()) {
+            throw new FileNotFoundException("Resource not found: " + resource.getLocation());
+        }
 
         try (InputStream is = resource.getInputStream()) {
             final StreamReader reader = new StreamReader(new YamlUnicodeReader(is), settings);

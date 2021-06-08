@@ -414,8 +414,13 @@ public class KameletComponent extends DefaultComponent {
                     if (!path.endsWith("/")) {
                         path += "/";
                     }
-                    ecc.getRoutesLoader().loadRoutes(
-                            ecc.getResourceLoader().resolveResource(path + templateId + ".kamelet.yaml"));
+                    String loc = path + templateId + ".kamelet.yaml";
+                    try {
+                        ecc.getRoutesLoader().loadRoutes(
+                                ecc.getResourceLoader().resolveResource(loc));
+                    } catch (Exception e) {
+                        throw new KameletNotFoundException(templateId, loc, e);
+                    }
                 }
             }
 
