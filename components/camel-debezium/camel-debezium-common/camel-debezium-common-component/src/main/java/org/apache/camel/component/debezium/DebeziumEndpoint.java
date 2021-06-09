@@ -90,6 +90,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         message.setHeader(DebeziumConstants.HEADER_OPERATION, operation);
         message.setHeader(DebeziumConstants.HEADER_BEFORE, before);
         message.setHeader(DebeziumConstants.HEADER_TIMESTAMP, timestamp);
+        message.setHeader(Exchange.MESSAGE_TIMESTAMP, timestamp);
 
         message.setBody(body);
 
