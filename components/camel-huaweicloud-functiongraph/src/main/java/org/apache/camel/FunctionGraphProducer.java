@@ -76,23 +76,14 @@ public class FunctionGraphProducer extends DefaultProducer {
             try {
                 request = new ObjectMapper().readValue(strBody, HashMap.class);
             } catch (JsonProcessingException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Invalid response body given");
-                }
                 throw new IllegalArgumentException("Request body must be a JSON or a HashMap");
             }
         } else {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Exchange body is not valid");
-            }
             throw new IllegalArgumentException("Exchange body is mandatory and should be a valid Map or JSON string");
         }
 
         // checking for function name and function package
         if (ObjectHelper.isEmpty(clientConfigurations.getFunctionName())) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Function name not found.");
-            }
             throw new IllegalArgumentException("Function name is mandatory for invokeFunction.");
         }
         if (ObjectHelper.isEmpty(exchange.getProperty(FunctionGraphProperties.FUNCTION_PACKAGE))
@@ -119,13 +110,12 @@ public class FunctionGraphProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(clientConfigurations.getXCffLogType())) {
             exchange.setProperty(FunctionGraphProperties.XCFFLOGS, response.getLog());
         }
-        LOG.info("Invoke Function results: " + response);
+
+        LOG.debug("Invoke Function results: {}", response);
     }
 
     /**
      * Update dynamic client configurations
-     *
-     * @param exchange
      */
     private void updateClientConfigs(Exchange exchange) {
         resetDynamicConfigs();
@@ -133,9 +123,6 @@ public class FunctionGraphProducer extends DefaultProducer {
         // checking for required operation
         if (ObjectHelper.isEmpty(exchange.getProperty(FunctionGraphProperties.OPERATION))
                 && ObjectHelper.isEmpty(endpoint.getOperation())) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("No operation name given. Cannot proceed with FunctionGraph operations.");
-            }
             throw new IllegalArgumentException("Operation name not found");
         } else {
             clientConfigurations.setOperation(
@@ -147,9 +134,6 @@ public class FunctionGraphProducer extends DefaultProducer {
         // checking for required function name (exchange overrides endpoint function name)
         if (ObjectHelper.isEmpty(exchange.getProperty(FunctionGraphProperties.FUNCTION_NAME))
                 && ObjectHelper.isEmpty(endpoint.getFunctionName())) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("No function name given.");
-            }
             throw new IllegalArgumentException("Function name not found");
         } else {
             clientConfigurations.setFunctionName(
@@ -161,9 +145,7 @@ public class FunctionGraphProducer extends DefaultProducer {
         // checking for optional function package (exchange overrides endpoint function package)
         if (ObjectHelper.isEmpty(exchange.getProperty(FunctionGraphProperties.FUNCTION_PACKAGE))
                 && ObjectHelper.isEmpty(endpoint.getFunctionPackage())) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("No function package given. Defaulting to 'default'.");
-            }
+            LOG.warn("No function package given. Defaulting to 'default'.");
             clientConfigurations.setFunctionPackage(FunctionGraphConstants.DEFAULT_FUNCTION_PACKAGE);
         } else {
             clientConfigurations.setFunctionPackage(
@@ -174,9 +156,7 @@ public class FunctionGraphProducer extends DefaultProducer {
 
         // checking for optional XCffLogType
         if (ObjectHelper.isEmpty(exchange.getProperty(FunctionGraphProperties.XCFFLOGTYPE))) {
-            if (LOG.isErrorEnabled()) {
-                LOG.warn("No XCffLogType given");
-            }
+            LOG.warn("No XCffLogType given");
         } else {
             clientConfigurations.setXCffLogType((String) exchange.getProperty(FunctionGraphProperties.XCFFLOGTYPE));
         }

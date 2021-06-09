@@ -2,7 +2,7 @@
 = FunctionGraph Component
 :docTitle: FunctionGraph
 :artifactId: camel-huaweicloud-functiongraph
-:description: Huawei Cloud component to integrate with FunctionGraph services
+:description: To call serverless functions on Huawei Cloud
 :since: 3.11
 :supportLevel: Preview
 :component-header: Only producer is supported
@@ -17,21 +17,21 @@ Huawei Cloud FunctionGraph component allows you to integrate with https://www.hu
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>git
     <artifactId>camel-huaweicloud-functiongraph</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI Format
 
-[source,java]
--------------------------------
+[source,text]
+----
 hwcloud-functiongraph:operation[?options]
--------------------------------
+----
 
 == URI Options
 
@@ -74,20 +74,20 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *authenticationKey* (producer) | *Required* Authentication key for the cloud user |  | String
 | *endpoint* (producer) | FunctionGraph url. Carries higher precedence than region parameter based client initialization |  | String
 | *functionName* (producer) | Name of the function to invoke |  | String
 | *functionPackage* (producer) | Functions that can be logically grouped together |  | String
-| *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *projectId* (producer) | *Required* Cloud project ID |  | String
-| *proxyHost* (producer) | Proxy server ip/hostname |  | String
-| *proxyPassword* (producer) | Proxy authentication password |  | String
-| *proxyPort* (producer) | Proxy server port |  | int
-| *proxyUser* (producer) | Proxy authentication user |  | String
 | *region* (producer) | *Required* FunctionGraph service region. This is lower precedence than endpoint based configuration |  | String
-| *secretKey* (producer) | *Required* Secret key for the cloud user |  | String
 | *serviceKeys* (producer) | Configuration object for cloud service authentication |  | ServiceKeys
+| *proxyHost* (proxy) | Proxy server ip/hostname |  | String
+| *proxyPassword* (proxy) | Proxy authentication password |  | String
+| *proxyPort* (proxy) | Proxy server port |  | int
+| *proxyUser* (proxy) | Proxy authentication user |  | String
+| *authenticationKey* (security) | *Required* Authentication key for the cloud user |  | String
+| *ignoreSslVerification* (security) | Ignore SSL verification | false | boolean
+| *secretKey* (security) | *Required* Secret key for the cloud user |  | String
 |===
 // endpoint options: END
 
@@ -125,13 +125,15 @@ If the operation, function name, or function package are set, they will override
 
 == List of Supported FunctionGraph Operations
 
-- invokeFunction
+- invokeFunction - to invoke a serverless function
 
 == Using ServiceKey Configuration Bean
+
 Authentication key and secret keys are required to authenticate against cloud smn service. You can avoid having them being exposed
-and scattered over in your endpoint uri by wrapping them inside a bean of class ```org.apache.camel.component.huaweicloud.functiongraph.models.ServiceKeys```.
-Add it to the registry and let Camel look it up by referring the object via endpoint query parameter ```serviceKeys```.
-Check the following code snippets
+and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.functiongraph.models.ServiceKeys`.
+Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
+
+Check the following code snippets:
 
 [source,xml]
 ----
@@ -141,10 +143,10 @@ Check the following code snippets
 </bean>
 ----
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:triggerRoute")
  .setProperty(FunctionGraphProperties.OPERATION, constant("invokeFunction"))
  .setProperty(FunctionGraphProperties.FUNCTION_NAME ,constant("your_function_name"))
  .setProperty(FunctionGraphProperties.FUNCTION_PACKAGE, constant("your_function_package"))
  .to("hwcloud-functiongraph:invokeFunction?projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
---------------------------------------------------------------------------------
+----

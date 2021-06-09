@@ -6746,7 +6746,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * FunctionGraph (camel-huaweicloud-functiongraph)
-     * Huawei Cloud component to integrate with FunctionGraph services
+     * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless
      * Since: 3.11
@@ -6766,7 +6766,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * FunctionGraph (camel-huaweicloud-functiongraph)
-     * Huawei Cloud component to integrate with FunctionGraph services
+     * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless
      * Since: 3.11
