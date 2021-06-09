@@ -19,21 +19,14 @@ package org.apache.camel;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.camel.models.ClientConfigurations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class FunctionGraphUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(FunctionGraphUtils.class.getName());
 
     private FunctionGraphUtils() {
     }
 
     /**
      * Gets the fieldName from the jsonString and returns it as a String
-     *
-     * @param  jsonString
-     * @param  fieldName
-     * @return
      */
     public static String extractJsonFieldAsString(String jsonString, String fieldName) {
         Gson gson = new Gson();
@@ -42,10 +35,6 @@ public final class FunctionGraphUtils {
 
     /**
      * returns the urn based on urnFormat and clientConfigurations
-     *
-     * @param  urnFormat
-     * @param  clientConfigurations
-     * @return
      */
     public static String composeUrn(String urnFormat, ClientConfigurations clientConfigurations) {
         return String.format(urnFormat, clientConfigurations.getRegion(),

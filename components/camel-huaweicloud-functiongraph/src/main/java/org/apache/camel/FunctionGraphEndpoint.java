@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Huawei Cloud component to integrate with FunctionGraph services
+ * To call serverless functions on Huawei Cloud
  */
 @UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-functiongraph", title = "FunctionGraph",
              syntax = "hwcloud-functiongraph:operation",
@@ -59,24 +59,24 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String functionName;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", secret = false)
+    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", secret = false, label = "proxy")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port", secret = false)
+    @UriParam(description = "Proxy server port", displayName = "Proxy server port", secret = false, label = "proxy")
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", secret = true)
+    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", secret = true, label = "proxy")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true)
+    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true, label = "proxy")
     @Metadata(required = false)
     private String proxyPassword;
 
     @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-              defaultValue = "false")
+              defaultValue = "false", label = "security")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
@@ -90,11 +90,13 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Authentication key for the cloud user", displayName = "API authentication key (AK)", secret = true)
+    @UriParam(description = "Authentication key for the cloud user", displayName = "API authentication key (AK)", secret = true,
+              label = "security")
     @Metadata(required = true)
     private String authenticationKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true)
+    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true,
+              label = "security")
     @Metadata(required = true)
     private String secretKey;
 
