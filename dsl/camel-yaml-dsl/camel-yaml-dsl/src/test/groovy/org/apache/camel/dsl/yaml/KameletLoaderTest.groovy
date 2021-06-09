@@ -277,9 +277,9 @@ class KameletLoaderTest extends YamlTestSupport {
                       uri: kamelet:source
                       steps:
                       - filter:
-                          simple: '${header.process}'
-                      - to: 
-                          uri: "kamelet:sink"    
+                          simple: "${body} range '5..7'"
+                      - to: "log:filter"
+                      - to: "kamelet:sink"    
             '''
 
             loadRoutes '''
@@ -288,22 +288,21 @@ class KameletLoaderTest extends YamlTestSupport {
                     steps:
                       - kamelet:
                           name: "filter-action"
-                      - to: 
-                          uri: "mock:result"
+                      - to: "log:route"
+                      - to: "mock:result"
             '''
 
             withMock('mock:result') {
-                expectedBodiesReceived 2, 4
+                expectedBodiesReceived 5, 6, 7
             }
 
         when:
             context.start()
 
             withTemplate {
-                (1..4).each {
+                (1..10).each {
                     to('direct:start')
                         .withBody(it)
-                        .withHeader('process',  it % 2 == 0)
                         .send()
                 }
             }
