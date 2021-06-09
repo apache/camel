@@ -110,6 +110,7 @@
 ** xref:freemarker-component.adoc[Freemarker]
 ** xref:ftp-component.adoc[FTP]
 ** xref:ftps-component.adoc[FTPS]
+** xref:hwcloud-functiongraph-component.adoc[FunctionGraph]
 ** xref:ganglia-component.adoc[Ganglia]
 ** xref:geocoder-component.adoc[Geocoder]
 ** xref:git-component.adoc[Git]

@@ -3260,6 +3260,28 @@
     "producerOnly": true,
     "lenientProperties": true
   },
+  "HwcloudFunctiongraphComponentBuilderFactory": {
+    "kind": "component",
+    "name": "hwcloud-functiongraph",
+    "title": "FunctionGraph",
+    "description": "Huawei Cloud component to integrate with FunctionGraph services",
+    "deprecated": false,
+    "firstVersion": "3.11.0",
+    "label": "cloud,serverless",
+    "javaType": "org.apache.camel.FunctionGraphComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-huaweicloud-functiongraph",
+    "version": "3.11.0-SNAPSHOT",
+    "scheme": "hwcloud-functiongraph",
+    "extendsScheme": "",
+    "syntax": "hwcloud-functiongraph:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "HwcloudSmnComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-smn",

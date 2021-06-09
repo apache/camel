@@ -6745,6 +6745,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * FunctionGraph (camel-huaweicloud-functiongraph)
+     * Huawei Cloud component to integrate with FunctionGraph services
+     * 
+     * Category: cloud,serverless
+     * Since: 3.11
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-functiongraph
+     * 
+     * Syntax: <code>hwcloud-functiongraph:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to be performed
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.FunctionGraphEndpointBuilder hwcloudFunctiongraph(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.endpointBuilder("hwcloud-functiongraph", path);
+    }
+    /**
+     * FunctionGraph (camel-huaweicloud-functiongraph)
+     * Huawei Cloud component to integrate with FunctionGraph services
+     * 
+     * Category: cloud,serverless
+     * Since: 3.11
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-functiongraph
+     * 
+     * Syntax: <code>hwcloud-functiongraph:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to be performed
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.FunctionGraphEndpointBuilder hwcloudFunctiongraph(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * SimpleNotification (camel-huaweicloud-smn)
      * Huawei Cloud component to integrate with SimpleNotification services
      * 
