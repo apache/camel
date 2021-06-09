@@ -85,6 +85,10 @@ public class EventHubsConsumer extends DefaultConsumer {
         message.setHeader(EventHubsConstants.OFFSET, eventContext.getEventData().getOffset());
         message.setHeader(EventHubsConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
         message.setHeader(EventHubsConstants.SEQUENCE_NUMBER, eventContext.getEventData().getSequenceNumber());
+        if (eventContext.getEventData().getEnqueuedTime() != null) {
+            long ts = eventContext.getEventData().getEnqueuedTime().getEpochSecond() * 1000;
+            message.setHeader(Exchange.MESSAGE_TIMESTAMP, ts);
+        }
 
         return exchange;
     }
