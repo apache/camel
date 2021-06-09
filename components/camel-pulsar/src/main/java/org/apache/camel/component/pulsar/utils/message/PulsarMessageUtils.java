@@ -54,6 +54,7 @@ public final class PulsarMessageUtils {
         msg.setHeader(SEQUENCE_ID, message.getSequenceId());
         msg.setHeader(PUBLISH_TIME, message.getPublishTime());
         msg.setHeader(PROPERTIES, message.getProperties());
+        msg.setHeader(Exchange.MESSAGE_TIMESTAMP, message.getPublishTime());
 
         msg.setBody(message.getValue());
 
