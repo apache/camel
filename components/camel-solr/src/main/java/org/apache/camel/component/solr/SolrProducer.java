@@ -59,12 +59,8 @@ public class SolrProducer extends DefaultProducer {
             throw new IllegalArgumentException(SolrConstants.OPERATION + " header is missing");
         }
 
-        // solr configuration (create new config for concurrentupdate
-        SolrConfiguration solrConfiguration = getEndpoint().getSolrConfiguration();
-        if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT_STREAMING)) {
-            solrConfiguration = solrConfiguration.newCopy();
-            solrConfiguration.setUseConcurrentUpdateSolrClient(true);
-        }
+        // solr configuration
+        SolrConfiguration solrConfiguration = getEndpoint().getSolrConfiguration(operation);
 
         // solr client
         SolrClient solrClient = exchange.getIn().getHeader(SolrConstants.CLIENT, SolrClient.class);

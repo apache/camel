@@ -16,38 +16,31 @@
  */
 package org.apache.camel.component.solr;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.StringHelper;
 import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @UriParams
 public class SolrConfiguration implements Cloneable {
 
-    private final SolrScheme solrScheme;
+    private static final Logger LOG = LoggerFactory.getLogger(SolrConfiguration.class);
 
     private boolean useConcurrentUpdateSolrClient;
     private SolrEndpoint solrEndpoint;
+    private SolrScheme solrScheme;
 
     @UriPath(description = "Hostname and port for the Solr server(s). " +
                            "Multiple hosts can be specified, separated with a comma. " +
                            "See the solrClient parameter for more information on the SolrClient used to connect to Solr.")
     @Metadata(required = true)
-    private String url;
+    private final String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
     private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;
     @UriParam(defaultValue = "" + SolrConstants.DEFAULT_STREAMING_THREAD_COUNT)
@@ -88,19 +81,33 @@ public class SolrConfiguration implements Cloneable {
     @UriParam
     private Integer maxTotalConnections;
 
-    public SolrConfiguration(String endpointUri, String remaining) throws Exception {
-        solrScheme = SolrScheme.SOLR.getFrom(endpointUri);
-        Optional<String> chroot = getChrootFromPath(remaining);
-        if (chroot.isPresent()) {
-            zkChroot = chroot.get();
-        }
-        url = parseHostsFromUrl(remaining, chroot);
+    public SolrConfiguration(SolrScheme solrScheme, String url, String zkChroot) {
+        this.solrScheme = solrScheme;
+        this.url = url;
+        this.zkChroot = zkChroot;
+    }
+
+    public static SolrConfiguration newInstance(String endpointUri, String remaining) throws Exception {
+        SolrScheme solrScheme = SolrScheme.SOLR.getFrom(endpointUri);
+        Optional<String> zkChrootOptional = SolrClientHandler.getZkChrootFromUrl(remaining);
+        String url = SolrClientHandler.parseHostsFromUrl(remaining, zkChrootOptional);
+        SolrConfiguration solrConfiguration = new SolrConfiguration(solrScheme, url, zkChrootOptional.orElse(null));
         // validate url
-        getUrlListFrom(url);
+        SolrClientHandler.getUrlListFrom(solrConfiguration);
+        // return configuration
+        return solrConfiguration;
     }
 
     public SolrScheme getSolrScheme() {
         return solrScheme;
+    }
+
+    public void setSolrScheme(SolrScheme solrScheme) {
+        this.solrScheme = solrScheme;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public int getStreamingQueueSize() {
@@ -207,18 +214,19 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g. "zkHost=localhost:8123,localhost:8124".
-     * Optionally add the chroot, e.g. "zkHost=localhost:8123,localhost:8124/rootformysolr". In case the first part of
-     * the chroot path in the zkHost parameter is set to 'solr' (e.g. 'localhost:8123/solr' or
-     * 'localhost:8123/solr/..'), then that path is not considered as zookeeper chroot for backward compatibility
-     * reasons (this behaviour can be overridden via zkChroot parameter).
+     * Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g. "zkHost=localhost:2181,localhost:2182".
+     * Optionally add the chroot, e.g. "zkHost=localhost:2181,localhost:2182/rootformysolr". In case the first part of
+     * the url path (='contextroot') is set to 'solr' (e.g. 'localhost:2181/solr' or 'localhost:2181/solr/..'), then
+     * that path is not considered as zookeeper chroot for backward compatibility reasons (this behaviour can be
+     * overridden via zkChroot parameter).
      */
     public void setZkHost(String zkHost) {
-        Optional<String> chroot = getChrootFromPath(zkHost);
-        if (chroot.isPresent()) {
-            this.zkChroot = chroot.get();
+        Optional<String> zkChrootFromZkHost = SolrClientHandler.getZkChrootFromUrl(zkHost);
+        if (zkChrootFromZkHost.isPresent() && getZkChroot() == null) {
+            setZkChroot(zkChrootFromZkHost.get());
         }
-        this.zkHost = parseHostsFromUrl(zkHost, chroot);
+        this.zkHost = SolrClientHandler.parseHostsFromUrl(zkHost, zkChrootFromZkHost);
+        setSolrScheme(SolrScheme.SOLRCLOUD);
     }
 
     public String getZkChroot() {
@@ -230,6 +238,7 @@ public class SolrConfiguration implements Cloneable {
      */
     public void setZkChroot(String zkChroot) {
         this.zkChroot = zkChroot;
+        setSolrScheme(SolrScheme.SOLRCLOUD);
     }
 
     public String getCollection() {
@@ -293,12 +302,12 @@ public class SolrConfiguration implements Cloneable {
 
     /**
      * Uses the provided solr client to connect to solr. When this parameter is not specified, camel applies the
-     * following rules to determine the SolrClient. A CloudSolrClient should point to a zookeeper endpoint. Other
-     * clients point to a Solr endpoint. 1) when zkHost or zkChroot (=zookeeper root) parameter is set, then the
-     * CloudSolrClient is used. 2) when multiple hosts are specified in the uri (separated with a comma), then the
+     * following rules to determine the SolrClient: 1) when zkHost or zkChroot (=zookeeper root) parameter is set, then
+     * the CloudSolrClient is used. 2) when multiple hosts are specified in the uri (separated with a comma), then the
      * CloudSolrClient (uri scheme is 'solrCloud') or the LBHttpSolrClient (uri scheme is not 'solrCloud') is used. 3)
      * when the solr operation is INSERT_STREAMING, then the ConcurrentUpdateSolrClient is used. 4) otherwise, the
-     * HttpSolrClient is used.
+     * HttpSolrClient is used. Note: A CloudSolrClient should point to zookeeper endpoint(s); other clients point to
+     * Solr endpoint(s). The SolrClient can also be set via the exchange header 'CamelSolrClient'.
      */
     public void setSolrClient(SolrClient solrClient) {
         this.solrClient = solrClient;
@@ -309,13 +318,13 @@ public class SolrConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the http client to be used by the solrClient
+     * Sets the http client to be used by the solrClient. This is only applicable when solrClient is not set.
      */
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
-    public Boolean getUseConcurrentUpdateSolrClient() {
+    public boolean getUseConcurrentUpdateSolrClient() {
         return useConcurrentUpdateSolrClient;
     }
 
@@ -331,170 +340,17 @@ public class SolrConfiguration implements Cloneable {
         this.solrEndpoint = solrEndpoint;
     }
 
-    private String getFirstUrlFrom(String url) throws Exception {
-        return getUrlListFrom(url).get(0);
-    }
-
-    private List<String> getUrlListFrom(String url) throws Exception {
-        // add scheme when required
-        List<String> urlList = Arrays
-                .asList(url.split(","))
-                .stream()
-                .map(s -> solrScheme.getScheme().concat(s))
-                .collect(Collectors.toList());
-        // validate url syntax via parsing in URL instance
-        for (String s : urlList) {
-            try {
-                // solrCloud requires addition of HTTP scheme to be able to consider it as a valid URL scheme
-                new URL(
-                        SolrScheme.SOLRCLOUD.equals(solrScheme) ? SolrScheme.SOLR.getScheme().concat(s) : s);
-            } catch (MalformedURLException e) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Url '%s' not valid for endpoint with uri=%s",
-                                s,
-                                solrScheme.getUri()));
-            }
+    public SolrConfiguration deepCopy() {
+        try {
+            return (SolrConfiguration) this.clone();
+        } catch (CloneNotSupportedException e) {
+            LOG.error(
+                    String.format(
+                            "Could not generate new configuration based on configuration of existing endpoint %s",
+                            getSolrEndpoint()),
+                    e);
         }
-        return urlList;
-    }
-
-    /**
-     * signature defines parameters deciding whether or not to share the solrClient - sharing allowed: same signature -
-     * sharing not allowed: different signature
-     */
-    public String getSignature() {
-        if (solrClient != null) {
-            return solrClient.toString();
-        }
-        StringBuilder sb = new StringBuilder();
-        if (solrEndpoint != null) {
-            sb.append(solrEndpoint);
-        }
-        if (useConcurrentUpdateSolrClient) {
-            sb.append("_");
-            sb.append(useConcurrentUpdateSolrClient);
-        }
-        return sb.toString();
-    }
-
-    protected SolrClient initSolrClient() throws Exception {
-        // explicilty defined solrClient
-        if (solrClient != null) {
-            return solrClient;
-        }
-        List<String> urlList = getUrlListFrom((zkHost != null && !zkHost.isEmpty()) ? zkHost : url);
-        // zkHost or zkChroot is set
-        if (zkHost != null
-                || zkChroot != null) {
-            return getCloudSolrClient(urlList);
-        }
-        // more than 1 server provided:
-        //      if solrCloud uri then CloudSolrClient else LBHttpSolrClient
-        if (urlList.size() > 1) {
-            if (SolrScheme.SOLRCLOUD.equals(solrScheme)) {
-                return getCloudSolrClient(urlList);
-            } else {
-                return getLBHttpSolrClient(urlList);
-            }
-        }
-        // config with ConcurrentUpdateSolrClient
-        if (useConcurrentUpdateSolrClient) {
-            return getConcurrentUpdateSolrClient();
-        }
-        // base HttpSolrClient
-        return getHttpSolrClient();
-    }
-
-    private SolrClient getCloudSolrClient(List<String> urlList) {
-        Optional<String> zkChrootOptional = Optional.ofNullable(zkChroot);
-        CloudSolrClient.Builder builder = new CloudSolrClient.Builder(urlList, zkChrootOptional);
-        if (connectionTimeout != null) {
-            builder.withConnectionTimeout(connectionTimeout);
-        }
-        if (soTimeout != null) {
-            builder.withSocketTimeout(soTimeout);
-        }
-        if (httpClient != null) {
-            builder.withHttpClient(httpClient);
-        }
-        CloudSolrClient cloudSolrClient = builder.build();
-        if (collection != null && !collection.isEmpty()) {
-            cloudSolrClient.setDefaultCollection(collection);
-        }
-        return cloudSolrClient;
-    }
-
-    private SolrClient getLBHttpSolrClient(List<String> serverUrls) {
-        LBHttpSolrClient.Builder builder = new LBHttpSolrClient.Builder();
-        for (String serverUrl : serverUrls) {
-            builder.withBaseSolrUrl(serverUrl);
-        }
-        if (connectionTimeout != null) {
-            builder.withConnectionTimeout(connectionTimeout);
-        }
-        if (soTimeout != null) {
-            builder.withSocketTimeout(soTimeout);
-        }
-        if (httpClient != null) {
-            builder.withHttpClient(httpClient);
-        }
-        return builder.build();
-    }
-
-    private SolrClient getConcurrentUpdateSolrClient() throws Exception {
-        ConcurrentUpdateSolrClient.Builder builder = new ConcurrentUpdateSolrClient.Builder(getFirstUrlFrom(url));
-        if (connectionTimeout != null) {
-            builder.withConnectionTimeout(connectionTimeout);
-        }
-        if (soTimeout != null) {
-            builder.withSocketTimeout(soTimeout);
-        }
-        if (httpClient != null) {
-            builder.withHttpClient(httpClient);
-        }
-        builder.withQueueSize(streamingQueueSize);
-        builder.withThreadCount(streamingThreadCount);
-        return builder.build();
-    }
-
-    private SolrClient getHttpSolrClient() throws Exception {
-        HttpSolrClient.Builder builder = new HttpSolrClient.Builder(getFirstUrlFrom(url));
-        if (connectionTimeout != null) {
-            builder.withConnectionTimeout(connectionTimeout);
-        }
-        if (soTimeout != null) {
-            builder.withSocketTimeout(soTimeout);
-        }
-        if (httpClient != null) {
-            builder.withHttpClient(httpClient);
-        }
-        if (allowCompression != null) {
-            builder.allowCompression(allowCompression);
-        }
-        HttpSolrClient httpSolrClient = builder.build();
-        if (followRedirects != null) {
-            httpSolrClient.setFollowRedirects(followRedirects);
-        }
-        return httpSolrClient;
-    }
-
-    public SolrConfiguration newCopy() throws CloneNotSupportedException {
-        return (SolrConfiguration) super.clone();
-    }
-
-    private static Optional<String> getChrootFromPath(String path) {
-        // check further slash characters for 1st subPath = 'solr'
-        if (!path.contains("/")) {
-            return Optional.empty();
-        }
-        return Arrays.asList(path.split("/")).get(1).equals("solr")
-                ? Optional.empty() : Optional.of(path.substring(path.indexOf('/')));
-    }
-
-    private static String parseHostsFromUrl(String path, Optional<String> chroot) {
-        String hostsPath = StringHelper.removeStartingCharacters(path, '/');
-        return (chroot.isPresent()) ? hostsPath.substring(0, hostsPath.indexOf('/') - 1) : hostsPath;
+        return null;
     }
 
     public enum SolrScheme {
@@ -513,7 +369,7 @@ public class SolrConfiguration implements Cloneable {
 
         public SolrScheme getFrom(String endpointUri) {
             for (SolrScheme solrScheme : SolrScheme.values()) {
-                if (endpointUri.startsWith(solrScheme.getUri())) {
+                if (endpointUri.startsWith(solrScheme.uri)) {
                     return solrScheme;
                 }
             }
@@ -527,6 +383,7 @@ public class SolrConfiguration implements Cloneable {
         public String getScheme() {
             return scheme;
         }
+
     }
 
 }

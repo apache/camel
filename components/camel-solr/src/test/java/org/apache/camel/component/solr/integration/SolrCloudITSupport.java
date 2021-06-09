@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.solr;
+package org.apache.camel.component.solr.integration;
 
 import java.io.IOException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.solr.SolrComponent;
 import org.apache.camel.test.infra.solr.services.SolrLocalContainerCloudService;
 import org.apache.camel.test.infra.solr.services.SolrLocalContainerService;
 import org.apache.camel.test.junit5.CamelTestSupport;
