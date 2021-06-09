@@ -681,6 +681,10 @@ public class MailBinding {
             }
         }
 
+        if (mailMessage.getSentDate() != null) {
+            answer.put(Exchange.MESSAGE_TIMESTAMP, mailMessage.getSentDate().getTime());
+        }
+
         return answer;
     }
 
