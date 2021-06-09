@@ -178,6 +178,42 @@ class KameletTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+
+    def "kamelet (filter with flow)"() {
+        setup:
+            setFlowMode(YamlDeserializationMode.FLOW)
+
+            addTemplate('simple-filter') {
+                from('kamelet:source')
+                    .filter().simple('${header.foo} == "a"')
+                    .to("kamelet:sink")
+            }
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - kamelet: 
+                          name: "simple-filter"
+                      - to: 
+                          uri: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedBodiesReceived '1', '3'
+            }
+
+        when:
+            withTemplate {
+                to('direct:route').withBody('1').withHeader('foo', 'a').send()
+                to('direct:route').withBody('2').withHeader('foo', 'b').send()
+                to('direct:route').withBody('3').withHeader('foo', 'a').send()
+                to('direct:route').withBody('4').withHeader('foo', 'c').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
     def "kamelet (aggregation with flow)"() {
         setup:
             setFlowMode(YamlDeserializationMode.FLOW)

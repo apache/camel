@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.RouteTemplateDefinition
 import org.apache.camel.model.ToDefinition
@@ -255,6 +256,58 @@ class KameletLoaderTest extends YamlTestSupport {
                 id == 'mySetBody'
             }
 
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet with filter and flow"() {
+        setup:
+            setFlowMode(YamlDeserializationMode.FLOW)
+
+            loadKamelets '''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: Kamelet
+                metadata:
+                  name: filter-action
+                spec:
+                  definition:
+                    title: "Filter"
+                    description: "Filter based on the body"
+                  flow:
+                    from:
+                      uri: kamelet:source
+                      steps:
+                      - filter:
+                          simple: '${header.process}'
+                      - to: 
+                          uri: "kamelet:sink"    
+            '''
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - kamelet:
+                          name: "filter-action"
+                      - to: 
+                          uri: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedBodiesReceived 2, 4
+            }
+
+        when:
+            context.start()
+
+            withTemplate {
+                (1..4).each {
+                    to('direct:start')
+                        .withBody(it)
+                        .withHeader('process',  it % 2 == 0)
+                        .send()
+                }
+            }
+        then:
             MockEndpoint.assertIsSatisfied(context)
     }
 }
