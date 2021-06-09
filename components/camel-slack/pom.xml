@@ -32,9 +32,6 @@
     <name>Camel :: Slack</name>
     <description>Camel Slack Support</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
 
         <dependency>
