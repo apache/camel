@@ -110,6 +110,10 @@ public class QueueExchangeHeaders {
 
     public QueueExchangeHeaders insertionTime(final OffsetDateTime insertionTime) {
         headers.put(QueueConstants.INSERTION_TIME, insertionTime);
+        if (insertionTime != null) {
+            long ts = insertionTime.toEpochSecond() * 1000;
+            headers.put(Exchange.MESSAGE_TIMESTAMP, ts);
+        }
         return this;
     }
 

@@ -393,6 +393,10 @@ public class BlobExchangeHeaders {
 
     public BlobExchangeHeaders lastModified(final OffsetDateTime offsetDateTime) {
         headers.put(BlobConstants.LAST_MODIFIED, offsetDateTime);
+        if (offsetDateTime != null) {
+            long ts = offsetDateTime.toEpochSecond() * 1000;
+            headers.put(Exchange.MESSAGE_TIMESTAMP, ts);
+        }
         return this;
     }
 
