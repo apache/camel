@@ -1994,6 +1994,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HttpsComponentBuilderFactory.https();
     }
     /**
+     * FunctionGraph (camel-huaweicloud-functiongraph)
+     * Huawei Cloud component to integrate with FunctionGraph services
+     * 
+     * Category: cloud,serverless
+     * Since: 3.11
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-functiongraph
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HwcloudFunctiongraphComponentBuilderFactory.HwcloudFunctiongraphComponentBuilder hwcloudFunctiongraph() {
+        return org.apache.camel.builder.component.dsl.HwcloudFunctiongraphComponentBuilderFactory.hwcloudFunctiongraph();
+    }
+    /**
      * SimpleNotification (camel-huaweicloud-smn)
      * Huawei Cloud component to integrate with SimpleNotification services
      * 

@@ -1,5 +1,7 @@
 [[hwcloud-functiongraph-component]]
 = FunctionGraph Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-huaweicloud-functiongraph/src/main/docs/hwcloud-functiongraph-component.adoc
 :docTitle: FunctionGraph
 :artifactId: camel-huaweicloud-functiongraph
 :description: Huawei Cloud component to integrate with FunctionGraph services

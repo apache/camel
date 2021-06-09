@@ -902,7 +902,7 @@
         <artifactId>camel-http-common</artifactId>
         <version>${project.version}</version>
       </dependency>
-	  <dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-functiongraph</artifactId>
         <version>${project.version}</version>
