@@ -130,7 +130,8 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the http client to be used by the solrClient.
+         * Sets the http client to be used by the solrClient. This is only
+         * applicable when solrClient is not set.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.http.client.HttpClient&lt;/code&gt; type.
@@ -145,7 +146,8 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the http client to be used by the solrClient.
+         * Sets the http client to be used by the solrClient. This is only
+         * applicable when solrClient is not set.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.http.client.HttpClient&lt;/code&gt; type.
@@ -289,15 +291,16 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Uses the provided solr client to connect to solr. When this parameter
          * is not specified, camel applies the following rules to determine the
-         * SolrClient. A CloudSolrClient should point to a zookeeper endpoint.
-         * Other clients point to a Solr endpoint. 1) when zkHost or zkChroot
-         * (=zookeeper root) parameter is set, then the CloudSolrClient is used.
-         * 2) when multiple hosts are specified in the uri (separated with a
-         * comma), then the CloudSolrClient (uri scheme is 'solrCloud') or the
-         * LBHttpSolrClient (uri scheme is not 'solrCloud') is used. 3) when the
-         * solr operation is INSERT_STREAMING, then the
-         * ConcurrentUpdateSolrClient is used. 4) otherwise, the HttpSolrClient
-         * is used.
+         * SolrClient: 1) when zkHost or zkChroot (=zookeeper root) parameter is
+         * set, then the CloudSolrClient is used. 2) when multiple hosts are
+         * specified in the uri (separated with a comma), then the
+         * CloudSolrClient (uri scheme is 'solrCloud') or the LBHttpSolrClient
+         * (uri scheme is not 'solrCloud') is used. 3) when the solr operation
+         * is INSERT_STREAMING, then the ConcurrentUpdateSolrClient is used. 4)
+         * otherwise, the HttpSolrClient is used. Note: A CloudSolrClient should
+         * point to zookeeper endpoint(s); other clients point to Solr
+         * endpoint(s). The SolrClient can also be set via the exchange header
+         * 'CamelSolrClient'.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.solr.client.solrj.SolrClient&lt;/code&gt;
@@ -315,15 +318,16 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Uses the provided solr client to connect to solr. When this parameter
          * is not specified, camel applies the following rules to determine the
-         * SolrClient. A CloudSolrClient should point to a zookeeper endpoint.
-         * Other clients point to a Solr endpoint. 1) when zkHost or zkChroot
-         * (=zookeeper root) parameter is set, then the CloudSolrClient is used.
-         * 2) when multiple hosts are specified in the uri (separated with a
-         * comma), then the CloudSolrClient (uri scheme is 'solrCloud') or the
-         * LBHttpSolrClient (uri scheme is not 'solrCloud') is used. 3) when the
-         * solr operation is INSERT_STREAMING, then the
-         * ConcurrentUpdateSolrClient is used. 4) otherwise, the HttpSolrClient
-         * is used.
+         * SolrClient: 1) when zkHost or zkChroot (=zookeeper root) parameter is
+         * set, then the CloudSolrClient is used. 2) when multiple hosts are
+         * specified in the uri (separated with a comma), then the
+         * CloudSolrClient (uri scheme is 'solrCloud') or the LBHttpSolrClient
+         * (uri scheme is not 'solrCloud') is used. 3) when the solr operation
+         * is INSERT_STREAMING, then the ConcurrentUpdateSolrClient is used. 4)
+         * otherwise, the HttpSolrClient is used. Note: A CloudSolrClient should
+         * point to zookeeper endpoint(s); other clients point to Solr
+         * endpoint(s). The SolrClient can also be set via the exchange header
+         * 'CamelSolrClient'.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.solr.client.solrj.SolrClient&lt;/code&gt;
@@ -460,12 +464,12 @@ public interface SolrEndpointBuilderFactory {
         }
         /**
          * Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g.
-         * zkHost=localhost:8123,localhost:8124. Optionally add the chroot, e.g.
-         * zkHost=localhost:8123,localhost:8124/rootformysolr. In case the first
-         * part of the chroot path in the zkHost parameter is set to 'solr'
-         * (e.g. 'localhost:8123/solr' or 'localhost:8123/solr/..'), then that
-         * path is not considered as zookeeper chroot for backward compatibility
-         * reasons (this behaviour can be overridden via zkChroot parameter).
+         * zkHost=localhost:2181,localhost:2182. Optionally add the chroot, e.g.
+         * zkHost=localhost:2181,localhost:2182/rootformysolr. In case the first
+         * part of the url path (='contextroot') is set to 'solr' (e.g.
+         * 'localhost:2181/solr' or 'localhost:2181/solr/..'), then that path is
+         * not considered as zookeeper chroot for backward compatibility reasons
+         * (this behaviour can be overridden via zkChroot parameter).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
