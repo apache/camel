@@ -14,28 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.solr;
+package org.apache.camel.component.solr.integration;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.test.infra.solr.services.SolrService;
-import org.apache.camel.test.infra.solr.services.SolrServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.solr.SolrConstants;
+import org.junit.jupiter.api.Test;
 
-public class SolrITSupport extends CamelTestSupport {
+public class SolrCloudProducerIT extends SolrCloudITSupport {
 
-    @RegisterExtension
-    static SolrService service = SolrServiceFactory.createService();
+    String solrEndpointUri = getSolrUri("collection1");
+
+    @Test
+    public void sendTest() {
+        template.sendBodyAndHeader("direct:send", "pippo", SolrConstants.OPERATION, "COMMIT");
+    }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        SolrComponent solr = context.getComponent("solr", SolrComponent.class);
-        return context;
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:send").to(solrEndpointUri);
+            }
+        };
     }
-
-    protected String getSolrServiceAddress() {
-        return service.getSolrBaseUrl();
-    }
-
 }

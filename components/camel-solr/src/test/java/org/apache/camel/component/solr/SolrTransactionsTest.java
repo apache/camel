@@ -18,7 +18,7 @@ package org.apache.camel.component.solr;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit5.params.Test;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,7 +63,7 @@ public class SolrTransactionsTest extends SolrComponentTestSupport {
             // more supported in SolrCloud mode. See SOLR-4895
             Exception e = assertThrows(CamelExecutionException.class,
                     () -> doRollback());
-            assertIsInstanceOf(HttpSolrClient.RemoteSolrException.class, e.getCause());
+            assertIsInstanceOf(BaseHttpSolrClient.RemoteSolrException.class, e.getCause());
             assertTrue(
                     e.getCause().getMessage().contains("Rollback is currently not supported in SolrCloud mode. (SOLR-4895)"));
         } else {
