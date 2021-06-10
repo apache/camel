@@ -61,7 +61,6 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
 
         KafkaConfiguration copy = getConfiguration().copy();
         endpoint.setConfiguration(copy);
-        endpoint.getConfiguration().setTopic(remaining);
 
         setProperties(endpoint, parameters);
 
@@ -72,6 +71,14 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         // overwrite the additional properties from the endpoint
         if (!endpointAdditionalProperties.isEmpty()) {
             endpoint.getConfiguration().getAdditionalProperties().putAll(endpointAdditionalProperties);
+        }
+
+        // If a topic is not defined in the KafkaConfiguration (set as option parameter) but only in the uri,
+        // it can happen that it is not set correctly in the configuration of the endpoint.
+        // Therefore, the topic is added after setProperties method
+        // and an null check to avoid overwriting a value from the configuration.
+        if (endpoint.getConfiguration().getTopic() == null) {
+            endpoint.getConfiguration().setTopic(remaining);
         }
 
         return endpoint;
