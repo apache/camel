@@ -21,7 +21,7 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 [source,xml]
 ----
 <dependency>
-    <groupId>org.apache.camel</groupId>git
+    <groupId>org.apache.camel</groupId>
     <artifactId>camel-huaweicloud-functiongraph</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
@@ -131,7 +131,7 @@ If the operation, function name, or function package are set, they will override
 
 == Using ServiceKey Configuration Bean
 
-Authentication key and secret keys are required to authenticate against cloud smn service. You can avoid having them being exposed
+Authentication key and secret keys are required to authenticate against cloud FunctionGraph service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.functiongraph.models.ServiceKeys`.
 Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
 
