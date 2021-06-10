@@ -77,3 +77,6 @@ Therefore those configurations has renamed their configuration keys:
 | camel.cloud.consul.service-registry | camel.cloud.consul
 |====
 
+=== Apache Karaf
+
+The `camel-grpc` feature has been removed.
