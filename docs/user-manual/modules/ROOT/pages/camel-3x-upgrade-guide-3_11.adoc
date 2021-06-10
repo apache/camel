@@ -23,6 +23,10 @@ classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*
 
 This is from the `camel-main` module which is for running Camel standalone, but also reused for Camel on Spring Boot, or Camel on Quarkus.
 
+=== camel-apns
+
+The `camel-apns` component has been removed as the APNS (Apple Push Notification Service) online service has been retired y Apple.
+
 === camel-saxon
 
 The camel-saxon component no longer depends on camel-xslt-saxon.
