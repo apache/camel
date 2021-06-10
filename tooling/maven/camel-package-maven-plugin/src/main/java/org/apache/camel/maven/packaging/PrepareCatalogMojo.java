@@ -594,6 +594,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-debezium": 
                 case "camel-test": 
                 case "camel-aws":
+                case "camel-huawei":
                     return false;
                 default:
                     return true;
@@ -1206,6 +1207,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         dir.resolve("camel-vertx-http"),
                         dir.resolve("camel-vertx-kafka").resolve("camel-vertx-kafka-component"),
                         dir.resolve("camel-vertx-websocket"));
+            case "camel-huawei":
+                return Arrays.asList(dir.resolve("camel-huaweicloud-functiongraph"), dir.resolve("camel-huaweicloud-smn"));
             default:
                 return Collections.singletonList(dir);
         }
