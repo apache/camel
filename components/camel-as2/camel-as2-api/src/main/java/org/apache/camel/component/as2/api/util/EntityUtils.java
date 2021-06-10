@@ -25,7 +25,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIConsentEntity;
@@ -189,8 +188,10 @@ public final class EntityUtils {
             throws Exception {
         Args.notNull(ediMessage, "EDI Message");
         Args.notNull(ediMessageContentType, "EDI Message Content Type");
-        String charset = ediMessageContentType.getCharset() == null
-                ? AS2Charset.US_ASCII : ediMessageContentType.getCharset().toString();
+        String charset = null;
+        if (ediMessageContentType.getCharset() != null) {
+            charset = ediMessageContentType.getCharset().toString();
+        }
         switch (ediMessageContentType.getMimeType().toLowerCase()) {
             case AS2MediaType.APPLICATION_EDIFACT:
                 return new ApplicationEDIFACTEntity(ediMessage, charset, contentTransferEncoding, isMainBody);
