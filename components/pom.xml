@@ -380,7 +380,7 @@
                     <configuration>
                         <reuseForks>true</reuseForks>
                         <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         <systemPropertyVariables>
                             <visibleassertions.silence>true</visibleassertions.silence>
                         </systemPropertyVariables>

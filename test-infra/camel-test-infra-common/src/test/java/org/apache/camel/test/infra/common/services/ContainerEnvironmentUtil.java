@@ -33,9 +33,15 @@ public final class ContainerEnvironmentUtil {
 
     public static synchronized boolean isDockerAvailable() {
         if (!environmentCheckState) {
-            dockerAvailable = DockerClientFactory.instance().isDockerAvailable();
-            if (!dockerAvailable) {
-                LOG.warn("Docker environment is not available");
+            try {
+                dockerAvailable = DockerClientFactory.instance().isDockerAvailable();
+                if (!dockerAvailable) {
+                    LOG.warn("Docker environment is not available");
+                }
+            } catch (Exception e) {
+                LOG.error("Failed to evaluate whether the docker environment is available: {}", e.getMessage(), e);
+                LOG.warn("Turning off container-based tests because docker does not seem to be working correctly");
+                dockerAvailable = false;
             }
 
             environmentCheckState = true;
