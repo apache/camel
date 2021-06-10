@@ -169,12 +169,6 @@
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
         <fastjson-version>1.2.76</fastjson-version>
-        <felix-configadmin-version>1.9.20</felix-configadmin-version>
-        <felix-connect-version>0.2.0</felix-connect-version>
-        <felix-fileinstall-version>3.6.8</felix-fileinstall-version>
-        <felix-framework-version>5.6.12</felix-framework-version>
-        <felix-scr-annotations-version>1.12.0</felix-scr-annotations-version>
-        <felix-scr-version>2.1.26</felix-scr-version>
         <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
         <google-maps-services-version>0.10.1</google-maps-services-version>
         <flatpack-version>4.0.5</flatpack-version>
@@ -3928,13 +3922,6 @@
                 <groupId>org.apache.aries.blueprint</groupId>
                 <artifactId>org.apache.aries.blueprint.cm</artifactId>
                 <version>${aries-blueprint-cm-version}</version>
-            </dependency>
-
-            <!-- OSGi ConfigAdmin service -->
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.configadmin</artifactId>
-                <version>${felix-configadmin-version}</version>
             </dependency>
 
             <!-- need this to use the new 'maven-archetype' packaging type -->
