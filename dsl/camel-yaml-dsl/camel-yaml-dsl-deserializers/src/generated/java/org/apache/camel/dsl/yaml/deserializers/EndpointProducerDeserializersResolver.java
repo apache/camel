@@ -149,6 +149,8 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "hdfs":
             case "http":
             case "https":
+            case "hwcloud-functiongraph":
+            case "hwcloud-smn":
             case "iec60870-client":
             case "iec60870-server":
             case "ignite-cache":
