@@ -34,7 +34,10 @@ public interface ContainerService<T extends GenericContainer> extends ExecutionC
         }
 
         Logger logger = LoggerFactory.getLogger(ContainerService.class);
-        logger.warn("Test {} disabled because docker is not available", extensionContext.getElement().orElse(null));
+        logger.warn("Test {} is disabled because docker is not available", extensionContext.getElement().orElse(null));
+
+        System.err.println(
+                "Container-based tests were disabled because Docker is NOT available. Check the log files on target/failsafe-reports");
         return ConditionEvaluationResult.disabled("Docker is NOT available");
     }
 
