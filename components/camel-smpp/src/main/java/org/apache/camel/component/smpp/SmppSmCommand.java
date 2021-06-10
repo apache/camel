@@ -187,4 +187,18 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         }
         return false;
     }
+
+    protected byte getRegisterDeliveryFlag(Message message) {
+        if (message.getHeaders().containsKey(SmppConstants.REGISTERED_DELIVERY)) {
+            return message.getHeader(SmppConstants.REGISTERED_DELIVERY, Byte.class);
+        }
+        return config.getRegisteredDelivery();
+    }
+
+    protected boolean getRequestsSingleDLR(Message message) {
+        if (message.getHeaders().containsKey(SmppConstants.SINGLE_DLR)) {
+            return message.getHeader(SmppConstants.SINGLE_DLR, Boolean.class);
+        }
+        return config.isSingleDLR();
+    }
 }
