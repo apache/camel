@@ -95,11 +95,12 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         SubmitSm template = createSubmitSmTemplate(exchange);
         byte[][] segments = splitBody(exchange.getIn());
 
+        // FIXME: undocumented header
         ESMClass esmClass = exchange.getIn().getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
-        if (null != esmClass) {
+        if (esmClass != null) {
             template.setEsmClass(esmClass.value());
-            // multipart message
         } else if (segments.length > 1) {
+            // multipart message
             template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
         }
 

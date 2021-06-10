@@ -122,21 +122,20 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
 
     protected SubmitMulti[] createSubmitMulti(Exchange exchange) throws SmppException {
         byte[][] segments = splitBody(exchange.getIn());
+        SubmitMulti template = createSubmitMultiTemplate(exchange);
 
-        ESMClass esmClass;
-        // multipart message
-        if (segments.length > 1) {
-            esmClass = new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI);
-        } else {
-            esmClass = new ESMClass();
+        // FIXME: undocumented header
+        ESMClass esmClass = exchange.getIn().getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
+        if (esmClass != null) {
+            template.setEsmClass(esmClass.value());
+        } else if (segments.length > 1) {
+            // multipart message
+            template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
         }
 
-        SubmitMulti template = createSubmitMultiTemplate(exchange);
         SubmitMulti[] submitMulties = new SubmitMulti[segments.length];
-
         for (int i = 0; i < segments.length; i++) {
             SubmitMulti submitMulti = SmppUtils.copySubmitMulti(template);
-            submitMulti.setEsmClass(esmClass.value());
             submitMulti.setDataCoding(template.getDataCoding());
             submitMulti.setShortMessage(segments[i]);
             submitMulties[i] = submitMulti;
