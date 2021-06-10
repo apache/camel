@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.params.Test;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
@@ -34,6 +34,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.UpdateParams;
 import org.junit.jupiter.api.BeforeEach;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -161,7 +162,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         template.send("direct:start", exchange);
 
         //noinspection ThrowableResultOfMethodCallIgnored
-        assertEquals(HttpSolrClient.RemoteSolrException.class, exchange.getException().getClass());
+        assertIsInstanceOf(BaseHttpSolrClient.RemoteSolrException.class, exchange.getException());
     }
 
     @Test

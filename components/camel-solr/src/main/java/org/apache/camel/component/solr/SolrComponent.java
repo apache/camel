@@ -69,17 +69,17 @@ public class SolrComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SolrConfiguration configuration = new SolrConfiguration(uri, remaining);
+        SolrConfiguration configuration = SolrConfiguration.newInstance(uri, remaining);
         Endpoint endpoint = new SolrEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
     }
 
     public SolrClient getSolrClient(SolrProducer solrProducer, SolrConfiguration solrConfiguration) throws Exception {
-        String signature = solrConfiguration.getSignature();
+        String signature = SolrClientHandler.getSignature(solrConfiguration);
         SolrClientReference solrClientReference;
         if (!solrClientMap.containsKey(signature)) {
-            solrClientReference = new SolrClientReference(solrConfiguration.initSolrClient());
+            solrClientReference = new SolrClientReference(SolrClientHandler.getSolrClient(solrConfiguration));
             solrClientMap.put(signature, solrClientReference);
         } else {
             solrClientReference = solrClientMap.get(signature);

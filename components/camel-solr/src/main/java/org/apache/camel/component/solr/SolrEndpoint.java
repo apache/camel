@@ -18,6 +18,8 @@ package org.apache.camel.component.solr;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -37,10 +39,13 @@ public class SolrEndpoint extends DefaultEndpoint {
     @UriParam
     private SolrConfiguration solrConfiguration;
 
+    private final Map<String, SolrConfiguration> solrConfigurationsMap = new HashMap<>();
+
     public SolrEndpoint(String endpointUri, SolrComponent component, SolrConfiguration solrConfiguration) {
         super(endpointUri, component);
         solrConfiguration.setSolrEndpoint(this);
         this.solrConfiguration = solrConfiguration;
+        this.solrConfigurationsMap.put(SolrConstants.OPERATION, solrConfiguration);
     }
 
     public void setZkHost(String zkHost) {
@@ -53,7 +58,16 @@ public class SolrEndpoint extends DefaultEndpoint {
     }
 
     public SolrConfiguration getSolrConfiguration() {
-        return solrConfiguration;
+        return getSolrConfiguration(null);
+    }
+
+    public SolrConfiguration getSolrConfiguration(String solrOperation) {
+        if (solrConfigurationsMap.containsKey(solrOperation)) {
+            return solrConfigurationsMap.get(solrOperation);
+        }
+        SolrConfiguration newSolrConfiguration = SolrClientHandler.initializeFor(solrOperation, solrConfiguration);
+        solrConfigurationsMap.put(solrOperation, newSolrConfiguration);
+        return newSolrConfiguration;
     }
 
     public void setRequestHandler(String requestHandler) {
