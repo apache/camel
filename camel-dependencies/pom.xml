@@ -70,7 +70,7 @@
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-jackson2-version>2.11.3</azure-jackson2-version>
-    <azure-sdk-bom-version>1.0.2</azure-sdk-bom-version>
+    <azure-sdk-bom-version>1.0.3</azure-sdk-bom-version>
     <beanio-version>2.1.0</beanio-version>
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
     <bouncycastle-version>1.68</bouncycastle-version>
