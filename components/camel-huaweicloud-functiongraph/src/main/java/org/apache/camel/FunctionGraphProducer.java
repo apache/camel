@@ -86,12 +86,6 @@ public class FunctionGraphProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(clientConfigurations.getFunctionName())) {
             throw new IllegalArgumentException("Function name is mandatory for invokeFunction.");
         }
-        if (ObjectHelper.isEmpty(exchange.getProperty(FunctionGraphProperties.FUNCTION_PACKAGE))
-                && ObjectHelper.isEmpty(endpoint.getFunctionPackage())) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Function package not found. Continuing to invoke function with 'default' function package");
-            }
-        }
 
         // invoke the function
         InvokeFunctionRequest invokeFunctionRequest = new InvokeFunctionRequest()
@@ -145,7 +139,6 @@ public class FunctionGraphProducer extends DefaultProducer {
         // checking for optional function package (exchange overrides endpoint function package)
         if (ObjectHelper.isEmpty(exchange.getProperty(FunctionGraphProperties.FUNCTION_PACKAGE))
                 && ObjectHelper.isEmpty(endpoint.getFunctionPackage())) {
-            LOG.warn("No function package given. Defaulting to 'default'.");
             clientConfigurations.setFunctionPackage(FunctionGraphConstants.DEFAULT_FUNCTION_PACKAGE);
         } else {
             clientConfigurations.setFunctionPackage(
