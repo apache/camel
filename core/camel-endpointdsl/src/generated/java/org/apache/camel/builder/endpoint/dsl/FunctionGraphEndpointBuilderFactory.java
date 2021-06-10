@@ -70,6 +70,7 @@ public interface FunctionGraphEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: default
          * Group: producer
          * 
          * @param functionPackage the value to set

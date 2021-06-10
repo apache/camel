@@ -20,6 +20,7 @@ import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.http.HttpConfig;
 import com.huaweicloud.sdk.functiongraph.v2.FunctionGraphClient;
 import com.huaweicloud.sdk.functiongraph.v2.region.FunctionGraphRegion;
+import org.apache.camel.constants.FunctionGraphConstants;
 import org.apache.camel.models.ServiceKeys;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -50,7 +51,7 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     private String projectId;
 
     @UriParam(description = "Functions that can be logically grouped together",
-              displayName = "Function package", secret = false)
+              displayName = "Function package", secret = false, defaultValue = FunctionGraphConstants.DEFAULT_FUNCTION_PACKAGE)
     @Metadata(required = false)
     private String functionPackage;
 
