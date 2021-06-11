@@ -52,6 +52,8 @@
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>
             <scope>provided</scope>
+            <optional>true</optional>
+            <version>6.0.0</version>
         </dependency>
 
         <!-- testing -->

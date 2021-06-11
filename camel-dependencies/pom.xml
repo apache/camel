@@ -307,7 +307,7 @@
     <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
     <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
     <jbpm-version>7.54.0.Final</jbpm-version>
-    <jcache-bundle-version>1.1.0_1</jcache-bundle-version>
+    <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
     <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
     <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
     <jclouds-version>2.2.1</jclouds-version>
@@ -330,7 +330,7 @@
     <jira-guava-version>26.0-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>
     <jnats-version>2.11.4</jnats-version>
-    <jodatime2-bundle-version>2.10.6</jodatime2-bundle-version>
+    <jodatime2-version>2.10.10</jodatime2-version>
     <johnzon-version>1.2.12</johnzon-version>
     <jolokia-version>1.6.2</jolokia-version>
     <jolt-version>0.1.1</jolt-version>
@@ -447,7 +447,6 @@
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
     <optaplanner-version>8.7.0.Final</optaplanner-version>
     <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
-    <osgi-version>6.0.0</osgi-version>
     <paho-version>1.2.5</paho-version>
     <partial-build-plugin-version>2.7</partial-build-plugin-version>
     <pdfbox-version>2.0.23</pdfbox-version>
@@ -511,8 +510,6 @@
     <solr-version>8.8.2</solr-version>
     <solr-version-range>[8,9)</solr-version-range>
     <solr-zookeeper-version>3.6.2</solr-zookeeper-version>
-    <sourcecheckExcludes></sourcecheckExcludes>
-    <sourcecheckExcludesComma></sourcecheckExcludesComma>
     <spark-version>2.4.6</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
     <spock-version>2.0-M4-groovy-3.0</spock-version>
