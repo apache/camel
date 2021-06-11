@@ -134,10 +134,14 @@ public class HttpProducer extends DefaultProducer {
             final TypeConverter tc = exchange.getContext().getTypeConverter();
             for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
                 String key = entry.getKey();
+                // we should not add headers for the parameters in the uri if we bridge the endpoint
+                // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
+                if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
+                    continue;
+                }
                 Object headerValue = entry.getValue();
 
                 if (headerValue != null) {
-
                     if (headerValue instanceof String) {
                         // optimise for string values
                         String value = (String) headerValue;
@@ -166,12 +170,6 @@ public class HttpProducer extends DefaultProducer {
                     // should be combined into a single value
                     while (it.hasNext()) {
                         String value = tc.convertTo(String.class, it.next());
-
-                        // we should not add headers for the parameters in the uri if we bridge the endpoint
-                        // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
-                        if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
-                            continue;
-                        }
                         if (value != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
                             if (prev == null) {
                                 prev = value;
