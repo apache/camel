@@ -2071,6 +2071,9 @@
             "name" : {
               "type" : "string"
             },
+            "properties" : {
+              "type" : "object"
+            },
             "property" : {
               "type" : "array",
               "items" : {
