@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.dsl.yaml.support.model.MySetBody
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteTemplateDefinition
@@ -149,6 +150,95 @@ class RouteTemplateTest extends YamlTestSupport {
                               - to: "mock:result"
                     """)
             ]
+    }
+
+    def "create template with bean and properties"() {
+        setup:
+            loadRoutes """                
+                - template:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myProcessor"
+                        type: "#class:${MySetBody.class.name}"
+                        properties:
+                          payload: "test-payload"
+                    from:
+                      uri: "direct:{{directName}}"
+                      steps:
+                        - process:
+                            ref: "{{myProcessor}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "direct:myId"
+                      - to: "mock:result"
+            """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'test-payload'
+            }
+        when:
+            context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
+            context.start()
+
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+                id == 'myTemplate'
+                templateBeans.size() == 1
+            }
+
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "create template with bean and property"() {
+        setup:
+            loadRoutes """                
+                - template:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myProcessor"
+                        type: "#class:${MySetBody.class.name}"
+                        property:
+                          - key: "payload"
+                            value: "test-payload"
+                    from:
+                      uri: "direct:{{directName}}"
+                      steps:
+                        - process:
+                            ref: "{{myProcessor}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "direct:myId"
+                      - to: "mock:result"
+            """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'test-payload'
+            }
+        when:
+            context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
+            context.start()
+
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+                id == 'myTemplate'
+                templateBeans.size() == 1
+            }
+
+            MockEndpoint.assertIsSatisfied(context)
     }
 
     def "create template with properties"() {
