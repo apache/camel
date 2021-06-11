@@ -41,11 +41,14 @@
             <groupId>net.corda</groupId>
             <artifactId>corda-rpc</artifactId>
         </dependency>
+
+        <!-- osgi -->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>
             <scope>provided</scope>
             <optional>true</optional>
+            <version>6.0.0</version>
         </dependency>
 
         <!-- for testing -->

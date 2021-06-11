@@ -289,7 +289,7 @@
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
         <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
-        <jcache-bundle-version>1.1.0_1</jcache-bundle-version>
+        <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
         <jclouds-version>2.2.1</jclouds-version>
         <!-- jclouds must use this guava version -->
         <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
@@ -313,7 +313,7 @@
         <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>
         <libthrift-version>0.12.0</libthrift-version>
         <jing-version>20030619</jing-version>
-        <jodatime2-bundle-version>2.10.6</jodatime2-bundle-version>
+        <jodatime2-version>2.10.10</jodatime2-version>
         <jota-version>1.0.0-beta7</jota-version>
         <jolokia-version>1.6.2</jolokia-version>
         <jolt-version>0.1.1</jolt-version>
@@ -433,7 +433,6 @@
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
         <optaplanner-version>8.7.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
-        <osgi-version>6.0.0</osgi-version>
         <paho-version>1.2.5</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
         <pdfbox-version>2.0.23</pdfbox-version>
@@ -598,10 +597,7 @@
         <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
         <camel.osgi.require.capability />
         <camel.osgi.provide.capability />
-
         <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
-        <sourcecheckExcludes></sourcecheckExcludes>
-        <sourcecheckExcludesComma></sourcecheckExcludesComma>
     </properties>
 
     <dependencyManagement>
@@ -3207,18 +3203,6 @@
                 <version>${commons-codec-version}</version>
             </dependency>
 
-            <!-- optional dependencies for osgi -->
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>osgi.core</artifactId>
-                <version>${osgi-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>osgi.cmpn</artifactId>
-                <version>${osgi-version}</version>
-            </dependency>
-
             <!-- optional dependencies for JMS -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
@@ -3522,11 +3506,6 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient-cache</artifactId>
-                <version>${httpclient4-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient-osgi</artifactId>
                 <version>${httpclient4-version}</version>
             </dependency>
             <dependency>

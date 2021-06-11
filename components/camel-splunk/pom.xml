@@ -58,7 +58,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>${jodatime2-bundle-version}</version>
+            <version>${jodatime2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
