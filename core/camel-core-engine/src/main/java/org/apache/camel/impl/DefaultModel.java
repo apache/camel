@@ -429,6 +429,11 @@ public class DefaultModel implements Model {
                     // do not set properties when using #type as it uses an existing shared bean
                     routeTemplateContext.bind(b.getName(), clazz, found.iterator().next());
                 }
+            } else {
+                // invalid syntax for the local bean, so lets report an exception
+                throw new IllegalArgumentException(
+                        "Route template local bean: " + b.getName() + " has invalid type syntax: " + b.getType()
+                                                   + ". To refer to a class then prefix the value with #class such as: #class:fullyQualifiedClassName");
             }
         }
     }
