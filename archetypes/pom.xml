@@ -33,6 +33,10 @@
     <description>Camel Archetypes</description>
     <packaging>pom</packaging>
 
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+    </properties>
+
     <modules>
         <module>camel-archetype-api-component</module>
         <module>camel-archetype-cdi</module>
