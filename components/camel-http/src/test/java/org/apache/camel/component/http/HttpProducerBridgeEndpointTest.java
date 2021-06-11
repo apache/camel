@@ -36,7 +36,7 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
     private static final Integer INTEGER = Integer.valueOf(1);
     private static final Long LONG = Long.valueOf(999999999999999L);
     private static final Boolean BOOLEAN = true;
-    private static final String query
+    private static final String QUERY
             = "qp1=" + INSTANT + "&qp2=" + STRING + "&qp3=" + INTEGER + "&qp4=" + LONG + "&qp5=" + BOOLEAN;
 
     private HttpServer localServer;
@@ -58,7 +58,7 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
                 .registerHandler("/bridged",
                         new HeaderValidationHandler(
                                 "GET",
-                                query,
+                                QUERY,
                                 null,
                                 getExpectedContent(),
                                 null,
@@ -66,7 +66,7 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
                 .registerHandler("/notbridged",
                         new HeaderValidationHandler(
                                 "GET",
-                                query,
+                                QUERY,
                                 null,
                                 getExpectedContent(),
                                 noBridgeExpectedHeaders))
@@ -100,7 +100,7 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
 
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(null);
-        exchange.getIn().setHeader(Exchange.HTTP_QUERY, query);
+        exchange.getIn().setHeader(Exchange.HTTP_QUERY, QUERY);
         exchange.getIn().setHeader("qp1", INSTANT);
         exchange.getIn().setHeader("qp2", STRING);
         exchange.getIn().setHeader("qp3", INTEGER);
@@ -127,7 +127,7 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
 
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(null);
-        exchange.getIn().setHeader(Exchange.HTTP_QUERY, query);
+        exchange.getIn().setHeader(Exchange.HTTP_QUERY, QUERY);
         exchange.getIn().setHeader("qp1", INSTANT);
         exchange.getIn().setHeader("qp2", STRING);
         exchange.getIn().setHeader("qp3", INTEGER);
