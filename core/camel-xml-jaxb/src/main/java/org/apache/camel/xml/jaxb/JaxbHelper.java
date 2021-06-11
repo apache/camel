@@ -48,7 +48,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.spi.TypeConverterRegistry;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -102,14 +101,7 @@ public final class JaxbHelper {
      * @return         a new XmlConverter instance
      */
     public static XmlConverter newXmlConverter(CamelContext context) {
-        XmlConverter xmlConverter;
-        if (context != null) {
-            TypeConverterRegistry registry = context.getTypeConverterRegistry();
-            xmlConverter = registry.getInjector().newInstance(XmlConverter.class, false);
-        } else {
-            xmlConverter = new XmlConverter();
-        }
-        return xmlConverter;
+        return new XmlConverter();
     }
 
     /**
