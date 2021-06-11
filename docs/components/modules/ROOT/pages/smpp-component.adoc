@@ -1,7 +1,7 @@
 [[smpp-component]]
 = SMPP Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-smpp/src/main/docs/smpp-component.adoc
+:page-source: componentscamel-smppsrcmaindocssmpp-component.adoc
 :docTitle: SMPP
 :artifactId: camel-smpp
 :description: Send and receive SMS messages using a SMSC (Short Message Service Center).
@@ -168,7 +168,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The SMPP component supports 40 options, which are listed below.
+The SMPP component supports 41 options, which are listed below.
 
 
 
@@ -203,6 +203,7 @@ The SMPP component supports 40 options, which are listed below.
 | *pduProcessorDegree* (advanced) | Sets the number of threads which can read PDU and process them in parallel. | 3 | Integer
 | *pduProcessorQueueCapacity* (advanced) | Sets the capacity of the working queue for PDU processing. | 100 | Integer
 | *sessionStateListener* (advanced) | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
+| *singleDLR* (advanced) | When true, the SMSC delivery receipt would be requested only for the last segment of a multi-segment (long) message. For short messages, with only 1 segment the behaviour is unchanged. | false | boolean
 | *transactionTimer* (advanced) | Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME). | 10000 | Integer
 | *alphabet* (codec) | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2 Alphabet. There are 3 enums and the value can be one of: 0, 4, 8 |  | byte
 | *dataCoding* (codec) | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2 (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990) |  | byte
@@ -243,7 +244,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (40 parameters):
+=== Query Parameters (41 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -277,6 +278,7 @@ with the following path and query parameters:
 | *pduProcessorDegree* (advanced) | Sets the number of threads which can read PDU and process them in parallel. | 3 | Integer
 | *pduProcessorQueueCapacity* (advanced) | Sets the capacity of the working queue for PDU processing. | 100 | Integer
 | *sessionStateListener* (advanced) | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
+| *singleDLR* (advanced) | When true, the SMSC delivery receipt would be requested only for the last segment of a multi-segment (long) message. For short messages, with only 1 segment the behaviour is unchanged. | false | boolean
 | *transactionTimer* (advanced) | Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME). | 10000 | Integer
 | *alphabet* (codec) | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2 Alphabet. There are 3 enums and the value can be one of: 0, 4, 8 |  | byte
 | *dataCoding* (codec) | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2 (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990) |  | byte
@@ -342,6 +344,10 @@ settings above.
 |`CamelSmppRegisteredDelivery` |`Byte` |*only for SubmitSm, ReplaceSm, SubmitMulti and DataSm* Is used to
 request an SMSC delivery receipt and/or SME originated acknowledgements.
 Use the URI option `registeredDelivery` settings above.
+
+|`CamelSmppSingleDLR` | `Boolean` | *only for SubmitSm, SubmitMulti* Is used to
+request the SMSC delivery receipt only on the last segment of multi-segment (long) messages.
+Use the URI option `singleDLR` settings above.
 
 |`CamelSmppPriorityFlag` |`Byte` |*only for SubmitSm and SubmitMulti* Allows the originating SME to assign
 a priority level to the short message. Use the URI option `priorityFlag`

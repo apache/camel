@@ -31,6 +31,7 @@ import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
@@ -91,15 +92,16 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
     }
 
     protected SubmitSm[] createSubmitSm(Exchange exchange) throws SmppException {
-
+        Message message = exchange.getIn();
         SubmitSm template = createSubmitSmTemplate(exchange);
-        byte[][] segments = splitBody(exchange.getIn());
+        byte[][] segments = splitBody(message);
 
-        ESMClass esmClass = exchange.getIn().getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
-        if (null != esmClass) {
+        // FIXME: undocumented header
+        ESMClass esmClass = message.getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
+        if (esmClass != null) {
             template.setEsmClass(esmClass.value());
-            // multipart message
         } else if (segments.length > 1) {
+            // multipart message
             template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
         }
 
@@ -109,8 +111,24 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
             submitSm.setShortMessage(segments[i]);
             submitSms[i] = submitSm;
         }
-
+        setRegisterDeliveryReceiptFlag(submitSms, message);
         return submitSms;
+    }
+
+    protected void setRegisterDeliveryReceiptFlag(SubmitSm[] submitSms, Message message) {
+        byte specifiedDeliveryFlag = getRegisterDeliveryFlag(message);
+        byte flag;
+        if (getRequestsSingleDLR(message)) {
+            // Disable DLRs
+            flag = SMSCDeliveryReceipt.DEFAULT.value();
+        } else {
+            flag = specifiedDeliveryFlag;
+        }
+
+        for (int i = 0; i < submitSms.length - 1; i++) {
+            submitSms[i].setRegisteredDelivery(flag);
+        }
+        submitSms[submitSms.length - 1].setRegisteredDelivery(specifiedDeliveryFlag);
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -166,12 +184,6 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
             submitSm.setServiceType(in.getHeader(SmppConstants.SERVICE_TYPE, String.class));
         } else {
             submitSm.setServiceType(config.getServiceType());
-        }
-
-        if (in.getHeaders().containsKey(SmppConstants.REGISTERED_DELIVERY)) {
-            submitSm.setRegisteredDelivery(in.getHeader(SmppConstants.REGISTERED_DELIVERY, Byte.class));
-        } else {
-            submitSm.setRegisteredDelivery(config.getRegisteredDelivery());
         }
 
         if (in.getHeaders().containsKey(SmppConstants.PROTOCOL_ID)) {
