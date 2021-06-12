@@ -141,12 +141,10 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport {
                         .autoStartup(false)
                         .to("mock:test");
 
-                from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}"
-                     +
-                     "&streamFilter={'$match':{'$or':[{'fullDocument.string': 'value2'}]}}")
-                             .id("filterConsumer")
-                             .autoStartup(false)
-                             .to("mock:test");
+                from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&streamFilter={{myStreamFilter}}")
+                        .id("filterConsumer")
+                        .autoStartup(false)
+                        .to("mock:test");
             }
         });
     }
