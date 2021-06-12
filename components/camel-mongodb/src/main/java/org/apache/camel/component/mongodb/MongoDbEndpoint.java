@@ -101,22 +101,20 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String consumerType;
     @UriParam(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
     private long cursorRegenerationDelay = 1000L;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackIncreasingField;
-
-    @UriParam(label = "changeStream")
+    @UriParam(label = "consumer,changeStream")
     private String streamFilter;
-
     // persistent tail tracking
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private boolean persistentTailTracking;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String persistentId;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackDb;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackCollection;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackField;
     @UriParam(label = "common")
     private MongoDbOutputType outputType;
