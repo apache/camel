@@ -27,6 +27,10 @@ This is from the `camel-main` module which is for running Camel standalone, but 
 
 The `camel-apns` component has been removed as the APNS (Apple Push Notification Service) online service has been retired y Apple.
 
+=== camel-mongodb
+
+The `streamFilter` option should now be configured as endpoint uri parameter, instead of a route property.
+
 === camel-saxon
 
 The camel-saxon component no longer depends on camel-xslt-saxon.
