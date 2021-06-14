@@ -8654,6 +8654,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.KameletReifyEndpointBuilder kameletReify(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.endpointBuilder("kamelet-reify", path);
@@ -8676,6 +8677,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.KameletReifyEndpointBuilder kameletReify(
             String componentName,
             String path) {
