@@ -18,7 +18,7 @@ a|image::eip/ChannelIcon.gif[image]
 communicate with another using messaging?
 
 a|image::eip/MessageIcon.gif[image]
-|xref:message.adoc[Message] |How can two applications connected by a
+|xref:message.adoc[Message] |How can two applications be connected by a
 message channel exchange a piece of information?
 
 a|image::eip/PipesAndFiltersIcon.gif[image]
