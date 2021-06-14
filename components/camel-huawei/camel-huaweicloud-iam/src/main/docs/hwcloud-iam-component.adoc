@@ -1,6 +1,6 @@
 [[hwcloud-iam-component]]
-= IAM Component
-:docTitle: IAM
+= Huawei Cloud Identity and Access Management (IAM) Component
+:docTitle: Huawei Cloud Identity and Access Management (IAM)
 :artifactId: camel-huaweicloud-iam
 :description: To securely manage users on Huawei Cloud
 :since: 3.11
@@ -14,7 +14,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-ia
 
 *{component-header}*
 
-Huawei Cloud Identity and Access Management (IAM) component allows you to integrate with https://www.huaweicloud.com/en-us/product/iam.html[IAM] services provided by Huawei Cloud.
+Huawei Cloud Identity and Access Management (IAM) component allows you to integrate with https://www.huaweicloud.com/intl/en-us/product/iam.html[IAM] provided by Huawei Cloud.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 
