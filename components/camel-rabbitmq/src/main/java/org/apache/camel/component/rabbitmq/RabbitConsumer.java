@@ -381,7 +381,23 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         // This really only needs to be called on the first consumer or on
         // reconnections.
         if (consumer.getEndpoint().isDeclare()) {
-            consumer.getEndpoint().declareExchangeAndQueue(channel);
+            try {
+                consumer.getEndpoint().declareExchangeAndQueue(channel);
+            } catch (IOException e) {
+                if (channel != null && channel.isOpen()) {
+                    try {
+                        channel.close();
+                    } catch (Exception innerEx) {
+                        e.addSuppressed(innerEx);
+                    }
+                }
+                if (this.consumer.getEndpoint().isRecoverFromDeclareException()) {
+                    throw e;
+                } else {
+                    throw new RuntimeCamelException(
+                            "Unrecoverable error when attempting to declare exchange or queue for " + consumer, e);
+                }
+            }
         }
         return channel;
     }
