@@ -904,7 +904,10 @@ public class XmlConverter {
     //-------------------------------------------------------------------------
 
     protected void setupFeatures(DocumentBuilderFactory factory) {
-        Properties properties = System.getProperties();
+        // must do defensive copy in case of concurrency
+        Properties properties = new Properties();
+        properties.putAll(System.getProperties());
+
         List<String> features = new ArrayList<>();
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
             String key = (String) prop.getKey();
