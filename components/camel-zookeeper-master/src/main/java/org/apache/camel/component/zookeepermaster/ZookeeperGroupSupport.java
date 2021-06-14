@@ -132,6 +132,7 @@ public class ZookeeperGroupSupport extends ServiceSupport
 
     public void setManagedGroupFactory(ManagedGroupFactory managedGroupFactory) {
         this.managedGroupFactory = managedGroupFactory;
+        this.managedGroupFactory.setClassLoader(this.getClass().getClassLoader());
     }
 
     public ManagedGroupFactoryStrategy getManagedGroupFactoryStrategy() {
@@ -177,8 +178,8 @@ public class ZookeeperGroupSupport extends ServiceSupport
             if (managedGroupFactoryStrategy == null) {
                 managedGroupFactoryStrategy = new DefaultGroupFactoryStrategy();
             }
-            managedGroupFactory = managedGroupFactoryStrategy.createGroupFactory(curator, getClass().getClassLoader(),
-                    getCamelContext(), this);
+            setManagedGroupFactory(managedGroupFactoryStrategy.createGroupFactory(curator, getClass().getClassLoader(),
+                    getCamelContext(), this));
         }
     }
 

@@ -16,27 +16,23 @@
  */
 package org.apache.camel.component.zookeepermaster.group;
 
-import java.util.concurrent.Callable;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.zookeepermaster.ManagedGroupFactoryStrategy;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.curator.framework.CuratorFramework;
 
-public class DefaultGroupFactoryStrategy implements ManagedGroupFactoryStrategy {
+public final class GroupHelper {
 
-    @Override
-    public ManagedGroupFactory createGroupFactory(
-            CuratorFramework curator,
-            ClassLoader loader,
-            CamelContext camelContext,
-            Callable<CuratorFramework> factory)
-            throws Exception {
+    private GroupHelper() {
+    }
 
-        if (curator != null) {
-            return new DefaultManagedGroupFactory(curator, false);
-        } else {
-            return new DefaultManagedGroupFactory(factory.call(), true);
+    public static ManagedGroupFactory createManagedGroupFactory(
+            CamelContext camelContext, ClassLoader loader, CuratorFramework curator) {
+        ManagedGroupFactory factory = CamelContextHelper.findByType(camelContext, ManagedGroupFactory.class);
+        if (factory == null) {
+            factory = new DefaultManagedGroupFactory(curator, true);
         }
+        factory.setClassLoader(loader);
+        return factory;
     }
 
 }
