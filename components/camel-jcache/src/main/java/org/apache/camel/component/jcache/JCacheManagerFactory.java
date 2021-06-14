@@ -14,21 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jcache.processor.aggregate;
+package org.apache.camel.component.jcache;
 
-import org.apache.camel.component.jcache.JCacheConfiguration;
-import org.apache.camel.component.jcache.support.HazelcastTest;
-import org.apache.camel.test.junit5.CamelTestSupport;
+public interface JCacheManagerFactory {
 
-@HazelcastTest
-class JCacheAggregationRepositoryTestSupport extends CamelTestSupport {
-
-    protected JCacheAggregationRepository createRepository(boolean optimistic) throws Exception {
-        JCacheAggregationRepository repository = new JCacheAggregationRepository();
-        repository.setCamelContext(context);
-        repository.setConfiguration(new JCacheConfiguration("aggregation-repository"));
-        repository.setOptimistic(optimistic);
-
-        return repository;
-    }
+    <K, V> JCacheManager<K, V> createManager(JCacheConfiguration configuration);
 }
