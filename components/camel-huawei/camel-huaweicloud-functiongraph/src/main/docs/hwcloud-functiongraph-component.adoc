@@ -1,6 +1,6 @@
 [[hwcloud-functiongraph-component]]
-= Huawei Cloud FunctionGraph Component
-:docTitle: Huawei Cloud FunctionGraph
+= FunctionGraph Component
+:docTitle: FunctionGraph
 :artifactId: camel-huaweicloud-functiongraph
 :description: To call serverless functions on Huawei Cloud
 :since: 3.11

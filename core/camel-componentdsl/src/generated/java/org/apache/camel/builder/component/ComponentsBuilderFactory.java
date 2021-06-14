@@ -2007,6 +2007,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudFunctiongraphComponentBuilderFactory.hwcloudFunctiongraph();
     }
     /**
+     * IAM (camel-huaweicloud-iam)
+     * To securely manage users on Huawei Cloud
+     * 
+     * Category: cloud
+     * Since: 3.11
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-iam
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HwcloudIamComponentBuilderFactory.HwcloudIamComponentBuilder hwcloudIam() {
+        return org.apache.camel.builder.component.dsl.HwcloudIamComponentBuilderFactory.hwcloudIam();
+    }
+    /**
      * SimpleNotification (camel-huaweicloud-smn)
      * Huawei Cloud component to integrate with SimpleNotification services
      * 
