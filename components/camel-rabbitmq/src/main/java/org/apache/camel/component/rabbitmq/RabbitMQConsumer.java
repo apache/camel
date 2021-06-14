@@ -79,7 +79,6 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
             openConnection();
             return this.conn;
         } else {
-            openConnection();
             return this.conn;
         }
     }
