@@ -20,7 +20,7 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(67);
+        Set<String> props = new HashSet<>(68);
         props.add("prefetchCount");
         props.add("publisherAcknowledgementsTimeout");
         props.add("addresses");
@@ -50,6 +50,7 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
         props.add("concurrentConsumers");
         props.add("guaranteedDeliveries");
         props.add("vhost");
+        props.add("recoverFromDeclareException");
         props.add("lazyStartProducer");
         props.add("threadPoolSize");
         props.add("deadLetterQueue");
