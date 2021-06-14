@@ -36,11 +36,11 @@ import org.apache.commons.net.ftp.parser.UnixFTPEntryParser;
 import org.apache.commons.net.ftp.parser.VMSVersioningFTPEntryParser;
 
 /**
- * OsgiParserFactory commons-net DefaultFTPFileEntryParserFactory uses Class.forName, and fails to load custom
- * ParserFactories in OSGI. This class is an alternative ParserFactory that can be used when Camel is used in an OSGI
- * environment.
+ * commons-net DefaultFTPFileEntryParserFactory uses Class.forName, and fails to load custom ParserFactories in various
+ * runtimes such as OSGi. This class is an alternative ParserFactory that uses Camels {@link ClassResolver} to load
+ * classes.
  */
-public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
+public class CamelFTPParserFactory extends DefaultFTPFileEntryParserFactory {
     // Match a plain Java Identifier
     private static final String JAVA_IDENTIFIER = "\\p{javaJavaIdentifierStart}(\\p{javaJavaIdentifierPart})*";
     // Match a qualified name, e.g. a.b.c.Name - but don't allow the default
@@ -51,13 +51,13 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
 
     private ClassResolver ocr;
 
-    public OsgiParserFactory(ClassResolver ocr) {
+    public CamelFTPParserFactory(ClassResolver ocr) {
         this.ocr = ocr;
     }
 
     /**
      * setClassResolver sets a class resolver which can be used instead of Class.forName for class resolution.
-     * 
+     *
      * @param ocr Class Resolver
      */
     public void setClassResolver(ClassResolver ocr) {
@@ -96,28 +96,29 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
             }
         }
         if (parser == null) {
-            String ukey = key.toUpperCase(Locale.ENGLISH);
-            if (ukey.contains("UNIX")) {
-                parser = new UnixFTPEntryParser(config);
-            } else if (ukey.contains("LINUX")) {
-                parser = new UnixFTPEntryParser(config);
-            } else if (ukey.contains("VMS")) {
+            final String ukey = key.toUpperCase(java.util.Locale.ENGLISH);
+            if (ukey.indexOf(FTPClientConfig.SYST_UNIX_TRIM_LEADING) >= 0) {
+                parser = new UnixFTPEntryParser(config, true);
+                // must check this after SYST_UNIX_TRIM_LEADING as it is a substring of it
+            } else if (ukey.indexOf(FTPClientConfig.SYST_UNIX) >= 0 || ukey.indexOf("LINUX") >= 0) {
+                parser = new UnixFTPEntryParser(config, false);
+            } else if (ukey.indexOf(FTPClientConfig.SYST_VMS) >= 0) {
                 parser = new VMSVersioningFTPEntryParser(config);
-            } else if (ukey.contains("WINDOWS")) {
+            } else if (ukey.indexOf(FTPClientConfig.SYST_NT) >= 0 || ukey.indexOf("WIN32") >= 0) {
                 parser = createNTFTPEntryParser(config);
-            } else if (ukey.contains("WIN32")) {
-                parser = createNTFTPEntryParser(config);
-            } else if (ukey.contains("OS/2")) {
+            } else if (ukey.indexOf(FTPClientConfig.SYST_OS2) >= 0) {
                 parser = new OS2FTPEntryParser(config);
-            } else if ((ukey.contains("OS/400")) || (ukey.contains("AS/400"))) {
+            } else if (ukey.indexOf(FTPClientConfig.SYST_OS400) >= 0 || ukey.indexOf(FTPClientConfig.SYST_AS400) >= 0) {
                 parser = createOS400FTPEntryParser(config);
-            } else if (ukey.contains("MVS")) {
-                parser = new MVSFTPEntryParser();
-            } else if (ukey.contains("NETWARE")) {
+            } else if (ukey.indexOf(FTPClientConfig.SYST_MVS) >= 0) {
+                parser = new MVSFTPEntryParser(); // Does not currently support config parameter
+            } else if (ukey.indexOf(FTPClientConfig.SYST_NETWARE) >= 0) {
                 parser = new NetwareFTPEntryParser(config);
-            } else if (ukey.contains("MACOS PETER")) {
+            } else if (ukey.indexOf(FTPClientConfig.SYST_MACOS_PETER) >= 0) {
                 parser = new MacOsPeterFTPEntryParser(config);
-            } else if (ukey.contains("TYPE: L8")) {
+            } else if (ukey.indexOf(FTPClientConfig.SYST_L8) >= 0) {
+                // L8 normally means Unix, but move it to the end for some L8 systems that aren't.
+                // This check should be last!
                 parser = new UnixFTPEntryParser(config);
             } else {
                 throw new ParserInitializationException("Unknown parser type: " + key);
@@ -135,33 +136,47 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
      * Creates an NT FTP parser: if the config exists, and the system key equals {@link FTPClientConfig#SYST_NT} then a
      * plain {@link NTFTPEntryParser} is used, otherwise a composite of {@link NTFTPEntryParser} and
      * {@link UnixFTPEntryParser} is used.
-     * 
+     *
      * @param  config the config to use, may be {@code null}
      * @return        the parser
      */
-    private FTPFileEntryParser createNTFTPEntryParser(FTPClientConfig config) {
-        if (config != null && FTPClientConfig.SYST_NT.equals(config.getServerSystemKey())) {
+    private FTPFileEntryParser createNTFTPEntryParser(final FTPClientConfig config) {
+        if (config != null && FTPClientConfig.SYST_NT.equals(
+                config.getServerSystemKey())) {
             return new NTFTPEntryParser(config);
-        } else {
-            return new CompositeFileEntryParser(
-                    new FTPFileEntryParser[] { new NTFTPEntryParser(config), new UnixFTPEntryParser(config) });
         }
+        // clone the config as it may be changed by the parsers (NET-602)
+        final FTPClientConfig config2 = config != null ? new FTPClientConfig(config) : null;
+        return new CompositeFileEntryParser(
+                new FTPFileEntryParser[] {
+                        new NTFTPEntryParser(config),
+                        new UnixFTPEntryParser(
+                                config2,
+                                config2 != null && FTPClientConfig.SYST_UNIX_TRIM_LEADING.equals(config2.getServerSystemKey()))
+                });
     }
 
     /**
      * Creates an OS400 FTP parser: if the config exists, and the system key equals {@link FTPClientConfig#SYST_OS400}
      * then a plain {@link OS400FTPEntryParser} is used, otherwise a composite of {@link OS400FTPEntryParser} and
      * {@link UnixFTPEntryParser} is used.
-     * 
+     *
      * @param  config the config to use, may be {@code null}
      * @return        the parser
      */
-    private FTPFileEntryParser createOS400FTPEntryParser(FTPClientConfig config) {
-        if (config != null && FTPClientConfig.SYST_OS400.equals(config.getServerSystemKey())) {
+    private FTPFileEntryParser createOS400FTPEntryParser(final FTPClientConfig config) {
+        if (config != null &&
+                FTPClientConfig.SYST_OS400.equals(config.getServerSystemKey())) {
             return new OS400FTPEntryParser(config);
-        } else {
-            return new CompositeFileEntryParser(
-                    new FTPFileEntryParser[] { new OS400FTPEntryParser(config), new UnixFTPEntryParser(config) });
         }
+        // clone the config as it may be changed by the parsers (NET-602)
+        final FTPClientConfig config2 = config != null ? new FTPClientConfig(config) : null;
+        return new CompositeFileEntryParser(
+                new FTPFileEntryParser[] {
+                        new OS400FTPEntryParser(config),
+                        new UnixFTPEntryParser(
+                                config2,
+                                config2 != null && FTPClientConfig.SYST_UNIX_TRIM_LEADING.equals(config2.getServerSystemKey()))
+                });
     }
 }
