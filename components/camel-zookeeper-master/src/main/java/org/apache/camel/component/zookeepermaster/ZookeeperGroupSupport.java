@@ -175,10 +175,16 @@ public class ZookeeperGroupSupport extends ServiceSupport
             }
         }
         if (managedGroupFactory == null) {
-            if (managedGroupFactoryStrategy == null) {
-                managedGroupFactoryStrategy = new DefaultGroupFactoryStrategy();
+            Set<ManagedGroupFactoryStrategy> set
+                    = getCamelContext().getRegistry().findByType(ManagedGroupFactoryStrategy.class);
+            if (set.size() == 1) {
+                setManagedGroupFactoryStrategy(set.iterator().next());
+            } else {
+                setManagedGroupFactoryStrategy(new DefaultGroupFactoryStrategy());
             }
-            setManagedGroupFactory(managedGroupFactoryStrategy.createGroupFactory(curator, getClass().getClassLoader(),
+        }
+        if (managedGroupFactory == null) {
+            setManagedGroupFactory(getManagedGroupFactoryStrategy().createGroupFactory(curator, getClass().getClassLoader(),
                     getCamelContext(), this));
         }
     }
