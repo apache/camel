@@ -1,8 +1,8 @@
 [[hwcloud-smn-component]]
-= SimpleNotification Component
-:docTitle: SimpleNotification
+= Huawei Cloud Simple Message Notification Component
+:docTitle: Huawei Cloud Simple Message Notification (SMN)
 :artifactId: camel-huaweicloud-smn
-:description: Huawei Cloud component to integrate with SimpleNotification services
+:description: Huawei Cloud component to integrate with Simple Message Notification
 :since: 3.8
 :supportLevel: Stable
 :component-header: Only producer is supported
@@ -14,7 +14,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-sm
 
 *{component-header}*
 
-Huawei Cloud SMN component allowes you to integrate with Simple notification services[https://www.huaweicloud.com/en-us/product/smn.html] provided by Huawei cloud.
+Huawei Cloud Simple Message Notification (SMN) component allows you to integrate with https://www.huaweicloud.com/intl/en-us/product/smn.html[SMN] provided by Huawei Cloud.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -42,7 +42,7 @@ hwcloud-smn:service[?options]
 == Options
 
 // component options: START
-The SimpleNotification component supports 2 options, which are listed below.
+The SMN component supports 2 options, which are listed below.
 
 
 
@@ -55,7 +55,7 @@ The SimpleNotification component supports 2 options, which are listed below.
 // component options: END
 
 // endpoint options: START
-The SimpleNotification endpoint is configured using URI syntax:
+The SMN endpoint is configured using URI syntax:
 
 ----
 hwcloud-smn:smnService
@@ -123,9 +123,9 @@ with the following path and query parameters:
 |=======================================================================
 |Header |Type |Description
 
-|`CamelHwCloudSmnMesssageId` |`String` | Unique message id returned by simple message notification server after processing the request
+|`CamelHwCloudSmnMesssageId` |`String` | Unique message id returned by Simple Message Notification server after processing the request
 
-|`CamelHwCloudSmnRequestId` |`String` | Unique request id returned by simple message notification server after processing the request
+|`CamelHwCloudSmnRequestId` |`String` | Unique request id returned by Simple Message Notification server after processing the request
 
 |=======================================================================
 
