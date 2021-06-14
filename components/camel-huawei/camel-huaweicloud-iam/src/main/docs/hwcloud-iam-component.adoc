@@ -1,12 +1,12 @@
-[[hwcloud-functiongraph-component]]
-= Huawei Cloud FunctionGraph Component
-:docTitle: Huawei Cloud FunctionGraph
-:artifactId: camel-huaweicloud-functiongraph
-:description: To call serverless functions on Huawei Cloud
+[[hwcloud-iam-component]]
+= Huawei Cloud Identity and Access Management (IAM) Component
+:docTitle: Huawei Cloud Identity and Access Management (IAM)
+:artifactId: camel-huaweicloud-iam
+:description: To securely manage users on Huawei Cloud
 :since: 3.11
 :supportLevel: Preview
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-functiongraph.adoc[opts=optional]
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-iam.adoc[opts=optional]
 //Manually maintained attributes
 :group: Huawei Cloud
 
@@ -14,7 +14,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-fu
 
 *{component-header}*
 
-Huawei Cloud FunctionGraph component allows you to integrate with https://www.huaweicloud.com/intl/en-us/product/functiongraph.html[FunctionGraph] provided by Huawei Cloud.
+Huawei Cloud Identity and Access Management (IAM) component allows you to integrate with https://www.huaweicloud.com/intl/en-us/product/iam.html[IAM] provided by Huawei Cloud.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 
@@ -22,7 +22,7 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 ----
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-huaweicloud-functiongraph</artifactId>
+    <artifactId>camel-huaweicloud-iam</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
@@ -32,13 +32,13 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 
 [source,text]
 ----
-hwcloud-functiongraph:operation[?options]
+hwcloud-iam:operation[?options]
 ----
 
 == URI Options
 
 // component options: START
-The FunctionGraph component supports 2 options, which are listed below.
+The IAM component supports 2 options, which are listed below.
 
 
 
@@ -50,12 +50,11 @@ The FunctionGraph component supports 2 options, which are listed below.
 |===
 // component options: END
 
-
 // endpoint options: START
-The FunctionGraph endpoint is configured using URI syntax:
+The HuaweiCloud IAM endpoint is configured using URI syntax:
 
 ----
-hwcloud-functiongraph:operation
+hwcloud-iam:operation
 ----
 
 with the following path and query parameters:
@@ -76,12 +75,10 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *endpoint* (producer) | FunctionGraph url. Carries higher precedence than region parameter based client initialization |  | String
-| *functionName* (producer) | Name of the function to invoke |  | String
-| *functionPackage* (producer) | Functions that can be logically grouped together | default | String
+| *endpoint* (producer) | IAM url. Carries higher precedence than region parameter based client initialization |  | String
+| *groupId* (producer) | Group ID to perform operation with |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *projectId* (producer) | *Required* Cloud project ID |  | String
-| *region* (producer) | *Required* FunctionGraph service region. This is lower precedence than endpoint based configuration |  | String
+| *region* (producer) | *Required* IAM service region. This is lower precedence than endpoint based configuration |  | String
 | *serviceKeys* (producer) | Configuration object for cloud service authentication |  | ServiceKeys
 | *proxyHost* (proxy) | Proxy server ip/hostname |  | String
 | *proxyPassword* (proxy) | Proxy authentication password |  | String
@@ -90,56 +87,47 @@ with the following path and query parameters:
 | *authenticationKey* (security) | *Required* Authentication key for the cloud user |  | String
 | *ignoreSslVerification* (security) | Ignore SSL verification | false | boolean
 | *secretKey* (security) | *Required* Secret key for the cloud user |  | String
+| *userId* (producer) | User ID to perform operation with |  | String
 |===
 // endpoint options: END
 
 
 == Usage
 
-=== Message properties evaluated by the FunctionGraph producer
+=== Message properties evaluated by the IAM producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
 
-|`CamelHwCloudFgOperation` |`String` | Name of operation to invoke
+|`CamelHwCloudIamOperation` |`String` | Name of operation to invoke
 
-|`CamelHwCloudFgFunction` |`String` | Name of function to invoke operation on
+|`CamelHwCloudIamUserId` |`String` | User ID to invoke operation on
 
-|`CamelHwCloudFgPackage` |`String` | Name of the function package
-
-|`CamelHwCloudFgXCffLogType` | `String` | Type of log to be returned by FunctionGraph operation
+|`CamelHwCloudIamGroupId` |`String` | Group ID to invoke operation on
 
 |=======================================================================
 
-If the operation, function name, or function package are set, they will override their corresponding query parameter.
+If any of the above properties are set, they will override their corresponding query parameter.
 
-=== Message properties set by the FunctionGraph producer
+== List of Supported IAM Operations
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelHwCloudFgXCffLogs` |`String` | Unique log returned by FunctionGraph after processing the request if `CamelHwCloudFgXCffLogType` is set
-
-|=======================================================================
-
-
-== List of Supported FunctionGraph Operations
-
-- invokeFunction - to invoke a serverless function
+- listUsers
+- getUsers
+- listGroups
+- getGroupUsers
 
 == Using ServiceKey Configuration Bean
 
-Authentication key and secret keys are required to authenticate against cloud FunctionGraph service. You can avoid having them being exposed
-and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.functiongraph.models.ServiceKeys`.
+Authentication key and secret keys are required to authenticate against cloud IAM service. You can avoid having them being exposed
+and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.iam.models.ServiceKeys`.
 Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
 
 Check the following code snippets:
 
 [source,xml]
 ----
-<bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.functiongraph.models.ServiceKeys">
+<bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.iam.models.ServiceKeys">
    <property name="authenticationKey" value="your_authentication_key" />
    <property name="secretKey" value="your_secret_key" />
 </bean>
@@ -147,8 +135,8 @@ Check the following code snippets:
 [source,java]
 ----
 from("direct:triggerRoute")
- .setProperty(FunctionGraphProperties.OPERATION, constant("invokeFunction"))
- .setProperty(FunctionGraphProperties.FUNCTION_NAME ,constant("your_function_name"))
- .setProperty(FunctionGraphProperties.FUNCTION_PACKAGE, constant("your_function_package"))
- .to("hwcloud-functiongraph:invokeFunction?projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
+ .setProperty(IAMPropeties.OPERATION, constant("listUsers"))
+ .setProperty(IAMPropeties.USER_ID ,constant("your_user_id"))
+ .setProperty(IAMPropeties.GROUP_ID, constant("your_group_id))
+ .to("hwcloud-iam:listUsers?region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 ----
