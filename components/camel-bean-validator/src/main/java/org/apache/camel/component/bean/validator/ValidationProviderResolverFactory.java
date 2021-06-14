@@ -16,19 +16,11 @@
  */
 package org.apache.camel.component.bean.validator;
 
-import java.util.List;
-
 import javax.validation.ValidationProviderResolver;
 
-import org.hibernate.validator.HibernateValidator;
+import org.apache.camel.CamelContext;
 
-import static java.util.Collections.singletonList;
+public interface ValidationProviderResolverFactory {
 
-public class HibernateValidationProviderResolver implements ValidationProviderResolver {
-
-    @Override
-    public List getValidationProviders() {
-        return singletonList(new HibernateValidator());
-    }
-
+    ValidationProviderResolver createValidationProviderResolver(CamelContext camelContext);
 }

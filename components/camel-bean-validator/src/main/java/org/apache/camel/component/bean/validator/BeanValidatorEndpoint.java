@@ -32,7 +32,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.PlatformHelper;
 
 import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
 
@@ -76,7 +75,7 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
 
         ValidatorFactory validatorFactory = this.validatorFactory;
         if (validatorFactory == null) {
-            validatorFactory = buildValidatorFactory(isOsgiContext(), isIgnoreXmlConfiguration(),
+            validatorFactory = buildValidatorFactory(getCamelContext(), isIgnoreXmlConfiguration(),
                     validationProviderResolver, messageInterpolator, traversableResolver, constraintValidatorFactory);
         }
 
@@ -87,15 +86,6 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer is not supported");
-    }
-
-    /**
-     * Recognizes if component is executed in the OSGi environment.
-     *
-     * @return true if component is executed in the OSGi environment. False otherwise.
-     */
-    protected boolean isOsgiContext() {
-        return PlatformHelper.isOsgiContext(getCamelContext());
     }
 
     public String getLabel() {
