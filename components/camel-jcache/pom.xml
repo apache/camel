@@ -47,15 +47,6 @@
             <version>${jcache-bundle-version}</version>
         </dependency>
 
-        <!-- osgi -->
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-            <version>6.0.0</version>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
