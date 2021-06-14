@@ -2546,6 +2546,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.KameletReifyComponentBuilderFactory.KameletReifyComponentBuilder kameletReify() {
         return org.apache.camel.builder.component.dsl.KameletReifyComponentBuilderFactory.kameletReify();
     }
