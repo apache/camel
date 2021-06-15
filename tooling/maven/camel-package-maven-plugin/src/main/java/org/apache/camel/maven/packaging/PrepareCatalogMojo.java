@@ -1208,7 +1208,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         dir.resolve("camel-vertx-kafka").resolve("camel-vertx-kafka-component"),
                         dir.resolve("camel-vertx-websocket"));
             case "camel-huawei":
-                return Arrays.asList(dir.resolve("camel-huaweicloud-functiongraph"), dir.resolve("camel-huaweicloud-smn"), dir.resolve("camel-huaweicloud-iam"));
+                return Arrays.asList(dir.resolve("camel-huaweicloud-functiongraph"), dir.resolve("camel-huaweicloud-smn"),
+                        dir.resolve("camel-huaweicloud-iam"));
             default:
                 return Collections.singletonList(dir);
         }
