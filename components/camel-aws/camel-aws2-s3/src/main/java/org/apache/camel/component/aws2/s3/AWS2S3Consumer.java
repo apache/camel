@@ -379,14 +379,16 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         exchange.setPattern(pattern);
         Message message = exchange.getIn();
 
-        if (getConfiguration().isIncludeBody()) {
-            try {
-                message.setBody(IoUtils.toByteArray(s3Object));
-            } catch (IOException e) {
-                throw new RuntimeCamelException(e);
+        if (!getConfiguration().isIgnoreBody()) {
+            if (getConfiguration().isIncludeBody()) {
+                try {
+                    message.setBody(IoUtils.toByteArray(s3Object));
+                } catch (IOException e) {
+                    throw new RuntimeCamelException(e);
+                }
+            } else {
+                message.setBody(s3Object);
             }
-        } else {
-            message.setBody(s3Object);
         }
 
         message.setHeader(AWS2S3Constants.KEY, key);
