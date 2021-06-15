@@ -64,6 +64,9 @@ public class FunctionGraphProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * Perform invoke function operation and map return object to exchange body
+     */
     private void invokeFunction(Exchange exchange) {
 
         // convert exchange body to Map object

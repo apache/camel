@@ -247,6 +247,7 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
             return functionGraphClient;
         }
 
+        // setup AK/SK credential information
         BasicCredentials auth = new BasicCredentials()
                 .withAk(getServiceKeys() != null
                         ? getServiceKeys().getAuthenticationKey()
@@ -256,6 +257,7 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
                         : getSecretKey())
                 .withProjectId(getProjectId());
 
+        // setup http information
         HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig();
         httpConfig.withIgnoreSSLVerification(isIgnoreSslVerification());
         if (ObjectHelper.isNotEmpty(getProxyHost())

@@ -34,7 +34,7 @@ public final class FunctionGraphUtils {
     }
 
     /**
-     * returns the urn based on urnFormat and clientConfigurations
+     * Returns the urn based on urnFormat and clientConfigurations
      */
     public static String composeUrn(String urnFormat, ClientConfigurations clientConfigurations) {
         return String.format(urnFormat, clientConfigurations.getRegion(),
