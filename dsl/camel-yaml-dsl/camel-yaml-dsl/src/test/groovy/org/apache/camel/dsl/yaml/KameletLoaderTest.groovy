@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
-import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.RouteTemplateDefinition
 import org.apache.camel.model.ToDefinition
@@ -261,8 +260,6 @@ class KameletLoaderTest extends YamlTestSupport {
 
     def "kamelet with filter and flow"() {
         setup:
-            setFlowMode(YamlDeserializationMode.FLOW)
-
             loadKamelets '''
                 apiVersion: camel.apache.org/v1alpha1
                 kind: Kamelet

@@ -61,8 +61,6 @@ class SplitTest extends YamlTestSupport {
 
     def "split (flow)"() {
         setup:
-            setFlowMode(YamlDeserializationMode.FLOW)
-
             loadRoutes '''
                 - from:
                     uri: "direct:route"
@@ -87,6 +85,8 @@ class SplitTest extends YamlTestSupport {
     }
 
     def "split (flow disabled)"() {
+        setup:
+            setFlowMode(YamlDeserializationMode.CLASSIC)
         when:
             loadRoutes '''
                 - from:
