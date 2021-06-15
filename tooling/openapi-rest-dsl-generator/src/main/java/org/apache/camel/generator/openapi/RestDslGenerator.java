@@ -251,4 +251,8 @@ public abstract class RestDslGenerator<G> {
     public static RestDslXmlGenerator toXml(final OasDocument document) {
         return new RestDslXmlGenerator(document);
     }
+
+    public static RestDslYamlGenerator toYaml(final OasDocument document) {
+        return new RestDslYamlGenerator(document);
+    }
 }
