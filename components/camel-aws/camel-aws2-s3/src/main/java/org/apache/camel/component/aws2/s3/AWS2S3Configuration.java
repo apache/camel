@@ -81,6 +81,8 @@ public class AWS2S3Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean ignoreBody;
     @UriParam(label = "producer",
               enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange,createDownloadLink")
     private AWS2S3Operations operation;
@@ -276,6 +278,18 @@ public class AWS2S3Configuration implements Cloneable {
 
     public boolean isIncludeBody() {
         return includeBody;
+    }
+
+    /**
+     * If it is true, the S3 Object Body will be ignored completely, if it is set to false the S3 Object will be put in
+     * the body. Setting this to true, will override any behavior defined by includeBody option.
+     */
+    public boolean isIgnoreBody() {
+        return ignoreBody;
+    }
+
+    public void setIgnoreBody(boolean ignoreBody) {
+        this.ignoreBody = ignoreBody;
     }
 
     public boolean isDeleteAfterRead() {
