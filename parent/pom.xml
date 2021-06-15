@@ -435,7 +435,7 @@
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
         <paho-version>1.2.5</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
-        <pdfbox-version>2.0.23</pdfbox-version>
+        <pdfbox-version>2.0.24</pdfbox-version>
         <pgjdbc-driver-version>42.2.14</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.6</pgjdbc-ng-driver-version>
         <powermock-version>2.0.7</powermock-version>
