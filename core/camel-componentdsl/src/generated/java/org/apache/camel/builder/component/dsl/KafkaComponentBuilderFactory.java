@@ -456,6 +456,28 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * A unique identifier of the consumer instance provided by the end
+         * user. Only non-empty strings are permitted. If set, the consumer is
+         * treated as a static member, which means that only one instance with
+         * this ID is allowed in the consumer group at any time. This can be
+         * used in combination with a larger session timeout to avoid group
+         * rebalances caused by transient unavailability (e.g. process
+         * restarts). If not set, the consumer will join the group as a dynamic
+         * member, which is the traditional behavior.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param groupInstanceId the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder groupInstanceId(
+                java.lang.String groupInstanceId) {
+            doSetProperty("groupInstanceId", groupInstanceId);
+            return this;
+        }
+        /**
          * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
          * values.
          * 
@@ -1980,6 +2002,7 @@ public interface KafkaComponentBuilderFactory {
             case "fetchMinBytes": getOrCreateConfiguration((KafkaComponent) component).setFetchMinBytes((java.lang.Integer) value); return true;
             case "fetchWaitMaxMs": getOrCreateConfiguration((KafkaComponent) component).setFetchWaitMaxMs((java.lang.Integer) value); return true;
             case "groupId": getOrCreateConfiguration((KafkaComponent) component).setGroupId((java.lang.String) value); return true;
+            case "groupInstanceId": getOrCreateConfiguration((KafkaComponent) component).setGroupInstanceId((java.lang.String) value); return true;
             case "headerDeserializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderDeserializer((org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setHeartbeatIntervalMs((java.lang.Integer) value); return true;
             case "keyDeserializer": getOrCreateConfiguration((KafkaComponent) component).setKeyDeserializer((java.lang.String) value); return true;

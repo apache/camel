@@ -70,6 +70,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean topicIsPattern;
     @UriParam(label = "consumer")
     private String groupId;
+    @UriParam(label = "consumer")
+    private String groupInstanceId;
     @UriParam(label = "consumer", defaultValue = "10")
     private int consumerStreams = 10;
     @UriParam(label = "consumer", defaultValue = "1")
@@ -579,6 +581,21 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getGroupInstanceId() {
+        return groupInstanceId;
+    }
+
+    /**
+     * A unique identifier of the consumer instance provided by the end user. Only non-empty strings are permitted. If
+     * set, the consumer is treated as a static member, which means that only one instance with this ID is allowed in
+     * the consumer group at any time. This can be used in combination with a larger session timeout to avoid group
+     * rebalances caused by transient unavailability (e.g. process restarts). If not set, the consumer will join the
+     * group as a dynamic member, which is the traditional behavior.
+     */
+    public void setGroupInstanceId(String groupInstanceId) {
+        this.groupInstanceId = groupInstanceId;
     }
 
     public String getPartitioner() {
