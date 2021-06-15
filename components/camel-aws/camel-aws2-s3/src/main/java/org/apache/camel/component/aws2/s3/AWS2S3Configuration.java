@@ -82,7 +82,7 @@ public class AWS2S3Configuration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
     @UriParam(label = "producer",
-              enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange")
+              enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange,createDownloadLink")
     private AWS2S3Operations operation;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
