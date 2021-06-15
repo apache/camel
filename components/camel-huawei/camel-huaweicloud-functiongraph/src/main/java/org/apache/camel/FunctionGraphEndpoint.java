@@ -240,14 +240,16 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Initialize the client
+     * Initialize and return a new FunctionGraph Client
+     *
+     * @return
      */
     public FunctionGraphClient initClient() {
         if (functionGraphClient != null) {
             return functionGraphClient;
         }
 
-        // setup AK/SK credential information
+        // setup AK/SK credential information. User can input AK/SK through the ServiceKeys class, which, if provided, overrides the AK/SK passed through the endpoint
         BasicCredentials auth = new BasicCredentials()
                 .withAk(getServiceKeys() != null
                         ? getServiceKeys().getAuthenticationKey()
@@ -257,7 +259,7 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
                         : getSecretKey())
                 .withProjectId(getProjectId());
 
-        // setup http information
+        // setup http information (including proxy information if provided)
         HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig();
         httpConfig.withIgnoreSSLVerification(isIgnoreSslVerification());
         if (ObjectHelper.isNotEmpty(getProxyHost())
@@ -273,6 +275,7 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
             }
         }
 
+        // if an endpoint url is provided, the FunctionGraphClient will be built with an endpoint. Otherwise, it will be built with the provided region
         if (ObjectHelper.isNotEmpty(getEndpoint())) {
             return FunctionGraphClient.newBuilder()
                     .withCredential(auth)

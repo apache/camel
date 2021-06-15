@@ -66,6 +66,8 @@ public class FunctionGraphProducer extends DefaultProducer {
 
     /**
      * Perform invoke function operation and map return object to exchange body
+     *
+     * @param exchange
      */
     private void invokeFunction(Exchange exchange) {
 
@@ -113,6 +115,8 @@ public class FunctionGraphProducer extends DefaultProducer {
 
     /**
      * Update dynamic client configurations
+     *
+     * @param exchange
      */
     private void updateClientConfigs(Exchange exchange) {
         resetDynamicConfigs();
