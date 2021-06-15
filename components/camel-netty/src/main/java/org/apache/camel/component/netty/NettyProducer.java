@@ -175,18 +175,6 @@ public class NettyProducer extends DefaultAsyncProducer {
     @Override
     protected void doStop() throws Exception {
         LOG.debug("Stopping producer at address: {}", configuration.getAddress());
-        // close all channels
-        LOG.trace("Closing {} channels", allChannels.size());
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-
-        // and then shutdown the thread pools
-        if (workerGroup != null) {
-            workerGroup.shutdownGracefully();
-            workerGroup = null;
-        }
-
-        ServiceHelper.stopService(correlationManager);
 
         if (pool != null) {
             if (LOG.isDebugEnabled()) {
@@ -195,6 +183,22 @@ public class NettyProducer extends DefaultAsyncProducer {
             pool.close();
         }
 
+        // close all channels
+        LOG.debug("Closing {} channels", allChannels.size());
+        ChannelGroupFuture future = allChannels.close();
+        future.awaitUninterruptibly();
+
+        // and then shutdown the thread pools
+        if (workerGroup != null) {
+            LOG.debug("Stopping worker group: {}", workerGroup);
+            workerGroup.shutdownGracefully();
+            workerGroup = null;
+        }
+
+        LOG.trace("Stopping correlation manager: {}", correlationManager);
+        ServiceHelper.stopService(correlationManager);
+
+        LOG.debug("Stopped producer at address: {}", configuration.getAddress());
         super.doStop();
     }
 
