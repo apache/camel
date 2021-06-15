@@ -466,8 +466,8 @@ public interface Aws2S3ComponentBuilderFactory {
          * into the body and the headers will be set with the S3 object
          * metadata. This option is strongly related to autocloseBody option. In
          * case of setting includeBody to true because the S3Object stream will
-         * be consumed then it will also be closed in case of includeBody false
-         * then it will be up to the caller to close the S3Object stream.
+         * be consumed then it will also be closed, while in case of includeBody
+         * false then it will be up to the caller to close the S3Object stream.
          * However setting autocloseBody to true when includeBody is false it
          * will schedule to close the S3Object stream automatically on exchange
          * completion.
