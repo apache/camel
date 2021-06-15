@@ -109,6 +109,11 @@ public class KafkaConsumer extends DefaultConsumer {
             props.put(ConsumerConfig.GROUP_ID_CONFIG, randomGroupId);
             LOG.debug("Kafka consumer groupId is {} (generated)", randomGroupId);
         }
+        if (endpoint.getConfiguration().getGroupInstanceId() != null) {
+            String gid = endpoint.getConfiguration().getGroupInstanceId();
+            LOG.debug("Kafka consumer groupInstanceId is {}", gid);
+            props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, gid);
+        }
         return props;
     }
 
