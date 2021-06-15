@@ -51,7 +51,6 @@ public class CouchDbLocalContainerService implements CouchDbService, ContainerSe
                 .waitingFor(Wait.forListeningPort());
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(CouchDbProperties.SERVICE_ADDRESS, getServiceAddress());
         System.setProperty(CouchDbProperties.PORT, String.valueOf(port()));

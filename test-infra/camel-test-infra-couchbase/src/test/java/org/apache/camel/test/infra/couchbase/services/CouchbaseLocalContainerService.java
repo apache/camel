@@ -97,7 +97,6 @@ public class CouchbaseLocalContainerService implements CouchbaseService, Contain
         return container.getBootstrapHttpDirectPort();
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(CouchbaseProperties.COUCHBASE_HOSTNAME, getHostname());
         System.setProperty(CouchbaseProperties.COUCHBASE_PORT, String.valueOf(getPort()));

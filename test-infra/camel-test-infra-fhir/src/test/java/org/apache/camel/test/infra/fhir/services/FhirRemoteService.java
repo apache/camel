@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.fhir.common.FhirProperties;
 
 public class FhirRemoteService implements FhirService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

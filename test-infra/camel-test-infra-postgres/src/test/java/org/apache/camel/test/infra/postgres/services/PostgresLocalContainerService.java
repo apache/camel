@@ -43,7 +43,6 @@ public class PostgresLocalContainerService implements PostgresService, Container
         return new PostgreSQLContainer(imageName);
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(PostgresProperties.SERVICE_ADDRESS, getServiceAddress());
         System.setProperty(PostgresProperties.HOST, host());

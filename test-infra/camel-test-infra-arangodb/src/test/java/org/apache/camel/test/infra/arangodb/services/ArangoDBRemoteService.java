@@ -30,7 +30,6 @@ public class ArangoDBRemoteService implements ArangoDBService {
         return System.getProperty(ArangoDBProperties.ARANGODB_HOST);
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

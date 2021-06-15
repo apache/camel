@@ -23,7 +23,6 @@ import org.apache.camel.test.infra.azure.common.services.AzureService;
 
 public class AzureStorageBlobRemoteService implements AzureService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

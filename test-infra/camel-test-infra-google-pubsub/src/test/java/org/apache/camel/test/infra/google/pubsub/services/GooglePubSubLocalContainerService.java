@@ -52,7 +52,6 @@ public class GooglePubSubLocalContainerService implements GooglePubSubService, C
         return new PubSubEmulatorContainer(DockerImageName.parse(imageName));
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(GooglePubSubProperties.SERVICE_ADDRESS, getServiceAddress());
     }

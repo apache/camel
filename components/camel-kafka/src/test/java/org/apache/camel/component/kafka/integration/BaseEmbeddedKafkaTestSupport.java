@@ -22,20 +22,22 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
-import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.resources.SuiteScope;
+import org.apache.camel.test.junit5.resources.TestService;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    public static KafkaService service = KafkaServiceFactory.createService();
+
+    @TestService
+    @SuiteScope
+    public static KafkaService service;
 
     protected static AdminClient kafkaAdminClient;
 
@@ -89,4 +91,5 @@ public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
 
         return KafkaAdminClient.create(properties);
     }
+
 }

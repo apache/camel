@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.zookeeper.common.ZooKeeperProperties;
 
 public class ZooKeeperRemoteService implements ZooKeeperService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

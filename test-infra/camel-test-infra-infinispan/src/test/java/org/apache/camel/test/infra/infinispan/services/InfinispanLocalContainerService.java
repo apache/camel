@@ -63,7 +63,6 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
                 .waitingFor(Wait.forLogMessage(".*Infinispan.*Server.*started.*", 1));
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(InfinispanProperties.SERVICE_HOST, host());
         System.setProperty(InfinispanProperties.SERVICE_PORT, String.valueOf(port()));

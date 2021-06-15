@@ -21,7 +21,6 @@ import org.apache.camel.test.infra.hdfs.v2.common.HDFSProperties;
 
 public class RemoteHDFSService implements HDFSService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

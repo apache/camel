@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.couchdb.common.CouchDbProperties;
 
 public class CouchDbRemoteService implements CouchDbService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KafkaConsumerLastRecordHeaderIT extends BaseEmbeddedKafkaTestSupport {
-    private static final String TOPIC = "last-record";
+    private static final String TOPIC = "KafkaConsumerLastRecordHeaderTest";
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
@@ -88,7 +88,8 @@ public class KafkaConsumerLastRecordHeaderIT extends BaseEmbeddedKafkaTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("kafka:" + TOPIC + "?groupId=A&autoOffsetReset=earliest&autoCommitEnable=false").to("mock:result");
+                from("kafka:" + TOPIC + "?groupId=" + TOPIC + "_GROUP&autoOffsetReset=earliest&autoCommitEnable=false")
+                        .to("mock:result");
             }
         };
     }

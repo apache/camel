@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpGetWithParamTest extends BaseNettyTest {
 
-    private String serverUri = "netty-http:http://localhost:" + getPort() + "/myservice";
+    private String serverUri = "netty-http:http://localhost:{{port}}/myservice";
     private MyParamsProcessor processor = new MyParamsProcessor();
 
     @Test

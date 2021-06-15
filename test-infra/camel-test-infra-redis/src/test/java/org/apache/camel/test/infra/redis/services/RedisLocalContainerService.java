@@ -51,7 +51,6 @@ public class RedisLocalContainerService implements RedisService, ContainerServic
                 .waitingFor(Wait.forListeningPort());
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(RedisProperties.SERVICE_ADDRESS, getServiceAddress());
         System.setProperty(RedisProperties.PORT, String.valueOf(port()));

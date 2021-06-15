@@ -26,7 +26,6 @@ public class JDBCRemoteService implements JDBCService {
         CONNECTION_URL = System.getProperty(JDBCProperties.JDBC_CONNECTION_URL);
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka.integration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -31,6 +32,7 @@ import org.apache.camel.component.kafka.KafkaEndpoint;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.AfterEach;
@@ -45,15 +47,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
-    public static final String TOPIC = "test";
+    public static final String TOPIC = "KafkaConsumerFullTest";
 
     @BindToRegistry("myHeaderDeserializer")
     private MyKafkaHeaderDeserializer deserializer = new MyKafkaHeaderDeserializer();
 
     @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+                    + "?groupId=" + TOPIC
+                    + "_GROUP&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
                     + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true"
+                    + "&interceptorClasses=org.apache.camel.component.kafka.KafkaConsumerFullTest$MyMockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -109,8 +113,9 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
-                .count());
+        assertEquals(5,
+                StreamSupport.stream(MyMockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
+                        .count());
 
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertFalse(headers.containsKey(skippedHeaderKey), "Should not receive skipped header");
@@ -197,10 +202,21 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
     @Test
     public void headerDeserializerCouldBeOverridden() {
         KafkaEndpoint kafkaEndpoint
-                = context.getEndpoint("kafka:random_topic?headerDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
+                = context.getEndpoint("kafka:KafkaConsumerFullTest.random_topic?headerDeserializer=#myHeaderDeserializer",
+                        KafkaEndpoint.class);
         assertIsInstanceOf(MyKafkaHeaderDeserializer.class, kafkaEndpoint.getConfiguration().getHeaderDeserializer());
     }
 
     private static class MyKafkaHeaderDeserializer extends DefaultKafkaHeaderDeserializer {
+    }
+
+    public static class MyMockConsumerInterceptor extends MockConsumerInterceptor {
+        public static ArrayList<ConsumerRecords<String, String>> recordsCaptured = new ArrayList<>();
+
+        @Override
+        public ConsumerRecords<String, String> onConsume(ConsumerRecords<String, String> consumerRecords) {
+            recordsCaptured.add(consumerRecords);
+            return consumerRecords;
+        }
     }
 }

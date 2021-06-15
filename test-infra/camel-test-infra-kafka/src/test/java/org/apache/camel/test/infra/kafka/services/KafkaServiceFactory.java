@@ -24,7 +24,7 @@ public final class KafkaServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<KafkaService> builder() {
+    public static SimpleTestServiceBuilder<AbstractKafkaService> builder() {
         return new SimpleTestServiceBuilder<>("kafka");
     }
 
