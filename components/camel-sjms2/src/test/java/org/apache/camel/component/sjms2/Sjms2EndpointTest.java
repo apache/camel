@@ -103,7 +103,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
         try {
             Endpoint sjms = context.getEndpoint("sjms2:queue:test?exchangePattern=" + ExchangePattern.InOnly);
             assertNotNull(sjms);
-            assertTrue(sjms.createExchange().getPattern().equals(ExchangePattern.InOnly));
+            assertEquals(ExchangePattern.InOnly, sjms.createExchange().getPattern());
         } catch (Exception e) {
             fail("Exception thrown: " + e.getLocalizedMessage());
         }
@@ -114,7 +114,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
         try {
             Endpoint sjms = context.getEndpoint("sjms2:queue:test?exchangePattern=" + ExchangePattern.InOut);
             assertNotNull(sjms);
-            assertTrue(sjms.createExchange().getPattern().equals(ExchangePattern.InOut));
+            assertEquals(ExchangePattern.InOut, sjms.createExchange().getPattern());
         } catch (Exception e) {
             fail("Exception thrown: " + e.getLocalizedMessage());
         }
