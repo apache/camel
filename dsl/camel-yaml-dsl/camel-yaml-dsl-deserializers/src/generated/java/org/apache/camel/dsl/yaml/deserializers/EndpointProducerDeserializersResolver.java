@@ -150,6 +150,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "http":
             case "https":
             case "hwcloud-functiongraph":
+            case "hwcloud-iam":
             case "hwcloud-smn":
             case "iec60870-client":
             case "iec60870-server":
