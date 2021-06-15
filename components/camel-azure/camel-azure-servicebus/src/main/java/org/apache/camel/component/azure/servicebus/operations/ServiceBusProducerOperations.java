@@ -41,11 +41,19 @@ public class ServiceBusProducerOperations {
     private Mono<Void> sendMessages(final Iterable<Object> data, final ServiceBusTransactionContext context) {
         final Iterable<ServiceBusMessage> messages = ServiceBusUtils.createServiceBusMessages(data);
 
+        if (ObjectHelper.isEmpty(context)) {
+            return client.sendMessages(messages);
+        }
+
         return client.sendMessages(messages, context);
     }
 
     private Mono<Void> sendMessage(final Object data, final ServiceBusTransactionContext context) {
         final ServiceBusMessage message = ServiceBusUtils.createServiceBusMessage(data);
+
+        if (ObjectHelper.isEmpty(context)) {
+            return client.sendMessage(message);
+        }
 
         return client.sendMessage(message, context);
     }
@@ -53,6 +61,11 @@ public class ServiceBusProducerOperations {
     private Mono<List<Long>> scheduleMessage(
             final Object data, final OffsetDateTime scheduledEnqueueTime, final ServiceBusTransactionContext context) {
         final ServiceBusMessage message = ServiceBusUtils.createServiceBusMessage(data);
+
+        if (ObjectHelper.isEmpty(context)) {
+            return client.scheduleMessage(message, scheduledEnqueueTime)
+                    .map(Collections::singletonList);
+        }
 
         return client.scheduleMessage(message, scheduledEnqueueTime, context)
                 .map(Collections::singletonList);
@@ -62,6 +75,11 @@ public class ServiceBusProducerOperations {
             final Iterable<Object> data, final OffsetDateTime scheduledEnqueueTime,
             final ServiceBusTransactionContext context) {
         final Iterable<ServiceBusMessage> messages = ServiceBusUtils.createServiceBusMessages(data);
+
+        if (ObjectHelper.isEmpty(context)) {
+            return client.scheduleMessages(messages, scheduledEnqueueTime)
+                    .collectList();
+        }
 
         return client.scheduleMessages(messages, scheduledEnqueueTime, context)
                 .collectList();

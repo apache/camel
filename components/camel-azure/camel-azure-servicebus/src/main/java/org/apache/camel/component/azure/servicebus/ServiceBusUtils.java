@@ -19,7 +19,7 @@ public class ServiceBusUtils {
         } else if (data instanceof BinaryData) {
             return new ServiceBusMessage((BinaryData) data);
         } else {
-            return new ServiceBusMessage(BinaryData.fromObject(data));
+            throw new IllegalArgumentException("Make sure your message data is in String, byte[] or BinaryData");
         }
     }
 

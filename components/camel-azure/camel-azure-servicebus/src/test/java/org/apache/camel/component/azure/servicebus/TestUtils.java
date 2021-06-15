@@ -24,8 +24,8 @@ import java.util.Properties;
 public final class TestUtils {
 
     public static final String CONNECTION_STRING = "connectionString";
-    public static final String BLOB_ACCOUNT_NAME = "blobAccountName";
-    public static final String BLOB_ACCESS_KEY = "blobAccessKey";
+    public static final String TOPIC_NAME = "topicName";
+    public static final String SUBSCRIPTION_NAME = "subscriptionName";
 
     private TestUtils() {
     }
@@ -43,16 +43,13 @@ public final class TestUtils {
 
     public static Properties loadAzureAccessFromJvmEnv() throws Exception {
         final Properties properties = new Properties();
-        if (System.getProperty(CONNECTION_STRING) == null
-                || System.getProperty(BLOB_ACCOUNT_NAME) == null
-                || System.getProperty(BLOB_ACCESS_KEY) == null) {
+        if (System.getProperty(CONNECTION_STRING) == null) {
             throw new Exception(
-                    "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -PfullTests -DconnectionString=string"
-                                + " -DblobAccountName=blob -DblobAccessKey=key");
+                    "Make sure to supply azure servicebus connectionString, e.g:  mvn verify -PfullTests -DconnectionString=string");
         }
         properties.setProperty(CONNECTION_STRING, System.getProperty(CONNECTION_STRING));
-        properties.setProperty(BLOB_ACCOUNT_NAME, System.getProperty(BLOB_ACCOUNT_NAME));
-        properties.setProperty(BLOB_ACCESS_KEY, System.getProperty(BLOB_ACCESS_KEY));
+        properties.setProperty(TOPIC_NAME, System.getProperty(TOPIC_NAME));
+        properties.setProperty(SUBSCRIPTION_NAME, System.getProperty(SUBSCRIPTION_NAME));
 
         return properties;
     }
