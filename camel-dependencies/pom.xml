@@ -37,7 +37,7 @@
     <activemq-version>5.16.2</activemq-version>
     <ahc-version>2.12.3</ahc-version>
     <apache-any23-version>2.3</apache-any23-version>
-    <apache-drill-version>1.18.0</apache-drill-version>
+    <apache-drill-version>1.19.0</apache-drill-version>
     <apache-gora-version>0.9</apache-gora-version>
     <apacheds-version>2.0.0.AM26</apacheds-version>
     <apicurio-version>1.0.16.Final</apicurio-version>
