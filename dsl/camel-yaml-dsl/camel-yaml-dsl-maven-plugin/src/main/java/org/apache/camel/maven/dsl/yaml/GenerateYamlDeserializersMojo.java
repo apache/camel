@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
@@ -528,6 +529,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             }
         }
 
+        if (implementType(info, ID_AWARE_CLASS)) {
+            setProperty.beginControlFlow("case $S:", "id");
+            setProperty.addStatement("String val = asText(node)");
+            setProperty.addStatement("target.setId(val)");
+            setProperty.addStatement("break");
+            setProperty.endControlFlow();
+        }
+
         if (implementType(info, OUTPUT_NODE_CLASS)) {
             caseAdded = true;
 
@@ -737,6 +746,52 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             }
 
             return true;
+        }
+
+        //
+        // XmlElementRef
+        //
+        if (hasAnnotation(field, XML_ELEMENT_REF_ANNOTATION_CLASS)) {
+            if (field.type().name().equals(LIST_CLASS)) {
+                Type parameterized = field.type().asParameterizedType().arguments().get(0);
+                ClassInfo refType = view.getClassByName(parameterized.name());
+
+                // special handling for Rest + Verb definition
+                if (extendsType(refType, VERB_DEFINITION_CLASS)) {
+                    for (ClassInfo ci : view.getAllKnownSubclasses(parameterized.name())) {
+                        Optional<String> name = annotationValue(ci, XML_ROOT_ELEMENT_ANNOTATION_CLASS,
+                            "name")
+                            .map(AnnotationValue::asString)
+                            .filter(value -> !"##default".equals(value));
+
+                        if (!name.isPresent()) {
+                            continue;
+                        }
+
+                        String fieldName = name.get();
+                        String fieldType = ci.name().toString();
+
+                        cb.beginControlFlow("case $S:", fieldName);
+                        cb.addStatement("java.util.List<$L> existing = target.get$L()", refType.name().toString(), StringHelper.capitalize(field.name()));
+                        cb.beginControlFlow("if (existing == null)");
+                        cb.addStatement("existing = new java.util.ArrayList<>()");
+                        cb.endControlFlow();
+                        cb.addStatement("java.util.List val = asFlatList(node, $L.class)", fieldType);
+                        cb.addStatement("existing.addAll(val)");
+                        cb.addStatement("target.set$L(existing)", StringHelper.capitalize(field.name()));
+                        cb.addStatement("break");
+                        cb.endControlFlow();
+
+                        annotations.add(
+                            yamlPropertyWithSubtype(
+                                fieldName,
+                                "array",
+                                fieldType,
+                                false)
+                        );
+                    }
+                }
+            }
         }
 
         //

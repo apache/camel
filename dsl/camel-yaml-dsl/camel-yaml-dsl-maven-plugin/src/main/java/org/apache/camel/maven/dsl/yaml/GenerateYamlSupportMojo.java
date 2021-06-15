@@ -100,6 +100,11 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = DotName.createSimple("org.apache.camel.model.ToDynamicDefinition");
     public static final DotName ERROR_HANDLER_BUILDER_CLASS
             = DotName.createSimple("org.apache.camel.builder.ErrorHandlerBuilder");
+    public static final DotName VERB_DEFINITION_CLASS
+            = DotName.createSimple("org.apache.camel.model.rest.VerbDefinition");
+    public static final DotName ID_AWARE_CLASS
+            = DotName.createSimple("org.apache.camel.spi.IdAware");
+
 
     public static final DotName YAML_TYPE_ANNOTATION
             = DotName.createSimple("org.apache.camel.spi.annotations.YamlType");
@@ -590,6 +595,13 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                                 .orElse(false);
     }
 
+    protected boolean extendsType(Type type, DotName superType) {
+        return extendsType(
+            view.getClassByName(type.name()),
+            superType
+        );
+    }
+
     protected boolean extendsType(ClassInfo ci, DotName superType) {
         if (ci == null) {
             return false;
@@ -606,6 +618,13 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         }
 
         return false;
+    }
+
+    protected boolean implementType(Type type, DotName interfaceType) {
+        return implementType(
+            view.getClassByName(type.name()),
+            interfaceType
+        );
     }
 
     protected boolean implementType(ClassInfo ci, DotName interfaceType) {

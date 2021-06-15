@@ -482,6 +482,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimeoutCheckerExecutorServiceRef(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -951,6 +956,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "scope": {
                     String val = asText(node);
                     target.setScope(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -1453,6 +1463,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setOnWhen(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -1503,6 +1518,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "when": {
                     java.util.List<org.apache.camel.model.WhenDefinition> val = asFlatList(node, org.apache.camel.model.WhenDefinition.class);
                     target.setWhenClauses(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -1575,6 +1595,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setResilience4jConfiguration(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -1642,6 +1667,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "operation": {
                     String val = asText(node);
                     target.setOperation(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -2101,6 +2131,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -3817,6 +3852,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
@@ -3975,6 +4015,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -4131,6 +4176,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "uri-delimiter": {
                     String val = asText(node);
                     target.setUriDelimiter(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -4334,6 +4384,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "share-unit-of-work": {
                     String val = asText(node);
                     target.setShareUnitOfWork(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -4968,6 +5023,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -5015,6 +5075,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -5251,6 +5316,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "uri": {
                     String val = asText(node);
                     target.setUri(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -5673,6 +5743,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "uri": {
                     String val = asText(node);
                     target.setUri(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -6179,6 +6254,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSkipDuplicate(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -6246,6 +6326,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
                     if (uri == null) {
@@ -6307,6 +6392,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
                     if (uri == null) {
@@ -6355,6 +6445,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setValidate(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -6389,6 +6484,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -6441,6 +6541,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "uri": {
                     String val = asText(node);
                     target.setUri(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -6505,6 +6610,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "uri": {
                     String val = asText(node);
                     target.setUri(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -7522,6 +7632,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setLoadBalancerType(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -7629,6 +7744,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setMessage(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -7688,6 +7808,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -7989,6 +8114,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -8248,6 +8378,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimeout(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -8479,6 +8614,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUseOriginalMessage(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -8586,6 +8726,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUseOriginalMessage(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -8630,6 +8775,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -8731,6 +8881,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -8768,6 +8923,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -8813,6 +8973,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "validate": {
                     String val = asText(node);
                     target.setValidate(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -9171,6 +9336,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -9209,6 +9379,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -9255,6 +9430,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "ref": {
                     String val = asText(node);
                     target.setRef(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -9343,6 +9523,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "timeout": {
                     String val = asText(node);
                     target.setTimeout(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -9503,6 +9688,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -9586,6 +9776,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "ref": {
                     String val = asText(node);
                     target.setRef(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -9944,6 +10139,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -10111,6 +10311,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "timeout": {
                     String val = asText(node);
                     target.setTimeout(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -10404,6 +10609,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -10455,6 +10665,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "pattern": {
                     String val = asText(node);
                     target.setPattern(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -10510,6 +10725,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setPattern(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -10555,6 +10775,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "property-name": {
                     String val = asText(node);
                     target.setPropertyName(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -10615,6 +10840,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "stream-config": {
                     org.apache.camel.model.config.StreamResequencerConfig val = asType(node, org.apache.camel.model.config.StreamResequencerConfig.class);
                     target.setResequencerConfig(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -10818,6 +11048,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -11073,6 +11308,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security-requirements", type = "object:org.apache.camel.model.rest.RestSecuritiesRequirement"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
                     @YamlProperty(name = "tag", type = "string"),
+                    @YamlProperty(name = "patch", type = "array:org.apache.camel.model.rest.PatchVerbDefinition"),
+                    @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadVerbDefinition"),
+                    @YamlProperty(name = "put", type = "array:org.apache.camel.model.rest.PutVerbDefinition"),
+                    @YamlProperty(name = "delete", type = "array:org.apache.camel.model.rest.DeleteVerbDefinition"),
+                    @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetVerbDefinition"),
+                    @YamlProperty(name = "post", type = "array:org.apache.camel.model.rest.PostVerbDefinition"),
                     @YamlProperty(name = "verb", type = "array:org.apache.camel.model.rest.VerbDefinition")
             }
     )
@@ -11145,9 +11386,74 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTag(val);
                     break;
                 }
+                case "patch": {
+                    java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PatchVerbDefinition.class);
+                    existing.addAll(val);
+                    target.setVerbs(existing);
+                    break;
+                }
+                case "head": {
+                    java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.HeadVerbDefinition.class);
+                    existing.addAll(val);
+                    target.setVerbs(existing);
+                    break;
+                }
+                case "put": {
+                    java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PutVerbDefinition.class);
+                    existing.addAll(val);
+                    target.setVerbs(existing);
+                    break;
+                }
+                case "delete": {
+                    java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.DeleteVerbDefinition.class);
+                    existing.addAll(val);
+                    target.setVerbs(existing);
+                    break;
+                }
+                case "get": {
+                    java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.GetVerbDefinition.class);
+                    existing.addAll(val);
+                    target.setVerbs(existing);
+                    break;
+                }
+                case "post": {
+                    java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PostVerbDefinition.class);
+                    existing.addAll(val);
+                    target.setVerbs(existing);
+                    break;
+                }
                 case "verb": {
                     java.util.List<org.apache.camel.model.rest.VerbDefinition> val = asFlatList(node, org.apache.camel.model.rest.VerbDefinition.class);
                     target.setVerbs(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -11902,6 +12208,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setRests(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -12024,6 +12335,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "message": {
                     String val = asText(node);
                     target.setMessage(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -12179,6 +12495,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -12343,6 +12664,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUriDelimiter(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
@@ -12438,6 +12764,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
                     if (uri == null) {
@@ -12527,6 +12858,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "timeout-in-milliseconds": {
                     String val = asText(node);
                     target.setTimeoutInMilliseconds(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -12636,6 +12972,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUnits(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -12676,6 +13017,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -13134,6 +13480,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -13399,6 +13750,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
@@ -13455,6 +13811,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setPattern(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -13501,6 +13862,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "name": {
                     String val = asText(node);
                     target.setName(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -13558,6 +13924,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "name": {
                     String val = asText(node);
                     target.setName(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -13762,6 +14133,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
@@ -13954,6 +14330,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimeout(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -14050,6 +14431,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -14126,6 +14512,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -14362,6 +14753,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimeUnit(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -14455,6 +14851,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "time-unit": {
                     String val = asText(node);
                     target.setTimeUnit(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -14594,6 +14995,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimePeriodMillis(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
@@ -14654,6 +15060,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "ref": {
                     String val = asText(node);
                     target.setRef(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -14763,6 +15174,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
                     if (uri == null) {
@@ -14855,6 +15271,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "uri": {
                     String val = asText(node);
                     target.setUri(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -15061,6 +15482,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setRef(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -15105,6 +15531,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -15229,6 +15660,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -15967,6 +16403,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
@@ -16007,6 +16448,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {
@@ -16234,6 +16680,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -16334,6 +16785,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "steps": {
                     setSteps(target, node);;
                     break;
@@ -16388,6 +16844,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "steps": {
@@ -16521,6 +16982,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "uri": {
                     String val = asText(node);
                     target.setUri(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 default: {

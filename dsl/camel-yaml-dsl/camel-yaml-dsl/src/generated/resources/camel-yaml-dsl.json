@@ -6498,14 +6498,50 @@
           "consumes" : {
             "type" : "string"
           },
+          "delete" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.DeleteVerbDefinition"
+            }
+          },
           "enable-cors" : {
             "type" : "string"
+          },
+          "get" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.GetVerbDefinition"
+            }
+          },
+          "head" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.HeadVerbDefinition"
+            }
+          },
+          "patch" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PatchVerbDefinition"
+            }
           },
           "path" : {
             "type" : "string"
           },
+          "post" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PostVerbDefinition"
+            }
+          },
           "produces" : {
             "type" : "string"
+          },
+          "put" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PutVerbDefinition"
+            }
           },
           "security-definitions" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesDefinition"
