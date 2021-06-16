@@ -114,8 +114,9 @@ public class FunctionGraphProducer extends DefaultProducer {
     }
 
     /**
-     * Update dynamic client configurations. Some endpoint parameters (operation, function name, package, and XCFFLogType) can also be passed via exchange properties,
-     * so they can be updated between each transaction. Since they can change, we must clear the previous transaction and update these parameters with their new values
+     * Update dynamic client configurations. Some endpoint parameters (operation, function name, package, and
+     * XCFFLogType) can also be passed via exchange properties, so they can be updated between each transaction. Since
+     * they can change, we must clear the previous transaction and update these parameters with their new values
      *
      * @param exchange
      */
