@@ -55,7 +55,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                         getRouteCollection().route(route);
                     } else if (item instanceof RouteDefinition) {
                         getRouteCollection().route((RouteDefinition) item);
-                    }  else if (item instanceof CamelContextCustomizer) {
+                    } else if (item instanceof CamelContextCustomizer) {
                         ((CamelContextCustomizer) item).configure(getCamelContext());
                     } else if (item instanceof OnExceptionDefinition) {
                         if (!getRouteCollection().getRoutes().isEmpty()) {
@@ -77,11 +77,10 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                             verb.setRest(definition);
                         }
                         getRestCollection().rest(definition);
-                    }
-                    else if (item instanceof RestConfigurationDefinition) {
+                    } else if (item instanceof RestConfigurationDefinition) {
                         ((RestConfigurationDefinition) item).asRestConfiguration(
-                            getCamelContext(),
-                            getCamelContext().getRestConfiguration());
+                                getCamelContext(),
+                                getCamelContext().getRestConfiguration());
                     }
                 }
             }

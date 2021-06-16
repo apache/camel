@@ -663,4 +663,12 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
         return false;
     }
+
+    protected Stream<ClassInfo> implementsOrExtends(Type ci) {
+        return Stream.concat(
+            view.getAllKnownSubclasses(ci.name()).stream(),
+            view.getAllKnownSubclasses(ci.name()).stream())
+                .distinct()
+                .sorted(Comparator.comparing(ClassInfo::name));
+    }
 }

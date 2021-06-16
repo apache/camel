@@ -658,9 +658,9 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             TypeSpecHolder.put(attributes, "node", "tod");
         }
 
-        for (AnnotationSpec spec: properties) {
+        properties.stream().sorted(Comparator.comparing(a -> a.members.get("name").toString())).forEach(spec -> {
             yamlTypeAnnotation.addMember("properties", "$L", spec);
-        }
+        });
 
         builder.addAnnotation(yamlTypeAnnotation.build());
 
@@ -758,14 +758,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
                 // special handling for Rest + Verb definition
                 if (extendsType(refType, VERB_DEFINITION_CLASS)) {
-                    for (ClassInfo ci : view.getAllKnownSubclasses(parameterized.name())) {
+                    implementsOrExtends(parameterized).forEach(ci -> {
                         Optional<String> name = annotationValue(ci, XML_ROOT_ELEMENT_ANNOTATION_CLASS,
                             "name")
                             .map(AnnotationValue::asString)
                             .filter(value -> !"##default".equals(value));
 
                         if (!name.isPresent()) {
-                            continue;
+                            return;
                         }
 
                         String fieldName = name.get();
@@ -789,7 +789,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                 fieldType,
                                 false)
                         );
-                    }
+                    });
                 }
             }
         }
