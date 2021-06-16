@@ -135,6 +135,7 @@ public class AS2MessageTest {
     private static final String DISPOSITION_NOTIFICATION_OPTIONS
             = "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
     private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
+    private static final String MDN_MESSAGE_TEMPLATE = "TBD";
 
     private static final HttpDateGenerator DATE_GENERATOR = new HttpDateGenerator();
 
@@ -179,7 +180,7 @@ public class AS2MessageTest {
 
         testServer = new AS2ServerConnection(
                 AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
-                certList.toArray(new Certificate[0]), signingKP.getPrivate(), decryptingKP.getPrivate());
+                certList.toArray(new Certificate[0]), signingKP.getPrivate(), decryptingKP.getPrivate(), MDN_MESSAGE_TEMPLATE);
         testServer.listen("*", new HttpRequestHandler() {
             @Override
             public void handle(HttpRequest request, HttpResponse response, HttpContext context)
