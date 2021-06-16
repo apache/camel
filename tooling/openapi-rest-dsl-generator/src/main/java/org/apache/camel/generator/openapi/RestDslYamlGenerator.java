@@ -119,6 +119,16 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
             paramAsArray(xmlMapper, node, v);
         }
 
+        // the root tag should be an array if we have restConfiguration
+        JsonNode rc = node.get("restConfiguration");
+        JsonNode r = node.get("rest");
+        if (rc != null && r != null) {
+            ArrayNode arr = xmlMapper.createArrayNode();
+            arr.add(xmlMapper.createObjectNode().set("rest-configuration", rc));
+            arr.add(xmlMapper.createObjectNode().set("rest", r));
+            node = arr;
+        }
+
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
         String yaml = mapper.writeValueAsString(node);
         return yaml;
