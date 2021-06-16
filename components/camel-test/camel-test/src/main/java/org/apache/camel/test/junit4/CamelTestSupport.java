@@ -299,7 +299,7 @@ public abstract class CamelTestSupport extends TestSupport {
     @Before
     public void setUp() throws Exception {
         LOG.info("********************************************************************************");
-        LOG.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        LOG.info("Testing: {} ({})", getTestMethodName(), getClass().getName());
         LOG.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
@@ -445,7 +445,7 @@ public abstract class CamelTestSupport extends TestSupport {
         if (isUseRouteBuilder()) {
             RoutesBuilder[] builders = createRouteBuilders();
             for (RoutesBuilder builder : builders) {
-                LOG.debug("Using created route builder: " + builder);
+                LOG.debug("Using created route builder: {}", builder);
                 context.addRoutes(builder);
             }
             replaceFromEndpoints();
@@ -459,9 +459,9 @@ public abstract class CamelTestSupport extends TestSupport {
             }
         } else {
             replaceFromEndpoints();
-            LOG.debug("Using route builder from the created context: " + context);
+            LOG.debug("Using route builder from the created context: {}", context);
         }
-        LOG.debug("Routing Rules are: " + context.getRoutes());
+        LOG.debug("Routing Rules are: {}", context.getRoutes());
 
         assertValidContext(context);
     }
@@ -486,8 +486,8 @@ public abstract class CamelTestSupport extends TestSupport {
         long time = watch.taken();
 
         LOG.info("********************************************************************************");
-        LOG.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
-        LOG.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+        LOG.info("Testing done: {} ({})", getTestMethodName(), getClass().getName());
+        LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time), time);
 
         // if we should dump route stats, then write that to a file
         if (isRouteCoverageEnabled()) {

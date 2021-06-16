@@ -95,7 +95,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         Class<?> testClass = getTestClass();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Loading ApplicationContext for locations [" + StringUtils.arrayToCommaDelimitedString(locations) + "].");
+            LOG.debug("Loading ApplicationContext for locations [{}].", StringUtils.arrayToCommaDelimitedString(locations));
         }
 
         try {
@@ -191,9 +191,9 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
 
             if (excludedClasses.length > 0) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Setting up package scanning excluded classes as ExcludeRoutes "
-                              + "annotation was found. Excluding [" + StringUtils.arrayToCommaDelimitedString(excludedClasses)
-                              + "].");
+                    LOG.debug(
+                            "Setting up package scanning excluded classes as ExcludeRoutes annotation was found. Excluding [{}]",
+                            StringUtils.arrayToCommaDelimitedString(excludedClasses));
                 }
 
                 if (parentContext == null) {

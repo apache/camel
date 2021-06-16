@@ -224,8 +224,8 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         this.groupListener.setZooKeeperPassword(zooKeeperPassword);
         ServiceHelper.startService(groupListener);
 
-        LOG.info("Attempting to become master for endpoint: " + route.getEndpoint() + " in " + getCamelContext()
-                 + " with singletonID: " + getGroupName());
+        LOG.info("Attempting to become master for endpoint: {} in {} with singletonID: {}", route.getEndpoint(),
+                getCamelContext(), getGroupName());
         thisNodeState = createNodeState();
         groupListener.updateState(thisNodeState);
     }

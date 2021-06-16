@@ -895,8 +895,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             IOHelper.close(os, "retrieve: " + name, LOG);
             boolean deleted = FileUtil.deleteFile(temp);
             if (!deleted) {
-                LOG.warn("Error occurred during retrieving file: " + name
-                         + " to local directory. Cannot delete local work file: " + temp);
+                LOG.warn("Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
+                        name, temp);
             }
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {

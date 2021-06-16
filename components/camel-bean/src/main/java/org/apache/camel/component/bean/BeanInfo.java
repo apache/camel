@@ -1016,9 +1016,9 @@ public class BeanInfo {
                     AnnotationExpressionFactory expressionFactory = (AnnotationExpressionFactory) object;
                     return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
                 } else {
-                    LOG.warn("Ignoring bad annotation: " + languageAnnotation + "on method: " + method
-                             + " which declares a factory: " + type.getName()
-                             + " which does not implement " + AnnotationExpressionFactory.class.getName());
+                    LOG.warn(
+                            "Ignoring bad annotation: {} on method: {} which declares a factory {} which does not implement {}",
+                            languageAnnotation, method, type.getName(), AnnotationExpressionFactory.class.getName());
                 }
             }
         }
