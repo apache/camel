@@ -35,6 +35,8 @@ import org.xml.sax.InputSource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
@@ -45,6 +47,8 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.util.ObjectHelper;
 
 public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator> {
+
+    private static final String[] VERBS = new String[] { "delete", "get", "head", "patch", "post", "put" };
 
     RestDslYamlGenerator(final OasDocument document) {
         super(document);
@@ -109,9 +113,29 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         XmlMapper xmlMapper = new XmlMapper();
         JsonNode node = xmlMapper.readTree(newXml.getBytes());
 
+        // param nodes should be an array list, but if there is only 1 param then there is only 1 <param> in XML
+        // and jackson parses that into a single node, so we need to change that into an array node
+        for (String v : VERBS) {
+            paramAsArray(xmlMapper, node, v);
+        }
+
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
         String yaml = mapper.writeValueAsString(node);
         return yaml;
+    }
+
+    private static void paramAsArray(XmlMapper xmlMapper, JsonNode node, String verb) {
+        JsonNode puts = node.path("rest").path(verb);
+        for (JsonNode n : puts) {
+            JsonNode p = n.get("param");
+            if (p != null && !p.isArray()) {
+                // it should be an array
+                ArrayNode arr = xmlMapper.createArrayNode();
+                arr.add(p);
+                ObjectNode on = (ObjectNode) n;
+                on.set("param", arr);
+            }
+        }
     }
 
 }
