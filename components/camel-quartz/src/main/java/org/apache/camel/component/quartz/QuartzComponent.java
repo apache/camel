@@ -475,11 +475,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
 
         // Set camel job counts to zero. We needed this to prevent shutdown in case there are multiple Camel contexts
         // that has not completed yet, and the last one with job counts to zero will eventually shutdown.
-        AtomicInteger number = (AtomicInteger) quartzContext.get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
-        if (number == null) {
-            number = new AtomicInteger();
-            quartzContext.put(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT, number);
-        }
+        quartzContext.computeIfAbsent(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT, k -> new AtomicInteger());
     }
 
     private SchedulerContext storeCamelContextInQuartzContext() throws SchedulerException {
