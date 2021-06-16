@@ -24,7 +24,7 @@ import java.net.ServerSocket;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AvailablePortFinderTest {
 
@@ -33,7 +33,7 @@ public class AvailablePortFinderTest {
         int p1 = AvailablePortFinder.getNextAvailable();
         ServerSocket socket = new ServerSocket(p1);
         int p2 = AvailablePortFinder.getNextAvailable();
-        assertFalse(p1 == p2, "Port " + p1 + " Port2 " + p2);
+        assertNotEquals(p1, p2, "Port " + p1 + " Port2 " + p2);
         socket.close();
     }
 
@@ -42,7 +42,7 @@ public class AvailablePortFinderTest {
         int p1 = AvailablePortFinder.getNextAvailable();
         DatagramSocket socket = new DatagramSocket(p1);
         int p2 = AvailablePortFinder.getNextAvailable();
-        assertFalse(p1 == p2, "Port " + p1 + " Port2 " + p2);
+        assertNotEquals(p1, p2, "Port " + p1 + " Port2 " + p2);
         socket.close();
     }
 
@@ -53,7 +53,7 @@ public class AvailablePortFinderTest {
         socket.setReuseAddress(false); // true is default for MulticastSocket, we wan to fail if port is occupied
         socket.bind(new InetSocketAddress(InetAddress.getLocalHost(), p1));
         int p2 = AvailablePortFinder.getNextAvailable();
-        assertFalse(p1 == p2, "Port " + p1 + " Port2 " + p2);
+        assertNotEquals(p1, p2, "Port " + p1 + " Port2 " + p2);
         socket.close();
     }
 

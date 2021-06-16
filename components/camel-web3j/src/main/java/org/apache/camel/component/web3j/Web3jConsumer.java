@@ -219,7 +219,7 @@ public class Web3jConsumer extends DefaultConsumer {
     }
 
     private void processError(Throwable throwable, String operation) {
-        LOG.debug("processError for operation: " + operation + " " + throwable);
+        LOG.debug("processError for operation: {} {}", operation, throwable.getMessage(), throwable);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.setException(throwable);
         processEvent(exchange);

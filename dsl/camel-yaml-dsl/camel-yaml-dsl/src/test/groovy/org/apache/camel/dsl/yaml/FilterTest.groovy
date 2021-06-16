@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.FailedToCreateRouteException
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
@@ -101,8 +102,6 @@ class FilterTest extends YamlTestSupport {
 
     def "filter (flow)"() {
         setup:
-            setFlowMode(YamlDeserializationMode.FLOW)
-
             loadRoutes '''
                 - from:
                     uri: "direct:route"
@@ -127,5 +126,25 @@ class FilterTest extends YamlTestSupport {
 
         then:
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "filter (flow disabled)"() {
+        setup:
+            setFlowMode(YamlDeserializationMode.CLASSIC)
+
+        when:
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - filter:
+                          simple: "${body.startsWith(\\"a\\")}"
+                      - to: "mock:filter"
+            '''
+
+            context.start()
+        then:
+            def ex = thrown(FailedToCreateRouteException)
+            ex.message.contains('Failed to create route')
     }
 }

@@ -297,8 +297,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                         }
                         ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment);
                     } catch (AlreadyEmittedException aeEx) {
-                        LOG.warn("Ignoring starting of subsegment " + name + " as its parent segment"
-                                 + " was already emitted to AWS.");
+                        LOG.warn("Ignoring starting of subsegment {} as its parent segment was already emitted to AWS.",
+                                name);
                     }
                 } else {
                     LOG.trace("Ignoring creation of XRay subsegment as no segment exists in the current thread");
@@ -326,8 +326,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                         }
                         ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment.getParent());
                     } catch (AlreadyEmittedException aeEx) {
-                        LOG.warn("Ignoring close of subsegment " + entity.getName()
-                                 + " as its parent segment was already emitted to AWS");
+                        LOG.warn("Ignoring close of subsegment {} as its parent segment was already emitted to AWS",
+                                entity.getName());
                     }
                 }
             } else {
@@ -415,8 +415,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                     }
                     exchange.setProperty(CURRENT_SEGMENT, subsegment);
                 } catch (AlreadyEmittedException aeEx) {
-                    LOG.warn("Ignoring opening of subsegment " + route.getId() + " as its parent segment "
-                             + segmentName + " was already emitted before.");
+                    LOG.warn("Ignoring opening of subsegment {} as its parent segment {} was already emitted before.",
+                            route.getId(), segmentName);
                 }
             }
         }

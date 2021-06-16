@@ -182,8 +182,6 @@ class KameletTest extends YamlTestSupport {
 
     def "kamelet (filter with flow)"() {
         setup:
-            setFlowMode(YamlDeserializationMode.FLOW)
-
             addTemplate('simple-filter') {
                 from('kamelet:source')
                     .filter().simple('${header.foo} == "a"')
@@ -217,8 +215,6 @@ class KameletTest extends YamlTestSupport {
 
     def "kamelet (aggregation with flow)"() {
         setup:
-            setFlowMode(YamlDeserializationMode.FLOW)
-
             addTemplate('aggregate') {
                 from('kamelet:source')
                         .aggregate()

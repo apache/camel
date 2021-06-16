@@ -67,6 +67,6 @@ public class MiloClientCachingConnectionManagerTest {
         instance.releaseConnection(connection2);
 
         MiloClientConnection connection3 = instance.createConnection(configuration, new MonitorFilterConfiguration());
-        Assertions.assertFalse(connection1 == connection3);
+        Assertions.assertNotSame(connection1, connection3);
     }
 }

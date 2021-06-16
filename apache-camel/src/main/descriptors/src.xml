@@ -54,8 +54,8 @@
         <exclude>**/cobertura.ser</exclude>
 
         <exclude>**/node_modules/**</exclude>
-        <exclude>docs/node</exclude>
-        <exclude>docs/.yarn</exclude>
+        <exclude>docs/node/**</exclude>
+        <exclude>docs/.yarn/**</exclude>
         <exclude>**/.flattened-pom.xml</exclude>
       </excludes>
     </fileSet>
