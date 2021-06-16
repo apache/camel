@@ -36,6 +36,7 @@ import org.xml.sax.InputSource;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -116,27 +117,44 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         // param nodes should be an array list, but if there is only 1 param then there is only 1 <param> in XML
         // and jackson parses that into a single node, so we need to change that into an array node
         for (String v : VERBS) {
-            paramAsArray(xmlMapper, node, v);
+            fixParamNodes(xmlMapper, node, v);
         }
-
-        // the root tag should be an array if we have restConfiguration
-        JsonNode rc = node.get("restConfiguration");
-        JsonNode r = node.get("rest");
-        if (rc != null && r != null) {
-            ArrayNode arr = xmlMapper.createArrayNode();
-            arr.add(xmlMapper.createObjectNode().set("rest-configuration", rc));
-            arr.add(xmlMapper.createObjectNode().set("rest", r));
-            node = arr;
-        }
+        // the root tag should be an array
+        node = fixRootNode(xmlMapper, node);
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
         String yaml = mapper.writeValueAsString(node);
         return yaml;
     }
 
-    private static void paramAsArray(XmlMapper xmlMapper, JsonNode node, String verb) {
-        JsonNode puts = node.path("rest").path(verb);
-        for (JsonNode n : puts) {
+    private static JsonNode fixRootNode(XmlMapper xmlMapper, JsonNode node) {
+        JsonNode r = node.get("rest");
+        if (r != null) {
+            ArrayNode arr = xmlMapper.createArrayNode();
+            // if rest configuration is present then put it in the top
+            JsonNode rc = node.get("restConfiguration");
+            if (rc != null) {
+                arr.add(xmlMapper.createObjectNode().set("rest-configuration", rc));
+            }
+            arr.add(xmlMapper.createObjectNode().set("rest", r));
+            node = arr;
+        }
+        return node;
+    }
+
+    private static void fixParamNodes(XmlMapper xmlMapper, JsonNode node, String verb) {
+        JsonNode verbs = node.path("rest").path(verb);
+        if (verbs == null || verbs.isMissingNode()) {
+            return;
+        }
+        if (!verbs.isArray()) {
+            // the rest has only 1 verb so fool the code below and wrap in an new array
+            ArrayNode arr = xmlMapper.createArrayNode();
+            arr.add(verbs);
+            verbs = arr;
+        }
+        for (JsonNode n : verbs) {
+            // fix param to always be an array node
             JsonNode p = n.get("param");
             if (p != null && !p.isArray()) {
                 // it should be an array
@@ -144,6 +162,20 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                 arr.add(p);
                 ObjectNode on = (ObjectNode) n;
                 on.set("param", arr);
+                p = arr;
+            }
+            // fix required to be boolean type
+            if (p != null) {
+                for (JsonNode pc : p) {
+                    JsonNode r = pc.get("required");
+                    if (r != null) {
+                        String t = r.textValue();
+                        boolean b = Boolean.parseBoolean(t);
+                        ObjectNode on = (ObjectNode) pc;
+                        BooleanNode bn = xmlMapper.createObjectNode().booleanNode(b);
+                        on.set("required", bn);
+                    }
+                }
             }
         }
     }
