@@ -1395,9 +1395,9 @@ public class AggregateProcessor extends AsyncProcessorSupport
                             // if we are exhausted, then move to dead letter channel
                             if (data != null && recoverable.getMaximumRedeliveries() > 0
                                     && data.redeliveryCounter >= recoverable.getMaximumRedeliveries()) {
-                                LOG.warn("The recovered exchange is exhausted after " + recoverable.getMaximumRedeliveries()
-                                         + " attempts, will now be moved to dead letter channel: "
-                                         + recoverable.getDeadLetterUri());
+                                LOG.warn("The recovered exchange is exhausted after {} attempts, will now be moved to "
+                                         + "dead letter channel: {}",
+                                        recoverable.getMaximumRedeliveries(), recoverable.getDeadLetterUri());
 
                                 // send to DLC
                                 try {

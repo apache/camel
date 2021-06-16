@@ -70,12 +70,11 @@ abstract class MongoAbstractConsumerThread implements Runnable {
                     doRun();
                 } catch (Exception e) {
                     if (keepRunning) {
-                        log.warn("Exception from consuming from MongoDB caused by " + e.getMessage()
-                                 + ". Will try again on next poll.");
+                        log.warn("Exception from consuming from MongoDB caused by {}. Will try again on next poll.",
+                                e.getMessage());
                     } else {
-                        log.warn("Exception from consuming from MongoDB caused by " + e.getMessage()
-                                 + ". ConsumerThread will be stopped.",
-                                e);
+                        log.warn("Exception from consuming from MongoDB caused by {}. ConsumerThread will be stopped.",
+                                e.getMessage(), e);
                     }
                 }
                 // regenerate the cursor, if reading failed for some reason
