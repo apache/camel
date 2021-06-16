@@ -43,18 +43,18 @@ public final class DropboxPropertyManager {
 
     private static Properties loadProperties() throws Exception {
         URL url = DropboxPropertyManager.class.getResource("/dropbox.properties");
-        InputStream inStream;
-        try {
-            inStream = url.openStream();
+
+        try (InputStream inStream = url.openStream()) {
+            properties = new Properties();
+            try {
+                properties.load(inStream);
+            } catch (IOException e) {
+                throw new DropboxException("dropbox.properties can't be read", e);
+            }
         } catch (IOException e) {
             throw new DropboxException("dropbox.properties could not be found", e);
         }
-        properties = new Properties();
-        try {
-            properties.load(inStream);
-        } catch (IOException e) {
-            throw new DropboxException("dropbox.properties can't be read", e);
-        }
+
         return properties;
     }
 }
