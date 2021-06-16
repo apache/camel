@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -155,7 +155,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         // we should have 2 files in result (one file for each of the 2 pages)
         assertEquals(2, resultList.size());
         // they should be different files
-        assertFalse(resultList.get(0).getId().equals(resultList.get(1)));
+        assertNotEquals(resultList.get(1).getId(), resultList.get(0).getId());
     }
 
     @Test
