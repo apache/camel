@@ -791,7 +791,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     public RawClient createRawClientFor(SalesforceEndpoint endpoint) throws SalesforceException {
-        SalesforceEndpointConfig endpointConfig = endpoint.getConfiguration();
         return new DefaultRawClient(httpClient, "", session, loginConfig);
     }
 
