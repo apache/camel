@@ -62,8 +62,6 @@ class AggregateTest extends YamlTestSupport {
 
     def 'aggregate (flow)'() {
         setup:
-            setFlowMode(YamlDeserializationMode.FLOW)
-
             loadRoutes '''
                 - beans:
                   - name: myAggregatorStrategy
@@ -94,7 +92,9 @@ class AggregateTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def 'aggregate (disabled)'() {
+    def 'aggregate (flow disabled)'() {
+        setup:
+            setFlowMode(YamlDeserializationMode.CLASSIC)
         when:
             loadRoutes '''
                 - beans:
