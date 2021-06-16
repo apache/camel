@@ -1289,7 +1289,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
                 throw new ResolveEndpointFailedException(uri, e);
             }
         }
-        final String rawUri = uri;
         // normalize uri so we can do endpoint hits with minor mistakes and
         // parameters is not in the same order
         if (!normalized) {
@@ -1320,7 +1319,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
                 throw new ResolveEndpointFailedException(uri, e);
             }
         }
-        final String rawUri = uri;
         // normalize uri so we can do endpoint hits with minor mistakes and
         // parameters is not in the same order
         if (!normalized) {
