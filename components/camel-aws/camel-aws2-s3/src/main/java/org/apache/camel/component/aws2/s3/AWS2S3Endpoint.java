@@ -97,8 +97,6 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Querying whether bucket [{}] already exists...", bucketName);
 
-        String prefix = getConfiguration().getPrefix();
-
         try {
             s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
             LOG.trace("Bucket [{}] already exists", bucketName);
