@@ -62,7 +62,7 @@ public class BoxSearchManager {
      */
     public Collection<BoxItem> searchFolder(String folderId, String query) {
         try {
-            LOG.debug("Searching folder(id=" + folderId + ") with query=" + query);
+            LOG.debug("Searching folder(id={}) with query={}", folderId, query);
 
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
@@ -90,7 +90,7 @@ public class BoxSearchManager {
             return result;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 }

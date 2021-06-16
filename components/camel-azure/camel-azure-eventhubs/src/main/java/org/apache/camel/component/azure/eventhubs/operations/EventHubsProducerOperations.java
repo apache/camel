@@ -66,7 +66,7 @@ public class EventHubsProducerOperations {
         sendAsyncEventsWithSuitableMethod(eventData, sendOptions)
                 .subscribe(unused -> LOG.debug("Processed one event..."), error -> {
                     // error but we continue
-                    LOG.debug("Error processing async exchange with error:" + error.getMessage());
+                    LOG.debug("Error processing async exchange with error: {}", error.getMessage());
                     exchange.setException(error);
                     asyncCallback.done(false);
                 }, () -> {

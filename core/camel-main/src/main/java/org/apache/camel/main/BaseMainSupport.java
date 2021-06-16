@@ -991,7 +991,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (hc == null) {
                 hc = hcr.resolveById(parent);
                 if (hc == null) {
-                    LOG.warn("Cannot resolve HealthCheck with id: " + parent + " from classpath.");
+                    LOG.warn("Cannot resolve HealthCheck with id: {} from classpath.", parent);
                     continue;
                 }
                 hcr.register(hc);
