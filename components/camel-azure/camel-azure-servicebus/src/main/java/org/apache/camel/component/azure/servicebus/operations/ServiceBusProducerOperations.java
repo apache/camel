@@ -16,7 +16,7 @@ public class ServiceBusProducerOperations {
     private final ServiceBusSenderAsyncClientWrapper client;
 
     public ServiceBusProducerOperations(ServiceBusSenderAsyncClientWrapper client) {
-        ObjectHelper.isNotEmpty(client);
+        ObjectHelper.notNull(client, "client");
 
         this.client = client;
     }
