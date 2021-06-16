@@ -28,6 +28,21 @@ import org.apache.camel.model.rest.VerbDefinition
 
 class RestTest extends YamlTestSupport {
 
+    def "load rest configuration"() {
+        when:
+            loadRoutes """
+                - beans:
+                  - name: myRestConsumerFactory
+                    type: ${MockRestConsumerFactory.name}
+                - rest-configuration:
+                    component: "servlet"
+                    context-path: "/foo"       
+            """
+        then:
+            context.restConfiguration.component == 'servlet'
+            context.restConfiguration.contextPath == '/foo'
+    }
+
     def "load rest (to)"() {
         when:
             loadRoutes """

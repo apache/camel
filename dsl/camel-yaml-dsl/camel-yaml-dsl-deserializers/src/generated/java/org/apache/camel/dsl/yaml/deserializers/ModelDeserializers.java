@@ -11309,11 +11309,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
                     @YamlProperty(name = "tag", type = "string"),
                     @YamlProperty(name = "patch", type = "array:org.apache.camel.model.rest.PatchVerbDefinition"),
+                    @YamlProperty(name = "post", type = "array:org.apache.camel.model.rest.PostVerbDefinition"),
                     @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadVerbDefinition"),
-                    @YamlProperty(name = "put", type = "array:org.apache.camel.model.rest.PutVerbDefinition"),
                     @YamlProperty(name = "delete", type = "array:org.apache.camel.model.rest.DeleteVerbDefinition"),
                     @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetVerbDefinition"),
-                    @YamlProperty(name = "post", type = "array:org.apache.camel.model.rest.PostVerbDefinition"),
+                    @YamlProperty(name = "put", type = "array:org.apache.camel.model.rest.PutVerbDefinition"),
                     @YamlProperty(name = "verb", type = "array:org.apache.camel.model.rest.VerbDefinition")
             }
     )
@@ -11396,22 +11396,22 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setVerbs(existing);
                     break;
                 }
+                case "post": {
+                    java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PostVerbDefinition.class);
+                    existing.addAll(val);
+                    target.setVerbs(existing);
+                    break;
+                }
                 case "head": {
                     java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
                     }
                     java.util.List val = asFlatList(node, org.apache.camel.model.rest.HeadVerbDefinition.class);
-                    existing.addAll(val);
-                    target.setVerbs(existing);
-                    break;
-                }
-                case "put": {
-                    java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PutVerbDefinition.class);
                     existing.addAll(val);
                     target.setVerbs(existing);
                     break;
@@ -11436,12 +11436,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setVerbs(existing);
                     break;
                 }
-                case "post": {
+                case "put": {
                     java.util.List<org.apache.camel.model.rest.VerbDefinition> existing = target.getVerbs();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
                     }
-                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PostVerbDefinition.class);
+                    java.util.List val = asFlatList(node, org.apache.camel.model.rest.PutVerbDefinition.class);
                     existing.addAll(val);
                     target.setVerbs(existing);
                     break;

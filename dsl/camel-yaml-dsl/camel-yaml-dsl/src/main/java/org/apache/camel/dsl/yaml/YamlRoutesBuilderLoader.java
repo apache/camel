@@ -23,6 +23,7 @@ import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
@@ -54,13 +55,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                         getRouteCollection().route(route);
                     } else if (item instanceof RouteDefinition) {
                         getRouteCollection().route((RouteDefinition) item);
-                    } else if (item instanceof RestDefinition) {
-                        RestDefinition definition = (RestDefinition) item;
-                        for (VerbDefinition verb : definition.getVerbs()) {
-                            verb.setRest(definition);
-                        }
-                        getRestCollection().rest(definition);
-                    } else if (item instanceof CamelContextCustomizer) {
+                    }  else if (item instanceof CamelContextCustomizer) {
                         ((CamelContextCustomizer) item).configure(getCamelContext());
                     } else if (item instanceof OnExceptionDefinition) {
                         if (!getRouteCollection().getRoutes().isEmpty()) {
@@ -76,6 +71,17 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                         errorHandler((ErrorHandlerBuilder) item);
                     } else if (item instanceof RouteTemplateDefinition) {
                         getRouteTemplateCollection().routeTemplate((RouteTemplateDefinition) item);
+                    } else if (item instanceof RestDefinition) {
+                        RestDefinition definition = (RestDefinition) item;
+                        for (VerbDefinition verb : definition.getVerbs()) {
+                            verb.setRest(definition);
+                        }
+                        getRestCollection().rest(definition);
+                    }
+                    else if (item instanceof RestConfigurationDefinition) {
+                        ((RestConfigurationDefinition) item).asRestConfiguration(
+                            getCamelContext(),
+                            getCamelContext().getRestConfiguration());
                     }
                 }
             }
