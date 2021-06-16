@@ -106,19 +106,20 @@ public class XRefCheckMojo extends AbstractMojo {
                 }
             }
             for (Path root : componentPaths.get(component)) {
-                Files.list(root.resolve("modules"))
-                        .filter(Files::isDirectory)
-                        .filter(p -> Files.isDirectory(p.resolve("pages")))
-                        .forEach(module -> {
-                            String m = module.getFileName().toString();
-                            Path pagesDir = module.resolve("pages");
-                            walk(pagesDir)
-                                    .filter(Files::isRegularFile)
-                                    .forEach(page -> {
-                                        Path rel = pagesDir.relativize(page);
-                                        pages.put(component + ":" + m + ":" + rel.toString(), page);
-                                    });
-                        });
+                try (Stream<Path> stream = Files.list(root.resolve("modules"))) {
+                    stream.filter(Files::isDirectory)
+                            .filter(p -> Files.isDirectory(p.resolve("pages")))
+                            .forEach(module -> {
+                                String m = module.getFileName().toString();
+                                Path pagesDir = module.resolve("pages");
+                                walk(pagesDir)
+                                        .filter(Files::isRegularFile)
+                                        .forEach(page -> {
+                                            Path rel = pagesDir.relativize(page);
+                                            pages.put(component + ":" + m + ":" + rel.toString(), page);
+                                        });
+                            });
+                }
             }
         }
 
