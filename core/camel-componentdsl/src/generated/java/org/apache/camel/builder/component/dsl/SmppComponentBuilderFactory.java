@@ -554,6 +554,23 @@ public interface SmppComponentBuilderFactory {
             return this;
         }
         /**
+         * When true, the SMSC delivery receipt would be requested only for the
+         * last segment of a multi-segment (long) message. For short messages,
+         * with only 1 segment the behaviour is unchanged.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param singleDLR the value to set
+         * @return the dsl builder
+         */
+        default SmppComponentBuilder singleDLR(boolean singleDLR) {
+            doSetProperty("singleDLR", singleDLR);
+            return this;
+        }
+        /**
          * Defines the maximum period of inactivity allowed after a transaction,
          * after which an SMPP entity may assume that the session is no longer
          * active. This timer may be active on either communicating SMPP entity
@@ -799,6 +816,7 @@ public interface SmppComponentBuilderFactory {
             case "pduProcessorDegree": getOrCreateConfiguration((SmppComponent) component).setPduProcessorDegree((java.lang.Integer) value); return true;
             case "pduProcessorQueueCapacity": getOrCreateConfiguration((SmppComponent) component).setPduProcessorQueueCapacity((java.lang.Integer) value); return true;
             case "sessionStateListener": getOrCreateConfiguration((SmppComponent) component).setSessionStateListener((org.jsmpp.session.SessionStateListener) value); return true;
+            case "singleDLR": getOrCreateConfiguration((SmppComponent) component).setSingleDLR((boolean) value); return true;
             case "transactionTimer": getOrCreateConfiguration((SmppComponent) component).setTransactionTimer((java.lang.Integer) value); return true;
             case "alphabet": getOrCreateConfiguration((SmppComponent) component).setAlphabet((byte) value); return true;
             case "dataCoding": getOrCreateConfiguration((SmppComponent) component).setDataCoding((byte) value); return true;

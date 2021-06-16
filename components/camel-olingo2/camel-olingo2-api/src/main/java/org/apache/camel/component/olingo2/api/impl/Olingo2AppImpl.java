@@ -956,9 +956,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         if (null != charset) {
             headers.put(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
         }
-        if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
-            headers.put(HttpHeaders.CONTENT_TYPE, getContentType());
-        }
+
+        headers.computeIfAbsent(HttpHeaders.CONTENT_TYPE, k -> getContentType());
 
         // add request headers
         headers.putAll(batchRequest.getHeaders());

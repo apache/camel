@@ -76,6 +76,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "fetchWaitMaxMs": getOrCreateConfiguration(target).setFetchWaitMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "groupid":
         case "groupId": getOrCreateConfiguration(target).setGroupId(property(camelContext, java.lang.String.class, value)); return true;
+        case "groupinstanceid":
+        case "groupInstanceId": getOrCreateConfiguration(target).setGroupInstanceId(property(camelContext, java.lang.String.class, value)); return true;
         case "headerdeserializer":
         case "headerDeserializer": getOrCreateConfiguration(target).setHeaderDeserializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class, value)); return true;
         case "headerfilterstrategy":
@@ -286,6 +288,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "fetchWaitMaxMs": return java.lang.Integer.class;
         case "groupid":
         case "groupId": return java.lang.String.class;
+        case "groupinstanceid":
+        case "groupInstanceId": return java.lang.String.class;
         case "headerdeserializer":
         case "headerDeserializer": return org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class;
         case "headerfilterstrategy":
@@ -492,6 +496,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "fetchWaitMaxMs": return getOrCreateConfiguration(target).getFetchWaitMaxMs();
         case "groupid":
         case "groupId": return getOrCreateConfiguration(target).getGroupId();
+        case "groupinstanceid":
+        case "groupInstanceId": return getOrCreateConfiguration(target).getGroupInstanceId();
         case "headerdeserializer":
         case "headerDeserializer": return getOrCreateConfiguration(target).getHeaderDeserializer();
         case "headerfilterstrategy":

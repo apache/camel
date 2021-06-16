@@ -204,9 +204,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                                                                  + " Make sure to use unique names on CamelContext when using multiple CamelContexts in the same MBeanServer.",
                                 context);
                     } else {
-                        LOG.warn("This CamelContext(" + context.getName() + ") will be registered using the name: "
-                                 + managementName
-                                 + " due to clash with an existing name already registered in MBeanServer.");
+                        LOG.warn("This CamelContext({}) will be registered using the name: {} due to clash with an "
+                                 + "existing name already registered in MBeanServer.",
+                                context.getName(), managementName);
                     }
                 }
             }

@@ -66,7 +66,7 @@ public class JCacheEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        cacheManager = JCacheHelper.createManager(configuration);
+        cacheManager = JCacheHelper.createManager(getCamelContext(), configuration);
     }
 
     @Override

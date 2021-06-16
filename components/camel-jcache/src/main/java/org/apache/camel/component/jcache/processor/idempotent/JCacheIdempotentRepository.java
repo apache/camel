@@ -18,6 +18,8 @@ package org.apache.camel.component.jcache.processor.idempotent;
 
 import javax.cache.Cache;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -29,13 +31,24 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "JCache based message id repository")
-public class JCacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+public class JCacheIdempotentRepository extends ServiceSupport implements CamelContextAware, IdempotentRepository {
+    private CamelContext camelContext;
     private JCacheConfiguration configuration;
     private Cache<String, Boolean> cache;
     private JCacheManager<String, Boolean> cacheManager;
 
     public JCacheIdempotentRepository() {
         this.configuration = new JCacheConfiguration();
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public JCacheConfiguration getConfiguration() {
@@ -94,12 +107,13 @@ public class JCacheIdempotentRepository extends ServiceSupport implements Idempo
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "camelContext");
+        ObjectHelper.notNull(configuration, "configuration");
+
         if (cache != null) {
             cacheManager = new JCacheManager<>(cache);
         } else {
-            cacheManager = JCacheHelper.createManager(
-                    ObjectHelper.notNull(configuration, "configuration"));
-
+            cacheManager = JCacheHelper.createManager(getCamelContext(), configuration);
             cache = cacheManager.getCache();
         }
     }

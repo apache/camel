@@ -49,8 +49,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -517,5 +516,45 @@ public class SmppSubmitMultiCommandTest {
         assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
         assertNull(exchange.getMessage().getHeader(SmppConstants.ERROR));
+    }
+
+    @Test
+    public void singleDlrRequestOverridesDeliveryReceiptFlag() throws Exception {
+        String longSms = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" +
+                         "12345678901234567890123456789012345678901234567890123456789012345678901";
+
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
+        exchange.getIn().setHeader(SmppConstants.SINGLE_DLR, "true");
+        exchange.getIn().setBody(longSms.getBytes());
+
+        Address[] destAddrs = new Address[] {
+                new Address(
+                        TypeOfNumber.UNKNOWN,
+                        NumberingPlanIndicator.UNKNOWN,
+                        "1717")
+        };
+
+        when(session.submitMultiple(eq("CMT"),
+                eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                eq(destAddrs),
+                eq(new ESMClass((byte) 64)), eq((byte) 0), eq((byte) 1),
+                (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT)),
+                eq(ReplaceIfPresentFlag.DEFAULT),
+                eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), any(byte[].class)))
+                        .thenReturn(new SubmitMultiResult("1"));
+
+        when(session.submitMultiple(eq("CMT"),
+                eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                eq(destAddrs),
+                eq(new ESMClass((byte) 64)), eq((byte) 0), eq((byte) 1),
+                (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                eq(ReplaceIfPresentFlag.DEFAULT),
+                eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), any(byte[].class)))
+                        .thenReturn(new SubmitMultiResult("2"));
+
+        command.execute(exchange);
+        assertEquals(Arrays.asList("1", "2"), exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals(2, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
 }

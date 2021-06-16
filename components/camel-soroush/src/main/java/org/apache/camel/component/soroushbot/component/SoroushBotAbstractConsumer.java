@@ -92,12 +92,10 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                 }
                 if (!shutdown) {
                     if (connectionRetry == 0) {
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("connecting to getMessage from soroush");
-                        }
+                        LOG.info("connecting to getMessage from soroush");
                     } else {
                         if (LOG.isInfoEnabled()) {
-                            LOG.info("connection is closed. retrying for the " + ordinal(connectionRetry) + " time(s)... ");
+                            LOG.info("connection is closed. retrying for the {} time(s)... ", ordinal(connectionRetry));
                         }
                     }
                 }
@@ -136,9 +134,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                 try {
                     SoroushMessage soroushMessage = objectMapper.readValue(data, SoroushMessage.class);
                     exchange.getIn().setBody(soroushMessage);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("event data is: " + data);
-                    }
+                    LOG.debug("event data is: {}", data);
                     // if autoDownload is true, download the resource if provided in the message
                     if (endpoint.isAutoDownload()) {
                         endpoint.handleDownloadFiles(soroushMessage);

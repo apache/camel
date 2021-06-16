@@ -47,7 +47,7 @@ from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&pref
 
 
 // component options: START
-The AWS 2 S3 Storage Service component supports 49 options, which are listed below.
+The AWS 2 S3 Storage Service component supports 50 options, which are listed below.
 
 
 
@@ -79,7 +79,8 @@ The AWS 2 S3 Storage Service component supports 49 options, which are listed bel
 | *destinationBucketSuffix* (consumer) | Define the destination bucket suffix to use when an object must be moved and moveAfterRead is set to true. |  | String
 | *doneFileName* (consumer) | If provided, Camel will only consume files if a done file exists. |  | String
 | *fileName* (consumer) | To get the object from the bucket with the given file name |  | String
-| *includeBody* (consumer) | If it is true, the S3Object exchange will be consumed and put into the body and closed. If false the S3Object stream will be put raw into the body and the headers will be set with the S3 object metadata. This option is strongly related to autocloseBody option. In case of setting includeBody to true because the S3Object stream will be consumed then it will also be closed in case of includeBody false then it will be up to the caller to close the S3Object stream. However setting autocloseBody to true when includeBody is false it will schedule to close the S3Object stream automatically on exchange completion. | true | boolean
+| *ignoreBody* (consumer) | If it is true, the S3 Object Body will be ignored completely, if it is set to false the S3 Object will be put in the body. Setting this to true, will override any behavior defined by includeBody option. | false | boolean
+| *includeBody* (consumer) | If it is true, the S3Object exchange will be consumed and put into the body and closed. If false the S3Object stream will be put raw into the body and the headers will be set with the S3 object metadata. This option is strongly related to autocloseBody option. In case of setting includeBody to true because the S3Object stream will be consumed then it will also be closed, while in case of includeBody false then it will be up to the caller to close the S3Object stream. However setting autocloseBody to true when includeBody is false it will schedule to close the S3Object stream automatically on exchange completion. | true | boolean
 | *includeFolders* (consumer) | If it is true, the folders/directories will be consumed. If it is false, they will be ignored, and Exchanges will not be created for those | true | boolean
 | *moveAfterRead* (consumer) | Move objects from S3 bucket to a different bucket after they have been retrieved. To accomplish the operation the destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object is not moved. | false | boolean
 | *prefix* (consumer) | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
@@ -91,7 +92,7 @@ The AWS 2 S3 Storage Service component supports 49 options, which are listed bel
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *multiPartUpload* (producer) | If it is true, camel will upload the file with multi part format, the part size is decided by the option of partSize | false | boolean
 | *namingStrategy* (producer) | The naming strategy to use in streaming upload mode. There are 2 enums and the value can be one of: progressive, random | progressive | AWSS3NamingStrategyEnum
-| *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, getObjectRange |  | AWS2S3Operations
+| *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 8 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, getObjectRange, createDownloadLink |  | AWS2S3Operations
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *restartingPolicy* (producer) | The restarting policy to use in streaming upload mode. There are 2 enums and the value can be one of: override, lastPart | override | AWSS3RestartingPolicyEnum
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
@@ -135,7 +136,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (67 parameters):
+=== Query Parameters (68 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -165,7 +166,8 @@ with the following path and query parameters:
 | *destinationBucketSuffix* (consumer) | Define the destination bucket suffix to use when an object must be moved and moveAfterRead is set to true. |  | String
 | *doneFileName* (consumer) | If provided, Camel will only consume files if a done file exists. |  | String
 | *fileName* (consumer) | To get the object from the bucket with the given file name |  | String
-| *includeBody* (consumer) | If it is true, the S3Object exchange will be consumed and put into the body and closed. If false the S3Object stream will be put raw into the body and the headers will be set with the S3 object metadata. This option is strongly related to autocloseBody option. In case of setting includeBody to true because the S3Object stream will be consumed then it will also be closed in case of includeBody false then it will be up to the caller to close the S3Object stream. However setting autocloseBody to true when includeBody is false it will schedule to close the S3Object stream automatically on exchange completion. | true | boolean
+| *ignoreBody* (consumer) | If it is true, the S3 Object Body will be ignored completely, if it is set to false the S3 Object will be put in the body. Setting this to true, will override any behavior defined by includeBody option. | false | boolean
+| *includeBody* (consumer) | If it is true, the S3Object exchange will be consumed and put into the body and closed. If false the S3Object stream will be put raw into the body and the headers will be set with the S3 object metadata. This option is strongly related to autocloseBody option. In case of setting includeBody to true because the S3Object stream will be consumed then it will also be closed, while in case of includeBody false then it will be up to the caller to close the S3Object stream. However setting autocloseBody to true when includeBody is false it will schedule to close the S3Object stream automatically on exchange completion. | true | boolean
 | *includeFolders* (consumer) | If it is true, the folders/directories will be consumed. If it is false, they will be ignored, and Exchanges will not be created for those | true | boolean
 | *maxConnections* (consumer) | Set the maxConnections parameter in the S3 client configuration | 60 | int
 | *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a negative number to set it as unlimited. | 10 | int
@@ -183,7 +185,7 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *multiPartUpload* (producer) | If it is true, camel will upload the file with multi part format, the part size is decided by the option of partSize | false | boolean
 | *namingStrategy* (producer) | The naming strategy to use in streaming upload mode. There are 2 enums and the value can be one of: progressive, random | progressive | AWSS3NamingStrategyEnum
-| *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, getObjectRange |  | AWS2S3Operations
+| *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 8 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, getObjectRange, createDownloadLink |  | AWS2S3Operations
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *restartingPolicy* (producer) | The restarting policy to use in streaming upload mode. There are 2 enums and the value can be one of: override, lastPart | override | AWSS3RestartingPolicyEnum
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String

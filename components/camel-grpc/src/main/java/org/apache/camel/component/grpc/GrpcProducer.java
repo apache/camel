@@ -35,7 +35,6 @@ import org.apache.camel.component.grpc.client.GrpcExchangeForwarder;
 import org.apache.camel.component.grpc.client.GrpcExchangeForwarderFactory;
 import org.apache.camel.component.grpc.client.GrpcResponseAggregationStreamObserver;
 import org.apache.camel.component.grpc.client.GrpcResponseRouterStreamObserver;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -164,8 +163,6 @@ public class GrpcProducer extends DefaultAsyncProducer {
         if (configuration.getNegotiationType() == NegotiationType.TLS) {
             ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
-
-            ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
 
             SslContextBuilder sslContextBuilder = GrpcSslContexts.forClient()
                     .sslProvider(SslProvider.OPENSSL)

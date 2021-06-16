@@ -9,12 +9,14 @@
 :supportLevel: Preview
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-functiongraph.adoc[opts=optional]
+//Manually maintained attributes
+:group: Huawei Cloud
 
 *Since Camel {since}*
 
 *{component-header}*
 
-Huawei Cloud FunctionGraph component allows you to integrate with https://www.huaweicloud.com/en-us/product/functiongraph.html[FunctionGraph] services provided by Huawei Cloud.
+Huawei Cloud FunctionGraph component allows you to integrate with https://www.huaweicloud.com/intl/en-us/product/functiongraph.html[FunctionGraph] provided by Huawei Cloud.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 

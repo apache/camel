@@ -41,6 +41,8 @@ public class CustomResolver implements YamlDeserializerResolver {
             case "template":
             case "org.apache.camel.model.RouteTemplateDefinition":
                 return new RouteTemplateDefinitionDeserializer();
+            case "org.apache.camel.model.RouteTemplateBeanDefinition":
+                return new RouteTemplateBeanDefinitionDeserializer();
             case "org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition":
                 return new NamedBeanDeserializer();
             case "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition":

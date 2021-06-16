@@ -29,7 +29,7 @@
     <artifactId>camel-kamelet-reify</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Kamelet Reifiy</name>
+    <name>Camel :: Kamelet Reifiy (deprecated)</name>
     <description>To call Kamelets (indirectly)</description>
 
     <dependencies>

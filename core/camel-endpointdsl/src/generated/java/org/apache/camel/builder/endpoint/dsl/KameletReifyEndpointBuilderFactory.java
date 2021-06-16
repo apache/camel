@@ -281,6 +281,7 @@ public interface KameletReifyEndpointBuilderFactory {
          * @param path delegateUri
          * @return the dsl builder
          */
+        @Deprecated
         default KameletReifyEndpointBuilder kameletReify(String path) {
             return KameletReifyEndpointBuilderFactory.endpointBuilder("kamelet-reify", path);
         }
@@ -302,12 +303,14 @@ public interface KameletReifyEndpointBuilderFactory {
          * @param path delegateUri
          * @return the dsl builder
          */
+        @Deprecated
         default KameletReifyEndpointBuilder kameletReify(
                 String componentName,
                 String path) {
             return KameletReifyEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static KameletReifyEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

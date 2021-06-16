@@ -53,6 +53,37 @@ public interface PubnubComponentBuilderFactory {
             extends
                 ComponentBuilder<PubNubComponent> {
         /**
+         * The component configurations.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.pubnub.PubNubConfiguration&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder configuration(
+                org.apache.camel.component.pubnub.PubNubConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * UUID to be used as a device identifier, a default UUID is generated
+         * if not passed.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uuid the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder uuid(java.lang.String uuid) {
+            doSetProperty("uuid", uuid);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -72,6 +103,21 @@ public interface PubnubComponentBuilderFactory {
         default PubnubComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Also subscribe to related presence information.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param withPresence the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder withPresence(boolean withPresence) {
+            doSetProperty("withPresence", withPresence);
             return this;
         }
         /**
@@ -99,6 +145,31 @@ public interface PubnubComponentBuilderFactory {
             return this;
         }
         /**
+         * The operation to perform. PUBLISH: Default. Send a message to all
+         * subscribers of a channel. FIRE: allows the client to send a message
+         * to BLOCKS Event Handlers. These messages will go directly to any
+         * Event Handlers registered on the channel. HERENOW: Obtain information
+         * about the current state of a channel including a list of unique
+         * user-ids currently subscribed to the channel and the total occupancy
+         * count. WHERENOW: Obtain information about the current list of
+         * channels to which a uuid is subscribed to. GETSTATE: Used to get
+         * key/value pairs specific to a subscriber uuid. State information is
+         * supplied as a JSON object of key/value pairs SETSTATE: Used to set
+         * key/value pairs specific to a subscriber uuid GETHISTORY: Fetches
+         * historical messages of a channel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder operation(java.lang.String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -118,6 +189,96 @@ public interface PubnubComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * If Access Manager is utilized, client will use this authKey in all
+         * restricted requests.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param authKey the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder authKey(java.lang.String authKey) {
+            doSetProperty("authKey", authKey);
+            return this;
+        }
+        /**
+         * If cipher is passed, all communications to/from PubNub will be
+         * encrypted.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param cipherKey the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder cipherKey(java.lang.String cipherKey) {
+            doSetProperty("cipherKey", cipherKey);
+            return this;
+        }
+        /**
+         * The publish key obtained from your PubNub account. Required when
+         * publishing messages.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param publishKey the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder publishKey(java.lang.String publishKey) {
+            doSetProperty("publishKey", publishKey);
+            return this;
+        }
+        /**
+         * The secret key used for message signing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Use SSL for secure transmission.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * The subscribe key obtained from your PubNub account. Required when
+         * subscribing to channels or listening for presence events.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param subscribeKey the value to set
+         * @return the dsl builder
+         */
+        default PubnubComponentBuilder subscribeKey(
+                java.lang.String subscribeKey) {
+            doSetProperty("subscribeKey", subscribeKey);
+            return this;
+        }
     }
 
     class PubnubComponentBuilderImpl
@@ -129,15 +290,32 @@ public interface PubnubComponentBuilderFactory {
         protected PubNubComponent buildConcreteComponent() {
             return new PubNubComponent();
         }
+        private org.apache.camel.component.pubnub.PubNubConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.pubnub.PubNubComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.pubnub.PubNubConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "configuration": ((PubNubComponent) component).setConfiguration((org.apache.camel.component.pubnub.PubNubConfiguration) value); return true;
+            case "uuid": getOrCreateConfiguration((PubNubComponent) component).setUuid((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((PubNubComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "withPresence": getOrCreateConfiguration((PubNubComponent) component).setWithPresence((boolean) value); return true;
             case "lazyStartProducer": ((PubNubComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((PubNubComponent) component).setOperation((java.lang.String) value); return true;
             case "autowiredEnabled": ((PubNubComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "authKey": getOrCreateConfiguration((PubNubComponent) component).setAuthKey((java.lang.String) value); return true;
+            case "cipherKey": getOrCreateConfiguration((PubNubComponent) component).setCipherKey((java.lang.String) value); return true;
+            case "publishKey": getOrCreateConfiguration((PubNubComponent) component).setPublishKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((PubNubComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "secure": getOrCreateConfiguration((PubNubComponent) component).setSecure((boolean) value); return true;
+            case "subscribeKey": getOrCreateConfiguration((PubNubComponent) component).setSubscribeKey((java.lang.String) value); return true;
             default: return false;
             }
         }

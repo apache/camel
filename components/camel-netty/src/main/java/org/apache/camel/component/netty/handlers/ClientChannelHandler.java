@@ -68,20 +68,19 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Exception caught at Channel: {}", ctx.channel(), cause);
         }
-
         if (exceptionHandled) {
             // ignore subsequent exceptions being thrown
             return;
         }
-
         exceptionHandled = true;
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Closing channel as an exception was thrown from Netty", cause);
-        }
+        Exchange exchange = null;
 
         NettyCamelState state = getState(ctx, cause);
-        Exchange exchange = state != null ? state.getExchange() : null;
+        if (state != null) {
+            state.onExceptionCaught();
+            exchange = state.getExchange();
+        }
 
         // the state may not be set
         if (exchange != null) {
@@ -94,6 +93,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             }
 
             // close channel in case an exception was thrown
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Closing channel as an exception was thrown from Netty", cause);
+            }
             NettyHelper.close(ctx.channel());
 
             // signal callback

@@ -28,7 +28,6 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.CopyRequest;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -180,7 +179,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
             });
 
             // use default consumer callback
-            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
         }
 

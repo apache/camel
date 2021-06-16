@@ -467,7 +467,7 @@ public class KafkaProducerTest {
         List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
         assertNotNull(recordMetaData1);
         assertEquals(recordMetaData1.size(), numMetadata, "Expected one recordMetaData");
-        assertTrue(recordMetaData1.get(0) != null);
+        assertNotNull(recordMetaData1.get(0));
     }
 
     private void assertRecordMetadataExistsForEachAggregatedExchange() {

@@ -140,9 +140,7 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.HTTP_URI, request.getRequestURI());
         headers.put(Exchange.HTTP_PATH, rawPath);
         // only set content type if not already extracted
-        if (!headers.containsKey(Exchange.CONTENT_TYPE)) {
-            headers.put(Exchange.CONTENT_TYPE, request.getContentType());
-        }
+        headers.computeIfAbsent(Exchange.CONTENT_TYPE, k -> request.getContentType());
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("HTTP method {}", request.getMethod());

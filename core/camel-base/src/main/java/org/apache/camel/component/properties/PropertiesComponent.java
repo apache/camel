@@ -617,14 +617,13 @@ public class PropertiesComponent extends ServiceSupport
                         LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
                     } else if (obj != null) {
                         LOG.warn(
-                                "PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: "
-                                 + type.getName());
+                                "PropertiesComponent cannot add custom PropertiesSource as the type is not a {} but: {}",
+                                PropertiesSource.class.getName(), type.getName());
                     }
                 }
             } catch (Exception e) {
-                LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage()
-                          + ". This exception is ignored",
-                        e);
+                LOG.debug("Error discovering and using custom PropertiesSource due to {}. This exception is ignored",
+                        e.getMessage(), e);
             }
         }
 

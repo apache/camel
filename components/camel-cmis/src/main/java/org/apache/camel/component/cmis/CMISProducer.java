@@ -520,9 +520,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     private Folder storeFolder(Folder parentFolder, Map<String, Object> cmisProperties) throws Exception {
-        if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
-            cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
-        }
+        cmisProperties.putIfAbsent(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
+
         LOG.debug("Creating folder with properties: {}", cmisProperties);
         return parentFolder.createFolder(cmisProperties);
     }
@@ -530,9 +529,7 @@ public class CMISProducer extends DefaultProducer {
     private Document storeDocument(
             Folder parentFolder, Map<String, Object> cmisProperties, ContentStream contentStream, String versioning)
             throws Exception {
-        if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
-            cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
-        }
+        cmisProperties.putIfAbsent(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
 
         VersioningState versioningState = VersioningState.NONE;
 

@@ -388,9 +388,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // it has completed its current task
             ShutdownRunningTask current = order.getRoute().getShutdownRunningTask();
             if (current != ShutdownRunningTask.CompleteCurrentTaskOnly) {
-                LOG.debug("Changing shutdownRunningTask from {} to " + ShutdownRunningTask.CompleteCurrentTaskOnly
-                          + " on route {} to shutdown faster",
-                        current, order.getRoute().getId());
+                LOG.debug("Changing shutdownRunningTask from {} to {} on route {} to shutdown faster",
+                        ShutdownRunningTask.CompleteCurrentTaskOnly, current, order.getRoute().getId());
                 order.getRoute().setShutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly);
             }
 
@@ -639,8 +638,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     // we will stop it later, but for now it must run to be able to help all inflight messages
                     // be safely completed
                     deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                    LOG.debug("Route: " + order.getRoute().getId()
-                              + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
+                    LOG.debug("Route: {} {}", order.getRoute().getId(),
+                            suspendOnly ? "shutdown deferred." : "suspension deferred.");
                 }
             }
 

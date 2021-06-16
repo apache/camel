@@ -29,7 +29,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RequestReplyWithProducerIssueTest extends CamelTestSupport {
 
@@ -44,7 +44,7 @@ public class RequestReplyWithProducerIssueTest extends CamelTestSupport {
         producer.process(exchange);
         producer.stop();
 
-        assertTrue("Bye World".equals(exchange.getMessage().getBody()));
+        assertEquals("Bye World", exchange.getMessage().getBody());
     }
 
     @Override

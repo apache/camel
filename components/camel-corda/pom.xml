@@ -41,12 +41,6 @@
             <groupId>net.corda</groupId>
             <artifactId>corda-rpc</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
 
         <!-- for testing -->
         <dependency>

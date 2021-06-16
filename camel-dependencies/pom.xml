@@ -37,7 +37,7 @@
     <activemq-version>5.16.2</activemq-version>
     <ahc-version>2.12.3</ahc-version>
     <apache-any23-version>2.3</apache-any23-version>
-    <apache-drill-version>1.18.0</apache-drill-version>
+    <apache-drill-version>1.19.0</apache-drill-version>
     <apache-gora-version>0.9</apache-gora-version>
     <apacheds-version>2.0.0.AM26</apacheds-version>
     <apicurio-version>1.0.16.Final</apicurio-version>
@@ -53,7 +53,7 @@
     <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
     <asm-version>8.0.1</asm-version>
     <aspectj-version>1.9.6</aspectj-version>
-    <assertj-version>3.19.0</assertj-version>
+    <assertj-version>3.20.0</assertj-version>
     <asterisk-java-version>3.12.0</asterisk-java-version>
     <atlasmap-version>2.2.2</atlasmap-version>
     <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
@@ -66,14 +66,14 @@
     <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.1.0</awaitility-version>
-    <aws-java-sdk2-version>2.16.81</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.16.85</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-jackson2-version>2.11.3</azure-jackson2-version>
     <azure-sdk-bom-version>1.0.3</azure-sdk-bom-version>
     <beanio-version>2.1.0</beanio-version>
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
-    <bouncycastle-version>1.68</bouncycastle-version>
+    <bouncycastle-version>1.69</bouncycastle-version>
     <box-java-sdk-version>2.54.0</box-java-sdk-version>
     <braintree-gateway-version>3.10.0</braintree-gateway-version>
     <brave-zipkin-version>5.13.3</brave-zipkin-version>
@@ -135,7 +135,7 @@
     <commons-dbcp-version>1.4</commons-dbcp-version>
     <commons-dbcp2-version>2.8.0</commons-dbcp2-version>
     <commons-exec-version>1.3</commons-exec-version>
-    <commons-io-version>2.8.0</commons-io-version>
+    <commons-io-version>2.10.0</commons-io-version>
     <commons-lang-version>2.6</commons-lang-version>
     <commons-lang3-version>3.12.0</commons-lang3-version>
     <commons-logging-version>1.2</commons-logging-version>
@@ -188,12 +188,6 @@
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <facebook4j-core-version>2.4.13</facebook4j-core-version>
     <fastjson-version>1.2.76</fastjson-version>
-    <felix-configadmin-version>1.9.20</felix-configadmin-version>
-    <felix-connect-version>0.2.0</felix-connect-version>
-    <felix-fileinstall-version>3.6.8</felix-fileinstall-version>
-    <felix-framework-version>5.6.12</felix-framework-version>
-    <felix-scr-annotations-version>1.12.0</felix-scr-annotations-version>
-    <felix-scr-version>2.1.26</felix-scr-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-version>4.0.5</flatpack-version>
     <flink-version>1.13.0</flink-version>
@@ -313,7 +307,7 @@
     <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
     <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
     <jbpm-version>7.54.0.Final</jbpm-version>
-    <jcache-bundle-version>1.1.0_1</jcache-bundle-version>
+    <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
     <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
     <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
     <jclouds-version>2.2.1</jclouds-version>
@@ -327,7 +321,7 @@
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
     <jetty9-version>9.4.40.v20210413</jetty9-version>
-    <jgit-version>5.11.1.202105131744-r</jgit-version>
+    <jgit-version>5.12.0.202106070339-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
     <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
@@ -336,7 +330,7 @@
     <jira-guava-version>26.0-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>
     <jnats-version>2.11.4</jnats-version>
-    <jodatime2-bundle-version>2.10.6</jodatime2-bundle-version>
+    <jodatime2-version>2.10.10</jodatime2-version>
     <johnzon-version>1.2.12</johnzon-version>
     <jolokia-version>1.6.2</jolokia-version>
     <jolt-version>0.1.1</jolt-version>
@@ -366,7 +360,7 @@
     <jython-version>2.5.3</jython-version>
     <jzlib-version>1.1.3</jzlib-version>
     <kafka-version>2.8.0</kafka-version>
-    <kotlin-version>1.5.0</kotlin-version>
+    <kotlin-version>1.5.10</kotlin-version>
     <kubernetes-client-version>5.4.1</kubernetes-client-version>
     <kubernetes-model-version>5.4.1</kubernetes-model-version>
     <kudu-version>1.14.0</kudu-version>
@@ -395,7 +389,7 @@
     <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
     <maven-model-version>3.2.5</maven-model-version>
-    <maven-owasp-plugin-version>6.2.0</maven-owasp-plugin-version>
+    <maven-owasp-plugin-version>6.2.2</maven-owasp-plugin-version>
     <maven-plugin-annotations-version>3.6.0</maven-plugin-annotations-version>
     <maven-plugin-plugin-version>3.6.0</maven-plugin-plugin-version>
     <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
@@ -420,7 +414,7 @@
     <minimal-json-version>0.9.5</minimal-json-version>
     <minio-version>8.2.1</minio-version>
     <mock-javamail-version>1.9</mock-javamail-version>
-    <mockito-version>3.10.0</mockito-version>
+    <mockito-version>3.11.1</mockito-version>
     <mockwebserver-version>0.1.8</mockwebserver-version>
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mongo-java-driver-version>4.1.0</mongo-java-driver-version>
@@ -451,12 +445,11 @@
     <opentracing-version>0.33.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
-    <optaplanner-version>8.6.0.Final</optaplanner-version>
+    <optaplanner-version>8.7.0.Final</optaplanner-version>
     <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
-    <osgi-version>6.0.0</osgi-version>
     <paho-version>1.2.5</paho-version>
     <partial-build-plugin-version>2.7</partial-build-plugin-version>
-    <pdfbox-version>2.0.23</pdfbox-version>
+    <pdfbox-version>2.0.24</pdfbox-version>
     <pgjdbc-driver-version>42.2.14</pgjdbc-driver-version>
     <pgjdbc-ng-driver-version>0.8.6</pgjdbc-ng-driver-version>
     <powermock-version>2.0.7</powermock-version>
@@ -512,13 +505,11 @@
     <smallrye-health-version>3.0.2</smallrye-health-version>
     <smallrye-metrics-version>3.0.3</smallrye-metrics-version>
     <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
-    <snakeyaml-version>1.28</snakeyaml-version>
+    <snakeyaml-version>1.29</snakeyaml-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
     <solr-version>8.8.2</solr-version>
     <solr-version-range>[8,9)</solr-version-range>
     <solr-zookeeper-version>3.6.2</solr-zookeeper-version>
-    <sourcecheckExcludes></sourcecheckExcludes>
-    <sourcecheckExcludesComma></sourcecheckExcludesComma>
     <spark-version>2.4.6</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
     <spock-version>2.0-M4-groovy-3.0</spock-version>
@@ -531,7 +522,7 @@
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
     <spring-ws-version>3.0.10.RELEASE</spring-ws-version>
-    <spring5-version>5.3.7</spring5-version>
+    <spring5-version>5.3.8</spring5-version>
     <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
     <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
     <squareup-okio-version>1.17.2</squareup-okio-version>

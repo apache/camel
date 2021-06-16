@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -232,6 +233,16 @@ public final class DefaultConfigurationConfigurer {
                     .setStatisticsLevel(config.getJmxManagementStatisticsLevel());
             camelContext.getManagementStrategy().getManagementAgent()
                     .setManagementNamePattern(config.getJmxManagementNamePattern());
+        }
+
+        // global options
+        if (config.getGlobalOptions() != null) {
+            Map<String, String> map = camelContext.getGlobalOptions();
+            if (map == null) {
+                map = new HashMap<>();
+            }
+            map.putAll(config.getGlobalOptions());
+            camelContext.setGlobalOptions(map);
         }
 
         // global endpoint configurations
