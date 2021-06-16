@@ -233,7 +233,7 @@ public class CordaConsumer extends DefaultConsumer {
     }
 
     private void processError(Throwable throwable, String operation) {
-        LOG.debug("processError for operation: " + operation + " " + throwable);
+        LOG.debug("processError for operation: {} {}", operation, throwable);
         Exchange exchange = createExchange(true);
         exchange.setException(throwable);
         processEvent(exchange);

@@ -2675,11 +2675,11 @@ public abstract class AbstractCamelContext extends BaseService
                 strategy.onContextInitializing(this);
             } catch (VetoCamelContextStartException e) {
                 // okay we should not start Camel since it was vetoed
-                LOG.warn("Lifecycle strategy " + strategy + " vetoed initializing CamelContext ({}) due to: {}", getName(),
+                LOG.warn("Lifecycle strategy {} vetoed initializing CamelContext ({}) due to: {}", strategy, getName(),
                         e.getMessage());
                 throw e;
             } catch (Exception e) {
-                LOG.warn("Lifecycle strategy " + strategy + " failed initializing CamelContext ({}) due to: {}", getName(),
+                LOG.warn("Lifecycle strategy {} failed initializing CamelContext ({}) due to: {}", strategy, getName(),
                         e.getMessage());
                 throw e;
             }
@@ -2765,11 +2765,11 @@ public abstract class AbstractCamelContext extends BaseService
                     strategy.onContextInitialized(this);
                 } catch (VetoCamelContextStartException e) {
                     // okay we should not start Camel since it was vetoed
-                    LOG.warn("Lifecycle strategy " + strategy + " vetoed initializing CamelContext ({}) due to: {}", getName(),
+                    LOG.warn("Lifecycle strategy {} vetoed initializing CamelContext ({}) due to: {}", strategy, getName(),
                             e.getMessage());
                     throw e;
                 } catch (Exception e) {
-                    LOG.warn("Lifecycle strategy " + strategy + " failed initializing CamelContext ({}) due to: {}", getName(),
+                    LOG.warn("Lifecycle strategy {} failed initializing CamelContext ({}) due to: {}", strategy, getName(),
                             e.getMessage());
                     throw e;
                 }
@@ -3053,11 +3053,11 @@ public abstract class AbstractCamelContext extends BaseService
                     strategy.onContextStart(this);
                 } catch (VetoCamelContextStartException e) {
                     // okay we should not start Camel since it was vetoed
-                    LOG.warn("Lifecycle strategy " + strategy + " vetoed starting CamelContext ({}) due to: {}", getName(),
+                    LOG.warn("Lifecycle strategy {} vetoed starting CamelContext ({}) due to: {}", strategy, getName(),
                             e.getMessage());
                     throw e;
                 } catch (Exception e) {
-                    LOG.warn("Lifecycle strategy " + strategy + " failed starting CamelContext ({}) due to: {}", getName(),
+                    LOG.warn("Lifecycle strategy {} failed starting CamelContext ({}) due to: {}", strategy, getName(),
                             e.getMessage());
                     throw e;
                 }
@@ -3998,7 +3998,7 @@ public abstract class AbstractCamelContext extends BaseService
             LifecycleStrategy lifecycle = factory.createLifecycle(this);
             factory.setupManagement(this, strategy, lifecycle);
         } catch (Exception e) {
-            LOG.warn("Error setting up management due " + e.getMessage());
+            LOG.warn("Error setting up management due {}", e.getMessage());
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }

@@ -33,7 +33,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class GoogleCloudFunctionsConfigurationTest extends CamelTestSupport {
 
@@ -84,7 +84,7 @@ public class GoogleCloudFunctionsConfigurationTest extends CamelTestSupport {
                 .createEndpoint(String.format("google-functions://%s?client=#myClient", functionName));
 
         assertEquals(endpoint.getConfiguration().getFunctionName(), functionName);
-        assertTrue(endpoint.getConfiguration().getClient() == clientMock);
+        assertSame(clientMock, endpoint.getConfiguration().getClient());
 
         mockServiceHelper.stop();
     }
