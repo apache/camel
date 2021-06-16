@@ -270,6 +270,7 @@ public class Lambda2Producer extends DefaultProducer {
             }
 
             if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())
+                    || ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))
                     || (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
                             && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
                 builder.code(functionCode.build());
