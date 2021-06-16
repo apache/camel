@@ -32,15 +32,15 @@ public class StringHelperTest {
     @Test
     public void testSimpleSanitized() {
         String out = StringHelper.sanitize("hello");
-        assertTrue(out.indexOf(':') == -1, "Should not contain : ");
-        assertTrue(out.indexOf('.') == -1, "Should not contain . ");
+        assertEquals(-1, out.indexOf(':'), "Should not contain : ");
+        assertEquals(-1, out.indexOf('.'), "Should not contain . ");
     }
 
     @Test
     public void testNotFileFriendlySimpleSanitized() {
         String out = StringHelper.sanitize("c:\\helloworld");
-        assertTrue(out.indexOf(':') == -1, "Should not contain : ");
-        assertTrue(out.indexOf('.') == -1, "Should not contain . ");
+        assertEquals(-1, out.indexOf(':'), "Should not contain : ");
+        assertEquals(-1, out.indexOf('.'), "Should not contain . ");
     }
 
     @Test

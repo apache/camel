@@ -198,7 +198,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsOperations operations = consumer.getEndpointMessageListener().getTemplate();
         assertTrue(operations instanceof JmsTemplate);
         JmsTemplate template = (JmsTemplate) operations;
-        assertTrue(template.getDeliveryMode() == DeliveryMode.NON_PERSISTENT,
+        assertEquals(DeliveryMode.NON_PERSISTENT, template.getDeliveryMode(),
                 "Wrong delivery mode on reply template; expected  " + " DeliveryMode.NON_PERSISTENT but was DeliveryMode.PERSISTENT");
     }
 

@@ -29,6 +29,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport {
@@ -68,7 +70,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT)
                 .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start").send();
 
-        assertTrue(getTestCache().getIfPresent(key) != null);
+        assertNotNull(getTestCache().getIfPresent(key));
         assertEquals(val, getTestCache().getIfPresent(key));
     }
 
@@ -168,7 +170,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        assertFalse(cache.getIfPresent(key) != null);
+        assertNull(cache.getIfPresent(key));
     }
 
     @Test
