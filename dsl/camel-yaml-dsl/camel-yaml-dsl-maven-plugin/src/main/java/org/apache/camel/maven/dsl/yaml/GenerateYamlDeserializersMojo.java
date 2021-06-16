@@ -833,21 +833,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             );
                         } else {
                             ClassInfo ci = view.getClassByName(parametrizedType.name());
-
-                            String name = firstPresent(
-                                annotationValue(field, XML_VALUE_ANNOTATION_CLASS, "name")
-                                    .map(AnnotationValue::asString)
-                                    .filter(value -> !"##default".equals(value)),
-                                annotationValue(field, XML_ATTRIBUTE_ANNOTATION_CLASS, "name")
-                                    .map(AnnotationValue::asString)
-                                    .filter(value -> !"##default".equals(value)),
-                                annotationValue(field, XML_ELEMENT_ANNOTATION_CLASS, "name")
-                                    .map(AnnotationValue::asString)
-                                    .filter(value -> !"##default".equals(value)),
-                                annotationValue(ci, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
-                                    .map(AnnotationValue::asString)
-                                    .filter(value -> !"##default".equals(value))
-                            ).orElseGet(field::name);
+                            String name = fieldName(ci, field);
 
                             cb.beginControlFlow("case $S:", StringHelper.camelCaseToDash(name).toLowerCase(Locale.US));
                             cb.addStatement("java.util.List<$L> val = asFlatList(node, $L.class)", parametrizedType.name().toString(), parametrizedType.name().toString());
@@ -876,21 +862,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             );
                         } else {
                             ClassInfo ci = view.getClassByName(parametrizedType.name());
-
-                            String name = firstPresent(
-                                annotationValue(field, XML_VALUE_ANNOTATION_CLASS, "name")
-                                    .map(AnnotationValue::asString)
-                                    .filter(value -> !"##default".equals(value)),
-                                annotationValue(field, XML_ATTRIBUTE_ANNOTATION_CLASS, "name")
-                                    .map(AnnotationValue::asString)
-                                    .filter(value -> !"##default".equals(value)),
-                                annotationValue(field, XML_ELEMENT_ANNOTATION_CLASS, "name")
-                                    .map(AnnotationValue::asString)
-                                    .filter(value -> !"##default".equals(value)),
-                                annotationValue(ci, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
-                                    .map(AnnotationValue::asString)
-                                    .filter(value -> !"##default".equals(value))
-                            ).orElseGet(field::name);
+                            String name = fieldName(ci, field);
 
                             cb.beginControlFlow("case $S:", StringHelper.camelCaseToDash(name).toLowerCase(Locale.US));
                             cb.addStatement("var val = asFlatSet(node, $L.class)", parametrizedType.name().toString());

@@ -671,4 +671,21 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                 .distinct()
                 .sorted(Comparator.comparing(ClassInfo::name));
     }
+
+    protected String fieldName(ClassInfo ci, FieldInfo fi) {
+        return firstPresent(
+            annotationValue(fi, XML_VALUE_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(value -> !"##default".equals(value)),
+            annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(value -> !"##default".equals(value)),
+            annotationValue(fi, XML_ELEMENT_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(value -> !"##default".equals(value)),
+            annotationValue(ci, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(value -> !"##default".equals(value))
+        ).orElseGet(fi::name);
+    }
 }
