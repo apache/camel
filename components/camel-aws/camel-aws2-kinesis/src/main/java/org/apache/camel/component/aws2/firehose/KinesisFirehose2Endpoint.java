@@ -32,7 +32,7 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
 /**
  * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS 2 Kinesis Firehose",
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS Kinesis Firehose",
              syntax = "aws2-kinesis-firehose:streamName", producerOnly = true, category = {
                      Category.CLOUD,
                      Category.MESSAGING })
