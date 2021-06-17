@@ -64,8 +64,8 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         InputStream berOut = null;
         if (usingIterator) {
             if (clazzName != null) {
-                Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
-                encodeGenericTypeObject(exchange, clazz, stream);
+                exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
+                encodeGenericTypeObject(exchange, stream);
                 return;
             }
             Object record = exchange.getIn().getBody();
@@ -86,15 +86,16 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
-    private void encodeGenericTypeObject(Exchange exchange, Class<?> clazz, OutputStream stream)
+    private void encodeGenericTypeObject(Exchange exchange, OutputStream stream)
             throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, IOException {
         Class<?>[] paramOut = new Class<?>[1];
         paramOut[0] = OutputStream.class;
-        ReverseByteArrayOutputStream berOut = new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true);
-        Method encodeMethod = exchange.getIn().getBody().getClass().getDeclaredMethod("encode", paramOut);
-        encodeMethod.invoke(exchange.getIn().getBody(), berOut);
-        stream.write(berOut.getArray());
+        try (ReverseByteArrayOutputStream berOut = new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true)) {
+            Method encodeMethod = exchange.getIn().getBody().getClass().getDeclaredMethod("encode", paramOut);
+            encodeMethod.invoke(exchange.getIn().getBody(), berOut);
+            stream.write(berOut.getArray());
+        }
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -103,11 +104,9 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         if (usingIterator) {
             if (clazzName != null) {
                 Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
-                ASN1GenericIterator asn1GenericIterator = new ASN1GenericIterator(clazz, stream);
-                return asn1GenericIterator;
+                return new ASN1GenericIterator(clazz, stream);
             }
-            ASN1MessageIterator asn1MessageIterator = new ASN1MessageIterator(exchange, stream);
-            return asn1MessageIterator;
+            return new ASN1MessageIterator(exchange, stream);
         } else {
             ASN1Primitive asn1Record = null;
             byte[] asn1Bytes;

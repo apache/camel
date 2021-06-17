@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
@@ -80,19 +81,21 @@ public class ASN1GenericIterator<T> implements Iterator<T>, Closeable {
             ASN1Primitive current = getNextEntry();
 
             if (current != null) {
-                T instance = ObjectHelper.cast(clazz, createGenericTypeObject(current, clazz));
+                T instance = ObjectHelper.cast(clazz, createGenericTypeObject(current));
                 return instance;
             } else {
                 LOGGER.trace("close asn1InputStream");
                 return null;
             }
-        } catch (Throwable exception) {
+        } catch (Exception exception) {
             throw new RuntimeCamelException(exception);
         }
     }
 
     @SuppressWarnings("rawtypes")
-    private Object createGenericTypeObject(ASN1Primitive current, Class<T> clazz2) throws Throwable {
+    private Object createGenericTypeObject(ASN1Primitive current)
+            throws NoSuchMethodException, IOException, InstantiationException, IllegalAccessException,
+            InvocationTargetException {
         Class<?>[] paramIS = new Class[1];
         paramIS[0] = InputStream.class;
 
