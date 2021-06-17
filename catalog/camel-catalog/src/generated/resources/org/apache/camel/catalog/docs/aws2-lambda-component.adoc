@@ -1,6 +1,6 @@
 [[aws2-lambda-component]]
-= AWS 2 Lambda Component
-:docTitle: AWS 2 Lambda
+= AWS Lambda Component
+:docTitle: AWS Lambda
 :artifactId: camel-aws2-lambda
 :description: Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
 :since: 3.2
@@ -44,7 +44,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Lambda component supports 16 options, which are listed below.
+The AWS Lambda component supports 16 options, which are listed below.
 
 
 
@@ -74,7 +74,7 @@ The AWS 2 Lambda component supports 16 options, which are listed below.
 
 
 // endpoint options: START
-The AWS 2 Lambda endpoint is configured using URI syntax:
+The AWS Lambda endpoint is configured using URI syntax:
 
 ----
 aws2-lambda:function

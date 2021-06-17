@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.firehose.KinesisFirehose2Component;
 public interface Aws2KinesisFirehoseComponentBuilderFactory {
 
     /**
-     * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
+     * AWS Kinesis Firehose (camel-aws2-kinesis)
      * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
      * 
      * Category: cloud,messaging
@@ -45,7 +45,7 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Kinesis Firehose component.
+     * Builder for the AWS Kinesis Firehose component.
      */
     interface Aws2KinesisFirehoseComponentBuilder
             extends

@@ -40,7 +40,7 @@ public interface Sqs2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the AWS 2 Simple Queue Service (SQS)
+     * Builder for endpoint consumers for the AWS Simple Queue Service (SQS)
      * component.
      */
     public interface Sqs2EndpointConsumerBuilder
@@ -1522,8 +1522,8 @@ public interface Sqs2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the AWS 2 Simple Queue
-     * Service (SQS) component.
+     * Advanced builder for endpoint consumers for the AWS Simple Queue Service
+     * (SQS) component.
      */
     public interface AdvancedSqs2EndpointConsumerBuilder
             extends
@@ -1693,7 +1693,7 @@ public interface Sqs2EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the AWS 2 Simple Queue Service (SQS)
+     * Builder for endpoint producers for the AWS Simple Queue Service (SQS)
      * component.
      */
     public interface Sqs2EndpointProducerBuilder
@@ -2427,8 +2427,8 @@ public interface Sqs2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the AWS 2 Simple Queue
-     * Service (SQS) component.
+     * Advanced builder for endpoint producers for the AWS Simple Queue Service
+     * (SQS) component.
      */
     public interface AdvancedSqs2EndpointProducerBuilder
             extends
@@ -2490,7 +2490,7 @@ public interface Sqs2EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the AWS 2 Simple Queue Service (SQS) component.
+     * Builder for endpoint for the AWS Simple Queue Service (SQS) component.
      */
     public interface Sqs2EndpointBuilder
             extends
@@ -3013,7 +3013,7 @@ public interface Sqs2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Simple Queue Service (SQS)
+     * Advanced builder for endpoint for the AWS Simple Queue Service (SQS)
      * component.
      */
     public interface AdvancedSqs2EndpointBuilder
@@ -3096,7 +3096,7 @@ public interface Sqs2EndpointBuilderFactory {
 
     public interface Sqs2Builders {
         /**
-         * AWS 2 Simple Queue Service (SQS) (camel-aws2-sqs)
+         * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
          * Sending and receive messages to/from AWS SQS service using AWS SDK
          * version 2.x.
          * 
@@ -3116,7 +3116,7 @@ public interface Sqs2EndpointBuilderFactory {
             return Sqs2EndpointBuilderFactory.endpointBuilder("aws2-sqs", path);
         }
         /**
-         * AWS 2 Simple Queue Service (SQS) (camel-aws2-sqs)
+         * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
          * Sending and receive messages to/from AWS SQS service using AWS SDK
          * version 2.x.
          * 

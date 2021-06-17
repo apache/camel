@@ -1,6 +1,6 @@
 [[aws2-eks-component]]
-= AWS 2 Elastic Kubernetes Service (EKS) Component
-:docTitle: AWS 2 Elastic Kubernetes Service (EKS)
+= AWS Elastic Kubernetes Service (EKS) Component
+:docTitle: AWS Elastic Kubernetes Service (EKS)
 :artifactId: camel-aws2-eks
 :description: Manage AWS EKS cluster instances using AWS SDK version 2.x.
 :since: 3.1
@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Elastic Kubernetes Service (EKS) component supports 16 options, which are listed below.
+The AWS Elastic Kubernetes Service (EKS) component supports 16 options, which are listed below.
 
 
 
@@ -72,7 +72,7 @@ The AWS 2 Elastic Kubernetes Service (EKS) component supports 16 options, which 
 
 
 // endpoint options: START
-The AWS 2 Elastic Kubernetes Service (EKS) endpoint is configured using URI syntax:
+The AWS Elastic Kubernetes Service (EKS) endpoint is configured using URI syntax:
 
 ----
 aws2-eks:label

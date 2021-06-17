@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.kms.KMS2Component;
 public interface Aws2KmsComponentBuilderFactory {
 
     /**
-     * AWS 2 Key Management Service (KMS) (camel-aws2-kms)
+     * AWS Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -45,7 +45,7 @@ public interface Aws2KmsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Key Management Service (KMS) component.
+     * Builder for the AWS Key Management Service (KMS) component.
      */
     interface Aws2KmsComponentBuilder extends ComponentBuilder<KMS2Component> {
         /**

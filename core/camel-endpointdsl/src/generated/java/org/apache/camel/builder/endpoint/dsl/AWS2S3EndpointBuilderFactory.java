@@ -39,8 +39,7 @@ public interface AWS2S3EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the AWS 2 S3 Storage Service
-     * component.
+     * Builder for endpoint consumers for the AWS S3 Storage Service component.
      */
     public interface AWS2S3EndpointConsumerBuilder
             extends
@@ -1387,7 +1386,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the AWS 2 S3 Storage Service
+     * Advanced builder for endpoint consumers for the AWS S3 Storage Service
      * component.
      */
     public interface AdvancedAWS2S3EndpointConsumerBuilder
@@ -1595,8 +1594,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the AWS 2 S3 Storage Service
-     * component.
+     * Builder for endpoint producers for the AWS S3 Storage Service component.
      */
     public interface AWS2S3EndpointProducerBuilder
             extends
@@ -2409,7 +2407,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the AWS 2 S3 Storage Service
+     * Advanced builder for endpoint producers for the AWS S3 Storage Service
      * component.
      */
     public interface AdvancedAWS2S3EndpointProducerBuilder
@@ -2546,7 +2544,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the AWS 2 S3 Storage Service component.
+     * Builder for endpoint for the AWS S3 Storage Service component.
      */
     public interface AWS2S3EndpointBuilder
             extends
@@ -2944,7 +2942,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 S3 Storage Service component.
+     * Advanced builder for endpoint for the AWS S3 Storage Service component.
      */
     public interface AdvancedAWS2S3EndpointBuilder
             extends
@@ -3042,7 +3040,7 @@ public interface AWS2S3EndpointBuilderFactory {
 
     public interface AWS2S3Builders {
         /**
-         * AWS 2 S3 Storage Service (camel-aws2-s3)
+         * AWS S3 Storage Service (camel-aws2-s3)
          * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
          * version 2.x.
          * 
@@ -3062,7 +3060,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return AWS2S3EndpointBuilderFactory.endpointBuilder("aws2-s3", path);
         }
         /**
-         * AWS 2 S3 Storage Service (camel-aws2-s3)
+         * AWS S3 Storage Service (camel-aws2-s3)
          * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
          * version 2.x.
          * 

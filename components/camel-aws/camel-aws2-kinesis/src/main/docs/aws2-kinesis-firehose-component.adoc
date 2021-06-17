@@ -1,6 +1,6 @@
 [[aws2-kinesis-firehose-component]]
-= AWS 2 Kinesis Firehose Component
-:docTitle: AWS 2 Kinesis Firehose
+= AWS Kinesis Firehose Component
+:docTitle: AWS Kinesis Firehose
 :artifactId: camel-aws2-kinesis
 :description: Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
 :since: 3.2
@@ -42,7 +42,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 Kinesis Firehose component supports 16 options, which are listed below.
+The AWS Kinesis Firehose component supports 16 options, which are listed below.
 
 
 
@@ -75,7 +75,7 @@ The AWS 2 Kinesis Firehose component supports 16 options, which are listed below
 
 
 // endpoint options: START
-The AWS 2 Kinesis Firehose endpoint is configured using URI syntax:
+The AWS Kinesis Firehose endpoint is configured using URI syntax:
 
 ----
 aws2-kinesis-firehose:streamName
