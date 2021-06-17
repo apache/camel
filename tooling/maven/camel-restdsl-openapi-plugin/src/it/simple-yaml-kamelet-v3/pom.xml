@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.camel.maven.generator.openapi.it</groupId>
-  <artifactId>simple-yaml-v3</artifactId>
+  <artifactId>simple-yaml-kamelet-v3</artifactId>
   <version>1-SNAPSHOT</version>
 
   <description>A simple IT verifying the basic use case.</description>
@@ -46,6 +46,7 @@
               <goal>generate-yaml</goal>
             </goals>
             <configuration>
+              <destinationToSyntax>kamelet:${operationId}</destinationToSyntax>
               <filterOperation>find*,deletePet,updatePet</filterOperation>
             </configuration>
           </execution>

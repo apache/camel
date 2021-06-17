@@ -75,6 +75,8 @@ public class GenerateYamlMojo extends AbstractGenerateMojo {
         if (ObjectHelper.isNotEmpty(destinationGenerator)) {
             final DestinationGenerator destinationGeneratorObject = createDestinationGenerator();
             generator.withDestinationGenerator(destinationGeneratorObject);
+        } else if (ObjectHelper.isNotEmpty(destinationToSyntax)) {
+            generator.withDestinationToSyntax(destinationToSyntax);
         }
 
         if (restConfiguration) {

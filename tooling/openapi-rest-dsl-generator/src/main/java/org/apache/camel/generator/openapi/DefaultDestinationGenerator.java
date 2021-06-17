@@ -21,17 +21,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.apicurio.datamodels.openapi.models.OasOperation;
 
-public final class DirectToOperationId implements DestinationGenerator {
+public class DefaultDestinationGenerator implements DestinationGenerator {
 
-    private final AtomicInteger directRouteCount = new AtomicInteger();
+    private final AtomicInteger counter = new AtomicInteger();
+    private final String syntax;
+
+    public DefaultDestinationGenerator() {
+        this("direct:${operationId}");
+    }
+
+    public DefaultDestinationGenerator(String syntax) {
+        this.syntax = syntax;
+    }
 
     @Override
     public String generateDestinationFor(final OasOperation operation) {
-        return "direct:" + Optional.ofNullable(operation.operationId).orElseGet(this::generateDirectName);
+        String answer = syntax;
+        if (answer.contains("${operationId")) {
+            String id = Optional.ofNullable(operation.operationId).orElseGet(this::generateDirectName);
+            answer = answer.replace("${operationId}", id);
+        }
+        return answer;
     }
 
     String generateDirectName() {
-        return "rest" + directRouteCount.incrementAndGet();
+        return "rest" + counter.incrementAndGet();
     }
 
 }
