@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.huaweicloud.iam.constants;
 
+/**
+ * Constants for all the supported IAM operations
+ */
 public final class IAMOperations {
     public static final String LIST_USERS = "listUsers";
     public static final String GET_USER = "getUser";
