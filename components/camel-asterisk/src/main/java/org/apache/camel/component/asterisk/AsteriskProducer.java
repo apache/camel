@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.asterisk;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.asteriskjava.manager.AuthenticationFailedException;
-import org.asteriskjava.manager.TimeoutException;
 import org.asteriskjava.manager.action.ManagerAction;
 import org.asteriskjava.manager.response.ManagerResponse;
 import org.slf4j.Logger;
@@ -38,8 +34,7 @@ public class AsteriskProducer extends DefaultProducer {
     private final AsteriskEndpoint endpoint;
     private final AsteriskConnection connection;
 
-    public AsteriskProducer(AsteriskEndpoint endpoint) throws IllegalStateException, IOException, AuthenticationFailedException,
-                                                       TimeoutException, CamelAsteriskException {
+    public AsteriskProducer(AsteriskEndpoint endpoint) {
         super(endpoint);
 
         this.endpoint = endpoint;
