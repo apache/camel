@@ -50,7 +50,7 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
     }
 
     @InvokeOnHeader("SET")
-    void onSet(Message message, AsyncCallback callback) throws Exception {
+    void onSet(Message message, AsyncCallback callback) {
         final DistributedValue<Object> value = getResource(message);
         final long ttl = getResourceTtl(message);
         final Object val = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
@@ -67,7 +67,7 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
     }
 
     @InvokeOnHeader("GET")
-    void onGet(Message message, AsyncCallback callback) throws Exception {
+    void onGet(Message message, AsyncCallback callback) {
         final DistributedValue<Object> value = getResource(message);
         final ReadConsistency consistency
                 = message.getHeader(RESOURCE_READ_CONSISTENCY, configuration::getReadConsistency, ReadConsistency.class);
@@ -82,7 +82,7 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
     }
 
     @InvokeOnHeader("GET_AND_SET")
-    void onGetAndSet(Message message, AsyncCallback callback) throws Exception {
+    void onGetAndSet(Message message, AsyncCallback callback) {
         final DistributedValue<Object> value = getResource(message);
         final long ttl = getResourceTtl(message);
         final Object val = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
@@ -99,7 +99,7 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
     }
 
     @InvokeOnHeader("COMPARE_AND_SET")
-    void onCompareAndSet(Message message, AsyncCallback callback) throws Exception {
+    void onCompareAndSet(Message message, AsyncCallback callback) {
         final DistributedValue<Object> value = getResource(message);
         final long ttl = getResourceTtl(message);
         final Object newVal = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);

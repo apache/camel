@@ -47,7 +47,7 @@ public final class AtomixMessagingProducer extends AbstractAtomixClientProducer<
     // *********************************
 
     @InvokeOnHeader("DIRECT")
-    void onDirect(Message message, AsyncCallback callback) throws Exception {
+    void onDirect(Message message, AsyncCallback callback) {
         final Object value = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
         final String memberName = message.getHeader(MEMBER_NAME, configuration::getMemberName, String.class);
         final String channelName = message.getHeader(CHANNEL_NAME, configuration::getChannelName, String.class);
@@ -65,7 +65,7 @@ public final class AtomixMessagingProducer extends AbstractAtomixClientProducer<
     }
 
     @InvokeOnHeader("BROADCAST")
-    void onBroadcast(Message message, AsyncCallback callback) throws Exception {
+    void onBroadcast(Message message, AsyncCallback callback) {
         final Object value = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
         final String channelName = message.getHeader(CHANNEL_NAME, configuration::getChannelName, String.class);
         final AtomixMessaging.BroadcastType type

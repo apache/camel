@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.atomix.cluster;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -40,7 +41,7 @@ public final class AtomixClusterHelper {
 
     public static AtomixReplica createReplica(
             CamelContext camelContext, Address address, AtomixClusterConfiguration configuration)
-            throws Exception {
+            throws IOException, ClassNotFoundException {
         AtomixReplica atomix = (AtomixReplica) configuration.getAtomix();
 
         if (atomix == null) {
