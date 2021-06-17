@@ -136,10 +136,10 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         clientBootstrap.handler(pipelineFactory);
         ChannelFuture channelFuture
                 = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
-                    new Object[] { configuration.getHost(), configuration.getPort(), clientBootstrap });
-        }
+
+        LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
+                configuration.getHost(), configuration.getPort(), clientBootstrap);
+
         LOG.info("ClientModeServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
         channel = openChannel(channelFuture);
     }

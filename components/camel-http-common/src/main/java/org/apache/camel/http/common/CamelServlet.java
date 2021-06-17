@@ -454,7 +454,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             Thread.currentThread().setContextClassLoader(appCtxCl);
             if (log.isTraceEnabled()) {
                 log.trace("Overrode TCCL for exchangeId {} to {} on thread {}",
-                        new Object[] { exchange.getExchangeId(), appCtxCl, Thread.currentThread().getName() });
+                        exchange.getExchangeId(), appCtxCl, Thread.currentThread().getName());
             }
             return oldClassLoader;
         }
@@ -471,7 +471,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         Thread.currentThread().setContextClassLoader(oldTccl);
         if (log.isTraceEnabled()) {
             log.trace("Restored TCCL for exchangeId {} to {} on thread {}",
-                    new String[] { exchange.getExchangeId(), oldTccl.toString(), Thread.currentThread().getName() });
+                    exchange.getExchangeId(), oldTccl, Thread.currentThread().getName());
         }
     }
 

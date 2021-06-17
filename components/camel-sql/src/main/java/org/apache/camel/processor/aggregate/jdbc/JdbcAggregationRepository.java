@@ -398,7 +398,7 @@ public class JdbcAggregationRepository extends ServiceSupport
                 final String confirmKey = exchangeId;
 
                 jdbcTemplate.update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?",
-                        new Object[] { confirmKey });
+                        confirmKey);
 
             }
         });

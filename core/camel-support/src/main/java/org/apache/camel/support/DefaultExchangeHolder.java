@@ -400,13 +400,13 @@ public class DefaultExchangeHolder implements Serializable {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(
                         "Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder.",
-                        new Object[] { type, key, value, ObjectHelper.classCanonicalName(value) });
+                        type, key, value, ObjectHelper.classCanonicalName(value));
             }
         } else {
             // log regular at WARN level
             LOG.warn(
                     "Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder.",
-                    new Object[] { type, key, value, ObjectHelper.classCanonicalName(value) });
+                    type, key, value, ObjectHelper.classCanonicalName(value));
         }
     }
 
@@ -414,7 +414,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (LOG.isDebugEnabled()) {
             LOG.debug(
                     "Exchange {} containing key: {} with object: {} of type: {} is not valid header type, it will be excluded by the holder.",
-                    new Object[] { type, key, value, ObjectHelper.classCanonicalName(value) });
+                    type, key, value, ObjectHelper.classCanonicalName(value));
         }
     }
 
@@ -422,7 +422,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (LOG.isDebugEnabled()) {
             LOG.debug(
                     "Exchange {} containing key: {} with object: {} of type: {} is not valid exchange property type, it will be excluded by the holder.",
-                    new Object[] { type, key, value, ObjectHelper.classCanonicalName(value) });
+                    type, key, value, ObjectHelper.classCanonicalName(value));
         }
     }
 

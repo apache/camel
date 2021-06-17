@@ -213,9 +213,9 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
             String dozerId, Class<?> to, Class<?> from) {
         if (log.isInfoEnabled()) {
             if (dozerId != null) {
-                log.info("Added Dozer: {} as Camel type converter: {} -> {}", new Object[] { dozerId, from, to });
+                log.info("Added Dozer: {} as Camel type converter: {} -> {}", dozerId, from, to);
             } else {
-                log.info("Added Dozer as Camel type converter: {} -> {}", new Object[] { from, to });
+                log.info("Added Dozer as Camel type converter: {} -> {}", from, to);
             }
         }
 

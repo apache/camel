@@ -74,10 +74,7 @@ public class CouchDbChangesetTracker implements Runnable {
                         JsonObject doc = feed.getDoc();
 
                         Exchange exchange = consumer.createExchange(lastSequence, feed.getId(), doc, feed.isDeleted());
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Created exchange [exchange={}, _id={}, seq={}",
-                                    new Object[] { exchange, feed.getId(), lastSequence });
-                        }
+                        LOG.trace("Created exchange [exchange={}, _id={}, seq={}", exchange, feed.getId(), lastSequence);
 
                         try {
                             consumer.getProcessor().process(exchange);

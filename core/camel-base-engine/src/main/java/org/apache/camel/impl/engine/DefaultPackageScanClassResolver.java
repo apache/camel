@@ -164,7 +164,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
         if (log.isTraceEnabled()) {
             log.trace("Searching for: {} in package: {} using classloader: {}",
-                    new Object[] { test, packageName, loader.getClass().getName() });
+                    test, packageName, loader.getClass().getName());
         }
 
         Enumeration<URL> urls;

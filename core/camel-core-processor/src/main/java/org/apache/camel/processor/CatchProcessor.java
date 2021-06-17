@@ -110,7 +110,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("The exception is handled for the exception: {} caused by: {}",
-                    new Object[] { e.getClass().getName(), e.getMessage() });
+                    e.getClass().getName(), e.getMessage());
         }
 
         // emit event that the failure is being handled
