@@ -1050,7 +1050,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
+     * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1070,7 +1070,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.endpointBuilder("aws2-ec2", path);
     }
     /**
-     * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
+     * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management

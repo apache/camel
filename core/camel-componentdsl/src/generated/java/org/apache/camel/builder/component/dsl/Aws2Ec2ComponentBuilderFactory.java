@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.ec2.AWS2EC2Component;
 public interface Aws2Ec2ComponentBuilderFactory {
 
     /**
-     * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
+     * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -45,7 +45,7 @@ public interface Aws2Ec2ComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Elastic Compute Cloud (EC2) component.
+     * Builder for the AWS Elastic Compute Cloud (EC2) component.
      */
     interface Aws2Ec2ComponentBuilder
             extends
