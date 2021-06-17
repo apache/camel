@@ -50,8 +50,7 @@ public final class AS2ConnectionHelper {
      * @throws UnknownHostException Failed to establish connection due to unknown host.
      * @throws IOException          - Failed to establish connection.
      */
-    public static AS2ClientConnection createAS2ClientConnection(AS2Configuration configuration)
-            throws UnknownHostException, IOException {
+    public static AS2ClientConnection createAS2ClientConnection(AS2Configuration configuration) throws IOException {
         return new AS2ClientConnection(
                 configuration.getAs2Version(), configuration.getUserAgent(), configuration.getClientFqdn(),
                 configuration.getTargetHostname(), configuration.getTargetPortNumber());
