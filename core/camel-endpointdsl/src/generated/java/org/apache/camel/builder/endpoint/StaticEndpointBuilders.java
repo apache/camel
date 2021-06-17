@@ -917,7 +917,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 CloudWatch (camel-aws2-cw)
+     * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
      * 
      * Category: cloud,monitoring
@@ -937,7 +937,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.endpointBuilder("aws2-cw", path);
     }
     /**
-     * AWS 2 CloudWatch (camel-aws2-cw)
+     * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
      * 
      * Category: cloud,monitoring
