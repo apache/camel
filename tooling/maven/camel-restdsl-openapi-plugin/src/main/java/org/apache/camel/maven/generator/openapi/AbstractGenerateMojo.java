@@ -82,6 +82,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     String destinationGenerator;
 
     @Parameter
+    String destinationToSyntax;
+
+    @Parameter
     String filterOperation;
 
     @Parameter
