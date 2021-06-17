@@ -65,20 +65,18 @@ public class PahoComponentVerifierExtension extends DefaultComponentVerifierExte
         String password = (String) parameters.get("password");
 
         if (ObjectHelper.isNotEmpty(brokerUrl)) {
-            try {
-                // Create MQTT client
+            // Create MQTT client
+            try (MqttClient client = new MqttClient(brokerUrl, MqttClient.generateClientId())) {
                 if (ObjectHelper.isEmpty(username) && ObjectHelper.isEmpty(password)) {
-                    MqttClient client = new MqttClient(brokerUrl, MqttClient.generateClientId());
                     client.connect();
-                    client.disconnect();
                 } else {
-                    MqttClient client = new MqttClient(brokerUrl, MqttClient.generateClientId());
                     MqttConnectOptions connOpts = new MqttConnectOptions();
                     connOpts.setUserName(username);
                     connOpts.setPassword(password.toCharArray());
                     client.connect(connOpts);
-                    client.disconnect();
                 }
+
+                client.disconnect();
             } catch (MqttException e) {
                 builder.error(
                         ResultErrorBuilder
