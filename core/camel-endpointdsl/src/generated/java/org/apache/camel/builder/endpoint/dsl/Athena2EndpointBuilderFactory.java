@@ -31,7 +31,7 @@ public interface Athena2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Athena component.
+     * Builder for endpoint for the AWS Athena component.
      */
     public interface Athena2EndpointBuilder extends EndpointProducerBuilder {
         default AdvancedAthena2EndpointBuilder advanced() {
@@ -750,7 +750,7 @@ public interface Athena2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Athena component.
+     * Advanced builder for endpoint for the AWS Athena component.
      */
     public interface AdvancedAthena2EndpointBuilder
             extends
@@ -820,7 +820,7 @@ public interface Athena2EndpointBuilderFactory {
 
     public interface Athena2Builders {
         /**
-         * AWS 2 Athena (camel-aws2-athena)
+         * AWS Athena (camel-aws2-athena)
          * Access AWS Athena service using AWS SDK version 2.x.
          * 
          * Category: cloud,database
@@ -839,7 +839,7 @@ public interface Athena2EndpointBuilderFactory {
             return Athena2EndpointBuilderFactory.endpointBuilder("aws2-athena", path);
         }
         /**
-         * AWS 2 Athena (camel-aws2-athena)
+         * AWS Athena (camel-aws2-athena)
          * Access AWS Athena service using AWS SDK version 2.x.
          * 
          * Category: cloud,database

@@ -874,7 +874,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Athena (camel-aws2-athena)
+     * AWS Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 
      * Category: cloud,database
@@ -894,7 +894,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.endpointBuilder("aws2-athena", path);
     }
     /**
-     * AWS 2 Athena (camel-aws2-athena)
+     * AWS Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 
      * Category: cloud,database
