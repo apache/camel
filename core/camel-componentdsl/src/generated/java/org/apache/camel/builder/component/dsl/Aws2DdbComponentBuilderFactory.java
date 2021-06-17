@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.ddb.Ddb2Component;
 public interface Aws2DdbComponentBuilderFactory {
 
     /**
-     * AWS 2 DynamoDB (camel-aws2-ddb)
+     * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB service using AWS SDK version
      * 2.x.
      * 
@@ -46,7 +46,7 @@ public interface Aws2DdbComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 DynamoDB component.
+     * Builder for the AWS DynamoDB component.
      */
     interface Aws2DdbComponentBuilder extends ComponentBuilder<Ddb2Component> {
         /**

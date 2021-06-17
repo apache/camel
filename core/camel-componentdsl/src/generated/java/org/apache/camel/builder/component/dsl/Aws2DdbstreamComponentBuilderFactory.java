@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.ddbstream.Ddb2StreamComponent;
 public interface Aws2DdbstreamComponentBuilderFactory {
 
     /**
-     * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+     * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream service using AWS SDK version
      * 2.x.
      * 
@@ -46,7 +46,7 @@ public interface Aws2DdbstreamComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 DynamoDB Streams component.
+     * Builder for the AWS DynamoDB Streams component.
      */
     interface Aws2DdbstreamComponentBuilder
             extends

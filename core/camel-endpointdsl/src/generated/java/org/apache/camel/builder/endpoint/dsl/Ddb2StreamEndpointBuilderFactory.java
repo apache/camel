@@ -38,7 +38,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 DynamoDB Streams component.
+     * Builder for endpoint for the AWS DynamoDB Streams component.
      */
     public interface Ddb2StreamEndpointBuilder
             extends
@@ -978,7 +978,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 DynamoDB Streams component.
+     * Advanced builder for endpoint for the AWS DynamoDB Streams component.
      */
     public interface AdvancedDdb2StreamEndpointBuilder
             extends
@@ -1118,7 +1118,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
 
     public interface Ddb2StreamBuilders {
         /**
-         * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+         * AWS DynamoDB Streams (camel-aws2-ddb)
          * Receive messages from AWS DynamoDB Stream service using AWS SDK
          * version 2.x.
          * 
@@ -1138,7 +1138,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return Ddb2StreamEndpointBuilderFactory.endpointBuilder("aws2-ddbstream", path);
         }
         /**
-         * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+         * AWS DynamoDB Streams (camel-aws2-ddb)
          * Receive messages from AWS DynamoDB Stream service using AWS SDK
          * version 2.x.
          * 
