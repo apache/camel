@@ -43,7 +43,7 @@ public class DockerStatsConsumer extends DefaultConsumer {
     private DockerComponent component;
     private StatsCmd statsCmd;
 
-    public DockerStatsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
+    public DockerStatsConsumer(DockerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.component = (DockerComponent) endpoint.getComponent();
