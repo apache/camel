@@ -19,8 +19,10 @@ package org.apache.camel.component.huaweicloud.iam.constants;
 public final class IAMOperations {
     public static final String LIST_USERS = "listUsers";
     public static final String GET_USER = "getUser";
-    public static final String GET_GROUP_USERS = "getGroupUsers";
+    public static final String UPDATE_USER = "updateUser";
     public static final String LIST_GROUPS = "listGroups";
+    public static final String GET_GROUP_USERS = "getGroupUsers";
+    public static final String UPDATE_GROUP = "updateGroup";
 
     private IAMOperations() {
     }

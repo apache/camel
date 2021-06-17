@@ -3285,7 +3285,7 @@
   "HwcloudIamComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-iam",
-    "title": "IAM",
+    "title": "Huawei Cloud Identity and Access Management (IAM)",
     "description": "To securely manage users on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.11.0",
@@ -3301,7 +3301,7 @@
     "async": false,
     "api": false,
     "consumerOnly": false,
-    "producerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false
   },
   "HwcloudSmnComponentBuilderFactory": {
