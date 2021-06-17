@@ -8,8 +8,6 @@
 :since: 2.21
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/aws-xray.adoc[opts=optional]
-//Manually maintained attributes
-:group: AWS
 
 *Since Camel {since}*
 
