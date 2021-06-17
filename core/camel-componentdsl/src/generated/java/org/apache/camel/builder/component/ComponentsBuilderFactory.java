@@ -306,7 +306,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsSecretsManagerComponentBuilderFactory.awsSecretsManager();
     }
     /**
-     * AWS 2 Athena (camel-aws2-athena)
+     * AWS Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 
      * Category: cloud,database

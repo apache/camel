@@ -1,6 +1,6 @@
 [[aws2-athena-component]]
-= AWS 2 Athena Component
-:docTitle: AWS 2 Athena
+= AWS Athena Component
+:docTitle: AWS Athena
 :artifactId: camel-aws2-athena
 :description: Access AWS Athena service using AWS SDK version 2.x.
 :since: 3.4
@@ -60,7 +60,7 @@ from("direct:start")
 
 
 // component options: START
-The AWS 2 Athena component supports 30 options, which are listed below.
+The AWS Athena component supports 30 options, which are listed below.
 
 
 
@@ -111,7 +111,7 @@ The AWS 2 Athena component supports 30 options, which are listed below.
 
 
 // endpoint options: START
-The AWS 2 Athena endpoint is configured using URI syntax:
+The AWS Athena endpoint is configured using URI syntax:
 
 ----
 aws2-athena:label
