@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security basic auth definition
  */
-@Metadata(label = "rest")
+@Metadata(label = "rest,security,configuration")
 @XmlRootElement(name = "apiKey")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecurityApiKey extends RestSecurityDefinition {

@@ -3,7 +3,9 @@
     "kind": "model",
     "name": "sslContextParameters",
     "title": "Ssl Context Parameters",
+    "description": "Secure socket protocol configuration",
     "deprecated": false,
+    "label": "security,configuration",
     "javaType": "org.apache.camel.spring.xml.SSLContextParametersFactoryBean",
     "input": false,
     "output": false

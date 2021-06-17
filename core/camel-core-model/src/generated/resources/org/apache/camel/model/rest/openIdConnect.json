@@ -5,7 +5,7 @@
     "title": "Open Id Connect",
     "description": "Rest security OpenID Connect definition",
     "deprecated": false,
-    "label": "rest,security",
+    "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.RestSecurityOpenIdConnect",
     "input": false,
     "output": false

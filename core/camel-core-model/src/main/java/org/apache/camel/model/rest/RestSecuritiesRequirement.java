@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure global rest security requirements.
  */
-@Metadata(label = "rest,security", title = "Security Requirements")
+@Metadata(label = "rest,security,configuration", title = "Rest Security Requirements")
 @XmlRootElement(name = "securityRequirements")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecuritiesRequirement {
@@ -82,6 +82,9 @@ public class RestSecuritiesRequirement {
         return securityRequirements;
     }
 
+    /**
+     * Security requirement configurations
+     */
     public void setSecurityRequirements(Collection<SecurityDefinition> securityRequirements) {
         itemsMap = securityRequirements.stream()
                 .collect(Collectors.toMap(SecurityDefinition::getKey, Function.identity(), (u, v) -> u));

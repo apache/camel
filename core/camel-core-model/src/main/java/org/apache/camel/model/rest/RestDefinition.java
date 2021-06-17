@@ -84,10 +84,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private String apiDocs;
 
-    @XmlElement(name = "securityDefinitions") // use the name swagger uses
+    @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
     private RestSecuritiesDefinition securityDefinitions;
 
-    @XmlElement(name = "securityRequirements") // use the name swagger/OpenAPI uses
+    @XmlElement(name = "securityRequirements") // use the name Swagger/OpenAPI uses
     private RestSecuritiesRequirement securityRequirements;
 
     @XmlElementRef
