@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * match the number of expected messages and their message payloads are equal.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset-test", title = "DataSet Test", syntax = "dataset-test:name",
-             producerOnly = true, label = "core,testing", lenientProperties = true)
+             producerOnly = true, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
 public class DataSetTestEndpoint extends MockEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSetTestEndpoint.class);

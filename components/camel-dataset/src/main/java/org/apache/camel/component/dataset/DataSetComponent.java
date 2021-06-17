@@ -19,14 +19,14 @@ package org.apache.camel.component.dataset;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultComponent;
 
 /**
  * Component for <a href="http://camel.apache.org/dataset.html">DataSet</a>.
  */
 @org.apache.camel.spi.annotations.Component("dataset")
-public class DataSetComponent extends DefaultComponent {
+public class DataSetComponent extends MockComponent {
 
     public DataSetComponent() {
     }
@@ -34,6 +34,11 @@ public class DataSetComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DataSet dataSet = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, DataSet.class);
-        return new DataSetEndpoint(uri, this, dataSet);
+
+        DataSetEndpoint endpoint = new DataSetEndpoint(uri, this, dataSet);
+        endpoint.setLog(isLog());
+        setProperties(endpoint, parameters);
+
+        return endpoint;
     }
 }
