@@ -23,7 +23,7 @@ import org.apache.avro.reflect.ReflectData;
 public class AvroReflectResponder extends ReflectResponder {
     private AvroListener listener;
 
-    public AvroReflectResponder(Protocol protocol, AvroListener listener) throws Exception {
+    public AvroReflectResponder(Protocol protocol, AvroListener listener) {
         super(protocol, listener);
         this.listener = listener;
     }

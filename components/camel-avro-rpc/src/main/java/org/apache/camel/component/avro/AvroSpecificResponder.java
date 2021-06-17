@@ -23,7 +23,7 @@ import org.apache.avro.specific.SpecificData;
 public class AvroSpecificResponder extends SpecificResponder {
     private AvroListener listener;
 
-    public AvroSpecificResponder(Protocol protocol, AvroListener listener) throws Exception {
+    public AvroSpecificResponder(Protocol protocol, AvroListener listener) {
         super(protocol, listener);
         this.listener = listener;
     }

@@ -60,7 +60,7 @@ public final class EtcdHelper {
         }
     }
 
-    public static URI[] resolveURIs(CamelContext camelContext, String uriList) throws Exception {
+    public static URI[] resolveURIs(CamelContext camelContext, String uriList) {
         String[] uris;
         if (uriList != null) {
             uris = uriList.split(",");

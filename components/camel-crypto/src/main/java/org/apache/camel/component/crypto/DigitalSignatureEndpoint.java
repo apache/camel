@@ -73,7 +73,7 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         return configuration;
     }
 
-    public PublicKey getPublicKey() throws Exception {
+    public PublicKey getPublicKey() {
         return getConfiguration().getPublicKey();
     }
 
@@ -85,11 +85,11 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         getConfiguration().setPublicKeyName(publicKeyName);
     }
 
-    public Certificate getCertificate() throws Exception {
+    public Certificate getCertificate() {
         return getConfiguration().getCertificate();
     }
 
-    public PrivateKey getPrivateKey() throws Exception {
+    public PrivateKey getPrivateKey() {
         return getConfiguration().getPrivateKey();
     }
 
