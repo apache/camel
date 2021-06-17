@@ -238,7 +238,7 @@ public class AS2ServerConnection {
         }
     }
 
-    public void listen(String requestUri, HttpRequestHandler handler) throws IOException {
+    public void listen(String requestUri, HttpRequestHandler handler) {
         if (listenerThread != null) {
             synchronized (listenerThread) {
                 listenerThread.registerHandler(requestUri, handler);
