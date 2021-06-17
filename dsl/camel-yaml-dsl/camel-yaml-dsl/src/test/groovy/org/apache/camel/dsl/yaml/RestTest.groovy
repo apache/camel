@@ -168,12 +168,12 @@ class RestTest extends YamlTestSupport {
             }
     }
 
-    def "load rest (big)"() {
+    def "load rest (generated)"() {
         setup:
-            def rloc = 'classpath:/routes/rest-dsl.yaml'
+            def rloc = 'classpath:/routes/generated-rest-dsl.yaml'
             def rdsl = context.resourceLoader.resolveResource(rloc)
         when:
-            context.routesLoader.loadRoutes(rdsl)
+            loadRoutes rdsl
         then:
             context.restDefinitions != null
             !context.restDefinitions.isEmpty()

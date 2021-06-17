@@ -615,15 +615,19 @@
         }
       },
       "org.apache.camel.model.DescriptionDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "lang" : {
-            "type" : "string"
-          },
-          "text" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "lang" : {
+              "type" : "string"
+            },
+            "text" : {
+              "type" : "string"
+            }
           }
-        }
+        } ]
       },
       "org.apache.camel.model.DynamicRouterDefinition" : {
         "type" : "object",
