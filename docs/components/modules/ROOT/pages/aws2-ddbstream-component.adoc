@@ -1,8 +1,8 @@
 [[aws2-ddbstream-component]]
-= AWS 2 DynamoDB Streams Component
+= AWS DynamoDB Streams Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/camel-aws2-ddb/src/main/docs/aws2-ddbstream-component.adoc
-:docTitle: AWS 2 DynamoDB Streams
+:docTitle: AWS DynamoDB Streams
 :artifactId: camel-aws2-ddb
 :description: Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
 :since: 3.1
@@ -45,7 +45,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 DynamoDB Streams component supports 17 options, which are listed below.
+The AWS DynamoDB Streams component supports 17 options, which are listed below.
 
 
 
@@ -78,7 +78,7 @@ The AWS 2 DynamoDB Streams component supports 17 options, which are listed below
 
 
 // endpoint options: START
-The AWS 2 DynamoDB Streams endpoint is configured using URI syntax:
+The AWS DynamoDB Streams endpoint is configured using URI syntax:
 
 ----
 aws2-ddbstream:tableName

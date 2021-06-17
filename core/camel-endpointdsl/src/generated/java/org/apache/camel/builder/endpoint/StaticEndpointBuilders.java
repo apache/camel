@@ -960,7 +960,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 DynamoDB (camel-aws2-ddb)
+     * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB service using AWS SDK version
      * 2.x.
      * 
@@ -981,7 +981,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.endpointBuilder("aws2-ddb", path);
     }
     /**
-     * AWS 2 DynamoDB (camel-aws2-ddb)
+     * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB service using AWS SDK version
      * 2.x.
      * 
@@ -1005,7 +1005,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+     * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream service using AWS SDK version
      * 2.x.
      * 
@@ -1026,7 +1026,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.endpointBuilder("aws2-ddbstream", path);
     }
     /**
-     * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+     * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream service using AWS SDK version
      * 2.x.
      * 
