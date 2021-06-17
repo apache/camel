@@ -256,7 +256,7 @@ public class MinaConsumer extends DefaultConsumer {
             addCodecFactory(service, codecFactory);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                        new Object[] { type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter });
+                        type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter);
                 LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
                         codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
             }

@@ -116,11 +116,9 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
             // check to see if the same job has already been setup through another node of the cluster
             JobDetail existingJobDetail = getScheduler().getJobDetail(jobDetail.getKey());
             if (jobDetail.equals(existingJobDetail)) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info(
-                            "Skipping to schedule the job: {} for action: {} on route {} as the job: {} already existing inside the cluster",
-                            new Object[] { jobDetail.getKey(), action, route.getId(), existingJobDetail.getKey() });
-                }
+                LOG.info(
+                        "Skipping to schedule the job: {} for action: {} on route {} as the job: {} already existing inside the cluster",
+                        jobDetail.getKey(), action, route.getId(), existingJobDetail.getKey());
 
                 // skip scheduling the same job again as one is already existing for the same routeId and action
                 return;

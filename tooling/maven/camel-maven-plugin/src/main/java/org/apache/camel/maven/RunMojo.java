@@ -426,7 +426,7 @@ public class RunMojo extends AbstractExecMojo {
                     getLog().info("Starting Camel ...");
                     Method main = Thread.currentThread().getContextClassLoader()
                             .loadClass(mainClass).getMethod("main", String[].class);
-                    main.invoke(null, new Object[] { arguments });
+                    main.invoke(null, arguments);
 
                     afterBootstrapCamel();
                 } catch (Exception e) { // just pass it on
