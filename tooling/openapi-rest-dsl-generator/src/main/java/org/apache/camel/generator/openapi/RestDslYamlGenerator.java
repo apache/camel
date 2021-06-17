@@ -18,6 +18,9 @@ package org.apache.camel.generator.openapi;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -50,6 +53,8 @@ import org.apache.camel.util.ObjectHelper;
 public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator> {
 
     private static final String[] VERBS = new String[] { "delete", "get", "head", "patch", "post", "put" };
+    private static final String[] FIELD_ORDER
+            = new String[] { "id", "uri", "description", "consumes", "produces", "type", "outType", "param" };
 
     RestDslYamlGenerator(final OasDocument document) {
         super(document);
@@ -114,10 +119,9 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         XmlMapper xmlMapper = new XmlMapper();
         JsonNode node = xmlMapper.readTree(newXml.getBytes());
 
-        // param nodes should be an array list, but if there is only 1 param then there is only 1 <param> in XML
-        // and jackson parses that into a single node, so we need to change that into an array node
         for (String v : VERBS) {
             fixParamNodes(xmlMapper, node, v);
+            fixVerb(node, v);
         }
         // the root tag should be an array
         node = fixRootNode(xmlMapper, node);
@@ -142,6 +146,52 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         return node;
     }
 
+    /**
+     * we want verbs to have its children sorted in a specific order so the generated rest-dsl is always the same
+     * structure and that we have id, uri, ... in the top
+     */
+    private static void fixVerb(JsonNode node, String verb) {
+        JsonNode verbs = node.path("rest").path(verb);
+        if (verbs == null || verbs.isMissingNode()) {
+            return;
+        }
+        for (JsonNode n : verbs) {
+            List<String> names = new ArrayList<>();
+            if (n.isObject()) {
+                ObjectNode on = (ObjectNode) n;
+                // sort the elements: id, uri, description, consumes, produces, type, outType, param
+                Iterator<String> it = on.fieldNames();
+                while (it.hasNext()) {
+                    names.add(it.next());
+                }
+                // sort the nodes
+                names.sort((o1, o2) -> {
+                    int i1 = fieldOrderIndex(o1);
+                    int i2 = fieldOrderIndex(o2);
+                    if (i1 == i2) {
+                        return o1.compareTo(o2);
+                    }
+                    return i1 < i2 ? -1 : 1;
+                });
+                // reorder according to sorted set of names
+                List<JsonNode> nodes = new ArrayList<>();
+                for (String name : names) {
+                    nodes.add(on.get(name));
+                }
+                on.removeAll();
+                for (int i = 0; i < nodes.size(); i++) {
+                    JsonNode nn = nodes.get(i);
+                    String fn = names.get(i);
+                    on.set(fn, nn);
+                }
+            }
+        }
+    }
+
+    /**
+     * param nodes should be an array list, but if there is only 1 param then there is only 1 <param> in XML and jackson
+     * parses that into a single node, so we need to change that into an array node
+     */
     private static void fixParamNodes(XmlMapper xmlMapper, JsonNode node, String verb) {
         JsonNode verbs = node.path("rest").path(verb);
         if (verbs == null || verbs.isMissingNode()) {
@@ -178,6 +228,19 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                 }
             }
         }
+    }
+
+    private static int fieldOrderIndex(String field) {
+        // to should be last
+        if ("to".equals(field)) {
+            return Integer.MAX_VALUE;
+        }
+        for (int i = 0; i < FIELD_ORDER.length; i++) {
+            if (FIELD_ORDER[i].equals(field)) {
+                return i;
+            }
+        }
+        return Integer.MAX_VALUE - 1;
     }
 
 }
