@@ -1,6 +1,6 @@
 [[aws2-kinesis-component]]
-= AWS 2 Kinesis Component
-:docTitle: AWS 2 Kinesis
+= AWS Kinesis Component
+:docTitle: AWS Kinesis
 :artifactId: camel-aws2-kinesis
 :description: Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
 :since: 3.2
@@ -43,7 +43,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 Kinesis component supports 21 options, which are listed below.
+The AWS Kinesis component supports 21 options, which are listed below.
 
 
 
@@ -81,7 +81,7 @@ The AWS 2 Kinesis component supports 21 options, which are listed below.
 
 
 // endpoint options: START
-The AWS 2 Kinesis endpoint is configured using URI syntax:
+The AWS Kinesis endpoint is configured using URI syntax:
 
 ----
 aws2-kinesis:streamName

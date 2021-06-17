@@ -32,7 +32,7 @@ public interface Ses2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Simple Email Service (SES) component.
+     * Builder for endpoint for the AWS Simple Email Service (SES) component.
      */
     public interface Ses2EndpointBuilder extends EndpointProducerBuilder {
         /**
@@ -460,7 +460,7 @@ public interface Ses2EndpointBuilderFactory {
 
     public interface Ses2Builders {
         /**
-         * AWS 2 Simple Email Service (SES) (camel-aws2-ses)
+         * AWS Simple Email Service (SES) (camel-aws2-ses)
          * Send e-mails through AWS SES service using AWS SDK version 2.x.
          * 
          * Category: cloud,mail
@@ -479,7 +479,7 @@ public interface Ses2EndpointBuilderFactory {
             return Ses2EndpointBuilderFactory.endpointBuilder("aws2-ses", path);
         }
         /**
-         * AWS 2 Simple Email Service (SES) (camel-aws2-ses)
+         * AWS Simple Email Service (SES) (camel-aws2-ses)
          * Send e-mails through AWS SES service using AWS SDK version 2.x.
          * 
          * Category: cloud,mail

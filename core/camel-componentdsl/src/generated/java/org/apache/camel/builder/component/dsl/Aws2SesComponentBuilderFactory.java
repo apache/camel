@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.ses.Ses2Component;
 public interface Aws2SesComponentBuilderFactory {
 
     /**
-     * AWS 2 Simple Email Service (SES) (camel-aws2-ses)
+     * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service using AWS SDK version 2.x.
      * 
      * Category: cloud,mail
@@ -45,7 +45,7 @@ public interface Aws2SesComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Simple Email Service (SES) component.
+     * Builder for the AWS Simple Email Service (SES) component.
      */
     interface Aws2SesComponentBuilder extends ComponentBuilder<Ses2Component> {
         /**

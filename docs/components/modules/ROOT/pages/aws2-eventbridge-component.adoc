@@ -1,8 +1,8 @@
 [[aws2-eventbridge-component]]
-= AWS 2 Eventbridge Component
+= AWS Eventbridge Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/camel-aws2-eventbridge/src/main/docs/aws2-eventbridge-component.adoc
-:docTitle: AWS 2 Eventbridge
+:docTitle: AWS Eventbridge
 :artifactId: camel-aws2-eventbridge
 :description: Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
 :since: 3.6
@@ -49,7 +49,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Eventbridge component supports 17 options, which are listed below.
+The AWS Eventbridge component supports 17 options, which are listed below.
 
 
 
@@ -80,7 +80,7 @@ The AWS 2 Eventbridge component supports 17 options, which are listed below.
 
 
 // endpoint options: START
-The AWS 2 Eventbridge endpoint is configured using URI syntax:
+The AWS Eventbridge endpoint is configured using URI syntax:
 
 ----
 aws2-eventbridge://eventbusNameOrArn

@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.mq.MQ2Component;
 public interface Aws2MqComponentBuilderFactory {
 
     /**
-     * AWS 2 MQ (camel-aws2-mq)
+     * AWS MQ (camel-aws2-mq)
      * Manage AWS MQ instances using AWS SDK version 2.x.
      * 
      * Category: cloud,messaging
@@ -45,7 +45,7 @@ public interface Aws2MqComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 MQ component.
+     * Builder for the AWS MQ component.
      */
     interface Aws2MqComponentBuilder extends ComponentBuilder<MQ2Component> {
         /**

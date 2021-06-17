@@ -32,7 +32,7 @@ import org.apache.camel.component.aws2.kinesis.Kinesis2Component;
 public interface Aws2KinesisComponentBuilderFactory {
 
     /**
-     * AWS 2 Kinesis (camel-aws2-kinesis)
+     * AWS Kinesis (camel-aws2-kinesis)
      * Consume and produce records from and to AWS Kinesis Streams using AWS SDK
      * version 2.x.
      * 
@@ -47,7 +47,7 @@ public interface Aws2KinesisComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Kinesis component.
+     * Builder for the AWS Kinesis component.
      */
     interface Aws2KinesisComponentBuilder
             extends

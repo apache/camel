@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.sns.Sns2Component;
 public interface Aws2SnsComponentBuilderFactory {
 
     /**
-     * AWS 2 Simple Notification System (SNS) (camel-aws2-sns)
+     * AWS Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to an AWS Simple Notification Topic using AWS SDK version
      * 2.x.
      * 
@@ -46,7 +46,7 @@ public interface Aws2SnsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Simple Notification System (SNS) component.
+     * Builder for the AWS Simple Notification System (SNS) component.
      */
     interface Aws2SnsComponentBuilder extends ComponentBuilder<Sns2Component> {
         /**

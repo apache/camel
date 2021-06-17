@@ -1,6 +1,6 @@
 [[aws2-mq-component]]
-= AWS 2 MQ Component
-:docTitle: AWS 2 MQ
+= AWS MQ Component
+:docTitle: AWS MQ
 :artifactId: camel-aws2-mq
 :description: Manage AWS MQ instances using AWS SDK version 2.x.
 :since: 3.1
@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 MQ component supports 16 options, which are listed below.
+The AWS MQ component supports 16 options, which are listed below.
 
 
 
@@ -72,7 +72,7 @@ The AWS 2 MQ component supports 16 options, which are listed below.
 
 
 // endpoint options: START
-The AWS 2 MQ endpoint is configured using URI syntax:
+The AWS MQ endpoint is configured using URI syntax:
 
 ----
 aws2-mq:label

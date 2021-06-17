@@ -31,7 +31,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Kinesis Firehose component.
+     * Builder for endpoint for the AWS Kinesis Firehose component.
      */
     public interface KinesisFirehose2EndpointBuilder
             extends
@@ -457,7 +457,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
 
     public interface KinesisFirehose2Builders {
         /**
-         * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
+         * AWS Kinesis Firehose (camel-aws2-kinesis)
          * Produce data to AWS Kinesis Firehose streams using AWS SDK version
          * 2.x.
          * 
@@ -477,7 +477,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return KinesisFirehose2EndpointBuilderFactory.endpointBuilder("aws2-kinesis-firehose", path);
         }
         /**
-         * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
+         * AWS Kinesis Firehose (camel-aws2-kinesis)
          * Produce data to AWS Kinesis Firehose streams using AWS SDK version
          * 2.x.
          * 

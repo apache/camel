@@ -31,7 +31,7 @@ public interface IAM2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Identity and Access Management (IAM)
+     * Builder for endpoint for the AWS Identity and Access Management (IAM)
      * component.
      */
     public interface IAM2EndpointBuilder extends EndpointProducerBuilder {
@@ -451,7 +451,7 @@ public interface IAM2EndpointBuilderFactory {
 
     public interface IAM2Builders {
         /**
-         * AWS 2 Identity and Access Management (IAM) (camel-aws2-iam)
+         * AWS Identity and Access Management (IAM) (camel-aws2-iam)
          * Manage AWS IAM instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -470,7 +470,7 @@ public interface IAM2EndpointBuilderFactory {
             return IAM2EndpointBuilderFactory.endpointBuilder("aws2-iam", path);
         }
         /**
-         * AWS 2 Identity and Access Management (IAM) (camel-aws2-iam)
+         * AWS Identity and Access Management (IAM) (camel-aws2-iam)
          * Manage AWS IAM instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
