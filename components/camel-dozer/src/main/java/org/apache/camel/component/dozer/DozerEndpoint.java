@@ -60,7 +60,7 @@ public class DozerEndpoint extends DefaultEndpoint {
     @UriParam
     private DozerConfiguration configuration;
 
-    public DozerEndpoint(String endpointUri, Component component, DozerConfiguration configuration) throws Exception {
+    public DozerEndpoint(String endpointUri, Component component, DozerConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
         variableMapper = new VariableMapper();
@@ -78,7 +78,7 @@ public class DozerEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported for Dozer endpoints");
     }
 
-    public Mapper getMapper() throws Exception {
+    public Mapper getMapper() {
         return mapper;
     }
 

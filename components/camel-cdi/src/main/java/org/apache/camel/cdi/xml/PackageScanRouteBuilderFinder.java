@@ -51,7 +51,7 @@ final class PackageScanRouteBuilderFinder {
     /**
      * Appends all the {@link org.apache.camel.builder.RouteBuilder} instances that can be found on the classpath
      */
-    void appendBuilders(List<RoutesBuilder> list) throws IllegalAccessException, InstantiationException {
+    void appendBuilders(List<RoutesBuilder> list) {
         Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packages);
         for (Class<?> aClass : classes) {
             logger.trace("Found RouteBuilder class: {}", aClass);

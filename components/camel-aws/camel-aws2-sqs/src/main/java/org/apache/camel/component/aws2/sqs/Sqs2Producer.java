@@ -27,7 +27,6 @@ import java.util.UUID;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -59,7 +58,7 @@ public class Sqs2Producer extends DefaultProducer {
 
     private transient String sqsProducerToString;
 
-    public Sqs2Producer(Sqs2Endpoint endpoint) throws NoFactoryAvailableException {
+    public Sqs2Producer(Sqs2Endpoint endpoint) {
         super(endpoint);
         if (endpoint.getConfiguration().isFifoQueue()
                 && ObjectHelper.isEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {

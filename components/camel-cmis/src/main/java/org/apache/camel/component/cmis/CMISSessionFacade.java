@@ -220,7 +220,7 @@ public class CMISSessionFacade {
         return false;
     }
 
-    public ContentStream createContentStream(String fileName, byte[] buf, String mimeType) throws Exception {
+    public ContentStream createContentStream(String fileName, byte[] buf, String mimeType) {
         return buf != null
                 ? session.getObjectFactory()
                         .createContentStream(fileName, buf.length, mimeType, new ByteArrayInputStream(buf))

@@ -143,19 +143,19 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         return dnsActivation.getResolvesTo();
     }
 
-    public void setTtl(long ttl) throws Exception {
+    public void setTtl(long ttl) {
         this.ttl = ttl;
     }
 
-    public void setTtl(String ttl) throws Exception {
+    public void setTtl(String ttl) {
         this.ttl = Long.parseLong(ttl);
     }
 
-    public long getTtl() throws Exception {
+    public long getTtl() {
         return ttl;
     }
 
-    public void setStopRoutesOnException(String stopRoutesOnException) throws Exception {
+    public void setStopRoutesOnException(String stopRoutesOnException) {
         this.stopRoutesOnException = Boolean.parseBoolean(stopRoutesOnException);
     }
 

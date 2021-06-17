@@ -70,7 +70,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info,
-                            HeaderFilterStrategy headerFilterStrategy, boolean checkException) throws IOException {
+                            HeaderFilterStrategy headerFilterStrategy, boolean checkException) {
         super(bus, getTargetReference(info, bus), info);
         this.camelContext = camelContext;
         conduitInitiator = ci;

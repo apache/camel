@@ -48,7 +48,6 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -378,7 +377,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     /**
      * Create a client factory bean object. Notice that the serviceClass <b>must</b> be an interface.
      */
-    protected ClientFactoryBean createClientFactoryBean(Class<?> cls) throws CamelException {
+    protected ClientFactoryBean createClientFactoryBean(Class<?> cls) {
         if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             return new JaxWsClientFactoryBean() {
                 @Override
