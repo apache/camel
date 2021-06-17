@@ -139,6 +139,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     @UriParam(label = "producer")
     private int reportGroup;
     @UriParam(label = "producer")
+    private boolean log;
+    @UriParam(label = "producer")
     private boolean failFast = true;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean copyOnExchange = true;
@@ -1527,6 +1529,20 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.reportGroup = reportGroup;
     }
 
+    public boolean isLog() {
+        return log;
+    }
+
+    /**
+     * To turn on logging when the mock receives an incoming message.
+     * <p/>
+     * This will log only one time at INFO level for the incoming message. For more detailed logging then set the logger
+     * to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class.
+     */
+    public void setLog(boolean log) {
+        this.log = log;
+    }
+
     public boolean isCopyOnExchange() {
         return copyOnExchange;
     }
@@ -1557,8 +1573,18 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     // Implementation methods
     // -------------------------------------------------------------------------
 
+    @Override
+    public MockComponent getComponent() {
+        return (MockComponent) super.getComponent();
+    }
+
     protected synchronized void onExchange(Exchange exchange) {
         try {
+            if (log) {
+                String line = getComponent().getExchangeFormatter().format(exchange);
+                LOG.info("mock:{} received #{} -> {}", getName(), counter + 1, line);
+            }
+
             if (reporter != null) {
                 reporter.process(exchange);
             }

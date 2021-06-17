@@ -23,10 +23,18 @@ public class MockComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "exchangeformatter":
+        case "exchangeFormatter": target.setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "log": target.setLog(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"exchangeFormatter"};
     }
 
     @Override
@@ -34,8 +42,11 @@ public class MockComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "exchangeformatter":
+        case "exchangeFormatter": return org.apache.camel.spi.ExchangeFormatter.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "log": return boolean.class;
         default: return null;
         }
     }
@@ -46,8 +57,11 @@ public class MockComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "exchangeformatter":
+        case "exchangeFormatter": return target.getExchangeFormatter();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "log": return target.isLog();
         default: return null;
         }
     }

@@ -26,7 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.component.mock.MockComponent;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -118,7 +118,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         };
     }
 
-    private static class CustomComponent extends DefaultComponent {
+    private static class CustomComponent extends MockComponent {
         @Override
         protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
                 throws Exception {
