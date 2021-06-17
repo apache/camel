@@ -210,6 +210,25 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-restdsl-openapi-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-dsl</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>generate-yaml</goal>
+                        </goals>
+                        <configuration>
+                            <specificationUri>${project.basedir}/src/test/resources/openapi.json</specificationUri>
+                            <outputDirectory>${project.build.outputDirectory}/rest-dsl</outputDirectory>
+                            <fileName>generated-rest-dsl.yaml</fileName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
                 <version>${gmavenplus-plugin-version}</version>
