@@ -43,6 +43,7 @@ import com.github.dockerjava.api.command.RestartContainerCmd;
 import com.github.dockerjava.api.command.SearchImagesCmd;
 import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.command.StopContainerCmd;
+import com.github.dockerjava.api.command.SyncDockerCmd;
 import com.github.dockerjava.api.command.TagImageCmd;
 import com.github.dockerjava.api.command.TopContainerCmd;
 import com.github.dockerjava.api.command.UnpauseContainerCmd;
@@ -100,143 +101,143 @@ public class DockerProducer extends DefaultProducer {
 
             /** General **/
             case AUTH:
-                try (AuthCmd cmd = executeAuthRequest(client, message)) {
-                    result = cmd.exec();
+                try (AuthCmd cmd = executeAuthRequest(client)) {
+                    result = safeExec(cmd);
                 }
                 break;
             case INFO:
-                try (InfoCmd cmd = executeInfoRequest(client, message)) {
-                    result = cmd.exec();
+                try (InfoCmd cmd = executeInfoRequest(client)) {
+                    result = safeExec(cmd);
                 }
                 break;
             case PING:
-                try (PingCmd cmd = executePingRequest(client, message)) {
-                    result = cmd.exec();
+                try (PingCmd cmd = executePingRequest(client)) {
+                    result = safeExec(cmd);
                 }
                 break;
             case VERSION:
-                try (VersionCmd cmd = executeVersionRequest(client, message)) {
-                    result = cmd.exec();
+                try (VersionCmd cmd = executeVersionRequest(client)) {
+                    result = safeExec(cmd);
                 }
                 break;
             case CREATE_IMAGE:
                 try (CreateImageCmd cmd = executeCreateImageRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case INSPECT_IMAGE:
                 try (InspectImageCmd cmd = executeInspectImageRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case LIST_IMAGES:
                 try (ListImagesCmd cmd = executeListImagesRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case REMOVE_IMAGE:
                 try (RemoveImageCmd cmd = executeRemoveImageRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case SEARCH_IMAGES:
                 try (SearchImagesCmd cmd = executeSearchImageRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case TAG_IMAGE:
                 try (TagImageCmd cmd = executeTagImageRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case COMMIT_CONTAINER:
                 try (CommitCmd cmd = executeCommitContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case COPY_FILE_CONTAINER:
                 try (CopyArchiveFromContainerCmd cmd = executeCopyFileContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case CREATE_CONTAINER:
                 try (CreateContainerCmd cmd = executeCreateContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case DIFF_CONTAINER:
                 try (ContainerDiffCmd cmd = executeDiffContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case INSPECT_CONTAINER:
                 try (InspectContainerCmd cmd = executeInspectContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case LIST_CONTAINERS:
                 try (ListContainersCmd cmd = executeListContainersRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case KILL_CONTAINER:
                 try (KillContainerCmd cmd = executeKillContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case PAUSE_CONTAINER:
                 try (PauseContainerCmd cmd = executePauseContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case REMOVE_CONTAINER:
                 try (RemoveContainerCmd cmd = executeRemoveContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case RESTART_CONTAINER:
                 try (RestartContainerCmd cmd = executeRestartContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case START_CONTAINER:
                 try (StartContainerCmd cmd = executeStartContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case STOP_CONTAINER:
                 try (StopContainerCmd cmd = executeStopContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case TOP_CONTAINER:
                 try (TopContainerCmd cmd = executeTopContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case UNPAUSE_CONTAINER:
                 try (UnpauseContainerCmd cmd = executeUnpauseContainerRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case CREATE_NETWORK:
                 try (CreateNetworkCmd cmd = executeCreateNetworkRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case REMOVE_NETWORK:
                 try (RemoveNetworkCmd cmd = executeRemoveNetworkRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case CONNECT_NETWORK:
                 try (ConnectToNetworkCmd cmd = executeConnectToNetworkRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             case EXEC_CREATE:
                 try (ExecCreateCmd cmd = executeExecCreateRequest(client, message)) {
-                    result = cmd.exec();
+                    result = safeExec(cmd);
                 }
                 break;
             default:
@@ -247,7 +248,16 @@ public class DockerProducer extends DefaultProducer {
         if (result != null) {
             exchange.getIn().setBody(result);
         }
+    }
 
+    private Object safeExec(SyncDockerCmd<?> cmd) {
+        if (cmd == null) {
+            LOGGER.warn("Trying to execute a docker command but the requested object is null");
+
+            return null;
+        }
+
+        return cmd.exec();
     }
 
     /*********************
@@ -258,18 +268,17 @@ public class DockerProducer extends DefaultProducer {
      * Produces a Authorization request
      *
      * @param  client
-     * @param  message
      * @return
      */
-    private AuthCmd executeAuthRequest(DockerClient client, Message message) {
+    private AuthCmd executeAuthRequest(DockerClient client) {
 
         LOGGER.debug("Executing Docker Auth Request");
 
         AuthCmd authCmd = client.authCmd();
 
-        AuthConfig authConfig = client.authConfig();
-
         if (authCmd != null) {
+            AuthConfig authConfig = client.authConfig();
+
             authCmd.withAuthConfig(authConfig);
         }
 
@@ -280,51 +289,39 @@ public class DockerProducer extends DefaultProducer {
      * Produces a platform information request
      *
      * @param  client
-     * @param  message
      * @return
      */
-    private InfoCmd executeInfoRequest(DockerClient client, Message message) {
+    private InfoCmd executeInfoRequest(DockerClient client) {
 
         LOGGER.debug("Executing Docker Info Request");
 
-        InfoCmd infoCmd = client.infoCmd();
-
-        return infoCmd;
-
+        return client.infoCmd();
     }
 
     /**
      * Executes a ping platform request
      *
      * @param  client
-     * @param  message
      * @return
      */
-    private PingCmd executePingRequest(DockerClient client, Message message) {
+    private PingCmd executePingRequest(DockerClient client) {
 
         LOGGER.debug("Executing Docker Ping Request");
 
-        PingCmd pingCmd = client.pingCmd();
-
-        return pingCmd;
-
+        return client.pingCmd();
     }
 
     /**
      * Executes a platform version request
      *
      * @param  client
-     * @param  message
      * @return
      */
-    private VersionCmd executeVersionRequest(DockerClient client, Message message) {
+    private VersionCmd executeVersionRequest(DockerClient client) {
 
         LOGGER.debug("Executing Docker Version Request");
 
-        VersionCmd versionCmd = client.versionCmd();
-
-        return versionCmd;
-
+        return client.versionCmd();
     }
 
     /*********************
@@ -350,10 +347,7 @@ public class DockerProducer extends DefaultProducer {
             throw new IllegalArgumentException("Inputstream must be present on message body and repository must be specified");
         }
 
-        CreateImageCmd createImageCmd = client.createImageCmd(repository, inputStream);
-
-        return createImageCmd;
-
+        return client.createImageCmd(repository, inputStream);
     }
 
     /**
@@ -371,10 +365,7 @@ public class DockerProducer extends DefaultProducer {
 
         ObjectHelper.notNull(imageId, "Image ID must be specified");
 
-        InspectImageCmd inspectImageCmd = client.inspectImageCmd(imageId);
-
-        return inspectImageCmd;
-
+        return client.inspectImageCmd(imageId);
     }
 
     /**
@@ -454,10 +445,7 @@ public class DockerProducer extends DefaultProducer {
 
         ObjectHelper.notNull(term, "Term must be specified");
 
-        SearchImagesCmd searchImagesCmd = client.searchImagesCmd(term);
-
-        return searchImagesCmd;
-
+        return client.searchImagesCmd(term);
     }
 
     /**
@@ -505,7 +493,7 @@ public class DockerProducer extends DefaultProducer {
      * @return
      * @throws DockerException
      */
-    private CommitCmd executeCommitContainerRequest(DockerClient client, Message message) throws DockerException {
+    private CommitCmd executeCommitContainerRequest(DockerClient client, Message message) {
 
         LOGGER.debug("Executing Docker Commit Container Request");
 
@@ -919,10 +907,7 @@ public class DockerProducer extends DefaultProducer {
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
-        InspectContainerCmd inspectContainerCmd = client.inspectContainerCmd(containerId);
-
-        return inspectContainerCmd;
-
+        return client.inspectContainerCmd(containerId);
     }
 
     /**
@@ -1016,10 +1001,7 @@ public class DockerProducer extends DefaultProducer {
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
-        PauseContainerCmd pauseContainerCmd = client.pauseContainerCmd(containerId);
-
-        return pauseContainerCmd;
-
+        return client.pauseContainerCmd(containerId);
     }
 
     /**
@@ -1065,7 +1047,7 @@ public class DockerProducer extends DefaultProducer {
      * @return
      * @throws DockerException
      */
-    private RestartContainerCmd executeRestartContainerRequest(DockerClient client, Message message) throws DockerException {
+    private RestartContainerCmd executeRestartContainerRequest(DockerClient client, Message message) {
 
         LOGGER.debug("Executing Docker Restart Container Request");
 
@@ -1100,10 +1082,7 @@ public class DockerProducer extends DefaultProducer {
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
-        StartContainerCmd startContainerCmd = client.startContainerCmd(containerId);
-
-        return startContainerCmd;
-
+        return client.startContainerCmd(containerId);
     }
 
     /**
@@ -1176,10 +1155,7 @@ public class DockerProducer extends DefaultProducer {
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
-        UnpauseContainerCmd unpauseContainerCmd = client.unpauseContainerCmd(containerId);
-
-        return unpauseContainerCmd;
-
+        return client.unpauseContainerCmd(containerId);
     }
 
     /**
@@ -1190,17 +1166,13 @@ public class DockerProducer extends DefaultProducer {
      * @return
      */
     private CreateNetworkCmd executeCreateNetworkRequest(DockerClient client, Message message) {
-
         LOGGER.debug("Executing Docker Network Create Request");
 
         String networkName = DockerHelper.getProperty(DockerConstants.DOCKER_NETWORK, configuration, message, String.class);
 
         ObjectHelper.notNull(networkName, "Network Name must be specified");
 
-        CreateNetworkCmd createNetworkCmd = client.createNetworkCmd().withName(networkName);
-
-        return createNetworkCmd;
-
+        return client.createNetworkCmd().withName(networkName);
     }
 
     /**
@@ -1218,10 +1190,7 @@ public class DockerProducer extends DefaultProducer {
 
         ObjectHelper.notNull(networkId, "Network ID must be specified");
 
-        RemoveNetworkCmd removeNetworkCmd = client.removeNetworkCmd(networkId);
-
-        return removeNetworkCmd;
-
+        return client.removeNetworkCmd(networkId);
     }
 
     /**
@@ -1242,10 +1211,7 @@ public class DockerProducer extends DefaultProducer {
         ObjectHelper.notNull(networkId, "Network ID must be specified");
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
-        ConnectToNetworkCmd connectToNetworkCmd
-                = client.connectToNetworkCmd().withNetworkId(networkId).withContainerId(containerId);
-
-        return connectToNetworkCmd;
+        return client.connectToNetworkCmd().withNetworkId(networkId).withContainerId(containerId);
 
     }
 
@@ -1307,10 +1273,4 @@ public class DockerProducer extends DefaultProducer {
         return execCreateCmd;
 
     }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
 }
