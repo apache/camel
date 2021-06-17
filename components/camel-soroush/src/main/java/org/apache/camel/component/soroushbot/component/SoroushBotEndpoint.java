@@ -502,10 +502,11 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         //this for handle connection retry if sending request failed.
         for (int count = 0; count <= maxConnectionRetry; count++) {
             waitBeforeRetry(count);
-            MultiPart multipart = new MultiPart();
-            multipart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
-            multipart.bodyPart(new StreamDataBodyPart("file", inputStream, null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
-            try {
+
+            try (MultiPart multipart = new MultiPart()) {
+                multipart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+                multipart.bodyPart(new StreamDataBodyPart("file", inputStream, null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("try to upload {} for the {} time for message: {}", fileType,
                             StringUtils.ordinal(count + 1), message);
