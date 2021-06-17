@@ -431,7 +431,7 @@ public class JmsBinding {
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
                 LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",
-                        new Object[] { headerName, headerValue.getClass().getName(), headerValue });
+                        headerName, headerValue.getClass().getName(), headerValue);
             }
         }
     }

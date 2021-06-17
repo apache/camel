@@ -260,7 +260,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
             LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. "
                       + "Cluster description: {}, Db: {}, Collection: {}",
-                    new Object[] { mongoConnection.getClusterDescription(), mongoDatabase.getName(), collection });
+                    mongoConnection.getClusterDescription(), mongoDatabase.getName(), collection);
 
             try {
                 if (ObjectHelper.isNotEmpty(collectionIndex)) {

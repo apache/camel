@@ -246,11 +246,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                             ChannelHandlerFactories.newDelimiterBasedFrameDecoder(decoderMaxLineLength, delimiters, protocol));
                     decoders.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
-                                new Object[] { charset, delimiter, decoderMaxLineLength });
-                    }
+                    LOG.debug(
+                            "Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
+                            charset, delimiter, decoderMaxLineLength);
+
                 } else if ("udp".equalsIgnoreCase(protocol) && isUdpByteArrayCodec()) {
                     encoders.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
                     decoders.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));

@@ -373,11 +373,10 @@ public class SjmsProducer extends DefaultAsyncProducer {
                 if (jmsReplyTo != null && !(endpoint.isPreserveMessageQos() || endpoint.isExplicitQosEnabled())) {
                     // log at debug what we are doing, as higher level may cause noise in production logs
                     // this behavior is also documented at the camel website
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Disabling JMSReplyTo: {} for destination: {}. Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: {}",
-                                new Object[] { jmsReplyTo, to, endpoint });
-                    }
+                    LOG.debug(
+                            "Disabling JMSReplyTo: {} for destination: {}. Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: {}",
+                            jmsReplyTo, to, endpoint);
+
                     jmsReplyTo = null;
                 }
 

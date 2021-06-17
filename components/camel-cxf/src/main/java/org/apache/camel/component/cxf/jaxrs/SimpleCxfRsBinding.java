@@ -109,22 +109,21 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
     /** The JAX-RS annotations to be injected as headers in the IN message */
     private static final Set<Class<?>> HEADER_ANNOTATIONS = Collections.unmodifiableSet(
             new HashSet<>(
-                    Arrays.asList(new Class<?>[] {
+                    Arrays.asList(
                             CookieParam.class,
                             FormParam.class,
                             PathParam.class,
                             HeaderParam.class,
                             MatrixParam.class,
-                            QueryParam.class })));
+                            QueryParam.class)));
 
     private static final Set<Class<?>> BINARY_ATTACHMENT_TYPES = Collections.unmodifiableSet(
             new HashSet<>(
-                    Arrays.asList(new Class<?>[] {
+                    Arrays.asList(
                             Attachment.class,
                             DataHandler.class,
                             DataSource.class,
-                            InputStream.class,
-                    })));
+                            InputStream.class)));
 
     private static final Class<?>[] NO_PARAMETER_TYPES = null;
     private static final Object[] NO_PARAMETERS = null;

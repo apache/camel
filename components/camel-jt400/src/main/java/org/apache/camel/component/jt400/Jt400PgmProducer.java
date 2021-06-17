@@ -72,7 +72,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.trace(
                         "Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
-                        new Object[] { commandStr, iSeries.getSystemName(), iSeries.getUserId() });
+                        commandStr, iSeries.getSystemName(), iSeries.getUserId());
             }
 
             boolean result = pgmCall.run();
