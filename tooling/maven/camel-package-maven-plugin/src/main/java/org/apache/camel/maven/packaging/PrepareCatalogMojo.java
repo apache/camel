@@ -403,11 +403,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // check all the component options and grab the label(s) they
                 // use
                 model.getComponentOptions().stream().map(BaseOptionModel::getLabel).filter(l -> !Strings.isNullOrEmpty(l)).flatMap(l -> Stream.of(label.split(",")))
-                    .forEach(usedOptionLabels::add);
+                        .forEach(usedOptionLabels::add);
 
                 // check all the endpoint options and grab the label(s) they use
                 model.getEndpointOptions().stream().map(BaseOptionModel::getLabel).filter(l -> !Strings.isNullOrEmpty(l)).flatMap(l -> Stream.of(label.split(",")))
-                    .forEach(usedOptionLabels::add);
+                        .forEach(usedOptionLabels::add);
 
                 long unused = model.getEndpointOptions().stream().map(BaseOptionModel::getLabel).filter(Strings::isNullOrEmpty).count();
                 if (unused >= UNUSED_LABELS_WARN) {
@@ -591,8 +591,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-azure":
                 case "camel-google":
                 case "camel-microprofile":
-                case "camel-debezium": 
-                case "camel-test": 
+                case "camel-debezium":
+                case "camel-test":
                 case "camel-aws":
                 case "camel-huawei":
                     return false;
@@ -683,26 +683,26 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // find all camel maven modules
         Stream.concat(
-            list(componentsDir.toPath())
-                .filter(dir -> !dir.getFileName().startsWith(".") && !"target".equals(dir.getFileName().toString()))
-                .flatMap(p -> getComponentPath(p).stream()),
-            Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath()))
-            .forEach(dir -> {
-                List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs"))
-                    .filter(f -> f.getFileName().toString().endsWith(".adoc"))
-                    .collect(Collectors.toList());
+                list(componentsDir.toPath())
+                        .filter(dir -> !dir.getFileName().startsWith(".") && !"target".equals(dir.getFileName().toString()))
+                        .flatMap(p -> getComponentPath(p).stream()),
+                Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath()))
+                .forEach(dir -> {
+                    List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs"))
+                            .filter(f -> f.getFileName().toString().endsWith(".adoc"))
+                            .collect(Collectors.toList());
 
-                if (l.isEmpty()) {
-                    String n = dir.getFileName().toString();
-                    boolean isDir = dir.toFile().isDirectory();
-                    boolean valid = isDir && !n.startsWith(".") && !n.endsWith("-base") && !n.endsWith("-common");
-                    if (valid) {
-                        missingAdocFiles.add(dir);
+                    if (l.isEmpty()) {
+                        String n = dir.getFileName().toString();
+                        boolean isDir = dir.toFile().isDirectory();
+                        boolean valid = isDir && !n.startsWith(".") && !n.endsWith("-base") && !n.endsWith("-common") && !n.equals("src");
+                        if (valid) {
+                            missingAdocFiles.add(dir);
+                        }
+                    } else {
+                        adocFiles.addAll(l);
                     }
-                } else {
-                    adocFiles.addAll(l);
-                }
-            });
+                });
 
         getLog().info("Found " + adocFiles.size() + " ascii document files");
 
@@ -715,7 +715,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // Copy all descriptors
         Map<Path, Path> newJsons = map(adocFiles, p -> p, p -> documentsOutDir.resolve(p.getFileName()));
         list(documentsOutDir).filter(p -> !newJsons.containsValue(p) && !newJsons.containsValue(p.resolveSibling(p.getFileName().toString().replace(".html", ".adoc"))))
-            .forEach(this::delete);
+                .forEach(this::delete);
         newJsons.forEach(this::copy);
 
         Path all = documentsOutDir.resolve("../docs.properties");
@@ -826,8 +826,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel model catalog report");
         getLog().info("");
         getLog().info("\tModels found: " + json.size());
-        for (Path file : json) {
-            getLog().info("\t\t" + asComponentName(file));
+        if (getLog().isDebugEnabled()) {
+            for (Path file : json) {
+                getLog().debug("\t\t" + asComponentName(file));
+            }
         }
         if (!duplicate.isEmpty()) {
             getLog().info("");
@@ -843,13 +845,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        if (!usedLabels.isEmpty()) {
-            getLog().info("");
-            getLog().info("\tUsed labels: " + usedLabels.size());
-            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
-                getLog().info("\t\t" + entry.getKey() + ":");
-                for (String name : entry.getValue()) {
-                    getLog().info("\t\t\t" + name);
+        if (getLog().isDebugEnabled()) {
+            if (!usedLabels.isEmpty()) {
+                getLog().info("");
+                getLog().info("\tUsed labels: " + usedLabels.size());
+                for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+                    getLog().info("\t\t" + entry.getKey() + ":");
+                    for (String name : entry.getValue()) {
+                        getLog().info("\t\t\t" + name);
+                    }
                 }
             }
         }
@@ -871,8 +875,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel component catalog report");
         getLog().info("");
         getLog().info("\tComponents found: " + json.size());
-        for (Path file : json) {
-            getLog().info("\t\t" + asComponentName(file));
+        if (getLog().isDebugEnabled()) {
+            for (Path file : json) {
+                getLog().debug("\t\t" + asComponentName(file));
+            }
         }
         if (!duplicate.isEmpty()) {
             getLog().info("");
@@ -881,21 +887,23 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        if (!usedComponentLabels.isEmpty()) {
-            getLog().info("");
-            getLog().info("\tUsed component labels: " + usedComponentLabels.size());
-            for (Map.Entry<String, Set<String>> entry : usedComponentLabels.entrySet()) {
-                getLog().info("\t\t" + entry.getKey() + ":");
-                for (String name : entry.getValue()) {
-                    getLog().info("\t\t\t" + name);
+        if (getLog().isDebugEnabled()) {
+            if (!usedComponentLabels.isEmpty()) {
+                getLog().info("");
+                getLog().info("\tUsed component labels: " + usedComponentLabels.size());
+                for (Map.Entry<String, Set<String>> entry : usedComponentLabels.entrySet()) {
+                    getLog().debug("\t\t" + entry.getKey() + ":");
+                    for (String name : entry.getValue()) {
+                        getLog().debug("\t\t\t" + name);
+                    }
                 }
             }
-        }
-        if (!usedOptionsLabels.isEmpty()) {
-            getLog().info("");
-            getLog().info("\tUsed component/endpoint options labels: " + usedOptionsLabels.size());
-            for (String name : usedOptionsLabels) {
-                getLog().info("\t\t\t" + name);
+            if (!usedOptionsLabels.isEmpty()) {
+                getLog().info("");
+                getLog().info("\tUsed component/endpoint options labels: " + usedOptionsLabels.size());
+                for (String name : usedOptionsLabels) {
+                    getLog().info("\t\t\t" + name);
+                }
             }
         }
         if (!unusedLabels.isEmpty()) {
@@ -929,8 +937,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel data format catalog report");
         getLog().info("");
         getLog().info("\tDataFormats found: " + json.size());
-        for (Path file : json) {
-            getLog().info("\t\t" + asComponentName(file));
+        if (getLog().isDebugEnabled()) {
+            for (Path file : json) {
+                getLog().debug("\t\t" + asComponentName(file));
+            }
         }
         if (!duplicate.isEmpty()) {
             getLog().info("");
@@ -939,13 +949,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        if (!usedLabels.isEmpty()) {
-            getLog().info("");
-            getLog().info("\tUsed labels: " + usedLabels.size());
-            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
-                getLog().info("\t\t" + entry.getKey() + ":");
-                for (String name : entry.getValue()) {
-                    getLog().info("\t\t\t" + name);
+        if (getLog().isDebugEnabled()) {
+            if (!usedLabels.isEmpty()) {
+                getLog().info("");
+                getLog().info("\tUsed labels: " + usedLabels.size());
+                for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+                    getLog().info("\t\t" + entry.getKey() + ":");
+                    for (String name : entry.getValue()) {
+                        getLog().info("\t\t\t" + name);
+                    }
                 }
             }
         }
@@ -966,8 +978,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel language catalog report");
         getLog().info("");
         getLog().info("\tLanguages found: " + json.size());
-        for (Path file : json) {
-            getLog().info("\t\t" + asComponentName(file));
+        if (getLog().isDebugEnabled()) {
+            for (Path file : json) {
+                getLog().debug("\t\t" + asComponentName(file));
+            }
         }
         if (!duplicate.isEmpty()) {
             getLog().info("");
@@ -976,13 +990,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        if (!usedLabels.isEmpty()) {
-            getLog().info("");
-            getLog().info("\tUsed labels: " + usedLabels.size());
-            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
-                getLog().info("\t\t" + entry.getKey() + ":");
-                for (String name : entry.getValue()) {
-                    getLog().info("\t\t\t" + name);
+        if (getLog().isDebugEnabled()) {
+            if (!usedLabels.isEmpty()) {
+                getLog().info("");
+                getLog().info("\tUsed labels: " + usedLabels.size());
+                for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+                    getLog().info("\t\t" + entry.getKey() + ":");
+                    for (String name : entry.getValue()) {
+                        getLog().info("\t\t\t" + name);
+                    }
                 }
             }
         }
@@ -1003,8 +1019,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel other catalog report");
         getLog().info("");
         getLog().info("\tOthers found: " + json.size());
-        for (Path file : json) {
-            getLog().info("\t\t" + asComponentName(file));
+        if (getLog().isDebugEnabled()) {
+            for (Path file : json) {
+                getLog().debug("\t\t" + asComponentName(file));
+            }
         }
         if (!duplicate.isEmpty()) {
             getLog().info("");
@@ -1013,13 +1031,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        if (!usedLabels.isEmpty()) {
-            getLog().info("");
-            getLog().info("\tUsed labels: " + usedLabels.size());
-            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
-                getLog().info("\t\t" + entry.getKey() + ":");
-                for (String name : entry.getValue()) {
-                    getLog().info("\t\t\t" + name);
+        if (getLog().isDebugEnabled()) {
+            if (!usedLabels.isEmpty()) {
+                getLog().info("");
+                getLog().info("\tUsed labels: " + usedLabels.size());
+                for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+                    getLog().info("\t\t" + entry.getKey() + ":");
+                    for (String name : entry.getValue()) {
+                        getLog().info("\t\t\t" + name);
+                    }
                 }
             }
         }
@@ -1040,8 +1060,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Camel document catalog report");
         getLog().info("");
         getLog().info("\tDocuments found: " + docs.size());
-        for (Path file : docs) {
-            getLog().info("\t\t" + asComponentName(file));
+        if (getLog().isDebugEnabled()) {
+            for (Path file : docs) {
+                getLog().debug("\t\t" + asComponentName(file));
+            }
         }
         if (!duplicate.isEmpty()) {
             getLog().info("");
