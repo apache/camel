@@ -5,7 +5,7 @@
     "title": "Bearer Token",
     "description": "Rest security bearer token authentication definition",
     "deprecated": false,
-    "label": "rest,security",
+    "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.RestSecurityBearerToken",
     "input": false,
     "output": false

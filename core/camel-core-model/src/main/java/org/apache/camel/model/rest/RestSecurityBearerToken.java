@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Rest security bearer token authentication definition
  */
-@Metadata(label = "rest,security")
+@Metadata(label = "rest,security,configuration")
 @XmlRootElement(name = "bearerToken")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestSecurityBearerToken extends RestSecurityDefinition {

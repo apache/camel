@@ -22,12 +22,17 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.util.jsse.AbstractSSLContextParametersFactoryBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * Secure socket protocol configuration
+ */
+@Metadata(label = "security,configuration")
 @XmlRootElement(name = "sslContextParameters")
 @XmlType(propOrder = {})
 public class SSLContextParametersFactoryBean extends AbstractSSLContextParametersFactoryBean
