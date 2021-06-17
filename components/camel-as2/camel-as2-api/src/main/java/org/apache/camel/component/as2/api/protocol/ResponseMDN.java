@@ -292,7 +292,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         }
     }
 
-    private synchronized VelocityEngine getVelocityEngine() throws Exception {
+    private synchronized VelocityEngine getVelocityEngine() {
         if (velocityEngine == null) {
             velocityEngine = new VelocityEngine();
 
