@@ -100,6 +100,11 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = DotName.createSimple("org.apache.camel.model.ToDynamicDefinition");
     public static final DotName ERROR_HANDLER_BUILDER_CLASS
             = DotName.createSimple("org.apache.camel.builder.ErrorHandlerBuilder");
+    public static final DotName VERB_DEFINITION_CLASS
+            = DotName.createSimple("org.apache.camel.model.rest.VerbDefinition");
+    public static final DotName ID_AWARE_CLASS
+            = DotName.createSimple("org.apache.camel.spi.IdAware");
+
 
     public static final DotName YAML_TYPE_ANNOTATION
             = DotName.createSimple("org.apache.camel.spi.annotations.YamlType");
@@ -590,6 +595,13 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                                 .orElse(false);
     }
 
+    protected boolean extendsType(Type type, DotName superType) {
+        return extendsType(
+            view.getClassByName(type.name()),
+            superType
+        );
+    }
+
     protected boolean extendsType(ClassInfo ci, DotName superType) {
         if (ci == null) {
             return false;
@@ -606,6 +618,13 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         }
 
         return false;
+    }
+
+    protected boolean implementType(Type type, DotName interfaceType) {
+        return implementType(
+            view.getClassByName(type.name()),
+            interfaceType
+        );
     }
 
     protected boolean implementType(ClassInfo ci, DotName interfaceType) {
@@ -643,5 +662,30 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         }
 
         return false;
+    }
+
+    protected Stream<ClassInfo> implementsOrExtends(Type ci) {
+        return Stream.concat(
+            view.getAllKnownSubclasses(ci.name()).stream(),
+            view.getAllKnownSubclasses(ci.name()).stream())
+                .distinct()
+                .sorted(Comparator.comparing(ClassInfo::name));
+    }
+
+    protected String fieldName(ClassInfo ci, FieldInfo fi) {
+        return firstPresent(
+            annotationValue(fi, XML_VALUE_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(value -> !"##default".equals(value)),
+            annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(value -> !"##default".equals(value)),
+            annotationValue(fi, XML_ELEMENT_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(value -> !"##default".equals(value)),
+            annotationValue(ci, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(value -> !"##default".equals(value))
+        ).orElseGet(fi::name);
     }
 }
