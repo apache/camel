@@ -47,7 +47,6 @@ public final class ElasticsearchActionRequestConverter {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchActionRequestConverter.class);
 
     private static final String ES_QUERY_DSL_PREFIX = "query";
-    private static final String PARENT = "parent";
 
     private ElasticsearchActionRequestConverter() {
     }
@@ -103,14 +102,26 @@ public final class ElasticsearchActionRequestConverter {
 
     @Converter
     public static IndexRequest toIndexRequest(Object document, Exchange exchange) {
-        return createIndexRequest(document, exchange)
-                .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+        IndexRequest indexRequest = createIndexRequest(document, exchange);
+
+        // NOTE: although we dodge the NPE here, it may still throw it somewhere else
+        if (indexRequest != null) {
+            indexRequest.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+        }
+
+        return indexRequest;
     }
 
     @Converter
     public static UpdateRequest toUpdateRequest(Object document, Exchange exchange) {
-        return createUpdateRequest(document, exchange)
-                .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+        UpdateRequest updateRequest = createUpdateRequest(document, exchange);
+
+        // NOTE: although we dodge the NPE here, it may still throw it somewhere else
+        if (updateRequest != null) {
+            updateRequest.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+        }
+
+        return updateRequest;
     }
 
     @Converter
