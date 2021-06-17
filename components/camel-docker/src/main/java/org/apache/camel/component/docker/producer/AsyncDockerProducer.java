@@ -455,10 +455,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
-        WaitContainerCmd waitContainerCmd = client.waitContainerCmd(containerId);
-
-        return waitContainerCmd;
-
+        return client.waitContainerCmd(containerId);
     }
 
     /**
