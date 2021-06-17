@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
@@ -78,7 +77,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
     public FacebookEndpoint(String uri, FacebookComponent facebookComponent,
                             String remaining,
-                            FacebookEndpointConfiguration configuration) throws NoTypeConversionAvailableException {
+                            FacebookEndpointConfiguration configuration) {
         super(uri, facebookComponent);
         this.configuration = configuration;
         this.method = remaining;

@@ -128,7 +128,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
         return result;
     }
 
-    protected CxfEndpoint createCxfSpringEndpoint(String beanId) throws Exception {
+    protected CxfEndpoint createCxfSpringEndpoint(String beanId) {
         return CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfEndpoint.class);
     }
 

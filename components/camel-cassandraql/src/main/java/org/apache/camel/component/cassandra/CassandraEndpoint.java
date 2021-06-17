@@ -136,7 +136,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         return sessionHolder;
     }
 
-    protected CqlSessionBuilder createSessionBuilder() throws Exception {
+    protected CqlSessionBuilder createSessionBuilder() {
         CqlSessionBuilder sessionBuilder = CqlSession.builder();
         for (String host : hosts.split(",")) {
             sessionBuilder.addContactPoint(new InetSocketAddress(host, port == null ? 9042 : port));

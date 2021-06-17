@@ -179,8 +179,7 @@ public final class DropboxAPIFacade {
         }
     }
 
-    private DropboxFileUploadResult putBody(Exchange exchange, DropboxUploadMode mode, String dropboxPath, boolean isPresent)
-            throws DropboxException {
+    private DropboxFileUploadResult putBody(Exchange exchange, DropboxUploadMode mode, String dropboxPath, boolean isPresent) {
         String name = exchange.getIn().getHeader(HEADER_PUT_FILE_NAME, String.class);
         if (name == null) {
             // fallback to use CamelFileName

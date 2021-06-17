@@ -19,7 +19,6 @@ package org.apache.camel.converter.crypto;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +60,7 @@ public final class PGPDataFormatUtil {
     public static List<PGPPublicKey> findPublicKeys(
             CamelContext context, String filename, byte[] keyRing, List<String> userids,
             boolean forEncryption)
-            throws IOException, PGPException, NoSuchProviderException {
+            throws IOException, PGPException {
         InputStream is = determineKeyRingInputStream(context, filename, keyRing, forEncryption);
         try {
             return findPublicKeys(is, userids, forEncryption);
@@ -84,8 +83,7 @@ public final class PGPDataFormatUtil {
     public static PGPPrivateKey findPrivateKeyWithKeyId(
             CamelContext context, String filename, byte[] secretKeyRing, long keyid,
             String passphrase, PGPPassphraseAccessor passpraseAccessor, String provider)
-            throws IOException, PGPException,
-            NoSuchProviderException {
+            throws IOException, PGPException {
         InputStream is = determineKeyRingInputStream(context, filename, secretKeyRing, true);
         try {
             return findPrivateKeyWithKeyId(is, keyid, passphrase, passpraseAccessor, provider);
@@ -171,7 +169,7 @@ public final class PGPDataFormatUtil {
 
     private static List<PGPPublicKey> findPublicKeys(InputStream input, List<String> userids, boolean forEncryption)
             throws IOException,
-            PGPException, NoSuchProviderException {
+            PGPException {
 
         PGPPublicKeyRingCollection pgpSec = new PGPPublicKeyRingCollection(
                 PGPUtil.getDecoderStream(input),
@@ -266,7 +264,7 @@ public final class PGPDataFormatUtil {
             CamelContext context,
             String keychainFilename, byte[] secKeyRing, Map<String, String> sigKeyUserId2Password, String provider)
             throws IOException,
-            PGPException, NoSuchProviderException {
+            PGPException {
         InputStream keyChainInputStream = determineKeyRingInputStream(context, keychainFilename, secKeyRing, false);
         try {
             return findSecretKeysWithPrivateKeyAndUserId(keyChainInputStream, sigKeyUserId2Password, provider);
@@ -278,7 +276,7 @@ public final class PGPDataFormatUtil {
     private static List<PGPSecretKeyAndPrivateKeyAndUserId> findSecretKeysWithPrivateKeyAndUserId(
             InputStream keyringInput,
             Map<String, String> sigKeyUserId2Password, String provider)
-            throws IOException, PGPException, NoSuchProviderException {
+            throws IOException, PGPException {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(
                 PGPUtil.getDecoderStream(keyringInput),
                 new BcKeyFingerprintCalculator());

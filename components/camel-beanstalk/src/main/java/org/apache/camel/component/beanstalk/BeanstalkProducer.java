@@ -31,7 +31,7 @@ public class BeanstalkProducer extends DefaultAsyncProducer {
     private Client client;
     private final Command command;
 
-    public BeanstalkProducer(BeanstalkEndpoint endpoint, final Command command) throws Exception {
+    public BeanstalkProducer(BeanstalkEndpoint endpoint, final Command command) {
         super(endpoint);
         this.command = command;
     }
