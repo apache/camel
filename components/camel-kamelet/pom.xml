@@ -74,12 +74,6 @@
             <artifactId>camel-direct</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- TODO: circular
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-io-dsl</artifactId>
-            <scope>test</scope>
-        </dependency> -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
