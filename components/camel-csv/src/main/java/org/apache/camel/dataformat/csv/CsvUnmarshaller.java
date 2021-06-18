@@ -98,6 +98,7 @@ abstract class CsvUnmarshaller {
             CSVParser parser
                     = new CSVParser(new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange)), format);
             try {
+                exchange.getOut().setHeader("CamelCsvHeaderNames", parser.getHeaderNames());
                 return asList(parser.iterator(), converter);
             } finally {
                 IOHelper.close(parser);

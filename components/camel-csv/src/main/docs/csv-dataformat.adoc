@@ -56,7 +56,19 @@ The CSV dataformat supports 28 options, which are listed below.
 |===
 // dataformat options: END
 
+== Message Headers
 
+The following headers are supported by this component:
+
+=== File producer only
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Header |Description
+
+|`CamelCsvHeaderNames` |The header names provided or collected from the CSV.
+
+|===
 
 == Marshalling a Map to CSV
 
@@ -253,6 +265,22 @@ should illustrate this customization.
   <property name="staticField" value="org.apache.commons.csv.CSVStrategy.EXCEL_STRATEGY" />
 </bean>
 -----------------------------------------------------------------------------------------------------------------------------
+
+== Collecting header names
+
+When an empty string array is provided for the header, the format will collect the headers into
+a message header called CamelCsvHeaderNames.
+
+[source,java]
+--------------------------------------------
+CsvDataFormat csv = new CsvDataFormat();
+csv.setHeader(new String[0]);
+
+from("direct:start")
+  .unmarshal(csv)
+  .log("${header[CamelCsvHeaderNames]}");
+--------------------------------------------
+
 
 == Using skipFirstLine or skipHeaderRecord option while unmarshaling
 
