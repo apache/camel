@@ -42,6 +42,7 @@ public final class Kamelet {
     public static final String SINK_ID = "sink";
     public static final String PARAM_ROUTE_ID = "routeId";
     public static final String PARAM_TEMPLATE_ID = "templateId";
+    public static final String PARAM_LOCATION = "location";
     public static final String DEFAULT_LOCATION = "classpath:/kamelets";
 
     // use a running counter as uuid
@@ -94,6 +95,14 @@ public final class Kamelet {
         }
 
         return answer;
+    }
+
+    public static String extractLocation(CamelContext context, Map<String, Object> parameters) {
+        Object param = parameters.get(PARAM_LOCATION);
+        if (param != null) {
+            return CamelContextHelper.mandatoryConvertTo(context, String.class, param);
+        }
+        return null;
     }
 
     public static void extractKameletProperties(CamelContext context, Map<String, Object> properties, String... elements) {

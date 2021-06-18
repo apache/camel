@@ -39,10 +39,12 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_ROUTE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
 
@@ -100,9 +102,11 @@ public class KameletComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final String templateId = Kamelet.extractTemplateId(getCamelContext(), remaining, parameters);
         final String routeId = Kamelet.extractRouteId(getCamelContext(), remaining, parameters);
+        final String loc = Kamelet.extractLocation(getCamelContext(), parameters);
 
         parameters.remove(PARAM_TEMPLATE_ID);
         parameters.remove(PARAM_ROUTE_ID);
+        parameters.remove(PARAM_LOCATION);
 
         final KameletEndpoint endpoint;
 
@@ -132,6 +136,8 @@ public class KameletComponent extends DefaultComponent {
             // forward component properties
             endpoint.setBlock(block);
             endpoint.setTimeout(timeout);
+            // endpoint specific location
+            endpoint.setLocation(loc);
 
             // set endpoint specific properties
             setProperties(endpoint, parameters);
@@ -151,6 +157,8 @@ public class KameletComponent extends DefaultComponent {
             // forward component properties
             endpoint.setBlock(block);
             endpoint.setTimeout(timeout);
+            // endpoint specific location
+            endpoint.setLocation(loc);
 
             // set and remove endpoint specific properties
             setProperties(endpoint, parameters);
@@ -382,17 +390,27 @@ public class KameletComponent extends DefaultComponent {
             final ModelCamelContext context = getCamelContext().adapt(ModelCamelContext.class);
             final String templateId = endpoint.getTemplateId();
             final String routeId = endpoint.getRouteId();
+            final String loc = endpoint.getLocation() != null ? endpoint.getLocation() : getLocation();
 
-            if (context.getRouteTemplateDefinition(templateId) == null && getLocation() != null) {
-                LOGGER.debug("Loading route template={} from {}", templateId, getLocation());
+            if (context.getRouteTemplateDefinition(templateId) == null && loc != null) {
+                LOGGER.debug("Loading route template={} from {}", templateId, loc);
 
                 boolean found = false;
-                for (String path : getLocation().split(",")) {
-                    if (!path.endsWith("/")) {
-                        path += "/";
+                for (String path : loc.split(",")) {
+                    String name = path;
+                    Resource res = null;
+                    // first try resource as-is if the path has an extension
+                    String ext = FileUtil.onlyExt(path);
+                    if (ext != null) {
+                        res = ecc.getResourceLoader().resolveResource(name);
                     }
-                    String name = path + templateId + ".kamelet.yaml";
-                    Resource res = ecc.getResourceLoader().resolveResource(name);
+                    if (res == null || !res.exists()) {
+                        if (!path.endsWith("/")) {
+                            path += "/";
+                        }
+                        name = path + templateId + ".kamelet.yaml";
+                        res = ecc.getResourceLoader().resolveResource(name);
+                    }
                     if (res.exists()) {
                         try {
                             if (kameletResourceLoaderListener != null) {
@@ -410,16 +428,16 @@ public class KameletComponent extends DefaultComponent {
                 }
                 if (!found) {
                     // fallback to old behaviour
-                    String path = getLocation();
+                    String path = loc;
                     if (!path.endsWith("/")) {
                         path += "/";
                     }
-                    String loc = path + templateId + ".kamelet.yaml";
+                    String target = path + templateId + ".kamelet.yaml";
                     try {
                         ecc.getRoutesLoader().loadRoutes(
-                                ecc.getResourceLoader().resolveResource(loc));
+                                ecc.getResourceLoader().resolveResource(target));
                     } catch (Exception e) {
-                        throw new KameletNotFoundException(templateId, loc, e);
+                        throw new KameletNotFoundException(templateId, target, e);
                     }
                 }
             }
