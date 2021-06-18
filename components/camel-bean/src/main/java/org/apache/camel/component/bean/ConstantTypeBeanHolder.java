@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -79,7 +80,12 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
 
     @Override
     public Object getBean(Exchange exchange) {
-        // only create a bean if we have a default no-arg constructor
+        //  try to get the bean from registry first if there is a single candidate for the type. 
+        Set<?> beans = beanInfo.getCamelContext().getRegistry().findByType(type);
+        if (beans.size() == 1) {
+            return beans.iterator().next();
+        }
+        // only create a bean if we have a default no-arg constructor and not present in the registry
         if (beanInfo.hasPublicNoArgConstructors()) {
             Object bean = getBeanInfo().getCamelContext().getInjector().newInstance(type, false);
             if (options != null && !options.isEmpty()) {
