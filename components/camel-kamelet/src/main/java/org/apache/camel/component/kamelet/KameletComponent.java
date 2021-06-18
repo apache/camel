@@ -27,19 +27,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +61,8 @@ public class KameletComponent extends DefaultComponent {
     // active kamelet EIPs
     private final Map<String, Processor> kameletEips = new ConcurrentHashMap<>();
 
-    @Metadata(label = "advanced")
-    private KameletResourceLoaderListener kameletResourceLoaderListener;
+    @Metadata(label = "advanced", autowired = true)
+    private RouteTemplateLoaderListener routeTemplateLoaderListener;
 
     // counter that is used for producers to keep track if any consumer was added/removed since they last checked
     // this is used for optimization to avoid each producer to get consumer for each message processed
@@ -289,15 +288,15 @@ public class KameletComponent extends DefaultComponent {
         this.location = location;
     }
 
-    public KameletResourceLoaderListener getKameletResourceLoaderListener() {
-        return kameletResourceLoaderListener;
+    public RouteTemplateLoaderListener getRouteTemplateLoaderListener() {
+        return routeTemplateLoaderListener;
     }
 
     /**
      * To plugin a custom listener for when the Kamelet component is loading Kamelets from external resources.
      */
-    public void setKameletResourceLoaderListener(KameletResourceLoaderListener kameletResourceLoaderListener) {
-        this.kameletResourceLoaderListener = kameletResourceLoaderListener;
+    public void setRouteTemplateLoaderListener(RouteTemplateLoaderListener routeTemplateLoaderListener) {
+        this.routeTemplateLoaderListener = routeTemplateLoaderListener;
     }
 
     int getStateCounter() {
@@ -386,7 +385,6 @@ public class KameletComponent extends DefaultComponent {
         }
 
         public void createRouteForEndpoint(KameletEndpoint endpoint) throws Exception {
-            final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
             final ModelCamelContext context = getCamelContext().adapt(ModelCamelContext.class);
             final String templateId = endpoint.getTemplateId();
             final String routeId = endpoint.getRouteId();
@@ -394,64 +392,23 @@ public class KameletComponent extends DefaultComponent {
 
             if (context.getRouteTemplateDefinition(templateId) == null && loc != null) {
                 LOGGER.debug("Loading route template={} from {}", templateId, loc);
-
-                boolean found = false;
-                for (String path : loc.split(",")) {
-                    String name = path;
-                    Resource res = null;
-                    // first try resource as-is if the path has an extension
-                    String ext = FileUtil.onlyExt(path);
-                    if (ext != null) {
-                        res = ecc.getResourceLoader().resolveResource(name);
-                    }
-                    if (res == null || !res.exists()) {
-                        if (!path.endsWith("/")) {
-                            path += "/";
-                        }
-                        name = path + templateId + ".kamelet.yaml";
-                        res = ecc.getResourceLoader().resolveResource(name);
-                    }
-                    if (res.exists()) {
-                        try {
-                            if (kameletResourceLoaderListener != null) {
-                                kameletResourceLoaderListener.loadKamelets(res);
-                            }
-                        } catch (Exception e) {
-                            LOGGER.warn("KameletResourceLoaderListener error due to " + e.getMessage()
-                                        + ". This exception is ignored",
-                                    e);
-                        }
-                        ecc.getRoutesLoader().loadRoutes(res);
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    // fallback to old behaviour
-                    String path = loc;
-                    if (!path.endsWith("/")) {
-                        path += "/";
-                    }
-                    String target = path + templateId + ".kamelet.yaml";
-                    try {
-                        ecc.getRoutesLoader().loadRoutes(
-                                ecc.getResourceLoader().resolveResource(target));
-                    } catch (Exception e) {
-                        throw new KameletNotFoundException(templateId, target, e);
-                    }
-                }
+                RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), routeTemplateLoaderListener, templateId,
+                        loc);
             }
 
             LOGGER.debug("Creating route from template={} and id={}", templateId, routeId);
+            try {
+                String id = context.addRouteFromTemplate(routeId, templateId, endpoint.getKameletProperties());
+                RouteDefinition def = context.getRouteDefinition(id);
 
-            final String id = context.addRouteFromTemplate(routeId, templateId, endpoint.getKameletProperties());
-            final RouteDefinition def = context.getRouteDefinition(id);
+                if (!def.isPrepared()) {
+                    context.startRouteDefinitions(Collections.singletonList(def));
+                }
 
-            if (!def.isPrepared()) {
-                context.startRouteDefinitions(Collections.singletonList(def));
+                LOGGER.debug("Route with id={} created from template={}", id, templateId);
+            } catch (Exception e) {
+                throw new KameletNotFoundException(templateId, loc, e);
             }
-
-            LOGGER.debug("Route with id={} created from template={}", id, templateId);
         }
 
         @Override
