@@ -26,6 +26,8 @@ public interface RouteTemplateParameterSource {
 
     String TEMPLATE_ID = "templateId";
 
+    String LOCATION = "location";
+
     /**
      * The parameters for the given route
      *
@@ -35,7 +37,7 @@ public interface RouteTemplateParameterSource {
     Map<String, Object> parameters(String routeId);
 
     /**
-     * Gets the route ids as a set.
+     * Gets the route id's as a set.
      */
     Set<String> routeIds();
 
