@@ -20,7 +20,7 @@ public class ElsqlEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(50);
+        Set<String> props = new HashSet<>(49);
         props.add("initialDelay");
         props.add("allowNamedParameters");
         props.add("usePlaceholder");
@@ -49,7 +49,6 @@ public class ElsqlEndpointUriFactory extends org.apache.camel.support.component.
         props.add("onConsume");
         props.add("onConsumeFailed");
         props.add("useMessageBodyForSql");
-        props.add("dataSourceRef");
         props.add("outputType");
         props.add("transacted");
         props.add("useIterator");

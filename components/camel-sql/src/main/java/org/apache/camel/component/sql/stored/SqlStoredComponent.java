@@ -27,10 +27,14 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Component("sql-stored")
 public class SqlStoredComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqlStoredComponent.class);
 
     @Metadata
     private DataSource dataSource;
@@ -61,6 +65,7 @@ public class SqlStoredComponent extends DefaultComponent {
         if (target == null) {
             throw new IllegalArgumentException("DataSource must be configured");
         }
+        LOG.trace("Using DataSource: {}", target);
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
 

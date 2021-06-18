@@ -98,7 +98,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (48 parameters):
+=== Query Parameters (47 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -106,8 +106,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *allowNamedParameters* (common) | Whether to allow using named parameters in the queries. | true | boolean
 | *databaseVendor* (common) | To use a vendor specific com.opengamma.elsql.ElSqlConfig. There are 7 enums and the value can be one of: Default, Postgres, HSql, MySql, Oracle, SqlServer2008, Veritca |  | ElSqlDatabaseVendor
-| *dataSource* (common) | Sets the DataSource to use to communicate with the database. |  | DataSource
-| *dataSourceRef* (common) | *Deprecated* Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database. |  | String
+| *dataSource* (common) | Sets the DataSource to use to communicate with the database at endpoint level. |  | DataSource
 | *outputClass* (common) | Specify the full package and class name to use as conversion when outputType=SelectOne. |  | String
 | *outputHeader* (common) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. |  | String
 | *outputType* (common) | Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way: a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long object. b) If the query has more than one column, then it will return a Map of that result. c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names. It will assume your class has a default constructor to create instance with. d) If the query resulted in more than one rows, it throws an non-unique result exception. StreamList streams the result of the query using an Iterator. This can be used with the Splitter EIP in streaming mode to process the ResultSet in streaming fashion. There are 3 enums and the value can be one of: SelectOne, SelectList, StreamList | SelectList | SqlOutputType

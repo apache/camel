@@ -65,8 +65,6 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     @UriPath
     private String resourceUri;
     @UriParam
-    private DataSource dataSource;
-    @UriParam
     private ElSqlDatabaseVendor databaseVendor;
     @UriParam(label = "advanced")
     private ElSqlConfig elSqlConfig;
@@ -78,7 +76,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         this.elsqlName = elsqlName;
         this.resourceUri = resourceUri;
         this.namedJdbcTemplate = namedJdbcTemplate;
-        this.dataSource = dataSource;
+        setDataSource(dataSource);
     }
 
     @Override
@@ -110,7 +108,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         final SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null
                 ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
         final ElsqlProducer result
-                = new ElsqlProducer(this, elSql, elsqlName, namedJdbcTemplate, dataSource, prepareStrategy, isBatch());
+                = new ElsqlProducer(this, elSql, elsqlName, namedJdbcTemplate, getDataSource(), prepareStrategy, isBatch());
         return result;
     }
 
@@ -200,16 +198,4 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         this.resourceUri = resourceUri;
     }
 
-    @Override
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    /**
-     * Sets the DataSource to use to communicate with the database.
-     */
-    @Override
-    public void setDataSource(final DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 }

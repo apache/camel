@@ -24,14 +24,17 @@ import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 @Component("elsql")
 public class ElsqlComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ElsqlComponent.class);
 
     @Metadata
     private ElSqlDatabaseVendor databaseVendor;
@@ -54,10 +57,6 @@ public class ElsqlComponent extends DefaultComponent {
         if (ds != null) {
             target = ds;
         }
-        String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
-        if (target == null && dataSourceRef != null) {
-            target = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
-        }
         if (target == null) {
             // fallback and use component
             target = getDataSource();
@@ -65,6 +64,7 @@ public class ElsqlComponent extends DefaultComponent {
         if (target == null) {
             throw new IllegalArgumentException("DataSource must be configured");
         }
+        LOG.trace("Using DataSource: {}", target);
 
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(target);
         Map<String, Object> params = PropertiesHelper.extractProperties(parameters, "template.");
@@ -97,7 +97,6 @@ public class ElsqlComponent extends DefaultComponent {
         endpoint.setElSqlConfig(elSqlConfig);
         endpoint.setDatabaseVendor(databaseVendor);
         endpoint.setDataSource(target);
-        endpoint.setDataSourceRef(dataSourceRef);
         endpoint.setOnConsume(onConsume);
         endpoint.setOnConsumeFailed(onConsumeFailed);
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);

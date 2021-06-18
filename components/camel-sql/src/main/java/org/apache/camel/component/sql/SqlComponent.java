@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
@@ -70,10 +69,6 @@ public class SqlComponent extends DefaultComponent {
         if (ds != null) {
             target = ds;
         }
-        String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
-        if (target == null && dataSourceRef != null) {
-            target = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
-        }
         if (target == null) {
             // fallback and use component
             target = dataSource;
@@ -91,7 +86,7 @@ public class SqlComponent extends DefaultComponent {
         if (target == null) {
             throw new IllegalArgumentException("DataSource must be configured");
         }
-        LOG.debug("Using default DataSource discovered from registry: {}", target);
+        LOG.trace("Using DataSource: {}", target);
 
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
 
@@ -133,7 +128,6 @@ public class SqlComponent extends DefaultComponent {
         endpoint.setOnConsumeFailed(onConsumeFailed);
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
         endpoint.setDataSource(ds);
-        endpoint.setDataSourceRef(dataSourceRef);
         endpoint.setTemplateOptions(templateOptions);
         setProperties(endpoint, parameters);
         return endpoint;
