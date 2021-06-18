@@ -17,7 +17,6 @@
 package org.apache.camel.component.sql;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -28,8 +27,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -39,9 +36,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Component("sql")
 public class SqlComponent extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SqlComponent.class);
-
-    @Metadata
+    @Metadata(autowired = true)
     private DataSource dataSource;
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean usePlaceholder = true;
@@ -62,37 +57,7 @@ public class SqlComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        DataSource target = null;
-
-        // endpoint options overrule component configured datasource
-        DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
-        if (ds != null) {
-            target = ds;
-        }
-        if (target == null) {
-            // fallback and use component
-            target = dataSource;
-        }
-        if (target == null) {
-            // check if the registry contains a single instance of DataSource
-            Set<DataSource> dataSources = getCamelContext().getRegistry().findByType(DataSource.class);
-            if (dataSources.size() > 1) {
-                throw new IllegalArgumentException(
-                        "Multiple DataSources found in the registry and no explicit configuration provided");
-            } else if (dataSources.size() == 1) {
-                target = dataSources.iterator().next();
-            }
-        }
-        if (target == null) {
-            throw new IllegalArgumentException("DataSource must be configured");
-        }
-        LOG.trace("Using DataSource: {}", target);
-
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
-
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
-        Map<String, Object> templateOptions = PropertiesHelper.extractProperties(parameters, "template.");
-        PropertyBindingSupport.bindProperties(getCamelContext(), jdbcTemplate, templateOptions);
 
         String query = remaining;
         if (usePlaceholder) {
@@ -121,15 +86,35 @@ public class SqlComponent extends DefaultComponent {
             onConsumeBatchComplete = onConsumeBatchComplete.replaceAll(parameterPlaceholderSubstitute, "?");
         }
 
-        SqlEndpoint endpoint = new SqlEndpoint(uri, this, jdbcTemplate, query);
+        // create endpoint
+        SqlEndpoint endpoint = new SqlEndpoint(uri, this);
+        endpoint.setQuery(query);
         endpoint.setPlaceholder(parameterPlaceholderSubstitute);
         endpoint.setUsePlaceholder(isUsePlaceholder());
         endpoint.setOnConsume(onConsume);
         endpoint.setOnConsumeFailed(onConsumeFailed);
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
+        setProperties(endpoint, parameters);
+
+        // endpoint configured data source takes precedence
+        DataSource ds = dataSource;
+        if (endpoint.getDataSource() != null) {
+            ds = endpoint.getDataSource();
+        }
+        if (ds == null) {
+            throw new IllegalArgumentException("DataSource must be configured");
+        }
+
+        // create template
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+        Map<String, Object> templateOptions = PropertiesHelper.extractProperties(parameters, "template.");
+        PropertyBindingSupport.bindProperties(getCamelContext(), jdbcTemplate, templateOptions);
+
+        // set template on endpoint
+        endpoint.setJdbcTemplate(jdbcTemplate);
         endpoint.setDataSource(ds);
         endpoint.setTemplateOptions(templateOptions);
-        setProperties(endpoint, parameters);
+
         return endpoint;
     }
 
