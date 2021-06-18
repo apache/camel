@@ -6788,7 +6788,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * IAM (camel-huaweicloud-iam)
+     * Huawei Cloud Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
      * 
      * Category: cloud
@@ -6808,7 +6808,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder("hwcloud-iam", path);
     }
     /**
-     * IAM (camel-huaweicloud-iam)
+     * Huawei Cloud Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
      * 
      * Category: cloud

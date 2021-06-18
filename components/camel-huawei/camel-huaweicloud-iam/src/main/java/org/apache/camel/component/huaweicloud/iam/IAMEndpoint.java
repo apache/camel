@@ -35,15 +35,16 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To securely manage users on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-iam", title = "IAM", syntax = "hwcloud-iam:operation",
-             category = { Category.CLOUD })
+@UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-iam", title = "Huawei Cloud Identity and Access Management (IAM)",
+             syntax = "hwcloud-iam:operation",
+             category = { Category.CLOUD }, producerOnly = true)
 public class IAMEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "IAM service region. This is lower precedence than endpoint based configuration",
+    @UriParam(description = "IAM service region",
               displayName = "Service region", secret = false)
     @Metadata(required = true)
     private String region;
@@ -68,11 +69,6 @@ public class IAMEndpoint extends DefaultEndpoint {
               defaultValue = "false")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
-
-    @UriParam(description = "IAM endpoint url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Service endpoint", secret = false)
-    @Metadata(required = false)
-    private String endpoint;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
               secret = true)
@@ -171,14 +167,6 @@ public class IAMEndpoint extends DefaultEndpoint {
         this.ignoreSslVerification = ignoreSslVerification;
     }
 
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
-
     public ServiceKeys getServiceKeys() {
         return serviceKeys;
     }
@@ -227,11 +215,17 @@ public class IAMEndpoint extends DefaultEndpoint {
         this.iamClient = iamClient;
     }
 
+    /**
+     * Initialize and return a new IAM Client
+     *
+     * @return
+     */
     public IamClient initClient() {
         if (iamClient != null) {
             return iamClient;
         }
 
+        // check for mandatory AK/SK in ServiceKeys object or in endpoint
         if (ObjectHelper.isEmpty(getServiceKeys()) && ObjectHelper.isEmpty(getAuthenticationKey())) {
             throw new IllegalArgumentException("Authentication parameter 'authentication key (AK)' not found");
         }
@@ -239,6 +233,7 @@ public class IAMEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
         }
 
+        // setup AK/SK credential information. AK/SK provided through ServiceKeys overrides the AK/SK passed through the endpoint
         GlobalCredentials auth = new GlobalCredentials()
                 .withAk(getServiceKeys() != null
                         ? getServiceKeys().getAuthenticationKey()
@@ -247,6 +242,7 @@ public class IAMEndpoint extends DefaultEndpoint {
                         ? getServiceKeys().getSecretKey()
                         : getSecretKey());
 
+        // setup http information (including proxy information if provided)
         HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig();
         httpConfig.withIgnoreSSLVerification(isIgnoreSslVerification());
         if (ObjectHelper.isNotEmpty(getProxyHost())
@@ -262,20 +258,15 @@ public class IAMEndpoint extends DefaultEndpoint {
             }
         }
 
-        if (ObjectHelper.isNotEmpty(getEndpoint())) {
-            return IamClient.newBuilder()
-                    .withCredential(auth)
-                    .withHttpConfig(httpConfig)
-                    .withEndpoint(getEndpoint())
-                    .build();
-        } else if (ObjectHelper.isNotEmpty(getRegion())) {
+        // Build IamClient with mandatory region parameter.
+        if (ObjectHelper.isNotEmpty(getRegion())) {
             return IamClient.newBuilder()
                     .withCredential(auth)
                     .withHttpConfig(httpConfig)
                     .withRegion(IamRegion.valueOf(getRegion()))
                     .build();
         } else {
-            throw new IllegalArgumentException("Region/endpoint not found");
+            throw new IllegalArgumentException("Region not found");
         }
     }
 }

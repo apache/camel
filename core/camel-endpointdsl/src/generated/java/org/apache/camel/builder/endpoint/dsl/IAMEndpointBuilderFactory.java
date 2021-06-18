@@ -17,11 +17,9 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * To securely manage users on Huawei Cloud
@@ -33,676 +31,17 @@ public interface IAMEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the IAM component.
+     * Builder for endpoint for the Huawei Cloud Identity and Access Management
+     * (IAM) component.
      */
-    public interface IAMEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedIAMEndpointConsumerBuilder advanced() {
-            return (AdvancedIAMEndpointConsumerBuilder) this;
-        }
+    public interface IAMEndpointBuilder extends EndpointProducerBuilder {
         /**
          * Authentication key for the cloud user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
-         * Group: common
-         * 
-         * @param authenticationKey the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder authenticationKey(
-                String authenticationKey) {
-            doSetProperty("authenticationKey", authenticationKey);
-            return this;
-        }
-        /**
-         * IAM endpoint url. Carries higher precedence than region parameter
-         * based client initialization.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param endpoint the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder endpoint(String endpoint) {
-            doSetProperty("endpoint", endpoint);
-            return this;
-        }
-        /**
-         * Group ID to perform operation with.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param groupId the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder groupId(String groupId) {
-            doSetProperty("groupId", groupId);
-            return this;
-        }
-        /**
-         * Ignore SSL verification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder ignoreSslVerification(
-                boolean ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Ignore SSL verification.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder ignoreSslVerification(
-                String ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Proxy server ip/hostname.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * Proxy authentication password.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPassword the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder proxyPassword(String proxyPassword) {
-            doSetProperty("proxyPassword", proxyPassword);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder proxyPort(int proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy authentication user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyUser the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder proxyUser(String proxyUser) {
-            doSetProperty("proxyUser", proxyUser);
-            return this;
-        }
-        /**
-         * IAM service region. This is lower precedence than endpoint based
-         * configuration.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param region the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder region(String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Secret key for the cloud user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * Configuration object for cloud service authentication.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.iam.models.ServiceKeys&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceKeys the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder serviceKeys(Object serviceKeys) {
-            doSetProperty("serviceKeys", serviceKeys);
-            return this;
-        }
-        /**
-         * Configuration object for cloud service authentication.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.iam.models.ServiceKeys&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceKeys the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder serviceKeys(String serviceKeys) {
-            doSetProperty("serviceKeys", serviceKeys);
-            return this;
-        }
-        /**
-         * User ID to perform operation with.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param userId the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder userId(String userId) {
-            doSetProperty("userId", userId);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the IAM component.
-     */
-    public interface AdvancedIAMEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default IAMEndpointConsumerBuilder basic() {
-            return (IAMEndpointConsumerBuilder) this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIAMEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIAMEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIAMEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIAMEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the IAM component.
-     */
-    public interface IAMEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedIAMEndpointProducerBuilder advanced() {
-            return (AdvancedIAMEndpointProducerBuilder) this;
-        }
-        /**
-         * Authentication key for the cloud user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param authenticationKey the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder authenticationKey(
-                String authenticationKey) {
-            doSetProperty("authenticationKey", authenticationKey);
-            return this;
-        }
-        /**
-         * IAM endpoint url. Carries higher precedence than region parameter
-         * based client initialization.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param endpoint the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder endpoint(String endpoint) {
-            doSetProperty("endpoint", endpoint);
-            return this;
-        }
-        /**
-         * Group ID to perform operation with.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param groupId the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder groupId(String groupId) {
-            doSetProperty("groupId", groupId);
-            return this;
-        }
-        /**
-         * Ignore SSL verification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder ignoreSslVerification(
-                boolean ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Ignore SSL verification.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder ignoreSslVerification(
-                String ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Proxy server ip/hostname.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * Proxy authentication password.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPassword the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder proxyPassword(String proxyPassword) {
-            doSetProperty("proxyPassword", proxyPassword);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder proxyPort(int proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy authentication user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyUser the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder proxyUser(String proxyUser) {
-            doSetProperty("proxyUser", proxyUser);
-            return this;
-        }
-        /**
-         * IAM service region. This is lower precedence than endpoint based
-         * configuration.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param region the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder region(String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Secret key for the cloud user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * Configuration object for cloud service authentication.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.iam.models.ServiceKeys&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceKeys the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder serviceKeys(Object serviceKeys) {
-            doSetProperty("serviceKeys", serviceKeys);
-            return this;
-        }
-        /**
-         * Configuration object for cloud service authentication.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.iam.models.ServiceKeys&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceKeys the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder serviceKeys(String serviceKeys) {
-            doSetProperty("serviceKeys", serviceKeys);
-            return this;
-        }
-        /**
-         * User ID to perform operation with.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param userId the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder userId(String userId) {
-            doSetProperty("userId", userId);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
          * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointProducerBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the IAM component.
-     */
-    public interface AdvancedIAMEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default IAMEndpointProducerBuilder basic() {
-            return (IAMEndpointProducerBuilder) this;
-        }
-    }
-
-    /**
-     * Builder for endpoint for the IAM component.
-     */
-    public interface IAMEndpointBuilder
-            extends
-                IAMEndpointConsumerBuilder,
-                IAMEndpointProducerBuilder {
-        default AdvancedIAMEndpointBuilder advanced() {
-            return (AdvancedIAMEndpointBuilder) this;
-        }
-        /**
-         * Authentication key for the cloud user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
          * 
          * @param authenticationKey the value to set
          * @return the dsl builder
@@ -712,26 +51,11 @@ public interface IAMEndpointBuilderFactory {
             return this;
         }
         /**
-         * IAM endpoint url. Carries higher precedence than region parameter
-         * based client initialization.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param endpoint the value to set
-         * @return the dsl builder
-         */
-        default IAMEndpointBuilder endpoint(String endpoint) {
-            doSetProperty("endpoint", endpoint);
-            return this;
-        }
-        /**
          * Group ID to perform operation with.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param groupId the value to set
          * @return the dsl builder
@@ -746,7 +70,7 @@ public interface IAMEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: common
+         * Group: producer
          * 
          * @param ignoreSslVerification the value to set
          * @return the dsl builder
@@ -763,7 +87,7 @@ public interface IAMEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: common
+         * Group: producer
          * 
          * @param ignoreSslVerification the value to set
          * @return the dsl builder
@@ -774,11 +98,58 @@ public interface IAMEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default IAMEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default IAMEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * Proxy server ip/hostname.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param proxyHost the value to set
          * @return the dsl builder
@@ -792,7 +163,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param proxyPassword the value to set
          * @return the dsl builder
@@ -806,7 +177,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param proxyPort the value to set
          * @return the dsl builder
@@ -820,7 +191,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param proxyPort the value to set
          * @return the dsl builder
@@ -834,7 +205,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param proxyUser the value to set
          * @return the dsl builder
@@ -844,13 +215,12 @@ public interface IAMEndpointBuilderFactory {
             return this;
         }
         /**
-         * IAM service region. This is lower precedence than endpoint based
-         * configuration.
+         * IAM service region.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
-         * Group: common
+         * Group: producer
          * 
          * @param region the value to set
          * @return the dsl builder
@@ -865,7 +235,7 @@ public interface IAMEndpointBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
-         * Group: common
+         * Group: producer
          * 
          * @param secretKey the value to set
          * @return the dsl builder
@@ -880,7 +250,7 @@ public interface IAMEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.huaweicloud.iam.models.ServiceKeys&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param serviceKeys the value to set
          * @return the dsl builder
@@ -895,7 +265,7 @@ public interface IAMEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.huaweicloud.iam.models.ServiceKeys&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param serviceKeys the value to set
          * @return the dsl builder
@@ -909,7 +279,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param userId the value to set
          * @return the dsl builder
@@ -920,21 +290,10 @@ public interface IAMEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the IAM component.
-     */
-    public interface AdvancedIAMEndpointBuilder
-            extends
-                AdvancedIAMEndpointConsumerBuilder,
-                AdvancedIAMEndpointProducerBuilder {
-        default IAMEndpointBuilder basic() {
-            return (IAMEndpointBuilder) this;
-        }
-    }
-
     public interface IAMBuilders {
         /**
-         * IAM (camel-huaweicloud-iam)
+         * Huawei Cloud Identity and Access Management (IAM)
+         * (camel-huaweicloud-iam)
          * To securely manage users on Huawei Cloud
          * 
          * Category: cloud
@@ -953,7 +312,8 @@ public interface IAMEndpointBuilderFactory {
             return IAMEndpointBuilderFactory.endpointBuilder("hwcloud-iam", path);
         }
         /**
-         * IAM (camel-huaweicloud-iam)
+         * Huawei Cloud Identity and Access Management (IAM)
+         * (camel-huaweicloud-iam)
          * To securely manage users on Huawei Cloud
          * 
          * Category: cloud
@@ -975,7 +335,7 @@ public interface IAMEndpointBuilderFactory {
         }
     }
     static IAMEndpointBuilder endpointBuilder(String componentName, String path) {
-        class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder, AdvancedIAMEndpointBuilder {
+        class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder {
             public IAMEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }
