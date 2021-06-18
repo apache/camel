@@ -14,23 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kamelet;
-
-import org.apache.camel.spi.Resource;
+package org.apache.camel.spi;
 
 /**
- * Listener when the Kamelet component is loaing Kamelet(s) from a {@link Resource}.
+ * Listener when route templates is loaded from a {@link Resource}.
  *
  * For example when Kamelets are loaded from YAML files from the classpath, or via github from the Apache Camel Kamelet
  * Catalog.
  */
 @FunctionalInterface
-public interface KameletResourceLoaderListener {
+public interface RouteTemplateLoaderListener {
 
     /**
-     * About to load kamelets from the given resource.
+     * About to load route template (kamelet) from the given resource.
      *
-     * @param resource the resource that has kamelets to be loaded
+     * @param resource the resource that has route templates to be loaded
      */
-    void loadKamelets(Resource resource);
+    void loadRouteTemplate(Resource resource);
+
 }

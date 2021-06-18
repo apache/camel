@@ -60,14 +60,15 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.ScriptingLanguage;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.AntPathMatcher;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 
@@ -266,7 +267,10 @@ public class DefaultModel implements Model {
             // and look up again
             Object location = routeTemplateContext.getParameters().get(RouteTemplateParameterSource.LOCATION);
             if (location != null) {
-                loadRouteTemplateFromLocation(routeTemplateId, location.toString());
+                RouteTemplateLoaderListener listener
+                        = CamelContextHelper.findByType(getCamelContext(), RouteTemplateLoaderListener.class);
+                RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), listener, routeTemplateId,
+                        location.toString());
             }
             for (RouteTemplateDefinition def : routeTemplateDefinitions) {
                 if (routeTemplateId.equals(def.getId())) {
@@ -358,42 +362,6 @@ public class DefaultModel implements Model {
         }
         addRouteDefinition(def);
         return def.getId();
-    }
-
-    private void loadRouteTemplateFromLocation(String templateId, String location) throws Exception {
-        ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
-        boolean found = false;
-        for (String path : location.split(",")) {
-            String name = path;
-            Resource res = null;
-            // first try resource as-is if the path has an extension
-            String ext = FileUtil.onlyExt(path);
-            if (ext != null) {
-                res = ecc.getResourceLoader().resolveResource(name);
-            }
-            if (res == null || !res.exists()) {
-                if (!path.endsWith("/")) {
-                    path += "/";
-                }
-                name = path + templateId + ".kamelet.yaml";
-                res = ecc.getResourceLoader().resolveResource(name);
-            }
-            if (res.exists()) {
-                ecc.getRoutesLoader().loadRoutes(res);
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            // fallback to old behaviour
-            String path = location;
-            if (!path.endsWith("/")) {
-                path += "/";
-            }
-            String target = path + templateId + ".kamelet.yaml";
-            ecc.getRoutesLoader().loadRoutes(
-                    ecc.getResourceLoader().resolveResource(target));
-        }
     }
 
     private void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target) throws Exception {
