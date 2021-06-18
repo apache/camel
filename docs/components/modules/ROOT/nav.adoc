@@ -149,7 +149,7 @@
 ** xref:http-component.adoc[HTTP]
 ** xref:hwcloud-summary.adoc[Huawei Cloud]
 *** xref:hwcloud-functiongraph-component.adoc[FunctionGraph]
-*** xref:hwcloud-iam-component.adoc[IAM]
+*** xref:hwcloud-iam-component.adoc[Huawei Cloud Identity and Access Management (IAM)]
 *** xref:hwcloud-smn-component.adoc[SimpleNotification]
 ** xref:iec60870-client-component.adoc[IEC 60870 Client]
 ** xref:iec60870-server-component.adoc[IEC 60870 Server]
