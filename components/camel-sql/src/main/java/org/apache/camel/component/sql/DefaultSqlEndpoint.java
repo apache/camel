@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -41,6 +42,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
 
+    @Metadata(autowired = true)
     @UriParam(description = "Sets the DataSource to use to communicate with the database at endpoint level.")
     private DataSource dataSource;
     @UriParam(label = "consumer",
@@ -129,9 +131,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     public DefaultSqlEndpoint() {
     }
 
-    public DefaultSqlEndpoint(String uri, Component component, JdbcTemplate jdbcTemplate) {
-        super(uri, component);
-        this.jdbcTemplate = jdbcTemplate;
+    public DefaultSqlEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
     }
 
     public JdbcTemplate getJdbcTemplate() {
