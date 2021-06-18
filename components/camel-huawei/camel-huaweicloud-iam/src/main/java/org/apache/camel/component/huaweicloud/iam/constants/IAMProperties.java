@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.huaweicloud.iam.constants;
 
+/**
+ * Constants for properties set on the exchange object
+ */
 public final class IAMProperties {
     public static final String OPERATION = "CamelHwCloudIamOperation";
     public static final String USER_ID = "CamelHwCloudIamUserId";

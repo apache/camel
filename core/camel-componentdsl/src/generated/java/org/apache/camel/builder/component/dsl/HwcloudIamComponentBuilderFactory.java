@@ -31,7 +31,7 @@ import org.apache.camel.component.huaweicloud.iam.IAMComponent;
 public interface HwcloudIamComponentBuilderFactory {
 
     /**
-     * IAM (camel-huaweicloud-iam)
+     * Huawei Cloud Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
      * 
      * Category: cloud
@@ -45,33 +45,12 @@ public interface HwcloudIamComponentBuilderFactory {
     }
 
     /**
-     * Builder for the IAM component.
+     * Builder for the Huawei Cloud Identity and Access Management (IAM)
+     * component.
      */
     interface HwcloudIamComponentBuilder
             extends
                 ComponentBuilder<IAMComponent> {
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default HwcloudIamComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -134,7 +113,6 @@ public interface HwcloudIamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((IAMComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((IAMComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((IAMComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;

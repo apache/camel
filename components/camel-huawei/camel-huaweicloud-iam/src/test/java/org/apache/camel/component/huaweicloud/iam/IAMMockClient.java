@@ -22,6 +22,7 @@ import java.util.List;
 import com.huaweicloud.sdk.core.HcClient;
 import com.huaweicloud.sdk.iam.v3.IamClient;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneGroupResult;
+import com.huaweicloud.sdk.iam.v3.model.KeystoneGroupResultWithLinksSelf;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsRequest;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsResponse;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersForGroupByAdminRequest;
@@ -29,11 +30,16 @@ import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersForGroupByAdminResponse
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersRequest;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersResponse;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersResult;
+import com.huaweicloud.sdk.iam.v3.model.KeystoneUpdateGroupRequest;
+import com.huaweicloud.sdk.iam.v3.model.KeystoneUpdateGroupResponse;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneUserResult;
 import com.huaweicloud.sdk.iam.v3.model.Links;
 import com.huaweicloud.sdk.iam.v3.model.ShowUserRequest;
 import com.huaweicloud.sdk.iam.v3.model.ShowUserResponse;
 import com.huaweicloud.sdk.iam.v3.model.ShowUserResult;
+import com.huaweicloud.sdk.iam.v3.model.UpdateUserRequest;
+import com.huaweicloud.sdk.iam.v3.model.UpdateUserResponse;
+import com.huaweicloud.sdk.iam.v3.model.UpdateUserResult;
 
 public class IAMMockClient extends IamClient {
     public IAMMockClient(HcClient hcClient) {
@@ -90,6 +96,25 @@ public class IAMMockClient extends IamClient {
         groups.add(group2);
         KeystoneListGroupsResponse response = new KeystoneListGroupsResponse()
                 .withGroups(groups);
+        return response;
+    }
+
+    @Override
+    public UpdateUserResponse updateUser(UpdateUserRequest request) {
+        UpdateUserResult user = new UpdateUserResult().withName("User 19").withDescription("First");
+        UpdateUserResponse response = new UpdateUserResponse()
+                .withUser(user);
+        return response;
+    }
+
+    @Override
+    public KeystoneUpdateGroupResponse keystoneUpdateGroup(KeystoneUpdateGroupRequest request) {
+        KeystoneGroupResultWithLinksSelf group = new KeystoneGroupResultWithLinksSelf()
+                .withDescription("Group description")
+                .withDomainId("123")
+                .withName("Group 43");
+        KeystoneUpdateGroupResponse response = new KeystoneUpdateGroupResponse()
+                .withGroup(group);
         return response;
     }
 }

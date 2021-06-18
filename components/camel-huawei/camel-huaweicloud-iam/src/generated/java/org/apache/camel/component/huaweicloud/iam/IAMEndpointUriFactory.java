@@ -20,24 +20,20 @@ public class IAMEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(17);
+        Set<String> props = new HashSet<>(13);
         props.add("serviceKeys");
         props.add("secretKey");
         props.add("groupId");
         props.add("proxyPassword");
-        props.add("exchangePattern");
         props.add("ignoreSslVerification");
         props.add("authenticationKey");
         props.add("proxyHost");
         props.add("userId");
         props.add("proxyPort");
-        props.add("endpoint");
         props.add("lazyStartProducer");
-        props.add("bridgeErrorHandler");
         props.add("proxyUser");
         props.add("region");
         props.add("operation");
-        props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(7);
         secretProps.add("serviceKeys");

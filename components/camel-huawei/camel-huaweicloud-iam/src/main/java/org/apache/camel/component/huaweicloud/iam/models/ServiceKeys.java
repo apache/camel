@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.huaweicloud.iam.models;
 
+/**
+ * Class containing authentication and secret keys if the user does not want to expose these in the endpoint
+ */
 public class ServiceKeys {
     private String authenticationKey;
     private String secretKey;
