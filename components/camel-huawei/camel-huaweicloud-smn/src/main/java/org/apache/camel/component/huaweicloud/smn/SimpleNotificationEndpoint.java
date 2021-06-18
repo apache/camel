@@ -31,9 +31,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Huawei Cloud component to integrate with SimpleNotification services
+ * To broadcast messages and connect cloud services through notifications on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.8.0", scheme = "hwcloud-smn", title = "SimpleNotification",
+@UriEndpoint(firstVersion = "3.8.0", scheme = "hwcloud-smn", title = "Huawei Cloud Simple Message Notification (SMN)",
              syntax = "hwcloud-smn:smnService",
              category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true)
 public class SimpleNotificationEndpoint extends DefaultEndpoint {
