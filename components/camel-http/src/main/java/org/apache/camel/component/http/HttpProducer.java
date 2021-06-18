@@ -513,7 +513,13 @@ public class HttpProducer extends DefaultProducer {
                     if (len > 0 && len <= max) {
                         int i = (int) len;
                         byte[] arr = new byte[i];
-                        is.read(arr, 0, i);
+                        int read = 0;
+                        int offset = 0;
+                        int remain = i;
+                        while ((read = is.read(arr, offset, remain)) > 0 && remain > 0) {
+                            offset += read;
+                            remain -= read;
+                        }
                         IOHelper.close(is);
                         return arr;
                     }
