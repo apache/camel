@@ -1994,7 +1994,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HttpsComponentBuilderFactory.https();
     }
     /**
-     * FunctionGraph (camel-huaweicloud-functiongraph)
+     * Huawei Cloud FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless
@@ -2020,8 +2020,9 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudIamComponentBuilderFactory.hwcloudIam();
     }
     /**
-     * SimpleNotification (camel-huaweicloud-smn)
-     * Huawei Cloud component to integrate with SimpleNotification services
+     * Huawei Cloud Simple Message Notification (SMN) (camel-huaweicloud-smn)
+     * To broadcast messages and connect cloud services through notifications on
+     * Huawei Cloud
      * 
      * Category: cloud,messaging
      * Since: 3.8
