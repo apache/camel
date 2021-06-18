@@ -459,7 +459,7 @@
     <protonpack-version>1.8</protonpack-version>
     <protostream-version>4.4.1.Final</protostream-version>
     <pubnub-version>4.25.0</pubnub-version>
-    <pulsar-version>2.7.2</pulsar-version>
+    <pulsar-version>2.8.0</pulsar-version>
     <qpid-broker-version>8.0.4</qpid-broker-version>
     <qpid-jms-client-version>0.59.0</qpid-jms-client-version>
     <qpid-proton-j-version>0.33.8</qpid-proton-j-version>
