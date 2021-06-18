@@ -135,7 +135,7 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Cannot consume from validator");
     }
 
-    protected void configureValidator(ValidatingProcessor validator) throws Exception {
+    protected void configureValidator(ValidatingProcessor validator) {
         validator.setErrorHandler(getErrorHandler());
         validator.setUseSharedSchema(isUseSharedSchema());
         validator.setFailOnNullBody(isFailOnNullBody());

@@ -694,7 +694,7 @@ public abstract class CamelTestSupport
         return false;
     }
 
-    protected void stopCamelContext() throws Exception {
+    protected void stopCamelContext() {
         doStopCamelContext(context, camelContextService);
     }
 
@@ -736,7 +736,7 @@ public abstract class CamelTestSupport
         }
     }
 
-    protected void startCamelContext() throws Exception {
+    protected void startCamelContext() {
         if (camelContextService != null) {
             camelContextService.start();
         } else {

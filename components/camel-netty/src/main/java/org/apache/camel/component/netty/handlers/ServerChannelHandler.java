@@ -113,7 +113,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
     }
 
-    protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
+    protected Exchange createExchange(ChannelHandlerContext ctx, Object message) {
         // must be prototype scoped (not pooled) so we create the exchange via endpoint
         Exchange exchange = consumer.createExchange(false);
         consumer.getEndpoint().updateMessageHeader(exchange.getIn(), ctx);

@@ -26,7 +26,6 @@ import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
 import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
-import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.ssl.NoImplSslConfig;
 import org.apache.camel.support.ObjectHelper;
 
@@ -44,8 +43,7 @@ public final class DockerClientFactory {
      */
     @SuppressWarnings("resource")
     public static DockerClient getDockerClient(
-            DockerComponent dockerComponent, DockerConfiguration dockerConfiguration, Message message)
-            throws DockerException {
+            DockerComponent dockerComponent, DockerConfiguration dockerConfiguration, Message message) {
 
         org.apache.camel.util.ObjectHelper.notNull(dockerConfiguration, "dockerConfiguration");
 

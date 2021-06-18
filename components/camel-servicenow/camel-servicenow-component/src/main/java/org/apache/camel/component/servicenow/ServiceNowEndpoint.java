@@ -44,7 +44,7 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
     private final ServiceNowConfiguration configuration;
 
     public ServiceNowEndpoint(String uri, ServiceNowComponent component, ServiceNowConfiguration configuration,
-                              String instanceName) throws Exception {
+                              String instanceName) {
         super(uri, component);
 
         this.configuration = configuration;

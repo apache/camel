@@ -84,7 +84,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange, String operation) {
         HorizontalPodAutoscalerList hpaList
                 = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().list();
 

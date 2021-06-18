@@ -19,7 +19,6 @@ package org.apache.camel.component.undertow;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -226,7 +225,7 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
         private final ByteBufferPool pool;
         private UndertowClient client;
 
-        private UndertowClientWrapper() throws IOException, URISyntaxException {
+        private UndertowClientWrapper() throws IOException {
             this.worker = Xnio.getInstance().createWorker(OptionMap.EMPTY);
             this.pool = new DefaultByteBufferPool(true, 17 * 1024);
             this.client = UndertowClient.getInstance();

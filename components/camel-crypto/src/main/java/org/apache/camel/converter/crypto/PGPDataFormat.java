@@ -17,7 +17,6 @@
 package org.apache.camel.converter.crypto;
 
 import java.io.IOException;
-import java.security.NoSuchProviderException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -106,7 +105,7 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     public List<PGPSecretKeyAndPrivateKeyAndUserId> determineSecretKeysWithPrivateKeyAndUserId(
             Exchange exchange, String sigKeyFileName,
             List<String> sigKeyUserids, String sigKeyPassword, byte[] sigKeyRing)
-            throws IOException, PGPException, NoSuchProviderException {
+            throws IOException, PGPException {
 
         Map<String, String> sigKeyUserId2Password = determineSignatureKeyUserId2Password(sigKeyUserids, sigKeyPassword);
 

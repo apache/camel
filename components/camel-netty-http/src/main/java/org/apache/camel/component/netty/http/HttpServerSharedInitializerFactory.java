@@ -143,7 +143,7 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         return answer;
     }
 
-    private SslHandler configureServerSSLOnDemand() throws Exception {
+    private SslHandler configureServerSSLOnDemand() {
         if (!configuration.isSsl()) {
             return null;
         }

@@ -17,7 +17,6 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -150,7 +149,7 @@ public class UndertowComponent extends DefaultComponent
         return endpoint;
     }
 
-    protected UndertowEndpoint createEndpointInstance(URI endpointUri, UndertowComponent component) throws URISyntaxException {
+    protected UndertowEndpoint createEndpointInstance(URI endpointUri, UndertowComponent component) {
         return new UndertowEndpoint(endpointUri.toString(), component);
     }
 

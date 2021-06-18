@@ -192,7 +192,7 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
         exchange.getIn().setHeader(OptaPlannerConstants.IS_SOLVING, solver.isSolving());
     }
 
-    private String getSolverId(Exchange exchange) throws Exception {
+    private String getSolverId(Exchange exchange) {
         String solverId = exchange.getIn().getHeader(OptaPlannerConstants.SOLVER_ID, String.class);
         if (solverId == null) {
             solverId = configuration.getSolverId();

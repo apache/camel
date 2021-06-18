@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ldap;
 
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import javax.naming.directory.SearchControls;
@@ -55,7 +54,7 @@ public class LdapEndpoint extends DefaultEndpoint {
     @UriParam
     private String returnedAttributes;
 
-    protected LdapEndpoint(String endpointUri, String remaining, LdapComponent component) throws URISyntaxException {
+    protected LdapEndpoint(String endpointUri, String remaining, LdapComponent component) {
         super(endpointUri, component);
         this.dirContextName = remaining;
     }

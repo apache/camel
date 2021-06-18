@@ -101,7 +101,7 @@ public class ProtobufDataFormat extends ServiceSupport
         }
     }
 
-    public void setInstanceClass(String className) throws Exception {
+    public void setInstanceClass(String className) {
         ObjectHelper.notNull(className, "ProtobufDataFormat instaceClass");
         instanceClassName = className;
     }

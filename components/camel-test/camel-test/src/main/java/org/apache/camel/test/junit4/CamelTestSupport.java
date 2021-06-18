@@ -775,11 +775,11 @@ public abstract class CamelTestSupport extends TestSupport {
         return false;
     }
 
-    protected void stopCamelContext() throws Exception {
+    protected void stopCamelContext() {
         doStopCamelContext(context, camelContextService);
     }
 
-    private static void doStopCamelContext(CamelContext context, Service camelContextService) throws Exception {
+    private static void doStopCamelContext(CamelContext context, Service camelContextService) {
         if (camelContextService != null) {
             if (camelContextService == threadService.get()) {
                 threadService.remove();
@@ -796,8 +796,7 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     private static void doStopTemplates(
-            ConsumerTemplate consumer, ProducerTemplate template, FluentProducerTemplate fluentTemplate)
-            throws Exception {
+            ConsumerTemplate consumer, ProducerTemplate template, FluentProducerTemplate fluentTemplate) {
         if (consumer != null) {
             if (consumer == threadConsumer.get()) {
                 threadConsumer.remove();
@@ -818,7 +817,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
     }
 
-    protected void startCamelContext() throws Exception {
+    protected void startCamelContext() {
         if (camelContextService != null) {
             camelContextService.start();
         } else {

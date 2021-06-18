@@ -57,7 +57,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     private String cachedRemoteAddress;
     private String cachedCombinedAddress;
 
-    public MllpTcpClientProducer(MllpEndpoint endpoint) throws SocketException {
+    public MllpTcpClientProducer(MllpEndpoint endpoint) {
         super(endpoint);
 
         log = LoggerFactory

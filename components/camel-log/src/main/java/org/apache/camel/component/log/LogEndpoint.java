@@ -219,7 +219,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     /**
      * Creates the logger {@link Processor} to be used.
      */
-    protected Processor createLogger() throws Exception {
+    protected Processor createLogger() {
         Processor answer;
         // setup a new logger here
         CamelLogger camelLogger;

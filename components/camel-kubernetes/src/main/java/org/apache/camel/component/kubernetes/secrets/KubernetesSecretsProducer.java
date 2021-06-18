@@ -83,13 +83,13 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange, String operation) {
         SecretList secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace().list();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretsList.getItems());
     }
 
-    protected void doListSecretsByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListSecretsByLabels(Exchange exchange, String operation) {
         SecretList secretsList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);

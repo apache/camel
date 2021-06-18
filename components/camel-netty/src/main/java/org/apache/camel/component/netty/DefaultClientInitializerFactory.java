@@ -148,7 +148,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
         return answer;
     }
 
-    private SslHandler configureClientSSLOnDemand() throws Exception {
+    private SslHandler configureClientSSLOnDemand() {
         if (!producer.getConfiguration().isSsl()) {
             return null;
         }

@@ -51,7 +51,7 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
     private IgniteSetOperation operation;
 
     public IgniteSetEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
-                             IgniteSetComponent igniteComponent) throws Exception {
+                             IgniteSetComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         name = remaining;
 

@@ -265,7 +265,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         return endpoint.getJmsObjectFactory().createMessageConsumer(session, endpoint);
     }
 
-    protected void stopConsumers() throws Exception {
+    protected void stopConsumers() {
         synchronized (this.consumerLock) {
             if (consumers != null) {
                 LOG.debug("Stopping JMS MessageConsumers");

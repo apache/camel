@@ -36,7 +36,7 @@ public class GrpcResponseRouterStreamObserver extends ServiceSupport implements 
     private Endpoint endpoint;
     private AsyncProducer producer;
 
-    public GrpcResponseRouterStreamObserver(GrpcConfiguration configuration, Endpoint sourceEndpoint) throws Exception {
+    public GrpcResponseRouterStreamObserver(GrpcConfiguration configuration, Endpoint sourceEndpoint) {
         this.configuration = configuration;
         this.sourceEndpoint = sourceEndpoint;
     }

@@ -51,7 +51,7 @@ public class LuceneConfiguration {
     public LuceneConfiguration() {
     }
 
-    public LuceneConfiguration(URI uri) throws Exception {
+    public LuceneConfiguration(URI uri) {
         this.uri = uri;
     }
 
@@ -87,7 +87,7 @@ public class LuceneConfiguration {
         setMaxHits(component.getAndRemoveParameter(parameters, "maxHits", Integer.class, 10));
     }
 
-    private boolean isValidAuthority() throws URISyntaxException {
+    private boolean isValidAuthority() {
         if ((!authority.contains(":"))
                 || ((authority.split(":")[0]) == null)
                 || ((!authority.split(":")[1].equalsIgnoreCase("insert"))
@@ -98,7 +98,7 @@ public class LuceneConfiguration {
 
     }
 
-    private String retrieveTokenFromAuthority(String token) throws URISyntaxException {
+    private String retrieveTokenFromAuthority(String token) {
         String retval;
 
         if (token.equalsIgnoreCase("hostname")) {

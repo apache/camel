@@ -376,7 +376,7 @@ public class SipConfiguration {
         setContentTypeHeader(headerFactory.createContentTypeHeader(getContentType(), getContentSubType()));
     }
 
-    private void createMaxForwardsHeader() throws ParseException, InvalidArgumentException {
+    private void createMaxForwardsHeader() throws InvalidArgumentException {
         setMaxForwardsHeader(headerFactory.createMaxForwardsHeader(getMaxForwards()));
     }
 
@@ -397,7 +397,7 @@ public class SipConfiguration {
         contactHeader = headerFactory.createContactHeader(contactAddress);
     }
 
-    private void createExpiresHeader() throws ParseException, InvalidArgumentException {
+    private void createExpiresHeader() throws InvalidArgumentException {
         expiresHeader = getHeaderFactory().createExpiresHeader(getMsgExpiration());
     }
 

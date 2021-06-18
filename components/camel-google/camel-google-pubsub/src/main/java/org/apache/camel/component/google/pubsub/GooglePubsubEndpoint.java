@@ -108,7 +108,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
         return (GooglePubsubComponent) super.getComponent();
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (ObjectHelper.isEmpty(loggerId)) {
             log = LoggerFactory.getLogger(this.getClass().getName());
         } else {

@@ -84,7 +84,7 @@ public class KubernetesJobProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange, String operation) {
         JobList jobList = getEndpoint().getKubernetesClient().batch().jobs().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);

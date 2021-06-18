@@ -34,8 +34,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import org.apache.camel.Exchange;
@@ -89,12 +87,12 @@ public abstract class AbstractClientBase extends ServiceSupport
     private long terminationTimeout;
 
     public AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient,
-                              SalesforceLoginConfig loginConfig) throws SalesforceException {
+                              SalesforceLoginConfig loginConfig) {
         this(version, session, httpClient, loginConfig, DEFAULT_TERMINATION_TIMEOUT);
     }
 
     AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient,
-                       SalesforceLoginConfig loginConfig, int terminationTimeout) throws SalesforceException {
+                       SalesforceLoginConfig loginConfig, int terminationTimeout) {
         this.version = version;
         this.session = session;
         this.httpClient = httpClient;
@@ -278,14 +276,14 @@ public abstract class AbstractClientBase extends ServiceSupport
 
     final List<RestError> readErrorsFrom(
             final InputStream responseContent, final PayloadFormat format, final ObjectMapper objectMapper)
-            throws IOException, JsonParseException, JsonMappingException {
+            throws IOException {
         return readErrorsFrom(responseContent, format, objectMapper, null);
     }
 
     final List<RestError> readErrorsFrom(
             final InputStream responseContent, final PayloadFormat format, final ObjectMapper objectMapper,
             final XStream xStream)
-            throws IOException, JsonParseException, JsonMappingException {
+            throws IOException {
         final List<RestError> restErrors;
         if (PayloadFormat.JSON.equals(format)) {
             restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);

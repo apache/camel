@@ -69,8 +69,7 @@ public abstract class ZooKeeperOperation<ResultType> {
         return result;
     }
 
-    public OperationResult<ResultType> get(long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException {
+    public OperationResult<ResultType> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         // TODO perhaps set a timer here
         return get();
     }

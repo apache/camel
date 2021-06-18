@@ -70,7 +70,7 @@ public class SmppComponent extends DefaultComponent {
     /**
      * Create a new smpp endpoint with the provided uri and smpp configuration
      */
-    protected Endpoint createEndpoint(String uri, SmppConfiguration config) throws Exception {
+    protected Endpoint createEndpoint(String uri, SmppConfiguration config) {
         return new SmppEndpoint(uri, this, config);
     }
 

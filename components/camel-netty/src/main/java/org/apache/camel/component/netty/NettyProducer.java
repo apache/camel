@@ -520,7 +520,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
     }
 
-    protected void notifyChannelOpen(ChannelFuture channelFuture) throws Exception {
+    protected void notifyChannelOpen(ChannelFuture channelFuture) {
         // blocking for channel to be done
         if (LOG.isTraceEnabled()) {
             LOG.trace("Channel open finished with {}", channelFuture);
