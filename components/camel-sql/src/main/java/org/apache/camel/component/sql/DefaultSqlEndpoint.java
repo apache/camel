@@ -41,10 +41,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
 
-    @UriParam(description = "Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database.")
-    @Deprecated
-    private String dataSourceRef;
-    @UriParam(description = "Sets the DataSource to use to communicate with the databaset at endpoint level.")
+    @UriParam(description = "Sets the DataSource to use to communicate with the database at endpoint level.")
     private DataSource dataSource;
     @UriParam(label = "consumer",
               description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
@@ -356,17 +353,6 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
      */
     public void setUseMessageBodyForSql(boolean useMessageBodyForSql) {
         this.useMessageBodyForSql = useMessageBodyForSql;
-    }
-
-    public String getDataSourceRef() {
-        return dataSourceRef;
-    }
-
-    /**
-     * Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database.
-     */
-    public void setDataSourceRef(String dataSourceRef) {
-        this.dataSourceRef = dataSourceRef;
     }
 
     public DataSource getDataSource() {
