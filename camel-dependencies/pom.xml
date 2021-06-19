@@ -320,7 +320,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
-    <jetty9-version>9.4.40.v20210413</jetty9-version>
+    <jetty9-version>9.4.42.v20210604</jetty9-version>
     <jgit-version>5.12.0.202106070339-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -401,7 +401,7 @@
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.2.3</maven-war-plugin-version>
     <metrics-version>4.1.12.1</metrics-version>
-    <micrometer-version>1.6.1</micrometer-version>
+    <micrometer-version>1.7.0</micrometer-version>
     <microprofile-config-version>2.0</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-health-version>3.0</microprofile-health-version>
@@ -483,7 +483,7 @@
     <robotframework-version>4.0.1</robotframework-version>
     <rome-version>1.15.0</rome-version>
     <rxjava-version>1.3.8</rxjava-version>
-    <rxjava2-version>2.2.20</rxjava2-version>
+    <rxjava2-version>2.2.21</rxjava2-version>
     <saxon-version>9.9.1-7</saxon-version>
     <scala-datasonnet-version>2.13.3</scala-datasonnet-version>
     <scala-version>2.11.7</scala-version>
@@ -516,12 +516,12 @@
     <spring-batch-version>4.3.3</spring-batch-version>
     <spring-data-redis-version>2.5.1</spring-data-redis-version>
     <spring-integration-version>5.4.3</spring-integration-version>
-    <spring-ldap-version>2.3.3.RELEASE</spring-ldap-version>
+    <spring-ldap-version>2.3.4.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.3.7</spring-rabbitmq-version>
     <spring-security-version>5.5.0</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
-    <spring-ws-version>3.0.10.RELEASE</spring-ws-version>
+    <spring-ws-version>3.1.1</spring-ws-version>
     <spring5-version>5.3.8</spring5-version>
     <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
     <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
