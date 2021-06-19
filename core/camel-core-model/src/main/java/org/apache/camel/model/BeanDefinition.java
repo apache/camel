@@ -188,7 +188,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
      * times while processing the request. The bean does not have to be thread-safe as the instance is only called from
      * the same request. When using prototype scope, then the bean will be looked up or created per call. However in
      * case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on
-     * their configuration can act as either singleton or prototype scope. so when using prototype scope then this
+     * their configuration can act as either singleton or prototype scope. So when using prototype scope then this
      * depends on the bean registry implementation.
      */
     public void setScope(BeanScope scope) {
