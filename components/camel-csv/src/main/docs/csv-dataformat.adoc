@@ -60,7 +60,7 @@ The CSV dataformat supports 28 options, which are listed below.
 
 The following headers are supported by this component:
 
-=== File producer only
+=== Producer only
 
 [width="100%",cols="10%,90%",options="header",]
 |===
