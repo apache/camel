@@ -413,7 +413,7 @@ public class RunMojo extends AbstractExecMojo {
         final ClassLoader loader = getClassLoader();
         IsolatedThreadGroup threadGroup = new IsolatedThreadGroup(mainClass /* name */);
 
-        if (usingKameletMain && !detectKameletOnClassPath()) {
+        if (useKamelet != null && usingKameletMain && !detectKameletOnClassPath()) {
             throw new MojoFailureException(
                     "Cannot run Kamelet Main because camel-kamelet-main JAR is not available on classpath");
         }
