@@ -24,12 +24,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.camel.Exchange.SPLIT_COMPLETE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
 
     private final AtomicInteger count = new AtomicInteger();
