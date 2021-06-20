@@ -122,7 +122,7 @@ public final class ObjectHelper {
                 return leftNum.compareTo(rightNum) == 0;
             }
         } else if (rightValue instanceof String &&
-                ((leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue))) {
+                (leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue)) {
             if (leftValue instanceof Integer) {
                 Integer leftNum = (Integer) leftValue;
                 Integer rightNum = Integer.valueOf((String) rightValue);
@@ -222,7 +222,7 @@ public final class ObjectHelper {
                 return leftNum.compareTo(rightNum);
             }
         } else if (rightValue instanceof String &&
-                ((leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue))) {
+                (leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue)) {
             if (leftValue instanceof Integer) {
                 Integer leftNum = (Integer) leftValue;
                 Integer rightNum = Integer.valueOf((String) rightValue);
