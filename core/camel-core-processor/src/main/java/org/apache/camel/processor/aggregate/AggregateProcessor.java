@@ -102,6 +102,8 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
 
+    private final ThreadLocal<Boolean> incoming = new ThreadLocal<>();
+
     private volatile Lock lock;
     private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
     private final CamelContext camelContext;
@@ -313,12 +315,15 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        incoming.set(true);
         try {
             return doProcess(exchange, callback);
         } catch (Throwable e) {
             exchange.setException(e);
             callback.done(true);
             return true;
+        } finally {
+            incoming.remove();
         }
     }
 
@@ -872,17 +877,28 @@ public class AggregateProcessor extends AsyncProcessorSupport
         exchange.adapt(ExtendedExchange.class).addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
 
         // send this exchange
-        // the call to schedule is needed to ensure in-order processing of the aggregates
-        executorService.execute(() -> reactiveExecutor.schedule(() -> processor.process(exchange, done -> {
-            // log exception if there was a problem
-            if (exchange.getException() != null) {
-                // if there was an exception then let the exception handler handle it
-                getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
-                        exchange.getException());
+        executorService.execute(() -> {
+            Runnable task = () -> processor.process(exchange, done -> {
+                // log exception if there was a problem
+                if (exchange.getException() != null) {
+                    // if there was an exception then let the exception handler handle it
+                    getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
+                            exchange.getException());
+                } else {
+                    LOG.trace("Processing aggregated exchange: {} complete.", exchange);
+                }
+            });
+            Boolean inc = incoming.get();
+            if (!isParallelProcessing() && inc != null && inc) {
+                // we are completing from the incoming thread so we must execute the task synchronously
+                // as when we continue routing from the incoming thread it may depend on the completion task to
+                // been executed first
+                reactiveExecutor.scheduleSync(task);
             } else {
-                LOG.trace("Processing aggregated exchange: {} complete.", exchange);
+                // the call to schedule is needed to ensure in-order processing of the aggregates
+                reactiveExecutor.schedule(task);
             }
-        })));
+        });
     }
 
     /**

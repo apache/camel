@@ -20,11 +20,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.camel.Exchange.SPLIT_COMPLETE;
 
+@Disabled
 public class SplitAggregateParallelProcessingStackOverflowIssueTest extends ContextTestSupport {
 
     @Test
