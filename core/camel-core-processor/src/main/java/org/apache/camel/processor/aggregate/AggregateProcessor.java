@@ -102,8 +102,6 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
 
-    private final ThreadLocal<Boolean> incoming = new ThreadLocal<>();
-
     private volatile Lock lock;
     private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
     private final CamelContext camelContext;
@@ -315,15 +313,12 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        incoming.set(true);
         try {
             return doProcess(exchange, callback);
         } catch (Throwable e) {
             exchange.setException(e);
             callback.done(true);
             return true;
-        } finally {
-            incoming.remove();
         }
     }
 
@@ -888,16 +883,8 @@ public class AggregateProcessor extends AsyncProcessorSupport
                     LOG.trace("Processing aggregated exchange: {} complete.", exchange);
                 }
             });
-            Boolean inc = incoming.get();
-            if (!isParallelProcessing() && inc != null && inc) {
-                // we are completing from the incoming thread so we must execute the task synchronously
-                // as when we continue routing from the incoming thread it may depend on the completion task to
-                // been executed first
-                reactiveExecutor.scheduleSync(task);
-            } else {
-                // the call to schedule is needed to ensure in-order processing of the aggregates
-                reactiveExecutor.schedule(task);
-            }
+            // the call to schedule is needed to ensure in-order processing of the aggregates
+            reactiveExecutor.schedule(task);
         });
     }
 

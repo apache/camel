@@ -674,6 +674,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
             Processor sync = pair.getProcessor();
             try {
                 sync.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
             } finally {
                 afterSend(pair, watch);
             }
