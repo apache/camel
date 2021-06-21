@@ -96,7 +96,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     /**
-     * Reference to bean to lookup in the registry
+     * Reference to an existing bean (bean id) to lookup in the registry
      */
     public void setRef(String ref) {
         this.ref = ref;
@@ -127,7 +127,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     /**
-     * Class name of the bean to use
+     * Class name (fully qualified) of the bean to use
      */
     public void setBeanTypeName(String beanTypeName) {
         this.beanTypeName = beanTypeName;
