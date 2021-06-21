@@ -241,11 +241,19 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
         String sigKeyPassword = findSignatureKeyPassword(exchange);
         byte[] sigKeyRing = findSignatureKeyRing(exchange);
 
-        if ((sigKeyFileName == null && sigKeyRing == null) || useridParts == null || useridParts.isEmpty()
-                || (sigKeyPassword == null && passphraseAccessor == null)) {
+        if (hasSigKeys(sigKeyFileName, sigKeyRing) || useridParts == null || useridParts.isEmpty()
+                || hasPassword(sigKeyPassword)) {
             return Collections.emptyList();
         }
         return determineSecretKeysWithPrivateKeyAndUserId(exchange, sigKeyFileName, useridParts, sigKeyPassword, sigKeyRing);
+    }
+
+    private boolean hasPassword(String sigKeyPassword) {
+        return sigKeyPassword == null && passphraseAccessor == null;
+    }
+
+    private boolean hasSigKeys(String sigKeyFileName, byte[] sigKeyRing) {
+        return sigKeyFileName == null && sigKeyRing == null;
     }
 
     @Override
