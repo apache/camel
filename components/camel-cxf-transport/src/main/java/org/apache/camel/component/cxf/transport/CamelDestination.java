@@ -65,7 +65,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean checkException;
 
-    public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info) throws IOException {
+    public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info) {
         this(camelContext, bus, ci, info, null, false);
     }
 

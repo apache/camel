@@ -44,7 +44,7 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
     // ****************************
 
     @InvokeOnHeader(CaffeineConstants.ACTION_CLEANUP)
-    public void onCleanUp(Message message) throws Exception {
+    public void onCleanUp(Message message) {
         cache.cleanUp();
 
         setResult(message, true, null, null);
@@ -72,7 +72,7 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
     }
 
     @InvokeOnHeader(CaffeineConstants.ACTION_GET_ALL)
-    public void onGetAll(Message message) throws Exception {
+    public void onGetAll(Message message) {
         Object result = cache.getAllPresent(message.getHeader(CaffeineConstants.KEYS, Collections::emptySet, Set.class));
 
         setResult(message, true, result, null);
@@ -86,7 +86,7 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
     }
 
     @InvokeOnHeader(CaffeineConstants.ACTION_INVALIDATE_ALL)
-    public void onInvalidateAll(Message message) throws Exception {
+    public void onInvalidateAll(Message message) {
         cache.invalidateAll(message.getHeader(CaffeineConstants.KEYS, Collections::emptySet, Set.class));
 
         setResult(message, true, null, null);

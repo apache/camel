@@ -216,7 +216,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         return nf;
     }
 
-    public static Object getDefaultValueForPrimitive(Class<?> clazz) throws Exception {
+    public static Object getDefaultValueForPrimitive(Class<?> clazz) {
         if (clazz == byte.class) {
             return Byte.MIN_VALUE;
         } else if (clazz == short.class) {
