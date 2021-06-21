@@ -69,7 +69,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      *
      * @throws Exception
      */
-    public void initKeyValuePairModel() throws Exception {
+    public void initKeyValuePairModel() {
 
         // Find annotated KeyValuePairfields declared in the Model classes
         initAnnotatedFields();
