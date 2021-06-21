@@ -88,14 +88,14 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange, String operation) {
         DeploymentList deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(deploymentsList.getItems());
     }
 
-    protected void doListDeploymentsByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListDeploymentsByLabels(Exchange exchange, String operation) {
         DeploymentList deploymentList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
         MixedOperation<Deployment, DeploymentList, RollableScalableResource<Deployment>> deployments = getEndpoint()

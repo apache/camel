@@ -38,7 +38,7 @@ public class IPFSConfiguration {
     @UriParam(description = "The ipfs output directory")
     private String outdir;
 
-    public void init(String urispec, String remaining) throws Exception {
+    public void init(String urispec, String remaining) {
         String cmd = remaining;
         setIpfsCmd(cmd);
     }

@@ -77,13 +77,13 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange, String operation) {
         BuildConfigList buildConfigsList
                 = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs().inAnyNamespace().list();
         exchange.getOut().setBody(buildConfigsList.getItems());
     }
 
-    protected void doListBuildConfigsByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListBuildConfigsByLabels(Exchange exchange, String operation) {
         BuildConfigList buildConfigsList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
