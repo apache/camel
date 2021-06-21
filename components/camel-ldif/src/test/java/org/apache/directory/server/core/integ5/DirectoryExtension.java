@@ -220,7 +220,7 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
         }
 
         private long getCurrentRevision(DirectoryService dirService) throws Exception {
-            if ((dirService != null) && (dirService.getChangeLog().isEnabled())) {
+            if (dirService != null && dirService.getChangeLog().isEnabled()) {
                 long revision = dirService.getChangeLog().getCurrentRevision();
                 LOG.debug("Create revision {}", revision);
                 return revision;
@@ -233,7 +233,7 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
                 return;
             }
             ChangeLog cl = dirService.getChangeLog();
-            if (cl.isEnabled() && (revision < cl.getCurrentRevision())) {
+            if (cl.isEnabled() && revision < cl.getCurrentRevision()) {
                 LOG.debug("Revert revision {}", revision);
                 dirService.revert(revision);
             }
