@@ -655,8 +655,8 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     /**
      * Indicates whether or not the unmarshalling should capture the header record.
      *
-     * @param  lazyLoad {@code true} for capture header record, {@code false} otherwise
-     * @return          Current {@code CsvDataFormat}, fluent API
+     * @param  captureHeaderRecord {@code true} for capture header record, {@code false} otherwise
+     * @return                     Current {@code CsvDataFormat}, fluent API
      */
     public CsvDataFormat setCaptureHeaderRecord(boolean captureHeaderRecord) {
         this.captureHeaderRecord = captureHeaderRecord;
