@@ -298,7 +298,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.6.0</jedis-client-version>
         <jersey-version>2.28</jersey-version>
-        <jetcd-version>0.5.4</jetcd-version>
+        <jetcd-version>0.5.7</jetcd-version>
         <jetty9-version>9.4.42.v20210604</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
