@@ -73,7 +73,7 @@ with the following path and query parameters:
 | *operation* (producer) | *Required* Which operation to perform, one of: sendTransfer, getNewAddress, getTransfers. There are 3 enums and the value can be one of: sendTransfer, getNewAddress, getTransfers |  | String
 | *tag* (producer) | TAG |  | String
 | *url* (producer) | *Required* Node url |  | String
-| *securityLevel* (security) | Address security level | 1 | Integer
+| *securityLevel* (security) | Security level to be used for the private key / address. Can be 1, 2 or 3. | 1 | Integer
 |===
 // endpoint options: END
 
