@@ -227,6 +227,9 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
+     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+     * otherwise a new bean is created (requires a default no-arg constructor).
+     *
      * @param  beanType the Class of the bean which we want to invoke
      * @return          the builder to continue processing the DSL
      */
@@ -287,6 +290,9 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
+     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+     * otherwise a new bean is created (requires a default no-arg constructor).
+     *
      * @param  beanType the Class of the bean which we want to invoke
      * @param  method   the name of the method to invoke on the bean
      * @return          the builder to continue processing the DSL
@@ -299,6 +305,9 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
+     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+     * otherwise a new bean is created (requires a default no-arg constructor).
+     *
      * @param  beanType the Class of the bean which we want to invoke
      * @param  scope    the scope of the bean
      * @return          the builder to continue processing the DSL
@@ -310,6 +319,9 @@ public class ExpressionClause<T> implements Expression, Predicate {
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
+     *
+     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+     * otherwise a new bean is created (requires a default no-arg constructor).
      *
      * @param  beanType the Class of the bean which we want to invoke
      * @param  method   the name of the method to invoke on the bean
