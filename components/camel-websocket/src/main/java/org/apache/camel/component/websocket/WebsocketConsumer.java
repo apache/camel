@@ -56,20 +56,25 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
     public void sendMessage(
             final String connectionKey,
             final String message,
-            final InetSocketAddress remote) {
-        sendMessage(connectionKey, (Object) message, remote);
+            final InetSocketAddress remote,
+            final String subprotocol) {
+        sendMessage(connectionKey, (Object) message, remote, subprotocol);
     }
 
     public void sendMessage(
             final String connectionKey,
             final Object message,
-            final InetSocketAddress remote) {
+            final InetSocketAddress remote,
+            final String subprotocol) {
 
         final Exchange exchange = createExchange(true);
 
         // set header and body
         exchange.getIn().setHeader(WebsocketConstants.REMOTE_ADDRESS, remote);
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
+        if (subprotocol != null) {
+            exchange.getIn().setHeader(WebsocketConstants.SUBPROTOCOL, subprotocol);
+        }
         exchange.getIn().setBody(message);
 
         // use default consumer callback

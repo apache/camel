@@ -57,6 +57,7 @@ public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "staticresources":
         case "staticResources": target.setStaticResources(property(camelContext, java.lang.String.class, value)); return true;
+        case "subprotocol": target.setSubprotocol(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -100,6 +101,7 @@ public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "staticresources":
         case "staticResources": return java.lang.String.class;
+        case "subprotocol": return java.lang.String.class;
         default: return null;
         }
     }
@@ -144,6 +146,7 @@ public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sslContextParameters": return target.getSslContextParameters();
         case "staticresources":
         case "staticResources": return target.getStaticResources();
+        case "subprotocol": return target.getSubprotocol();
         default: return null;
         }
     }

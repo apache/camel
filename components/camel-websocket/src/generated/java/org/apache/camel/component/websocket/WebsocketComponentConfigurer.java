@@ -45,6 +45,7 @@ public class WebsocketComponentConfigurer extends PropertyConfigurerSupport impl
         case "sslPassword": target.setSslPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "staticresources":
         case "staticResources": target.setStaticResources(property(camelContext, java.lang.String.class, value)); return true;
+        case "subprotocol": target.setSubprotocol(property(camelContext, java.lang.String.class, value)); return true;
         case "threadpool":
         case "threadPool": target.setThreadPool(property(camelContext, org.eclipse.jetty.util.thread.ThreadPool.class, value)); return true;
         case "useglobalsslcontextparameters":
@@ -80,6 +81,7 @@ public class WebsocketComponentConfigurer extends PropertyConfigurerSupport impl
         case "sslPassword": return java.lang.String.class;
         case "staticresources":
         case "staticResources": return java.lang.String.class;
+        case "subprotocol": return java.lang.String.class;
         case "threadpool":
         case "threadPool": return org.eclipse.jetty.util.thread.ThreadPool.class;
         case "useglobalsslcontextparameters":
@@ -116,6 +118,7 @@ public class WebsocketComponentConfigurer extends PropertyConfigurerSupport impl
         case "sslPassword": return target.getSslPassword();
         case "staticresources":
         case "staticResources": return target.getStaticResources();
+        case "subprotocol": return target.getSubprotocol();
         case "threadpool":
         case "threadPool": return target.getThreadPool();
         case "useglobalsslcontextparameters":
