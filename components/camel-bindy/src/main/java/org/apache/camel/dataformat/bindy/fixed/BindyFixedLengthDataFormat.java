@@ -200,7 +200,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         try {
 
             // Parse the header if it exists
-            if (((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine())) && factory.hasHeader()) {
+            if (headerExists(factory, scanner, isEolSet)) {
 
                 // Read the line (should not trim as its fixed length)
                 String line = getNextNonEmptyLine(scanner, count, isEolSet);
@@ -259,10 +259,17 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     }
 
+    private boolean headerExists(BindyFixedLengthFactory factory, Scanner scanner, boolean isEolSet) {
+        return hasMore(isEolSet, scanner) && factory.hasHeader();
+    }
+
+    private boolean hasMore(boolean isEolSet, Scanner scanner) {
+        return isEolSet && scanner.hasNext() || !isEolSet && scanner.hasNextLine();
+    }
+
     private String getNextNonEmptyLine(Scanner scanner, AtomicInteger count, boolean isEolSet) {
         String line = "";
-        while (org.apache.camel.util.ObjectHelper.isEmpty(line)
-                && ((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine()))) {
+        while (org.apache.camel.util.ObjectHelper.isEmpty(line) && hasMore(isEolSet, scanner)) {
             count.incrementAndGet();
             if (!isEolSet) {
                 line = scanner.nextLine();
