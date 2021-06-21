@@ -75,7 +75,7 @@ Configures batch-processing resequence eip.
   <xs:element name="bean" type="tns:beanDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Calls a java bean
+Calls a Java bean
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3450,7 +3450,8 @@ Enables random backoff. Default value: false
         <xs:attribute name="ref" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a bean to use.
+Sets a reference to an exiting bean to use, which is looked up from the
+registry.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3464,7 +3465,7 @@ Sets the method name on the bean to use.
         <xs:attribute name="beanType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the Class of the bean.
+Sets the class name (fully qualified) of the bean to use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
