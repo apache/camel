@@ -56,6 +56,16 @@ The Aggregate EIP supports 27 options which are listed below:
 |===
 // eip options: END
 
+== Worker pools
+
+The aggregate EIP will always use a worker pool, that is used to process all the outgoing messages from the aggregator.
+The worker pool is determined accordingly:
+
+- If a custom `ExecutorService` has been configured, then this is used as worker pool.
+- If `paralellelProcessing=true` then a _default_ worker pool (is 10 worker threads by default) is created.
+However the thread pool size and other configurations can be configured using _thread pool profiles_.
+- Otherwise a single threaded worker pool is created.
+
 == About AggregationStrategy
 
 The `AggregationStrategy` is used for aggregating the old (lookup by its
