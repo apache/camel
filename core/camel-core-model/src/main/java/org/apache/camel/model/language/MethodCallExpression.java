@@ -128,6 +128,9 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     /**
      * Class name (fully qualified) of the bean to use
+     *
+     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+     * otherwise a new bean is created (requires a default no-arg constructor).
      */
     public void setBeanTypeName(String beanTypeName) {
         this.beanTypeName = beanTypeName;

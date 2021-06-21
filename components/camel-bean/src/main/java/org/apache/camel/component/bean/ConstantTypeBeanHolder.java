@@ -17,11 +17,11 @@
 package org.apache.camel.component.bean;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -29,6 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  * A constant (singleton) bean implementation of {@link org.apache.camel.component.bean.BeanTypeHolder}
  */
 public class ConstantTypeBeanHolder implements BeanTypeHolder {
+    private final CamelContext camelContext;
     private final Class<?> type;
     private final BeanInfo beanInfo;
     private Map<String, Object> options;
@@ -44,6 +45,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
 
         this.type = type;
         this.beanInfo = beanInfo;
+        this.camelContext = beanInfo.getCamelContext();
     }
 
     @Override
@@ -80,26 +82,24 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
 
     @Override
     public Object getBean(Exchange exchange) {
-        //  try to get the bean from registry first if there is a single candidate for the type. 
-        Set<?> beans = beanInfo.getCamelContext().getRegistry().findByType(type);
-        if (beans.size() == 1) {
-            return beans.iterator().next();
-        }
-        // only create a bean if we have a default no-arg constructor and not present in the registry
-        if (beanInfo.hasPublicNoArgConstructors()) {
-            Object bean = getBeanInfo().getCamelContext().getInjector().newInstance(type, false);
+        //  try to get the bean from registry first if there is a single candidate for the type
+        Object answer = CamelContextHelper.findByType(camelContext, type);
+
+        // if not then create a new bean instance from the type
+        if (answer == null && beanInfo.hasPublicNoArgConstructors()) {
+            // only create a bean if we have a default no-arg constructor and not present in the registry
+            answer = getBeanInfo().getCamelContext().getInjector().newInstance(type, false);
             if (options != null && !options.isEmpty()) {
                 PropertyBindingSupport.build()
                         .withRemoveParameters(false)
                         .withCamelContext(getBeanInfo().getCamelContext())
                         .withProperties(options)
-                        .withTarget(bean)
+                        .withTarget(answer)
                         .bind();
             }
-            return bean;
-        } else {
-            return null;
         }
+
+        return answer;
     }
 
     @Override
