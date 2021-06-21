@@ -66,7 +66,7 @@ The following headers are supported by this component:
 |===
 |Header |Description
 
-|`CamelCsvHeaderNames` |The header names provided or collected from the CSV.
+|`CamelCsvHeaderRecord` |The header record collected from the CSV when setCaptureHeaderRecord is true.
 
 |===
 
@@ -266,19 +266,19 @@ should illustrate this customization.
 </bean>
 -----------------------------------------------------------------------------------------------------------------------------
 
-== Collecting header names
+== Collecting header record
 
-When an empty string array is provided for the header, the format will collect the headers into
-a message header called CamelCsvHeaderNames.
+You can instruct the CSV Data Format to collect the headers into
+a message header called CamelCsvHeaderRecord.
 
 [source,java]
 --------------------------------------------
 CsvDataFormat csv = new CsvDataFormat();
-csv.setHeader(new String[0]);
+csv.setCaptureHeaderRecord(true);
 
 from("direct:start")
   .unmarshal(csv)
-  .log("${header[CamelCsvHeaderNames]}");
+  .log("${header[CamelCsvHeaderRecord]}");
 --------------------------------------------
 
 

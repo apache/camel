@@ -60,13 +60,13 @@ The CSV dataformat supports 28 options, which are listed below.
 
 The following headers are supported by this component:
 
-=== File producer only
+=== Producer only
 
 [width="100%",cols="10%,90%",options="header",]
 |===
 |Header |Description
 
-|`CamelCsvHeaderNames` |The header names provided or collected from the CSV.
+|`CamelCsvHeaderRecord` |The header record collected from the CSV when setCaptureHeaderRecord is true.
 
 |===
 
@@ -266,19 +266,19 @@ should illustrate this customization.
 </bean>
 -----------------------------------------------------------------------------------------------------------------------------
 
-== Collecting header names
+== Collecting header record
 
-When an empty string array is provided for the header, the format will collect the headers into
-a message header called CamelCsvHeaderNames.
+You can instruct the CSV Data Format to collect the headers into
+a message header called CamelCsvHeaderRecord.
 
 [source,java]
 --------------------------------------------
 CsvDataFormat csv = new CsvDataFormat();
-csv.setCaptureHeaderRecord(true));
+csv.setCaptureHeaderRecord(true);
 
 from("direct:start")
   .unmarshal(csv)
-  .log("${header[CamelCsvHeaderNames]}");
+  .log("${header[CamelCsvHeaderRecord]}");
 --------------------------------------------
 
 
