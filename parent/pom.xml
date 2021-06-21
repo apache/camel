@@ -314,7 +314,7 @@
         <libthrift-version>0.12.0</libthrift-version>
         <jing-version>20030619</jing-version>
         <jodatime2-version>2.10.10</jodatime2-version>
-        <jota-version>1.0.0-beta7</jota-version>
+        <jota-version>1.0.0-beta9</jota-version>
         <jolokia-version>1.6.2</jolokia-version>
         <jolt-version>0.1.1</jolt-version>
         <jool-version>0.9.12</jool-version>
