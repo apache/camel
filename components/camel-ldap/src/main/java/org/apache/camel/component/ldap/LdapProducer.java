@@ -49,7 +49,7 @@ public class LdapProducer extends DefaultProducer {
     private Integer pageSize;
 
     public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize,
-                        String returnedAttributes) throws Exception {
+                        String returnedAttributes) {
         super(endpoint);
 
         this.remaining = remaining;

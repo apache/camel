@@ -49,7 +49,7 @@ public class LdifProducer extends DefaultProducer {
     // properties
     private String ldapConnectionName;
 
-    public LdifProducer(LdifEndpoint endpoint, String ldapConnectionName) throws Exception {
+    public LdifProducer(LdifEndpoint endpoint, String ldapConnectionName) {
         super(endpoint);
         this.ldapConnectionName = ldapConnectionName;
     }
@@ -98,7 +98,7 @@ public class LdifProducer extends DefaultProducer {
      *
      * @return The created LDAP connection.
      */
-    protected LdapConnection getLdapConnection() throws CamelException {
+    protected LdapConnection getLdapConnection() {
         return (LdapConnection) getEndpoint().getCamelContext().getRegistry().lookupByName(ldapConnectionName);
     }
 
