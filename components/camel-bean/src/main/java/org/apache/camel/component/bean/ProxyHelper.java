@@ -96,15 +96,14 @@ public final class ProxyHelper {
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T> interfaceClass) throws Exception {
+    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T> interfaceClass) {
         return createProxy(endpoint, true, producer, toArray(interfaceClass));
     }
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static <T> T createProxy(Endpoint endpoint, boolean binding, Producer producer, Class<T>... interfaceClasses)
-            throws Exception {
+    public static <T> T createProxy(Endpoint endpoint, boolean binding, Producer producer, Class<T>... interfaceClasses) {
         return createProxyObject(endpoint, binding, producer, getClassLoader(interfaceClasses), interfaceClasses,
                 createMethodInfoCache(endpoint));
     }

@@ -90,7 +90,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
      *
      * @throws Exception
      */
-    public void initCsvModel() throws Exception {
+    public void initCsvModel() {
 
         // Find annotated Datafields declared in the Model classes
         initAnnotatedFields();
@@ -700,8 +700,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
      * @throws Exception              In case the field cannot be parsed
      */
     private void setDefaultValuesForFields(final Map<String, Object> model)
-            throws IllegalAccessException,
-            Exception {
+            throws Exception {
         // Set the default values, if defined
         for (int i = 1; i <= dataFields.size(); i++) {
             Field field = annotatedFields.get(i);

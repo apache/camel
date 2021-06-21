@@ -98,7 +98,7 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         return builder.build();
     }
 
-    protected <T> void processConsulResponse(Message message, ConsulResponse<T> response) throws Exception {
+    protected <T> void processConsulResponse(Message message, ConsulResponse<T> response) {
         message.setHeader(ConsulConstants.CONSUL_INDEX, response.getIndex());
         message.setHeader(ConsulConstants.CONSUL_LAST_CONTACT, response.getLastContact());
         message.setHeader(ConsulConstants.CONSUL_KNOWN_LEADER, response.isKnownLeader());
@@ -106,11 +106,11 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         setBodyAndResult(message, response.getResponse());
     }
 
-    protected void setBodyAndResult(Message message, Object body) throws Exception {
+    protected void setBodyAndResult(Message message, Object body) {
         setBodyAndResult(message, body, body != null);
     }
 
-    protected void setBodyAndResult(Message message, Object body, boolean result) throws Exception {
+    protected void setBodyAndResult(Message message, Object body, boolean result) {
         message.setHeader(ConsulConstants.CONSUL_RESULT, result);
         if (body != null) {
             message.setBody(body);
