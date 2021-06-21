@@ -13335,7 +13335,7 @@ The name of the language to use.
         <xs:attribute name="ref" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Reference to bean to lookup in the registry.
+Reference to an existing bean (bean id) to lookup in the registry.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13349,7 +13349,9 @@ Name of method to call.
         <xs:attribute name="beanType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Class name of the bean to use.
+Class name (fully qualified) of the bean to use Will lookup in registry and if
+there is a single instance of the same type, then the existing bean is used,
+otherwise a new bean is created (requires a default no-arg constructor).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
