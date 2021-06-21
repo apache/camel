@@ -99,8 +99,7 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
 
-        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword()))
-                && ObjectHelper.isEmpty(configuration.getOauthToken())) {
+        if (hasUsernameAndPassword(configuration) && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
         } else {
@@ -138,6 +137,10 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
         }
 
         client = new AutoAdaptableKubernetesClient(builder.build());
+    }
+
+    private boolean hasUsernameAndPassword(KubernetesConfiguration configuration) {
+        return ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword());
     }
 
     @Override
