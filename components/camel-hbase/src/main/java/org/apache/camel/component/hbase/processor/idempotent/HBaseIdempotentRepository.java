@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.hbase.processor.idempotent;
 
-import java.io.IOException;
-
 import org.apache.camel.component.hbase.HBaseHelper;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.service.ServiceSupport;
@@ -47,7 +45,7 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     private Table table;
 
     public HBaseIdempotentRepository(Configuration configuration, String tableName, String family,
-                                     String qualifier) throws IOException {
+                                     String qualifier) {
         this.tableName = tableName;
         this.family = family;
         this.qualifier = qualifier;

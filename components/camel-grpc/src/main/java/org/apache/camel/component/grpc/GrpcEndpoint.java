@@ -38,7 +38,7 @@ public class GrpcEndpoint extends DefaultEndpoint {
     private String serviceName;
     private String servicePackage;
 
-    public GrpcEndpoint(String uri, GrpcComponent component, GrpcConfiguration config) throws Exception {
+    public GrpcEndpoint(String uri, GrpcComponent component, GrpcConfiguration config) {
         super(uri, component);
         this.configuration = config;
     }
