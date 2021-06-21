@@ -15,19 +15,35 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class ServiceBusEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":namespace/eventHubName";
+    private static final String BASE = ":queueNameOrTopicName";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(19);
+        props.add("clientOptions");
+        props.add("serviceBusType");
+        props.add("connectionString");
+        props.add("prefetchCount");
+        props.add("receiverAsyncClient");
+        props.add("exchangePattern");
+        props.add("amqpTransportType");
+        props.add("serviceBusReceiveMode");
+        props.add("senderAsyncClient");
         props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
-        props.add("namespace");
-        props.add("exchangePattern");
+        props.add("subQueue");
+        props.add("topicOrQueueName");
+        props.add("subscriptionName");
+        props.add("amqpRetryOptions");
+        props.add("proxyOptions");
+        props.add("disableAutoComplete");
         props.add("exceptionHandler");
+        props.add("maxAutoLockRenewDuration");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("connectionString");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -42,7 +58,7 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "namespace", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "topicOrQueueName", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

@@ -1,16 +1,13 @@
 package org.apache.camel.component.azure.servicebus.integration.operations;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Spliterator;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
-import com.azure.messaging.servicebus.ServiceBusMessage;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
@@ -80,8 +77,6 @@ public class ServiceBusProducerOperationsIT {
 
         assertTrue(exists, "test message body");
 
-
-
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
             operations.sendMessages(12345, null).block();
@@ -99,7 +94,8 @@ public class ServiceBusProducerOperationsIT {
 
         operations.sendMessages(inputBatch, null).block();
 
-        final Spliterator<ServiceBusReceivedMessage> receivedMessages = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
+        final Spliterator<ServiceBusReceivedMessage> receivedMessages
+                = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
 
         final boolean batch1Exists = StreamSupport.stream(receivedMessages, false)
                 .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("test batch 1"));
@@ -122,15 +118,14 @@ public class ServiceBusProducerOperationsIT {
         operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null).block();
 
         final boolean exists = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("testScheduleMessage"));
+                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
+                        .equals("testScheduleMessage"));
 
         assertTrue(exists, "test message body");
 
-
-
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
-            operations.scheduleMessages(12345, OffsetDateTime.now(),null).block();
+            operations.scheduleMessages(12345, OffsetDateTime.now(), null).block();
         });
     }
 
@@ -145,16 +140,20 @@ public class ServiceBusProducerOperationsIT {
 
         operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null).block();
 
-        final Spliterator<ServiceBusReceivedMessage> receivedMessages = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
+        final Spliterator<ServiceBusReceivedMessage> receivedMessages
+                = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
 
         final boolean batch1Exists = StreamSupport.stream(receivedMessages, false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("testSchedulingBatchMessages 1"));
+                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
+                        .equals("testSchedulingBatchMessages 1"));
 
         final boolean batch2Exists = StreamSupport.stream(receivedMessages, false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("testSchedulingBatchMessages 2"));
+                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
+                        .equals("testSchedulingBatchMessages 2"));
 
         final boolean batch3Exists = StreamSupport.stream(receivedMessages, false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("testSchedulingBatchMessages 3"));
+                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
+                        .equals("testSchedulingBatchMessages 3"));
 
         assertTrue(batch1Exists, "test message body 1");
         assertTrue(batch2Exists, "test message body 2");

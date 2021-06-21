@@ -21,29 +21,90 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServiceBusEndpoint target = (ServiceBusEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "amqpretryoptions":
+        case "amqpRetryOptions": target.getConfiguration().setAmqpRetryOptions(property(camelContext, com.azure.core.amqp.AmqpRetryOptions.class, value)); return true;
+        case "amqptransporttype":
+        case "amqpTransportType": target.getConfiguration().setAmqpTransportType(property(camelContext, com.azure.core.amqp.AmqpTransportType.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clientoptions":
+        case "clientOptions": target.getConfiguration().setClientOptions(property(camelContext, com.azure.core.util.ClientOptions.class, value)); return true;
+        case "connectionstring":
+        case "connectionString": target.getConfiguration().setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
+        case "disableautocomplete":
+        case "disableAutoComplete": target.getConfiguration().setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxautolockrenewduration":
+        case "maxAutoLockRenewDuration": target.getConfiguration().setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value)); return true;
+        case "prefetchcount":
+        case "prefetchCount": target.getConfiguration().setPrefetchCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyoptions":
+        case "proxyOptions": target.getConfiguration().setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
+        case "receiverasyncclient":
+        case "receiverAsyncClient": target.getConfiguration().setReceiverAsyncClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class, value)); return true;
+        case "senderasyncclient":
+        case "senderAsyncClient": target.getConfiguration().setSenderAsyncClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusSenderAsyncClient.class, value)); return true;
+        case "servicebusreceivemode":
+        case "serviceBusReceiveMode": target.getConfiguration().setServiceBusReceiveMode(property(camelContext, com.azure.messaging.servicebus.models.ServiceBusReceiveMode.class, value)); return true;
+        case "servicebustype":
+        case "serviceBusType": target.getConfiguration().setServiceBusType(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusType.class, value)); return true;
+        case "subqueue":
+        case "subQueue": target.getConfiguration().setSubQueue(property(camelContext, com.azure.messaging.servicebus.models.SubQueue.class, value)); return true;
+        case "subscriptionname":
+        case "subscriptionName": target.getConfiguration().setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"receiverAsyncClient","senderAsyncClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "amqpretryoptions":
+        case "amqpRetryOptions": return com.azure.core.amqp.AmqpRetryOptions.class;
+        case "amqptransporttype":
+        case "amqpTransportType": return com.azure.core.amqp.AmqpTransportType.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "clientoptions":
+        case "clientOptions": return com.azure.core.util.ClientOptions.class;
+        case "connectionstring":
+        case "connectionString": return java.lang.String.class;
+        case "disableautocomplete":
+        case "disableAutoComplete": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxautolockrenewduration":
+        case "maxAutoLockRenewDuration": return java.time.Duration.class;
+        case "prefetchcount":
+        case "prefetchCount": return java.lang.Integer.class;
+        case "proxyoptions":
+        case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
+        case "receiverasyncclient":
+        case "receiverAsyncClient": return com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class;
+        case "senderasyncclient":
+        case "senderAsyncClient": return com.azure.messaging.servicebus.ServiceBusSenderAsyncClient.class;
+        case "servicebusreceivemode":
+        case "serviceBusReceiveMode": return com.azure.messaging.servicebus.models.ServiceBusReceiveMode.class;
+        case "servicebustype":
+        case "serviceBusType": return org.apache.camel.component.azure.servicebus.ServiceBusType.class;
+        case "subqueue":
+        case "subQueue": return com.azure.messaging.servicebus.models.SubQueue.class;
+        case "subscriptionname":
+        case "subscriptionName": return java.lang.String.class;
         default: return null;
         }
     }
@@ -52,14 +113,42 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ServiceBusEndpoint target = (ServiceBusEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "amqpretryoptions":
+        case "amqpRetryOptions": return target.getConfiguration().getAmqpRetryOptions();
+        case "amqptransporttype":
+        case "amqpTransportType": return target.getConfiguration().getAmqpTransportType();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "clientoptions":
+        case "clientOptions": return target.getConfiguration().getClientOptions();
+        case "connectionstring":
+        case "connectionString": return target.getConfiguration().getConnectionString();
+        case "disableautocomplete":
+        case "disableAutoComplete": return target.getConfiguration().isDisableAutoComplete();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxautolockrenewduration":
+        case "maxAutoLockRenewDuration": return target.getConfiguration().getMaxAutoLockRenewDuration();
+        case "prefetchcount":
+        case "prefetchCount": return target.getConfiguration().getPrefetchCount();
+        case "proxyoptions":
+        case "proxyOptions": return target.getConfiguration().getProxyOptions();
+        case "receiverasyncclient":
+        case "receiverAsyncClient": return target.getConfiguration().getReceiverAsyncClient();
+        case "senderasyncclient":
+        case "senderAsyncClient": return target.getConfiguration().getSenderAsyncClient();
+        case "servicebusreceivemode":
+        case "serviceBusReceiveMode": return target.getConfiguration().getServiceBusReceiveMode();
+        case "servicebustype":
+        case "serviceBusType": return target.getConfiguration().getServiceBusType();
+        case "subqueue":
+        case "subQueue": return target.getConfiguration().getSubQueue();
+        case "subscriptionname":
+        case "subscriptionName": return target.getConfiguration().getSubscriptionName();
         default: return null;
         }
     }

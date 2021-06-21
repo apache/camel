@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * services using messages.
  */
 @UriEndpoint(firstVersion = "3.11.0", scheme = "azure-servicebus", title = "Azure ServiceBus",
-             syntax = "azure-servicebus:namespace/eventHubName", category = {
+             syntax = "azure-servicebus:queueNameOrTopicName", category = {
                      Category.CLOUD, Category.MESSAGING })
 public class ServiceBusEndpoint extends DefaultEndpoint {
 
