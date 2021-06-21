@@ -50,7 +50,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
     private ExecutorService executor;
     private List<Subscriber> subscribers;
 
-    GooglePubsubConsumer(GooglePubsubEndpoint endpoint, Processor processor) throws Exception {
+    GooglePubsubConsumer(GooglePubsubEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;

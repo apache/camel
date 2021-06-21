@@ -31,7 +31,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFilePollingConsumer.class);
     private final long delay;
 
-    public GenericFilePollingConsumer(GenericFileEndpoint endpoint) throws Exception {
+    public GenericFilePollingConsumer(GenericFileEndpoint endpoint) {
         super(endpoint);
         this.delay = endpoint.getDelay() > 0 ? endpoint.getDelay() : endpoint.getDefaultDelay();
     }
