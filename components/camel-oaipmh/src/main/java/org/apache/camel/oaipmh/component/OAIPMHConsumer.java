@@ -28,7 +28,7 @@ public class OAIPMHConsumer extends ScheduledPollConsumer {
 
     private Harvester harvester;
 
-    public OAIPMHConsumer(OAIPMHEndpoint endpoint, Processor processor) throws Exception {
+    public OAIPMHConsumer(OAIPMHEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
