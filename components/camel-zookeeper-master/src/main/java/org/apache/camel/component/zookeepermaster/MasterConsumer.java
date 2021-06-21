@@ -119,7 +119,7 @@ public class MasterConsumer extends DefaultConsumer {
         return state;
     }
 
-    private void stopConsumer() throws Exception {
+    private void stopConsumer() {
         ServiceHelper.stopAndShutdownServices(delegate);
         ServiceHelper.stopAndShutdownServices(endpoint.getConsumerEndpoint());
         delegate = null;
