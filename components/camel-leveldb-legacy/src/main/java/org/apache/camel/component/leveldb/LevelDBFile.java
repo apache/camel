@@ -63,7 +63,7 @@ public class LevelDBFile implements Service {
         return file;
     }
 
-    public void setFile(File file) throws IOException {
+    public void setFile(File file) {
         this.file = file;
     }
 

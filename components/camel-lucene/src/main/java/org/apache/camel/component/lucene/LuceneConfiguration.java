@@ -51,7 +51,7 @@ public class LuceneConfiguration {
     public LuceneConfiguration() {
     }
 
-    public LuceneConfiguration(URI uri) throws Exception {
+    public LuceneConfiguration(URI uri) {
         this.uri = uri;
     }
 
