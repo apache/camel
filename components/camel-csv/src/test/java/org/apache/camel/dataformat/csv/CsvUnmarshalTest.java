@@ -83,7 +83,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         Message message = output.getExchanges().get(0).getIn();
         Map<String, Object> headers = message.getHeaders();
         List<?> body = assertIsInstanceOf(List.class, message.getBody());
-        assertEquals(Arrays.asList("A", "B", "C"), headers.get("CamelCsvHeaderNames"));
+        assertEquals(Arrays.asList("A", "B", "C"), headers.get("CamelCsvHeaderRecord"));
         assertEquals(Arrays.asList("1", "2", "3"), body.get(0));
         assertEquals(Arrays.asList("one", "two", "three"), body.get(1));
     }
@@ -187,7 +187,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
 
                 // Autoload headers
                 from("direct:autoload_headers")
-                        .unmarshal(new CsvDataFormat().setHeader(new String[] {}))
+                        .unmarshal(new CsvDataFormat().setCaptureHeaderRecord(true))
                         .to("mock:output");
 
                 // Lazy load
