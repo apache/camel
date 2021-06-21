@@ -1958,12 +1958,12 @@ public class StaticEndpointBuilders {
      * Since: 3.11
      * Maven coordinates: org.apache.camel:camel-azure-servicebus
      * 
-     * Syntax: <code>azure-servicebus:namespace/eventHubName</code>
+     * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
      * 
-     * Path parameter: namespace
-     * EventHubs namespace created in Azure Portal
+     * Path parameter: topicOrQueueName
+     * d
      * 
-     * @param path namespace/eventHubName
+     * @param path queueNameOrTopicName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory.ServiceBusEndpointBuilder azureServicebus(
@@ -1983,14 +1983,14 @@ public class StaticEndpointBuilders {
      * Since: 3.11
      * Maven coordinates: org.apache.camel:camel-azure-servicebus
      * 
-     * Syntax: <code>azure-servicebus:namespace/eventHubName</code>
+     * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
      * 
-     * Path parameter: namespace
-     * EventHubs namespace created in Azure Portal
+     * Path parameter: topicOrQueueName
+     * d
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path namespace/eventHubName
+     * @param path queueNameOrTopicName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory.ServiceBusEndpointBuilder azureServicebus(

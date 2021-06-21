@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.time.Duration;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -44,6 +45,172 @@ public interface ServiceBusEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedServiceBusEndpointConsumerBuilder advanced() {
             return (AdvancedServiceBusEndpointConsumerBuilder) this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param amqpRetryOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder amqpRetryOptions(
+                Object amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param amqpRetryOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder amqpRetryOptions(
+                String amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * 
+         * Default: AMQP
+         * Group: common
+         * 
+         * @param amqpTransportType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder amqpTransportType(
+                AmqpTransportType amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * 
+         * Default: AMQP
+         * Group: common
+         * 
+         * @param amqpTransportType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder amqpTransportType(
+                String amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder clientOptions(
+                Object clientOptions) {
+            doSetProperty("clientOptions", clientOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder clientOptions(
+                String clientOptions) {
+            doSetProperty("clientOptions", clientOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param proxyOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder proxyOptions(
+                Object proxyOptions) {
+            doSetProperty("proxyOptions", proxyOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param proxyOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder proxyOptions(
+                String proxyOptions) {
+            doSetProperty("proxyOptions", proxyOptions);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Default: queue
+         * Group: common
+         * 
+         * @param serviceBusType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder serviceBusType(
+                ServiceBusType serviceBusType) {
+            doSetProperty("serviceBusType", serviceBusType);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Default: queue
+         * Group: common
+         * 
+         * @param serviceBusType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder serviceBusType(
+                String serviceBusType) {
+            doSetProperty("serviceBusType", serviceBusType);
+            return this;
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
@@ -88,6 +255,228 @@ public interface ServiceBusEndpointBuilderFactory {
         default ServiceBusEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param disableAutoComplete the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder disableAutoComplete(
+                boolean disableAutoComplete) {
+            doSetProperty("disableAutoComplete", disableAutoComplete);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param disableAutoComplete the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder disableAutoComplete(
+                String disableAutoComplete) {
+            doSetProperty("disableAutoComplete", disableAutoComplete);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param maxAutoLockRenewDuration the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder maxAutoLockRenewDuration(
+                Duration maxAutoLockRenewDuration) {
+            doSetProperty("maxAutoLockRenewDuration", maxAutoLockRenewDuration);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param maxAutoLockRenewDuration the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder maxAutoLockRenewDuration(
+                String maxAutoLockRenewDuration) {
+            doSetProperty("maxAutoLockRenewDuration", maxAutoLockRenewDuration);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder prefetchCount(
+                Integer prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder prefetchCount(
+                String prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param receiverAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder receiverAsyncClient(
+                Object receiverAsyncClient) {
+            doSetProperty("receiverAsyncClient", receiverAsyncClient);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param receiverAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder receiverAsyncClient(
+                String receiverAsyncClient) {
+            doSetProperty("receiverAsyncClient", receiverAsyncClient);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.messaging.servicebus.models.ServiceBusReceiveMode&lt;/code&gt; type.
+         * 
+         * Default: PEER_LOCK
+         * Group: consumer
+         * 
+         * @param serviceBusReceiveMode the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder serviceBusReceiveMode(
+                ServiceBusReceiveMode serviceBusReceiveMode) {
+            doSetProperty("serviceBusReceiveMode", serviceBusReceiveMode);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.messaging.servicebus.models.ServiceBusReceiveMode&lt;/code&gt; type.
+         * 
+         * Default: PEER_LOCK
+         * Group: consumer
+         * 
+         * @param serviceBusReceiveMode the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder serviceBusReceiveMode(
+                String serviceBusReceiveMode) {
+            doSetProperty("serviceBusReceiveMode", serviceBusReceiveMode);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.messaging.servicebus.models.SubQueue&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param subQueue the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder subQueue(SubQueue subQueue) {
+            doSetProperty("subQueue", subQueue);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.messaging.servicebus.models.SubQueue&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param subQueue the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder subQueue(String subQueue) {
+            doSetProperty("subQueue", subQueue);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param subscriptionName the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder subscriptionName(
+                String subscriptionName) {
+            doSetProperty("subscriptionName", subscriptionName);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param connectionString the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder connectionString(
+                String connectionString) {
+            doSetProperty("connectionString", connectionString);
             return this;
         }
     }
@@ -184,6 +573,172 @@ public interface ServiceBusEndpointBuilderFactory {
             return (AdvancedServiceBusEndpointProducerBuilder) this;
         }
         /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param amqpRetryOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder amqpRetryOptions(
+                Object amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param amqpRetryOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder amqpRetryOptions(
+                String amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * 
+         * Default: AMQP
+         * Group: common
+         * 
+         * @param amqpTransportType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder amqpTransportType(
+                AmqpTransportType amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * 
+         * Default: AMQP
+         * Group: common
+         * 
+         * @param amqpTransportType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder amqpTransportType(
+                String amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder clientOptions(
+                Object clientOptions) {
+            doSetProperty("clientOptions", clientOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder clientOptions(
+                String clientOptions) {
+            doSetProperty("clientOptions", clientOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param proxyOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder proxyOptions(
+                Object proxyOptions) {
+            doSetProperty("proxyOptions", proxyOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param proxyOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder proxyOptions(
+                String proxyOptions) {
+            doSetProperty("proxyOptions", proxyOptions);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Default: queue
+         * Group: common
+         * 
+         * @param serviceBusType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder serviceBusType(
+                ServiceBusType serviceBusType) {
+            doSetProperty("serviceBusType", serviceBusType);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Default: queue
+         * Group: common
+         * 
+         * @param serviceBusType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder serviceBusType(
+                String serviceBusType) {
+            doSetProperty("serviceBusType", serviceBusType);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -232,6 +787,54 @@ public interface ServiceBusEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param senderAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder senderAsyncClient(
+                Object senderAsyncClient) {
+            doSetProperty("senderAsyncClient", senderAsyncClient);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param senderAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder senderAsyncClient(
+                String senderAsyncClient) {
+            doSetProperty("senderAsyncClient", senderAsyncClient);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param connectionString the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder connectionString(
+                String connectionString) {
+            doSetProperty("connectionString", connectionString);
+            return this;
+        }
     }
 
     /**
@@ -256,6 +859,183 @@ public interface ServiceBusEndpointBuilderFactory {
         default AdvancedServiceBusEndpointBuilder advanced() {
             return (AdvancedServiceBusEndpointBuilder) this;
         }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param amqpRetryOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder amqpRetryOptions(
+                Object amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param amqpRetryOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder amqpRetryOptions(
+                String amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * 
+         * Default: AMQP
+         * Group: common
+         * 
+         * @param amqpTransportType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder amqpTransportType(
+                AmqpTransportType amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * 
+         * Default: AMQP
+         * Group: common
+         * 
+         * @param amqpTransportType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder amqpTransportType(
+                String amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder clientOptions(Object clientOptions) {
+            doSetProperty("clientOptions", clientOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder clientOptions(String clientOptions) {
+            doSetProperty("clientOptions", clientOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param proxyOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder proxyOptions(Object proxyOptions) {
+            doSetProperty("proxyOptions", proxyOptions);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param proxyOptions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder proxyOptions(String proxyOptions) {
+            doSetProperty("proxyOptions", proxyOptions);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Default: queue
+         * Group: common
+         * 
+         * @param serviceBusType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder serviceBusType(
+                ServiceBusType serviceBusType) {
+            doSetProperty("serviceBusType", serviceBusType);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Default: queue
+         * Group: common
+         * 
+         * @param serviceBusType the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder serviceBusType(String serviceBusType) {
+            doSetProperty("serviceBusType", serviceBusType);
+            return this;
+        }
+        /**
+         * d.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param connectionString the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder connectionString(
+                String connectionString) {
+            doSetProperty("connectionString", connectionString);
+            return this;
+        }
     }
 
     /**
@@ -268,6 +1048,44 @@ public interface ServiceBusEndpointBuilderFactory {
         default ServiceBusEndpointBuilder basic() {
             return (ServiceBusEndpointBuilder) this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.azure.core.amqp.AmqpTransportType</code> enum.
+     */
+    enum AmqpTransportType {
+        AMQP,
+        AMQP_WEB_SOCKETS;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.azure.servicebus.ServiceBusType</code>
+     * enum.
+     */
+    enum ServiceBusType {
+        queue,
+        topic;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>com.azure.messaging.servicebus.models.ServiceBusReceiveMode</code>
+     * enum.
+     */
+    enum ServiceBusReceiveMode {
+        PEEK_LOCK,
+        RECEIVE_AND_DELETE;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>com.azure.messaging.servicebus.models.SubQueue</code> enum.
+     */
+    enum SubQueue {
+        NONE,
+        DEAD_LETTER_QUEUE,
+        TRANSFER_DEAD_LETTER_QUEUE;
     }
 
     public interface ServiceBusBuilders {
@@ -284,12 +1102,12 @@ public interface ServiceBusEndpointBuilderFactory {
          * Since: 3.11
          * Maven coordinates: org.apache.camel:camel-azure-servicebus
          * 
-         * Syntax: <code>azure-servicebus:namespace/eventHubName</code>
+         * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
          * 
-         * Path parameter: namespace
-         * EventHubs namespace created in Azure Portal
+         * Path parameter: topicOrQueueName
+         * d
          * 
-         * @param path namespace/eventHubName
+         * @param path queueNameOrTopicName
          * @return the dsl builder
          */
         default ServiceBusEndpointBuilder azureServicebus(String path) {
@@ -308,14 +1126,14 @@ public interface ServiceBusEndpointBuilderFactory {
          * Since: 3.11
          * Maven coordinates: org.apache.camel:camel-azure-servicebus
          * 
-         * Syntax: <code>azure-servicebus:namespace/eventHubName</code>
+         * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
          * 
-         * Path parameter: namespace
-         * EventHubs namespace created in Azure Portal
+         * Path parameter: topicOrQueueName
+         * d
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path namespace/eventHubName
+         * @param path queueNameOrTopicName
          * @return the dsl builder
          */
         default ServiceBusEndpointBuilder azureServicebus(

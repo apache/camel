@@ -965,7 +965,7 @@
     "version": "3.11.0-SNAPSHOT",
     "scheme": "azure-servicebus",
     "extendsScheme": "",
-    "syntax": "azure-servicebus:namespace\/eventHubName",
+    "syntax": "azure-servicebus:queueNameOrTopicName",
     "async": false,
     "api": false,
     "consumerOnly": false,
