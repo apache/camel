@@ -193,6 +193,10 @@ outage did not also include DynamoDB itself.
 Given that AWS only retain 24 hours worth of changes, you will have
 missed change events no matter what mitigations are in place.
 
+=== Message Body
+
+The Message body is istance of "software.amazon.awssdk.services.dynamodb.model.Record", for more information about it, have a look at the https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/dynamodb/model/Record.html[related javadoc]
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
