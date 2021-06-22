@@ -56,6 +56,7 @@ public class CsvDataFormatReifier extends DataFormatReifier<CsvDataFormat> {
         properties.put("lazyLoad", definition.getLazyLoad());
         properties.put("useMaps", definition.getUseMaps());
         properties.put("useOrderedMaps", definition.getUseOrderedMaps());
+        properties.put("captureHeaderRecord", definition.getCaptureHeaderRecord());
         properties.put("recordConverter", asRef(definition.getRecordConverterRef()));
         properties.put("marshallerFactory", asRef(definition.getMarshallerFactoryRef()));
     }

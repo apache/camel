@@ -111,6 +111,9 @@ public class CsvDataFormat extends DataFormatDefinition {
     private String useOrderedMaps;
     @XmlAttribute
     private String recordConverterRef;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
+    private String captureHeaderRecord;
 
     public CsvDataFormat() {
         super("csv");
@@ -448,4 +451,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         return trailingDelimiter;
     }
 
+    public String getCaptureHeaderRecord() {
+        return captureHeaderRecord;
+    }
+
+    /**
+     * Whether the unmarshalling should capture the header record and store it in the message header
+     */
+    public void setCaptureHeaderRecord(String captureHeaderRecord) {
+        this.captureHeaderRecord = captureHeaderRecord;
+    }
 }
