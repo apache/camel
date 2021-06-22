@@ -243,7 +243,7 @@ public final class SyslogConverter {
 
             StringBuilder structuredData = new StringBuilder();
             boolean inblock = false;
-            while (((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') || inblock) {
+            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ' || inblock) {
                 if (charFound == '[') {
                     inblock = true;
                 }

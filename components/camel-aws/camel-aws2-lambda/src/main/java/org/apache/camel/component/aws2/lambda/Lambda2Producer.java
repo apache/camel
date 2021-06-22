@@ -271,8 +271,8 @@ public class Lambda2Producer extends DefaultProducer {
 
             if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())
                     || ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))
-                    || (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
-                            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
+                    || ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
+                            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
                 builder.code(functionCode.build());
             } else {
                 throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
@@ -360,7 +360,6 @@ public class Lambda2Producer extends DefaultProducer {
         }
         try {
             result = lambdaClient.createFunction(request);
-
         } catch (AwsServiceException ase) {
             LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
@@ -380,8 +379,8 @@ public class Lambda2Producer extends DefaultProducer {
             builder.functionName(getEndpoint().getFunction());
 
             if (ObjectHelper.isEmpty(exchange.getIn().getBody())
-                    && (ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
-                            && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
+                    && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
+                    && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
                 throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
             }
 

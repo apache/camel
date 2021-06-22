@@ -774,9 +774,9 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected boolean isAddDataObjectFormat() {
-        return (getDataObjectFormatIdentifier() != null && !getDataObjectFormatIdentifier().isEmpty())
-                || (getDataObjectFormatDescription() != null && !getDataObjectFormatDescription().isEmpty())
-                || (getDataObjectFormatMimeType() != null && !getDataObjectFormatMimeType().isEmpty());
+        return getDataObjectFormatIdentifier() != null && !getDataObjectFormatIdentifier().isEmpty()
+                || getDataObjectFormatDescription() != null && !getDataObjectFormatDescription().isEmpty()
+                || getDataObjectFormatMimeType() != null && !getDataObjectFormatMimeType().isEmpty();
     }
 
     protected void addSignedSignatureProperties(Document doc, Element signedProperties, Input input) throws Exception {
@@ -796,7 +796,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
 
     protected boolean isAddSignedSignatureProperties() throws Exception {
         return isAddSigningTime() || getSigningCertificate() != null
-                || (getSigningCertificateChain() != null && getSigningCertificateChain().length > 0) || isAddSignaturePolicy()
+                || getSigningCertificateChain() != null && getSigningCertificateChain().length > 0 || isAddSignaturePolicy()
                 || isAddSignatureProductionPlace() || isAddSignerRole();
     }
 

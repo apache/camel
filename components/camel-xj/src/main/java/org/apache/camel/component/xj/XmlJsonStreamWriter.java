@@ -524,7 +524,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
             int len = text.length();
             int st = 0;
 
-            while ((st < len) && (text.charAt(st) <= ' ')) {
+            while (st < len && text.charAt(st) <= ' ') {
                 st++;
             }
 

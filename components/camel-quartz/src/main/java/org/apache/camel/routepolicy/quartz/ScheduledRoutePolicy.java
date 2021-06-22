@@ -69,7 +69,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
                 resumeOrStartConsumer(route.getConsumer());
             }
         } else if (action == Action.STOP) {
-            if ((routeStatus == ServiceStatus.Started) || (routeStatus == ServiceStatus.Suspended)) {
+            if (routeStatus == ServiceStatus.Started || routeStatus == ServiceStatus.Suspended) {
                 stopRoute(route, getRouteStopGracePeriod(), getTimeUnit());
             } else {
                 LOG.warn("Route is not in a started/suspended state and cannot be stopped. The current route state is {}",

@@ -559,7 +559,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         for (String name : children) {
             String fullPath = ZKPaths.makePath(path, name);
 
-            if ((mode == RefreshMode.FORCE_GET_DATA_AND_STAT) || !currentData.containsKey(fullPath)) {
+            if (mode == RefreshMode.FORCE_GET_DATA_AND_STAT || !currentData.containsKey(fullPath)) {
                 try {
                     getDataAndStat(fullPath);
                 } catch (KeeperException.NoNodeException ignore) {

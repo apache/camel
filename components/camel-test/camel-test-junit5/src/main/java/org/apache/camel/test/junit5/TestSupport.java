@@ -452,7 +452,7 @@ public final class TestSupport {
         int tries = 0;
         int maxTries = 5;
         boolean exists = true;
-        while (exists && (tries < maxTries)) {
+        while (exists && tries < maxTries) {
             recursivelyDeleteDirectory(file);
             tries++;
             exists = file.exists();

@@ -127,8 +127,8 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             long newOlderThan = startTime + watch.taken() - minAge;
             LOG.trace("New older than threshold: {}", newOlderThan);
 
-            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
-                    || (minAge != 0 && newLastModified < newOlderThan))) {
+            if (newLength >= minLength && (minAge == 0 && newLastModified == lastModified && newLength == length
+                    || minAge != 0 && newLastModified < newOlderThan)) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {

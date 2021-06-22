@@ -227,7 +227,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
                 = (MultivaluedMap<String, String>) cxfExchange.getInMessage().get(URITemplate.TEMPLATE_PARAMETERS);
 
         // return immediately if we have no path parameters
-        if (pathParams == null || (pathParams.size() == 1 && pathParams.containsKey(URITemplate.FINAL_MATCH_GROUP))) {
+        if (pathParams == null || pathParams.size() == 1 && pathParams.containsKey(URITemplate.FINAL_MATCH_GROUP)) {
             return;
         }
 

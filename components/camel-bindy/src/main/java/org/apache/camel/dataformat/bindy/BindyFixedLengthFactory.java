@@ -462,7 +462,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                     int fieldLength = datafield.length();
 
-                    if (fieldLength == 0 && (datafield.lengthPos() > 0)) {
+                    if (fieldLength == 0 && datafield.lengthPos() > 0) {
                         List<String> resultVals = results.get(datafield.lengthPos());
                         fieldLength = Integer.valueOf(resultVals.get(0));
                     }

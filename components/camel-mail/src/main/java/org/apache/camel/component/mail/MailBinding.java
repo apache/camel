@@ -781,7 +781,7 @@ public class MailBinding {
     }
 
     private static boolean isCollection(Object value) {
-        return value instanceof Collection || (value != null && value.getClass().isArray());
+        return value instanceof Collection || value != null && value.getClass().isArray();
     }
 
 }

@@ -60,7 +60,7 @@ public class SedaProducer extends DefaultAsyncProducer {
         }
 
         if (wait == WaitForTaskToComplete.Always
-                || (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange))) {
+                || wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange)) {
 
             // do not handover the completion as we wait for the copy to complete, and copy its result back when it done
             Exchange copy = prepareCopy(exchange, false);

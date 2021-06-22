@@ -182,8 +182,8 @@ public class HeaderTesterImpl implements HeaderTester {
         if (!relayHeaders) {
             if (ctx != null
                     && !ctx.containsKey(Header.HEADER_LIST)
-                    || (ctx.containsKey(Header.HEADER_LIST)
-                            && ((List<?>) ctx.get(Header.HEADER_LIST)).size() == 0)) {
+                    || ctx.containsKey(Header.HEADER_LIST)
+                            && ((List<?>) ctx.get(Header.HEADER_LIST)).size() == 0) {
                 return true;
             }
             return false;
