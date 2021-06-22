@@ -60,7 +60,7 @@ public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
 
             // Note: #getTotal == the total # the query would return *without* pagination, effectively telling us
             // we've reached the end. Also exit early if we're limiting the # of results.
-            if (start >= searchResult.getTotal() || (maxResults > 0 && issues.size() >= maxResults)) {
+            if (start >= searchResult.getTotal() || maxResults > 0 && issues.size() >= maxResults) {
                 break;
             }
 

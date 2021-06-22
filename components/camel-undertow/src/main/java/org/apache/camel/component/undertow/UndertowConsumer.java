@@ -256,7 +256,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             return;
         }
 
-        if (getEndpoint().isUseStreaming() && (body instanceof InputStream)) {
+        if (getEndpoint().isUseStreaming() && body instanceof InputStream) {
             httpExchange.startBlocking();
             try (InputStream input = (InputStream) body;
                  OutputStream output = httpExchange.getOutputStream()) {

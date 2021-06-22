@@ -202,7 +202,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                         throw ex;
                     }
 
-                } else if (continuation.isTimeout() || (!continuation.isResumed() && !continuation.isPending())) {
+                } else if (continuation.isTimeout() || !continuation.isResumed() && !continuation.isPending()) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
                     try {
                         if (!continuation.isPending()) {

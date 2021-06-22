@@ -274,7 +274,7 @@ public class JaxbDataFormat extends ServiceSupport
     }
 
     private boolean asXmlStreamWriter(Exchange exchange) {
-        return needFiltering(exchange) || (xmlStreamWriterWrapper != null);
+        return needFiltering(exchange) || xmlStreamWriterWrapper != null;
     }
 
     @Override

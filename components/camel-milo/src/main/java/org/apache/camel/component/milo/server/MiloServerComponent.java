@@ -246,7 +246,7 @@ public class MiloServerComponent extends DefaultComponent {
             hostnames.add(HostnameUtil.getHostname());
             hostnames.addAll(HostnameUtil.getHostnames(bindAddress));
 
-            boolean anonymous = (this.enableAnonymousAuthentication != null && this.enableAnonymousAuthentication)
+            boolean anonymous = this.enableAnonymousAuthentication != null && this.enableAnonymousAuthentication
                     || Boolean.getBoolean("org.apache.camel.milo.server.default.enableAnonymous");
 
             UserTokenPolicy[] tokenPolicies

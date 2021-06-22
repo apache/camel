@@ -598,7 +598,7 @@ public class CxfMessageHeadersRelayTest {
         OutofBandHeader hdrToTest = null;
         List<Header> oobHdr = CastUtils.cast((List<?>) responseContext.get(Header.HEADER_LIST));
         if (!expect) {
-            if (oobHdr == null || (oobHdr != null && oobHdr.size() == 0)) {
+            if (oobHdr == null || oobHdr != null && oobHdr.size() == 0) {
                 return;
             }
             fail("Should have got *no* out-of-band headers, but some were found");
@@ -655,7 +655,7 @@ public class CxfMessageHeadersRelayTest {
         List<OutofBandHeader> hdrToTest = new ArrayList<>();
         List<Header> oobHdr = CastUtils.cast((List<?>) responseContext.get(Header.HEADER_LIST));
         if (!expect) {
-            if (oobHdr == null || (oobHdr != null && oobHdr.size() == 0)) {
+            if (oobHdr == null || oobHdr != null && oobHdr.size() == 0) {
                 return;
             }
             fail("Should have got *no* out-of-band headers, but some were found");

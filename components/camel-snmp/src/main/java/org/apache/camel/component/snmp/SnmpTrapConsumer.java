@@ -104,8 +104,8 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         if (pdu != null) {
             // check for INFORM
             // code take from the book "Essential SNMP"
-            if ((pdu.getType() != PDU.TRAP) && (pdu.getType() != PDU.V1TRAP) && (pdu.getType() != PDU.REPORT)
-                    && (pdu.getType() != PDU.RESPONSE)) {
+            if (pdu.getType() != PDU.TRAP && pdu.getType() != PDU.V1TRAP && pdu.getType() != PDU.REPORT
+                    && pdu.getType() != PDU.RESPONSE) {
                 // first response the inform-message and then process the
                 // message
                 pdu.setErrorIndex(0);
