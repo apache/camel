@@ -6703,6 +6703,14 @@ Refers to a custom CsvRecordConverter to lookup from the registry to use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="captureHeaderRecord" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the unmarshalling should capture the header record and store it in the
+message header. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -10131,10 +10139,17 @@ backward compatibility. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
-        <xs:attribute name="headerName" type="xs:string" use="required">
+        <xs:attribute name="name" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Name of header to remove.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="headerName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Deprecated: Name of header to remove (deprecated use name instead).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
