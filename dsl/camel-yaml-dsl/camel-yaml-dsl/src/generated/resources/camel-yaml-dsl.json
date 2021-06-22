@@ -3926,6 +3926,9 @@
             "allow-missing-column-names" : {
               "type" : "boolean"
             },
+            "capture-header-record" : {
+              "type" : "boolean"
+            },
             "comment-marker" : {
               "type" : "string"
             },

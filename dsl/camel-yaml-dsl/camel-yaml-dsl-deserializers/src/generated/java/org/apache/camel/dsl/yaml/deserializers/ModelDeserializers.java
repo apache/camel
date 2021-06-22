@@ -2277,6 +2277,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "csv",
             properties = {
                     @YamlProperty(name = "allow-missing-column-names", type = "boolean"),
+                    @YamlProperty(name = "capture-header-record", type = "boolean"),
                     @YamlProperty(name = "comment-marker", type = "string"),
                     @YamlProperty(name = "comment-marker-disabled", type = "boolean"),
                     @YamlProperty(name = "delimiter", type = "string"),
@@ -2329,6 +2330,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "allow-missing-column-names": {
                     String val = asText(node);
                     target.setAllowMissingColumnNames(val);
+                    break;
+                }
+                case "capture-header-record": {
+                    String val = asText(node);
+                    target.setCaptureHeaderRecord(val);
                     break;
                 }
                 case "comment-marker": {
