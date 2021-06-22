@@ -230,7 +230,7 @@ public class EndpointMessageListener implements SessionMessageListener {
         LOG.trace("onMessage END");
     }
 
-    protected Object getReplyToDestination(Message message) throws JMSException {
+    protected Object getReplyToDestination(Message message) {
         // lets send a response back if we can
         Object destination = getReplyToDestination();
         if (destination == null) {

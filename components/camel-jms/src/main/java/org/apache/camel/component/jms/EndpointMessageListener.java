@@ -432,7 +432,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
         });
     }
 
-    protected Object getReplyToDestination(Message message) throws JMSException {
+    protected Object getReplyToDestination(Message message) {
         // lets send a response back if we can
         Object destination = getReplyToDestination();
         if (destination == null) {
