@@ -21,6 +21,11 @@ then a single-threaded worker pool is created and used by the aggregator.
 Camels routing engine works better when a dedicated worker pool that eliminates a _hack_ that otherwise was needed in other EIPs that
 was affected if using the aggregator in some special configurations.
 
+=== RemoveHeader EIP
+
+In XML and YAML DSL the `headerName` attribute has been deprecated, and you should use `name` instead.
+This is to make the EIP consistent with the naming used by other similar EIPs.
+
 === Routes loader
 
 The default pattern for discovering Camel routes et all from the classpath has changed from only including XML files to now include all files.
