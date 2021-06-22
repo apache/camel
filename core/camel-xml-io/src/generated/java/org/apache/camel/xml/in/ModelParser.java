@@ -1904,6 +1904,7 @@ public class ModelParser extends BaseParser {
         return doParse(new CsvDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "allowMissingColumnNames": def.setAllowMissingColumnNames(val); break;
+                case "captureHeaderRecord": def.setCaptureHeaderRecord(val); break;
                 case "commentMarker": def.setCommentMarker(val); break;
                 case "commentMarkerDisabled": def.setCommentMarkerDisabled(val); break;
                 case "delimiter": def.setDelimiter(val); break;
