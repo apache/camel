@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Tests to ensure that arbitrary headers can be stored as raw text within a dataSource Tests to ensure the body can be
  * stored as readable text within a dataSource
  */
-public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
+public class JdbcAggregateStoreAsText2Test extends CamelSpringTestSupport {
     protected JdbcAggregationRepository repo;
     protected JdbcTemplate jdbcTemplate;
     protected DataSource dataSource;
@@ -42,29 +42,29 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return newAppContext(
-                "JdbcSpringDataSource.xml", "JdbcSpringAggregateStoreAsText.xml");
+                "JdbcSpringDataSource.xml", "JdbcSpringAggregateStoreAsText2.xml");
     }
 
     @Override
     public void postProcessTest() throws Exception {
         super.postProcessTest();
 
-        repo = applicationContext.getBean("repo3", JdbcAggregationRepository.class);
-        dataSource = context.getRegistry().lookupByNameAndType(getClass().getSimpleName() + "-dataSource3", DataSource.class);
+        repo = applicationContext.getBean("repo4", JdbcAggregationRepository.class);
+        dataSource = context.getRegistry().lookupByNameAndType(getClass().getSimpleName() + "-dataSource4", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
 
-        jdbcTemplate.execute("DELETE FROM aggregationRepo3");
-        jdbcTemplate.execute("DELETE FROM aggregationRepo3_completed");
+        jdbcTemplate.execute("DELETE FROM aggregationRepo4");
+        jdbcTemplate.execute("DELETE FROM aggregationRepo4_completed");
     }
 
     @Test
-    public void testStoreBodyAsTextAndCompanyNameHeaderAndAccountNameHeader() throws Exception {
+    public void testOnlyAccountNameHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("ABCDE");
 
-        repo.setStoreBodyAsText(true);
-        repo.setHeadersToStoreAsText(Arrays.asList("companyName", "accountName"));
+        repo.setStoreBodyAsText(false);
+        repo.setHeadersToStoreAsText(Arrays.asList("accountName"));
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
@@ -72,62 +72,24 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
         headers.put("accountName", "Alan");
 
         template.sendBodyAndHeaders("direct:start", "A", headers);
-        assertEquals("A", getAggregationRepositoryBody(123));
-        assertEquals("Acme", getAggregationRepositoryCompanyName(123));
+        assertEquals(null, getAggregationRepositoryBody(123));
+        assertEquals(null, getAggregationRepositoryCompanyName(123));
         assertEquals("Alan", getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "B", headers);
-        assertEquals("AB", getAggregationRepositoryBody(123));
-        assertEquals("Acme", getAggregationRepositoryCompanyName(123));
+        assertEquals(null, getAggregationRepositoryBody(123));
+        assertEquals(null, getAggregationRepositoryCompanyName(123));
         assertEquals("Alan", getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "C", headers);
-        assertEquals("ABC", getAggregationRepositoryBody(123));
-        assertEquals("Acme", getAggregationRepositoryCompanyName(123));
+        assertEquals(null, getAggregationRepositoryBody(123));
+        assertEquals(null, getAggregationRepositoryCompanyName(123));
         assertEquals("Alan", getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "D", headers);
-        assertEquals("ABCD", getAggregationRepositoryBody(123));
-        assertEquals("Acme", getAggregationRepositoryCompanyName(123));
+        assertEquals(null, getAggregationRepositoryBody(123));
+        assertEquals(null, getAggregationRepositoryCompanyName(123));
         assertEquals("Alan", getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "E", headers);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testStoreBodyAsTextAndNoHeaders() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:aggregated");
-        mock.expectedBodiesReceived("ABCDE");
-
-        repo.setStoreBodyAsText(true);
-        repo.setHeadersToStoreAsText(null);
-
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("id", 123);
-        headers.put("companyName", "Acme");
-        headers.put("accountName", "Alan");
-
-        template.sendBodyAndHeaders("direct:start", "A", headers);
-        assertEquals("A", getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals(null, getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "B", headers);
-        assertEquals("AB", getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals(null, getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "C", headers);
-        assertEquals("ABC", getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals(null, getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "D", headers);
-        assertEquals("ABCD", getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals(null, getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "E", headers);
 
@@ -147,6 +109,6 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
     }
 
     public String getAggregationRepositoryColumn(int id, String columnName) {
-        return jdbcTemplate.queryForObject("SELECT " + columnName + " from aggregationRepo3 where id = ?", String.class, id);
+        return jdbcTemplate.queryForObject("SELECT " + columnName + " from aggregationRepo4 where id = ?", String.class, id);
     }
 }
