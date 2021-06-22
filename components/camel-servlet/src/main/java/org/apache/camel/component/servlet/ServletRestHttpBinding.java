@@ -27,7 +27,7 @@ public class ServletRestHttpBinding extends DefaultHttpBinding {
     }
 
     @Override
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
         super.populateRequestParameters(request, message);
 
         String path = request.getPathInfo();

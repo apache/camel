@@ -559,7 +559,7 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Creates the HttpHost to use to call the remote server
      */
-    protected HttpHost createHost(HttpRequestBase httpRequest, Exchange exchange) throws Exception {
+    protected HttpHost createHost(HttpRequestBase httpRequest, Exchange exchange) {
         if (httpRequest.getURI() == defaultUri) {
             return defaultHttpHost;
         } else {
