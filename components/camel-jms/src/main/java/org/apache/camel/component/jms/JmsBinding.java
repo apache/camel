@@ -274,7 +274,7 @@ public class JmsBinding {
         return result;
     }
 
-    protected Object createInputStreamFromStreamMessage(Exchange exchange, StreamMessage message) throws JMSException {
+    protected Object createInputStreamFromStreamMessage(Exchange exchange, StreamMessage message) {
         return new StreamMessageInputStream(message);
     }
 
