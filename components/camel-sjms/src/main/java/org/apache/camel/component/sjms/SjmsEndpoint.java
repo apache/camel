@@ -410,7 +410,7 @@ public class SjmsEndpoint extends DefaultEndpoint
         return template;
     }
 
-    public MessageListenerContainer createMessageListenerContainer(SjmsEndpoint endpoint) throws Exception {
+    public MessageListenerContainer createMessageListenerContainer(SjmsEndpoint endpoint) {
         SimpleMessageListenerContainer answer = new SimpleMessageListenerContainer(endpoint);
         answer.setConcurrentConsumers(concurrentConsumers);
         return answer;
