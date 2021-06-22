@@ -219,7 +219,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         return iSeries;
     }
 
-    private void release(AS400 iSeries) throws Exception {
+    private void release(AS400 iSeries) {
         if (iSeries != null) {
             LOG.debug("Releasing connection to {}", getISeriesEndpoint());
             getISeriesEndpoint().releaseSystem(iSeries);

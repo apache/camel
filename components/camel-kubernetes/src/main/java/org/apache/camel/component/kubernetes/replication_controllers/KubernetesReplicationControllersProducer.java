@@ -89,7 +89,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange, String operation) {
         ReplicationControllerList rcList = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
@@ -102,7 +102,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         exchange.getOut().setBody(rcList.getItems());
     }
 
-    protected void doListReplicationControllersByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListReplicationControllersByLabels(Exchange exchange, String operation) {
         ReplicationControllerList rcList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, Map.class);
