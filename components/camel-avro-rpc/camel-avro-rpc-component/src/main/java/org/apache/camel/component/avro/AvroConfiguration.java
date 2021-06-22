@@ -70,8 +70,8 @@ public class AvroConfiguration implements Cloneable {
         setHost(uri.getHost());
         setPort(uri.getPort());
 
-        if ((uri.getPath() != null)
-                && (StringUtils.indexOf(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR) != -1)) {
+        if (uri.getPath() != null
+                && StringUtils.indexOf(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR) != -1) {
             String path = StringUtils.substringAfter(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR);
             if (!path.contains(AVRO_MESSAGE_NAME_SEPARATOR)) {
                 setMessageName(path);

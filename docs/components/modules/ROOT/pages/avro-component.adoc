@@ -1,7 +1,7 @@
 [[avro-component]]
 = Avro RPC Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-avro-rpc/src/main/docs/avro-component.adoc
+:page-source: components/camel-avro-rpc/camel-avro-rpc-component/src/main/docs/avro-component.adoc
 :docTitle: Avro RPC
 :artifactId: camel-avro-rpc
 :description: Produce or consume Apache Avro RPC services.
@@ -278,5 +278,12 @@ Value value filled as array contents.
 == Karaf support
 
 This component is not supported in Karaf.
+
+== Avro via HTTP SPI
+
+The Avro RPC component offers the `org.apache.camel.component.avro.spi.AvroRpcHttpServerFactory` service provider interface (SPI) so that various platforms can provide their own implementation based on their native HTTP server.
+
+The default implementation available in `org.apache.camel:camel-avro-jetty` is based on `org.apache.avro:avro-ipc-jetty`.
+
 
 include::{page-component-version}@camel-spring-boot::page$avro-starter.adoc[]

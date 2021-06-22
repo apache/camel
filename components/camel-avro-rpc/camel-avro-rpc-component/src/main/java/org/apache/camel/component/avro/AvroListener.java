@@ -23,15 +23,19 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.avro.Protocol;
 import org.apache.avro.Schema;
 import org.apache.avro.ipc.Server;
-import org.apache.avro.ipc.jetty.HttpServer;
 import org.apache.avro.ipc.netty.NettyServer;
 import org.apache.avro.ipc.specific.SpecificResponder;
 import org.apache.avro.specific.SpecificData;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.component.avro.spi.AvroRpcHttpServerFactory;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.util.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.avro.AvroConstants.AVRO_HTTP_TRANSPORT;
 import static org.apache.camel.component.avro.AvroConstants.AVRO_NETTY_TRANSPORT;
@@ -42,12 +46,14 @@ import static org.apache.camel.component.avro.AvroConstants.AVRO_NETTY_TRANSPORT
  */
 public class AvroListener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AvroListener.class);
+
     private ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<>();
     private AvroConsumer defaultConsumer;
     private final Server server;
 
     public AvroListener(AvroEndpoint endpoint) throws Exception {
-        server = initAndStartServer(endpoint.getConfiguration());
+        server = initAndStartServer(endpoint.getConfiguration(), endpoint.getCamelContext());
     }
 
     /**
@@ -58,7 +64,7 @@ public class AvroListener {
      * @return                     Initialized and started server
      * @throws java.io.IOException
      */
-    private Server initAndStartServer(AvroConfiguration configuration) throws Exception {
+    private Server initAndStartServer(AvroConfiguration configuration, CamelContext camelContext) throws Exception {
         SpecificResponder responder;
         Server server;
 
@@ -69,7 +75,13 @@ public class AvroListener {
         }
 
         if (AVRO_HTTP_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
-            server = new HttpServer(responder, configuration.getPort());
+            AvroRpcHttpServerFactory factory = camelContext
+                    .adapt(ExtendedCamelContext.class)
+                    .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
+                    .newInstance("avro-rpc-http-server-factory", AvroRpcHttpServerFactory.class)
+                    .orElseThrow(() -> new IllegalStateException(
+                            "AvroRpcHttpServerFactory is neither set on this endpoint neither found in Camel Registry or FactoryFinder."));
+            server = factory.create(responder, configuration.getPort());
         } else if (AVRO_NETTY_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
             server = new NettyServer(responder, new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {
@@ -115,13 +127,13 @@ public class AvroListener {
     public boolean unregister(String messageName) {
         if (!StringUtils.isEmpty(messageName)) {
             if (consumerRegistry.remove(messageName) == null) {
-                Log.getLog().warn("Consumer with message name {} was already unregistered.", messageName);
+                LOGGER.warn("Consumer with message name {} was already unregistered.", messageName);
             }
         } else {
             defaultConsumer = null;
         }
 
-        if ((defaultConsumer == null) && (consumerRegistry.isEmpty())) {
+        if (defaultConsumer == null && consumerRegistry.isEmpty()) {
             if (server != null) {
                 server.close();
             }

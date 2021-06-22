@@ -580,6 +580,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-http-common":
                 case "camel-jetty-common":
                 case "camel-as2":
+                case "camel-avro-rpc":
                 case "camel-olingo2":
                 case "camel-olingo4":
                 case "camel-servicenow":
@@ -1176,6 +1177,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         switch (dir.getFileName().toString()) {
             case "camel-as2":
                 return Collections.singletonList(dir.resolve("camel-as2-component"));
+            case "camel-avro-rpc":
+                return Collections.singletonList(dir.resolve("camel-avro-rpc-component"));
             case "camel-salesforce":
                 return Collections.singletonList(dir.resolve("camel-salesforce-component"));
             case "camel-olingo2":
