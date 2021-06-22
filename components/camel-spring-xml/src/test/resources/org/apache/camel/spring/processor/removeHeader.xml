@@ -31,7 +31,7 @@
         <constant>bar</constant>
       </setHeader>
       <to uri="mock:mid"/>
-      <removeHeader headerName="foo"/>
+      <removeHeader name="foo"/>
       <to uri="mock:end"/>     
     </route>
   </camelContext>

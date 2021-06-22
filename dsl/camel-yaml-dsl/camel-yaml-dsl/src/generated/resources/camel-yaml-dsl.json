@@ -1857,10 +1857,12 @@
             },
             "inherit-error-handler" : {
               "type" : "boolean"
+            },
+            "name" : {
+              "type" : "string"
             }
           }
-        } ],
-        "required" : [ "header-name" ]
+        } ]
       },
       "org.apache.camel.model.RemoveHeadersDefinition" : {
         "oneOf" : [ {
