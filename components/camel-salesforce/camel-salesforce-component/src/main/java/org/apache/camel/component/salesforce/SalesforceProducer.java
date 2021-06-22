@@ -75,6 +75,10 @@ public class SalesforceProducer extends DefaultAsyncProducer {
                 processor = new XmlRestProcessor(endpoint);
             }
         }
+        if (!isRawOperation(operationName) && endpointConfig.getFormat() == PayloadFormat.XML) {
+            LOG.warn("XML format is deprecated for all operations other than the Raw operation" +
+                     " and will be removed in a future release.");
+        }
     }
 
     private boolean isBulkV2Operation(OperationName operationName) {
