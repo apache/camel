@@ -400,7 +400,7 @@
         <minio-version>8.2.2</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.1.8</mockwebserver-version>
-        <mockito-version>3.11.1</mockito-version>
+        <mockito-version>3.11.2</mockito-version>
         <mongo-java-driver-version>4.1.0</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msv-version>2013.6.1</msv-version>
