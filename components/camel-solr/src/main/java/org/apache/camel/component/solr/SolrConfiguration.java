@@ -87,7 +87,7 @@ public class SolrConfiguration implements Cloneable {
         this.zkChroot = zkChroot;
     }
 
-    public static SolrConfiguration newInstance(String endpointUri, String remaining) throws Exception {
+    public static SolrConfiguration newInstance(String endpointUri, String remaining) {
         SolrScheme solrScheme = SolrScheme.SOLR.getFrom(endpointUri);
         Optional<String> zkChrootOptional = SolrClientHandler.getZkChrootFromUrl(remaining);
         String url = SolrClientHandler.parseHostsFromUrl(remaining, zkChrootOptional);

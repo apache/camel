@@ -75,7 +75,7 @@ public class SolrComponent extends DefaultComponent {
         return endpoint;
     }
 
-    public SolrClient getSolrClient(SolrProducer solrProducer, SolrConfiguration solrConfiguration) throws Exception {
+    public SolrClient getSolrClient(SolrProducer solrProducer, SolrConfiguration solrConfiguration) {
         String signature = SolrClientHandler.getSignature(solrConfiguration);
         SolrClientReference solrClientReference;
         if (!solrClientMap.containsKey(signature)) {
