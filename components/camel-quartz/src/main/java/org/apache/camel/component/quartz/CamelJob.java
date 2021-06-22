@@ -127,8 +127,8 @@ public class CamelJob implements Job {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);
                 }
                 if (triggerKey.equals(checkTriggerKey)
-                        || (jobDetail.requestsRecovery() && jobKey.getGroup().equals(checkTriggerKey.getGroup())
-                                && jobKey.getName().equals(checkTriggerKey.getName()))) {
+                        || jobDetail.requestsRecovery() && jobKey.getGroup().equals(checkTriggerKey.getGroup())
+                                && jobKey.getName().equals(checkTriggerKey.getName())) {
                     return quartzEndpoint;
                 }
             }

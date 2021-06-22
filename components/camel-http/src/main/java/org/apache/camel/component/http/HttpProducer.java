@@ -413,7 +413,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         Header locationHeader = httpResponse.getFirstHeader("location");
-        if (locationHeader != null && (responseCode >= 300 && responseCode < 400)) {
+        if (locationHeader != null && responseCode >= 300 && responseCode < 400) {
             answer = new HttpOperationFailedException(uri, responseCode, statusText, locationHeader.getValue(), headers, copy);
         } else {
             answer = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);

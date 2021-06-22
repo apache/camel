@@ -473,7 +473,7 @@ public class SjmsProducer extends DefaultAsyncProducer {
             throws JMSException {
 
         boolean isPubSub = isTopicPrefix(destinationName)
-                || (!isQueuePrefix(destinationName) && endpoint.isTopic());
+                || !isQueuePrefix(destinationName) && endpoint.isTopic();
 
         // must normalize the destination name
         String before = destinationName;

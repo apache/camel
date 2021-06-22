@@ -75,7 +75,7 @@ public class Sqs2Component extends DefaultComponent {
 
         // Verify that visibilityTimeout is set if extendMessageVisibility is
         // set to true.
-        if (configuration.isExtendMessageVisibility() && (configuration.getVisibilityTimeout() == null)) {
+        if (configuration.isExtendMessageVisibility() && configuration.getVisibilityTimeout() == null) {
             throw new IllegalArgumentException(
                     "Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
         }

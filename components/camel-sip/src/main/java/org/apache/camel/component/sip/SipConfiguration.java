@@ -162,7 +162,7 @@ public class SipConfiguration {
     public void parseURI() throws Exception {
         protocol = uri.getScheme();
 
-        if ((!protocol.equalsIgnoreCase("sip")) && (!protocol.equalsIgnoreCase("sips"))) {
+        if (!protocol.equalsIgnoreCase("sip") && !protocol.equalsIgnoreCase("sips")) {
             throw new IllegalArgumentException("Unrecognized SIP protocol: " + protocol + " for uri: " + uri);
         }
 
@@ -407,7 +407,7 @@ public class SipConfiguration {
         properties.setProperty("gov.nist.javax.sip.MAX_MESSAGE_SIZE", "" + getMaxMessageSize());
         properties.setProperty("gov.nist.javax.sip.CACHE_CLIENT_CONNECTIONS", "" + isCacheConnections());
         properties.setProperty("javax.sip.USE_ROUTER_FOR_ALL_URIS", "" + isUseRouterForAllUris());
-        if ((implementationDebugLogFile != null) && (implementationServerLogFile != null)) {
+        if (implementationDebugLogFile != null && implementationServerLogFile != null) {
             properties.setProperty("gov.nist.javax.sip.DEBUG_LOG", implementationDebugLogFile);
             properties.setProperty("gov.nist.javax.sip.SERVER_LOG", implementationServerLogFile);
             properties.setProperty("gov.nist.javax.sip.TRACE_LEVEL", implementationTraceLevel);

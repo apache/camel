@@ -297,8 +297,8 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             if (isTrimmingNeededAndEnabled(factory, myLine)) {
                 myLine = myLine.substring(0, factory.recordLength());
             }
-            if ((myLine.length() < factory.recordLength()
-                    && !factory.isIgnoreMissingChars()) || (myLine.length() > factory.recordLength())) {
+            if (myLine.length() < factory.recordLength()
+                    && !factory.isIgnoreMissingChars() || myLine.length() > factory.recordLength()) {
                 throw new java.lang.IllegalArgumentException(
                         "Size of the record: " + myLine.length()
                                                              + " is not equal to the value provided in the model: "

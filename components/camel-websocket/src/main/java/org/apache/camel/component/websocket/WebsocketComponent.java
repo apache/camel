@@ -573,7 +573,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         int index1 = remaining.indexOf(':');
         int index2 = remaining.indexOf('/');
 
-        if ((index1 != -1) && (index2 != -1)) {
+        if (index1 != -1 && index2 != -1) {
             String result = remaining.substring(index1 + 1, index2);
             return Integer.parseInt(result);
         } else {

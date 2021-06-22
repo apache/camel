@@ -60,7 +60,7 @@ public class TcpDataWriter extends SplunkDataWriter {
     }
 
     Socket getSocket(TcpInput tcpInput, Service service) throws IOException {
-        if (localPort.isPresent() || (host != null && !host.equals(tcpInput.getHost()))) {
+        if (localPort.isPresent() || host != null && !host.equals(tcpInput.getHost())) {
             String h = host == null ? service.getHost() : host;
             return new Socket(h, port);
         }

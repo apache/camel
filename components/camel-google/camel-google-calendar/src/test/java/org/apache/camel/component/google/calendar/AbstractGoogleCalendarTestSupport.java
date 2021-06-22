@@ -63,9 +63,9 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
     private static boolean hasCredentials() {
         loadProperties();
 
-        return (!properties.getProperty("clientId", "").isEmpty())
-                && (!properties.getProperty("clientSecret", "").isEmpty())
-                && (!properties.getProperty("accessToken", "").isEmpty());
+        return !properties.getProperty("clientId", "").isEmpty()
+                && !properties.getProperty("clientSecret", "").isEmpty()
+                && !properties.getProperty("accessToken", "").isEmpty();
     }
 
     @BeforeEach
