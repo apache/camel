@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.irc;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -138,7 +137,7 @@ public class IrcConfiguration implements Cloneable {
         return retval.toString();
     }
 
-    public void configure(String uriStr) throws URISyntaxException, UnsupportedEncodingException {
+    public void configure(String uriStr) throws URISyntaxException {
         // fix provided URI and handle that we can use # to indicate the IRC room
         if (uriStr.startsWith("ircs")) {
             setUsingSSL(true);

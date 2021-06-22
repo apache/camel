@@ -59,7 +59,7 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
     private IgniteQueueOperation operation;
 
     public IgniteQueueEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
-                               IgniteQueueComponent igniteComponent) throws Exception {
+                               IgniteQueueComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         name = remaining;
 
