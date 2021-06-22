@@ -57,6 +57,14 @@ application.
 http://ibm.biz/OSSupport[IBM] provides cross-platform support for
 Apache Camel and many other open source packages.
 
+[[CommercialCamelOfferings-LinuxPolska]]
+== https://linuxpolska.com/[Linux Polska]
+
+https://linuxpolska.com/[Linux Polska] is an IT company based in Warsaw, Poland. It designs and creates its own open source solutions in the areas of middleware, application containerization, hybrid cloud, DevOps, databases, IT automation and more. Its experienced team of engineers has over 500 individual certifications.
+https://linuxpolska.com/[Linux Polska] also provides https://linuxpolska.com/services/[consulting, implementation and maintenance services]. 
+Part of Linux Polska’s business centers on providing https://linuxpolska.pl/szkolenia/[IT training courses], both authorized and proprietary, delivered by an experienced team of certified trainers. Linux Polska’s training portfolio contains a wide range of technology and topics such as Red Hat, EnterpriseDB, containerization, IT automation and more. 
+
+
 [[CommercialCamelOfferings-MediaDriver]]
 == http://mediadriver.com[Media Driver]
 
@@ -132,6 +140,7 @@ development.
 https://www.yupiik.com[Yupiik] contributes and commits to the Apache Camel project. Provides consulting,
 training and support for Apache Camel and related projects like Apache Karaf, Apache ActiveMQ, Apache Kafka,
 Apache Unomi.
+
 
 [[CommercialCamelOfferings-Policyforadditionstothispage]]
 == Policy for additions to this page
