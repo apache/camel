@@ -159,7 +159,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             }
         }
 
-        // skip from core folder as they are manitained manually in parent and should not be in all-components
+        // skip from core folder as they are maintained manually in parent and should not be in all-components
         boolean core = project.getParentArtifact() != null && project.getParentArtifact().getArtifactId().equals("core");
         if (!core && count > 0 && (val == null || val.equals("true"))) {
             // Update all component pom sync point
