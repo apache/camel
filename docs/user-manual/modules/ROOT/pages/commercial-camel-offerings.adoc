@@ -58,12 +58,6 @@ architectural guidance, best practice integration, and project
 management. Media Driver offers training classes for developers and
 administrators, as well as middleware management software.
 
-[[CommercialCamelOfferings-Middleware360]]
-== http://www.middleware360.com/[Middleware360]
-
-http://www.middleware360.com/[Middleware360] Enterprise Integration
-consulting services.
-
 [[CommercialCamelOfferings-OpenLogic]]
 == http://www.openlogic.com/[OpenLogic]
 
