@@ -176,7 +176,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
         LOG.debug("Scheduled job: {} is deleted", jobKey);
     }
 
-    protected JobDetail createJobDetail(Action action, Route route) throws Exception {
+    protected JobDetail createJobDetail(Action action, Route route) {
         JobDetail jobDetail = null;
 
         if (action == Action.START) {
@@ -196,8 +196,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
         return jobDetail;
     }
 
-    protected void updateScheduledRouteDetails(Action action, JobDetail jobDetail, Trigger trigger, Route route)
-            throws Exception {
+    protected void updateScheduledRouteDetails(Action action, JobDetail jobDetail, Trigger trigger, Route route) {
         ScheduledRouteDetails scheduledRouteDetails = getScheduledRouteDetails(route.getId());
         if (action == Action.START) {
             scheduledRouteDetails.setStartJobKey(jobDetail.getKey());

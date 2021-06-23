@@ -282,7 +282,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
-    public static void expectsMessageCount(int count, MockEndpoint... endpoints) throws InterruptedException {
+    public static void expectsMessageCount(int count, MockEndpoint... endpoints) {
         for (MockEndpoint endpoint : endpoints) {
             endpoint.setExpectedMessageCount(count);
         }

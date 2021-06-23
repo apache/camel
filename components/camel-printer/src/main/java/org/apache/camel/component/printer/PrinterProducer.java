@@ -45,7 +45,7 @@ public class PrinterProducer extends DefaultProducer {
     private PrintService printService;
     private String printer;
 
-    public PrinterProducer(Endpoint endpoint, PrinterConfiguration config) throws Exception {
+    public PrinterProducer(Endpoint endpoint, PrinterConfiguration config) {
         super(endpoint);
         this.config = config;
     }
@@ -65,7 +65,7 @@ public class PrinterProducer extends DefaultProducer {
         }
     }
 
-    private DocFlavor assignDocFlavor() throws Exception {
+    private DocFlavor assignDocFlavor() {
         return config.getDocFlavor();
     }
 

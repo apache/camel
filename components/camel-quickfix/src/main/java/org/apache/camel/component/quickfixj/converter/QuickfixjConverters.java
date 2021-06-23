@@ -87,7 +87,7 @@ public final class QuickfixjConverters {
 
     @Converter
     public static InputStream toInputStream(Message value, Exchange exchange)
-            throws InvalidMessage, ConfigError, UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         if (exchange != null) {
             String charsetName = ExchangeHelper.getCharsetName(exchange);
             if (charsetName != null) {

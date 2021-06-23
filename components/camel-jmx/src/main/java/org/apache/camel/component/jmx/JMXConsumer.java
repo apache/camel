@@ -166,7 +166,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     /**
      * Schedules execution of the doStart() operation to occur again after the reconnect delay
      */
-    protected void scheduleDelayedStart() throws Exception {
+    protected void scheduleDelayedStart() {
         Runnable startRunnable = new Runnable() {
             @Override
             public void run() {

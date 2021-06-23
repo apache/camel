@@ -130,7 +130,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
      */
     @Bean(initMethod = "", destroyMethod = "")
     // Camel handles the lifecycle of this bean
-    public ProducerTemplate producerTemplate(CamelContext camelContext) throws Exception {
+    public ProducerTemplate producerTemplate(CamelContext camelContext) {
         return camelContext.createProducerTemplate();
     }
 
@@ -139,7 +139,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
      */
     @Bean(initMethod = "", destroyMethod = "")
     // Camel handles the lifecycle of this bean
-    public ConsumerTemplate consumerTemplate(CamelContext camelContext) throws Exception {
+    public ConsumerTemplate consumerTemplate(CamelContext camelContext) {
         return camelContext.createConsumerTemplate();
     }
 
@@ -183,7 +183,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
      * @return {@link CamelContext} used by this configuration. By default {@link SpringCamelContext} instance is
      *         created, to fully integrate Spring application context and Camel registry.
      */
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         return new SpringCamelContext(getApplicationContext());
     }
 
