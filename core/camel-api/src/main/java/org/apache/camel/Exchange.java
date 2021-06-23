@@ -414,9 +414,9 @@ public interface Exchange {
     Map<String, Object> getProperties();
 
     /**
-     * Returns all (both internal and custom) of the properties associated with the exchange
+     * Returns all (both internal and custom) properties associated with the exchange
      *
-     * @return all (both internal and custom) the properties in a Map
+     * @return all (both internal and custom) properties in a Map
      * @see    #getProperties()
      */
     Map<String, Object> getAllProperties();
