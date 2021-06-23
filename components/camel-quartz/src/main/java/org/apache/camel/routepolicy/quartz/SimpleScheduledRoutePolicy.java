@@ -50,7 +50,7 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
         }
     }
 
-    protected void doOnInit(Route route) throws Exception {
+    protected void doOnInit(Route route) {
         QuartzComponent quartz = route.getCamelContext().getComponent("quartz", QuartzComponent.class);
         quartz.addScheduleInitTask(scheduler -> {
             setScheduler(scheduler);

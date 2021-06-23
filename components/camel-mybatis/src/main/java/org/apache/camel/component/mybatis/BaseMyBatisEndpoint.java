@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mybatis;
 
-import java.io.IOException;
-
 import org.apache.camel.Component;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
@@ -44,7 +42,7 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
         return (MyBatisComponent) super.getComponent();
     }
 
-    public SqlSessionFactory getSqlSessionFactory() throws IOException {
+    public SqlSessionFactory getSqlSessionFactory() {
         return getComponent().getSqlSessionFactory();
     }
 

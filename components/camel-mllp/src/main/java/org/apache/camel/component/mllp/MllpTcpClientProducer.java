@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.concurrent.Executors;
@@ -57,7 +56,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     private String cachedRemoteAddress;
     private String cachedCombinedAddress;
 
-    public MllpTcpClientProducer(MllpEndpoint endpoint) throws SocketException {
+    public MllpTcpClientProducer(MllpEndpoint endpoint) {
         super(endpoint);
 
         log = LoggerFactory

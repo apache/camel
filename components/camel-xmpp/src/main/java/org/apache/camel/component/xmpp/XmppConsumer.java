@@ -119,7 +119,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         super.doStart();
     }
 
-    protected void scheduleDelayedStart() throws Exception {
+    protected void scheduleDelayedStart() {
         Runnable startRunnable = new Runnable() {
             @Override
             public void run() {
@@ -135,7 +135,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         getExecutor().schedule(startRunnable, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
     }
 
-    private void startRobustConnectionMonitor() throws Exception {
+    private void startRobustConnectionMonitor() {
         Runnable connectionCheckRunnable = new Runnable() {
             @Override
             public void run() {

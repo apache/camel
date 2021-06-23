@@ -97,7 +97,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     /**
      * Creates a producer using the given sender
      */
-    public Producer createProducer(JavaMailSender sender) throws Exception {
+    public Producer createProducer(JavaMailSender sender) {
         return new MailProducer(this, sender);
     }
 
