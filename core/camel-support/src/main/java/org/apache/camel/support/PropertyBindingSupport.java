@@ -313,6 +313,11 @@ public final class PropertyBindingSupport {
                 newTarget = prop;
                 newClass = newTarget.getClass();
                 newName = parts[i + 1];
+
+                // if we have not yet found a configurer for the new target
+                if (configurer == null) {
+                    configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, newTarget);
+                }
             }
         }
 
