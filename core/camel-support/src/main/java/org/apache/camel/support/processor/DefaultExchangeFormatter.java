@@ -134,7 +134,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            style(sb, "Properties").append(sortMap(filterHeaderAndProperties(exchange.getProperties())));
+            style(sb, "Properties").append(sortMap(filterHeaderAndProperties(exchange.getAllProperties())));
         }
         if (showAll || showHeaders) {
             if (multiline) {
