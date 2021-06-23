@@ -30,17 +30,6 @@ and support for Apache Camel and the related Apache Open Source
 Software. We specialize in helping our clients to realize new projects
 and support the delivery of the project from end to end.
 
-[[CommercialCamelOfferings-Evosent]]
-== http://evosent.com/?utm_source=apache&utm_medium=web&utm_campaign=commercial_support[Evosent]
-
-http://evosent.com/?utm_source=apache&utm_medium=web&utm_campaign=commercial_support[Evosent] is
-a boutique consultancy based in Europe. It specialises in open source
-integration middleware, messaging and big data: Apache Camel,
-ServiceMix, Karaf, ActiveMQ, Elasticsearch (+ Kibana + Logstash), Docker
-and Kubernetes.  Evosent is managed by a committer and PMC member at the
-Apache Camel and Apache Ignite projects. Amongst it services are: ninja
-consulting and support; workshops, mentoring and training; proof of
-concept development; and sophisticated engineering services.
 
 [[CommercialCamelOfferings-GOAPPO]]
 == https://www.goappo.com[GOAPPO]
