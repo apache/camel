@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.11.0</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -35,14 +35,14 @@
     <properties>
         <compiler.fork>true</compiler.fork>
         <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
-        <cxf.codegen.jvmArgs/>
+        <cxf.codegen.jvmArgs />
         <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError</camel.surefire.fork.vmargs>
         <camel.surefire.forkCount>1</camel.surefire.forkCount>
         <camel.surefire.forkTimeout>600</camel.surefire.forkTimeout>
         <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
-        <cxf.xjc.jvmArgs/>
+        <cxf.xjc.jvmArgs />
         <trimStackTrace>false</trimStackTrace>
         <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
         <!-- dependency versions -->
