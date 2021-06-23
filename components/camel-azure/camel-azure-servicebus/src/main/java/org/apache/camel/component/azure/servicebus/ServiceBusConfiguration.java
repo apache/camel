@@ -60,10 +60,10 @@ public class ServiceBusConfiguration implements Cloneable {
     private boolean disableAutoComplete = false;
     @UriParam(label = "consumer", defaultValue = "PEER_LOCK")
     private ServiceBusReceiveMode serviceBusReceiveMode = ServiceBusReceiveMode.PEEK_LOCK;
-    @UriParam(label = "consumer")
-    private Duration maxAutoLockRenewDuration;
-    @UriParam(label = "consumer")
-    private Integer prefetchCount;
+    @UriParam(label = "consumer", defaultValue = "5min")
+    private Duration maxAutoLockRenewDuration = Duration.ofMinutes(5);
+    @UriParam(label = "consumer", defaultValue = "0")
+    private int prefetchCount = 0;
     @UriParam(label = "consumer")
     private SubQueue subQueue;
     @UriParam(label = "producer")
@@ -205,11 +205,11 @@ public class ServiceBusConfiguration implements Cloneable {
     /**
      * dd
      */
-    public Integer getPrefetchCount() {
+    public int getPrefetchCount() {
         return prefetchCount;
     }
 
-    public void setPrefetchCount(Integer prefetchCount) {
+    public void setPrefetchCount(int prefetchCount) {
         this.prefetchCount = prefetchCount;
     }
 

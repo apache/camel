@@ -16,113 +16,64 @@
  */
 package org.apache.camel.component.azure.servicebus.client;
 
-public final class ServiceBusClientFactory {
+import com.azure.messaging.servicebus.ServiceBusClientBuilder;
+import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
+import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
+import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
+import org.apache.camel.component.azure.servicebus.ServiceBusType;
 
-    private static final String SERVICE_URI_SEGMENT = "servicebus.windows.net";
-    private static final String BLOB_SERVICE_URI_SEGMENT = ".blob.core.windows.net";
+public final class ServiceBusClientFactory {
 
     private ServiceBusClientFactory() {
     }
 
-    /*
-    public static EventHubProducerAsyncClient createEventHubProducerAsyncClient(final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration) {
-        return new EventHubClientBuilder()
-                .connectionString(buildConnectionString(configuration))
-                .transportType(configuration.getAmqpTransportType())
-                .retry(configuration.getAmqpRetryOptions())
-                .buildAsyncProducerClient();
-    }
-    
-    public static EventHubConsumerAsyncClient createEventHubConsumerAsyncClient(final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration) {
-        return new EventHubClientBuilder()
-                .connectionString(buildConnectionString(configuration))
-                .consumerGroup(configuration.getConsumerGroupName())
-                .prefetchCount(configuration.getPrefetchCount())
-                .transportType(configuration.getAmqpTransportType())
-                .retry(configuration.getAmqpRetryOptions())
-                .buildAsyncConsumerClient();
-    }
-    
-    public static EventProcessorClient createEventProcessorClient(
-            final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration, final Consumer<EventContext> processEvent,
-            final Consumer<ErrorContext> processError) {
-        return new EventProcessorClientBuilder()
-                .initialPartitionEventPosition(configuration.getEventPosition())
-                .connectionString(buildConnectionString(configuration))
-                .checkpointStore(createCheckpointStore(configuration))
-                .consumerGroup(configuration.getConsumerGroupName())
-                .retry(configuration.getAmqpRetryOptions())
-                .transportType(configuration.getAmqpTransportType())
-                .processError(processError)
-                .processEvent(processEvent)
-                .buildEventProcessorClient();
-    
-    }
-    
-    // public for testing purposes
-    public static BlobContainerAsyncClient createBlobContainerClient(final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration) {
-        return new BlobContainerClientBuilder()
-                .endpoint(buildAzureEndpointUri(configuration))
-                .containerName(configuration.getBlobContainerName())
-                .credential(getCredentialForClient(configuration))
+    public ServiceBusSenderAsyncClient createServiceBusSenderAsyncClient(final ServiceBusConfiguration configuration) {
+        return createBaseServiceBusSenderClient(createBaseServiceBusClient(configuration), configuration)
                 .buildAsyncClient();
     }
-    
-    private static CheckpointStore createCheckpointStore(final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration) {
-        if (ObjectHelper.isNotEmpty(configuration.getCheckpointStore())) {
-            return configuration.getCheckpointStore();
+
+    public ServiceBusReceiverAsyncClient createServiceBusReceiverAsyncClient(final ServiceBusConfiguration configuration) {
+        return createBaseServiceBusReceiverClient(createBaseServiceBusClient(configuration), configuration)
+                .prefetchCount(configuration.getPrefetchCount())
+                .receiveMode(configuration.getServiceBusReceiveMode())
+                .subQueue(configuration.getSubQueue())
+                .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
+                .subscriptionName(configuration.getSubscriptionName())
+                .buildAsyncClient();
+    }
+
+    private ServiceBusClientBuilder createBaseServiceBusClient(final ServiceBusConfiguration configuration) {
+        return new ServiceBusClientBuilder()
+                .transportType(configuration.getAmqpTransportType())
+                .clientOptions(configuration.getClientOptions())
+                .retryOptions(configuration.getAmqpRetryOptions())
+                .proxyOptions(configuration.getProxyOptions())
+                .connectionString(configuration.getConnectionString());
+    }
+
+    private ServiceBusClientBuilder.ServiceBusSenderClientBuilder createBaseServiceBusSenderClient(
+            final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
+        if (configuration.getServiceBusType() == ServiceBusType.queue) {
+            return busClientBuilder.sender()
+                    .queueName(configuration.getTopicOrQueueName());
+        } else {
+            return busClientBuilder.sender()
+                    .topicName(configuration.getTopicOrQueueName());
         }
-        // so we have no checkpoint store, we fallback to default BlobCheckpointStore
-        // first we check if we have all required params for BlobCheckpointStore
-        if (ObjectHelper.isEmpty(configuration.getBlobContainerName())
-                || !isCredentialsSet(configuration)) {
-            throw new IllegalArgumentException(
-                    "Since there is no provided CheckpointStore, you will need to set blobAccountName, blobAccessName"
-                                               + " or blobContainerName in order to use the default BlobCheckpointStore");
+    }
+
+    private ServiceBusClientBuilder.ServiceBusReceiverClientBuilder createBaseServiceBusReceiverClient(
+            final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
+        final ServiceBusClientBuilder.ServiceBusReceiverClientBuilder receiverClientBuilder = busClientBuilder.receiver();
+
+        if (configuration.isDisableAutoComplete()) {
+            receiverClientBuilder.disableAutoComplete();
         }
-    
-        // second build the BlobContainerAsyncClient
-        return new BlobCheckpointStore(createBlobContainerClient(configuration));
-    }
-    
-    private static boolean isCredentialsSet(final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration) {
-        if (ObjectHelper.isNotEmpty(configuration.getBlobStorageSharedKeyCredential())) {
-            return true;
+
+        if (configuration.getServiceBusType() == ServiceBusType.queue) {
+            return receiverClientBuilder.queueName(configuration.getTopicOrQueueName());
+        } else {
+            return receiverClientBuilder.topicName(configuration.getTopicOrQueueName());
         }
-    
-        return ObjectHelper.isNotEmpty(configuration.getBlobAccessKey())
-                && ObjectHelper.isNotEmpty(configuration.getBlobAccountName());
     }
-    
-    private static String buildConnectionString(final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration) {
-        if (ObjectHelper.isNotEmpty(configuration.getConnectionString())) {
-            return configuration.getConnectionString();
-        }
-    
-        return String.format(Locale.ROOT, "Endpoint=sb://%s.%s/;SharedAccessKeyName=%s;SharedAccessKey=%s;EntityPath=%s",
-                configuration.getNamespace(), SERVICE_URI_SEGMENT, configuration.getSharedAccessName(),
-                configuration.getSharedAccessKey(),
-                configuration.getEventHubName());
-    }
-    
-    private static String buildAzureEndpointUri(final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration) {
-        return String.format(Locale.ROOT, "https://%s" + BLOB_SERVICE_URI_SEGMENT, getAccountName(configuration));
-    }
-    
-    private static StorageSharedKeyCredential getCredentialForClient(final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration) {
-        final StorageSharedKeyCredential storageSharedKeyCredential = configuration.getBlobStorageSharedKeyCredential();
-    
-        if (storageSharedKeyCredential != null) {
-            return storageSharedKeyCredential;
-        }
-    
-        return new StorageSharedKeyCredential(configuration.getBlobAccountName(), configuration.getBlobAccessKey());
-    }
-    
-    private static String getAccountName(final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration) {
-        return ObjectHelper.isNotEmpty(configuration.getBlobStorageSharedKeyCredential())
-                ? configuration.getBlobStorageSharedKeyCredential().getAccountName()
-                : configuration.getBlobAccountName();
-    }
-     */
 }

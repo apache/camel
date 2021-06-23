@@ -48,7 +48,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": getOrCreateConfiguration(target).setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value)); return true;
         case "prefetchcount":
-        case "prefetchCount": getOrCreateConfiguration(target).setPrefetchCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "prefetchCount": getOrCreateConfiguration(target).setPrefetchCount(property(camelContext, int.class, value)); return true;
         case "proxyoptions":
         case "proxyOptions": getOrCreateConfiguration(target).setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
         case "receiverasyncclient":
@@ -95,7 +95,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": return java.time.Duration.class;
         case "prefetchcount":
-        case "prefetchCount": return java.lang.Integer.class;
+        case "prefetchCount": return int.class;
         case "proxyoptions":
         case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
         case "receiverasyncclient":

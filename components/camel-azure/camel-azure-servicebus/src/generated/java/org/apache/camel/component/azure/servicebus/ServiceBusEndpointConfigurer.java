@@ -42,7 +42,7 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": target.getConfiguration().setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value)); return true;
         case "prefetchcount":
-        case "prefetchCount": target.getConfiguration().setPrefetchCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "prefetchCount": target.getConfiguration().setPrefetchCount(property(camelContext, int.class, value)); return true;
         case "proxyoptions":
         case "proxyOptions": target.getConfiguration().setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
         case "receiverasyncclient":
@@ -90,7 +90,7 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": return java.time.Duration.class;
         case "prefetchcount":
-        case "prefetchCount": return java.lang.Integer.class;
+        case "prefetchCount": return int.class;
         case "proxyoptions":
         case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
         case "receiverasyncclient":
