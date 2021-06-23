@@ -27,6 +27,8 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "Multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
         case "showall":
         case "ShowAll": target.setShowAll(property(camelContext, boolean.class, value)); return true;
+        case "showallproperties":
+        case "ShowAllProperties": target.setShowAllProperties(property(camelContext, boolean.class, value)); return true;
         case "showbody":
         case "ShowBody": target.setShowBody(property(camelContext, boolean.class, value)); return true;
         case "showbodytype":
@@ -68,6 +70,8 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "Multiline": return boolean.class;
         case "showall":
         case "ShowAll": return boolean.class;
+        case "showallproperties":
+        case "ShowAllProperties": return boolean.class;
         case "showbody":
         case "ShowBody": return boolean.class;
         case "showbodytype":
@@ -110,6 +114,8 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "Multiline": return target.isMultiline();
         case "showall":
         case "ShowAll": return target.isShowAll();
+        case "showallproperties":
+        case "ShowAllProperties": return target.isShowAllProperties();
         case "showbody":
         case "ShowBody": return target.isShowBody();
         case "showbodytype":

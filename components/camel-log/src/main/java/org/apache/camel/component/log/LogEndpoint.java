@@ -74,8 +74,11 @@ public class LogEndpoint extends ProcessorEndpoint {
     @UriParam(label = "formatting", defaultValue = "true",
               description = "Shows the Message Exchange Pattern (or MEP for short).")
     private boolean showExchangePattern = true;
-    @UriParam(label = "formatting", description = "Show the exchange properties.")
+    @UriParam(label = "formatting",
+              description = "Show the exchange properties (only custom). Use showAllProperties to show both internal and custom properties.")
     private boolean showProperties;
+    @UriParam(label = "formatting", description = "Show all of the exchange properties (both internal and custom).")
+    private boolean showAllProperties;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
     @UriParam(label = "formatting", defaultValue = "true",
@@ -143,7 +146,8 @@ public class LogEndpoint extends ProcessorEndpoint {
             // are any options configured if not we can optimize to use shared default
             boolean changed = !showExchangePattern || !skipBodyLineSeparator || !showBody || !showBodyType || maxChars != 10000
                     || style != DefaultExchangeFormatter.OutputStyle.Default;
-            changed |= showExchangeId || showProperties || showHeaders || showException || showCaughtException
+            changed |= showExchangeId || showProperties || showAllProperties || showHeaders || showException
+                    || showCaughtException
                     || showStackTrace;
             changed |= showAll || multiline || showFuture || showStreams || showFiles;
 
@@ -160,6 +164,7 @@ public class LogEndpoint extends ProcessorEndpoint {
                 def.setShowFuture(showFuture);
                 def.setShowHeaders(showHeaders);
                 def.setShowProperties(showProperties);
+                def.setShowAllProperties(showAllProperties);
                 def.setShowStackTrace(showStackTrace);
                 def.setShowStreams(showStreams);
                 def.setMaxChars(maxChars);
@@ -416,6 +421,14 @@ public class LogEndpoint extends ProcessorEndpoint {
 
     public void setShowProperties(boolean showProperties) {
         this.showProperties = showProperties;
+    }
+
+    public boolean isShowAllProperties() {
+        return showAllProperties;
+    }
+
+    public void setShowAllProperties(boolean showAllProperties) {
+        this.showAllProperties = showAllProperties;
     }
 
     public boolean isShowHeaders() {
