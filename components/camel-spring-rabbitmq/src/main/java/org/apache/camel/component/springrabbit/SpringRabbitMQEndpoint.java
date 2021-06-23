@@ -531,7 +531,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         return new AsyncRabbitTemplate(template);
     }
 
-    public AbstractMessageListenerContainer createMessageListenerContainer() throws Exception {
+    public AbstractMessageListenerContainer createMessageListenerContainer() {
         return getComponent().getListenerContainerFactory().createListenerContainer(this);
     }
 

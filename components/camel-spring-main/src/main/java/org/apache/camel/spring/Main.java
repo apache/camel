@@ -229,7 +229,7 @@ public class Main extends MainCommandLineSupport {
         return getCamelContext().createProducerTemplate();
     }
 
-    protected AbstractApplicationContext createDefaultApplicationContext() throws IOException {
+    protected AbstractApplicationContext createDefaultApplicationContext() {
         ApplicationContext parentContext = getParentApplicationContext();
 
         // file based

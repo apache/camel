@@ -438,7 +438,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return namespacePrefixes;
     }
 
-    public XQueryExpression getExpression() throws IOException, XPathException {
+    public XQueryExpression getExpression() {
         return expression;
     }
 
@@ -666,8 +666,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     /**
      * Configures the dynamic context with exchange specific parameters
      */
-    protected void configureQuery(DynamicQueryContext dynamicQueryContext, Exchange exchange)
-            throws Exception {
+    protected void configureQuery(DynamicQueryContext dynamicQueryContext, Exchange exchange) {
         addParameters(dynamicQueryContext, exchange.getProperties());
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
         dynamicQueryContext.setParameter(

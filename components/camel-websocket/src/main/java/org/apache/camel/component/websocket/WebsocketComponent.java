@@ -469,7 +469,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         return servlet;
     }
 
-    protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) throws Exception {
+    protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) {
         ServletContextHandler context
                 = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
         server.addConnector(connector);

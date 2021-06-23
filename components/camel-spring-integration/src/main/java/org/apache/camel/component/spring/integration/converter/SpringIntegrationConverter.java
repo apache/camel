@@ -37,14 +37,13 @@ public final class SpringIntegrationConverter {
     }
 
     @Converter
-    public static Endpoint toEndpoint(final MessageChannel channel) throws Exception {
+    public static Endpoint toEndpoint(final MessageChannel channel) {
         Endpoint answer = new SpringIntegrationEndpoint("spring-integration://" + channel.toString(), channel.toString(), null);
         return answer;
     }
 
     @Converter
-    public static org.springframework.messaging.Message<?> toSpringMessage(final org.apache.camel.Message camelMessage)
-            throws Exception {
+    public static org.springframework.messaging.Message<?> toSpringMessage(final org.apache.camel.Message camelMessage) {
         if (camelMessage instanceof SpringIntegrationMessage) {
             SpringIntegrationMessage siMessage = (SpringIntegrationMessage) camelMessage;
             org.springframework.messaging.Message<?> message = siMessage.getMessage();
@@ -59,8 +58,7 @@ public final class SpringIntegrationConverter {
     }
 
     @Converter
-    public static org.apache.camel.Message toCamelMessage(final org.springframework.messaging.Message<?> springMessage)
-            throws Exception {
+    public static org.apache.camel.Message toCamelMessage(final org.springframework.messaging.Message<?> springMessage) {
         return new SpringIntegrationMessage((CamelContext) null, springMessage);
     }
 
