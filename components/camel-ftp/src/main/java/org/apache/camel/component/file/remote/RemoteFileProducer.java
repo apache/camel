@@ -83,20 +83,15 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     @Override
     public void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
         loggedIn = false;
-        if (isStopping() || isStopped()) {
-            // if we are stopping then ignore any exception during a poll
-            LOG.debug("Exception occurred during stopping: {}", exception.getMessage());
-        } else {
-            LOG.warn("Writing file failed with: {}", exception.getMessage());
-            try {
-                disconnect();
-            } catch (Exception e) {
-                // ignore exception
-                LOG.debug("Ignored exception during disconnect: {}", e.getMessage());
-            }
-            // rethrow the original exception*/
-            throw exception;
+        LOG.warn("Writing file failed with: {}", exception.getMessage());
+        try {
+            disconnect();
+        } catch (Exception e) {
+            // ignore exception
+            LOG.debug("Ignored exception during disconnect: {}", e.getMessage());
         }
+        // rethrow the original exception
+        throw exception;
     }
 
     public void disconnect() throws GenericFileOperationFailedException {
