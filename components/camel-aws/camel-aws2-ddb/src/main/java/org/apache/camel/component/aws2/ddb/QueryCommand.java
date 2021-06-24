@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
@@ -36,9 +35,8 @@ public class QueryCommand extends AbstractDdbCommand {
     public void execute() {
         QueryRequest.Builder query = QueryRequest.builder().tableName(determineTableName())
                 .attributesToGet(determineAttributeNames()).consistentRead(determineConsistentRead())
-                .exclusiveStartKey(determineStartKey()).keyConditions(determineKeyConditions())
-                .exclusiveStartKey(determineStartKey()).limit(determineLimit())
-                .scanIndexForward(determineScanIndexForward());
+                .keyConditions(determineKeyConditions()).exclusiveStartKey(determineExclusiveStartKey())
+                .limit(determineLimit()).scanIndexForward(determineScanIndexForward());
 
         // Check if we have set an Index Name
         if (exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class) != null) {
@@ -53,11 +51,6 @@ public class QueryCommand extends AbstractDdbCommand {
         tmp.put(Ddb2Constants.CONSUMED_CAPACITY, result.consumedCapacity());
         tmp.put(Ddb2Constants.COUNT, result.count());
         addToResults(tmp);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<String, AttributeValue> determineStartKey() {
-        return exchange.getIn().getHeader(Ddb2Constants.START_KEY, Map.class);
     }
 
     private Boolean determineScanIndexForward() {
