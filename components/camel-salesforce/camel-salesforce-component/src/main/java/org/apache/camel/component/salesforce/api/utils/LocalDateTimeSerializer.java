@@ -22,7 +22,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -39,7 +38,7 @@ final class LocalDateTimeSerializer extends StdSerializer<LocalDateTime> {
 
     @Override
     public void serialize(final LocalDateTime value, final JsonGenerator gen, final SerializerProvider serializers)
-            throws IOException, JsonProcessingException {
+            throws IOException {
 
         final ZonedDateTime zonedDateTime = ZonedDateTime.of(value, ZoneId.systemDefault());
 
