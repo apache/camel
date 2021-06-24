@@ -16,12 +16,32 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
+import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
+import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncClientWrapper;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 
 public class ServiceBusProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceBusProducer.class);
+
+    private ServiceBusSenderAsyncClientWrapper senderClientWrapper;
+    private ServiceBusConfigurationOptionsProxy configurationOptionsProxy;
+    private final Map<ServiceBusOperationDefinition, BiConsumer<Exchange, AsyncCallback>> operations = new HashMap<>();
+
 
     public ServiceBusProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -31,11 +51,11 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        // create the client
-        //producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(getEndpoint().getConfiguration());
+        // create the senderClient
+        final ServiceBusSenderAsyncClient senderClient = ServiceBusClientFactory.createServiceBusSenderAsyncClient(getConfiguration());
 
-        // create our operations
-        //producerOperations = new EventHubsProducerOperations(producerAsyncClient, getConfiguration());
+        // create the wrapper
+        senderClientWrapper = new ServiceBusSenderAsyncClientWrapper(senderClient);
     }
 
     @Override
@@ -53,13 +73,11 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        /*
-        if (producerAsyncClient != null) {
+
+        if (senderClientWrapper != null) {
             // shutdown async client
-            producerAsyncClient.close();
+            senderClientWrapper.close();
         }
-        
-         */
 
         super.doStop();
     }
@@ -71,5 +89,28 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
     public ServiceBusConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
+    }
+
+    private BiConsumer<Exchange, AsyncCallback> receiveMessages() {
+        return ((exchange, callback) -> {
+            //final Flux<ServiceBusReceivedMessage> receivedMessage =
+        });
+    }
+
+    private <T> void subscribeToFlux(
+            final Flux<T> inputFlux, final Exchange exchange, final Consumer<T> resultsCallback, final AsyncCallback callback) {
+        inputFlux
+                .subscribe(resultsCallback, error -> {
+                    // error but we continue
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Error processing async exchange with error: {}", error.getMessage());
+                    }
+                    exchange.setException(error);
+                    callback.done(false);
+                }, () -> {
+                    // we are done from everything, so mark it as sync done
+                    LOG.trace("All events with exchange have been sent successfully.");
+                    callback.done(false);
+                });
     }
 }

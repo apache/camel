@@ -200,6 +200,7 @@ public interface AzureServicebusComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
+         * Default: 5min
          * Group: consumer
          * 
          * @param maxAutoLockRenewDuration the value to set
@@ -213,15 +214,15 @@ public interface AzureServicebusComponentBuilderFactory {
         /**
          * dd.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
+         * Default: 0
          * Group: consumer
          * 
          * @param prefetchCount the value to set
          * @return the dsl builder
          */
-        default AzureServicebusComponentBuilder prefetchCount(
-                java.lang.Integer prefetchCount) {
+        default AzureServicebusComponentBuilder prefetchCount(int prefetchCount) {
             doSetProperty("prefetchCount", prefetchCount);
             return this;
         }
@@ -398,7 +399,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "bridgeErrorHandler": ((ServiceBusComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "disableAutoComplete": getOrCreateConfiguration((ServiceBusComponent) component).setDisableAutoComplete((boolean) value); return true;
             case "maxAutoLockRenewDuration": getOrCreateConfiguration((ServiceBusComponent) component).setMaxAutoLockRenewDuration((java.time.Duration) value); return true;
-            case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((java.lang.Integer) value); return true;
+            case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;
             case "receiverAsyncClient": getOrCreateConfiguration((ServiceBusComponent) component).setReceiverAsyncClient((com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient) value); return true;
             case "serviceBusReceiveMode": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusReceiveMode((com.azure.messaging.servicebus.models.ServiceBusReceiveMode) value); return true;
             case "subQueue": getOrCreateConfiguration((ServiceBusComponent) component).setSubQueue((com.azure.messaging.servicebus.models.SubQueue) value); return true;

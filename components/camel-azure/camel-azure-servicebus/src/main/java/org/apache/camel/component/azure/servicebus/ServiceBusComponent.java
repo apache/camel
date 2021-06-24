@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +43,19 @@ public class ServiceBusComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
+        if (remaining == null || remaining.trim().length() == 0) {
+            throw new IllegalArgumentException("A queue or topic name must be specified.");
+        }
+
         final ServiceBusConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new ServiceBusConfiguration();
 
+        // set account or topic name
+        configuration.setTopicOrQueueName(remaining);
+
         final ServiceBusEndpoint endpoint = new ServiceBusEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+        validateConfigurations(configuration);
 
         return endpoint;
     }
@@ -62,37 +71,11 @@ public class ServiceBusComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    /*
     private void validateConfigurations(final ServiceBusConfiguration configuration) {
-        if (!isAccessKeyAndAccessNameSet(configuration)) {
-            throw new IllegalArgumentException(
-                    "Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient "
-                                               + "or connectionString must be specified.");
+        if (configuration.getReceiverAsyncClient() == null || configuration.getSenderAsyncClient() == null) {
+            if (ObjectHelper.isEmpty(configuration.getConnectionString())) {
+                throw new IllegalArgumentException("Azure ServiceBus ConnectionString must be specified.");
+            }
         }
     }
-    
-    private boolean isAccessKeyAndAccessNameSet(final EventHubsConfiguration configuration) {
-        return ObjectHelper.isNotEmpty(configuration.getSharedAccessName())
-                && ObjectHelper.isNotEmpty(configuration.getSharedAccessKey());
-    }
-    
-    private boolean areAzureClientsNotSet(final EventHubsConfiguration configuration) {
-        return ObjectHelper.isEmpty(configuration.getProducerAsyncClient());
-    }
-    
-    private void checkAndSetNamespaceAndHubName(final EventHubsConfiguration configuration, final String remaining) {
-        // only set if clients are empty and remaining exists
-        if (ObjectHelper.isEmpty(remaining)) {
-            throw new IllegalArgumentException("ConnectionString, AzureClients or Namespace and EventHub name must be set");
-        }
-    
-        final String[] parts = remaining.split("/");
-    
-        if (parts.length < 2) {
-            throw new IllegalArgumentException("ConnectionString, AzureClients or Namespace and EventHub name must be set");
-        }
-        configuration.setNamespace(parts[0]);
-        configuration.setEventHubName(parts[1]);
-    }
-     */
 }

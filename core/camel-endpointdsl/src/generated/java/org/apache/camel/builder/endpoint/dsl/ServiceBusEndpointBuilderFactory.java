@@ -295,6 +295,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
+         * Default: 5min
          * Group: consumer
          * 
          * @param maxAutoLockRenewDuration the value to set
@@ -311,6 +312,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
+         * Default: 5min
          * Group: consumer
          * 
          * @param maxAutoLockRenewDuration the value to set
@@ -324,24 +326,25 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * dd.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
+         * Default: 0
          * Group: consumer
          * 
          * @param prefetchCount the value to set
          * @return the dsl builder
          */
         default ServiceBusEndpointConsumerBuilder prefetchCount(
-                Integer prefetchCount) {
+                int prefetchCount) {
             doSetProperty("prefetchCount", prefetchCount);
             return this;
         }
         /**
          * dd.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
+         * Default: 0
          * Group: consumer
          * 
          * @param prefetchCount the value to set

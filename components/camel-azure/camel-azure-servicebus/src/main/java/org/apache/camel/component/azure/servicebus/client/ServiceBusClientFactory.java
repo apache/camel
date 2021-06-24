@@ -27,12 +27,12 @@ public final class ServiceBusClientFactory {
     private ServiceBusClientFactory() {
     }
 
-    public ServiceBusSenderAsyncClient createServiceBusSenderAsyncClient(final ServiceBusConfiguration configuration) {
+    public static ServiceBusSenderAsyncClient createServiceBusSenderAsyncClient(final ServiceBusConfiguration configuration) {
         return createBaseServiceBusSenderClient(createBaseServiceBusClient(configuration), configuration)
                 .buildAsyncClient();
     }
 
-    public ServiceBusReceiverAsyncClient createServiceBusReceiverAsyncClient(final ServiceBusConfiguration configuration) {
+    public static ServiceBusReceiverAsyncClient createServiceBusReceiverAsyncClient(final ServiceBusConfiguration configuration) {
         return createBaseServiceBusReceiverClient(createBaseServiceBusClient(configuration), configuration)
                 .prefetchCount(configuration.getPrefetchCount())
                 .receiveMode(configuration.getServiceBusReceiveMode())
@@ -42,7 +42,7 @@ public final class ServiceBusClientFactory {
                 .buildAsyncClient();
     }
 
-    private ServiceBusClientBuilder createBaseServiceBusClient(final ServiceBusConfiguration configuration) {
+    private static ServiceBusClientBuilder createBaseServiceBusClient(final ServiceBusConfiguration configuration) {
         return new ServiceBusClientBuilder()
                 .transportType(configuration.getAmqpTransportType())
                 .clientOptions(configuration.getClientOptions())
@@ -51,7 +51,7 @@ public final class ServiceBusClientFactory {
                 .connectionString(configuration.getConnectionString());
     }
 
-    private ServiceBusClientBuilder.ServiceBusSenderClientBuilder createBaseServiceBusSenderClient(
+    private static ServiceBusClientBuilder.ServiceBusSenderClientBuilder createBaseServiceBusSenderClient(
             final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
         if (configuration.getServiceBusType() == ServiceBusType.queue) {
             return busClientBuilder.sender()
@@ -62,7 +62,7 @@ public final class ServiceBusClientFactory {
         }
     }
 
-    private ServiceBusClientBuilder.ServiceBusReceiverClientBuilder createBaseServiceBusReceiverClient(
+    private static ServiceBusClientBuilder.ServiceBusReceiverClientBuilder createBaseServiceBusReceiverClient(
             final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
         final ServiceBusClientBuilder.ServiceBusReceiverClientBuilder receiverClientBuilder = busClientBuilder.receiver();
 
