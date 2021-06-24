@@ -1,13 +1,13 @@
 {
   "groups": [
-    { "name": "camel.main", "description": "camel-main configurations.", "sourceType": "org.apache.camel.main.DefaultConfigurationProperties" },
-    { "name": "camel.faulttolerance", "description": "camel-fault-tolerance configurations.", "sourceType": "org.apache.camel.main.FaultToleranceConfigurationProperties" },
-    { "name": "camel.hystrix", "description": "camel-hystrix configurations.", "sourceType": "org.apache.camel.main.HystrixConfigurationProperties" },
-    { "name": "camel.resilience4j", "description": "camel-resilience4j configurations.", "sourceType": "org.apache.camel.main.Resilience4jConfigurationProperties" },
-    { "name": "camel.rest", "description": "camel-rest configurations.", "sourceType": "org.apache.camel.spi.RestConfiguration" },
-    { "name": "camel.health", "description": "camel-health configurations.", "sourceType": "org.apache.camel.main.HealthConfigurationProperties" },
-    { "name": "camel.lra", "description": "camel-lra configurations.", "sourceType": "org.apache.camel.main.LraConfigurationProperties" },
-    { "name": "camel.threadpool", "description": "camel-threadpool configurations.", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties" }
+    { "name": "camel.main", "description": "Camel Main configurations", "sourceType": "org.apache.camel.main.DefaultConfigurationProperties" },
+    { "name": "camel.threadpool", "description": "Camel Thread Pool configurations", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties" },
+    { "name": "camel.health", "description": "Camel Health Check configurations", "sourceType": "org.apache.camel.main.HealthConfigurationProperties" },
+    { "name": "camel.rest", "description": "Camel Rest-DSL configurations", "sourceType": "org.apache.camel.spi.RestConfiguration" },
+    { "name": "camel.faulttolerance", "description": "Fault Tolerance EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.FaultToleranceConfigurationProperties" },
+    { "name": "camel.resilience4j", "description": "Resilience4j EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.Resilience4jConfigurationProperties" },
+    { "name": "camel.hystrix", "description": "Hystrix (deprecated) EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.HystrixConfigurationProperties" },
+    { "name": "camel.lra", "description": "Camel Saga EIP (Long Running Actions) configurations", "sourceType": "org.apache.camel.main.LraConfigurationProperties" }
   ],
   "properties": [
     { "name": "camel.main.allowUseOriginalMessage", "description": "Sets whether to allow access to the original message from Camel's error handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive copy of the original message is not needed. Default is false.", "sourceType": "org.apache.camel.main.DefaultConfigurationProperties", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
