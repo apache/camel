@@ -18,26 +18,11 @@ General questions about Camel
 * xref:can-i-get-commercial-support.adoc[Can I get commercial support?]
 * link:/community/support/[How can I get help?]
 * xref:how-can-i-get-the-source-code.adoc[How can I get the source code?]
-* xref:how-does-camel-compare-to-mule.adoc[How does Camel compare to
-Mule?]
-* xref:how-does-camel-compare-to-servicemix.adoc[How does Camel compare
-to ServiceMix?]
-* xref:how-does-camel-compare-to-servicemix-eip.adoc[How does Camel
-compare to ServiceMix EIP?]
-* xref:how-does-camel-compare-to-synapse.adoc[How does Camel compare to
-Synapse?]
 * xref:how-does-camel-work.adoc[How does Camel work?]
-* xref:how-does-camel-work-with-activemq.adoc[How does Camel work with
-ActiveMQ?]
-* xref:how-does-camel-work-with-servicemix.adoc[How does Camel work with
-ServiceMix?]
-* xref:how-does-the-camel-api-compare-to.adoc[How does the Camel API
-compare to?]
 * xref:how-does-the-website-work.adoc[How does the website work?]
 * xref:how-do-i-become-a-committer.adoc[How do I become a committer?]
 * xref:how-do-i-compile-the-code.adoc[How do I compile the code?]
 * xref:how-do-i-edit-the-website.adoc[How do I edit the website?]
-* xref:how-do-i-run-camel-using-java-webstart.adoc[How do I run Camel
 using Java WebStart?]
 * xref:if-i-use-servicemix-when-should-i-use-camel.adoc[If I use
 ServiceMix when should I use Camel?]
@@ -87,7 +72,6 @@ Questions on using Apache Camel
 * xref:how-do-i-run-activemq-and-camel-in-jboss.adoc[How do I run ActiveMQ and Camel in JBoss?]
 * xref:how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[How do I set the max chars when debug logging messages in Camel?]
 * xref:how-do-i-use-a-big-uber-jar.adoc[How do I use a big (uber) JAR?]
-* xref:how-do-i-use-camel-inside-servicemix.adoc[How do I use Camel inside ServiceMix?]
 * xref:how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do I use Spring Property Placeholder with Camel XML?]
 * xref:how-do-i-use-uris-with-parameters-in-xml.adoc[How do I use URIs with parameters in XML?]
 * xref:how-do-i-write-a-custom-processor-which-sends-multiple-messages.adoc[How do I write a custom Processor which sends multiple messages?]
