@@ -75,7 +75,14 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
 
         // check if we can begin on this file
         String key = asKey(file);
-        boolean answer = idempotentRepository.add(exchange, key);
+        boolean answer = false;
+        try {
+            answer = idempotentRepository.add(exchange, key);
+        } catch (Exception e) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Cannot acquire read lock due to " + e.getMessage() + ". Will skip the file: " + file, e);
+            }
+        }
         if (!answer) {
             // another node is processing the file so skip
             CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
@@ -105,11 +112,11 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
         };
 
         if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
-            LOG.debug("Scheduling readlock release task to run asynchronous delayed after {} millis",
+            LOG.debug("Scheduling read lock release task to run asynchronous delayed after {} millis",
                     readLockIdempotentReleaseDelay);
             readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
         } else if (readLockIdempotentReleaseDelay > 0) {
-            LOG.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
+            LOG.debug("Delaying read lock release task {} millis", readLockIdempotentReleaseDelay);
             Thread.sleep(readLockIdempotentReleaseDelay);
             r.run();
         } else {
@@ -132,11 +139,11 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
         };
 
         if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
-            LOG.debug("Scheduling readlock release task to run asynchronous delayed after {} millis",
+            LOG.debug("Scheduling read lock release task to run asynchronous delayed after {} millis",
                     readLockIdempotentReleaseDelay);
             readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
         } else if (readLockIdempotentReleaseDelay > 0) {
-            LOG.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
+            LOG.debug("Delaying read lock release task {} millis", readLockIdempotentReleaseDelay);
             Thread.sleep(readLockIdempotentReleaseDelay);
             r.run();
         } else {
