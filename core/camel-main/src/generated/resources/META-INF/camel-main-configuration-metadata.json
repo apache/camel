@@ -1,12 +1,12 @@
 {
   "groups": [
-    { "name": "camel.main", "description": "General Camel configurations", "sourceType": "org.apache.camel.main.DefaultConfigurationProperties" },
-    { "name": "camel.threadpool", "description": "Camel thread pool configurations", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties" },
+    { "name": "camel.main", "description": "Camel Main configurations", "sourceType": "org.apache.camel.main.DefaultConfigurationProperties" },
+    { "name": "camel.threadpool", "description": "Camel Thread Pool configurations", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties" },
     { "name": "camel.health", "description": "Camel Health Check configurations", "sourceType": "org.apache.camel.main.HealthConfigurationProperties" },
     { "name": "camel.rest", "description": "Camel Rest-DSL configurations", "sourceType": "org.apache.camel.spi.RestConfiguration" },
-    { "name": "camel.faulttolerance", "description": "Fault Tolerance circuit breaker configurations", "sourceType": "org.apache.camel.main.FaultToleranceConfigurationProperties" },
-    { "name": "camel.resilience4j", "description": "Resilience4j circuit breaker configurations", "sourceType": "org.apache.camel.main.Resilience4jConfigurationProperties" },
-    { "name": "camel.hystrix", "description": "Hystrix (deprecated) circuit breaker configurations", "sourceType": "org.apache.camel.main.HystrixConfigurationProperties" },
+    { "name": "camel.faulttolerance", "description": "Fault Tolerance EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.FaultToleranceConfigurationProperties" },
+    { "name": "camel.resilience4j", "description": "Resilience4j EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.Resilience4jConfigurationProperties" },
+    { "name": "camel.hystrix", "description": "Hystrix (deprecated) EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.HystrixConfigurationProperties" },
     { "name": "camel.lra", "description": "Camel Saga EIP (Long Running Actions) configurations", "sourceType": "org.apache.camel.main.LraConfigurationProperties" }
   ],
   "properties": [

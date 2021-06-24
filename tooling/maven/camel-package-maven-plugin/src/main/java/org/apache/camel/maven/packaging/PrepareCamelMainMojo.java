@@ -241,10 +241,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             MainModel model = new MainModel();
             model.getOptions().addAll(data);
             model.getGroups().add(new MainGroupModel(
-                    "camel.main", "General Camel configurations", "org.apache.camel.main.DefaultConfigurationProperties"));
+                    "camel.main", "Camel Main configurations", "org.apache.camel.main.DefaultConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.threadpool", "Camel thread pool configurations",
+                            "camel.threadpool", "Camel Thread Pool configurations",
                             "org.apache.camel.main.ThreadPoolConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
                     "camel.health", "Camel Health Check configurations",
@@ -254,14 +254,14 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                             "camel.rest", "Camel Rest-DSL configurations", "org.apache.camel.spi.RestConfiguration"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.faulttolerance", "Fault Tolerance circuit breaker configurations",
+                            "camel.faulttolerance", "Fault Tolerance EIP Circuit Breaker configurations",
                             "org.apache.camel.main.FaultToleranceConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.resilience4j", "Resilience4j circuit breaker configurations",
+                            "camel.resilience4j", "Resilience4j EIP Circuit Breaker configurations",
                             "org.apache.camel.main.Resilience4jConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
-                    "camel.hystrix", "Hystrix (deprecated) circuit breaker configurations",
+                    "camel.hystrix", "Hystrix (deprecated) EIP Circuit Breaker configurations",
                     "org.apache.camel.main.HystrixConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
                     "camel.lra", "Camel Saga EIP (Long Running Actions) configurations",
