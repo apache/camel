@@ -171,7 +171,7 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
     }
 
     private void processCreateJob(final Exchange exchange, final AsyncCallback callback)
-            throws InvalidPayloadException, SalesforceException {
+            throws InvalidPayloadException {
         JobInfo jobBody = exchange.getIn().getMandatoryBody(JobInfo.class);
         bulkClient.createJob(jobBody, determineHeaders(exchange), new BulkApiClient.JobInfoResponseCallback() {
             @Override
