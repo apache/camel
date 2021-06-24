@@ -243,6 +243,11 @@ public interface QuartzComponentBuilderFactory {
          * Whether to interrupt jobs on shutdown which forces the scheduler to
          * shutdown quicker and attempt to interrupt any running jobs. If this
          * is enabled then any running jobs can fail due to being interrupted.
+         * When a job is interrupted then Camel will mark the exchange to stop
+         * continue routing and set
+         * java.util.concurrent.RejectedExecutionException as caused exception.
+         * Therefore use this with care, as its often better to allow Camel jobs
+         * to complete and shutdown gracefully.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
