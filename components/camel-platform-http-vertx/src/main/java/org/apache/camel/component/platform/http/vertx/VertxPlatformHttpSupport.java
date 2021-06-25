@@ -176,6 +176,8 @@ public final class VertxPlatformHttpSupport {
                 }
             }
             response.end();
+        } else if (body instanceof Buffer) {
+            response.end((Buffer) body);
         } else {
             final TypeConverter tc = camelExchange.getContext().getTypeConverter();
             final ByteBuffer bb = tc.mandatoryConvertTo(ByteBuffer.class, body);
@@ -184,7 +186,6 @@ public final class VertxPlatformHttpSupport {
             b.setBytes(0, bb);
             response.end(b);
         }
-
     }
 
     static void populateCamelHeaders(
