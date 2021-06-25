@@ -32,7 +32,8 @@ public final class ServiceBusClientFactory {
                 .buildAsyncClient();
     }
 
-    public static ServiceBusReceiverAsyncClient createServiceBusReceiverAsyncClient(final ServiceBusConfiguration configuration) {
+    public static ServiceBusReceiverAsyncClient createServiceBusReceiverAsyncClient(
+            final ServiceBusConfiguration configuration) {
         return createBaseServiceBusReceiverClient(createBaseServiceBusClient(configuration), configuration)
                 .prefetchCount(configuration.getPrefetchCount())
                 .receiveMode(configuration.getServiceBusReceiveMode())

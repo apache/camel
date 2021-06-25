@@ -11,11 +11,11 @@ import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncC
 import org.apache.camel.util.ObjectHelper;
 import reactor.core.publisher.Mono;
 
-public class ServiceBusProducerOperations {
+public class ServiceBusSenderOperations {
 
     private final ServiceBusSenderAsyncClientWrapper client;
 
-    public ServiceBusProducerOperations(ServiceBusSenderAsyncClientWrapper client) {
+    public ServiceBusSenderOperations(ServiceBusSenderAsyncClientWrapper client) {
         ObjectHelper.notNull(client, "client");
 
         this.client = client;

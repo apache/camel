@@ -39,13 +39,13 @@ class ServiceBusConsumerIT extends CamelTestSupport {
     public void prepare() throws Exception {
         containerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
     
-        final Properties properties = TestUtils.loadAzureAccessFromJvmEnv();
+        final Properties properties = ServiceBusTestUtils.loadAzureAccessFromJvmEnv();
     
         configuration = new org.apache.camel.component.azure.eventhubs.ServicebusConfiguration();
-        configuration.setBlobAccessKey(properties.getProperty(TestUtils.BLOB_ACCESS_KEY));
-        configuration.setBlobAccountName(properties.getProperty(TestUtils.BLOB_ACCOUNT_NAME));
+        configuration.setBlobAccessKey(properties.getProperty(ServiceBusTestUtils.BLOB_ACCESS_KEY));
+        configuration.setBlobAccountName(properties.getProperty(ServiceBusTestUtils.BLOB_ACCOUNT_NAME));
         configuration.setBlobContainerName(containerName);
-        configuration.setConnectionString(properties.getProperty(TestUtils.CONNECTION_STRING));
+        configuration.setConnectionString(properties.getProperty(ServiceBusTestUtils.CONNECTION_STRING));
     
         containerAsyncClient = EventHubsClientFactory.createBlobContainerClient(configuration);
     

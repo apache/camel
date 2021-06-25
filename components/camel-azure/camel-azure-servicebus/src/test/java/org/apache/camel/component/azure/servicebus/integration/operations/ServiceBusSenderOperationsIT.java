@@ -11,10 +11,10 @@ import com.azure.messaging.servicebus.ServiceBusClientBuilder;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
-import org.apache.camel.component.azure.servicebus.TestUtils;
+import org.apache.camel.component.azure.servicebus.ServiceBusTestUtils;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusReceiverAsyncClientWrapper;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncClientWrapper;
-import org.apache.camel.component.azure.servicebus.operations.ServiceBusProducerOperations;
+import org.apache.camel.component.azure.servicebus.operations.ServiceBusSenderOperations;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,17 +25,17 @@ import org.junit.jupiter.api.TestInstance;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ServiceBusProducerOperationsIT {
+public class ServiceBusSenderOperationsIT {
 
     private ServiceBusSenderAsyncClientWrapper clientSenderWrapper;
     private ServiceBusReceiverAsyncClientWrapper clientReceiverWrapper;
 
     @BeforeAll
     void prepare() throws Exception {
-        final Properties properties = TestUtils.loadAzureAccessFromJvmEnv();
+        final Properties properties = ServiceBusTestUtils.loadAzureAccessFromJvmEnv();
 
         final ServiceBusSenderAsyncClient senderClient = new ServiceBusClientBuilder()
-                .connectionString(properties.getProperty(TestUtils.CONNECTION_STRING))
+                .connectionString(properties.getProperty(ServiceBusTestUtils.CONNECTION_STRING))
                 .sender()
                 .buildAsyncClient();
 
@@ -44,13 +44,13 @@ public class ServiceBusProducerOperationsIT {
 
     @BeforeEach
     void prepareReceiver() throws Exception {
-        final Properties properties = TestUtils.loadAzureAccessFromJvmEnv();
+        final Properties properties = ServiceBusTestUtils.loadAzureAccessFromJvmEnv();
 
         final ServiceBusReceiverAsyncClient receiverClient = new ServiceBusClientBuilder()
-                .connectionString(properties.getProperty(TestUtils.CONNECTION_STRING))
+                .connectionString(properties.getProperty(ServiceBusTestUtils.CONNECTION_STRING))
                 .receiver()
-                .topicName(properties.getProperty(TestUtils.TOPIC_NAME))
-                .subscriptionName(properties.getProperty(TestUtils.SUBSCRIPTION_NAME))
+                .topicName(properties.getProperty(ServiceBusTestUtils.TOPIC_NAME))
+                .subscriptionName(properties.getProperty(ServiceBusTestUtils.SUBSCRIPTION_NAME))
                 .buildAsyncClient();
 
         clientReceiverWrapper = new ServiceBusReceiverAsyncClientWrapper(receiverClient);
@@ -68,7 +68,7 @@ public class ServiceBusProducerOperationsIT {
 
     @Test
     void testSendSingleMessage() {
-        final ServiceBusProducerOperations operations = new ServiceBusProducerOperations(clientSenderWrapper);
+        final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
 
         operations.sendMessages("test data", null).block();
 
@@ -85,7 +85,7 @@ public class ServiceBusProducerOperationsIT {
 
     @Test
     void testSendingBatchMessages() {
-        final ServiceBusProducerOperations operations = new ServiceBusProducerOperations(clientSenderWrapper);
+        final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
 
         final List<String> inputBatch = new LinkedList<>();
         inputBatch.add("test batch 1");
@@ -113,7 +113,7 @@ public class ServiceBusProducerOperationsIT {
 
     @Test
     void testScheduleMessage() {
-        final ServiceBusProducerOperations operations = new ServiceBusProducerOperations(clientSenderWrapper);
+        final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
 
         operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null).block();
 
@@ -131,7 +131,7 @@ public class ServiceBusProducerOperationsIT {
 
     @Test
     void testSchedulingBatchMessages() {
-        final ServiceBusProducerOperations operations = new ServiceBusProducerOperations(clientSenderWrapper);
+        final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
 
         final List<String> inputBatch = new LinkedList<>();
         inputBatch.add("testSchedulingBatchMessages 1");

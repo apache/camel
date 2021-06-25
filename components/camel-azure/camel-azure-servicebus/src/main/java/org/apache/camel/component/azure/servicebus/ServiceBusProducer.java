@@ -17,12 +17,10 @@
 package org.apache.camel.component.azure.servicebus;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
@@ -30,9 +28,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncClientWrapper;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public class ServiceBusProducer extends DefaultAsyncProducer {
 
@@ -40,8 +39,11 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
     private ServiceBusSenderAsyncClientWrapper senderClientWrapper;
     private ServiceBusConfigurationOptionsProxy configurationOptionsProxy;
-    private final Map<ServiceBusOperationDefinition, BiConsumer<Exchange, AsyncCallback>> operations = new HashMap<>();
+    private final Map<ServiceBusProducerOperationDefinition, BiConsumer<Exchange, AsyncCallback>> operations = new HashMap<>();
 
+    {
+        //bind(ServiceBusProducerOperationDefinition.receiveMessages, receiveMessages());
+    }
 
     public ServiceBusProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -52,7 +54,9 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
         super.doStart();
 
         // create the senderClient
-        final ServiceBusSenderAsyncClient senderClient = ServiceBusClientFactory.createServiceBusSenderAsyncClient(getConfiguration());
+        final ServiceBusSenderAsyncClient senderClient = getConfiguration().getSenderAsyncClient() != null
+                ? getConfiguration().getSenderAsyncClient()
+                : ServiceBusClientFactory.createServiceBusSenderAsyncClient(getConfiguration());
 
         // create the wrapper
         senderClientWrapper = new ServiceBusSenderAsyncClientWrapper(senderClient);
@@ -61,8 +65,8 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
+            //invokeOperation(ServiceBusProducerOperationDefinition.receiveMessages, exchange, callback);
             return false;
-            //return producerOperations.sendEvents(exchange, callback);
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -91,15 +95,36 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
         return getEndpoint().getConfiguration();
     }
 
-    private BiConsumer<Exchange, AsyncCallback> receiveMessages() {
-        return ((exchange, callback) -> {
-            //final Flux<ServiceBusReceivedMessage> receivedMessage =
-        });
+    private void bind(ServiceBusProducerOperationDefinition operation, BiConsumer<Exchange, AsyncCallback> fn) {
+        operations.put(operation, fn);
     }
 
-    private <T> void subscribeToFlux(
-            final Flux<T> inputFlux, final Exchange exchange, final Consumer<T> resultsCallback, final AsyncCallback callback) {
-        inputFlux
+    /**
+     * Entry method that selects the appropriate ServiceBusProducerOperationDefinition operation and executes it
+     */
+    private void invokeOperation(
+            final ServiceBusProducerOperationDefinition operation, final Exchange exchange, final AsyncCallback callback) {
+        final ServiceBusProducerOperationDefinition operationsToInvoke;
+
+        // we put listDatabases operation as default in case no operation has been selected
+        if (ObjectHelper.isEmpty(operation)) {
+            operationsToInvoke = ServiceBusProducerOperationDefinition.sendMessages;
+        } else {
+            operationsToInvoke = operation;
+        }
+
+        final BiConsumer<Exchange, AsyncCallback> fnToInvoke = operations.get(operationsToInvoke);
+
+        if (fnToInvoke != null) {
+            fnToInvoke.accept(exchange, callback);
+        } else {
+            throw new RuntimeException("Operation not supported. Value: " + operationsToInvoke);
+        }
+    }
+
+    private <T> void subscribeToMono(
+            final Mono<T> inputMono, final Exchange exchange, final Consumer<T> resultsCallback, final AsyncCallback callback) {
+        inputMono
                 .subscribe(resultsCallback, error -> {
                     // error but we continue
                     if (LOG.isDebugEnabled()) {

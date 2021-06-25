@@ -52,6 +52,8 @@ public class ServiceBusConfiguration implements Cloneable {
     @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
     @UriParam(label = "consumer")
+    private ServiceBusConsumerOperationDefinition consumerOperation = ServiceBusConsumerOperationDefinition.receiveMessages;
+    @UriParam(label = "consumer")
     @Metadata(autowired = true)
     private ServiceBusReceiverAsyncClient receiverAsyncClient;
     @UriParam(label = "consumer")
@@ -66,6 +68,8 @@ public class ServiceBusConfiguration implements Cloneable {
     private int prefetchCount = 0;
     @UriParam(label = "consumer")
     private SubQueue subQueue;
+    @UriParam(label = "producer")
+    private ServiceBusProducerOperationDefinition producerOperation = ServiceBusProducerOperationDefinition.sendMessages;
     @UriParam(label = "producer")
     @Metadata(autowired = true)
     private ServiceBusSenderAsyncClient senderAsyncClient;
@@ -233,6 +237,28 @@ public class ServiceBusConfiguration implements Cloneable {
 
     public void setSenderAsyncClient(ServiceBusSenderAsyncClient senderAsyncClient) {
         this.senderAsyncClient = senderAsyncClient;
+    }
+
+    /**
+     * dd
+     */
+    public ServiceBusConsumerOperationDefinition getConsumerOperation() {
+        return consumerOperation;
+    }
+
+    public void setConsumerOperation(ServiceBusConsumerOperationDefinition consumerOperation) {
+        this.consumerOperation = consumerOperation;
+    }
+
+    /**
+     * dd
+     */
+    public ServiceBusProducerOperationDefinition getProducerOperation() {
+        return producerOperation;
+    }
+
+    public void setProducerOperation(ServiceBusProducerOperationDefinition producerOperation) {
+        this.producerOperation = producerOperation;
     }
 
     // *************************************************

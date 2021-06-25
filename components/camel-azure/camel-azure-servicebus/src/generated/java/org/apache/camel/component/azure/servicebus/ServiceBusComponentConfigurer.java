@@ -41,6 +41,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusConfiguration.class, value)); return true;
         case "connectionstring":
         case "connectionString": getOrCreateConfiguration(target).setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumeroperation":
+        case "consumerOperation": getOrCreateConfiguration(target).setConsumerOperation(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class, value)); return true;
         case "disableautocomplete":
         case "disableAutoComplete": getOrCreateConfiguration(target).setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -49,6 +51,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxAutoLockRenewDuration": getOrCreateConfiguration(target).setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value)); return true;
         case "prefetchcount":
         case "prefetchCount": getOrCreateConfiguration(target).setPrefetchCount(property(camelContext, int.class, value)); return true;
+        case "produceroperation":
+        case "producerOperation": getOrCreateConfiguration(target).setProducerOperation(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition.class, value)); return true;
         case "proxyoptions":
         case "proxyOptions": getOrCreateConfiguration(target).setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
         case "receiverasyncclient":
@@ -88,6 +92,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "configuration": return org.apache.camel.component.azure.servicebus.ServiceBusConfiguration.class;
         case "connectionstring":
         case "connectionString": return java.lang.String.class;
+        case "consumeroperation":
+        case "consumerOperation": return org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class;
         case "disableautocomplete":
         case "disableAutoComplete": return boolean.class;
         case "lazystartproducer":
@@ -96,6 +102,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxAutoLockRenewDuration": return java.time.Duration.class;
         case "prefetchcount":
         case "prefetchCount": return int.class;
+        case "produceroperation":
+        case "producerOperation": return org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition.class;
         case "proxyoptions":
         case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
         case "receiverasyncclient":
@@ -131,6 +139,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "configuration": return target.getConfiguration();
         case "connectionstring":
         case "connectionString": return getOrCreateConfiguration(target).getConnectionString();
+        case "consumeroperation":
+        case "consumerOperation": return getOrCreateConfiguration(target).getConsumerOperation();
         case "disableautocomplete":
         case "disableAutoComplete": return getOrCreateConfiguration(target).isDisableAutoComplete();
         case "lazystartproducer":
@@ -139,6 +149,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxAutoLockRenewDuration": return getOrCreateConfiguration(target).getMaxAutoLockRenewDuration();
         case "prefetchcount":
         case "prefetchCount": return getOrCreateConfiguration(target).getPrefetchCount();
+        case "produceroperation":
+        case "producerOperation": return getOrCreateConfiguration(target).getProducerOperation();
         case "proxyoptions":
         case "proxyOptions": return getOrCreateConfiguration(target).getProxyOptions();
         case "receiverasyncclient":

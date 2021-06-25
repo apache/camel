@@ -16,50 +16,61 @@
  */
 package org.apache.camel.component.azure.servicebus.integration;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncClientWrapper;
+import org.apache.camel.component.azure.servicebus.operations.ServiceBusSenderOperations;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperty(named = "connectionString", matches = ".*",
-                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
+                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ServiceBusProducerIT extends CamelTestSupport {
+class ServiceBusProducerIT extends BaseCamelServiceBusTestSupport {
 
     @EndpointInject
     private ProducerTemplate template;
 
-    /*
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
-    private EventHubConsumerAsyncClient consumerAsyncClient;
-    
-    @BeforeAll
-    public void prepare() throws Exception {
-        final Properties properties = TestUtils.loadAzureAccessFromJvmEnv();
-    
-        final org.apache.camel.component.azure.eventhubs.ServicebusConfiguration configuration = new org.apache.camel.component.azure.eventhubs.ServicebusConfiguration();
-        configuration.setConnectionString(properties.getProperty(TestUtils.CONNECTION_STRING));
-        configuration.setConsumerGroupName(EventHubClientBuilder.DEFAULT_CONSUMER_GROUP_NAME);
-    
-        consumerAsyncClient = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
-    }
-    
+
     @Test
-    public void testSendEventWithSpecificPartition() throws InterruptedException {
-    
-        final String messageBody = RandomStringUtils.randomAlphabetic(30);
-        final String firstPartition = "0";
-    
+    public void testReceiveMessages() throws InterruptedException {
+
+        final List<String> inputBatch = new LinkedList<>();
+        inputBatch.add("test batch 1");
+        inputBatch.add("test batch 2");
+        inputBatch.add("test batch 3");
+
+        new ServiceBusSenderOperations(new ServiceBusSenderAsyncClientWrapper(senderAsyncClient)).sendMessages(inputBatch, null)
+                .block();
+
         final AtomicBoolean eventExists = new AtomicBoolean();
-    
-        final CompletableFuture<Exchange> resultAsync = template.asyncSend("direct:sendAsync", exchange -> {
-            exchange.getIn().setHeader(org.apache.camel.component.azure.eventhubs.ServiceBusConstants.PARTITION_ID, firstPartition);
-            exchange.getIn().setBody(messageBody);
+
+        Thread.sleep(1000);
+
+        result.expectedMessageCount(3);
+
+        //template.asyncSend("direct:receiveMessages", exchange -> {
+        //});
+
+        template.send("direct:receiveMessages", exchange -> {
         });
-    
+
+        result.setAssertPeriod(5000);
+        result.assertIsSatisfied();
+
+        /*final CompletableFuture<Exchange> resultAsync = template.asyncSend("direct:receiveMessages", exchange -> {
+        });
+        
+        
         resultAsync.whenComplete((exchange, throwable) -> {
             // we sent our exchange, let's check it out
             final Boolean eventFlag = consumerAsyncClient.receiveFromPartition(firstPartition, EventPosition.earliest())
@@ -67,60 +78,28 @@ class ServiceBusProducerIT extends CamelTestSupport {
                             && partitionEvent.getData().getBodyAsString()
                                     .contains(messageBody))
                     .block();
-    
+        
             if (eventFlag == null) {
                 eventExists.set(false);
             }
-    
+        
             eventExists.set(eventFlag);
         });
-    
+        
         result.expectedMinimumMessageCount(1);
         result.setAssertPeriod(20000);
         result.assertIsSatisfied();
-    
-        assertTrue(eventExists.get());
+        
+        assertTrue(eventExists.get());*/
     }
-    
-    @Test
-    public void testSendingNonValidData() throws InterruptedException {
-    
-        final String messageBody = RandomStringUtils.randomAlphabetic(30);
-        final String firstPartition = "0";
-    
-        final AtomicReference<Exchange> resultExchange = new AtomicReference<>();
-    
-        final CompletableFuture<Exchange> resultAsync = template.asyncSend("direct:sendAsync", exchange -> {
-            exchange.getIn().setHeader(org.apache.camel.component.azure.eventhubs.ServiceBusConstants.PARTITION_ID, firstPartition);
-            exchange.getIn().setHeader(org.apache.camel.component.azure.eventhubs.ServiceBusConstants.PARTITION_KEY, "testKey");
-            exchange.getIn().setBody(messageBody);
-        });
-    
-        resultAsync.whenComplete((exchange, throwable) -> resultExchange.set(exchange));
-    
-        result.setAssertPeriod(100);
-        result.assertIsSatisfied();
-    
-        assertNotNull(resultExchange.get());
-        assertNotNull(resultExchange.get().getException());
-    }
-    
-    @AfterAll
-    public void tearDown() {
-        consumerAsyncClient.close();
-    }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:sendAsync")
-                        .to("azure-eventhubs:?connectionString=RAW({{connectionString}})")
-                        .to(result);
+                from("direct:receiveMessages").to("azure-servicebus:test//?connectionString=test").to(result);
             }
         };
     }
-    
-     */
 }

@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.servicebus;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -38,6 +39,10 @@ public class ServiceBusComponent extends DefaultComponent {
     private ServiceBusConfiguration configuration = new ServiceBusConfiguration();
 
     public ServiceBusComponent() {
+    }
+
+    public ServiceBusComponent(final CamelContext context) {
+        super(context);
     }
 
     @Override

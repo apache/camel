@@ -5,11 +5,11 @@ import org.apache.camel.component.azure.servicebus.client.ServiceBusReceiverAsyn
 import org.apache.camel.util.ObjectHelper;
 import reactor.core.publisher.Flux;
 
-public class ServiceBusConsumerOperations {
+public class ServiceBusReceiverOperations {
 
     private final ServiceBusReceiverAsyncClientWrapper client;
 
-    public ServiceBusConsumerOperations(final ServiceBusReceiverAsyncClientWrapper client) {
+    public ServiceBusReceiverOperations(final ServiceBusReceiverAsyncClientWrapper client) {
         ObjectHelper.notNull(client, "client");
 
         this.client = client;

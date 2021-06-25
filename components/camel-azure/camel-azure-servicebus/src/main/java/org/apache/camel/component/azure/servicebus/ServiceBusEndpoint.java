@@ -67,5 +67,4 @@ public class ServiceBusEndpoint extends DefaultEndpoint {
     public void setConfiguration(ServiceBusConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }

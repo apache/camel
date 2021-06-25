@@ -31,6 +31,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "clientOptions": target.getConfiguration().setClientOptions(property(camelContext, com.azure.core.util.ClientOptions.class, value)); return true;
         case "connectionstring":
         case "connectionString": target.getConfiguration().setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumeroperation":
+        case "consumerOperation": target.getConfiguration().setConsumerOperation(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class, value)); return true;
         case "disableautocomplete":
         case "disableAutoComplete": target.getConfiguration().setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -43,6 +45,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxAutoLockRenewDuration": target.getConfiguration().setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value)); return true;
         case "prefetchcount":
         case "prefetchCount": target.getConfiguration().setPrefetchCount(property(camelContext, int.class, value)); return true;
+        case "produceroperation":
+        case "producerOperation": target.getConfiguration().setProducerOperation(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition.class, value)); return true;
         case "proxyoptions":
         case "proxyOptions": target.getConfiguration().setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
         case "receiverasyncclient":
@@ -79,6 +83,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "clientOptions": return com.azure.core.util.ClientOptions.class;
         case "connectionstring":
         case "connectionString": return java.lang.String.class;
+        case "consumeroperation":
+        case "consumerOperation": return org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class;
         case "disableautocomplete":
         case "disableAutoComplete": return boolean.class;
         case "exceptionhandler":
@@ -91,6 +97,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxAutoLockRenewDuration": return java.time.Duration.class;
         case "prefetchcount":
         case "prefetchCount": return int.class;
+        case "produceroperation":
+        case "producerOperation": return org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition.class;
         case "proxyoptions":
         case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
         case "receiverasyncclient":
@@ -123,6 +131,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "clientOptions": return target.getConfiguration().getClientOptions();
         case "connectionstring":
         case "connectionString": return target.getConfiguration().getConnectionString();
+        case "consumeroperation":
+        case "consumerOperation": return target.getConfiguration().getConsumerOperation();
         case "disableautocomplete":
         case "disableAutoComplete": return target.getConfiguration().isDisableAutoComplete();
         case "exceptionhandler":
@@ -135,6 +145,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxAutoLockRenewDuration": return target.getConfiguration().getMaxAutoLockRenewDuration();
         case "prefetchcount":
         case "prefetchCount": return target.getConfiguration().getPrefetchCount();
+        case "produceroperation":
+        case "producerOperation": return target.getConfiguration().getProducerOperation();
         case "proxyoptions":
         case "proxyOptions": return target.getConfiguration().getProxyOptions();
         case "receiverasyncclient":

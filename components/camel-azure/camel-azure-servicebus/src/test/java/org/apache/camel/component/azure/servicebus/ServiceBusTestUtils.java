@@ -21,20 +21,26 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 
-public final class TestUtils {
+import com.azure.messaging.servicebus.ServiceBusClientBuilder;
+import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
+import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
+
+public final class ServiceBusTestUtils {
 
     public static final String CONNECTION_STRING = "connectionString";
     public static final String TOPIC_NAME = "topicName";
     public static final String SUBSCRIPTION_NAME = "subscriptionName";
+    public static final String QUEUE_NAME = "queueName";
 
-    private TestUtils() {
+    private ServiceBusTestUtils() {
     }
 
     public static Properties loadAzurePropertiesFile() throws IOException {
         final Properties properties = new Properties();
         final String fileName = "azure_key.properties";
 
-        final InputStream inputStream = Objects.requireNonNull(TestUtils.class.getClassLoader().getResourceAsStream(fileName));
+        final InputStream inputStream
+                = Objects.requireNonNull(ServiceBusTestUtils.class.getClassLoader().getResourceAsStream(fileName));
 
         properties.load(inputStream);
 
@@ -50,8 +56,43 @@ public final class TestUtils {
         properties.setProperty(CONNECTION_STRING, System.getProperty(CONNECTION_STRING));
         properties.setProperty(TOPIC_NAME, System.getProperty(TOPIC_NAME));
         properties.setProperty(SUBSCRIPTION_NAME, System.getProperty(SUBSCRIPTION_NAME));
+        //properties.setProperty(QUEUE_NAME, System.getProperty(QUEUE_NAME));
 
         return properties;
+    }
+
+    public static ServiceBusReceiverAsyncClient createServiceBusReceiverAsyncClient(final ServiceBusType type)
+            throws Exception {
+        final Properties properties = loadAzureAccessFromJvmEnv();
+
+        final ServiceBusClientBuilder.ServiceBusReceiverClientBuilder clientBuilder = new ServiceBusClientBuilder()
+                .connectionString(properties.getProperty(CONNECTION_STRING))
+                .receiver()
+                .subscriptionName(properties.getProperty(SUBSCRIPTION_NAME));
+
+        if (type == ServiceBusType.queue) {
+            clientBuilder.queueName(properties.getProperty(QUEUE_NAME));
+        } else {
+            clientBuilder.topicName(properties.getProperty(TOPIC_NAME));
+        }
+
+        return clientBuilder.buildAsyncClient();
+    }
+
+    public static ServiceBusSenderAsyncClient createServiceBusSenderAsyncClient(final ServiceBusType type) throws Exception {
+        final Properties properties = loadAzureAccessFromJvmEnv();
+
+        final ServiceBusClientBuilder.ServiceBusSenderClientBuilder clientBuilder = new ServiceBusClientBuilder()
+                .connectionString(properties.getProperty(CONNECTION_STRING))
+                .sender();
+
+        if (type == ServiceBusType.queue) {
+            clientBuilder.queueName(properties.getProperty(QUEUE_NAME));
+        } else {
+            clientBuilder.topicName(properties.getProperty(TOPIC_NAME));
+        }
+
+        return clientBuilder.buildAsyncClient();
     }
 
 }
