@@ -48,7 +48,7 @@ import static org.apache.camel.component.kamelet.Kamelet.PARAM_ROUTE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
 
 /**
- * The Kamelet Component provides support for materializing routes templates.
+ * Materialize route templates
  */
 @Component(Kamelet.SCHEME)
 public class KameletComponent extends DefaultComponent {
