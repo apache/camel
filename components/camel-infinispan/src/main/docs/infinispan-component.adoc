@@ -184,8 +184,8 @@ The component supports 21 options, which are listed below.
 [source,java]
 ----
 from("direct:start")
-    .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
-    .setHeader(InfinispanConstants.KEY).constant("123")
+    .setHeader(CamelInfinispanOperation).constant(CamelInfinispanOperationGet)
+    .setHeader(CamelInfinispanKey).constant("123")
     .to("infinispan?cacheContainer=#cacheContainer");
 ----
 
@@ -194,8 +194,8 @@ from("direct:start")
 [source,java]
 ----
 from("direct:start")
-    .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.PUT)
-    .setHeader(InfinispanConstants.KEY).constant("123")
+    .setHeader(CamelInfinispanOperation).constant(CamelInfinispanOperationPut)
+    .setHeader(CamelInfinispanKey).constant("123")
     .to("infinispan:myCacheName");
 ----
 
@@ -204,10 +204,10 @@ from("direct:start")
 [source,java]
 ----
 from("direct:start")
-    .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
-    .setHeader(InfinispanConstants.KEY).constant("123")
-    .setHeader(InfinispanConstants.LIFESPAN_TIME).constant(100L)
-    .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT.constant(TimeUnit.MILLISECONDS.toString())
+    .setHeader(CamelInfinispanOperation).constant(CamelInfinispanOperationGet)
+    .setHeader(CamelInfinispanKey).constant("123")
+    .setHeader(CamelInfinispanLifespanTime).constant(100L)
+    .setHeader(CamelInfinispanTimeUnit.constant(TimeUnit.MILLISECONDS.toString())
     .to("infinispan:myCacheName");
 ----
 
@@ -224,8 +224,8 @@ org.infinispan.client.hotrod.configuration.Configuration cacheContainerConfigura
 ...
 
 from("direct:start")
-    .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
-    .setHeader(InfinispanConstants.KEY).constant("123")
+    .setHeader(CamelInfinispanOperation).constant(CamelInfinispanOperationGet)
+    .setHeader(CamelInfinispanKey).constant("123")
     .to("infinispan?cacheContainerConfiguration=#cacheContainerConfiguration");
 ----
 
