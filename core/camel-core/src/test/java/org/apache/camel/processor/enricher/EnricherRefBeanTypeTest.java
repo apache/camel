@@ -22,12 +22,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EnricherRefBeanClassTest extends ContextTestSupport {
+public class EnricherRefBeanTypeTest extends ContextTestSupport {
 
     private MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
 
@@ -35,6 +36,7 @@ public class EnricherRefBeanClassTest extends ContextTestSupport {
     protected Registry createRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("cool", cool);
+        jndi.bind("latest", new UseLatestAggregationStrategy());
         return jndi;
     }
 
@@ -61,7 +63,7 @@ public class EnricherRefBeanClassTest extends ContextTestSupport {
                 cool.setCamelContext(context);
 
                 from("direct:start").enrich().simple("ref:cool")
-                        .aggregationStrategyRef("#class:org.apache.camel.processor.aggregate.UseLatestAggregationStrategy");
+                        .aggregationStrategyRef("#type:org.apache.camel.AggregationStrategy");
             }
         };
     }
