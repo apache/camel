@@ -17,6 +17,7 @@
 package org.apache.camel.component.ahc;
 
 import java.io.ByteArrayOutputStream;
+import java.util.concurrent.ExecutorService;
 
 import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.camel.AsyncCallback;
@@ -37,6 +38,8 @@ public class AhcProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AhcProducer.class);
     private final AsyncHttpClient client;
+    private ExecutorService workerPool;
+    private boolean shutdownPool;
 
     public AhcProducer(AhcEndpoint endpoint) {
         super(endpoint);
@@ -46,6 +49,24 @@ public class AhcProducer extends DefaultAsyncProducer {
     @Override
     public AhcEndpoint getEndpoint() {
         return (AhcEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (workerPool == null) {
+            workerPool = getEndpoint().getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AhcWorkerPool");
+            shutdownPool = true;
+        }
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (shutdownPool && workerPool != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(workerPool);
+            workerPool = null;
+        }
     }
 
     @Override
@@ -94,7 +115,8 @@ public class AhcProducer extends DefaultAsyncProducer {
             } catch (Exception e) {
                 exchange.setException(e);
             } finally {
-                callback.done(false);
+                // use worker pool to continue routing to avoid blocking ahc/netty threads
+                workerPool.execute(callback);
             }
         }
 
@@ -108,8 +130,8 @@ public class AhcProducer extends DefaultAsyncProducer {
             } catch (Exception e) {
                 exchange.setException(e);
             } finally {
-                // signal we are done
-                callback.done(false);
+                // use worker pool to continue routing to avoid blocking ahc/netty threads
+                workerPool.execute(callback);
             }
             return exchange;
         }
