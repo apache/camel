@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
@@ -152,6 +153,8 @@ public abstract class AbstractReifier implements BeanRepository {
     public Object lookupByName(String name) {
         if (name != null && name.startsWith("#class:")) {
             return createBean(name, Object.class);
+        } else if (name != null && name.startsWith("#type:")) {
+            return lookupBean(name, Object.class);
         } else {
             return getRegistry().lookupByName(name);
         }
@@ -160,6 +163,8 @@ public abstract class AbstractReifier implements BeanRepository {
     public <T> T lookup(String name, Class<T> type) {
         if (name != null && name.startsWith("#class:")) {
             return createBean(name, type);
+        } else if (name != null && name.startsWith("#type:")) {
+            return lookupBean(name, type);
         } else {
             return lookupByNameAndType(name, type);
         }
@@ -168,9 +173,30 @@ public abstract class AbstractReifier implements BeanRepository {
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         if (name != null && name.startsWith("#class:")) {
             return createBean(name, type);
+        } else if (name != null && name.startsWith("#type:")) {
+            return lookupBean(name, type);
         } else {
             return getRegistry().lookupByNameAndType(name, type);
         }
+    }
+
+    @Override
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
+        return getRegistry().findByTypeWithName(type);
+    }
+
+    @Override
+    public <T> Set<T> findByType(Class<T> type) {
+        return getRegistry().findByType(type);
+    }
+
+    @Override
+    public Object unwrap(Object value) {
+        return getRegistry().unwrap(value);
+    }
+
+    public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
+        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
 
     private <T> T createBean(String name, Class<T> type) {
@@ -215,23 +241,26 @@ public abstract class AbstractReifier implements BeanRepository {
         return type.cast(answer);
     }
 
-    @Override
-    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        return getRegistry().findByTypeWithName(type);
+    private <T> T lookupBean(String name, Class<T> type) {
+        try {
+            return doLookupBean(name, type);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
     }
 
-    @Override
-    public <T> Set<T> findByType(Class<T> type) {
-        return getRegistry().findByType(type);
-    }
-
-    @Override
-    public Object unwrap(Object value) {
-        return getRegistry().unwrap(value);
-    }
-
-    public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
-        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
+    private <T> T doLookupBean(String name, Class<T> type) throws ClassNotFoundException {
+        Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(name.substring(6));
+        Set<?> found = getRegistry().findByType(clazz);
+        if (found == null || found.isEmpty()) {
+            throw new NoSuchBeanException(null, clazz.getName());
+        } else if (found.size() > 1) {
+            throw new NoSuchBeanException(
+                    "Found " + found.size() + " beans of type: " + clazz + ". Only one bean expected.");
+        } else {
+            Object answer = found.iterator().next();
+            return type.cast(answer);
+        }
     }
 
 }
