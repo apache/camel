@@ -26,12 +26,15 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.reifier.language.ExpressionReifier;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public abstract class AbstractReifier implements BeanRepository {
 
@@ -147,15 +150,69 @@ public abstract class AbstractReifier implements BeanRepository {
 
     @Override
     public Object lookupByName(String name) {
-        return getRegistry().lookupByName(name);
+        if (name != null && name.startsWith("#class:")) {
+            return createBean(name, Object.class);
+        } else {
+            return getRegistry().lookupByName(name);
+        }
     }
 
     public <T> T lookup(String name, Class<T> type) {
-        return lookupByNameAndType(name, type);
+        if (name != null && name.startsWith("#class:")) {
+            return createBean(name, type);
+        } else {
+            return lookupByNameAndType(name, type);
+        }
     }
 
     public <T> T lookupByNameAndType(String name, Class<T> type) {
-        return getRegistry().lookupByNameAndType(name, type);
+        if (name != null && name.startsWith("#class:")) {
+            return createBean(name, type);
+        } else {
+            return getRegistry().lookupByNameAndType(name, type);
+        }
+    }
+
+    private <T> T createBean(String name, Class<T> type) {
+        try {
+            return doCreateBean(name, type);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+    }
+
+    private <T> T doCreateBean(String name, Class<T> type) throws Exception {
+        Object answer;
+
+        // if there is a factory method then the class/bean should be created in a different way
+        String className;
+        String factoryMethod = null;
+        String parameters = null;
+        className = name.substring(7);
+        if (className.endsWith(")") && className.indexOf('(') != -1) {
+            parameters = StringHelper.after(className, "(");
+            parameters = parameters.substring(0, parameters.length() - 1); // clip last )
+            className = StringHelper.before(className, "(");
+        }
+        if (className != null && className.indexOf('#') != -1) {
+            factoryMethod = StringHelper.after(className, "#");
+            className = StringHelper.before(className, "#");
+        }
+        Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+
+        if (factoryMethod != null && parameters != null) {
+            answer = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, clazz, factoryMethod, parameters);
+        } else if (factoryMethod != null) {
+            answer = camelContext.getInjector().newInstance(type, factoryMethod);
+        } else if (parameters != null) {
+            answer = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, parameters);
+        } else {
+            answer = camelContext.getInjector().newInstance(clazz);
+        }
+        if (answer == null) {
+            throw new IllegalStateException("Cannot create bean: " + name);
+        }
+        return type.cast(answer);
     }
 
     @Override
