@@ -116,22 +116,6 @@ If any of the above properties are set, they will override their corresponding q
 - createBucket - `bucketName` parameter is *required*, `bucketLocation` parameter is optional
 - deleteBucket - `bucketName` parameter is *required*
 
-=== Create bucket through exchange body
-If you would like to configure all the https://support.huaweicloud.com/intl/en-us/api-obs/obs_04_0021.html[parameters] when creating a bucket, you can pass a https://obssdk-intl.obs.ap-southeast-1.myhuaweicloud.com/apidoc/en/java/index.html?com/obs/services/model/CreateBucketRequest.html[CreateBucketRequest] object or a Json string into the exchange body. If the exchange body is empty, a new bucket will be created using the bucketName and bucketLocation (if provided) passed through the endpoint uri.
-
-[source,java]
-----
-from("direct:triggerRoute")
- .setBody(new CreateBucketRequest("Bucket name", "Bucket location"))
- .to("hwcloud-obs:createBucket?region=cn-north-4&authenticationKey=********&secretKey=********")
-----
-
-[source,java]
-----
-from("direct:triggerRoute")
- .setBody("{\"bucketName\":\"Bucket name\",\"location\":\"Bucket location\"}")
- .to("hwcloud-obs:createBucket?region=cn-north-4&authenticationKey=********&secretKey=********")
-----
 
 == Using ServiceKey Configuration Bean
 
