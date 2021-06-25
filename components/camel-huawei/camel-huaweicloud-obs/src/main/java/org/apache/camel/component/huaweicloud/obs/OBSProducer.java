@@ -117,11 +117,11 @@ public class OBSProducer extends DefaultProducer {
             try {
                 request = new ObjectMapper().readValue(strBody, CreateBucketRequest.class);
             } catch (JsonProcessingException e) {
-                throw new IllegalArgumentException("String request body must be a valid JSON");
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn(
+                            "String request body must be a valid JSON representation of a CreateBucketRequest. Attempting to create a bucket from endpoint parameters");
+                }
             }
-        } else if (exchangeBody != null) {
-            throw new IllegalArgumentException(
-                    "Exchange body should be a valid JSON string or CreateBucketRequest object. If no exchange body is provided, a new bucket will be created from endpoint parameters");
         }
 
         // if no CreateBucketRequest was found in the exchange body, then create one from endpoint parameters (Basic users)
@@ -137,7 +137,7 @@ public class OBSProducer extends DefaultProducer {
             // check for bucket location, which is optional to create a new bucket
             if (ObjectHelper.isEmpty(clientConfigurations.getBucketLocation())) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("No bucket location given, defaulting to 'cn-north-1'");
+                    LOG.warn("No bucket location given, defaulting to '" + OBSConstants.DEFAULT_LOCATION + "'");
                 }
                 clientConfigurations.setBucketLocation(OBSConstants.DEFAULT_LOCATION);
             }
