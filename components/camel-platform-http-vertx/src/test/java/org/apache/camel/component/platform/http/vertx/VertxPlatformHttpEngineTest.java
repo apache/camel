@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import javax.activation.DataHandler;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.vertx.core.VertxOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -402,6 +403,35 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .body(is("{foo=bar, cheese=wine}"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testTextContentPost() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("platform-http:/text/post")
+                            .log("POST:/test/post has body ${body}");
+                }
+            });
+
+            context.start();
+
+            String payload = "Hello World";
+            given()
+                    .contentType(ContentType.TEXT)
+                    .body(payload)
+                    .when()
+                    .post("/text/post")
+                    .then()
+                    .statusCode(200)
+                    .body(is(payload));
         } finally {
             context.stop();
         }
