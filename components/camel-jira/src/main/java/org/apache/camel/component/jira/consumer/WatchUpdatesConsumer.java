@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jira.consumer;
 
 import java.lang.reflect.Method;
@@ -97,7 +96,7 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
         Object changedField = get.invoke(changed);
 
         if (!Objects.equals(originalField, changedField)) {
-            if (!((JiraEndpoint) getEndpoint()).isSendOnlyUpdatedField()) {
+            if (!getEndpoint().isSendOnlyUpdatedField()) {
                 processExchange(changed, changed.getKey(), fieldName);
             } else {
                 processExchange(changedField, changed.getKey(), fieldName);
