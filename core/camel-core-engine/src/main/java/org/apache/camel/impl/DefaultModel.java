@@ -70,6 +70,7 @@ import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.function.Suppliers;
 
 public class DefaultModel implements Model {
@@ -425,19 +426,69 @@ public class DefaultModel implements Model {
                     }));
                 }
             } else if (b.getBeanClass() != null || b.getType() != null && b.getType().startsWith("#class:")) {
-                Class<?> clazz = b.getBeanClass() != null
-                        ? b.getBeanClass() : camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(7));
-                // we only have the bean class so we use that to create a new bean via the injector
-                // and memorize so the bean is only created once and the local bean is the same
-                // if a route template refers to the local bean multiple times
-                routeTemplateContext.bind(b.getName(), clazz,
-                        Suppliers.memorize(() -> {
-                            Object local = camelContext.getInjector().newInstance(clazz);
+                // if there is a factory method then the class/bean should be created in a different way
+                String className = null;
+                String factoryMethod = null;
+                String parameters = null;
+                if (b.getType() != null) {
+                    className = b.getType().substring(7);
+                    if (className.endsWith(")") && className.indexOf('(') != -1) {
+                        parameters = StringHelper.after(className, "(");
+                        parameters = parameters.substring(0, parameters.length() - 1); // clip last )
+                        className = StringHelper.before(className, "(");
+                    }
+                    if (className != null && className.indexOf('#') != -1) {
+                        factoryMethod = StringHelper.after(className, "#");
+                        className = StringHelper.before(className, "#");
+                    }
+                }
+                if (className != null && (factoryMethod != null || parameters != null)) {
+                    final Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+                    final String fqn = className;
+                    final String fm = factoryMethod;
+                    final String fp = parameters;
+                    routeTemplateContext.bind(b.getName(), Object.class, Suppliers.memorize(() -> {
+                        try {
+                            Object local;
+                            if (fm != null) {
+                                if (fp != null) {
+                                    // special to support factory method parameters
+                                    local = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, clazz, fm, fp);
+                                } else {
+                                    local = camelContext.getInjector().newInstance(clazz, fm);
+                                }
+                                if (local == null) {
+                                    throw new IllegalStateException(
+                                            "Cannot create bean instance using factory method: " + fqn + "#" + fm);
+                                }
+                            } else {
+                                // special to support constructor parameters
+                                local = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, fp);
+                            }
                             if (!props.isEmpty()) {
                                 setPropertiesOnTarget(camelContext, local, props);
                             }
                             return local;
-                        }));
+                        } catch (Exception e) {
+                            throw new IllegalStateException(
+                                    "Cannot create bean: " + b.getType());
+                        }
+                    }));
+                } else {
+                    Class<?> clazz = b.getBeanClass() != null
+                            ? b.getBeanClass() : camelContext.getClassResolver().resolveMandatoryClass(className);
+                    // we only have the bean class so we use that to create a new bean via the injector
+                    // and memorize so the bean is only created once and the local bean is the same
+                    // if a route template refers to the local bean multiple times
+                    routeTemplateContext.bind(b.getName(), clazz,
+                            Suppliers.memorize(() -> {
+                                Object local = camelContext.getInjector().newInstance(clazz);
+                                if (!props.isEmpty()) {
+                                    setPropertiesOnTarget(camelContext, local, props);
+                                }
+                                return local;
+                            }));
+                }
             } else if (b.getType() != null && b.getType().startsWith("#type:")) {
                 Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(6));
                 Set<?> found = getCamelContext().getRegistry().findByType(clazz);

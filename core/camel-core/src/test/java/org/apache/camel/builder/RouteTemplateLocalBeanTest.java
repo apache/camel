@@ -692,6 +692,70 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
+    public void testLocalBeanFactoryMethod() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateBean("myBar")
+                        .type("#class:org.apache.camel.builder.RouteTemplateLocalBeanTest#createBuilderProcessorThree('MyPrefix ')")
+                        .end()
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("MyPrefix Builder3 World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    @Test
+    public void testLocalBeanConstructorParameter() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateBean("myBar").type("#class:org.apache.camel.builder.MyConstructorProcessor('MyCtr ')").end()
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("MyCtr World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
     public static class BuilderTwoProcessor implements Processor {
 
         private String prefix = "";
@@ -737,6 +801,12 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
     public Processor createBuilderProcessorTwo(RouteTemplateContext rtc) {
         return new BuilderTwoProcessor(rtc.getProperty("greeting", String.class));
+    }
+
+    public static Processor createBuilderProcessorThree(String prefix) {
+        BuilderThreeProcessor answer = new BuilderThreeProcessor();
+        answer.setPrefix(prefix);
+        return answer;
     }
 
 }
