@@ -39,7 +39,7 @@ public class ScanCommand extends AbstractDdbCommand {
 
         Map<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.ITEMS, result.items());
-        tmp.put(Ddb2Constants.LAST_EVALUATED_KEY, result.lastEvaluatedKey());
+        tmp.put(Ddb2Constants.LAST_EVALUATED_KEY, result.hasLastEvaluatedKey() ? result.lastEvaluatedKey() : null);
         tmp.put(Ddb2Constants.CONSUMED_CAPACITY, result.consumedCapacity());
         tmp.put(Ddb2Constants.COUNT, result.count());
         tmp.put(Ddb2Constants.SCANNED_COUNT, result.scannedCount());
