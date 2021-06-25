@@ -1,7 +1,7 @@
 [[bean-eip]]
 = Bean EIP
 :docTitle: Bean
-:description: Calls a java bean
+:description: Calls a Java bean
 :since: 
 :supportLevel: Stable
 
@@ -25,11 +25,11 @@ The Bean EIP supports 5 options which are listed below:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *ref* | Sets a reference to a bean to use |  | String
+| *ref* | Sets a reference to an exiting bean to use, which is looked up from the registry |  | String
 | *method* | Sets the method name on the bean to use |  | String
-| *beanType* | Sets the Class of the bean |  | String
+| *beanType* | Sets the class name (fully qualified) of the bean to use |  | String
 | *cache* | *Deprecated* Use singleton option instead | true | Boolean
-| *scope* | Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time. When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean while processing a request and you want to call the same bean instance multiple times while processing the request. The bean does not have to be thread-safe as the instance is only called from the same request. When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope. so when using prototype scope then this depends on the bean registry implementation. | Singleton | String
+| *scope* | Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time. When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean while processing a request and you want to call the same bean instance multiple times while processing the request. The bean does not have to be thread-safe as the instance is only called from the same request. When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope. So when using prototype scope then this depends on the bean registry implementation. | Singleton | String
 |===
 // eip options: END
 
