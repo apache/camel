@@ -51,8 +51,7 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
         }
     }
 
-    @Override
-    protected int poll() throws Exception {
+    protected int doPoll() throws Exception {
         // it may happen the poll() is called while the route is doing the initial load,
         // this way we need to wait for the latestIssueId being associated to the last indexed issue id
         int nMessages = 0;
