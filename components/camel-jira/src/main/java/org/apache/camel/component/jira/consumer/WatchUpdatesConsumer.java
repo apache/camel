@@ -55,8 +55,8 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
     private void initIssues() {
         watchedIssues = new HashMap<>();
-        List<Issue> issues = getIssues(((JiraEndpoint) getEndpoint()).getJql(), 0, 50,
-                ((JiraEndpoint) getEndpoint()).getMaxResults());
+        List<Issue> issues = getIssues(getEndpoint().getJql(), 0, 50,
+                getEndpoint().getMaxResults());
         issues.forEach(i -> watchedIssues.put(i.getId(), i));
         watchedIssuesKeys = issues.stream()
                 .map(Issue::getKey)
@@ -64,9 +64,9 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {
-        List<Issue> issues = getIssues(((JiraEndpoint) getEndpoint()).getJql(), 0, 50,
-                ((JiraEndpoint) getEndpoint()).getMaxResults());
+    protected int doPoll() throws Exception {
+        List<Issue> issues = getIssues(getEndpoint().getJql(), 0, 50,
+                getEndpoint().getMaxResults());
         if (watchedIssues.values().size() != issues.size()) {
             init();
         }
