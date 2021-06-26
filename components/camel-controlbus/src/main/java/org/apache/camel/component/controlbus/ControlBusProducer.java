@@ -73,7 +73,7 @@ public class ControlBusProducer extends DefaultAsyncProducer {
         return true;
     }
 
-    protected void processByLanguage(Exchange exchange, Language language) throws Exception {
+    protected void processByLanguage(Exchange exchange, Language language) {
         LanguageTask task = new LanguageTask(exchange, language);
         if (getEndpoint().isAsync()) {
             getEndpoint().getComponent().getExecutorService().submit(task);
@@ -82,7 +82,7 @@ public class ControlBusProducer extends DefaultAsyncProducer {
         }
     }
 
-    protected void processByAction(Exchange exchange) throws Exception {
+    protected void processByAction(Exchange exchange) {
         ActionTask task = new ActionTask(exchange);
         if (getEndpoint().isAsync()) {
             getEndpoint().getComponent().getExecutorService().submit(task);

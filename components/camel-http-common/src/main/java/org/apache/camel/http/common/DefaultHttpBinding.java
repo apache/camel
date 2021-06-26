@@ -220,7 +220,7 @@ public class DefaultHttpBinding implements HttpBinding {
         populateAttachments(request, message);
     }
 
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
         Enumeration<?> names = request.getParameterNames();
@@ -448,7 +448,7 @@ public class DefaultHttpBinding implements HttpBinding {
         int codeToUse = currentCode == null ? defaultCode : currentCode;
 
         if (codeToUse != 500) {
-            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+            if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
                 // no content 
                 codeToUse = currentCode == null ? 204 : currentCode;
             }

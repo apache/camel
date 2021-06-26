@@ -42,6 +42,8 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
         case "showall":
         case "showAll": target.setShowAll(property(camelContext, boolean.class, value)); return true;
+        case "showallproperties":
+        case "showAllProperties": target.setShowAllProperties(property(camelContext, boolean.class, value)); return true;
         case "showbody":
         case "showBody": target.setShowBody(property(camelContext, boolean.class, value)); return true;
         case "showbodytype":
@@ -97,6 +99,8 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "multiline": return boolean.class;
         case "showall":
         case "showAll": return boolean.class;
+        case "showallproperties":
+        case "showAllProperties": return boolean.class;
         case "showbody":
         case "showBody": return boolean.class;
         case "showbodytype":
@@ -153,6 +157,8 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "multiline": return target.isMultiline();
         case "showall":
         case "showAll": return target.isShowAll();
+        case "showallproperties":
+        case "showAllProperties": return target.isShowAllProperties();
         case "showbody":
         case "showBody": return target.isShowBody();
         case "showbodytype":

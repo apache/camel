@@ -1090,7 +1090,7 @@ public class XmlConverter {
             sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (Exception e) {
             LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
-                    new Object[] { "http://xml.org/sax/features/external-general-entities", false, e.getMessage() });
+                    "http://xml.org/sax/features/external-general-entities", false, e.getMessage());
         }
         sfactory.setNamespaceAware(true);
         return sfactory;

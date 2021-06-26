@@ -155,7 +155,7 @@ public final class ServerAnnotationProcessor {
             if (ntlmHandler != null) {
                 Class<?> ntlmProviderClass = createLdapServer.ntlmProvider();
                 // default value is a invalid Object.class
-                if ((ntlmProviderClass != null) && (ntlmProviderClass != Object.class)) {
+                if (ntlmProviderClass != null && ntlmProviderClass != Object.class) {
                     try {
                         ntlmHandler.setNtlmProvider((NtlmProvider) ntlmProviderClass
                                 .getDeclaredConstructor().newInstance());

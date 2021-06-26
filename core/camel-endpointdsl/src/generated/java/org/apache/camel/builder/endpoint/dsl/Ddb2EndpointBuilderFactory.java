@@ -31,7 +31,7 @@ public interface Ddb2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 DynamoDB component.
+     * Builder for endpoint for the AWS DynamoDB component.
      */
     public interface Ddb2EndpointBuilder extends EndpointProducerBuilder {
         /**
@@ -553,7 +553,7 @@ public interface Ddb2EndpointBuilderFactory {
 
     public interface Ddb2Builders {
         /**
-         * AWS 2 DynamoDB (camel-aws2-ddb)
+         * AWS DynamoDB (camel-aws2-ddb)
          * Store and retrieve data from AWS DynamoDB service using AWS SDK
          * version 2.x.
          * 
@@ -573,7 +573,7 @@ public interface Ddb2EndpointBuilderFactory {
             return Ddb2EndpointBuilderFactory.endpointBuilder("aws2-ddb", path);
         }
         /**
-         * AWS 2 DynamoDB (camel-aws2-ddb)
+         * AWS DynamoDB (camel-aws2-ddb)
          * Store and retrieve data from AWS DynamoDB service using AWS SDK
          * version 2.x.
          * 

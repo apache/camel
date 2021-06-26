@@ -143,6 +143,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         executeOther();
         executeDataFormat();
         executeLanguage();
+        File engine = findCamelDirectory(project.getBasedir(), "camel-core-engine");
+        eipDocDir = new File(engine, "/src/main/docs/modules/eips/pages");
         executeEips();
     }
 

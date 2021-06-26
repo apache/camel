@@ -29,7 +29,7 @@
 
   <artifactId>camel-huaweicloud-iam</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Huawei Cloud IAM Component</name>
+  <name>Camel :: Huawei Cloud :: IAM Component</name>
   <description>To securely manage users on Huawei Cloud</description>
 
   <dependencies>

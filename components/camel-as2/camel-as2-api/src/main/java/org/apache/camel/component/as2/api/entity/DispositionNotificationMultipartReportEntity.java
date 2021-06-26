@@ -71,8 +71,7 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
         return AS2MimeType.MULTIPART_REPORT + "; report-type=disposition-notification; boundary=\"" + boundary + "\"";
     }
 
-    protected TextPlainEntity buildPlainTextReport(String mdnMessage)
-            throws HttpException {
+    protected TextPlainEntity buildPlainTextReport(String mdnMessage) {
         return new TextPlainEntity(mdnMessage, AS2Charset.US_ASCII, AS2TransferEncoding.SEVENBIT, false);
     }
 

@@ -54,7 +54,7 @@ public class AnnotationModelLoader {
         this.filter = filter;
     }
 
-    public Set<Class<?>> loadModels(String... packageNames) throws Exception {
+    public Set<Class<?>> loadModels(String... packageNames) {
         Set<Class<?>> results = resolver.findAnnotated(annotations, packageNames);
 
         //TODO;  this logic could be moved into the PackageScanClassResolver by creating:

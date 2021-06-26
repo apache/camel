@@ -93,7 +93,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doSelectOne(Exchange exchange, SqlSession session) throws Exception {
+    private void doSelectOne(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -107,7 +107,7 @@ public class MyBatisProducer extends DefaultProducer {
         doProcessResult(exchange, result, session);
     }
 
-    private void doSelectList(Exchange exchange, SqlSession session) throws Exception {
+    private void doSelectList(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -121,7 +121,7 @@ public class MyBatisProducer extends DefaultProducer {
         doProcessResult(exchange, result, session);
     }
 
-    private void doInsert(Exchange exchange, SqlSession session) throws Exception {
+    private void doInsert(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -140,7 +140,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doInsertList(Exchange exchange, SqlSession session) throws Exception {
+    private void doInsertList(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -155,7 +155,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doUpdate(Exchange exchange, SqlSession session) throws Exception {
+    private void doUpdate(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -174,7 +174,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doUpdateList(Exchange exchange, SqlSession session) throws Exception {
+    private void doUpdateList(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -189,7 +189,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doDelete(Exchange exchange, SqlSession session) throws Exception {
+    private void doDelete(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -208,7 +208,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doDeleteList(Exchange exchange, SqlSession session) throws Exception {
+    private void doDeleteList(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {

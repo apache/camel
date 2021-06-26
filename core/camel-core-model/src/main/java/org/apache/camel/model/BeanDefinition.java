@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Calls a java bean
+ * Calls a Java bean
  */
 @Metadata(label = "eip,endpoint")
 @XmlRootElement(name = "bean")
@@ -101,7 +101,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
 
     /**
-     * Sets a reference to a bean to use
+     * Sets a reference to an exiting bean to use, which is looked up from the registry
      */
     public void setRef(String ref) {
         this.ref = ref;
@@ -119,7 +119,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
 
     /**
-     * Sets an instance of the bean to use
+     * Sets an existing instance of the bean to use
      */
     public void setBean(Object bean) {
         this.bean = bean;
@@ -134,7 +134,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
 
     /**
-     * Sets the Class of the bean
+     * Sets the class name (fully qualified) of the bean to use
      */
     public void setBeanType(String beanType) {
         this.beanType = beanType;
@@ -145,12 +145,13 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
 
     /**
-     * Sets the Class of the bean
+     * Sets the class name (fully qualified) of the bean to use
      */
     public void setBeanType(Class<?> beanType) {
         this.beanClass = beanType;
     }
 
+    @Deprecated
     public String getCache() {
         if (scope == null || BeanScope.Singleton.name().equals(scope)) {
             return "true";
@@ -162,6 +163,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     /**
      * Use singleton option instead
      */
+    @Deprecated
     public void setCache(String cache) {
         if ("true".equals(cache)) {
             scope = BeanScope.Singleton.name();
@@ -188,7 +190,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
      * times while processing the request. The bean does not have to be thread-safe as the instance is only called from
      * the same request. When using prototype scope, then the bean will be looked up or created per call. However in
      * case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on
-     * their configuration can act as either singleton or prototype scope. so when using prototype scope then this
+     * their configuration can act as either singleton or prototype scope. So when using prototype scope then this
      * depends on the bean registry implementation.
      */
     public void setScope(BeanScope scope) {

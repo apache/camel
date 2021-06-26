@@ -874,7 +874,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Athena (camel-aws2-athena)
+     * AWS Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 
      * Category: cloud,database
@@ -894,7 +894,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.endpointBuilder("aws2-athena", path);
     }
     /**
-     * AWS 2 Athena (camel-aws2-athena)
+     * AWS Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 
      * Category: cloud,database
@@ -917,7 +917,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 CloudWatch (camel-aws2-cw)
+     * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
      * 
      * Category: cloud,monitoring
@@ -937,7 +937,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.endpointBuilder("aws2-cw", path);
     }
     /**
-     * AWS 2 CloudWatch (camel-aws2-cw)
+     * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
      * 
      * Category: cloud,monitoring
@@ -960,7 +960,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 DynamoDB (camel-aws2-ddb)
+     * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB service using AWS SDK version
      * 2.x.
      * 
@@ -981,7 +981,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.endpointBuilder("aws2-ddb", path);
     }
     /**
-     * AWS 2 DynamoDB (camel-aws2-ddb)
+     * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB service using AWS SDK version
      * 2.x.
      * 
@@ -1005,7 +1005,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+     * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream service using AWS SDK version
      * 2.x.
      * 
@@ -1026,7 +1026,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.endpointBuilder("aws2-ddbstream", path);
     }
     /**
-     * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+     * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream service using AWS SDK version
      * 2.x.
      * 
@@ -1050,7 +1050,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
+     * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1070,7 +1070,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.endpointBuilder("aws2-ec2", path);
     }
     /**
-     * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
+     * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1093,7 +1093,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Elastic Container Service (ECS) (camel-aws2-ecs)
+     * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
      * Manage AWS ECS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1113,7 +1113,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory.endpointBuilder("aws2-ecs", path);
     }
     /**
-     * AWS 2 Elastic Container Service (ECS) (camel-aws2-ecs)
+     * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
      * Manage AWS ECS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1136,7 +1136,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Elastic Kubernetes Service (EKS) (camel-aws2-eks)
+     * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
      * Manage AWS EKS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1156,7 +1156,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.endpointBuilder("aws2-eks", path);
     }
     /**
-     * AWS 2 Elastic Kubernetes Service (EKS) (camel-aws2-eks)
+     * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
      * Manage AWS EKS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1179,7 +1179,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Eventbridge (camel-aws2-eventbridge)
+     * AWS Eventbridge (camel-aws2-eventbridge)
      * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1199,7 +1199,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.endpointBuilder("aws2-eventbridge", path);
     }
     /**
-     * AWS 2 Eventbridge (camel-aws2-eventbridge)
+     * AWS Eventbridge (camel-aws2-eventbridge)
      * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1222,7 +1222,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Identity and Access Management (IAM) (camel-aws2-iam)
+     * AWS Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1242,7 +1242,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder("aws2-iam", path);
     }
     /**
-     * AWS 2 Identity and Access Management (IAM) (camel-aws2-iam)
+     * AWS Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1265,7 +1265,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Kinesis (camel-aws2-kinesis)
+     * AWS Kinesis (camel-aws2-kinesis)
      * Consume and produce records from and to AWS Kinesis Streams using AWS SDK
      * version 2.x.
      * 
@@ -1286,7 +1286,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.endpointBuilder("aws2-kinesis", path);
     }
     /**
-     * AWS 2 Kinesis (camel-aws2-kinesis)
+     * AWS Kinesis (camel-aws2-kinesis)
      * Consume and produce records from and to AWS Kinesis Streams using AWS SDK
      * version 2.x.
      * 
@@ -1310,7 +1310,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
+     * AWS Kinesis Firehose (camel-aws2-kinesis)
      * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
      * 
      * Category: cloud,messaging
@@ -1330,7 +1330,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory.endpointBuilder("aws2-kinesis-firehose", path);
     }
     /**
-     * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
+     * AWS Kinesis Firehose (camel-aws2-kinesis)
      * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
      * 
      * Category: cloud,messaging
@@ -1353,7 +1353,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Key Management Service (KMS) (camel-aws2-kms)
+     * AWS Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1373,7 +1373,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.endpointBuilder("aws2-kms", path);
     }
     /**
-     * AWS 2 Key Management Service (KMS) (camel-aws2-kms)
+     * AWS Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1396,7 +1396,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Lambda (camel-aws2-lambda)
+     * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
      * 
      * Category: cloud,computing,serverless
@@ -1416,7 +1416,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder("aws2-lambda", path);
     }
     /**
-     * AWS 2 Lambda (camel-aws2-lambda)
+     * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
      * 
      * Category: cloud,computing,serverless
@@ -1439,7 +1439,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 MQ (camel-aws2-mq)
+     * AWS MQ (camel-aws2-mq)
      * Manage AWS MQ instances using AWS SDK version 2.x.
      * 
      * Category: cloud,messaging
@@ -1459,7 +1459,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.endpointBuilder("aws2-mq", path);
     }
     /**
-     * AWS 2 MQ (camel-aws2-mq)
+     * AWS MQ (camel-aws2-mq)
      * Manage AWS MQ instances using AWS SDK version 2.x.
      * 
      * Category: cloud,messaging
@@ -1482,7 +1482,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
+     * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1502,7 +1502,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory.endpointBuilder("aws2-msk", path);
     }
     /**
-     * AWS 2 Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
+     * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1525,7 +1525,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 S3 Storage Service (camel-aws2-s3)
+     * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
      * version 2.x.
      * 
@@ -1546,7 +1546,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.endpointBuilder("aws2-s3", path);
     }
     /**
-     * AWS 2 S3 Storage Service (camel-aws2-s3)
+     * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
      * version 2.x.
      * 
@@ -1570,7 +1570,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Simple Email Service (SES) (camel-aws2-ses)
+     * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service using AWS SDK version 2.x.
      * 
      * Category: cloud,mail
@@ -1590,7 +1590,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.endpointBuilder("aws2-ses", path);
     }
     /**
-     * AWS 2 Simple Email Service (SES) (camel-aws2-ses)
+     * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service using AWS SDK version 2.x.
      * 
      * Category: cloud,mail
@@ -1613,7 +1613,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Simple Notification System (SNS) (camel-aws2-sns)
+     * AWS Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to an AWS Simple Notification Topic using AWS SDK version
      * 2.x.
      * 
@@ -1634,7 +1634,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.endpointBuilder("aws2-sns", path);
     }
     /**
-     * AWS 2 Simple Notification System (SNS) (camel-aws2-sns)
+     * AWS Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to an AWS Simple Notification Topic using AWS SDK version
      * 2.x.
      * 
@@ -1658,7 +1658,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Simple Queue Service (SQS) (camel-aws2-sqs)
+     * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
      * Sending and receive messages to/from AWS SQS service using AWS SDK
      * version 2.x.
      * 
@@ -1679,7 +1679,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder("aws2-sqs", path);
     }
     /**
-     * AWS 2 Simple Queue Service (SQS) (camel-aws2-sqs)
+     * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
      * Sending and receive messages to/from AWS SQS service using AWS SDK
      * version 2.x.
      * 
@@ -1703,7 +1703,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Security Token Service (STS) (camel-aws2-sts)
+     * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1723,7 +1723,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.endpointBuilder("aws2-sts", path);
     }
     /**
-     * AWS 2 Security Token Service (STS) (camel-aws2-sts)
+     * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1746,7 +1746,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS 2 Translate (camel-aws2-translate)
+     * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -1766,7 +1766,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate", path);
     }
     /**
-     * AWS 2 Translate (camel-aws2-translate)
+     * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -6745,7 +6745,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * FunctionGraph (camel-huaweicloud-functiongraph)
+     * Huawei Cloud FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless
@@ -6765,7 +6765,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.endpointBuilder("hwcloud-functiongraph", path);
     }
     /**
-     * FunctionGraph (camel-huaweicloud-functiongraph)
+     * Huawei Cloud FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless
@@ -6788,7 +6788,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * IAM (camel-huaweicloud-iam)
+     * Huawei Cloud Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
      * 
      * Category: cloud
@@ -6808,7 +6808,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder("hwcloud-iam", path);
     }
     /**
-     * IAM (camel-huaweicloud-iam)
+     * Huawei Cloud Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
      * 
      * Category: cloud
@@ -6831,8 +6831,9 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * SimpleNotification (camel-huaweicloud-smn)
-     * Huawei Cloud component to integrate with SimpleNotification services
+     * Huawei Cloud Simple Message Notification (SMN) (camel-huaweicloud-smn)
+     * To broadcast messages and connect cloud services through notifications on
+     * Huawei Cloud
      * 
      * Category: cloud,messaging
      * Since: 3.8
@@ -6851,8 +6852,9 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.endpointBuilder("hwcloud-smn", path);
     }
     /**
-     * SimpleNotification (camel-huaweicloud-smn)
-     * Huawei Cloud component to integrate with SimpleNotification services
+     * Huawei Cloud Simple Message Notification (SMN) (camel-huaweicloud-smn)
+     * To broadcast messages and connect cloud services through notifications on
+     * Huawei Cloud
      * 
      * Category: cloud,messaging
      * Since: 3.8

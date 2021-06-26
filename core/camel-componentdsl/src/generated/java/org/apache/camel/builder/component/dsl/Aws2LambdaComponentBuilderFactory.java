@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.lambda.Lambda2Component;
 public interface Aws2LambdaComponentBuilderFactory {
 
     /**
-     * AWS 2 Lambda (camel-aws2-lambda)
+     * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
      * 
      * Category: cloud,computing,serverless
@@ -45,7 +45,7 @@ public interface Aws2LambdaComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Lambda component.
+     * Builder for the AWS Lambda component.
      */
     interface Aws2LambdaComponentBuilder
             extends

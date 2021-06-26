@@ -80,7 +80,7 @@ public class DockerComponent extends DefaultComponent {
         return configuration;
     }
 
-    public DockerClient getClient(DockerClientProfile clientProfile) throws DockerException {
+    public DockerClient getClient(DockerClientProfile clientProfile) {
         return clients.get(clientProfile);
     }
 

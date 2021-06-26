@@ -125,10 +125,10 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     private static final Logger LOG = LoggerFactory.getLogger(PGPKeyAccessDataFormat.class);
 
-    private static final List<String> SIGNATURE_VERIFICATION_OPTIONS = Arrays.asList(new String[] {
+    private static final List<String> SIGNATURE_VERIFICATION_OPTIONS = Arrays.asList(
             SIGNATURE_VERIFICATION_OPTION_OPTIONAL,
             SIGNATURE_VERIFICATION_OPTION_REQUIRED, SIGNATURE_VERIFICATION_OPTION_IGNORE,
-            SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED });
+            SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
 
     private static final String BC = "BC";
     private static final int BUFFER_SIZE = 16 * 1024;
@@ -427,7 +427,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     private DecryptedDataAndPPublicKeyEncryptedData getDecryptedData(Exchange exchange, InputStream encryptedStream)
-            throws Exception, PGPException {
+            throws Exception {
         PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream, new BcKeyFingerprintCalculator());
         Object firstObject = pgpFactory.nextObject();
         // the first object might be a PGP marker packet 

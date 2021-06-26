@@ -202,16 +202,16 @@ public interface KameletComponentBuilderFactory {
          * Kamelets from external resources.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.kamelet.KameletResourceLoaderListener&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.spi.RouteTemplateLoaderListener&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
-         * @param kameletResourceLoaderListener the value to set
+         * @param routeTemplateLoaderListener the value to set
          * @return the dsl builder
          */
-        default KameletComponentBuilder kameletResourceLoaderListener(
-                org.apache.camel.component.kamelet.KameletResourceLoaderListener kameletResourceLoaderListener) {
-            doSetProperty("kameletResourceLoaderListener", kameletResourceLoaderListener);
+        default KameletComponentBuilder routeTemplateLoaderListener(
+                org.apache.camel.spi.RouteTemplateLoaderListener routeTemplateLoaderListener) {
+            doSetProperty("routeTemplateLoaderListener", routeTemplateLoaderListener);
             return this;
         }
     }
@@ -239,7 +239,7 @@ public interface KameletComponentBuilderFactory {
             case "lazyStartProducer": ((KameletComponent) component).setLazyStartProducer((boolean) value); return true;
             case "timeout": ((KameletComponent) component).setTimeout((long) value); return true;
             case "autowiredEnabled": ((KameletComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "kameletResourceLoaderListener": ((KameletComponent) component).setKameletResourceLoaderListener((org.apache.camel.component.kamelet.KameletResourceLoaderListener) value); return true;
+            case "routeTemplateLoaderListener": ((KameletComponent) component).setRouteTemplateLoaderListener((org.apache.camel.spi.RouteTemplateLoaderListener) value); return true;
             default: return false;
             }
         }

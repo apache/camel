@@ -17,6 +17,7 @@
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.idempotent.jdbc.JdbcOrphanLockAwareIdempotentRepository.ProcessorNameAndMessageId;
@@ -29,6 +30,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -78,7 +80,8 @@ public class JdbcOrphanLockAwareIdempotentRepositoryTest {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis() - 5 * 60 * 1000L);
         template.update("UPDATE CAMEL_MESSAGEPROCESSED SET createdAT = ? WHERE processorName = ? AND messageId = ?", timestamp,
                 APP_NAME, "FILE_4");
-        assertFalse(jdbcMessageIdRepository.contains("FILE_4"));
+
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !jdbcMessageIdRepository.contains("FILE_4"));
         jdbcMessageIdRepository.keepAlive();
         assertTrue(jdbcMessageIdRepository.contains("FILE_4"));
     }

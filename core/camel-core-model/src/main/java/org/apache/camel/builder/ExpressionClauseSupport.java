@@ -179,18 +179,18 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
-     * @param  bean the name of the bean looked up the registry
-     * @return      the builder to continue processing the DSL
+     * @param  ref the name (bean id) of the bean to lookup from the registry
+     * @return     the builder to continue processing the DSL
      */
-    public T method(String bean) {
-        return expression(new MethodCallExpression(bean));
+    public T method(String ref) {
+        return expression(new MethodCallExpression(ref));
     }
 
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
-     * @param  instance the instance of the bean
+     * @param  instance the existing instance of the bean
      * @return          the builder to continue processing the DSL
      */
     public T method(Object instance) {
@@ -200,6 +200,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
+     *
+     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+     * otherwise a new bean is created (requires a default no-arg constructor).
      *
      * @param  beanType the Class of the bean which we want to invoke
      * @return          the builder to continue processing the DSL
@@ -212,24 +215,24 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
-     * @param  bean   the name of the bean looked up the registry
+     * @param  ref    the name (bean id) of the bean to lookup from the registry
      * @param  method the name of the method to invoke on the bean
      * @return        the builder to continue processing the DSL
      */
-    public T method(String bean, String method) {
-        return expression(new MethodCallExpression(bean, method));
+    public T method(String ref, String method) {
+        return expression(new MethodCallExpression(ref, method));
     }
 
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
-     * @param  bean  the name of the bean looked up the registry
+     * @param  ref   the name (bean id) of the bean to lookup from the registry
      * @param  scope the scope of the bean
      * @return       the builder to continue processing the DSL
      */
-    public T method(String bean, BeanScope scope) {
-        MethodCallExpression exp = new MethodCallExpression(bean);
+    public T method(String ref, BeanScope scope) {
+        MethodCallExpression exp = new MethodCallExpression(ref);
         exp.setScope(scope.name());
         return expression(exp);
     }
@@ -238,13 +241,13 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
-     * @param  bean   the name of the bean looked up the registry
+     * @param  ref    the name (bean id) of the bean to lookup from the registry
      * @param  method the name of the method to invoke on the bean
      * @param  scope  the scope of the bean
      * @return        the builder to continue processing the DSL
      */
-    public T method(String bean, String method, BeanScope scope) {
-        MethodCallExpression exp = new MethodCallExpression(bean, method);
+    public T method(String ref, String method, BeanScope scope) {
+        MethodCallExpression exp = new MethodCallExpression(ref, method);
         exp.setScope(scope.name());
         return expression(exp);
     }
@@ -253,7 +256,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
-     * @param  instance the instance of the bean
+     * @param  instance the existing instance of the bean
      * @param  method   the name of the method to invoke on the bean
      * @return          the builder to continue processing the DSL
      */
@@ -264,6 +267,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
+     *
+     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+     * otherwise a new bean is created (requires a default no-arg constructor).
      *
      * @param  beanType the Class of the bean which we want to invoke
      * @param  method   the name of the method to invoke on the bean
@@ -276,6 +282,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
+     *
+     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+     * otherwise a new bean is created (requires a default no-arg constructor).
      *
      * @param  beanType the Class of the bean which we want to invoke
      * @param  scope    the scope of the bean
@@ -290,6 +299,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
+     *
+     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+     * otherwise a new bean is created (requires a default no-arg constructor).
      *
      * @param  beanType the Class of the bean which we want to invoke
      * @param  method   the name of the method to invoke on the bean

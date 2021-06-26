@@ -100,7 +100,7 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
 
         final Map<String, String> properties = camelContext.getGlobalOptions();
         LoggingLevel rollbackLoggingLevel = definition.getRollbackLoggingLevel();
-        if ((properties != null) && properties.containsKey(ROLLBACK_LOGGING_LEVEL_PROPERTY)) {
+        if (properties != null && properties.containsKey(ROLLBACK_LOGGING_LEVEL_PROPERTY)) {
             rollbackLoggingLevel = LoggingLevel.valueOf(properties.get(ROLLBACK_LOGGING_LEVEL_PROPERTY));
         }
 

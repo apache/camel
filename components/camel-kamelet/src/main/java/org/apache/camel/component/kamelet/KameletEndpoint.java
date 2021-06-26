@@ -43,6 +43,9 @@ public class KameletEndpoint extends DefaultEndpoint {
     @Metadata
     @UriPath(description = "The Route ID", defaultValueNote = "The ID will be auto-generated if not provided")
     private final String routeId;
+    @UriParam(description = "Location of the Kamelet to use which can be specified as a resource from file system, classpath etc."
+                            + " The location cannot use wildcards, and must refer to a file including extension, for example file:/etc/foo-kamelet.xml")
+    private String location;
 
     @UriParam(label = "producer", defaultValue = "true")
     private boolean block = true;
@@ -125,6 +128,14 @@ public class KameletEndpoint extends DefaultEndpoint {
 
     public String getRouteId() {
         return routeId;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public Map<String, Object> getKameletProperties() {

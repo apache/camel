@@ -130,7 +130,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     protected void doInit() throws Exception {
         super.doInit();
 
-        if (unmarshalTypeName != null && (unmarshalType == null)) {
+        if (unmarshalTypeName != null && unmarshalType == null) {
             setUnmarshalType(camelContext.getClassResolver().resolveClass(unmarshalTypeName));
         }
     }

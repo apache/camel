@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.sts.STS2Component;
 public interface Aws2StsComponentBuilderFactory {
 
     /**
-     * AWS 2 Security Token Service (STS) (camel-aws2-sts)
+     * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -45,7 +45,7 @@ public interface Aws2StsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Security Token Service (STS) component.
+     * Builder for the AWS Security Token Service (STS) component.
      */
     interface Aws2StsComponentBuilder extends ComponentBuilder<STS2Component> {
         /**

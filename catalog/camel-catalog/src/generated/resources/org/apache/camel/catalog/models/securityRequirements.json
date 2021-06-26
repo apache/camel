@@ -2,15 +2,15 @@
   "model": {
     "kind": "model",
     "name": "securityRequirements",
-    "title": "Security Requirements",
+    "title": "Rest Security Requirements",
     "description": "To configure global rest security requirements.",
     "deprecated": false,
-    "label": "rest,security",
+    "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.RestSecuritiesRequirement",
     "input": false,
     "output": false
   },
   "properties": {
-    "securityRequirements": { "kind": "element", "displayName": "Security Requirements", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.SecurityDefinition>", "oneOf": [ "securityRequirement" ], "deprecated": false, "autowired": false, "secret": false }
+    "securityRequirements": { "kind": "element", "displayName": "Security Requirements", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.SecurityDefinition>", "oneOf": [ "securityRequirement" ], "deprecated": false, "autowired": false, "secret": false, "description": "Security requirement configurations" }
   }
 }

@@ -86,7 +86,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         }
 
         JtaTransactionErrorHandlerBuilder txBuilder;
-        if ((builder != null) && builder.supportTransacted()) {
+        if (builder != null && builder.supportTransacted()) {
             if (!(builder instanceof JtaTransactionErrorHandlerBuilder)) {
                 throw new RuntimeCamelException(
                         "The given transactional error handler builder '" + builder

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.camel.spi.ClassResolver;

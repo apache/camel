@@ -23,13 +23,6 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authenticationkey":
         case "authenticationKey": target.setAuthenticationKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "groupid":
         case "groupId": target.setGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "ignoresslverification":
@@ -60,13 +53,6 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authenticationkey":
         case "authenticationKey": return java.lang.String.class;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return boolean.class;
-        case "endpoint": return java.lang.String.class;
-        case "exceptionhandler":
-        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
-        case "exchangepattern":
-        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "groupid":
         case "groupId": return java.lang.String.class;
         case "ignoresslverification":
@@ -98,13 +84,6 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authenticationkey":
         case "authenticationKey": return target.getAuthenticationKey();
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "endpoint": return target.getEndpoint();
-        case "exceptionhandler":
-        case "exceptionHandler": return target.getExceptionHandler();
-        case "exchangepattern":
-        case "exchangePattern": return target.getExchangePattern();
         case "groupid":
         case "groupId": return target.getGroupId();
         case "ignoresslverification":

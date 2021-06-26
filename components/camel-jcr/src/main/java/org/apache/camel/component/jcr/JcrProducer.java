@@ -39,7 +39,7 @@ import org.apache.jackrabbit.util.Text;
 
 public class JcrProducer extends DefaultProducer {
 
-    public JcrProducer(JcrEndpoint jcrEndpoint) throws RepositoryException {
+    public JcrProducer(JcrEndpoint jcrEndpoint) {
         super(jcrEndpoint);
     }
 

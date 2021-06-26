@@ -29,8 +29,8 @@
 
     <artifactId>camel-huawei-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Camel :: Huawei :: Parent</name>
-    <description>Camel Huawei parent</description>
+    <name>Camel :: Huawei Cloud :: Parent</name>
+    <description>Camel Huawei Cloud parent</description>
 
     <modules>
         <module>camel-huaweicloud-functiongraph</module>

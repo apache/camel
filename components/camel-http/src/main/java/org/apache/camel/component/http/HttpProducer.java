@@ -413,7 +413,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         Header locationHeader = httpResponse.getFirstHeader("location");
-        if (locationHeader != null && (responseCode >= 300 && responseCode < 400)) {
+        if (locationHeader != null && responseCode >= 300 && responseCode < 400) {
             answer = new HttpOperationFailedException(uri, responseCode, statusText, locationHeader.getValue(), headers, copy);
         } else {
             answer = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
@@ -513,7 +513,13 @@ public class HttpProducer extends DefaultProducer {
                     if (len > 0 && len <= max) {
                         int i = (int) len;
                         byte[] arr = new byte[i];
-                        is.read(arr, 0, i);
+                        int read = 0;
+                        int offset = 0;
+                        int remain = i;
+                        while ((read = is.read(arr, offset, remain)) > 0 && remain > 0) {
+                            offset += read;
+                            remain -= read;
+                        }
                         IOHelper.close(is);
                         return arr;
                     }
@@ -553,7 +559,7 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Creates the HttpHost to use to call the remote server
      */
-    protected HttpHost createHost(HttpRequestBase httpRequest, Exchange exchange) throws Exception {
+    protected HttpHost createHost(HttpRequestBase httpRequest, Exchange exchange) {
         if (httpRequest.getURI() == defaultUri) {
             return defaultHttpHost;
         } else {

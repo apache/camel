@@ -1,8 +1,8 @@
 [[aws2-s3-component]]
-= AWS 2 S3 Storage Service Component
+= AWS S3 Storage Service Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/camel-aws2-s3/src/main/docs/aws2-s3-component.adoc
-:docTitle: AWS 2 S3 Storage Service
+:docTitle: AWS S3 Storage Service
 :artifactId: camel-aws2-s3
 :description: Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.
 :since: 3.2
@@ -10,7 +10,7 @@
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-s3.adoc[opts=optional]
 //Manually maintained attributes
-:group: AWS 2
+:group: AWS
 
 *Since Camel {since}*
 
@@ -49,7 +49,7 @@ from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&pref
 
 
 // component options: START
-The AWS 2 S3 Storage Service component supports 50 options, which are listed below.
+The AWS S3 Storage Service component supports 50 options, which are listed below.
 
 
 
@@ -120,7 +120,7 @@ The AWS 2 S3 Storage Service component supports 50 options, which are listed bel
 
 
 // endpoint options: START
-The AWS 2 S3 Storage Service endpoint is configured using URI syntax:
+The AWS S3 Storage Service endpoint is configured using URI syntax:
 
 ----
 aws2-s3://bucketNameOrArn

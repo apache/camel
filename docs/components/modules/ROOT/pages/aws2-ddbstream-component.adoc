@@ -1,8 +1,8 @@
 [[aws2-ddbstream-component]]
-= AWS 2 DynamoDB Streams Component
+= AWS DynamoDB Streams Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/camel-aws2-ddb/src/main/docs/aws2-ddbstream-component.adoc
-:docTitle: AWS 2 DynamoDB Streams
+:docTitle: AWS DynamoDB Streams
 :artifactId: camel-aws2-ddb
 :description: Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
 :since: 3.1
@@ -10,7 +10,7 @@
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-ddbstream.adoc[opts=optional]
 //Manually maintained attributes
-:group: AWS 2
+:group: AWS
 
 *Since Camel {since}*
 
@@ -45,7 +45,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 DynamoDB Streams component supports 17 options, which are listed below.
+The AWS DynamoDB Streams component supports 17 options, which are listed below.
 
 
 
@@ -78,7 +78,7 @@ The AWS 2 DynamoDB Streams component supports 17 options, which are listed below
 
 
 // endpoint options: START
-The AWS 2 DynamoDB Streams endpoint is configured using URI syntax:
+The AWS DynamoDB Streams endpoint is configured using URI syntax:
 
 ----
 aws2-ddbstream:tableName
@@ -194,6 +194,10 @@ outage did not also include DynamoDB itself.
 
 Given that AWS only retain 24 hours worth of changes, you will have
 missed change events no matter what mitigations are in place.
+
+=== Message Body
+
+The Message body is istance of "software.amazon.awssdk.services.dynamodb.model.Record", for more information about it, have a look at the https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/dynamodb/model/Record.html[related javadoc]
 
 == Dependencies
 

@@ -615,15 +615,19 @@
         }
       },
       "org.apache.camel.model.DescriptionDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "lang" : {
-            "type" : "string"
-          },
-          "text" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "lang" : {
+              "type" : "string"
+            },
+            "text" : {
+              "type" : "string"
+            }
           }
-        }
+        } ]
       },
       "org.apache.camel.model.DynamicRouterDefinition" : {
         "type" : "object",
@@ -1853,10 +1857,12 @@
             },
             "inherit-error-handler" : {
               "type" : "boolean"
+            },
+            "name" : {
+              "type" : "string"
             }
           }
-        } ],
-        "required" : [ "header-name" ]
+        } ]
       },
       "org.apache.camel.model.RemoveHeadersDefinition" : {
         "oneOf" : [ {
@@ -3918,6 +3924,9 @@
           "type" : "object",
           "properties" : {
             "allow-missing-column-names" : {
+              "type" : "boolean"
+            },
+            "capture-header-record" : {
               "type" : "boolean"
             },
             "comment-marker" : {
@@ -6498,14 +6507,50 @@
           "consumes" : {
             "type" : "string"
           },
+          "delete" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.DeleteVerbDefinition"
+            }
+          },
           "enable-cors" : {
             "type" : "string"
+          },
+          "get" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.GetVerbDefinition"
+            }
+          },
+          "head" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.HeadVerbDefinition"
+            }
+          },
+          "patch" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PatchVerbDefinition"
+            }
           },
           "path" : {
             "type" : "string"
           },
+          "post" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PostVerbDefinition"
+            }
+          },
           "produces" : {
             "type" : "string"
+          },
+          "put" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.PutVerbDefinition"
+            }
           },
           "security-definitions" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesDefinition"

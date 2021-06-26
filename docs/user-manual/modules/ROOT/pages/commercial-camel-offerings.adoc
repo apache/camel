@@ -30,17 +30,6 @@ and support for Apache Camel and the related Apache Open Source
 Software. We specialize in helping our clients to realize new projects
 and support the delivery of the project from end to end.
 
-[[CommercialCamelOfferings-Evosent]]
-== http://evosent.com/?utm_source=apache&utm_medium=web&utm_campaign=commercial_support[Evosent]
-
-http://evosent.com/?utm_source=apache&utm_medium=web&utm_campaign=commercial_support[Evosent] is
-a boutique consultancy based in Europe. It specialises in open source
-integration middleware, messaging and big data: Apache Camel,
-ServiceMix, Karaf, ActiveMQ, Elasticsearch (+ Kibana + Logstash), Docker
-and Kubernetes.  Evosent is managed by a committer and PMC member at the
-Apache Camel and Apache Ignite projects. Amongst it services are: ninja
-consulting and support; workshops, mentoring and training; proof of
-concept development; and sophisticated engineering services.
 
 [[CommercialCamelOfferings-GOAPPO]]
 == https://www.goappo.com[GOAPPO]
@@ -57,6 +46,12 @@ application.
 http://ibm.biz/OSSupport[IBM] provides cross-platform support for
 Apache Camel and many other open source packages.
 
+[[CommercialCamelOfferings-LinuxPolska]]
+== https://linuxpolska.com/[Linux Polska]
+
+https://linuxpolska.com/[Linux Polska] provides consulting, implementation and maintenance services in the areas of middleware, especially for Apache Camel and related projects based on Apache. The company also designs and creates its own open source solutions. Its experienced team of engineers has over 500 individual certifications. Part of Linux Polska’s business centers on providing IT training courses, delivered by an experienced team of certified trainers.
+
+
 [[CommercialCamelOfferings-MediaDriver]]
 == http://mediadriver.com[Media Driver]
 
@@ -68,12 +63,6 @@ including business and technical analysis, proof of concepts,
 architectural guidance, best practice integration, and project
 management. Media Driver offers training classes for developers and
 administrators, as well as middleware management software.
-
-[[CommercialCamelOfferings-Middleware360]]
-== http://www.middleware360.com/[Middleware360]
-
-http://www.middleware360.com/[Middleware360] Enterprise Integration
-consulting services.
 
 [[CommercialCamelOfferings-OpenLogic]]
 == http://www.openlogic.com/[OpenLogic]
@@ -132,6 +121,7 @@ development.
 https://www.yupiik.com[Yupiik] contributes and commits to the Apache Camel project. Provides consulting,
 training and support for Apache Camel and related projects like Apache Karaf, Apache ActiveMQ, Apache Kafka,
 Apache Unomi.
+
 
 [[CommercialCamelOfferings-Policyforadditionstothispage]]
 == Policy for additions to this page

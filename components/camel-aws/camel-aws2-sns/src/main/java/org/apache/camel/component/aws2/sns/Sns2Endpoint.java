@@ -53,7 +53,7 @@ import software.amazon.awssdk.services.sns.model.Topic;
 /**
  * Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS 2 Simple Notification System (SNS)",
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS Simple Notification System (SNS)",
              syntax = "aws2-sns:topicNameOrArn", producerOnly = true,
              category = { Category.CLOUD, Category.MESSAGING, Category.MOBILE })
 public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {

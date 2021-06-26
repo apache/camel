@@ -115,7 +115,7 @@ public class DelegateZooKeeperGroup<T extends NodeState> implements Group<T> {
         }
     }
 
-    protected void doStop() throws IOException {
+    protected void doStop() {
         closeQuietly(group);
     }
 

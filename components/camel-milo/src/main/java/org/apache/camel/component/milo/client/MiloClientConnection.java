@@ -51,7 +51,7 @@ public class MiloClientConnection implements AutoCloseable {
         return configuration;
     }
 
-    protected void init() throws Exception {
+    protected void init() {
         this.manager = new SubscriptionManager(this.configuration, Stack.sharedScheduledExecutor(), 10_000);
     }
 

@@ -454,7 +454,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         }
 
         // write required Enumerations for any picklists
-        if (!useStringsForPicklists || (picklistToEnums != null && picklistToEnums.length > 0)) {
+        if (!useStringsForPicklists || picklistToEnums != null && picklistToEnums.length > 0) {
             for (final SObjectField field : description.getFields()) {
                 if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
                     final String enumName = utility.enumTypeName(description.getName(),

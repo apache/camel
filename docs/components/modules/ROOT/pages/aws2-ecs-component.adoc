@@ -1,8 +1,8 @@
 [[aws2-ecs-component]]
-= AWS 2 Elastic Container Service (ECS) Component
+= AWS Elastic Container Service (ECS) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/camel-aws2-ecs/src/main/docs/aws2-ecs-component.adoc
-:docTitle: AWS 2 Elastic Container Service (ECS)
+:docTitle: AWS Elastic Container Service (ECS)
 :artifactId: camel-aws2-ecs
 :description: Manage AWS ECS cluster instances using AWS SDK version 2.x.
 :since: 3.1
@@ -10,7 +10,7 @@
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-ecs.adoc[opts=optional]
 //Manually maintained attributes
-:group: AWS 2
+:group: AWS
 
 *Since Camel {since}*
 
@@ -44,7 +44,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Elastic Container Service (ECS) component supports 16 options, which are listed below.
+The AWS Elastic Container Service (ECS) component supports 16 options, which are listed below.
 
 
 
@@ -74,7 +74,7 @@ The AWS 2 Elastic Container Service (ECS) component supports 16 options, which a
 
 
 // endpoint options: START
-The AWS 2 Elastic Container Service (ECS) endpoint is configured using URI syntax:
+The AWS Elastic Container Service (ECS) endpoint is configured using URI syntax:
 
 ----
 aws2-ecs:label

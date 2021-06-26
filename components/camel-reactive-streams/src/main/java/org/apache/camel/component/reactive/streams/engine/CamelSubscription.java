@@ -190,7 +190,7 @@ public class CamelSubscription implements Subscription {
         }
     }
 
-    public void signalCompletion() throws Exception {
+    public void signalCompletion() {
         mutex.lock();
         terminating = true;
         mutex.unlock();

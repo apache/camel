@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 // Doesn't work on AIX and HP-UX
 @DisabledOnOs({ OS.AIX, OS.OTHER })
+@Disabled("TODO: requires TLS to work")
 public class IOTAProducerTest extends CamelTestSupport {
 
     private static final String SEED = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";

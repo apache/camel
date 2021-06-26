@@ -94,7 +94,7 @@ public class StreamProducer extends DefaultProducer {
         return new FileOutputStream(f, true);
     }
 
-    private OutputStream resolveStreamFromHeader(Object o, Exchange exchange) throws CamelExchangeException {
+    private OutputStream resolveStreamFromHeader(Object o, Exchange exchange) {
         return exchange.getContext().getTypeConverter().convertTo(OutputStream.class, o);
     }
 

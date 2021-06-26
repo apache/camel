@@ -31,7 +31,7 @@ public interface Translate2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Translate component.
+     * Builder for endpoint for the AWS Translate component.
      */
     public interface Translate2EndpointBuilder
             extends
@@ -505,7 +505,7 @@ public interface Translate2EndpointBuilderFactory {
 
     public interface Translate2Builders {
         /**
-         * AWS 2 Translate (camel-aws2-translate)
+         * AWS Translate (camel-aws2-translate)
          * Translate texts using AWS Translate and AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -524,7 +524,7 @@ public interface Translate2EndpointBuilderFactory {
             return Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate", path);
         }
         /**
-         * AWS 2 Translate (camel-aws2-translate)
+         * AWS Translate (camel-aws2-translate)
          * Translate texts using AWS Translate and AWS SDK version 2.x.
          * 
          * Category: cloud,management

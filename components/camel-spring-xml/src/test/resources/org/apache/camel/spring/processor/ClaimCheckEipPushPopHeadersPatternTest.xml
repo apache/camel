@@ -35,7 +35,7 @@
       <setHeader name="foo">
         <constant>456</constant>
       </setHeader>
-      <removeHeader headerName="bar"/>
+      <removeHeader name="bar"/>
       <to uri="mock:b"/>
       <claimCheck operation="Pop" filter="header:(foo|bar)"/>
       <to uri="mock:c"/>

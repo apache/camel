@@ -51,7 +51,7 @@ public class LuceneConfiguration {
     public LuceneConfiguration() {
     }
 
-    public LuceneConfiguration(URI uri) throws Exception {
+    public LuceneConfiguration(URI uri) {
         this.uri = uri;
     }
 
@@ -88,14 +88,16 @@ public class LuceneConfiguration {
     }
 
     private boolean isValidAuthority() throws URISyntaxException {
-        if ((!authority.contains(":"))
-                || ((authority.split(":")[0]) == null)
-                || ((!authority.split(":")[1].equalsIgnoreCase("insert"))
-                        && (!authority.split(":")[1].equalsIgnoreCase("query")))) {
+        if (!authority.contains(":") || authority.split(":")[0] == null || insertOrQueryCheck()) {
             return false;
         }
         return true;
 
+    }
+
+    private boolean insertOrQueryCheck() {
+        return !authority.split(":")[1].equalsIgnoreCase("insert")
+                && !authority.split(":")[1].equalsIgnoreCase("query");
     }
 
     private String retrieveTokenFromAuthority(String token) throws URISyntaxException {

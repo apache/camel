@@ -32,7 +32,7 @@ public interface Cw2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 CloudWatch component.
+     * Builder for endpoint for the AWS CloudWatch component.
      */
     public interface Cw2EndpointBuilder extends EndpointProducerBuilder {
         /**
@@ -451,7 +451,7 @@ public interface Cw2EndpointBuilderFactory {
 
     public interface Cw2Builders {
         /**
-         * AWS 2 CloudWatch (camel-aws2-cw)
+         * AWS CloudWatch (camel-aws2-cw)
          * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
          * 
          * Category: cloud,monitoring
@@ -470,7 +470,7 @@ public interface Cw2EndpointBuilderFactory {
             return Cw2EndpointBuilderFactory.endpointBuilder("aws2-cw", path);
         }
         /**
-         * AWS 2 CloudWatch (camel-aws2-cw)
+         * AWS CloudWatch (camel-aws2-cw)
          * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
          * 
          * Category: cloud,monitoring

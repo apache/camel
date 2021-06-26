@@ -772,7 +772,7 @@ public class JmsConfiguration implements Cloneable {
         return template;
     }
 
-    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) throws Exception {
+    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) {
         AbstractMessageListenerContainer container = chooseMessageListenerContainerImplementation(endpoint);
         configureMessageListenerContainer(container, endpoint);
         return container;
@@ -1547,8 +1547,7 @@ public class JmsConfiguration implements Cloneable {
 
     protected void configureMessageListenerContainer(
             AbstractMessageListenerContainer container,
-            JmsEndpoint endpoint)
-            throws Exception {
+            JmsEndpoint endpoint) {
         container.setConnectionFactory(getOrCreateListenerConnectionFactory());
         if (endpoint instanceof DestinationEndpoint) {
             container.setDestinationResolver(createDestinationResolver((DestinationEndpoint) endpoint));

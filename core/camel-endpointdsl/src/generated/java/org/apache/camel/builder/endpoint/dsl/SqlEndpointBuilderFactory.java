@@ -80,7 +80,7 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the databaset at
+         * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
          * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
@@ -95,7 +95,7 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the databaset at
+         * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
          * The option will be converted to a
@@ -108,22 +108,6 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder dataSource(String dataSource) {
             doSetProperty("dataSource", dataSource);
-            return this;
-        }
-        /**
-         * Sets the reference to a DataSource to lookup from the registry, to
-         * use for communicating with the database.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param dataSourceRef the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SqlEndpointConsumerBuilder dataSourceRef(String dataSourceRef) {
-            doSetProperty("dataSourceRef", dataSourceRef);
             return this;
         }
         /**
@@ -1460,7 +1444,7 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the databaset at
+         * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
          * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
@@ -1475,7 +1459,7 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the databaset at
+         * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
          * The option will be converted to a
@@ -1488,22 +1472,6 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointProducerBuilder dataSource(String dataSource) {
             doSetProperty("dataSource", dataSource);
-            return this;
-        }
-        /**
-         * Sets the reference to a DataSource to lookup from the registry, to
-         * use for communicating with the database.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param dataSourceRef the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SqlEndpointProducerBuilder dataSourceRef(String dataSourceRef) {
-            doSetProperty("dataSourceRef", dataSourceRef);
             return this;
         }
         /**
@@ -2049,7 +2017,7 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the databaset at
+         * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
          * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
@@ -2064,7 +2032,7 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the databaset at
+         * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
          * The option will be converted to a
@@ -2077,22 +2045,6 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointBuilder dataSource(String dataSource) {
             doSetProperty("dataSource", dataSource);
-            return this;
-        }
-        /**
-         * Sets the reference to a DataSource to lookup from the registry, to
-         * use for communicating with the database.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param dataSourceRef the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SqlEndpointBuilder dataSourceRef(String dataSourceRef) {
-            doSetProperty("dataSourceRef", dataSourceRef);
             return this;
         }
         /**

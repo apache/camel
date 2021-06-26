@@ -100,7 +100,7 @@ public class ThriftDataFormat extends ServiceSupport
         }
     }
 
-    public void setInstanceClass(String className) throws Exception {
+    public void setInstanceClass(String className) {
         ObjectHelper.notNull(className, "ThriftDataFormat instaceClass");
         instanceClassName = className;
     }

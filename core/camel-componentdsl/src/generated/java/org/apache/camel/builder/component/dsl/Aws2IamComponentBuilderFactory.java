@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.iam.IAM2Component;
 public interface Aws2IamComponentBuilderFactory {
 
     /**
-     * AWS 2 Identity and Access Management (IAM) (camel-aws2-iam)
+     * AWS Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -45,7 +45,7 @@ public interface Aws2IamComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Identity and Access Management (IAM) component.
+     * Builder for the AWS Identity and Access Management (IAM) component.
      */
     interface Aws2IamComponentBuilder extends ComponentBuilder<IAM2Component> {
         /**

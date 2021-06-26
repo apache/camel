@@ -77,7 +77,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
     }
 
     @Override
-    public OperationResult<ResultType> get() throws InterruptedException, ExecutionException {
+    public OperationResult<ResultType> get() throws ExecutionException, InterruptedException {
         installWatch();
         waitingThreads.add(Thread.currentThread());
         waitForAnyWatchedType.await();

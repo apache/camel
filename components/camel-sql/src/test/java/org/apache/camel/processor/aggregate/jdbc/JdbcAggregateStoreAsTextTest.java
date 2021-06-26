@@ -53,6 +53,9 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
         dataSource = context.getRegistry().lookupByNameAndType(getClass().getSimpleName() + "-dataSource3", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
+
+        jdbcTemplate.execute("DELETE FROM aggregationRepo3");
+        jdbcTemplate.execute("DELETE FROM aggregationRepo3_completed");
     }
 
     @Test
@@ -125,44 +128,6 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
         assertEquals("ABCD", getAggregationRepositoryBody(123));
         assertEquals(null, getAggregationRepositoryCompanyName(123));
         assertEquals(null, getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "E", headers);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testOnlyAccountNameHeaders() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:aggregated");
-        mock.expectedBodiesReceived("ABCDE");
-
-        repo.setStoreBodyAsText(false);
-        repo.setHeadersToStoreAsText(Arrays.asList("accountName"));
-
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("id", 123);
-        headers.put("companyName", "Acme");
-        headers.put("accountName", "Alan");
-
-        template.sendBodyAndHeaders("direct:start", "A", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals("Alan", getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "B", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals("Alan", getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "C", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals("Alan", getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "D", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals("Alan", getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "E", headers);
 

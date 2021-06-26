@@ -425,7 +425,7 @@
   "Aws2AthenaComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-athena",
-    "title": "AWS 2 Athena",
+    "title": "AWS Athena",
     "description": "Access AWS Athena service using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.4.0",
@@ -447,7 +447,7 @@
   "Aws2CwComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-cw",
-    "title": "AWS 2 CloudWatch",
+    "title": "AWS CloudWatch",
     "description": "Sending metrics to AWS CloudWatch using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -469,7 +469,7 @@
   "Aws2DdbComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-ddb",
-    "title": "AWS 2 DynamoDB",
+    "title": "AWS DynamoDB",
     "description": "Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -491,7 +491,7 @@
   "Aws2DdbstreamComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-ddbstream",
-    "title": "AWS 2 DynamoDB Streams",
+    "title": "AWS DynamoDB Streams",
     "description": "Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -513,7 +513,7 @@
   "Aws2Ec2ComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-ec2",
-    "title": "AWS 2 Elastic Compute Cloud (EC2)",
+    "title": "AWS Elastic Compute Cloud (EC2)",
     "description": "Manage AWS EC2 instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -535,7 +535,7 @@
   "Aws2EcsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-ecs",
-    "title": "AWS 2 Elastic Container Service (ECS)",
+    "title": "AWS Elastic Container Service (ECS)",
     "description": "Manage AWS ECS cluster instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -557,7 +557,7 @@
   "Aws2EksComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-eks",
-    "title": "AWS 2 Elastic Kubernetes Service (EKS)",
+    "title": "AWS Elastic Kubernetes Service (EKS)",
     "description": "Manage AWS EKS cluster instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -579,7 +579,7 @@
   "Aws2EventbridgeComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-eventbridge",
-    "title": "AWS 2 Eventbridge",
+    "title": "AWS Eventbridge",
     "description": "Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.6.0",
@@ -601,7 +601,7 @@
   "Aws2IamComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-iam",
-    "title": "AWS 2 Identity and Access Management (IAM)",
+    "title": "AWS Identity and Access Management (IAM)",
     "description": "Manage AWS IAM instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -623,7 +623,7 @@
   "Aws2KinesisComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-kinesis",
-    "title": "AWS 2 Kinesis",
+    "title": "AWS Kinesis",
     "description": "Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.2.0",
@@ -645,7 +645,7 @@
   "Aws2KinesisFirehoseComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-kinesis-firehose",
-    "title": "AWS 2 Kinesis Firehose",
+    "title": "AWS Kinesis Firehose",
     "description": "Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.2.0",
@@ -667,7 +667,7 @@
   "Aws2KmsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-kms",
-    "title": "AWS 2 Key Management Service (KMS)",
+    "title": "AWS Key Management Service (KMS)",
     "description": "Manage keys stored in AWS KMS instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -689,7 +689,7 @@
   "Aws2LambdaComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-lambda",
-    "title": "AWS 2 Lambda",
+    "title": "AWS Lambda",
     "description": "Manage and invoke AWS Lambda functions using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.2.0",
@@ -711,7 +711,7 @@
   "Aws2MqComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-mq",
-    "title": "AWS 2 MQ",
+    "title": "AWS MQ",
     "description": "Manage AWS MQ instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -733,7 +733,7 @@
   "Aws2MskComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-msk",
-    "title": "AWS 2 Managed Streaming for Apache Kafka (MSK)",
+    "title": "AWS Managed Streaming for Apache Kafka (MSK)",
     "description": "Manage AWS MSK instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -755,7 +755,7 @@
   "Aws2S3ComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-s3",
-    "title": "AWS 2 S3 Storage Service",
+    "title": "AWS S3 Storage Service",
     "description": "Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.2.0",
@@ -777,7 +777,7 @@
   "Aws2SesComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-ses",
-    "title": "AWS 2 Simple Email Service (SES)",
+    "title": "AWS Simple Email Service (SES)",
     "description": "Send e-mails through AWS SES service using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -799,7 +799,7 @@
   "Aws2SnsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-sns",
-    "title": "AWS 2 Simple Notification System (SNS)",
+    "title": "AWS Simple Notification System (SNS)",
     "description": "Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -821,7 +821,7 @@
   "Aws2SqsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-sqs",
-    "title": "AWS 2 Simple Queue Service (SQS)",
+    "title": "AWS Simple Queue Service (SQS)",
     "description": "Sending and receive messages to\/from AWS SQS service using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -843,7 +843,7 @@
   "Aws2StsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-sts",
-    "title": "AWS 2 Security Token Service (STS)",
+    "title": "AWS Security Token Service (STS)",
     "description": "Manage AWS STS cluster instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.5.0",
@@ -865,7 +865,7 @@
   "Aws2TranslateComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-translate",
-    "title": "AWS 2 Translate",
+    "title": "AWS Translate",
     "description": "Translate texts using AWS Translate and AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -3263,7 +3263,7 @@
   "HwcloudFunctiongraphComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-functiongraph",
-    "title": "FunctionGraph",
+    "title": "Huawei Cloud FunctionGraph",
     "description": "To call serverless functions on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.11.0",
@@ -3285,7 +3285,7 @@
   "HwcloudIamComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-iam",
-    "title": "IAM",
+    "title": "Huawei Cloud Identity and Access Management (IAM)",
     "description": "To securely manage users on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.11.0",
@@ -3301,14 +3301,14 @@
     "async": false,
     "api": false,
     "consumerOnly": false,
-    "producerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false
   },
   "HwcloudSmnComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-smn",
-    "title": "SimpleNotification",
-    "description": "Huawei Cloud component to integrate with SimpleNotification services",
+    "title": "Huawei Cloud Simple Message Notification (SMN)",
+    "description": "To broadcast messages and connect cloud services through notifications on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.8.0",
     "label": "cloud,messaging",

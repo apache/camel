@@ -469,7 +469,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         return servlet;
     }
 
-    protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) throws Exception {
+    protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) {
         ServletContextHandler context
                 = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
         server.addConnector(connector);
@@ -573,7 +573,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         int index1 = remaining.indexOf(':');
         int index2 = remaining.indexOf('/');
 
-        if ((index1 != -1) && (index2 != -1)) {
+        if (index1 != -1 && index2 != -1) {
             String result = remaining.substring(index1 + 1, index2);
             return Integer.parseInt(result);
         } else {

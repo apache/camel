@@ -69,7 +69,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
                 resumeOrStartConsumer(route.getConsumer());
             }
         } else if (action == Action.STOP) {
-            if ((routeStatus == ServiceStatus.Started) || (routeStatus == ServiceStatus.Suspended)) {
+            if (routeStatus == ServiceStatus.Started || routeStatus == ServiceStatus.Suspended) {
                 stopRoute(route, getRouteStopGracePeriod(), getTimeUnit());
             } else {
                 LOG.warn("Route is not in a started/suspended state and cannot be stopped. The current route state is {}",
@@ -116,11 +116,9 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
             // check to see if the same job has already been setup through another node of the cluster
             JobDetail existingJobDetail = getScheduler().getJobDetail(jobDetail.getKey());
             if (jobDetail.equals(existingJobDetail)) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info(
-                            "Skipping to schedule the job: {} for action: {} on route {} as the job: {} already existing inside the cluster",
-                            new Object[] { jobDetail.getKey(), action, route.getId(), existingJobDetail.getKey() });
-                }
+                LOG.info(
+                        "Skipping to schedule the job: {} for action: {} on route {} as the job: {} already existing inside the cluster",
+                        jobDetail.getKey(), action, route.getId(), existingJobDetail.getKey());
 
                 // skip scheduling the same job again as one is already existing for the same routeId and action
                 return;
@@ -178,7 +176,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
         LOG.debug("Scheduled job: {} is deleted", jobKey);
     }
 
-    protected JobDetail createJobDetail(Action action, Route route) throws Exception {
+    protected JobDetail createJobDetail(Action action, Route route) {
         JobDetail jobDetail = null;
 
         if (action == Action.START) {
@@ -198,8 +196,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport
         return jobDetail;
     }
 
-    protected void updateScheduledRouteDetails(Action action, JobDetail jobDetail, Trigger trigger, Route route)
-            throws Exception {
+    protected void updateScheduledRouteDetails(Action action, JobDetail jobDetail, Trigger trigger, Route route) {
         ScheduledRouteDetails scheduledRouteDetails = getScheduledRouteDetails(route.getId());
         if (action == Action.START) {
             scheduledRouteDetails.setStartJobKey(jobDetail.getKey());

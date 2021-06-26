@@ -872,17 +872,20 @@ public class AggregateProcessor extends AsyncProcessorSupport
         exchange.adapt(ExtendedExchange.class).addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
 
         // send this exchange
-        // the call to schedule is needed to ensure in-order processing of the aggregates
-        executorService.execute(() -> reactiveExecutor.schedule(() -> processor.process(exchange, done -> {
-            // log exception if there was a problem
-            if (exchange.getException() != null) {
-                // if there was an exception then let the exception handler handle it
-                getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
-                        exchange.getException());
-            } else {
-                LOG.trace("Processing aggregated exchange: {} complete.", exchange);
-            }
-        })));
+        executorService.execute(() -> {
+            Runnable task = () -> processor.process(exchange, done -> {
+                // log exception if there was a problem
+                if (exchange.getException() != null) {
+                    // if there was an exception then let the exception handler handle it
+                    getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
+                            exchange.getException());
+                } else {
+                    LOG.trace("Processing aggregated exchange: {} complete.", exchange);
+                }
+            });
+            // the call to schedule is needed to ensure in-order processing of the aggregates
+            reactiveExecutor.schedule(task);
+        });
     }
 
     /**

@@ -51,9 +51,9 @@ public class PahoComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // Each endpoint can have its own configuration so make
         // a copy of the configuration
-        PahoConfiguration configuration = getConfiguration().copy();
+        PahoConfiguration pahoConfiguration = getConfiguration().copy();
 
-        PahoEndpoint answer = new PahoEndpoint(uri, remaining, this, configuration);
+        PahoEndpoint answer = new PahoEndpoint(uri, remaining, this, pahoConfiguration);
         answer.setClient(client);
 
         setProperties(answer, parameters);

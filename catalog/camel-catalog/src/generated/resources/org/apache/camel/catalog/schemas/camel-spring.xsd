@@ -75,7 +75,7 @@ Configures batch-processing resequence eip.
   <xs:element name="bean" type="tns:beanDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Calls a java bean
+Calls a Java bean
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -734,7 +734,7 @@ To call Kamelets
   <xs:element name="keyStoreParameters" type="tns:keyStoreParametersFactoryBean">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-null
+Key store facility for cryptographic keys and certificates
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -937,8 +937,7 @@ Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages
   <xs:element name="param" type="tns:restOperationParamDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-To specify the rest operation parameters using Swagger. This maps to the Swagger
-Parameter Message Object.
+To specify the rest operation parameters.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1155,8 +1154,7 @@ Resilience4j Circuit Breaker EIP configuration
   <xs:element name="responseHeader" type="tns:restOperationResponseHeaderDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-To specify the rest operation response headers using Swagger. This maps to the
-Swagger Response Header Object.
+To specify the rest operation response headers.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1164,8 +1162,7 @@ Swagger Response Header Object.
   <xs:element name="responseMessage" type="tns:restOperationResponseMsgDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-To specify the rest operation response messages using Swagger. This maps to the
-Swagger Response Message Object.
+To specify the rest operation response messages.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1375,7 +1372,7 @@ Executes a script from a language which does not change the message body.
   <xs:element name="secureRandomParameters" type="tns:secureRandomParametersFactoryBean">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-null
+Cryptographically strong random number generator
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1536,7 +1533,7 @@ Splits a single message into many sub-messages.
   <xs:element name="sslContextParameters" type="tns:sslContextParametersFactoryBean">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-null
+Secure socket protocol configuration
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3183,11 +3180,25 @@ org.apache.camel.processor.aggregate.MemoryAggregationRepository.
         <xs:attribute name="strategyRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-A reference to lookup the AggregationStrategy in the Registry. Configuring an
-AggregationStrategy is required, and is used to merge the incoming Exchange with
-the existing already merged exchanges. At first call the oldExchange parameter
-is null. On subsequent invocations the oldExchange contains the merged exchanges
-and newExchange is of course the new incoming Exchange.
+A reference to lookup the AggregationStrategy in the Registry. The value can
+either refer to a bean to lookup, or to lookup a singleton bean by its type, or
+to create a new bean: Lookup bean - This is the default behavior to lookup an
+existing bean by the bean id (value) reference by type - Values can refer to
+singleton beans by their type in the registry by prefixing with #type: syntax,
+eg #type:com.foo.MyClassType reference new class - Values can refer to creating
+new beans by their class name by prefixing with #class, eg
+#class:com.foo.MyClassType. The class is created using a default no-arg
+constructor, however if you need to create the instance via a factory method
+then you specify the method as shown:
+#class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires
+parameters they can be specified as follows:
+#class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you
+need to create the instance via constructor parameters then you can specify the
+parameters as shown: #class:com.foo.MyClass('Hello World', 5, true). Configuring
+an AggregationStrategy is required, and is used to merge the incoming Exchange
+with the existing already merged exchanges. At first call the oldExchange
+parameter is null. On subsequent invocations the oldExchange contains the merged
+exchanges and newExchange is of course the new incoming Exchange.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3453,7 +3464,8 @@ Enables random backoff. Default value: false
         <xs:attribute name="ref" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a bean to use.
+Sets a reference to an exiting bean to use, which is looked up from the
+registry.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3467,7 +3479,7 @@ Sets the method name on the bean to use.
         <xs:attribute name="beanType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets the Class of the bean.
+Sets the class name (fully qualified) of the bean to use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3492,7 +3504,7 @@ instance is only called from the same request. When using prototype scope, then
 the bean will be looked up or created per call. However in case of lookup then
 this is delegated to the bean registry such as Spring or CDI (if in use), which
 depends on their configuration can act as either singleton or prototype scope.
-so when using prototype scope then this depends on the bean registry
+So when using prototype scope then this depends on the bean registry
 implementation. Default value: Singleton
             ]]></xs:documentation>
           </xs:annotation>
@@ -4501,7 +4513,20 @@ have both include and exclude header:pattern at the same time.
             <xs:documentation xml:lang="en"><![CDATA[
 To use a custom AggregationStrategy instead of the default implementation.
 Notice you cannot use both custom aggregation strategy and configure data at the
-same time.
+same time. The value can either refer to a bean to lookup, or to lookup a
+singleton bean by its type, or to create a new bean: Lookup bean - This is the
+default behavior to lookup an existing bean by the bean id (value) reference by
+type - Values can refer to singleton beans by their type in the registry by
+prefixing with #type: syntax, eg #type:com.foo.MyClassType reference new class -
+Values can refer to creating new beans by their class name by prefixing with
+#class, eg #class:com.foo.MyClassType. The class is created using a default
+no-arg constructor, however if you need to create the instance via a factory
+method then you specify the method as shown:
+#class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires
+parameters they can be specified as follows:
+#class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you
+need to create the instance via constructor parameters then you can specify the
+parameters as shown: #class:com.foo.MyClass('Hello World', 5, true).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -4727,7 +4752,21 @@ producers.
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to an AggregationStrategy to be used to merge the reply from the external
 service, into a single outgoing message. By default Camel will use the reply
-from the external service as outgoing message.
+from the external service as outgoing message. The value can either refer to a
+bean to lookup, or to lookup a singleton bean by its type, or to create a new
+bean: Lookup bean - This is the default behavior to lookup an existing bean by
+the bean id (value) reference by type - Values can refer to singleton beans by
+their type in the registry by prefixing with #type: syntax, eg
+#type:com.foo.MyClassType reference new class - Values can refer to creating new
+beans by their class name by prefixing with #class, eg
+#class:com.foo.MyClassType. The class is created using a default no-arg
+constructor, however if you need to create the instance via a factory method
+then you specify the method as shown:
+#class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires
+parameters they can be specified as follows:
+#class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you
+need to create the instance via constructor parameters then you can specify the
+parameters as shown: #class:com.foo.MyClass('Hello World', 5, true).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6702,6 +6741,14 @@ collected). Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to a custom CsvRecordConverter to lookup from the registry to use.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="captureHeaderRecord" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the unmarshalling should capture the header record and store it in the
+message header. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -9852,7 +9899,21 @@ therefore its recommended to use a timeout value. Default value: -1
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to an AggregationStrategy to be used to merge the reply from the external
 service, into a single outgoing message. By default Camel will use the reply
-from the external service as outgoing message.
+from the external service as outgoing message. The value can either refer to a
+bean to lookup, or to lookup a singleton bean by its type, or to create a new
+bean: Lookup bean - This is the default behavior to lookup an existing bean by
+the bean id (value) reference by type - Values can refer to singleton beans by
+their type in the registry by prefixing with #type: syntax, eg
+#type:com.foo.MyClassType reference new class - Values can refer to creating new
+beans by their class name by prefixing with #class, eg
+#class:com.foo.MyClassType. The class is created using a default no-arg
+constructor, however if you need to create the instance via a factory method
+then you specify the method as shown:
+#class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires
+parameters they can be specified as follows:
+#class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you
+need to create the instance via constructor parameters then you can specify the
+parameters as shown: #class:com.foo.MyClass('Hello World', 5, true).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10133,10 +10194,17 @@ backward compatibility. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
-        <xs:attribute name="headerName" type="xs:string" use="required">
+        <xs:attribute name="name" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Name of header to remove.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="headerName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Deprecated: Name of header to remove (deprecated use name instead).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13337,7 +13405,7 @@ The name of the language to use.
         <xs:attribute name="ref" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Reference to bean to lookup in the registry.
+Reference to an existing bean (bean id) to lookup in the registry.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13351,7 +13419,9 @@ Name of method to call.
         <xs:attribute name="beanType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Class name of the bean to use.
+Class name (fully qualified) of the bean to use Will lookup in registry and if
+there is a single instance of the same type, then the existing bean is used,
+otherwise a new bean is created (requires a default no-arg constructor).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13369,7 +13439,7 @@ instance is only called from the same request. When using prototype scope, then
 the bean will be looked up or created per call. However in case of lookup then
 this is delegated to the bean registry such as Spring or CDI (if in use), which
 depends on their configuration can act as either singleton or prototype scope.
-so when using prototype scope then this depends on the bean registry
+So when using prototype scope then this depends on the bean registry
 implementation. Default value: Singleton
             ]]></xs:documentation>
           </xs:annotation>
@@ -13797,7 +13867,7 @@ Sets deprecated flag in openapi. Default value: false
             <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="xs:string">
               <xs:annotation>
                 <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter list of allowable values (enum).
+Sets the parameter list of allowable values (enum).
                 ]]></xs:documentation>
               </xs:annotation>
             </xs:element>
@@ -13807,7 +13877,7 @@ Sets the Swagger Parameter list of allowable values (enum).
       <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition">
         <xs:annotation>
           <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter examples.
+Sets the parameter examples.
           ]]></xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -13815,64 +13885,64 @@ Sets the Swagger Parameter examples.
     <xs:attribute name="name" type="xs:string" use="required">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter name.
+Sets the parameter name.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="type" type="tns:restParamType" use="required">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter type. Default value: path
+Sets the parameter type. Default value: path
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="description" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter description.
+Sets the parameter description.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="defaultValue" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter default value.
+Sets the parameter default value.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="required" type="xs:boolean">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter required flag. Default value: true
+Sets the parameter required flag. Default value: true
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="collectionFormat" type="tns:collectionFormat">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter collection format. Default value: csv
+Sets the parameter collection format. Default value: csv
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="arrayType" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter array type. Required if data type is array. Describes
-the type of items in the array. Default value: string
+Sets the parameter array type. Required if data type is array. Describes the
+type of items in the array. Default value: string
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="dataType" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter data type. Default value: string
+Sets the parameter data type. Default value: string
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="dataFormat" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter data format.
+Sets the parameter data format.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -13944,7 +14014,7 @@ The response model.
             <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="xs:string">
               <xs:annotation>
                 <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter list of allowable values.
+Sets the parameter list of allowable values.
                 ]]></xs:documentation>
               </xs:annotation>
             </xs:element>
@@ -13969,36 +14039,36 @@ Description of the parameter.
     <xs:attribute name="collectionFormat" type="tns:collectionFormat">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter collection format. Default value: csv
+Sets the parameter collection format. Default value: csv
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="arrayType" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter array type. Required if data type is array. Describes
-the type of items in the array. Default value: string
+Sets the parameter array type. Required if data type is array. Describes the
+type of items in the array. Default value: string
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="dataType" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger header data type. Default value: string
+Sets the header data type. Default value: string
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="dataFormat" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter data format.
+Sets the parameter data format.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="example" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger example.
+Sets the example.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14184,8 +14254,8 @@ key without a prefix is a common key for all situations.
       <xs:element maxOccurs="unbounded" minOccurs="0" name="apiProperty" type="tns:restPropertyDefinition">
         <xs:annotation>
           <xs:documentation xml:lang="en"><![CDATA[
-Allows to configure as many additional properties for the api documentation
-(swagger). For example set property api.title to my cool stuff.
+Allows to configure as many additional properties for the api documentation. For
+example set property api.title to my cool stuff.
           ]]></xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -14211,11 +14281,11 @@ registered in the registry. If either one is found, then that is being used.
     <xs:attribute name="apiComponent" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-The name of the Camel component to use as the REST API (such as swagger) If no
-API Component has been explicit configured, then Camel will lookup if there is a
-Camel component responsible for servicing and generating the REST API
-documentation, or if a org.apache.camel.spi.RestApiProcessorFactory is
-registered in the registry. If either one is found, then that is being used.
+The name of the Camel component to use as the REST API. If no API Component has
+been explicit configured, then Camel will lookup if there is a Camel component
+responsible for servicing and generating the REST API documentation, or if a
+org.apache.camel.spi.RestApiProcessorFactory is registered in the registry. If
+either one is found, then that is being used.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14244,8 +14314,8 @@ The hostname to use for exposing the REST service.
     <xs:attribute name="apiHost" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-To use an specific hostname for the API documentation (eg swagger) This can be
-used to override the generated host with this configured hostname.
+To use an specific hostname for the API documentation This can be used to
+override the generated host with this configured hostname.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14274,10 +14344,8 @@ uses.
     <xs:attribute name="producerApiDoc" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the location of the api document (swagger api) the REST producer will use
-to validate the REST uri and query parameters are valid accordingly to the api
-document. This requires adding camel-swagger-java to the classpath, and any miss
-configuration will let Camel fail on startup and report the error(s). The
+Sets the location of the api document the REST producer will use to validate the
+REST uri and query parameters are valid accordingly to the api document. The
 location of the api document is loaded from classpath by default, but you can
 use file: or http: to refer to resources to load from file or http url.
         ]]></xs:documentation>

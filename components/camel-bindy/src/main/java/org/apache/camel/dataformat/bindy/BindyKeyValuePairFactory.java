@@ -69,7 +69,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      *
      * @throws Exception
      */
-    public void initKeyValuePairModel() throws Exception {
+    public void initKeyValuePairModel() {
 
         // Find annotated KeyValuePairfields declared in the Model classes
         initAnnotatedFields();
@@ -320,7 +320,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                 for (int i = 0; i < values.size(); i++) {
 
                                     // BigIntegerFormatFactory if object exist
-                                    if ((!l.isEmpty()) && (l.size() > i)) {
+                                    if (!l.isEmpty() && l.size() > i) {
                                         obj = l.get(i);
                                     } else {
                                         obj = clazz.newInstance();
@@ -353,7 +353,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                     }
 
                                     // Add object created to the list
-                                    if ((!l.isEmpty()) && (l.size() > i)) {
+                                    if (!l.isEmpty() && l.size() > i) {
                                         l.set(i, obj);
                                     } else {
                                         l.add(i, obj);
@@ -619,7 +619,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      * Get parameters defined in @Message annotation
      */
     private void initMessageParameters() {
-        if ((pairSeparator == null) || (keyValuePairSeparator == null)) {
+        if (pairSeparator == null || keyValuePairSeparator == null) {
             for (Class<?> cl : models) {
                 // Get annotation @Message from the class
                 Message message = cl.getAnnotation(Message.class);

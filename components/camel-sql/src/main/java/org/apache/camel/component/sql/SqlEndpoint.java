@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Perform SQL queries using Spring JDBC.
@@ -41,9 +40,8 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
     public SqlEndpoint() {
     }
 
-    public SqlEndpoint(String uri, Component component, JdbcTemplate jdbcTemplate, String query) {
-        super(uri, component, jdbcTemplate);
-        this.query = query;
+    public SqlEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
     }
 
     @Override

@@ -276,7 +276,7 @@ public class RabbitMQComponent extends DefaultComponent {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
-                    new Object[] { endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName() });
+                    endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName());
         }
 
         Map<String, Object> localArgs = new HashMap<>();

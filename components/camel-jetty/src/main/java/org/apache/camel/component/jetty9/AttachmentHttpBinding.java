@@ -85,7 +85,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
     }
 
     @Override
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
         // we populate the http request parameters without checking the request
         // method
         Map<String, Object> headers = message.getHeaders();

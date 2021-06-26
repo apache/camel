@@ -274,7 +274,7 @@ public class JmsBinding {
         return result;
     }
 
-    protected Object createInputStreamFromStreamMessage(Exchange exchange, StreamMessage message) throws JMSException {
+    protected Object createInputStreamFromStreamMessage(Exchange exchange, StreamMessage message) {
         return new StreamMessageInputStream(message);
     }
 
@@ -410,7 +410,7 @@ public class JmsBinding {
             // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
             Object value = getValidJMSHeaderValue(headerName, headerValue);
             // if the value was null, then it may be allowed as an additional header
-            if (value == null && (endpoint != null && endpoint.getConfiguration().getAllowAdditionalHeaders() != null)) {
+            if (value == null && endpoint != null && endpoint.getConfiguration().getAllowAdditionalHeaders() != null) {
                 Iterator it = ObjectHelper.createIterator(endpoint.getConfiguration().getAllowAdditionalHeaders());
                 while (it.hasNext()) {
                     String pattern = (String) it.next();
@@ -431,7 +431,7 @@ public class JmsBinding {
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
                 LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",
-                        new Object[] { headerName, headerValue.getClass().getName(), headerValue });
+                        headerName, headerValue.getClass().getName(), headerValue);
             }
         }
     }
@@ -559,7 +559,7 @@ public class JmsBinding {
 
         // create the JmsMessage based on the type
         if (type != null) {
-            if (body == null && (endpoint != null && !endpoint.getConfiguration().isAllowNullBody())) {
+            if (body == null && endpoint != null && !endpoint.getConfiguration().isAllowNullBody()) {
                 throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
             }
             LOG.trace("Using JmsMessageType: {}", type);
@@ -570,7 +570,7 @@ public class JmsBinding {
         }
 
         // check for null body
-        if (body == null && (endpoint != null && !endpoint.getConfiguration().isAllowNullBody())) {
+        if (body == null && endpoint != null && !endpoint.getConfiguration().isAllowNullBody()) {
             throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
         }
 

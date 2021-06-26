@@ -24,6 +24,7 @@ import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2DDBBase extends CamelTestSupport {
@@ -31,11 +32,16 @@ public class Aws2DDBBase extends CamelTestSupport {
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createDynamodbService();
 
+    protected DynamoDbClient ddbClient;
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         Ddb2Component ddb2Component = context.getComponent("aws2-ddb", Ddb2Component.class);
-        ddb2Component.getConfiguration().setAmazonDDBClient(AWSSDKClientUtils.newDynamoDBClient());
+        if (ddbClient == null) {
+            ddbClient = AWSSDKClientUtils.newDynamoDBClient();
+        }
+        ddb2Component.getConfiguration().setAmazonDDBClient(ddbClient);
         return context;
     }
 }

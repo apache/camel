@@ -95,20 +95,20 @@ public interface ProducerTemplate extends Service {
     int getCurrentCacheSize();
 
     /**
-     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true). In
+     * Reports if async* methods will dispatch processing from the calling thread (false) or through executor (true). In
      * both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed non-blocking
      * processing.
      * 
-     * @return if async* methods will dipatch processing with the executor
+     * @return if async* methods will dispatch processing with the executor
      */
     boolean isThreadedAsyncMode();
 
     /**
-     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true). In
+     * Reports if async* methods will dispatch processing from the calling thread (false) or through executor (true). In
      * both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed non-blocking
      * processing.
      * 
-     * @param useExecutor if async* methods will dipatch processing with the executor
+     * @param useExecutor if async* methods will dispatch processing with the executor
      */
     void setThreadedAsyncMode(boolean useExecutor);
 

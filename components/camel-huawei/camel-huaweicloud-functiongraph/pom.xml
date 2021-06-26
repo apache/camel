@@ -30,7 +30,7 @@
 
     <artifactId>camel-huaweicloud-functiongraph</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Huawei Cloud FunctionGraph Component</name>
+    <name>Camel :: Huawei Cloud :: FunctionGraph Component</name>
     <description>To call serverless functions on Huawei Cloud</description>
 
     <dependencies>

@@ -54,8 +54,10 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     @UriParam(label = "formatting", defaultValue = "true",
               description = "Shows the Message Exchange Pattern (or MEP for short).")
     private boolean showExchangePattern = true;
-    @UriParam(label = "formatting", description = "Show the exchange properties.")
+    @UriParam(label = "formatting", description = "Show the exchange properties (only custom).")
     private boolean showProperties;
+    @UriParam(label = "formatting", description = "Show all the exchange properties (both internal and custom).")
+    private boolean showAllProperties;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
     @UriParam(label = "formatting", defaultValue = "true",
@@ -130,7 +132,12 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             style(sb, "ExchangePattern").append(exchange.getPattern());
         }
 
-        if (showAll || showProperties) {
+        if (showAll || showAllProperties) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
+            style(sb, "Properties").append(sortMap(filterHeaderAndProperties(exchange.getAllProperties())));
+        } else if (showProperties) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
@@ -249,10 +256,21 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     /**
-     * Show the exchange properties.
+     * Show the exchange properties (only custom). Use showAllProperties to show both internal and custom properties.
      */
     public void setShowProperties(boolean showProperties) {
         this.showProperties = showProperties;
+    }
+
+    public boolean isShowAllProperties() {
+        return showAllProperties;
+    }
+
+    /**
+     * Show all of the exchange properties (both internal and custom).
+     */
+    public void setShowAllProperties(boolean showAllProperties) {
+        this.showAllProperties = showAllProperties;
     }
 
     public boolean isShowHeaders() {

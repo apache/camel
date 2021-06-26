@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -216,7 +215,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         }
     }
 
-    protected void connectIfNecessary() throws IOException {
+    protected void connectIfNecessary() {
         // We need to send a noop first to check if the connection is still open
         boolean isConnected = false;
         try {

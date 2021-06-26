@@ -18,7 +18,7 @@ exported/imported by Excel.
 == Options
 
 // dataformat options: START
-The CSV dataformat supports 28 options, which are listed below.
+The CSV dataformat supports 29 options, which are listed below.
 
 
 
@@ -53,10 +53,23 @@ The CSV dataformat supports 28 options, which are listed below.
 | useMaps | false | Boolean | Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected).
 | useOrderedMaps | false | Boolean | Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected).
 | recordConverterRef |  | String | Refers to a custom CsvRecordConverter to lookup from the registry to use.
+| captureHeaderRecord | false | Boolean | Whether the unmarshalling should capture the header record and store it in the message header
 |===
 // dataformat options: END
 
+== Message Headers
 
+The following headers are supported by this component:
+
+=== Producer only
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Header |Description
+
+|`CamelCsvHeaderRecord` |The header record collected from the CSV when setCaptureHeaderRecord is true.
+
+|===
 
 == Marshalling a Map to CSV
 
@@ -253,6 +266,22 @@ should illustrate this customization.
   <property name="staticField" value="org.apache.commons.csv.CSVStrategy.EXCEL_STRATEGY" />
 </bean>
 -----------------------------------------------------------------------------------------------------------------------------
+
+== Collecting header record
+
+You can instruct the CSV Data Format to collect the headers into
+a message header called CamelCsvHeaderRecord.
+
+[source,java]
+--------------------------------------------
+CsvDataFormat csv = new CsvDataFormat();
+csv.setCaptureHeaderRecord(true);
+
+from("direct:start")
+  .unmarshal(csv)
+  .log("${header[CamelCsvHeaderRecord]}");
+--------------------------------------------
+
 
 == Using skipFirstLine or skipHeaderRecord option while unmarshaling
 

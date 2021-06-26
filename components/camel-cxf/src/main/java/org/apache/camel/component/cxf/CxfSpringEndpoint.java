@@ -38,7 +38,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     private String beanId;
     private ApplicationContext applicationContext;
 
-    public CxfSpringEndpoint(CxfComponent component, String address) throws Exception {
+    public CxfSpringEndpoint(CxfComponent component, String address) {
         super(address, component);
     }
 

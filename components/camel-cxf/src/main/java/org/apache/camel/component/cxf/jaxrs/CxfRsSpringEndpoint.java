@@ -31,7 +31,7 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     private ConfigurerImpl configurer;
     private String beanId;
 
-    public CxfRsSpringEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean) throws Exception {
+    public CxfRsSpringEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean) {
         super(uri, component);
         setAddress(bean.getAddress());
         // Update the sfb address by resolving the properties

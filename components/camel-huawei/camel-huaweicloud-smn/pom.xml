@@ -31,7 +31,7 @@
 
     <artifactId>camel-huaweicloud-smn</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Huawei Cloud SimpleNotification Component</name>
+    <name>Camel :: Huawei Cloud :: SimpleNotification Component</name>
     <description>A Camel Huawei Simple Notification Component</description>
 
     <dependencies>

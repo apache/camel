@@ -165,7 +165,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * To specify the REST operation parameters using Swagger.
+     * To specify the REST operation parameters.
      */
     public void setParams(List<RestOperationParamDefinition> params) {
         this.params = params;
@@ -176,7 +176,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets swagger operation response messages.
+     * Sets operation response messages.
      */
     public void setResponseMsgs(List<RestOperationResponseMsgDefinition> responseMsgs) {
         this.responseMsgs = responseMsgs;
@@ -187,7 +187,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets the swagger security settings for this verb.
+     * Sets the security settings for this verb.
      */
     public void setSecurity(List<SecurityDefinition> security) {
         this.security = security;

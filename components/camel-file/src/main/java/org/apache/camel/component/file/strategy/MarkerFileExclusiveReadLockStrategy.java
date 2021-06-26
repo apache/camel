@@ -111,7 +111,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         doReleaseExclusiveReadLock(operations, file, exchange);
     }
 
-    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+    protected void doReleaseExclusiveReadLock(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
         if (!markerFile) {
             // if not using marker file then nothing to release

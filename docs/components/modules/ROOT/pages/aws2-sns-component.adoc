@@ -1,8 +1,8 @@
 [[aws2-sns-component]]
-= AWS 2 Simple Notification System (SNS) Component
+= AWS Simple Notification System (SNS) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/camel-aws2-sns/src/main/docs/aws2-sns-component.adoc
-:docTitle: AWS 2 Simple Notification System (SNS)
+:docTitle: AWS Simple Notification System (SNS)
 :artifactId: camel-aws2-sns
 :description: Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.
 :since: 3.1
@@ -10,7 +10,7 @@
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-sns.adoc[opts=optional]
 //Manually maintained attributes
-:group: AWS 2
+:group: AWS
 
 *Since Camel {since}*
 
@@ -47,7 +47,7 @@ The topic will be created if they don't already exists. +
 
 
 // component options: START
-The AWS 2 Simple Notification System (SNS) component supports 24 options, which are listed below.
+The AWS Simple Notification System (SNS) component supports 24 options, which are listed below.
 
 
 
@@ -86,7 +86,7 @@ The AWS 2 Simple Notification System (SNS) component supports 24 options, which 
 
 
 // endpoint options: START
-The AWS 2 Simple Notification System (SNS) endpoint is configured using URI syntax:
+The AWS Simple Notification System (SNS) endpoint is configured using URI syntax:
 
 ----
 aws2-sns:topicNameOrArn

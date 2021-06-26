@@ -83,13 +83,13 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange, String operation) {
         ServiceAccountList saList = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace().list();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(saList.getItems());
     }
 
-    protected void doListServiceAccountsByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListServiceAccountsByLabels(Exchange exchange, String operation) {
         ServiceAccountList saList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);

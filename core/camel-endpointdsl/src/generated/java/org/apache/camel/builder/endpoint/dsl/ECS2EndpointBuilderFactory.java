@@ -31,7 +31,7 @@ public interface ECS2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Elastic Container Service (ECS)
+     * Builder for endpoint for the AWS Elastic Container Service (ECS)
      * component.
      */
     public interface ECS2EndpointBuilder extends EndpointProducerBuilder {
@@ -439,7 +439,7 @@ public interface ECS2EndpointBuilderFactory {
 
     public interface ECS2Builders {
         /**
-         * AWS 2 Elastic Container Service (ECS) (camel-aws2-ecs)
+         * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
          * Manage AWS ECS cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -458,7 +458,7 @@ public interface ECS2EndpointBuilderFactory {
             return ECS2EndpointBuilderFactory.endpointBuilder("aws2-ecs", path);
         }
         /**
-         * AWS 2 Elastic Container Service (ECS) (camel-aws2-ecs)
+         * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
          * Manage AWS ECS cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management

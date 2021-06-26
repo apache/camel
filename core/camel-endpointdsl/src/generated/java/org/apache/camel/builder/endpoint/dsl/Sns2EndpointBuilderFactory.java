@@ -32,7 +32,7 @@ public interface Sns2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Simple Notification System (SNS)
+     * Builder for endpoint for the AWS Simple Notification System (SNS)
      * component.
      */
     public interface Sns2EndpointBuilder extends EndpointProducerBuilder {
@@ -647,7 +647,7 @@ public interface Sns2EndpointBuilderFactory {
 
     public interface Sns2Builders {
         /**
-         * AWS 2 Simple Notification System (SNS) (camel-aws2-sns)
+         * AWS Simple Notification System (SNS) (camel-aws2-sns)
          * Send messages to an AWS Simple Notification Topic using AWS SDK
          * version 2.x.
          * 
@@ -667,7 +667,7 @@ public interface Sns2EndpointBuilderFactory {
             return Sns2EndpointBuilderFactory.endpointBuilder("aws2-sns", path);
         }
         /**
-         * AWS 2 Simple Notification System (SNS) (camel-aws2-sns)
+         * AWS Simple Notification System (SNS) (camel-aws2-sns)
          * Send messages to an AWS Simple Notification Topic using AWS SDK
          * version 2.x.
          * 

@@ -65,8 +65,7 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
     public ApplicationPkcs7SignatureEntity(byte[] signature,
                                            String charset,
                                            String contentTransferEncoding,
-                                           boolean isMainBody)
-                                                               throws HttpException {
+                                           boolean isMainBody) {
         this.signature = Args.notNull(signature, "signature");
 
         ContentType contentType = ContentType

@@ -104,7 +104,6 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "hazelcast-topic":
             case "hbase":
             case "hdfs":
-            case "hwcloud-iam":
             case "iec60870-client":
             case "iec60870-server":
             case "ignite-cache":

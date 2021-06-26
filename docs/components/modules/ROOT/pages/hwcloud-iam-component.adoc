@@ -1,13 +1,13 @@
 [[hwcloud-iam-component]]
-= IAM Component
+= Huawei Cloud Identity and Access Management (IAM) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-huawei/camel-huaweicloud-iam/src/main/docs/hwcloud-iam-component.adoc
-:docTitle: IAM
+:docTitle: Huawei Cloud Identity and Access Management (IAM)
 :artifactId: camel-huaweicloud-iam
 :description: To securely manage users on Huawei Cloud
 :since: 3.11
 :supportLevel: Preview
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-iam.adoc[opts=optional]
 //Manually maintained attributes
 :group: Huawei Cloud
@@ -40,21 +40,20 @@ hwcloud-iam:operation[?options]
 == URI Options
 
 // component options: START
-The IAM component supports 3 options, which are listed below.
+The Huawei Cloud Identity and Access Management (IAM) component supports 2 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
 
 // endpoint options: START
-The IAM endpoint is configured using URI syntax:
+The Huawei Cloud Identity and Access Management (IAM) endpoint is configured using URI syntax:
 
 ----
 hwcloud-iam:operation
@@ -72,28 +71,24 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (16 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *authenticationKey* (common) | *Required* Authentication key for the cloud user |  | String
-| *endpoint* (common) | IAM endpoint url. Carries higher precedence than region parameter based client initialization |  | String
-| *groupId* (common) | Group ID to perform operation with |  | String
-| *ignoreSslVerification* (common) | Ignore SSL verification | false | boolean
-| *proxyHost* (common) | Proxy server ip/hostname |  | String
-| *proxyPassword* (common) | Proxy authentication password |  | String
-| *proxyPort* (common) | Proxy server port |  | int
-| *proxyUser* (common) | Proxy authentication user |  | String
-| *region* (common) | *Required* IAM service region. This is lower precedence than endpoint based configuration |  | String
-| *secretKey* (common) | *Required* Secret key for the cloud user |  | String
-| *serviceKeys* (common) | Configuration object for cloud service authentication |  | ServiceKeys
-| *userId* (common) | User ID to perform operation with |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *authenticationKey* (producer) | *Required* Authentication key for the cloud user |  | String
+| *groupId* (producer) | Group ID to perform operation with |  | String
+| *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *proxyHost* (producer) | Proxy server ip/hostname |  | String
+| *proxyPassword* (producer) | Proxy authentication password |  | String
+| *proxyPort* (producer) | Proxy server port |  | int
+| *proxyUser* (producer) | Proxy authentication user |  | String
+| *region* (producer) | *Required* IAM service region |  | String
+| *secretKey* (producer) | *Required* Secret key for the cloud user |  | String
+| *serviceKeys* (producer) | Configuration object for cloud service authentication |  | ServiceKeys
+| *userId* (producer) | User ID to perform operation with |  | String
 |===
 // endpoint options: END
 
@@ -119,9 +114,46 @@ If any of the above properties are set, they will override their corresponding q
 == List of Supported IAM Operations
 
 - listUsers
-- getUsers
+- getUser - `userId` parameter is *required*
+- updateUser - `userId` parameter is *required*
 - listGroups
-- getGroupUsers
+- getGroupUsers - `groupId` is *required*
+- updateGroup - `groupId` is *required*
+
+=== Passing Options Through Exchange Body
+There are many options that can be submitted to https://support.huaweicloud.com/en-us/api-iam/iam_08_0011.html[update a user] (Table 4) or to https://support.huaweicloud.com/en-us/api-iam/iam_09_0004.html[update a group] (Table 4). Since there are multiple user/group options, they must be passed through the exchange body.
+
+For the `updateUser` operation, you can pass the user options as an UpdateUserOption object or a Json string:
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new UpdateUserOption().withName("user").withDescription("employee").withEmail("user@email.com"))
+ .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&authenticationKey=********&secretKey=********")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"name\":\"user\",\"description\":\"employee\",\"email\":\"user@email.com\"}")
+ .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&authenticationKey=********&secretKey=********")
+----
+
+For the `updateGroup` operation, you can pass the group options as a KeystoneUpdateGroupOption object or a Json string:
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new KeystoneUpdateGroupOption().withName("group").withDescription("employees").withDomainId("1234"))
+ .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&authenticationKey=********&secretKey=********")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"name\":\"group\",\"description\":\"employees\",\"domain_id\":\"1234\"}")
+ .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&authenticationKey=********&secretKey=********")
+----
 
 == Using ServiceKey Configuration Bean
 

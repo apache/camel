@@ -195,7 +195,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         String keyGenerated;
 
         // BigIntegerFormatFactory added for ticket - camel-2773
-        if ((key1 != null) && (key2 != null)) {
+        if (key1 != null && key2 != null) {
             key2Formatted = getNumberFormat().format((long) key2);
             keyGenerated = String.valueOf(key1) + key2Formatted;
         } else {
@@ -216,7 +216,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         return nf;
     }
 
-    public static Object getDefaultValueForPrimitive(Class<?> clazz) throws Exception {
+    public static Object getDefaultValueForPrimitive(Class<?> clazz) {
         if (clazz == byte.class) {
             return Byte.MIN_VALUE;
         } else if (clazz == short.class) {

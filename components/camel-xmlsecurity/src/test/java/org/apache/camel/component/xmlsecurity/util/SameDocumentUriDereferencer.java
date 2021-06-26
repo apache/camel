@@ -63,7 +63,7 @@ public final class SameDocumentUriDereferencer implements URIDereferencer {
             throw new URIReferenceException("Cannot resolve a URI of value 'null'.");
         }
 
-        if (uriString != null && ((uriString.length() != 0 && uriString.charAt(0) == '#') || uriString.isEmpty())) {
+        if (uriString != null && (uriString.length() != 0 && uriString.charAt(0) == '#' || uriString.isEmpty())) {
             // same document uri
             XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
             return fac.getURIDereferencer().dereference(uriReference, context);

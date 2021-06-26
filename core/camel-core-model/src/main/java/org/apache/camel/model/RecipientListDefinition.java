@@ -161,6 +161,21 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * Sets a reference to the AggregationStrategy to be used to assemble the replies from the recipients, into a single
      * outgoing message from the RecipientList. By default Camel will use the last reply as the outgoing message. You
      * can also use a POJO as the AggregationStrategy
+     * <p/>
+     * The value can either refer to a bean to lookup, or to lookup a singleton bean by its type, or to create a new
+     * bean:
+     * <ul>
+     * <li>Lookup bean - This is the default behavior to lookup an existing bean by the bean id (value)</li>
+     * <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with
+     * #type: syntax, eg #type:com.foo.MyClassType</li>
+     * <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg
+     * #class:com.foo.MyClassType. The class is created using a default no-arg constructor, however if you need to
+     * create the instance via a factory method then you specify the method as shown:
+     * #class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires parameters they can be specified
+     * as follows: #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the
+     * instance via constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello
+     * World', 5, true)</li>.
+     * </ul>
      */
     public RecipientListDefinition<Type> aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);
@@ -363,16 +378,16 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     /**
      * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used to cache and reuse
      * producers when using this recipient list, when uris are reused.
-     *
+     * <p>
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
      * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
-     *
+     * <p>
      * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
      * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
      * the default size (1000).
-     *
+     * <p>
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
      * reduce memory usage to avoid storing too many non frequent used producers.
      *
@@ -387,16 +402,16 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     /**
      * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used to cache and reuse
      * producers when using this recipient list, when uris are reused.
-     *
+     * <p>
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
      * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
-     *
+     * <p>
      * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
      * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
      * the default size (1000).
-     *
+     * <p>
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
      * reduce memory usage to avoid storing too many non frequent used producers.
      *
