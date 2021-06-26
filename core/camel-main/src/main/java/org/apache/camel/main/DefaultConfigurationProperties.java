@@ -16,6 +16,9 @@
  */
 package org.apache.camel.main;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.StartupSummaryLevel;
@@ -95,6 +98,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
     private boolean dumpRoutes;
+    private Map<String, String> globalOptions;
     // route controller
     @Metadata(defaultValue = "DEBUG")
     @Deprecated
@@ -1015,6 +1019,20 @@ public abstract class DefaultConfigurationProperties<T> {
         this.dumpRoutes = dumpRoutes;
     }
 
+    public Map<String, String> getGlobalOptions() {
+        return globalOptions;
+    }
+
+    /**
+     * Sets global options that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     */
+    public void setGlobalOptions(Map<String, String> globalOptions) {
+        this.globalOptions = globalOptions;
+    }
+
     @Deprecated
     public LoggingLevel getRouteControllerLoggingLevel() {
         return routeControllerLoggingLevel;
@@ -1914,6 +1932,34 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withDumpRoutes(boolean dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
+        return (T) this;
+    }
+
+    /**
+     * Sets global options that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     */
+    public T withGlobalOptions(Map<String, String> globalOptions) {
+        if (this.globalOptions == null) {
+            this.globalOptions = new HashMap<>();
+        }
+        this.globalOptions.putAll(globalOptions);
+        return (T) this;
+    }
+
+    /**
+     * Sets global options that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     */
+    public T withGlobalOption(String key, String value) {
+        if (this.globalOptions == null) {
+            this.globalOptions = new HashMap<>();
+        }
+        this.globalOptions.put(key, value);
         return (T) this;
     }
 

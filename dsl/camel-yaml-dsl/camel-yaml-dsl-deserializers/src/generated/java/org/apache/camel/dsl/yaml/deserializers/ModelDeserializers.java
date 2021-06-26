@@ -71,7 +71,6 @@ import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RouteTemplateScriptDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
@@ -12184,71 +12183,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "steps": {
                     setSteps(target, node);;
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            inline = true,
-            types = org.apache.camel.model.RouteTemplateBeanDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "template-bean",
-            properties = {
-                    @YamlProperty(name = "bean-type", type = "string"),
-                    @YamlProperty(name = "name", type = "string", required = true),
-                    @YamlProperty(name = "property", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "script", type = "object:org.apache.camel.model.RouteTemplateScriptDefinition"),
-                    @YamlProperty(name = "type", type = "string", required = true)
-            }
-    )
-    public static class RouteTemplateBeanDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateBeanDefinition> {
-        public RouteTemplateBeanDefinitionDeserializer() {
-            super(RouteTemplateBeanDefinition.class);
-        }
-
-        @Override
-        protected RouteTemplateBeanDefinition newInstance() {
-            return new RouteTemplateBeanDefinition();
-        }
-
-        @Override
-        protected RouteTemplateBeanDefinition newInstance(String value) {
-            return new RouteTemplateBeanDefinition(value);
-        }
-
-        @Override
-        protected boolean setProperty(RouteTemplateBeanDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "bean-type": {
-                    String val = asText(node);
-                    target.setBeanType(val);
-                    break;
-                }
-                case "name": {
-                    String val = asText(node);
-                    target.setName(val);
-                    break;
-                }
-                case "property": {
-                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                    target.setProperties(val);
-                    break;
-                }
-                case "script": {
-                    org.apache.camel.model.RouteTemplateScriptDefinition val = asType(node, org.apache.camel.model.RouteTemplateScriptDefinition.class);
-                    target.setScript(val);
-                    break;
-                }
-                case "type": {
-                    String val = asText(node);
-                    target.setType(val);
                     break;
                 }
                 default: {

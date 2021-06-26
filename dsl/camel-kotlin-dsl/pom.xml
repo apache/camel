@@ -230,4 +230,17 @@
         </plugins>
     </build>
 
+    <!-- skip tests on java 8 -->
+    <profiles>
+        <profile>
+            <id>java-8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>

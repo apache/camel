@@ -79,6 +79,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExchangeFactoryStatisticsEnabled": target.setExchangeFactoryStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
         case "fileconfigurations":
         case "FileConfigurations": target.setFileConfigurations(property(camelContext, java.lang.String.class, value)); return true;
+        case "globaloptions":
+        case "GlobalOptions": target.setGlobalOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "inflightrepositorybrowseenabled":
         case "InflightRepositoryBrowseEnabled": target.setInflightRepositoryBrowseEnabled(property(camelContext, boolean.class, value)); return true;
         case "javaroutesexcludepattern":
@@ -272,6 +274,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExchangeFactoryStatisticsEnabled": return boolean.class;
         case "fileconfigurations":
         case "FileConfigurations": return java.lang.String.class;
+        case "globaloptions":
+        case "GlobalOptions": return java.util.Map.class;
         case "inflightrepositorybrowseenabled":
         case "InflightRepositoryBrowseEnabled": return boolean.class;
         case "javaroutesexcludepattern":
@@ -466,6 +470,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExchangeFactoryStatisticsEnabled": return target.isExchangeFactoryStatisticsEnabled();
         case "fileconfigurations":
         case "FileConfigurations": return target.getFileConfigurations();
+        case "globaloptions":
+        case "GlobalOptions": return target.getGlobalOptions();
         case "inflightrepositorybrowseenabled":
         case "InflightRepositoryBrowseEnabled": return target.isInflightRepositoryBrowseEnabled();
         case "javaroutesexcludepattern":
@@ -603,6 +609,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "configurations":
         case "Configurations": return java.lang.Object.class;
+        case "globaloptions":
+        case "GlobalOptions": return java.lang.String.class;
         case "routesbuilders":
         case "RoutesBuilders": return org.apache.camel.RoutesBuilder.class;
         default: return null;

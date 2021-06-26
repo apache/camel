@@ -86,6 +86,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "serviceType": getOrCreateConfiguration(target).setServiceType(property(camelContext, java.lang.String.class, value)); return true;
         case "sessionstatelistener":
         case "sessionStateListener": getOrCreateConfiguration(target).setSessionStateListener(property(camelContext, org.jsmpp.session.SessionStateListener.class, value)); return true;
+        case "singledlr":
+        case "singleDLR": getOrCreateConfiguration(target).setSingleDLR(property(camelContext, boolean.class, value)); return true;
         case "sourceaddr":
         case "sourceAddr": getOrCreateConfiguration(target).setSourceAddr(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceaddrnpi":
@@ -169,6 +171,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "serviceType": return java.lang.String.class;
         case "sessionstatelistener":
         case "sessionStateListener": return org.jsmpp.session.SessionStateListener.class;
+        case "singledlr":
+        case "singleDLR": return boolean.class;
         case "sourceaddr":
         case "sourceAddr": return java.lang.String.class;
         case "sourceaddrnpi":
@@ -253,6 +257,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "serviceType": return getOrCreateConfiguration(target).getServiceType();
         case "sessionstatelistener":
         case "sessionStateListener": return getOrCreateConfiguration(target).getSessionStateListener();
+        case "singledlr":
+        case "singleDLR": return getOrCreateConfiguration(target).isSingleDLR();
         case "sourceaddr":
         case "sourceAddr": return getOrCreateConfiguration(target).getSourceAddr();
         case "sourceaddrnpi":

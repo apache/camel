@@ -214,9 +214,9 @@ public class MethodInfo {
                     for (Annotation a : method.getAnnotations()) {
                         // favour existing annotation so only add if not exists
                         Class<?> at = a.annotationType();
-                        if (!annotations.containsKey(at)) {
-                            annotations.put(at, a);
-                        }
+
+                        annotations.putIfAbsent(at, a);
+
                         aep |= at == Pattern.class || at == InOnly.class || at == InOut.class;
                     }
                 }

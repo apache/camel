@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerIT.class);
@@ -233,6 +233,6 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
         LOG.debug("------------Completed LuceneQueryProducer Wildcard with Return Lucene Docs Test---------------");
 
         context.stop();
-        assertTrue(errorMap.get("NO_LUCENE_DOCS_ERROR") == null);
+        assertNull(errorMap.get("NO_LUCENE_DOCS_ERROR"));
     }
 }

@@ -53,7 +53,7 @@
         <ahc-version>2.12.3</ahc-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-any23-version>2.3</apache-any23-version>
-        <apache-drill-version>1.18.0</apache-drill-version>
+        <apache-drill-version>1.19.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
         <arangodb-java-version>6.12.1</arangodb-java-version>
         <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
@@ -67,7 +67,7 @@
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
         <asm-version>8.0.1</asm-version>
         <aspectj-version>1.9.6</aspectj-version>
-        <assertj-version>3.19.0</assertj-version>
+        <assertj-version>3.20.0</assertj-version>
         <asterisk-java-version>3.12.0</asterisk-java-version>
         <atlasmap-version>2.2.2</atlasmap-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
@@ -80,14 +80,14 @@
         <avro-ipc-jetty-version>1.10.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
         <awaitility-version>4.1.0</awaitility-version>
-        <aws-java-sdk2-version>2.16.81</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.16.85</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.0.3</azure-sdk-bom-version>
         <azure-jackson2-version>2.11.3</azure-jackson2-version>
         <beanio-version>2.1.0</beanio-version>
         <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
-        <bouncycastle-version>1.68</bouncycastle-version>
+        <bouncycastle-version>1.69</bouncycastle-version>
         <box-java-sdk-version>2.54.0</box-java-sdk-version>
         <braintree-gateway-version>3.10.0</braintree-gateway-version>
         <brave-zipkin-version>5.13.3</brave-zipkin-version>
@@ -118,7 +118,7 @@
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-dbcp2-version>2.8.0</commons-dbcp2-version>
         <commons-exec-version>1.3</commons-exec-version>
-        <commons-io-version>2.8.0</commons-io-version>
+        <commons-io-version>2.10.0</commons-io-version>
         <commons-lang-version>2.6</commons-lang-version>
         <commons-lang3-version>3.12.0</commons-lang3-version>
         <commons-logging-version>1.2</commons-logging-version>
@@ -169,12 +169,6 @@
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
         <fastjson-version>1.2.76</fastjson-version>
-        <felix-configadmin-version>1.9.20</felix-configadmin-version>
-        <felix-connect-version>0.2.0</felix-connect-version>
-        <felix-fileinstall-version>3.6.8</felix-fileinstall-version>
-        <felix-framework-version>5.6.12</felix-framework-version>
-        <felix-scr-annotations-version>1.12.0</felix-scr-annotations-version>
-        <felix-scr-version>2.1.26</felix-scr-version>
         <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
         <google-maps-services-version>0.10.1</google-maps-services-version>
         <flatpack-version>4.0.5</flatpack-version>
@@ -295,7 +289,7 @@
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
         <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
-        <jcache-bundle-version>1.1.0_1</jcache-bundle-version>
+        <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
         <jclouds-version>2.2.1</jclouds-version>
         <!-- jclouds must use this guava version -->
         <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
@@ -310,7 +304,7 @@
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.1</jettison-version>
-        <jgit-version>5.11.1.202105131744-r</jgit-version>
+        <jgit-version>5.12.0.202106070339-r</jgit-version>
         <jgroups-version>4.2.15.Final</jgroups-version>
         <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
@@ -319,7 +313,7 @@
         <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>
         <libthrift-version>0.12.0</libthrift-version>
         <jing-version>20030619</jing-version>
-        <jodatime2-bundle-version>2.10.6</jodatime2-bundle-version>
+        <jodatime2-version>2.10.10</jodatime2-version>
         <jota-version>1.0.0-beta7</jota-version>
         <jolokia-version>1.6.2</jolokia-version>
         <jolt-version>0.1.1</jolt-version>
@@ -348,7 +342,7 @@
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <kafka-version>2.8.0</kafka-version>
-        <kotlin-version>1.5.0</kotlin-version>
+        <kotlin-version>1.5.10</kotlin-version>
         <kubernetes-client-version>5.4.1</kubernetes-client-version>
         <kubernetes-model-version>5.4.1</kubernetes-model-version>
         <kudu-version>1.14.0</kudu-version>
@@ -375,7 +369,7 @@
         <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
         <maven-checkstyle-plugin-version>3.1.2</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.40</maven-checkstyle-version>
-        <maven-owasp-plugin-version>6.2.0</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>6.2.2</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.2.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
@@ -406,7 +400,7 @@
         <minio-version>8.2.1</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.1.8</mockwebserver-version>
-        <mockito-version>3.10.0</mockito-version>
+        <mockito-version>3.11.1</mockito-version>
         <mongo-java-driver-version>4.1.0</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msv-version>2013.6.1</msv-version>
@@ -437,12 +431,11 @@
         <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
         <opentracing-version>0.33.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
-        <optaplanner-version>8.6.0.Final</optaplanner-version>
+        <optaplanner-version>8.7.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
-        <osgi-version>6.0.0</osgi-version>
         <paho-version>1.2.5</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
-        <pdfbox-version>2.0.23</pdfbox-version>
+        <pdfbox-version>2.0.24</pdfbox-version>
         <pgjdbc-driver-version>42.2.14</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.6</pgjdbc-ng-driver-version>
         <powermock-version>2.0.7</powermock-version>
@@ -497,7 +490,7 @@
         <smallrye-metrics-version>3.0.3</smallrye-metrics-version>
         <smallrye-health-version>3.0.2</smallrye-health-version>
         <smallrye-fault-tolerance-version>5.1.0</smallrye-fault-tolerance-version>
-        <snakeyaml-version>1.28</snakeyaml-version>
+        <snakeyaml-version>1.29</snakeyaml-version>
         <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <!-- solr version aligned with lucene -->
@@ -513,7 +506,7 @@
         <spring-ldap-version>2.3.3.RELEASE</spring-ldap-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.7</spring5-version>
+        <spring5-version>5.3.8</spring5-version>
         <spring-rabbitmq-version>2.3.7</spring-rabbitmq-version>
         <spring-security-version>5.5.0</spring-security-version>
         <spring-ws-version>3.0.10.RELEASE</spring-ws-version>
@@ -604,10 +597,7 @@
         <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
         <camel.osgi.require.capability />
         <camel.osgi.provide.capability />
-
         <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
-        <sourcecheckExcludes></sourcecheckExcludes>
-        <sourcecheckExcludesComma></sourcecheckExcludesComma>
     </properties>
 
     <dependencyManagement>
@@ -1525,7 +1515,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-huawei-parent</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-huaweicloud-functiongraph</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-huaweicloud-iam</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -3213,18 +3213,6 @@
                 <version>${commons-codec-version}</version>
             </dependency>
 
-            <!-- optional dependencies for osgi -->
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>osgi.core</artifactId>
-                <version>${osgi-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>osgi.cmpn</artifactId>
-                <version>${osgi-version}</version>
-            </dependency>
-
             <!-- optional dependencies for JMS -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
@@ -3528,11 +3516,6 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient-cache</artifactId>
-                <version>${httpclient4-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient-osgi</artifactId>
                 <version>${httpclient4-version}</version>
             </dependency>
             <dependency>
@@ -3928,13 +3911,6 @@
                 <groupId>org.apache.aries.blueprint</groupId>
                 <artifactId>org.apache.aries.blueprint.cm</artifactId>
                 <version>${aries-blueprint-cm-version}</version>
-            </dependency>
-
-            <!-- OSGi ConfigAdmin service -->
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.configadmin</artifactId>
-                <version>${felix-configadmin-version}</version>
             </dependency>
 
             <!-- need this to use the new 'maven-archetype' packaging type -->

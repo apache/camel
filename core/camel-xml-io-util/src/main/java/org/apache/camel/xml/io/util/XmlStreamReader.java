@@ -303,7 +303,6 @@ public class XmlStreamReader extends Reader {
         defaultEncoding = staticDefaultEncoding;
         final boolean lenient = true;
         if (conn instanceof HttpURLConnection) {
-            final Package pckg = this.getClass().getPackage();
             setRequestHeader(conn, requestHeaders);
             try {
                 doHttpStream(conn.getInputStream(), conn.getContentType(), lenient);

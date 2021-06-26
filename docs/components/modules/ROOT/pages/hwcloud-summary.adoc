@@ -1,0 +1,12 @@
+= Huawei Cloud Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-huawei/camel-huaweicloud-functiongraph/src/main/docs/hwcloud-summary.adoc
+:docTitle: Huawei Cloud
+
+The Camel components for https://www.huaweicloud.com/intl/en-us/[Huawei Cloud Services] which provides connectivity to Huawei Cloud services from Camel.
+
+== {docTitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]

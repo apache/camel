@@ -6788,6 +6788,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IAM (camel-huaweicloud-iam)
+     * To securely manage users on Huawei Cloud
+     * 
+     * Category: cloud
+     * Since: 3.11
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-iam
+     * 
+     * Syntax: <code>hwcloud-iam:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to be performed
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder hwcloudIam(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder("hwcloud-iam", path);
+    }
+    /**
+     * IAM (camel-huaweicloud-iam)
+     * To securely manage users on Huawei Cloud
+     * 
+     * Category: cloud
+     * Since: 3.11
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-iam
+     * 
+     * Syntax: <code>hwcloud-iam:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to be performed
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder hwcloudIam(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * SimpleNotification (camel-huaweicloud-smn)
      * Huawei Cloud component to integrate with SimpleNotification services
      * 
@@ -8654,6 +8697,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.KameletReifyEndpointBuilder kameletReify(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.endpointBuilder("kamelet-reify", path);
@@ -8676,6 +8720,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.KameletReifyEndpointBuilder kameletReify(
             String componentName,
             String path) {

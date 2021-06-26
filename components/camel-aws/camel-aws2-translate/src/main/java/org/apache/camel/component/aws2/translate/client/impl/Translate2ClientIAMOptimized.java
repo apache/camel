@@ -59,7 +59,7 @@ public class Translate2ClientIAMOptimized implements Translate2InternalClient {
         TranslateClientBuilder clientBuilder = TranslateClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
-        boolean isClientConfigFound = false;
+
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"

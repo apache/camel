@@ -42,9 +42,8 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.support.PlatformHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.AnnotationExpressionFactory;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
@@ -102,19 +101,16 @@ public class BeanInfo {
     public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy,
                     BeanComponent beanComponent) {
 
-        boolean osgi = PlatformHelper.isOsgiContext(camelContext);
-        if (!osgi) {
-            // OSGi services wont work for this
-            while (type.isSynthetic()) {
-                type = type.getSuperclass();
-                if (explicitMethod != null) {
-                    try {
-                        explicitMethod = type.getDeclaredMethod(explicitMethod.getName(), explicitMethod.getParameterTypes());
-                    } catch (NoSuchMethodException e) {
-                        throw new RuntimeCamelException("Unable to find a method " + explicitMethod + " on " + type, e);
-                    }
-                }
-            }
+        // use type resolver
+        BeanInfoTypeResolver typeResolver = CamelContextHelper.findByType(camelContext, BeanInfoTypeResolver.class);
+        if (typeResolver == null) {
+            // use default instance
+            typeResolver = DefaultBeanInfoTypeResolver.INSTANCE;
+        }
+        Object[] resolved = typeResolver.resolve(type, explicitMethod);
+        if (resolved != null) {
+            type = (Class<?>) resolved[0];
+            explicitMethod = (Method) resolved[1];
         }
 
         this.camelContext = camelContext;
@@ -1020,9 +1016,9 @@ public class BeanInfo {
                     AnnotationExpressionFactory expressionFactory = (AnnotationExpressionFactory) object;
                     return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
                 } else {
-                    LOG.warn("Ignoring bad annotation: " + languageAnnotation + "on method: " + method
-                             + " which declares a factory: " + type.getName()
-                             + " which does not implement " + AnnotationExpressionFactory.class.getName());
+                    LOG.warn(
+                            "Ignoring bad annotation: {} on method: {} which declares a factory {} which does not implement {}",
+                            languageAnnotation, method, type.getName(), AnnotationExpressionFactory.class.getName());
                 }
             }
         }
