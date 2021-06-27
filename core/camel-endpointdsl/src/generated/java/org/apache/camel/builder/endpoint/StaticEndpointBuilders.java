@@ -10742,7 +10742,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Netty (camel-netty)
-     * Socket level networking using TCP or UDP with  Netty 4.x.
+     * Socket level networking using TCP or UDP with Netty 4.x.
      * 
      * Category: networking,tcp,udp
      * Since: 2.14
@@ -10770,7 +10770,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Netty (camel-netty)
-     * Socket level networking using TCP or UDP with  Netty 4.x.
+     * Socket level networking using TCP or UDP with Netty 4.x.
      * 
      * Category: networking,tcp,udp
      * Since: 2.14

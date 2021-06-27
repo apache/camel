@@ -2,7 +2,7 @@
 = Netty Component
 :docTitle: Netty
 :artifactId: camel-netty
-:description: Socket level networking using TCP or UDP with  Netty 4.x.
+:description: Socket level networking using TCP or UDP with Netty 4.x.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
