@@ -136,9 +136,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
         // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
         DispositionNotificationMultipartReportEntity multipartReportEntity;
-        if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) != null
-                || HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE)
-                   == AS2DispositionType.FAILED.getType()) {
+        if (AS2DispositionType.FAILED.getType()
+                .equals(HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE))) {
             // Return a failed Message Disposition Notification Receipt in response body
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
