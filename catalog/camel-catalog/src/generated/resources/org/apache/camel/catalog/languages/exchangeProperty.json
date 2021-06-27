@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "exchangeProperty",
     "title": "ExchangeProperty",
-    "description": "Get the value of named Camel Exchange property.",
+    "description": "Get values of named Camel Exchange properties.",
     "deprecated": false,
     "firstVersion": "2.0.0",
     "label": "language,core",

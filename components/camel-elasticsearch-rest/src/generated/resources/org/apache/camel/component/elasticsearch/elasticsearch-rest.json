@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "elasticsearch-rest",
     "title": "Elasticsearch Rest",
-    "description": "Send requests to with an ElasticSearch via REST API.",
+    "description": "Send requests to ElasticSearch via REST API",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "search,monitoring",

@@ -2,7 +2,7 @@
 = Header Language
 :docTitle: Header
 :artifactId: camel-core-languages
-:description: Get the value of the named Camel Message header.
+:description: Get values of Camel Message headers.
 :since: 1.5
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/header.adoc[opts=optional]

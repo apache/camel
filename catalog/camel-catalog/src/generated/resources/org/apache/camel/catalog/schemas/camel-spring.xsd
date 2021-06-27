@@ -401,7 +401,7 @@ null
   <xs:element name="exchangeProperty" type="tns:exchangePropertyExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Get the value of named Camel Exchange property.
+Get values of named Camel Exchange properties.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -556,7 +556,7 @@ Rest HEAD command
   <xs:element name="header" type="tns:headerExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Get the value of the named Camel Message header.
+Get values of Camel Message headers.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1716,7 +1716,7 @@ Recipient List or Dynamic Router EIP instead.
   <xs:element name="tokenize" type="tns:tokenizerExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Tokenize text payloads using the specified delimiter patterns.
+Tokenize text payloads using delimiter patterns.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>

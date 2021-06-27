@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "header",
     "title": "Header",
-    "description": "Get the value of the named Camel Message header.",
+    "description": "Get values of Camel Message headers.",
     "deprecated": false,
     "firstVersion": "1.5.0",
     "label": "language,core",

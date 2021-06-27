@@ -4,7 +4,7 @@
 :page-source: components/camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc
 :docTitle: Elasticsearch Rest
 :artifactId: camel-elasticsearch-rest
-:description: Send requests to with an ElasticSearch via REST API.
+:description: Send requests to ElasticSearch via REST API
 :since: 2.21
 :supportLevel: Stable
 :component-header: Only producer is supported

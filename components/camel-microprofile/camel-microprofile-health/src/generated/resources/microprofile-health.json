@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "microprofile-health",
     "title": "Microprofile Health",
-    "description": "Bridging Eclipse MicroProfile Health with Camel health checks",
+    "description": "Expose Camel health checks via MicroProfile Health",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "microservice",

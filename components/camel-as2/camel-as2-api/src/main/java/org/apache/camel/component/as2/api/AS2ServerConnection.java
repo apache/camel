@@ -178,6 +178,7 @@ public class AS2ServerConnection {
     }
 
     private RequestListenerThread listenerThread;
+    private final Object lock = new Object();
     private String as2Version;
     private String originServer;
     private String serverFqdn;
@@ -226,7 +227,7 @@ public class AS2ServerConnection {
 
     public void close() {
         if (listenerThread != null) {
-            synchronized (listenerThread) {
+            synchronized (lock) {
                 try {
                     listenerThread.serversocket.close();
                 } catch (IOException e) {
@@ -242,14 +243,13 @@ public class AS2ServerConnection {
 
     public void listen(String requestUri, HttpRequestHandler handler) {
         if (listenerThread != null) {
-            synchronized (listenerThread) {
+            synchronized (lock) {
                 listenerThread.registerHandler(requestUri, handler);
             }
         }
     }
 
     public void stopListening(String requestUri) {
-
         if (listenerThread != null) {
             listenerThread.unregisterHandler(requestUri);
         }

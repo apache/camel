@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: MicroProfile :: Health</name>
-    <description>Bridging Eclipse MicroProfile Health with Camel health checks</description>
+    <description>Expose Camel health checks via MicroProfile Health</description>
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
