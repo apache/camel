@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "file",
     "title": "File",
-    "description": "For expressions and predicates using the file\/simple language.",
+    "description": "File related capabilities for the Simle language",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "language,core,java",
