@@ -302,7 +302,10 @@ public class StaxConverter {
 
     private void returnXMLInputFactory(XMLInputFactory factory) {
         if (factory != inputFactory) {
-            INPUT_FACTORY_POOL.offer(factory);
+            boolean resultOfOffer = INPUT_FACTORY_POOL.offer(factory);
+            if (!resultOfOffer) {
+                LOG.error("factory wasn't added into INPUT_FACTORY_POOL");
+            }
         }
     }
 
@@ -316,7 +319,10 @@ public class StaxConverter {
 
     private void returnXMLOutputFactory(XMLOutputFactory factory) {
         if (factory != outputFactory) {
-            OUTPUT_FACTORY_POOL.offer(factory);
+            boolean resultOfOffer = OUTPUT_FACTORY_POOL.offer(factory);
+            if (!resultOfOffer) {
+                LOG.error("factory wasn't added into OUTPUT_FACTORY_POOL");
+            }
         }
     }
 

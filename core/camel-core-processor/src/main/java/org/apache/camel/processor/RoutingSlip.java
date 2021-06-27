@@ -587,7 +587,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
      * Embedded processor that routes to the routing slip that has been set via the exchange property
      * {@link Exchange#SLIP_PRODUCER}.
      */
-    private final class RoutingSlipProcessor extends AsyncProcessorSupport {
+    private static final class RoutingSlipProcessor extends AsyncProcessorSupport {
 
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
