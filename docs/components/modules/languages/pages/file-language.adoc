@@ -4,7 +4,7 @@
 :page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/file-language.adoc
 :docTitle: File
 :artifactId: camel-core-languages
-:description: For expressions and predicates using the file/simple language.
+:description: File related capabilities for the Simle language
 :since: 1.1
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/file.adoc[opts=optional]
