@@ -4,7 +4,7 @@
 :page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/exchangeProperty-language.adoc
 :docTitle: ExchangeProperty
 :artifactId: camel-core-languages
-:description: Get the value of named Camel Exchange property.
+:description: Get values of named Camel Exchange properties.
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/exchangeProperty.adoc[opts=optional]
