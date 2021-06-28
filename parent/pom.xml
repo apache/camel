@@ -55,7 +55,7 @@
         <apache-any23-version>2.3</apache-any23-version>
         <apache-drill-version>1.19.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
-        <arangodb-java-version>6.12.2</arangodb-java-version>
+        <arangodb-java-version>6.12.3</arangodb-java-version>
         <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
         <aries-blueprint-cm-version>1.3.0</aries-blueprint-cm-version>
         <aries-blueprint-core-version>1.10.0</aries-blueprint-core-version>
