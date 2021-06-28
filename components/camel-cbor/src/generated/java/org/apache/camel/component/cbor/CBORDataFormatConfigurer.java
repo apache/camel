@@ -20,14 +20,14 @@ public class CBORDataFormatConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "objectmapper":
         case "objectMapper": dataformat.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
-        case "unmarshaltypename":
-        case "unmarshalTypeName": dataformat.setUnmarshalTypeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "unmarshaltype":
+        case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
         case "usedefaultobjectmapper":
         case "useDefaultObjectMapper": dataformat.setUseDefaultObjectMapper(property(camelContext, boolean.class, value)); return true;
         case "allowunmarshalltype":
         case "allowUnmarshallType": dataformat.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
-        case "collectiontypename":
-        case "collectionTypeName": dataformat.setCollectionTypeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectiontype":
+        case "collectionType": dataformat.setCollectionType(property(camelContext, java.lang.Class.class, value)); return true;
         case "uselist":
         case "useList": dataformat.setUseList(property(camelContext, boolean.class, value)); return true;
         case "prettyprint":

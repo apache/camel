@@ -37,11 +37,11 @@ public class CBORDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String useDefaultObjectMapper;
-    @XmlAttribute
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
-    @XmlAttribute
+    @XmlAttribute(name = "collectionType")
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;
