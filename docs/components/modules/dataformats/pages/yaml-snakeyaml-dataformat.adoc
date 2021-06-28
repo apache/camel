@@ -34,7 +34,7 @@ The YAML SnakeYAML dataformat supports 12 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | library | SnakeYAML | YAMLLibrary | Which yaml library to use. By default it is SnakeYAML. There are 1 enums and the value can be one of: snake-yaml
-| unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
+| unmarshalType |  | String | Class name of the java type to use when unmarshalling
 | constructor |  | String | BaseConstructor to construct incoming documents.
 | representer |  | String | Representer to emit outgoing objects.
 | dumperOptions |  | String | DumperOptions to configure outgoing objects.
