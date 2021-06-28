@@ -10,6 +10,6 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-resourceresolver-github",
-    "version": "3.11.0-SNAPSHOT"
+    "version": "3.12.0-SNAPSHOT"
   }
 }

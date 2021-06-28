@@ -20,8 +20,8 @@ public class ASN1DataFormatConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "usingiterator":
         case "usingIterator": dataformat.setUsingIterator(property(camelContext, boolean.class, value)); return true;
-        case "clazzname":
-        case "clazzName": dataformat.setClazzName(property(camelContext, java.lang.String.class, value)); return true;
+        case "unmarshaltype":
+        case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
         default: return false;
         }
     }

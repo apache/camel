@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -55,7 +55,7 @@
         <apache-any23-version>2.3</apache-any23-version>
         <apache-drill-version>1.19.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
-        <arangodb-java-version>6.12.2</arangodb-java-version>
+        <arangodb-java-version>6.12.3</arangodb-java-version>
         <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
         <aries-blueprint-cm-version>1.3.0</aries-blueprint-cm-version>
         <aries-blueprint-core-version>1.10.0</aries-blueprint-core-version>
@@ -66,7 +66,7 @@
         <arquillian-version>1.6.0.Final</arquillian-version>
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
         <asm-version>8.0.1</asm-version>
-        <aspectj-version>1.9.6</aspectj-version>
+        <aspectj-version>1.9.7</aspectj-version>
         <assertj-version>3.20.2</assertj-version>
         <asterisk-java-version>3.12.0</asterisk-java-version>
         <atlasmap-version>2.2.2</atlasmap-version>

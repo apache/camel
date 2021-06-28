@@ -245,8 +245,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "asn1",
             properties = {
-                    @YamlProperty(name = "clazz-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "unmarshal-type", type = "string"),
                     @YamlProperty(name = "using-iterator", type = "boolean")
             }
     )
@@ -269,14 +269,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ASN1DataFormat target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "clazz-name": {
-                    String val = asText(node);
-                    target.setClazzName(val);
-                    break;
-                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "unmarshal-type": {
+                    String val = asText(node);
+                    target.setUnmarshalTypeName(val);
                     break;
                 }
                 case "using-iterator": {

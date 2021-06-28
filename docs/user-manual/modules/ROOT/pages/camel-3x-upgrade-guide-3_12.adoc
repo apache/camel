@@ -1,0 +1,11 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.11 to 3.12
+
+=== Data Formats
+
+The `camel-asn1` data format has renamed the option `clazzName` to `unmarshalType`.

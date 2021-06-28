@@ -1761,7 +1761,7 @@ public class ModelParser extends BaseParser {
     protected ASN1DataFormat doParseASN1DataFormat() throws IOException, XmlPullParserException {
         return doParse(new ASN1DataFormat(), (def, key, val) -> {
             switch (key) {
-                case "clazzName": def.setClazzName(val); break;
+                case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 case "usingIterator": def.setUsingIterator(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }

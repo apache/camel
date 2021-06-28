@@ -38,20 +38,15 @@ import org.bouncycastle.asn1.ASN1Primitive;
 @Dataformat("asn1")
 public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean usingIterator;
-    private String clazzName;
+    private Class<?> unmarshalType;
 
     public ASN1DataFormat() {
         this.usingIterator = false;
     }
 
-    public ASN1DataFormat(String clazzName) {
+    public ASN1DataFormat(Class<?> unmarshalType) {
         this.usingIterator = true;
-        this.clazzName = clazzName;
-    }
-
-    public ASN1DataFormat(Class<?> clazz) {
-        this.usingIterator = true;
-        this.clazzName = clazz.getName();
+        this.unmarshalType = unmarshalType;
     }
 
     @Override
@@ -63,8 +58,7 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         InputStream berOut = null;
         if (usingIterator) {
-            if (clazzName != null) {
-                exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
+            if (unmarshalType != null) {
                 encodeGenericTypeObject(exchange, stream);
                 return;
             }
@@ -102,9 +96,8 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         if (usingIterator) {
-            if (clazzName != null) {
-                Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
-                return new ASN1GenericIterator(clazz, stream);
+            if (unmarshalType != null) {
+                return new ASN1GenericIterator(unmarshalType, stream);
             }
             return new ASN1MessageIterator(exchange, stream);
         } else {
@@ -130,12 +123,12 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         this.usingIterator = usingIterator;
     }
 
-    public String getClazzName() {
-        return clazzName;
+    public Class<?> getUnmarshalType() {
+        return unmarshalType;
     }
 
-    public void setClazzName(String clazzName) {
-        this.clazzName = clazzName;
+    public void setUnmarshalType(Class<?> unmarshalType) {
+        this.unmarshalType = unmarshalType;
     }
 
     @Override

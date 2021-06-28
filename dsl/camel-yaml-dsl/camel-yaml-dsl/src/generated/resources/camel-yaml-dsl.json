@@ -3635,10 +3635,10 @@
         }, {
           "type" : "object",
           "properties" : {
-            "clazz-name" : {
+            "id" : {
               "type" : "string"
             },
-            "id" : {
+            "unmarshal-type" : {
               "type" : "string"
             },
             "using-iterator" : {

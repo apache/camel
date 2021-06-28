@@ -546,8 +546,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
-     * Sending and receive messages to/from AWS SQS service using AWS SDK
-     * version 2.x.
+     * Send and receive messages to/from AWS SQS service using AWS SDK version
+     * 2.x.
      * 
      * Category: cloud,messaging
      * Since: 3.1
@@ -1310,7 +1310,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Elasticsearch Rest (camel-elasticsearch-rest)
-     * Send requests to with an ElasticSearch via REST API.
+     * Send requests to ElasticSearch via REST API
      * 
      * Category: search,monitoring
      * Since: 2.21
@@ -3128,7 +3128,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Netty (camel-netty)
-     * Socket level networking using TCP or UDP with the Netty 4.x.
+     * Socket level networking using TCP or UDP with Netty 4.x.
      * 
      * Category: networking,tcp,udp
      * Since: 2.14

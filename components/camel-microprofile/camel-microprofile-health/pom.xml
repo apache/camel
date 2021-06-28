@@ -23,14 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-microprofile-parent</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-microprofile-health</artifactId>
     <packaging>jar</packaging>
 
     <name>Camel :: MicroProfile :: Health</name>
-    <description>Bridging Eclipse MicroProfile Health with Camel health checks</description>
+    <description>Expose Camel health checks via MicroProfile Health</description>
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
