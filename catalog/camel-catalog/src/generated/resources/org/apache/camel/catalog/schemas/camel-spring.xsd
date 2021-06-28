@@ -5990,10 +5990,10 @@ streaming mode. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="clazzName" type="xs:string">
+        <xs:attribute name="unmarshalType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Name of class to use when unmarshalling.
+Class to use when unmarshalling.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
