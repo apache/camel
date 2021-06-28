@@ -52,26 +52,12 @@ public class ProtobufDataFormatReifier extends DataFormatReifier<ProtobufDataFor
                 properties.put("useDefaultObjectMapper", definition.getUseDefaultObjectMapper());
             }
             properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
-            if (definition.getJsonView() != null) {
-                properties.put("jsonViewTypeName", asTypeName(definition.getJsonView()));
-            } else {
-                properties.put("jsonViewTypeName", definition.getJsonViewTypeName());
-            }
-            if (definition.getUnmarshalType() != null) {
-                properties.put("unmarshalTypeName", asTypeName(definition.getUnmarshalType()));
-            } else if (definition.getUnmarshalTypeName() != null) {
-                properties.put("unmarshalTypeName", definition.getUnmarshalTypeName());
-            } else {
-                properties.put("unmarshalTypeName", definition.getInstanceClass());
-            }
-            properties.put("jsonView", definition.getJsonView());
+            properties.put("jsonView", or(definition.getJsonView(), definition.getJsonViewTypeName()));
+            properties.put("unmarshalType", or(
+                    or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()), definition.getInstanceClass()));
             properties.put("include", definition.getInclude());
             properties.put("allowJmsType", definition.getAllowJmsType());
-            if (definition.getCollectionType() != null) {
-                properties.put("collectionTypeName", asTypeName(definition.getCollectionType()));
-            } else {
-                properties.put("collectionTypeName", definition.getCollectionTypeName());
-            }
+            properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
             properties.put("useList", definition.getUseList());
             properties.put("moduleClassNames", definition.getModuleClassNames());
             properties.put("moduleRefs", definition.getModuleRefs());
