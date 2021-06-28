@@ -4,7 +4,7 @@
 :artifactId: camel-jackson-protobuf
 :description: Marshal POJOs to Protobuf and back using Jackson.
 :since: 3.10
-:supportLevel: Preview
+:supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/protobuf-jackson.adoc[opts=optional]
 
 *Since Camel {since}*
