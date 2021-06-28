@@ -17,6 +17,7 @@
 package org.apache.camel.zipkin;
 
 import java.io.Closeable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Set;
 
 import brave.Span;
 import brave.Span.Kind;
+import brave.SpanCustomizer;
 import brave.Tracing;
 import brave.context.slf4j.MDCScopeDecorator;
 import brave.propagation.B3Propagation;
@@ -139,6 +141,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private Set<String> excludePatterns = new HashSet<>();
     private boolean includeMessageBody;
     private boolean includeMessageBodyStreams;
+    private Map<String, String> clientCustomTags = Collections.emptyMap();
+
     private final Map<String, Span.Kind> producerComponentToSpanKind = new HashMap<>();
     private final Map<String, Span.Kind> consumerComponentToSpanKind = new HashMap<>();
 
@@ -359,6 +363,27 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     @ManagedAttribute(description = "Whether to include stream based Camel message bodies in the zipkin traces")
     public void setIncludeMessageBodyStreams(boolean includeMessageBodyStreams) {
         this.includeMessageBodyStreams = includeMessageBodyStreams;
+    }
+
+    /**
+     * Custom tags that should be included on all client requests, in addition to the tags specified on the Exchange via
+     * <code>camel.client.customtags</code>.
+     *
+     * @param clientCustomTags custom tags to be added for all client requests
+     * @see                    ZipkinClientRequestAdapter#onRequest(Exchange, SpanCustomizer)
+     */
+    public void setClientCustomTags(Map<String, String> clientCustomTags) {
+        this.clientCustomTags = clientCustomTags == null ? Collections.emptyMap() : new HashMap<>(clientCustomTags);
+    }
+
+    /**
+     * Custom tags that are added for all client requests.
+     *
+     * @return custom tags added for all client requests
+     * @see    ZipkinClientRequestAdapter#onRequest(Exchange, SpanCustomizer)
+     */
+    public Map<String, String> getClientCustomTags() {
+        return clientCustomTags;
     }
 
     @Override
