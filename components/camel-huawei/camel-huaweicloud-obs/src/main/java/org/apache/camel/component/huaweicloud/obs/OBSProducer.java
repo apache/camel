@@ -50,8 +50,8 @@ public class OBSProducer extends DefaultProducer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
         this.clientConfigurations = new ClientConfigurations();
         this.obsClient = this.endpoint.initClient();
         this.gson = new Gson();

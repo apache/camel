@@ -40,25 +40,25 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.CLOUD })
 public class OBSEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
+    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
     @Metadata(required = true)
     private String operation;
 
     @UriParam(description = "OBS service region. This is lower precedence than endpoint based configuration",
-              displayName = "Service region", secret = false)
+              displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
     @UriParam(description = "OBS url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Endpoint url", secret = false)
+              displayName = "Endpoint url")
     @Metadata(required = false)
     private String endpoint;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", secret = false)
+    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port", secret = false)
+    @UriParam(description = "Proxy server port", displayName = "Proxy server port")
     @Metadata(required = false)
     private int proxyPort;
 
@@ -70,8 +70,7 @@ public class OBSEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-              defaultValue = "false")
+    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", defaultValue = "false")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
@@ -88,11 +87,11 @@ public class OBSEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String secretKey;
 
-    @UriParam(description = "Name of bucket to perform operation on", displayName = "Bucket Name", secret = false)
+    @UriParam(description = "Name of bucket to perform operation on", displayName = "Bucket Name")
     @Metadata(required = false)
     private String bucketName;
 
-    @UriParam(description = "Location of bucket when creating a new bucket", displayName = "Bucket Location", secret = false)
+    @UriParam(description = "Location of bucket when creating a new bucket", displayName = "Bucket Location")
     @Metadata(required = false)
     private String bucketLocation;
 
