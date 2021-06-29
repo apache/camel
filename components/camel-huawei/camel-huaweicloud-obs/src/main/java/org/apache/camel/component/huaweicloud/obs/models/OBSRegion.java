@@ -64,7 +64,7 @@ public final class OBSRegion {
         if (ObjectHelper.isEmpty(regionId)) {
             throw new IllegalArgumentException("Unexpected empty parameter: regionId.");
         } else {
-            String endpoint = REGIONS.get(regionId);
+            String endpoint = REGIONS.get(regionId.toLowerCase());
             if (ObjectHelper.isNotEmpty(endpoint)) {
                 return endpoint;
             } else {
