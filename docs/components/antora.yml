@@ -18,6 +18,7 @@
 name: components
 title: Camel Components
 version: 3.11.x
+display_version: 3.11.x (LTS)
 nav:
   - modules/ROOT/nav.adoc
   - modules/dataformats/nav.adoc

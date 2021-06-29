@@ -18,6 +18,7 @@
 name: components
 #title: Enterprise Integration Patterns
 version: 3.11.x
+display_version: 3.11.x (LTS)
 #start_page: eips:enterprise-integration-patterns.adoc
 #nav:
 #- modules/eips/nav.adoc
