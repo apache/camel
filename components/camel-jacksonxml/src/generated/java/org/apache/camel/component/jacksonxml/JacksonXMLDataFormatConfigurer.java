@@ -26,8 +26,8 @@ public class JacksonXMLDataFormatConfigurer extends PropertyConfigurerSupport im
         case "moduleClassNames": dataformat.setModuleClassNames(property(camelContext, java.lang.String.class, value)); return true;
         case "modulerefs":
         case "moduleRefs": dataformat.setModuleRefs(property(camelContext, java.lang.String.class, value)); return true;
-        case "unmarshaltypename":
-        case "unmarshalTypeName": dataformat.setUnmarshalTypeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "unmarshaltype":
+        case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
         case "jsonview":
         case "jsonView": dataformat.setJsonView(property(camelContext, java.lang.Class.class, value)); return true;
         case "include": dataformat.setInclude(property(camelContext, java.lang.String.class, value)); return true;

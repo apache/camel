@@ -37,7 +37,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String prettyPrint;
-    @XmlAttribute
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
