@@ -60,31 +60,19 @@ public class OBSProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         updateClientConfigs(exchange);
 
-        try {
-            switch (clientConfigurations.getOperation()) {
-                case OBSOperations.LIST_BUCKETS:
-                    listBuckets(exchange);
-                    break;
-                case OBSOperations.CREATE_BUCKET:
-                    createBucket(exchange);
-                    break;
-                case OBSOperations.DELETE_BUCKET:
-                    deleteBucket(exchange);
-                    break;
-                default:
-                    throw new UnsupportedOperationException(
-                            String.format("%s is not a supported operation", clientConfigurations.getOperation()));
-            }
-        } catch (ObsException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Failed to perform operation");
-                LOG.error("HTTP Code: " + e.getResponseCode());
-                LOG.error("Error Code: " + e.getErrorCode());
-                LOG.error("Error Message: " + e.getErrorMessage());
-                LOG.error("Request ID: " + e.getErrorRequestId());
-                LOG.error("Host ID: " + e.getErrorHostId());
-            }
-            throw e;
+        switch (clientConfigurations.getOperation()) {
+            case OBSOperations.LIST_BUCKETS:
+                listBuckets(exchange);
+                break;
+            case OBSOperations.CREATE_BUCKET:
+                createBucket(exchange);
+                break;
+            case OBSOperations.DELETE_BUCKET:
+                deleteBucket(exchange);
+                break;
+            default:
+                throw new UnsupportedOperationException(
+                        String.format("%s is not a supported operation", clientConfigurations.getOperation()));
         }
     }
 
@@ -117,10 +105,8 @@ public class OBSProducer extends DefaultProducer {
             try {
                 request = new ObjectMapper().readValue(strBody, CreateBucketRequest.class);
             } catch (JsonProcessingException e) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn(
-                            "String request body must be a valid JSON representation of a CreateBucketRequest. Attempting to create a bucket from endpoint parameters");
-                }
+                LOG.warn(
+                        "String request body must be a valid JSON representation of a CreateBucketRequest. Attempting to create a bucket from endpoint parameters");
             }
         }
 
@@ -128,17 +114,13 @@ public class OBSProducer extends DefaultProducer {
         if (request == null) {
             // check for bucket name, which is mandatory to create a new bucket
             if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("No bucket name given");
-                }
+                LOG.error("No bucket name given");
                 throw new IllegalArgumentException("Bucket name is mandatory to create bucket");
             }
 
             // check for bucket location, which is optional to create a new bucket
             if (ObjectHelper.isEmpty(clientConfigurations.getBucketLocation())) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("No bucket location given, defaulting to '" + OBSConstants.DEFAULT_LOCATION + "'");
-                }
+                LOG.warn("No bucket location given, defaulting to '" + OBSConstants.DEFAULT_LOCATION + "'");
                 clientConfigurations.setBucketLocation(OBSConstants.DEFAULT_LOCATION);
             }
             // verify valid bucket location
@@ -160,9 +142,7 @@ public class OBSProducer extends DefaultProducer {
     private void deleteBucket(Exchange exchange) throws ObsException {
         // check for bucket name, which is mandatory to delete a bucket
         if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("No bucket name given");
-            }
+            LOG.error("No bucket name given");
             throw new IllegalArgumentException("Bucket name is mandatory to delete bucket");
         }
 
@@ -184,9 +164,7 @@ public class OBSProducer extends DefaultProducer {
         // checking for required operation (exchange overrides endpoint operation if both are provided)
         if (ObjectHelper.isEmpty(exchange.getProperty(OBSProperties.OPERATION))
                 && ObjectHelper.isEmpty(endpoint.getOperation())) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("No operation name given. Cannot proceed with OBS operations.");
-            }
+            LOG.error("No operation name given. Cannot proceed with OBS operations.");
             throw new IllegalArgumentException("Operation name not found");
         } else {
             clientConfigurations.setOperation(
