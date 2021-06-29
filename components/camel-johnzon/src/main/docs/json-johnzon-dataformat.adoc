@@ -33,7 +33,7 @@ The JSON Johnzon dataformat supports 3 options, which are listed below.
 | Name | Default | Java Type | Description
 | objectMapper |  | String | Lookup and use the existing Mapper with the given id.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
-| unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
+| unmarshalType |  | String | Class name of the java type to use when unmarshalling
 |===
 // dataformat options: END
 

@@ -579,21 +579,21 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
                     @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
                     @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
-                    @YamlProperty(name = "collection-type-name", type = "string"),
+                    @YamlProperty(name = "collection-type", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "disable-features", type = "string"),
                     @YamlProperty(name = "enable-features", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "include", type = "string"),
                     @YamlProperty(name = "instance-class-name", type = "string"),
-                    @YamlProperty(name = "json-view-type-name", type = "string"),
+                    @YamlProperty(name = "json-view", type = "string"),
                     @YamlProperty(name = "library", type = "enum:ApacheAvro,Jackson,dataFormatName"),
                     @YamlProperty(name = "module-class-names", type = "string"),
                     @YamlProperty(name = "module-refs", type = "string"),
                     @YamlProperty(name = "object-mapper", type = "string"),
                     @YamlProperty(name = "schema-resolver", type = "string"),
                     @YamlProperty(name = "timezone", type = "string"),
-                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "unmarshal-type", type = "string"),
                     @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
                     @YamlProperty(name = "use-list", type = "boolean")
             }
@@ -637,7 +637,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAutoDiscoverSchemaResolver(val);
                     break;
                 }
-                case "collection-type-name": {
+                case "collection-type": {
                     String val = asText(node);
                     target.setCollectionTypeName(val);
                     break;
@@ -672,7 +672,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInstanceClassName(val);
                     break;
                 }
-                case "json-view-type-name": {
+                case "json-view": {
                     String val = asText(node);
                     target.setJsonViewTypeName(val);
                     break;
@@ -706,7 +706,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimezone(val);
                     break;
                 }
-                case "unmarshal-type-name": {
+                case "unmarshal-type": {
                     String val = asText(node);
                     target.setUnmarshalTypeName(val);
                     break;
@@ -1183,13 +1183,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "allow-jms-type", type = "boolean"),
                     @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
-                    @YamlProperty(name = "collection-type-name", type = "string"),
+                    @YamlProperty(name = "collection-type", type = "string"),
                     @YamlProperty(name = "disable-features", type = "string"),
                     @YamlProperty(name = "enable-features", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "object-mapper", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
-                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "unmarshal-type", type = "string"),
                     @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
                     @YamlProperty(name = "use-list", type = "boolean")
             }
@@ -1218,7 +1218,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAllowUnmarshallType(val);
                     break;
                 }
-                case "collection-type-name": {
+                case "collection-type": {
                     String val = asText(node);
                     target.setCollectionTypeName(val);
                     break;
@@ -1248,7 +1248,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setPrettyPrint(val);
                     break;
                 }
-                case "unmarshal-type-name": {
+                case "unmarshal-type": {
                     String val = asText(node);
                     target.setUnmarshalTypeName(val);
                     break;
@@ -6758,18 +6758,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "allow-jms-type", type = "boolean"),
                     @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
-                    @YamlProperty(name = "collection-type-name", type = "string"),
+                    @YamlProperty(name = "collection-type", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "disable-features", type = "string"),
                     @YamlProperty(name = "enable-features", type = "string"),
                     @YamlProperty(name = "enable-jaxb-annotation-module", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "include", type = "string"),
-                    @YamlProperty(name = "json-view-type-name", type = "string"),
+                    @YamlProperty(name = "json-view", type = "string"),
                     @YamlProperty(name = "module-class-names", type = "string"),
                     @YamlProperty(name = "module-refs", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
-                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "unmarshal-type", type = "string"),
                     @YamlProperty(name = "use-list", type = "boolean"),
                     @YamlProperty(name = "xml-mapper", type = "string")
             }
@@ -6798,7 +6798,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAllowUnmarshallType(val);
                     break;
                 }
-                case "collection-type-name": {
+                case "collection-type": {
                     String val = asText(node);
                     target.setCollectionTypeName(val);
                     break;
@@ -6833,7 +6833,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInclude(val);
                     break;
                 }
-                case "json-view-type-name": {
+                case "json-view": {
                     String val = asText(node);
                     target.setJsonViewTypeName(val);
                     break;
@@ -6853,7 +6853,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setPrettyPrint(val);
                     break;
                 }
-                case "unmarshal-type-name": {
+                case "unmarshal-type": {
                     String val = asText(node);
                     target.setUnmarshalTypeName(val);
                     break;
@@ -7160,14 +7160,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
                     @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
                     @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
-                    @YamlProperty(name = "collection-type-name", type = "string"),
+                    @YamlProperty(name = "collection-type", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "disable-features", type = "string"),
                     @YamlProperty(name = "drop-root-node", type = "boolean"),
                     @YamlProperty(name = "enable-features", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "include", type = "string"),
-                    @YamlProperty(name = "json-view-type-name", type = "string"),
+                    @YamlProperty(name = "json-view", type = "string"),
                     @YamlProperty(name = "library", type = "enum:Fastjson,Gson,Jackson,Johnzon,Jsonb,XStream"),
                     @YamlProperty(name = "module-class-names", type = "string"),
                     @YamlProperty(name = "module-refs", type = "string"),
@@ -7176,7 +7176,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pretty-print", type = "boolean"),
                     @YamlProperty(name = "schema-resolver", type = "string"),
                     @YamlProperty(name = "timezone", type = "string"),
-                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "unmarshal-type", type = "string"),
                     @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
                     @YamlProperty(name = "use-list", type = "boolean")
             }
@@ -7215,7 +7215,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAutoDiscoverSchemaResolver(val);
                     break;
                 }
-                case "collection-type-name": {
+                case "collection-type": {
                     String val = asText(node);
                     target.setCollectionTypeName(val);
                     break;
@@ -7250,7 +7250,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInclude(val);
                     break;
                 }
-                case "json-view-type-name": {
+                case "json-view": {
                     String val = asText(node);
                     target.setJsonViewTypeName(val);
                     break;
@@ -7294,7 +7294,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimezone(val);
                     break;
                 }
-                case "unmarshal-type-name": {
+                case "unmarshal-type": {
                     String val = asText(node);
                     target.setUnmarshalTypeName(val);
                     break;
@@ -10049,7 +10049,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allow-unmarshall-type", type = "boolean"),
                     @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
                     @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
-                    @YamlProperty(name = "collection-type-name", type = "string"),
+                    @YamlProperty(name = "collection-type", type = "string"),
                     @YamlProperty(name = "content-type-format", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "disable-features", type = "string"),
@@ -10057,14 +10057,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "include", type = "string"),
                     @YamlProperty(name = "instance-class", type = "string"),
-                    @YamlProperty(name = "json-view-type-name", type = "string"),
+                    @YamlProperty(name = "json-view", type = "string"),
                     @YamlProperty(name = "library", type = "enum:GoogleProtobuf,Jackson,dataFormatName"),
                     @YamlProperty(name = "module-class-names", type = "string"),
                     @YamlProperty(name = "module-refs", type = "string"),
                     @YamlProperty(name = "object-mapper", type = "string"),
                     @YamlProperty(name = "schema-resolver", type = "string"),
                     @YamlProperty(name = "timezone", type = "string"),
-                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "unmarshal-type", type = "string"),
                     @YamlProperty(name = "use-default-object-mapper", type = "boolean"),
                     @YamlProperty(name = "use-list", type = "boolean")
             }
@@ -10108,7 +10108,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAutoDiscoverSchemaResolver(val);
                     break;
                 }
-                case "collection-type-name": {
+                case "collection-type": {
                     String val = asText(node);
                     target.setCollectionTypeName(val);
                     break;
@@ -10148,7 +10148,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInstanceClass(val);
                     break;
                 }
-                case "json-view-type-name": {
+                case "json-view": {
                     String val = asText(node);
                     target.setJsonViewTypeName(val);
                     break;
@@ -10182,7 +10182,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimezone(val);
                     break;
                 }
-                case "unmarshal-type-name": {
+                case "unmarshal-type": {
                     String val = asText(node);
                     target.setUnmarshalTypeName(val);
                     break;
@@ -17963,7 +17963,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "representer", type = "string"),
                     @YamlProperty(name = "resolver", type = "string"),
                     @YamlProperty(name = "type-filter", type = "array:org.apache.camel.model.dataformat.YAMLTypeFilterDefinition"),
-                    @YamlProperty(name = "unmarshal-type-name", type = "string"),
+                    @YamlProperty(name = "unmarshal-type", type = "string"),
                     @YamlProperty(name = "use-application-context-class-loader", type = "boolean")
             }
     )
@@ -18035,7 +18035,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTypeFilters(val);
                     break;
                 }
-                case "unmarshal-type-name": {
+                case "unmarshal-type": {
                     String val = asText(node);
                     target.setUnmarshalTypeName(val);
                     break;
