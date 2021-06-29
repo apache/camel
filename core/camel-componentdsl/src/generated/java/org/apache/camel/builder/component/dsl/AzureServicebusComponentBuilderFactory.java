@@ -182,6 +182,22 @@ public interface AzureServicebusComponentBuilderFactory {
         /**
          * dd.
          * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param consumerOperation the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder consumerOperation(
+                org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition consumerOperation) {
+            doSetProperty("consumerOperation", consumerOperation);
+            return this;
+        }
+        /**
+         * dd.
+         * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
@@ -318,6 +334,22 @@ public interface AzureServicebusComponentBuilderFactory {
          * dd.
          * 
          * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param producerOperation the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder producerOperation(
+                org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition producerOperation) {
+            doSetProperty("producerOperation", producerOperation);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
          * 
          * Group: producer
@@ -397,6 +429,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "proxyOptions": getOrCreateConfiguration((ServiceBusComponent) component).setProxyOptions((com.azure.core.amqp.ProxyOptions) value); return true;
             case "serviceBusType": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusType((org.apache.camel.component.azure.servicebus.ServiceBusType) value); return true;
             case "bridgeErrorHandler": ((ServiceBusComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "consumerOperation": getOrCreateConfiguration((ServiceBusComponent) component).setConsumerOperation((org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition) value); return true;
             case "disableAutoComplete": getOrCreateConfiguration((ServiceBusComponent) component).setDisableAutoComplete((boolean) value); return true;
             case "maxAutoLockRenewDuration": getOrCreateConfiguration((ServiceBusComponent) component).setMaxAutoLockRenewDuration((java.time.Duration) value); return true;
             case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;
@@ -405,6 +438,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "subQueue": getOrCreateConfiguration((ServiceBusComponent) component).setSubQueue((com.azure.messaging.servicebus.models.SubQueue) value); return true;
             case "subscriptionName": getOrCreateConfiguration((ServiceBusComponent) component).setSubscriptionName((java.lang.String) value); return true;
             case "lazyStartProducer": ((ServiceBusComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "producerOperation": getOrCreateConfiguration((ServiceBusComponent) component).setProducerOperation((org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition) value); return true;
             case "senderAsyncClient": getOrCreateConfiguration((ServiceBusComponent) component).setSenderAsyncClient((com.azure.messaging.servicebus.ServiceBusSenderAsyncClient) value); return true;
             case "autowiredEnabled": ((ServiceBusComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionString": getOrCreateConfiguration((ServiceBusComponent) component).setConnectionString((java.lang.String) value); return true;

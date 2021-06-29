@@ -260,6 +260,38 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * dd.
          * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param consumerOperation the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder consumerOperation(
+                ServiceBusConsumerOperationDefinition consumerOperation) {
+            doSetProperty("consumerOperation", consumerOperation);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param consumerOperation the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder consumerOperation(
+                String consumerOperation) {
+            doSetProperty("consumerOperation", consumerOperation);
+            return this;
+        }
+        /**
+         * dd.
+         * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
@@ -794,6 +826,38 @@ public interface ServiceBusEndpointBuilderFactory {
          * dd.
          * 
          * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param producerOperation the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder producerOperation(
+                ServiceBusProducerOperationDefinition producerOperation) {
+            doSetProperty("producerOperation", producerOperation);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param producerOperation the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder producerOperation(
+                String producerOperation) {
+            doSetProperty("producerOperation", producerOperation);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
          * 
          * Group: producer
@@ -1073,6 +1137,15 @@ public interface ServiceBusEndpointBuilderFactory {
 
     /**
      * Proxy enum for
+     * <code>org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition</code> enum.
+     */
+    enum ServiceBusConsumerOperationDefinition {
+        receiveMessages,
+        peekMessages;
+    }
+
+    /**
+     * Proxy enum for
      * <code>com.azure.messaging.servicebus.models.ServiceBusReceiveMode</code>
      * enum.
      */
@@ -1089,6 +1162,15 @@ public interface ServiceBusEndpointBuilderFactory {
         NONE,
         DEAD_LETTER_QUEUE,
         TRANSFER_DEAD_LETTER_QUEUE;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition</code> enum.
+     */
+    enum ServiceBusProducerOperationDefinition {
+        sendMessages,
+        scheduleMessages;
     }
 
     public interface ServiceBusBuilders {
