@@ -81,7 +81,7 @@ public final class OBSRegion {
     public static void checkValidRegion(String regionId) {
         if (ObjectHelper.isEmpty(regionId)) {
             throw new IllegalArgumentException("Unexpected empty parameter: regionId.");
-        } else if (ObjectHelper.isEmpty(REGIONS.get(regionId))) {
+        } else if (ObjectHelper.isEmpty(REGIONS.get(regionId.toLowerCase()))) {
             throw new IllegalArgumentException("Unexpected regionId: " + regionId);
         }
     }
