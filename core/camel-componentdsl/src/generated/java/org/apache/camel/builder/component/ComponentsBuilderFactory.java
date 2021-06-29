@@ -624,7 +624,7 @@ public interface ComponentsBuilderFactory {
      * messages.
      * 
      * Category: cloud,messaging
-     * Since: 3.11
+     * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-azure-servicebus
      * 
      * @return the dsl builder

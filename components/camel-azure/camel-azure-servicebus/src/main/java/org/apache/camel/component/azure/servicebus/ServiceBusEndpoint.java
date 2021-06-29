@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * secure platform for asynchronous transfer of data and state. Data is transferred between different applications and
  * services using messages.
  */
-@UriEndpoint(firstVersion = "3.11.0", scheme = "azure-servicebus", title = "Azure ServiceBus",
+@UriEndpoint(firstVersion = "3.12.0", scheme = "azure-servicebus", title = "Azure ServiceBus",
              syntax = "azure-servicebus:queueNameOrTopicName", category = {
                      Category.CLOUD, Category.MESSAGING })
 public class ServiceBusEndpoint extends DefaultEndpoint {

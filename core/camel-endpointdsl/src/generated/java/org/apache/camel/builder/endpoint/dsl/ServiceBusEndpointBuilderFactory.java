@@ -1184,7 +1184,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * and services using messages.
          * 
          * Category: cloud,messaging
-         * Since: 3.11
+         * Since: 3.12
          * Maven coordinates: org.apache.camel:camel-azure-servicebus
          * 
          * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
@@ -1208,7 +1208,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * and services using messages.
          * 
          * Category: cloud,messaging
-         * Since: 3.11
+         * Since: 3.12
          * Maven coordinates: org.apache.camel:camel-azure-servicebus
          * 
          * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
