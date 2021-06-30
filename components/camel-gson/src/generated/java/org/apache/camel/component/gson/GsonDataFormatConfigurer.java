@@ -18,8 +18,8 @@ public class GsonDataFormatConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         GsonDataFormat dataformat = (GsonDataFormat) target;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "unmarshaltypename":
-        case "unmarshalTypeName": dataformat.setUnmarshalTypeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "unmarshaltype":
+        case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": dataformat.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         case "contenttypeheader":

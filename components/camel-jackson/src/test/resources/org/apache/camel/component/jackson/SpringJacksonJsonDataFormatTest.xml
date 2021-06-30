@@ -33,9 +33,9 @@
             <json id="jack"/>
             <json id="pretty" prettyPrint="true"/>
             <!-- and this one uses our own TestPojo class as unmarshal type -->
-            <json id="pojo" library="Jackson" unmarshalTypeName="org.apache.camel.component.jackson.TestPojo"/>
+            <json id="pojo" library="Jackson" unmarshalType="org.apache.camel.component.jackson.TestPojo"/>
             <!-- in addition to our own TestPojoView class we make use of the jsonView attribute here as filter -->
-            <json id="view" library="Jackson" unmarshalTypeName="org.apache.camel.component.jackson.TestPojoView" jsonViewTypeName="org.apache.camel.component.jackson.Views$Age"/>
+            <json id="view" library="Jackson" unmarshalType="org.apache.camel.component.jackson.TestPojoView" jsonView="org.apache.camel.component.jackson.Views$Age"/>
         </dataFormats>
 
         <route>

@@ -30,7 +30,7 @@
         <!-- we define the json jackson data formats to be used -->
         <dataFormats>
             <!-- and this one uses our own TestPojo class as unmarshal type -->
-            <json id="pojo" library="Jackson" useList="true" unmarshalTypeName="org.apache.camel.component.jackson.TestPojo"/>
+            <json id="pojo" library="Jackson" useList="true" unmarshalType="org.apache.camel.component.jackson.TestPojo"/>
         </dataFormats>
 
         <route>

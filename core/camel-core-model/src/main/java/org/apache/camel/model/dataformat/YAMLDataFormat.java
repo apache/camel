@@ -42,7 +42,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
     private ClassLoader classLoader;
     @XmlTransient
     private Class<?> unmarshalType;
-    @XmlAttribute
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlAttribute
     private String constructor;

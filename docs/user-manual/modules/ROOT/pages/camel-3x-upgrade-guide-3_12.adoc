@@ -9,3 +9,18 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 === Data Formats
 
 The `camel-asn1` data format has renamed the option `clazzName` to `unmarshalType`.
+The `camel-avro` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-avro` data format has renamed the option `jsonViewTypeName` to `jsonView`.
+The `camel-avro` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-cbor` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-cbor` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-jacksonxml` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-jacksonxml` data format has renamed the option `jsonViewTypeName` to `jsonView`.
+The `camel-jacksonxml` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-json` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-json` data format has renamed the option `jsonViewTypeName` to `jsonView`.
+The `camel-json` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-protobuf` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-protobuf` data format has renamed the option `jsonViewTypeName` to `jsonView`.
+The `camel-protobuf` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-yaml` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
