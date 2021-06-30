@@ -12,7 +12,8 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[o
 The jOOR language allows to use Java code in your Camel expression, with some limitations.
 The jOOR library integrates with the Java compiler and performs runtime compilation of Java code.
 
-NOTE: Java 8 is not supported. Java 11 or 14 is required.
+NOTE: Java 8 is not supported.
+Java 11 or 14 is required.
 
 
 == jOOR Options
@@ -22,14 +23,14 @@ NOTE: Java 8 is not supported. Java 11 or 14 is required.
 // language options: START
 The jOOR language supports 4 options, which are listed below.
 
-
-
 [width="100%",cols="2,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| preCompile | true | Boolean | Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.
+| preCompile | true | Boolean | Whether the expression should be pre compiled once during initialization phase.
+If this is turned off, then the expression is reloaded and compiled on each evaluation.
 | resultType |  | String | Sets the class name of the result type (type from output)
-| singleQuotes | true | Boolean | Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.
+| singleQuotes | true | Boolean | Whether single quotes can be used as replacement for double quotes.
+This is convenient when you need to work with strings inside strings.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
@@ -57,9 +58,11 @@ The jOOR language allows the following functions to be used in the script:
 | Function | Description
 | bodyAs(type) | To convert the body to the given type.
 | headerAs(name, type) | To convert the header with the name to the given type.
-| headerAs(name, defaultValue, type) | To convert the header with the name to the given type. If no header exists then use the given default value.
+| headerAs(name, defaultValue, type) | To convert the header with the name to the given type.
+If no header exists then use the given default value.
 | exchangePropertyAs(name, type) | To convert the exchange property with the name to the given type.
-| exchangePropertyAs(name, defaultValue, type) | To convert the exchange property with the name to the given type. If no exchange property exists then use the given default value.
+| exchangePropertyAs(name, defaultValue, type) | To convert the exchange property with the name to the given type.
+If no exchange property exists then use the given default value.
 | optionalBodyAs(type) | To convert the body to the given type returned wrapped in `java.util.Optional`.
 | optionalHeaderAs(name, type) | To convert the header with the name to the given type returned wrapped in `java.util.Optional`.
 | optionalExchangePropertyAs(name, type) | To convert the exchange property with the name to the given type returned wrapped in `java.util.Optional`.
@@ -68,19 +71,21 @@ The jOOR language allows the following functions to be used in the script:
 These functions are convenient for getting the message body, header or exchange properties as a specific Java type.
 
 Here we want to get the message body as a `com.foo.MyUser` type we can do as follows:
+
 [source,java]
 ----
 var user = bodyAs(com.foo.MyUser.class);
 ----
 
 You can omit _.class_ to make the function a little bit smaller:
+
 [source,java]
 ----
 var user = bodyAs(com.foo.MyUser);
 ----
 
-The type must be a fully qualified class type, but that can be inconvenient to type all the time. In such a situation, you can configure an import
-in the `camel-joor.properties` file as shown below:
+The type must be a fully qualified class type, but that can be inconvenient to type all the time.
+In such a situation, you can configure an import in the `camel-joor.properties` file as shown below:
 
 [source,properties]
 ----
@@ -88,6 +93,7 @@ import com.foo.MyUser;
 ----
 
 And then the function can be shortened:
+
 [source,java]
 ----
 var user = bodyAs(MyUser);
@@ -128,8 +134,7 @@ from("direct:start")
     .to("mock:result");
 ----
 
-Now this code may seem a bit magically, but what happens is that the `myEcho` bean is injected via a constructor,
-and then called directly in the script so its as fast as possible.
+Now this code may seem a bit magically, but what happens is that the `myEcho` bean is injected via a constructor, and then called directly in the script so its as fast as possible.
 
 Under the hod Camel jOOR generates the following source code that is compiled once:
 
@@ -159,8 +164,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-Notice how we declare the bean as if its a local variable via `var bean = #bean:myEcho`. When doing this we must use
-a different name as `myEcho` is the variable used by the dependency injection and therefore we use _bean_ as name in the script.
+Notice how we declare the bean as if its a local variable via `var bean = #bean:myEcho`.
+When doing this we must use a different name as `myEcho` is the variable used by the dependency injection and therefore we use _bean_ as name in the script.
 
 == Auto imports
 
@@ -240,6 +245,7 @@ from("seda:orders")
 ----
 
 And in XML DSL:
+
 [source,xml]
 ----
 <route>
@@ -253,7 +259,8 @@ And in XML DSL:
 
 == Multi statements
 
-It is possible to include multiple statements. The code below shows an example where the `user` header is retrieved in a first statement.
+It is possible to include multiple statements.
+The code below shows an example where the `user` header is retrieved in a first statement.
 And then, in a second statement we return a value whether the user is `null` or not.
 
 [source,java]
@@ -287,8 +294,7 @@ from("jms:incoming")
     .to("jms:orders");
 ----
 
-Here the jOOR script is externalized into the file `src/main/resources/orders.joor` which allows you to edit this source
-file while running the Camel application and try the changes with hot-reloading.
+Here the jOOR script is externalized into the file `src/main/resources/orders.joor` which allows you to edit this source file while running the Camel application and try the changes with hot-reloading.
 
 In XML DSL it's easier because you can turn off pre-compilation in the `<joor>` XML element:
 
@@ -303,6 +309,33 @@ In XML DSL it's easier because you can turn off pre-compilation in the `<joor>` 
 </route>
 ----
 
+== Lambda based AggregationStrategy
+
+The jOOR language have special support for defining an `org.apache.camel.AggregationStrategy` as a lambda expression.
+This is useful when using EIP patterns that uses aggregation such as the Aggregator, Splitter, Recipient List, Enrich, and others.
+
+To use this then the jOOR language script must be in the following syntax:
+
+----
+(e1, e2) -> { }
+----
+
+Where `e1` and `e2` are the _old_ Exchange and _new_ Exchange from the `aggregate` method in the `AggregationStrategy`.
+The returned value is used as the aggregated message body, or use `null` to skip this.
+
+The lambda syntax is representing a Java util `BiFunction<Exchange, Exchange, Object>` type.
+
+For example to aggregate message bodies together we can do this as shown:
+
+[source,java]
+----
+(e1, e2) -> {
+  String b1 = e1.getMessage().getBody(String.class);
+  String b2 = e2.getMessage().getBody(String.class);
+  return b1 + ',' + b2;
+}
+----
+
 == Limitations
 
 The jOOR Camel language is only supported as a block of Java code that gets compiled into a Java class with a single method.
@@ -311,17 +344,13 @@ The code that you can write is therefore limited to a number of Java statements.
 The supported runtime is intended for Java standalone, Spring Boot, Camel Quarkus and other microservices runtimes.
 It is not supported in OSGi, Camel Karaf or any kind of Java Application Server runtime.
 
-jOOR does not support runtime compilation with Spring Boot using _fat jar_ packaging (https://github.com/jOOQ/jOOR/issues/69),
-it works with exploded classpath.
+jOOR does not support runtime compilation with Spring Boot using _fat jar_ packaging (https://github.com/jOOQ/jOOR/issues/69), it works with exploded classpath.
 
 == Dependencies
 
-To use scripting languages in your camel routes you need to add a
-dependency on *camel-joor*.
+To use scripting languages in your camel routes you need to add a dependency on *camel-joor*.
 
-If you use Maven you could just add the following to your `pom.xml`,
-substituting the version number for the latest and greatest release (see
-the download page for the latest versions).
+If you use Maven you could just add the following to your `pom.xml`, substituting the version number for the latest and greatest release (see the download page for the latest versions).
 
 [source,xml]
 ---------------------------------------
