@@ -375,4 +375,49 @@ class RouteTemplateTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "create template with groovy"() {
+        setup:
+            loadRoutes """                
+                    - template:
+                        id: "myTemplate"
+                        beans:
+                          - name: "myAgg"
+                            type: "groovy"
+                            script: "class MaxAgg { int agg(int s1, int s2) { return Math.max(s1, s2) }}; new MaxAgg()"
+                        from:
+                          uri: "direct:route"
+                          steps:
+                            - aggregate:
+                                strategy-ref: "{{myAgg}}"
+                                completion-size: 2
+                                correlation-expression:
+                                  header: "StockSymbol"
+                                steps:  
+                                  - to: "mock:result"
+                """
+            withMock('mock:result') {
+                expectedMessageCount 2
+                expectedBodiesReceived '101', '200'
+            }
+        when:
+            context.addRouteFromTemplate('myId', 'myTemplate', [:])
+            context.start()
+
+            withTemplate {
+                to('direct:route').withBody('99').withHeader('StockSymbol', 1).send()
+                to('direct:route').withBody('101').withHeader('StockSymbol', 1).send()
+                to('direct:route').withBody('200').withHeader('StockSymbol', 2).send()
+                to('direct:route').withBody('199').withHeader('StockSymbol', 2).send()
+            }
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+                id == 'myTemplate'
+                templateBeans.size() == 1
+            }
+
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
 }
