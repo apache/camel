@@ -6831,7 +6831,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Huawei Cloud Simple Message Notification (SMN) (camel-huaweicloud-smn)
+     * Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
      * Huawei Cloud
      * 
@@ -6852,7 +6852,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.endpointBuilder("hwcloud-smn", path);
     }
     /**
-     * Huawei Cloud Simple Message Notification (SMN) (camel-huaweicloud-smn)
+     * Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
      * Huawei Cloud
      * 

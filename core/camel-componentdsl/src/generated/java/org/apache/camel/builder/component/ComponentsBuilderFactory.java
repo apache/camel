@@ -2020,7 +2020,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudIamComponentBuilderFactory.hwcloudIam();
     }
     /**
-     * Huawei Cloud Simple Message Notification (SMN) (camel-huaweicloud-smn)
+     * Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
      * Huawei Cloud
      * 
