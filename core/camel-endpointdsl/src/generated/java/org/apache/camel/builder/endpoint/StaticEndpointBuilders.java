@@ -6745,7 +6745,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Huawei Cloud FunctionGraph (camel-huaweicloud-functiongraph)
+     * FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless
@@ -6765,7 +6765,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.endpointBuilder("hwcloud-functiongraph", path);
     }
     /**
-     * Huawei Cloud FunctionGraph (camel-huaweicloud-functiongraph)
+     * FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless

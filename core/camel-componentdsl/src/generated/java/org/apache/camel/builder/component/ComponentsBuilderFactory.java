@@ -1994,7 +1994,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HttpsComponentBuilderFactory.https();
     }
     /**
-     * Huawei Cloud FunctionGraph (camel-huaweicloud-functiongraph)
+     * FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless

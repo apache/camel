@@ -1,8 +1,8 @@
 [[hwcloud-functiongraph-component]]
-= Huawei Cloud FunctionGraph Component
+= FunctionGraph Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-huawei/camel-huaweicloud-functiongraph/src/main/docs/hwcloud-functiongraph-component.adoc
-:docTitle: Huawei Cloud FunctionGraph
+:page-source: componentscamel-huaweicamel-huaweicloud-functiongraphsrcmaindocshwcloud-functiongraph-component.adoc
+:docTitle: FunctionGraph
 :artifactId: camel-huaweicloud-functiongraph
 :description: To call serverless functions on Huawei Cloud
 :since: 3.11
@@ -40,7 +40,7 @@ hwcloud-functiongraph:operation[?options]
 == URI Options
 
 // component options: START
-The Huawei Cloud FunctionGraph component supports 2 options, which are listed below.
+The FunctionGraph component supports 2 options, which are listed below.
 
 
 
@@ -54,7 +54,7 @@ The Huawei Cloud FunctionGraph component supports 2 options, which are listed be
 
 
 // endpoint options: START
-The Huawei Cloud FunctionGraph endpoint is configured using URI syntax:
+The FunctionGraph endpoint is configured using URI syntax:
 
 ----
 hwcloud-functiongraph:operation
