@@ -31,7 +31,7 @@ import org.apache.camel.builder.component.ComponentBuilder;
 public interface HwcloudFunctiongraphComponentBuilderFactory {
 
     /**
-     * FunctionGraph (camel-huaweicloud-functiongraph)
+     * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless
@@ -45,7 +45,7 @@ public interface HwcloudFunctiongraphComponentBuilderFactory {
     }
 
     /**
-     * Builder for the FunctionGraph component.
+     * Builder for the Huawei FunctionGraph component.
      */
     interface HwcloudFunctiongraphComponentBuilder
             extends

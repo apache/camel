@@ -31,7 +31,7 @@ public interface FunctionGraphEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the FunctionGraph component.
+     * Builder for endpoint for the Huawei FunctionGraph component.
      */
     public interface FunctionGraphEndpointBuilder
             extends
@@ -329,7 +329,7 @@ public interface FunctionGraphEndpointBuilderFactory {
 
     public interface FunctionGraphBuilders {
         /**
-         * FunctionGraph (camel-huaweicloud-functiongraph)
+         * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
          * To call serverless functions on Huawei Cloud
          * 
          * Category: cloud,serverless
@@ -348,7 +348,7 @@ public interface FunctionGraphEndpointBuilderFactory {
             return FunctionGraphEndpointBuilderFactory.endpointBuilder("hwcloud-functiongraph", path);
         }
         /**
-         * FunctionGraph (camel-huaweicloud-functiongraph)
+         * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
          * To call serverless functions on Huawei Cloud
          * 
          * Category: cloud,serverless

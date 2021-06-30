@@ -1994,7 +1994,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HttpsComponentBuilderFactory.https();
     }
     /**
-     * FunctionGraph (camel-huaweicloud-functiongraph)
+     * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
      * Category: cloud,serverless
@@ -2007,7 +2007,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudFunctiongraphComponentBuilderFactory.hwcloudFunctiongraph();
     }
     /**
-     * Identity and Access Management (IAM) (camel-huaweicloud-iam)
+     * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
      * 
      * Category: cloud
@@ -2020,7 +2020,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudIamComponentBuilderFactory.hwcloudIam();
     }
     /**
-     * Simple Message Notification (SMN) (camel-huaweicloud-smn)
+     * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
      * Huawei Cloud
      * 

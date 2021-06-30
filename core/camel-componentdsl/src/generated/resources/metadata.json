@@ -3263,7 +3263,7 @@
   "HwcloudFunctiongraphComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-functiongraph",
-    "title": "FunctionGraph",
+    "title": "Huawei FunctionGraph",
     "description": "To call serverless functions on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.11.0",
@@ -3285,7 +3285,7 @@
   "HwcloudIamComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-iam",
-    "title": "Identity and Access Management (IAM)",
+    "title": "Huawei Identity and Access Management (IAM)",
     "description": "To securely manage users on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.11.0",
@@ -3307,7 +3307,7 @@
   "HwcloudSmnComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-smn",
-    "title": "Simple Message Notification (SMN)",
+    "title": "Huawei Simple Message Notification (SMN)",
     "description": "To broadcast messages and connect cloud services through notifications on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.8.0",

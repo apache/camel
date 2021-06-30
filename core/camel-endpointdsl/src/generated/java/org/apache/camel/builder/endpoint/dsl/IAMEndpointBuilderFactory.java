@@ -31,7 +31,7 @@ public interface IAMEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the Identity and Access Management (IAM)
+     * Builder for endpoint for the Huawei Identity and Access Management (IAM)
      * component.
      */
     public interface IAMEndpointBuilder extends EndpointProducerBuilder {
@@ -292,7 +292,7 @@ public interface IAMEndpointBuilderFactory {
 
     public interface IAMBuilders {
         /**
-         * Identity and Access Management (IAM) (camel-huaweicloud-iam)
+         * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
          * To securely manage users on Huawei Cloud
          * 
          * Category: cloud
@@ -311,7 +311,7 @@ public interface IAMEndpointBuilderFactory {
             return IAMEndpointBuilderFactory.endpointBuilder("hwcloud-iam", path);
         }
         /**
-         * Identity and Access Management (IAM) (camel-huaweicloud-iam)
+         * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
          * To securely manage users on Huawei Cloud
          * 
          * Category: cloud

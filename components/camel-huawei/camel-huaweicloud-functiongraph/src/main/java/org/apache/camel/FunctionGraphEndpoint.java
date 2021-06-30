@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To call serverless functions on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-functiongraph", title = "FunctionGraph",
+@UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-functiongraph", title = "Huawei FunctionGraph",
              syntax = "hwcloud-functiongraph:operation",
              category = { Category.CLOUD, Category.SERVERLESS }, producerOnly = true)
 public class FunctionGraphEndpoint extends DefaultEndpoint {

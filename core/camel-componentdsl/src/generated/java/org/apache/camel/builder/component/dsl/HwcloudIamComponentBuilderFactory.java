@@ -31,7 +31,7 @@ import org.apache.camel.component.huaweicloud.iam.IAMComponent;
 public interface HwcloudIamComponentBuilderFactory {
 
     /**
-     * Identity and Access Management (IAM) (camel-huaweicloud-iam)
+     * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
      * 
      * Category: cloud
@@ -45,7 +45,7 @@ public interface HwcloudIamComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Identity and Access Management (IAM) component.
+     * Builder for the Huawei Identity and Access Management (IAM) component.
      */
     interface HwcloudIamComponentBuilder
             extends
