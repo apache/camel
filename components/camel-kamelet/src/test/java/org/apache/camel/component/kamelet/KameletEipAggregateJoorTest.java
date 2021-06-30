@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class KameletEipAggregateGroovyTest extends CamelTestSupport {
+public class KameletEipAggregateJoorTest extends CamelTestSupport {
 
     @Test
     public void testAggregate() throws Exception {
@@ -47,19 +47,21 @@ public class KameletEipAggregateGroovyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("my-aggregate")
-                        .templateBean("myAgg", "groovy",
-                                // for aggregation we need a class that has the method with how to aggregate the messages
-                                // the logic can of course be much more than just to append with comma
-                                "class MyAgg { String agg(b1, b2) { b1 + ',' + b2 } }; new MyAgg()")
-                        // the groovy is evaluated as a script so must return an instance of the class
+                        .templateBean("myAgg", "joor",
+                                // for aggregation we can use a BiFunction that takes Exchange as input and return the aggregated response
+                                // camel-joor has special support for this if we use (e1, e2) -> { ... } as a lambda expression
+                                "(e1, e2) -> {" +
+                                                       " String b1 = e1.getMessage().getBody(String.class);" +
+                                                       " String b2 = e2.getMessage().getBody(String.class);" +
+                                                       " return b1 + ',' + b2; }")
                         .templateParameter("count")
                         .from("kamelet:source")
                         .aggregate(constant(true))
-                            .completionSize("{{count}}")
-                            // use the groovy script bean for aggregation
-                            .aggregationStrategyRef("{{myAgg}}")
-                            .to("log:aggregate")
-                            .to("kamelet:sink")
+                        .completionSize("{{count}}")
+                        // use the groovy script bean for aggregation
+                        .aggregationStrategyRef("{{myAgg}}")
+                        .to("log:aggregate")
+                        .to("kamelet:sink")
                         .end();
 
                 from("direct:start")

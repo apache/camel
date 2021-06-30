@@ -19,6 +19,7 @@ package org.apache.camel.reifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.function.BiFunction;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
@@ -28,6 +29,7 @@ import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
@@ -88,6 +90,14 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
             Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy instanceof BiFunction) {
+                AggregationStrategyBiFunctionAdapter adapter
+                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                if (definition.getStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                }
+                strategy = adapter;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter
                         = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getStrategyMethodName()));
