@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To provide stable, secure, efficient, and easy-to-use cloud storage service on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-obs", title = "Huawei Cloud Object Storage Service (OBS)",
+@UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-obs", title = "Object Storage Service (OBS)",
              syntax = "hwcloud-obs:operation",
              category = { Category.CLOUD })
 public class OBSEndpoint extends DefaultEndpoint {
