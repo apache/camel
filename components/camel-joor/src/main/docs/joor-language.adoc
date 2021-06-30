@@ -23,14 +23,14 @@ Java 11 or 14 is required.
 // language options: START
 The jOOR language supports 4 options, which are listed below.
 
+
+
 [width="100%",cols="2,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| preCompile | true | Boolean | Whether the expression should be pre compiled once during initialization phase.
-If this is turned off, then the expression is reloaded and compiled on each evaluation.
+| preCompile | true | Boolean | Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.
 | resultType |  | String | Sets the class name of the result type (type from output)
-| singleQuotes | true | Boolean | Whether single quotes can be used as replacement for double quotes.
-This is convenient when you need to work with strings inside strings.
+| singleQuotes | true | Boolean | Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
