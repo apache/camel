@@ -490,7 +490,7 @@ public class SjmsProducer extends DefaultAsyncProducer {
      * @throws JMSException can be thrown
      */
     protected String determineCorrelationId(Message message) throws JMSException {
-        String cid = getJMSCorrelationIDAsBytes(message);
+        String cid = getJMSCorrelationID(message);
         if (ObjectHelper.isEmpty(cid)) {
             cid = getJMSMessageID(message);
         }

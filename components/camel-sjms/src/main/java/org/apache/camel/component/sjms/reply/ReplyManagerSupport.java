@@ -41,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.sjms.jms.JmsMessageHelper.getJMSCorrelationIDAsBytes;
+import static org.apache.camel.component.sjms.jms.JmsMessageHelper.getJMSCorrelationID;
 
 /**
  * Base class for {@link ReplyManager} implementations.
@@ -127,7 +127,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     @Override
     public void onMessage(Message message, Session session) throws JMSException {
-        String correlationID = getJMSCorrelationIDAsBytes(message);
+        String correlationID = getJMSCorrelationID(message);
 
         if (correlationID == null) {
             log.warn("Ignoring message with no correlationID: {}", message);
