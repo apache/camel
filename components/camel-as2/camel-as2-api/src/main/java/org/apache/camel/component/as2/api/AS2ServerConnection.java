@@ -233,6 +233,8 @@ public class AS2ServerConnection {
                 } catch (IOException e) {
                     LOG.debug(e.getMessage(), e);
                 } finally {
+                    // TODO This line causes FindBugs (static code analysis tool) alert with description
+                    //  http://findbugs.sourceforge.net/bugDescriptions.html#ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD
                     listenerThread = null;
                 }
             }
