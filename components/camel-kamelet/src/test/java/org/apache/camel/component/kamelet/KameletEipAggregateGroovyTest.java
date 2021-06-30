@@ -17,7 +17,6 @@
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -49,10 +48,10 @@ public class KameletEipAggregateGroovyTest extends CamelTestSupport {
             public void configure() throws Exception {
                 routeTemplate("my-aggregate")
                         .templateBean("myAgg", "groovy",
-                            // for aggregation we need a class that has the method with how to aggregate the messages
-                            // the logic can of course be much more than just to append with comma
+                                // for aggregation we need a class that has the method with how to aggregate the messages
+                                // the logic can of course be much more than just to append with comma
                                 "class MyAgg { String agg(b1, b2) { b1 + ',' + b2 } }; new MyAgg()")
-                            // the groovy is evaluated as a script so must return an instance of the class
+                        // the groovy is evaluated as a script so must return an instance of the class
                         .templateParameter("count")
                         .from("kamelet:source")
                         .aggregate(constant(true))
