@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To securely manage users on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-iam", title = "Huawei Cloud Identity and Access Management (IAM)",
+@UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-iam", title = "Identity and Access Management (IAM)",
              syntax = "hwcloud-iam:operation",
              category = { Category.CLOUD }, producerOnly = true)
 public class IAMEndpoint extends DefaultEndpoint {
