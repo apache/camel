@@ -942,6 +942,11 @@
         <artifactId>camel-huaweicloud-iam</artifactId>
         <version>${project.version}</version>
       </dependency>
+	  <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-huaweicloud-obs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-smn</artifactId>
