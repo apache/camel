@@ -51,10 +51,14 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "proxyOptions": target.getConfiguration().setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
         case "receiverasyncclient":
         case "receiverAsyncClient": target.getConfiguration().setReceiverAsyncClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class, value)); return true;
+        case "scheduledenqueuetime":
+        case "scheduledEnqueueTime": target.getConfiguration().setScheduledEnqueueTime(property(camelContext, java.time.OffsetDateTime.class, value)); return true;
         case "senderasyncclient":
         case "senderAsyncClient": target.getConfiguration().setSenderAsyncClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusSenderAsyncClient.class, value)); return true;
         case "servicebusreceivemode":
         case "serviceBusReceiveMode": target.getConfiguration().setServiceBusReceiveMode(property(camelContext, com.azure.messaging.servicebus.models.ServiceBusReceiveMode.class, value)); return true;
+        case "servicebustransactioncontext":
+        case "serviceBusTransactionContext": target.getConfiguration().setServiceBusTransactionContext(property(camelContext, com.azure.messaging.servicebus.ServiceBusTransactionContext.class, value)); return true;
         case "servicebustype":
         case "serviceBusType": target.getConfiguration().setServiceBusType(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusType.class, value)); return true;
         case "subqueue":
@@ -103,10 +107,14 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
         case "receiverasyncclient":
         case "receiverAsyncClient": return com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class;
+        case "scheduledenqueuetime":
+        case "scheduledEnqueueTime": return java.time.OffsetDateTime.class;
         case "senderasyncclient":
         case "senderAsyncClient": return com.azure.messaging.servicebus.ServiceBusSenderAsyncClient.class;
         case "servicebusreceivemode":
         case "serviceBusReceiveMode": return com.azure.messaging.servicebus.models.ServiceBusReceiveMode.class;
+        case "servicebustransactioncontext":
+        case "serviceBusTransactionContext": return com.azure.messaging.servicebus.ServiceBusTransactionContext.class;
         case "servicebustype":
         case "serviceBusType": return org.apache.camel.component.azure.servicebus.ServiceBusType.class;
         case "subqueue":
@@ -151,10 +159,14 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "proxyOptions": return target.getConfiguration().getProxyOptions();
         case "receiverasyncclient":
         case "receiverAsyncClient": return target.getConfiguration().getReceiverAsyncClient();
+        case "scheduledenqueuetime":
+        case "scheduledEnqueueTime": return target.getConfiguration().getScheduledEnqueueTime();
         case "senderasyncclient":
         case "senderAsyncClient": return target.getConfiguration().getSenderAsyncClient();
         case "servicebusreceivemode":
         case "serviceBusReceiveMode": return target.getConfiguration().getServiceBusReceiveMode();
+        case "servicebustransactioncontext":
+        case "serviceBusTransactionContext": return target.getConfiguration().getServiceBusTransactionContext();
         case "servicebustype":
         case "serviceBusType": return target.getConfiguration().getServiceBusType();
         case "subqueue":
