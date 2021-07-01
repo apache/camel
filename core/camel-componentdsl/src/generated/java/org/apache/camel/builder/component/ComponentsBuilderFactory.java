@@ -2020,6 +2020,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudIamComponentBuilderFactory.hwcloudIam();
     }
     /**
+     * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
+     * To provide stable, secure, efficient, and easy-to-use cloud storage
+     * service on Huawei Cloud
+     * 
+     * Category: cloud
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-obs
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HwcloudObsComponentBuilderFactory.HwcloudObsComponentBuilder hwcloudObs() {
+        return org.apache.camel.builder.component.dsl.HwcloudObsComponentBuilderFactory.hwcloudObs();
+    }
+    /**
      * Huawei Cloud Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
      * Huawei Cloud
