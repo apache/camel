@@ -349,6 +349,22 @@ public interface AzureServicebusComponentBuilderFactory {
         /**
          * dd.
          * 
+         * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param scheduledEnqueueTime the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder scheduledEnqueueTime(
+                java.time.OffsetDateTime scheduledEnqueueTime) {
+            doSetProperty("scheduledEnqueueTime", scheduledEnqueueTime);
+            return this;
+        }
+        /**
+         * dd.
+         * 
          * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
          * 
@@ -360,6 +376,22 @@ public interface AzureServicebusComponentBuilderFactory {
         default AzureServicebusComponentBuilder senderAsyncClient(
                 com.azure.messaging.servicebus.ServiceBusSenderAsyncClient senderAsyncClient) {
             doSetProperty("senderAsyncClient", senderAsyncClient);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusTransactionContext&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param serviceBusTransactionContext the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder serviceBusTransactionContext(
+                com.azure.messaging.servicebus.ServiceBusTransactionContext serviceBusTransactionContext) {
+            doSetProperty("serviceBusTransactionContext", serviceBusTransactionContext);
             return this;
         }
         /**
@@ -439,7 +471,9 @@ public interface AzureServicebusComponentBuilderFactory {
             case "subscriptionName": getOrCreateConfiguration((ServiceBusComponent) component).setSubscriptionName((java.lang.String) value); return true;
             case "lazyStartProducer": ((ServiceBusComponent) component).setLazyStartProducer((boolean) value); return true;
             case "producerOperation": getOrCreateConfiguration((ServiceBusComponent) component).setProducerOperation((org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition) value); return true;
+            case "scheduledEnqueueTime": getOrCreateConfiguration((ServiceBusComponent) component).setScheduledEnqueueTime((java.time.OffsetDateTime) value); return true;
             case "senderAsyncClient": getOrCreateConfiguration((ServiceBusComponent) component).setSenderAsyncClient((com.azure.messaging.servicebus.ServiceBusSenderAsyncClient) value); return true;
+            case "serviceBusTransactionContext": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusTransactionContext((com.azure.messaging.servicebus.ServiceBusTransactionContext) value); return true;
             case "autowiredEnabled": ((ServiceBusComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionString": getOrCreateConfiguration((ServiceBusComponent) component).setConnectionString((java.lang.String) value); return true;
             default: return false;

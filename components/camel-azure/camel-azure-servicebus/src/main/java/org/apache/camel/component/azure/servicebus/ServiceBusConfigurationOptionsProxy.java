@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.time.OffsetDateTime;
 import java.util.function.Supplier;
 
+import com.azure.messaging.servicebus.ServiceBusTransactionContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
@@ -39,6 +41,21 @@ public class ServiceBusConfigurationOptionsProxy {
 
     public ServiceBusConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public ServiceBusTransactionContext getServiceBusTransactionContext(final Exchange exchange) {
+        return getOption(exchange, ServiceBusConstants.SERVICE_BUS_TRANSACTION_CONTEXT,
+                configuration::getServiceBusTransactionContext, ServiceBusTransactionContext.class);
+    }
+
+    public OffsetDateTime getScheduledEnqueueTime(final Exchange exchange) {
+        return getOption(exchange, ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, configuration::getScheduledEnqueueTime,
+                OffsetDateTime.class);
+    }
+
+    public ServiceBusProducerOperationDefinition getServiceBusProducerOperationDefinition(final Exchange exchange) {
+        return getOption(exchange, ServiceBusConstants.PRODUCER_OPERATION, configuration::getProducerOperation,
+                ServiceBusProducerOperationDefinition.class);
     }
 
     private <R> R getOption(

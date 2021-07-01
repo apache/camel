@@ -22,6 +22,11 @@ public final class ServiceBusConstants {
 
     // headers set by the consumer only
 
+    // headers evaluated by the producer
+    public static final String SERVICE_BUS_TRANSACTION_CONTEXT = HEADER_PREFIX + "ServiceBusTransactionContext";
+    public static final String SCHEDULED_ENQUEUE_TIME = HEADER_PREFIX + "ScheduledEnqueueTime";
+    public static final String PRODUCER_OPERATION = HEADER_PREFIX + "ProducerOperation";
+
     private ServiceBusConstants() {
     }
 }

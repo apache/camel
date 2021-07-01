@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -857,6 +858,38 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * dd.
          * 
+         * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param scheduledEnqueueTime the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder scheduledEnqueueTime(
+                OffsetDateTime scheduledEnqueueTime) {
+            doSetProperty("scheduledEnqueueTime", scheduledEnqueueTime);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param scheduledEnqueueTime the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder scheduledEnqueueTime(
+                String scheduledEnqueueTime) {
+            doSetProperty("scheduledEnqueueTime", scheduledEnqueueTime);
+            return this;
+        }
+        /**
+         * dd.
+         * 
          * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
          * 
@@ -884,6 +917,38 @@ public interface ServiceBusEndpointBuilderFactory {
         default ServiceBusEndpointProducerBuilder senderAsyncClient(
                 String senderAsyncClient) {
             doSetProperty("senderAsyncClient", senderAsyncClient);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusTransactionContext&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param serviceBusTransactionContext the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder serviceBusTransactionContext(
+                Object serviceBusTransactionContext) {
+            doSetProperty("serviceBusTransactionContext", serviceBusTransactionContext);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusTransactionContext&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param serviceBusTransactionContext the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder serviceBusTransactionContext(
+                String serviceBusTransactionContext) {
+            doSetProperty("serviceBusTransactionContext", serviceBusTransactionContext);
             return this;
         }
         /**

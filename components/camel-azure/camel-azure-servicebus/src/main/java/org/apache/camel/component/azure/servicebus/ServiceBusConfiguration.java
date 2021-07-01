@@ -17,6 +17,7 @@
 package org.apache.camel.component.azure.servicebus;
 
 import java.time.Duration;
+import java.time.OffsetDateTime;
 
 import com.azure.core.amqp.AmqpRetryOptions;
 import com.azure.core.amqp.AmqpTransportType;
@@ -24,6 +25,7 @@ import com.azure.core.amqp.ProxyOptions;
 import com.azure.core.util.ClientOptions;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
+import com.azure.messaging.servicebus.ServiceBusTransactionContext;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.messaging.servicebus.models.SubQueue;
 import org.apache.camel.RuntimeCamelException;
@@ -73,6 +75,10 @@ public class ServiceBusConfiguration implements Cloneable {
     @UriParam(label = "producer")
     @Metadata(autowired = true)
     private ServiceBusSenderAsyncClient senderAsyncClient;
+    @UriParam(label = "producer")
+    private ServiceBusTransactionContext serviceBusTransactionContext;
+    @UriParam(label = "producer")
+    private OffsetDateTime scheduledEnqueueTime;
 
     /**
      * d
@@ -259,6 +265,28 @@ public class ServiceBusConfiguration implements Cloneable {
 
     public void setProducerOperation(ServiceBusProducerOperationDefinition producerOperation) {
         this.producerOperation = producerOperation;
+    }
+
+    /**
+     * dd
+     */
+    public ServiceBusTransactionContext getServiceBusTransactionContext() {
+        return serviceBusTransactionContext;
+    }
+
+    public void setServiceBusTransactionContext(ServiceBusTransactionContext serviceBusTransactionContext) {
+        this.serviceBusTransactionContext = serviceBusTransactionContext;
+    }
+
+    /**
+     * dd
+     */
+    public OffsetDateTime getScheduledEnqueueTime() {
+        return scheduledEnqueueTime;
+    }
+
+    public void setScheduledEnqueueTime(OffsetDateTime scheduledEnqueueTime) {
+        this.scheduledEnqueueTime = scheduledEnqueueTime;
     }
 
     // *************************************************
