@@ -3304,6 +3304,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "HwcloudObsComponentBuilderFactory": {
+    "kind": "component",
+    "name": "hwcloud-obs",
+    "title": "Huawei Object Storage Service (OBS)",
+    "description": "To provide stable, secure, efficient, and easy-to-use cloud storage service on Huawei Cloud",
+    "deprecated": false,
+    "firstVersion": "3.12.0",
+    "label": "cloud",
+    "javaType": "org.apache.camel.component.huaweicloud.obs.OBSComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-huaweicloud-obs",
+    "version": "3.12.0-SNAPSHOT",
+    "scheme": "hwcloud-obs",
+    "extendsScheme": "",
+    "syntax": "hwcloud-obs:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "HwcloudSmnComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-smn",

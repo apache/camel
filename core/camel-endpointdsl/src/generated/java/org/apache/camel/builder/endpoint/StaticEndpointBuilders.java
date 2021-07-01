@@ -6831,6 +6831,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
+     * To provide stable, secure, efficient, and easy-to-use cloud storage
+     * service on Huawei Cloud
+     * 
+     * Category: cloud
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-obs
+     * 
+     * Syntax: <code>hwcloud-obs:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to be performed
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OBSEndpointBuilderFactory.OBSEndpointBuilder hwcloudObs(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OBSEndpointBuilderFactory.endpointBuilder("hwcloud-obs", path);
+    }
+    /**
+     * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
+     * To provide stable, secure, efficient, and easy-to-use cloud storage
+     * service on Huawei Cloud
+     * 
+     * Category: cloud
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-obs
+     * 
+     * Syntax: <code>hwcloud-obs:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to be performed
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OBSEndpointBuilderFactory.OBSEndpointBuilder hwcloudObs(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OBSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Huawei Cloud Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
      * Huawei Cloud
