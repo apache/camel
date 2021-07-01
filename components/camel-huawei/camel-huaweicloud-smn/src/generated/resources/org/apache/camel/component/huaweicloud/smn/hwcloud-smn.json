@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "hwcloud-smn",
-    "title": "Huawei Cloud Simple Message Notification (SMN)",
+    "title": "Huawei Simple Message Notification (SMN)",
     "description": "To broadcast messages and connect cloud services through notifications on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.8.0",

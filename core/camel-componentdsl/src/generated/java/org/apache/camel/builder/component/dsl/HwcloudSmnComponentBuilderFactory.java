@@ -32,7 +32,7 @@ import org.apache.camel.component.huaweicloud.smn.SimpleNotificationComponent;
 public interface HwcloudSmnComponentBuilderFactory {
 
     /**
-     * Huawei Cloud Simple Message Notification (SMN) (camel-huaweicloud-smn)
+     * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
      * Huawei Cloud
      * 
@@ -47,7 +47,7 @@ public interface HwcloudSmnComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Huawei Cloud Simple Message Notification (SMN) component.
+     * Builder for the Huawei Simple Message Notification (SMN) component.
      */
     interface HwcloudSmnComponentBuilder
             extends
