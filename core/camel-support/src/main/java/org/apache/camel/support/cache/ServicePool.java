@@ -294,6 +294,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * thread at any given time.
      */
     private class MultiplePool implements Pool<S> {
+        private final Object lock = new Object();
         private final Endpoint endpoint;
         private final BlockingQueue<S> queue;
         private final List<S> evicts;
@@ -313,7 +314,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         private void cleanupEvicts() {
             if (!evicts.isEmpty()) {
-                synchronized (this) {
+                synchronized (lock) {
                     if (!evicts.isEmpty()) {
                         for (S evict : evicts) {
                             doStop(evict);
@@ -365,7 +366,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         @Override
         public void evict(S s) {
             // to be evicted
-            evicts.add(s);
+            synchronized (lock) {
+                evicts.add(s);
+            }
         }
 
         @Override
