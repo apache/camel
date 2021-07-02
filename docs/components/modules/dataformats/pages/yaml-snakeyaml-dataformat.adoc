@@ -94,13 +94,13 @@ tag.
 <dataFormats>
   <!--
     here we define a YAML data format with the id snake and that it should use
-    the TestPojo as the class type when doing unmarshal. The unmarshalTypeName
+    the TestPojo as the class type when doing unmarshal. The unmarshalType
     is optional
   -->
   <yaml
     id="snake"
     library="SnakeYAML"
-    unmarshalTypeName="org.apache.camel.component.yaml.model.TestPojo"/>
+    unmarshalType="org.apache.camel.component.yaml.model.TestPojo"/>
 
   <!--
     here we define a YAML data format with the id snake-safe which restricts the

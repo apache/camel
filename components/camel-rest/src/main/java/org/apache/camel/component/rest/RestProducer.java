@@ -318,7 +318,7 @@ public class RestProducer extends DefaultAsyncProducer {
                     .withTarget(json);
             if (type != null) {
                 String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                builder.withProperty("unmarshalTypeName", typeName);
+                builder.withProperty("unmarshalType", typeName);
                 builder.withProperty("useList", type.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, "json.in.", builder);
@@ -330,7 +330,7 @@ public class RestProducer extends DefaultAsyncProducer {
                     .withTarget(outJson);
             if (outType != null) {
                 String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                builder.withProperty("unmarshalTypeName", typeName);
+                builder.withProperty("unmarshalType", typeName);
                 builder.withProperty("useList", outType.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, "json.out.", builder);

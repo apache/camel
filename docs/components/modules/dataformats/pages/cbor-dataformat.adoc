@@ -58,7 +58,7 @@ tag.
 <dataFormats>
     <!-- here we define a CBOR data format with the id test and that it should use the TestPojo as the class type when
     doing unmarshal. -->
-    <cbor id="test" unmarshalTypeName="org.apache.camel.component.cbor.TestPojo"/>
+    <cbor id="test" unmarshalType="org.apache.camel.component.cbor.TestPojo"/>
 </dataFormats>
 -----------------------------------------------------------------------------------------------------------------------------
 

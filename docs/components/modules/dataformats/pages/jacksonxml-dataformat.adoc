@@ -80,8 +80,8 @@ tag.
 -----------------------------------------------------------------------------------------------------------------------------
         <dataFormats>
             <!-- here we define a Xml data format with the id jack and that it should use the TestPojo as the class type when
-                 doing unmarshal. The unmarshalTypeName is optional, if not provided Camel will use a Map as the type -->
-            <jacksonxml id="jack" unmarshalTypeName="org.apache.camel.component.jacksonxml.TestPojo"/>
+                 doing unmarshal. The unmarshalType is optional, if not provided Camel will use a Map as the type -->
+            <jacksonxml id="jack" unmarshalType="org.apache.camel.component.jacksonxml.TestPojo"/>
         </dataFormats>
 -----------------------------------------------------------------------------------------------------------------------------
 
@@ -142,7 +142,7 @@ And the same in XML DSL:
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 <from uri="direct:inPojoAgeView"/>
   <marshal>
-    <jacksonxml unmarshalTypeName="org.apache.camel.component.jacksonxml.TestPojoView" jsonView="org.apache.camel.component.jacksonxml.Views$Age"/>
+    <jacksonxml unmarshalType="org.apache.camel.component.jacksonxml.TestPojoView" jsonView="org.apache.camel.component.jacksonxml.Views$Age"/>
   </marshal>
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -238,7 +238,7 @@ And you can specify the pojo type also
 [source,java]
 -------------------------------------------------------------------------------
     <dataFormats>
-      <jacksonxml id="jack" useList="true" unmarshalTypeName="com.foo.MyPojo"/>
+      <jacksonxml id="jack" useList="true" unmarshalType="com.foo.MyPojo"/>
     </dataFormats>
 -------------------------------------------------------------------------------
 
@@ -250,7 +250,7 @@ those using the moduleClassNames option as shown below.
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------------------------
     <dataFormats>
-      <jacksonxml id="jack" useList="true" unmarshalTypeName="com.foo.MyPojo" moduleClassNames="com.foo.MyModule,com.foo.MyOtherModule"/>
+      <jacksonxml id="jack" useList="true" unmarshalType="com.foo.MyPojo" moduleClassNames="com.foo.MyModule,com.foo.MyOtherModule"/>
     </dataFormats>
 -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -267,7 +267,7 @@ to the module as shown below:
     </bean>
  
     <dataFormats>
-      <jacksonxml id="jacksonxml" useList="true" unmarshalTypeName="com.foo.MyPojo" moduleRefs="myJacksonModule"/>
+      <jacksonxml id="jacksonxml" useList="true" unmarshalType="com.foo.MyPojo" moduleRefs="myJacksonModule"/>
     </dataFormats>
 ------------------------------------------------------------------------------------------------------------------
 
@@ -283,7 +283,7 @@ when marshalling, you can configure this using the disableFeatures:
 [source,java]
 -------------------------------------------------------------------------------------------------------------------
  <dataFormats>
-      <jacksonxml id="jacksonxml" unmarshalTypeName="com.foo.MyPojo" disableFeatures="FAIL_ON_UNKNOWN_PROPERTIES"/>
+      <jacksonxml id="jacksonxml" unmarshalType="com.foo.MyPojo" disableFeatures="FAIL_ON_UNKNOWN_PROPERTIES"/>
  </dataFormats>
 -------------------------------------------------------------------------------------------------------------------
 
