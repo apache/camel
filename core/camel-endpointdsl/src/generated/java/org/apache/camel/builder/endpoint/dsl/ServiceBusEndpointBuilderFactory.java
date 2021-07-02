@@ -264,6 +264,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition&lt;/code&gt; type.
          * 
+         * Default: receiveMessages
          * Group: consumer
          * 
          * @param consumerOperation the value to set
@@ -280,6 +281,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition&lt;/code&gt; type.
          * 
+         * Default: receiveMessages
          * Group: consumer
          * 
          * @param consumerOperation the value to set
@@ -354,6 +356,37 @@ public interface ServiceBusEndpointBuilderFactory {
         default ServiceBusEndpointConsumerBuilder maxAutoLockRenewDuration(
                 String maxAutoLockRenewDuration) {
             doSetProperty("maxAutoLockRenewDuration", maxAutoLockRenewDuration);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param peakNumMaxMessages the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder peakNumMaxMessages(
+                Integer peakNumMaxMessages) {
+            doSetProperty("peakNumMaxMessages", peakNumMaxMessages);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param peakNumMaxMessages the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder peakNumMaxMessages(
+                String peakNumMaxMessages) {
+            doSetProperty("peakNumMaxMessages", peakNumMaxMessages);
             return this;
         }
         /**
@@ -829,6 +862,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition&lt;/code&gt; type.
          * 
+         * Default: sendMessages
          * Group: producer
          * 
          * @param producerOperation the value to set
@@ -845,6 +879,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition&lt;/code&gt; type.
          * 
+         * Default: sendMessages
          * Group: producer
          * 
          * @param producerOperation the value to set

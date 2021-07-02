@@ -185,6 +185,7 @@ public interface AzureServicebusComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition&lt;/code&gt; type.
          * 
+         * Default: receiveMessages
          * Group: consumer
          * 
          * @param consumerOperation the value to set
@@ -225,6 +226,21 @@ public interface AzureServicebusComponentBuilderFactory {
         default AzureServicebusComponentBuilder maxAutoLockRenewDuration(
                 java.time.Duration maxAutoLockRenewDuration) {
             doSetProperty("maxAutoLockRenewDuration", maxAutoLockRenewDuration);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param peakNumMaxMessages the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder peakNumMaxMessages(
+                java.lang.Integer peakNumMaxMessages) {
+            doSetProperty("peakNumMaxMessages", peakNumMaxMessages);
             return this;
         }
         /**
@@ -336,6 +352,7 @@ public interface AzureServicebusComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition&lt;/code&gt; type.
          * 
+         * Default: sendMessages
          * Group: producer
          * 
          * @param producerOperation the value to set
@@ -464,6 +481,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "consumerOperation": getOrCreateConfiguration((ServiceBusComponent) component).setConsumerOperation((org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition) value); return true;
             case "disableAutoComplete": getOrCreateConfiguration((ServiceBusComponent) component).setDisableAutoComplete((boolean) value); return true;
             case "maxAutoLockRenewDuration": getOrCreateConfiguration((ServiceBusComponent) component).setMaxAutoLockRenewDuration((java.time.Duration) value); return true;
+            case "peakNumMaxMessages": getOrCreateConfiguration((ServiceBusComponent) component).setPeakNumMaxMessages((java.lang.Integer) value); return true;
             case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;
             case "receiverAsyncClient": getOrCreateConfiguration((ServiceBusComponent) component).setReceiverAsyncClient((com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient) value); return true;
             case "serviceBusReceiveMode": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusReceiveMode((com.azure.messaging.servicebus.models.ServiceBusReceiveMode) value); return true;

@@ -16,8 +16,23 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
+import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
+import org.apache.camel.component.azure.servicebus.client.ServiceBusReceiverAsyncClientWrapper;
+import org.apache.camel.component.azure.servicebus.operations.ServiceBusReceiverOperations;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +40,25 @@ public class ServiceBusConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceBusConsumer.class);
 
+    private Synchronization onCompletion;
+    private ServiceBusReceiverAsyncClientWrapper clientWrapper;
+    private ServiceBusReceiverOperations operations;
+
+    private final Map<ServiceBusConsumerOperationDefinition, Runnable> operationsToExecute = new HashMap<>();
+
+    {
+        bind(ServiceBusConsumerOperationDefinition.peekMessages, this::peekMessages);
+        bind(ServiceBusConsumerOperationDefinition.receiveMessages, this::receiveMessages);
+    }
+
     public ServiceBusConsumer(final ServiceBusEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        onCompletion = new ConsumerOnCompletion();
     }
 
     @Override
@@ -34,18 +66,30 @@ public class ServiceBusConsumer extends DefaultConsumer {
         super.doStart();
 
         // create the client
+        final ServiceBusReceiverAsyncClient client = getConfiguration().getReceiverAsyncClient() != null
+                ? getConfiguration().getReceiverAsyncClient()
+                : ServiceBusClientFactory.createServiceBusReceiverAsyncClient(getConfiguration());
 
-        // start the client but we will rely on the Azure Client Scheduler for thread management
+        // create the wrapper
+        clientWrapper = new ServiceBusReceiverAsyncClientWrapper(client);
+
+        // create the operations
+        operations = new ServiceBusReceiverOperations(clientWrapper);
+
+        // get the operation that we want to invoke
+        final ServiceBusConsumerOperationDefinition chosenOperation = getConfiguration().getConsumerOperation();
+
+        // invoke the operation and run it
+        invokeOperation(chosenOperation);
     }
 
     @Override
     protected void doStop() throws Exception {
-        /*
-        if (processorClient != null) {
+        if (clientWrapper != null) {
             // shutdown the client
-            processorClient.stop();
+            clientWrapper.close();
         }
-         */
+
         // shutdown camel consumer
         super.doStop();
     }
@@ -59,98 +103,116 @@ public class ServiceBusConsumer extends DefaultConsumer {
         return (ServiceBusEndpoint) super.getEndpoint();
     }
 
-    /*
-    private Exchange createAzureEventHubExchange(final EventContext eventContext) {
-        final Exchange exchange = createExchange(true);
-        final Message message = exchange.getIn();
-    
-        // set body as byte[] and let camel typeConverters do the job to convert
-        message.setBody(eventContext.getEventData().getBody());
-        // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, eventContext.getPartitionContext().getPartitionId());
-        message.setHeader(EventHubsConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
-        message.setHeader(EventHubsConstants.OFFSET, eventContext.getEventData().getOffset());
-        message.setHeader(EventHubsConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
-        message.setHeader(EventHubsConstants.SEQUENCE_NUMBER, eventContext.getEventData().getSequenceNumber());
-    
-        return exchange;
+    private void bind(final ServiceBusConsumerOperationDefinition operation, Runnable fn) {
+        operationsToExecute.put(operation, fn);
     }
-    
-    private Exchange createAzureEventHubExchange(final ErrorContext errorContext) {
-        final Exchange exchange = createExchange(true);
-        final Message message = exchange.getIn();
-    
-        // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, errorContext.getPartitionContext().getPartitionId());
-    
-        // set exception
-        exchange.setException(errorContext.getThrowable());
-    
-        return exchange;
+
+    /**
+     * Entry method that selects the appropriate operation and executes it
+     */
+    private void invokeOperation(final ServiceBusConsumerOperationDefinition operation) {
+        final ServiceBusConsumerOperationDefinition operationsToInvoke;
+
+        if (ObjectHelper.isEmpty(operation)) {
+            operationsToInvoke = ServiceBusConsumerOperationDefinition.receiveMessages;
+        } else {
+            operationsToInvoke = operation;
+        }
+
+        final Runnable fnToInvoke = operationsToExecute.get(operationsToInvoke);
+
+        if (fnToInvoke != null) {
+            fnToInvoke.run();
+        } else {
+            throw new RuntimeException("Operation not supported. Value: " + operationsToInvoke);
+        }
     }
-    
-    private void onEventListener(final EventContext eventContext) {
-        final Exchange exchange = createAzureEventHubExchange(eventContext);
-    
+
+    private void receiveMessages() {
+        operations.receiveMessages()
+                .subscribe(this::onEventListener, this::onErrorListener, () -> {
+                });
+    }
+
+    private void peekMessages() {
+        operations.peekMessages(getConfiguration().getPeakNumMaxMessages())
+                .subscribe(this::onEventListener, this::onErrorListener, () -> {
+                });
+    }
+
+    private void onEventListener(final ServiceBusReceivedMessage message) {
+        final Exchange exchange = createServiceBusExchange(message);
+
         // add exchange callback
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
-            @Override
-            public void onComplete(Exchange exchange) {
-                // we update the consumer offsets
-                processCommit(exchange, eventContext);
-            }
-    
-            @Override
-            public void onFailure(Exchange exchange) {
-                // we do nothing here
-                processRollback(exchange);
-            }
-        });
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
         // use default consumer callback
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);
     }
-    
-    private void onErrorListener(final ErrorContext errorContext) {
-        final Exchange exchange = createAzureEventHubExchange(errorContext);
-    
+
+    private Exchange createServiceBusExchange(final ServiceBusReceivedMessage receivedMessage) {
+        final Exchange exchange = createExchange(true);
+        final Message message = exchange.getIn();
+
+        // set body
+        message.setBody(receivedMessage.getBody());
+
+        // set headers
+        message.setHeader(ServiceBusConstants.APPLICATION_PROPERTIES, receivedMessage.getApplicationProperties());
+        message.setHeader(ServiceBusConstants.CONTENT_TYPE, receivedMessage.getContentType());
+        message.setHeader(ServiceBusConstants.APPLICATION_PROPERTIES, receivedMessage.getContentType());
+        message.setHeader(ServiceBusConstants.MESSAGE_ID, receivedMessage.getMessageId());
+        message.setHeader(ServiceBusConstants.CORRELATION_ID, receivedMessage.getCorrelationId());
+        message.setHeader(ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION, receivedMessage.getDeadLetterErrorDescription());
+        message.setHeader(ServiceBusConstants.DEAD_LETTER_REASON, receivedMessage.getDeadLetterSource());
+        message.setHeader(ServiceBusConstants.DEAD_LETTER_SOURCE, receivedMessage.getDeadLetterSource());
+        message.setHeader(ServiceBusConstants.DELIVERY_COUNT, receivedMessage.getDeliveryCount());
+        message.setHeader(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, receivedMessage.getScheduledEnqueueTime());
+        message.setHeader(ServiceBusConstants.ENQUEUED_SEQUENCE_NUMBER, receivedMessage.getEnqueuedSequenceNumber());
+        message.setHeader(ServiceBusConstants.ENQUEUED_TIME, receivedMessage.getEnqueuedTime());
+        message.setHeader(ServiceBusConstants.EXPIRES_AT, receivedMessage.getExpiresAt());
+        message.setHeader(ServiceBusConstants.LOCK_TOKEN, receivedMessage.getLockToken());
+        message.setHeader(ServiceBusConstants.LOCKED_UNTIL, receivedMessage.getLockedUntil());
+        message.setHeader(ServiceBusConstants.PARTITION_KEY, receivedMessage.getPartitionKey());
+        message.setHeader(ServiceBusConstants.RAW_AMQP_MESSAGE, receivedMessage.getRawAmqpMessage());
+        message.setHeader(ServiceBusConstants.REPLY_TO, receivedMessage.getReplyTo());
+        message.setHeader(ServiceBusConstants.REPLY_TO_SESSION_ID, receivedMessage.getReplyToSessionId());
+        message.setHeader(ServiceBusConstants.SEQUENCE_NUMBER, receivedMessage.getSequenceNumber());
+        message.setHeader(ServiceBusConstants.SESSION_ID, receivedMessage.getSessionId());
+        message.setHeader(ServiceBusConstants.SUBJECT, receivedMessage.getSubject());
+        message.setHeader(ServiceBusConstants.TIME_TO_LIVE, receivedMessage.getTimeToLive());
+        message.setHeader(ServiceBusConstants.TO, receivedMessage.getTo());
+
+        return exchange;
+    }
+
+    private void onErrorListener(final Throwable errorContext) {
+        final Exchange exchange = createServiceBusExchange(errorContext);
+
         // log exception if an exception occurred and was not handled
         if (exchange.getException() != null) {
             getExceptionHandler().handleException("Error processing exchange", exchange,
                     exchange.getException());
         }
     }
-    
-     */
 
-    /**
-     * Strategy to commit the offset after message being processed successfully.
-     *
-     * @param exchange the exchange
-     */
-    /*
-    private void processCommit(final Exchange exchange, final EventContext eventContext) {
-        try {
-            eventContext.updateCheckpoint();
-        } catch (Exception ex) {
-            getExceptionHandler().handleException("Error occurred during updating the checkpoint. This exception is ignored.",
-                    exchange, ex);
+    private Exchange createServiceBusExchange(final Throwable errorContext) {
+        final Exchange exchange = createExchange(true);
+
+        // set exception
+        exchange.setException(errorContext);
+
+        return exchange;
+    }
+
+    private class ConsumerOnCompletion extends SynchronizationAdapter {
+
+        @Override
+        public void onFailure(Exchange exchange) {
+            final Exception cause = exchange.getException();
+            if (cause != null) {
+                getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
+            }
         }
     }
-     */
-
-    /**
-     * Strategy when processing the exchange failed.
-     *
-     * @param exchange the exchange
-     */
-    /*
-    private void processRollback(Exchange exchange) {
-        final Exception cause = exchange.getException();
-        if (cause != null) {
-            getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
-        }
-    }
-    
-     */
 }

@@ -20,11 +20,12 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(23);
+        Set<String> props = new HashSet<>(24);
         props.add("clientOptions");
         props.add("serviceBusType");
         props.add("connectionString");
         props.add("prefetchCount");
+        props.add("peakNumMaxMessages");
         props.add("receiverAsyncClient");
         props.add("serviceBusTransactionContext");
         props.add("scheduledEnqueueTime");

@@ -53,7 +53,7 @@ public class ServiceBusConfiguration implements Cloneable {
     private AmqpRetryOptions amqpRetryOptions;
     @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", defaultValue = "receiveMessages")
     private ServiceBusConsumerOperationDefinition consumerOperation = ServiceBusConsumerOperationDefinition.receiveMessages;
     @UriParam(label = "consumer")
     @Metadata(autowired = true)
@@ -70,7 +70,9 @@ public class ServiceBusConfiguration implements Cloneable {
     private int prefetchCount = 0;
     @UriParam(label = "consumer")
     private SubQueue subQueue;
-    @UriParam(label = "producer")
+    @UriParam(label = "consumer")
+    private Integer peakNumMaxMessages;
+    @UriParam(label = "producer", defaultValue = "sendMessages")
     private ServiceBusProducerOperationDefinition producerOperation = ServiceBusProducerOperationDefinition.sendMessages;
     @UriParam(label = "producer")
     @Metadata(autowired = true)
@@ -287,6 +289,17 @@ public class ServiceBusConfiguration implements Cloneable {
 
     public void setScheduledEnqueueTime(OffsetDateTime scheduledEnqueueTime) {
         this.scheduledEnqueueTime = scheduledEnqueueTime;
+    }
+
+    /**
+     * dd
+     */
+    public Integer getPeakNumMaxMessages() {
+        return peakNumMaxMessages;
+    }
+
+    public void setPeakNumMaxMessages(Integer peakNumMaxMessages) {
+        this.peakNumMaxMessages = peakNumMaxMessages;
     }
 
     // *************************************************

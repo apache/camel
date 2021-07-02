@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
@@ -44,7 +45,9 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     private ServiceBusSenderAsyncClientWrapper senderClientWrapper;
     private ServiceBusConfigurationOptionsProxy configurationOptionsProxy;
     private ServiceBusSenderOperations serviceBusSenderOperations;
-    private final Map<ServiceBusProducerOperationDefinition, BiConsumer<Exchange, AsyncCallback>> operations = new HashMap<>();
+
+    private final Map<ServiceBusProducerOperationDefinition, BiConsumer<Exchange, AsyncCallback>> operationsToExecute
+            = new HashMap<>();
 
     {
         bind(ServiceBusProducerOperationDefinition.sendMessages, sendMessages());
@@ -92,7 +95,6 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-
         if (senderClientWrapper != null) {
             // shutdown async client
             senderClientWrapper.close();
@@ -111,7 +113,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     }
 
     private void bind(ServiceBusProducerOperationDefinition operation, BiConsumer<Exchange, AsyncCallback> fn) {
-        operations.put(operation, fn);
+        operationsToExecute.put(operation, fn);
     }
 
     /**
@@ -128,7 +130,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
             operationsToInvoke = operation;
         }
 
-        final BiConsumer<Exchange, AsyncCallback> fnToInvoke = operations.get(operationsToInvoke);
+        final BiConsumer<Exchange, AsyncCallback> fnToInvoke = operationsToExecute.get(operationsToInvoke);
 
         if (fnToInvoke != null) {
             fnToInvoke.accept(exchange, callback);
@@ -146,10 +148,10 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
             if (exchange.getMessage().getBody() instanceof Iterable) {
                 sendMessageAsync
-                        = serviceBusSenderOperations.sendMessages(convertBodyToStringList((Iterable<Object>) inputBody),
+                        = serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<Object>) inputBody),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange));
             } else {
-                sendMessageAsync = serviceBusSenderOperations.sendMessages(exchange.getMessage().getBody(String.class),
+                sendMessageAsync = serviceBusSenderOperations.sendMessages(exchange.getMessage().getBody(BinaryData.class),
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange));
             }
 
@@ -167,13 +169,14 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
             if (exchange.getMessage().getBody() instanceof Iterable) {
                 scheduleMessagesAsync
-                        = serviceBusSenderOperations.scheduleMessages(convertBodyToStringList((Iterable<Object>) inputBody),
+                        = serviceBusSenderOperations.scheduleMessages(convertBodyToList((Iterable<Object>) inputBody),
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange));
             } else {
-                scheduleMessagesAsync = serviceBusSenderOperations.scheduleMessages(exchange.getMessage().getBody(String.class),
-                        configurationOptionsProxy.getScheduledEnqueueTime(exchange),
-                        configurationOptionsProxy.getServiceBusTransactionContext(exchange));
+                scheduleMessagesAsync
+                        = serviceBusSenderOperations.scheduleMessages(exchange.getMessage().getBody(BinaryData.class),
+                                configurationOptionsProxy.getScheduledEnqueueTime(exchange),
+                                configurationOptionsProxy.getServiceBusTransactionContext(exchange));
             }
 
             subscribeToMono(scheduleMessagesAsync, exchange,
@@ -181,9 +184,9 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
         });
     }
 
-    private List<String> convertBodyToStringList(final Iterable<Object> inputBody) {
+    private List<BinaryData> convertBodyToList(final Iterable<Object> inputBody) {
         return StreamSupport.stream(inputBody.spliterator(), false)
-                .map(body -> getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, body))
+                .map(body -> getEndpoint().getCamelContext().getTypeConverter().convertTo(BinaryData.class, body))
                 .collect(Collectors.toList());
     }
 
