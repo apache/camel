@@ -70,7 +70,7 @@ public final class ResourceHelper {
             return false;
         }
 
-        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("http:");
+        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("http:") || uri.startsWith("https:");
     }
 
     /**
