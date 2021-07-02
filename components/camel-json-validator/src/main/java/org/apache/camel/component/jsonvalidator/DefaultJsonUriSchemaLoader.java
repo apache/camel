@@ -16,16 +16,23 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
+import java.io.*;
 import java.net.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaException;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SchemaValidatorsConfig;
 import com.networknt.schema.SpecVersion;
+import com.networknt.schema.SpecVersionDetector;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
 
 public class DefaultJsonUriSchemaLoader implements JsonUriSchemaLoader {
+
+    protected ObjectMapper mapper = new ObjectMapper();
 
     protected SchemaValidatorsConfig config = new SchemaValidatorsConfig();
 
@@ -33,7 +40,18 @@ public class DefaultJsonUriSchemaLoader implements JsonUriSchemaLoader {
 
     @Override
     public JsonSchema createSchema(CamelContext camelContext, String schemaUri) throws Exception {
-        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(defaultVersion);
+        // determine schema version
+        InputStream stream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, schemaUri);
+        JsonNode node = mapper.readTree(stream);
+        SpecVersion.VersionFlag version;
+        try {
+            version = SpecVersionDetector.detect(node);
+        } catch (JsonSchemaException e) {
+            // default if no schema version was specified
+            version = defaultVersion;
+        }
+
+        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(version);
 
         // the URI based method will correctly resolve relative schema references to other schema in the same directory
         URI uri;
