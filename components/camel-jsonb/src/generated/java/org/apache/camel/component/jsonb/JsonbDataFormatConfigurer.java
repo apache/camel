@@ -21,7 +21,7 @@ public class JsonbDataFormatConfigurer extends PropertyConfigurerSupport impleme
         case "objectmapper":
         case "objectMapper": dataformat.setObjectMapper(property(camelContext, javax.json.bind.Jsonb.class, value)); return true;
         case "unmarshaltype":
-        case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.reflect.Type.class, value)); return true;
+        case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": dataformat.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         default: return false;
