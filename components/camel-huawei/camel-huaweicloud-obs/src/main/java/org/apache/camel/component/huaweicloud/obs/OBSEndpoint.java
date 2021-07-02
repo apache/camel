@@ -272,6 +272,14 @@ public class OBSEndpoint extends DefaultEndpoint {
         // setup ignore ssl verification
         obsConfiguration.setValidateCertificate(!isIgnoreSslVerification());
 
-        return new ObsClient(getAuthenticationKey(), getSecretKey(), obsConfiguration);
+        // setup AK/SK credential information. AK/SK provided through ServiceKeys overrides the AK/SK passed through the endpoint
+        String auth = getServiceKeys() != null
+                ? getServiceKeys().getAuthenticationKey()
+                : getAuthenticationKey();
+        String secret = getServiceKeys() != null
+                ? getServiceKeys().getSecretKey()
+                : getSecretKey();
+
+        return new ObsClient(auth, secret, obsConfiguration);
     }
 }
