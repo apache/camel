@@ -370,7 +370,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.lifecycleStrategies.add(new OnCamelContextLifecycleStrategy());
 
         // add a default autowired strategy
-        this.lifecycleStrategies.add(new AutowiredLifecycleStrategy(this));
+        this.lifecycleStrategies.add(new DefaultAutowiredLifecycleStrategy(this));
 
         // add a default LifecycleStrategy to customize services using customizers from registry
         this.lifecycleStrategies.add(new CustomizersLifecycleStrategy(this));
