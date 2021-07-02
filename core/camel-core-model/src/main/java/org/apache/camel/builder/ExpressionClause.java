@@ -63,6 +63,14 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Specify the constant expression value. <b>Important:</b> this is a fixed constant value that is only set once
+     * during starting up the route, do not use this if you want dynamic values during routing.
+     */
+    public T constant(Object value, boolean trim) {
+        return delegate.constant(value, trim);
+    }
+
+    /**
      * An expression of the exchange
      */
     public T exchange() {

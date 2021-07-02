@@ -104,6 +104,13 @@ public abstract class BuilderSupport {
     /**
      * Returns a constant expression value builder
      */
+    public ValueBuilder constant(Object value, boolean trim) {
+        return Builder.constant(value, trim);
+    }
+
+    /**
+     * Returns a constant expression value builder
+     */
     public ValueBuilder constant(Object... value) {
         return Builder.constant(value);
     }
