@@ -24,6 +24,7 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxGroup;
 import com.box.sdk.BoxGroupMembership;
 import com.box.sdk.BoxUser;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class BoxGroupsManager {
             }
             return groups;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -93,7 +94,7 @@ public class BoxGroupsManager {
             return BoxGroup.createGroup(boxConnection, name, provenance, externalSyncIdentifier, description,
                     invitabilityLevel, memberViewabilityLevel).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -113,7 +114,7 @@ public class BoxGroupsManager {
             BoxGroup group = new BoxGroup(boxConnection, groupId);
             group.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -135,7 +136,7 @@ public class BoxGroupsManager {
 
             return group.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -161,7 +162,7 @@ public class BoxGroupsManager {
             group.updateInfo(groupInfo);
             return group;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -183,7 +184,7 @@ public class BoxGroupsManager {
 
             return group.getMemberships();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -212,7 +213,7 @@ public class BoxGroupsManager {
 
             return group.addMembership(user, role).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -233,7 +234,7 @@ public class BoxGroupsManager {
 
             groupMembership.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -255,7 +256,7 @@ public class BoxGroupsManager {
 
             return group.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -282,7 +283,7 @@ public class BoxGroupsManager {
             groupMembership.updateInfo(info);
             return groupMembership;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }

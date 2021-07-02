@@ -48,6 +48,12 @@
             <artifactId>box-java-sdk</artifactId>
             <version>${box-java-sdk-version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

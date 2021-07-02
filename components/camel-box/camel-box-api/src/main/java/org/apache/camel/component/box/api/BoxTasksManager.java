@@ -25,6 +25,7 @@ import com.box.sdk.BoxFile;
 import com.box.sdk.BoxTask;
 import com.box.sdk.BoxTaskAssignment;
 import com.box.sdk.BoxUser;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class BoxTasksManager {
             return file.getTasks();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -97,7 +98,7 @@ public class BoxTasksManager {
             BoxFile fileToAddTaskOn = new BoxFile(boxConnection, fileId);
             return fileToAddTaskOn.addTask(action, message, dueAt).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -116,7 +117,7 @@ public class BoxTasksManager {
             BoxTask task = new BoxTask(boxConnection, taskId);
             task.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -138,7 +139,7 @@ public class BoxTasksManager {
 
             return task.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -165,7 +166,7 @@ public class BoxTasksManager {
 
             return task;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -188,7 +189,7 @@ public class BoxTasksManager {
             return file.getAssignments();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -217,7 +218,7 @@ public class BoxTasksManager {
 
             return task;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -239,7 +240,7 @@ public class BoxTasksManager {
 
             return taskAssignment.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -294,7 +295,7 @@ public class BoxTasksManager {
             BoxTaskAssignment taskAssignment = new BoxTaskAssignment(boxConnection, taskAssignmentId);
             taskAssignment.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
