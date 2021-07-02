@@ -29,7 +29,7 @@ public class DefaultJsonUriSchemaLoader implements JsonUriSchemaLoader {
 
     protected SchemaValidatorsConfig config = new SchemaValidatorsConfig();
 
-    protected SpecVersion.VersionFlag defaultVersion = SpecVersion.VersionFlag.V4;
+    protected SpecVersion.VersionFlag defaultVersion = SpecVersion.VersionFlag.V201909;
 
     @Override
     public JsonSchema createSchema(CamelContext camelContext, String schemaUri) throws Exception {

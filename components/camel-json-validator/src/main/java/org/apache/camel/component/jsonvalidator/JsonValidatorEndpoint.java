@@ -213,7 +213,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     /**
      * To use a custom schema loader allowing for adding custom format validation. The default implementation will
-     * create a schema loader with draft v4 support.
+     * create a schema loader with draft 2019-09 support.
      */
     public void setUriSchemaLoader(JsonUriSchemaLoader uriSchemaLoader) {
         this.uriSchemaLoader = uriSchemaLoader;

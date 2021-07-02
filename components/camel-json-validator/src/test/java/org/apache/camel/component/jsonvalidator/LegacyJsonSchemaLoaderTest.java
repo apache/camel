@@ -57,7 +57,7 @@ public class LegacyJsonSchemaLoaderTest extends CamelTestSupport {
             public JsonSchema createSchema(CamelContext camelContext, InputStream inputStream) throws Exception {
                 // ignore the requested schema and always return Order.json schema ... the validation will only
                 // succeed if it's done with this schema
-                JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4);
+                JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
                 return factory.getSchema(URI.create("classpath:org/apache/camel/component/jsonvalidator/Order.json"));
             }
         });

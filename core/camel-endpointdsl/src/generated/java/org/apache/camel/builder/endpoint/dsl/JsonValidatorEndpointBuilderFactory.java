@@ -288,7 +288,7 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * To use a custom schema loader allowing for adding custom format
          * validation. The default implementation will create a schema loader
-         * with draft v4 support.
+         * with draft 2019-09 support.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader&lt;/code&gt; type.
@@ -306,7 +306,7 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * To use a custom schema loader allowing for adding custom format
          * validation. The default implementation will create a schema loader
-         * with draft v4 support.
+         * with draft 2019-09 support.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader&lt;/code&gt; type.
