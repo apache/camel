@@ -291,16 +291,16 @@ public interface JsonValidatorEndpointBuilderFactory {
          * with draft v4 support.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonSchemaLoader&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
-         * @param schemaLoader the value to set
+         * @param uriSchemaLoader the value to set
          * @return the dsl builder
          */
-        default AdvancedJsonValidatorEndpointBuilder schemaLoader(
-                Object schemaLoader) {
-            doSetProperty("schemaLoader", schemaLoader);
+        default AdvancedJsonValidatorEndpointBuilder uriSchemaLoader(
+                Object uriSchemaLoader) {
+            doSetProperty("uriSchemaLoader", uriSchemaLoader);
             return this;
         }
         /**
@@ -309,16 +309,16 @@ public interface JsonValidatorEndpointBuilderFactory {
          * with draft v4 support.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonSchemaLoader&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
-         * @param schemaLoader the value to set
+         * @param uriSchemaLoader the value to set
          * @return the dsl builder
          */
-        default AdvancedJsonValidatorEndpointBuilder schemaLoader(
-                String schemaLoader) {
-            doSetProperty("schemaLoader", schemaLoader);
+        default AdvancedJsonValidatorEndpointBuilder uriSchemaLoader(
+                String uriSchemaLoader) {
+            doSetProperty("uriSchemaLoader", uriSchemaLoader);
             return this;
         }
     }

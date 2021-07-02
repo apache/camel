@@ -16,23 +16,33 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
-import java.io.InputStream;
+import java.net.*;
 
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SchemaValidatorsConfig;
+import com.networknt.schema.SpecVersion;
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.ResourceHelper;
 
-/**
- * @deprecated use DefaultJsonUriSchemaLoader instead
- */
-@Deprecated
-public class DefaultJsonSchemaLoader implements JsonSchemaLoader {
+public class DefaultJsonUriSchemaLoader implements JsonUriSchemaLoader {
+
+    protected SchemaValidatorsConfig config = new SchemaValidatorsConfig();
+
+    protected SpecVersion.VersionFlag defaultVersion = SpecVersion.VersionFlag.V4;
 
     @Override
-    @Deprecated
-    public JsonSchema createSchema(CamelContext camelContext, InputStream inputStream) throws Exception {
-        JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
-        return factory.getSchema(inputStream);
+    public JsonSchema createSchema(CamelContext camelContext, String schemaUri) throws Exception {
+        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(defaultVersion);
+
+        // the URI based method will correctly resolve relative schema references to other schema in the same directory
+        URI uri;
+        if (ResourceHelper.hasScheme(schemaUri)) {
+            uri = URI.create(schemaUri);
+        } else {
+            uri = URI.create("classpath:" + schemaUri);
+        }
+        return factory.getSchema(uri, config);
     }
 
 }
