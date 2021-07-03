@@ -191,14 +191,14 @@ Below is a simple INDEX example
 [source,java]
 ----
 from("direct:index")
-  .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&indexType=tweet");
+  .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
 ----
 
 [source,xml]
 ----
 <route>
     <from uri="direct:index" />
-    <to uri="elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&indexType=tweet"/>
+    <to uri="elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter"/>
 </route>
 ----
 
@@ -222,14 +222,14 @@ Pass in the query JSON String or the Map
 [source,java]
 ----
 from("direct:search")
-  .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet");
+  .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter");
 ----
 
 [source,xml]
 ----
 <route>
     <from uri="direct:search" />
-    <to uri="elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet"/>
+    <to uri="elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter"/>
 </route>
 ----
 
@@ -261,14 +261,14 @@ Search using Elasticsearch scroll api in order to fetch all results.
 [source,java]
 ----
 from("direct:search")
-  .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet&useScroll=true&scrollKeepAliveMs=30000");
+  .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&useScroll=true&scrollKeepAliveMs=30000");
 ----
 
 [source,xml]
 ----
 <route>
     <from uri="direct:search" />
-    <to uri="elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet&useScroll=true&scrollKeepAliveMs=30000"/>
+    <to uri="elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&useScroll=true&scrollKeepAliveMs=30000"/>
 </route>
 ----
 
@@ -285,7 +285,7 @@ xref:{eip-vc}:eips:split-eip.adoc[Split EIP] can also be used.
 [source,java]
 ----
 from("direct:search")
-  .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet&useScroll=true&scrollKeepAliveMs=30000")
+  .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&useScroll=true&scrollKeepAliveMs=30000")
   .split()
   .body()
   .streaming()
