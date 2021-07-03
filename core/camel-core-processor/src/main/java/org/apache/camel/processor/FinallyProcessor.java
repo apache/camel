@@ -90,7 +90,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
         this.routeId = routeId;
     }
 
-    private final class FinallyAsyncCallback implements AsyncCallback {
+    private static final class FinallyAsyncCallback implements AsyncCallback {
 
         private final Exchange exchange;
         private final AsyncCallback callback;

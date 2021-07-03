@@ -455,11 +455,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                         type);
             }
             Object rc;
-            if (tryConvert) {
-                rc = bulk.convertTo(value.getClass(), type, exchange, value);
-            } else {
-                rc = bulk.convertTo(value.getClass(), type, exchange, value);
-            }
+
+            rc = bulk.convertTo(value.getClass(), type, exchange, value);
+
             if (rc != null) {
                 return rc;
             }

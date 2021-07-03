@@ -39,6 +39,7 @@ import org.apache.camel.spi.RestRegistry;
 public class ManagedRestRegistry extends ManagedService implements ManagedRestRegistryMBean {
 
     private final RestRegistry registry;
+    // TODO apiProducer is reported unused, if it is needed, then place @SuppressWarnings("unused")
     private transient Producer apiProducer;
 
     public ManagedRestRegistry(CamelContext context, RestRegistry registry) {

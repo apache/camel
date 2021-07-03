@@ -397,7 +397,7 @@ public class PredicateBuilder {
                     // the left operator is not null so its true
                     return true;
                 }
-
+                // TODO leftValue is null, is it expected?
                 return ObjectHelper.typeCoerceNotEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }
 
