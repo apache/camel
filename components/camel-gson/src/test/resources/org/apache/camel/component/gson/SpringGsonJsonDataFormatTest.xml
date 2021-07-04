@@ -30,8 +30,8 @@
         <!-- we define the json jackson data formats to be used -->
         <dataFormats>
             <!-- this one uses our own TestPojo class as unmarshal type -->
-            <json id="gson" library="Gson" unmarshalTypeName="org.apache.camel.component.gson.TestPojo"/>
-            <json id="pretty" library="Gson" prettyPrint="true" unmarshalTypeName="org.apache.camel.component.gson.TestPojo"/>
+            <json id="gson" library="Gson" unmarshalType="org.apache.camel.component.gson.TestPojo"/>
+            <json id="pretty" library="Gson" prettyPrint="true" unmarshalType="org.apache.camel.component.gson.TestPojo"/>
         </dataFormats>
 
         <route>

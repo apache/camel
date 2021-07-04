@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * To broadcast messages and connect cloud services through notifications on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.8.0", scheme = "hwcloud-smn", title = "Huawei Cloud Simple Message Notification (SMN)",
+@UriEndpoint(firstVersion = "3.8.0", scheme = "hwcloud-smn", title = "Huawei Simple Message Notification (SMN)",
              syntax = "hwcloud-smn:smnService",
              category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true)
 public class SimpleNotificationEndpoint extends DefaultEndpoint {

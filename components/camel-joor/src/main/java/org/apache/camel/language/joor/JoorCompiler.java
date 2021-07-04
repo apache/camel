@@ -124,6 +124,8 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
 
         // trim text
         script = script.trim();
+        // special for evaluating aggregation strategy via a BiFunction
+        boolean biFunction = script.startsWith("(e1, e2) ->");
 
         script = staticHelper(script);
         script = alias(script);
@@ -137,6 +139,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         sb.append("\n");
         sb.append("import java.util.*;\n");
         sb.append("import java.util.concurrent.*;\n");
+        sb.append("import java.util.function.*;\n");
         sb.append("import java.util.stream.*;\n");
         sb.append("\n");
         sb.append("import org.apache.camel.*;\n");
@@ -182,6 +185,12 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         if (!script.contains("return ")) {
             sb.append("return ");
         }
+        if (biFunction) {
+            if (!sb.toString().endsWith("return ")) {
+                sb.append("return ");
+            }
+            sb.append("(BiFunction<Exchange, Exchange, Object>) ");
+        }
 
         if (singleQuotes) {
             // single quotes instead of double quotes, as its very annoying for string in strings
@@ -191,6 +200,9 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
             sb.append(script);
         }
         if (!script.endsWith("}") && !script.endsWith(";")) {
+            sb.append(";");
+        }
+        if (biFunction && !script.endsWith(";")) {
             sb.append(";");
         }
         sb.append("\n");

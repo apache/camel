@@ -46,6 +46,7 @@ import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.saga.CamelSagaService;
+import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
@@ -514,6 +515,10 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        // use the main autowired lifecycle strategy instead of the default
+        camelContext.getLifecycleStrategies().removeIf(s -> s instanceof AutowiredLifecycleStrategy);
+        camelContext.addLifecycleStrategy(new MainAutowiredLifecycleStrategy(camelContext));
+
         // setup properties
         configurePropertiesService(camelContext);
         // setup startup recorder before building context

@@ -32,8 +32,8 @@ public interface SimpleNotificationEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the Huawei Cloud Simple Message Notification
-     * (SMN) component.
+     * Builder for endpoint for the Huawei Simple Message Notification (SMN)
+     * component.
      */
     public interface SimpleNotificationEndpointBuilder
             extends
@@ -346,8 +346,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
 
     public interface SimpleNotificationBuilders {
         /**
-         * Huawei Cloud Simple Message Notification (SMN)
-         * (camel-huaweicloud-smn)
+         * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
          * To broadcast messages and connect cloud services through
          * notifications on Huawei Cloud
          * 
@@ -367,8 +366,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
             return SimpleNotificationEndpointBuilderFactory.endpointBuilder("hwcloud-smn", path);
         }
         /**
-         * Huawei Cloud Simple Message Notification (SMN)
-         * (camel-huaweicloud-smn)
+         * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
          * To broadcast messages and connect cloud services through
          * notifications on Huawei Cloud
          * 

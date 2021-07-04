@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "hwcloud-functiongraph",
-    "title": "Huawei Cloud FunctionGraph",
+    "title": "Huawei FunctionGraph",
     "description": "To call serverless functions on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.11.0",

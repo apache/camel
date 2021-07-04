@@ -16,14 +16,13 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.Ordered;
+import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -32,68 +31,35 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class AutowiredLifecycleStrategy extends LifecycleStrategySupport {
+class DefaultAutowiredLifecycleStrategy extends LifecycleStrategySupport implements AutowiredLifecycleStrategy, Ordered {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AutowiredLifecycleStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultAutowiredLifecycleStrategy.class);
 
-    // provisional maps to hold components, dataformats, languages that are created during
-    // starting camel, but need to defer autowiring until later in case additional configuration
-    // would turn off autowired for some components
-    private final Map<String, Component> autowrieComponents = new HashMap<>();
-    private final Map<String, DataFormat> autowrieDataFormats = new HashMap<>();
-    private final Map<String, Language> autowrieLanguages = new HashMap<>();
     private final ExtendedCamelContext camelContext;
-    private volatile boolean initializing;
 
-    public AutowiredLifecycleStrategy(CamelContext camelContext) {
+    public DefaultAutowiredLifecycleStrategy(CamelContext camelContext) {
         this.camelContext = (ExtendedCamelContext) camelContext;
     }
 
     @Override
-    public void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
-        // we have parsed configuration (such as via camel-main) and are now initializing
-        // so lets do autowiring on what we have collected so far
-        // we also need to eager autowire components as when they create endpoints they must be configured with
-        // those autowired options
-        autowrieComponents.forEach(this::autowireComponent);
-        autowrieDataFormats.forEach(this::autowireDataFormat);
-        autowrieLanguages.forEach(this::autowireLanguage);
-        autowrieComponents.clear();
-        autowrieDataFormats.clear();
-        autowrieLanguages.clear();
-        initializing = true;
-    }
-
-    @Override
-    public void onContextStopped(CamelContext context) {
-        initializing = false;
+    public int getOrder() {
+        // we should be last
+        return Ordered.LOWEST;
     }
 
     @Override
     public void onComponentAdd(String name, Component component) {
-        if (initializing) {
-            autowireComponent(name, component);
-        } else {
-            autowrieComponents.put(name, component);
-        }
+        autowireComponent(name, component);
     }
 
     @Override
     public void onDataFormatCreated(String name, DataFormat dataFormat) {
-        if (initializing) {
-            autowireDataFormat(name, dataFormat);
-        } else {
-            autowrieDataFormats.put(name, dataFormat);
-        }
+        autowireDataFormat(name, dataFormat);
     }
 
     @Override
     public void onLanguageCreated(String name, Language language) {
-        if (initializing) {
-            autowireLanguage(name, language);
-        } else {
-            autowrieLanguages.put(name, language);
-        }
+        autowireLanguage(name, language);
     }
 
     private void autowireComponent(String name, Component component) {

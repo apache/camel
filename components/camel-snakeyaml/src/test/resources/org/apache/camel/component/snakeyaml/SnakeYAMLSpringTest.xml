@@ -32,11 +32,11 @@
 
             <yaml id="yaml-pojo"
                   library="SnakeYAML"
-                  unmarshalTypeName="org.apache.camel.component.snakeyaml.model.TestPojo"/>
+                  unmarshalType="org.apache.camel.component.snakeyaml.model.TestPojo"/>
 
             <yaml id="yaml-pojo-pretty-flow"
                   library="SnakeYAML"
-                  unmarshalTypeName="org.apache.camel.component.snakeyaml.model.TestPojo"
+                  unmarshalType="org.apache.camel.component.snakeyaml.model.TestPojo"
                   prettyFlow="true"/>
         </dataFormats>
 

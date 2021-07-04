@@ -16,6 +16,8 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.function.BiFunction;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
@@ -25,6 +27,7 @@ import org.apache.camel.model.ClaimCheckOperation;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.support.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -114,6 +117,8 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
             Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy instanceof BiFunction) {
+                strategy = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
             } else if (aggStrategy != null) {
                 strategy = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
             } else {

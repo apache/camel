@@ -26,6 +26,7 @@ import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxUser;
 import com.box.sdk.CreateUserParams;
 import com.box.sdk.EmailAlias;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ public class BoxUsersManager {
 
             return BoxUser.getCurrentUser(boxConnection);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -93,7 +94,7 @@ public class BoxUsersManager {
             }
             return users;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -122,7 +123,7 @@ public class BoxUsersManager {
                 return BoxUser.createEnterpriseUser(boxConnection, login, name).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -147,7 +148,7 @@ public class BoxUsersManager {
                 return BoxUser.createAppUser(boxConnection, name).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -169,7 +170,7 @@ public class BoxUsersManager {
 
             return user.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -195,7 +196,7 @@ public class BoxUsersManager {
             user.updateInfo(info);
             return user;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -217,7 +218,7 @@ public class BoxUsersManager {
             BoxUser file = new BoxUser(boxConnection, userId);
             file.delete(notifyUser, force);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -243,7 +244,7 @@ public class BoxUsersManager {
 
             return user.addEmailAlias(email);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -265,7 +266,7 @@ public class BoxUsersManager {
 
             return user.getEmailAliases();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -290,7 +291,7 @@ public class BoxUsersManager {
 
             user.deleteEmailAlias(emailAliasId);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -315,7 +316,7 @@ public class BoxUsersManager {
 
             return user.transferContent(userId);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }

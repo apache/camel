@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "hwcloud-iam",
-    "title": "Huawei Cloud Identity and Access Management (IAM)",
+    "title": "Huawei Identity and Access Management (IAM)",
     "description": "To securely manage users on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.11.0",

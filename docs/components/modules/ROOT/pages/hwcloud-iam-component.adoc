@@ -1,8 +1,8 @@
 [[hwcloud-iam-component]]
-= Huawei Cloud Identity and Access Management (IAM) Component
+= Huawei Identity and Access Management (IAM) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-huawei/camel-huaweicloud-iam/src/main/docs/hwcloud-iam-component.adoc
-:docTitle: Huawei Cloud Identity and Access Management (IAM)
+:docTitle: Huawei Identity and Access Management (IAM)
 :artifactId: camel-huaweicloud-iam
 :description: To securely manage users on Huawei Cloud
 :since: 3.11
@@ -40,7 +40,7 @@ hwcloud-iam:operation[?options]
 == URI Options
 
 // component options: START
-The Huawei Cloud Identity and Access Management (IAM) component supports 2 options, which are listed below.
+The Huawei Identity and Access Management (IAM) component supports 2 options, which are listed below.
 
 
 
@@ -53,7 +53,7 @@ The Huawei Cloud Identity and Access Management (IAM) component supports 2 optio
 // component options: END
 
 // endpoint options: START
-The Huawei Cloud Identity and Access Management (IAM) endpoint is configured using URI syntax:
+The Huawei Identity and Access Management (IAM) endpoint is configured using URI syntax:
 
 ----
 hwcloud-iam:operation

@@ -47,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(excludeProperties = "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType," +
                               "collectionTypeName,collectionType,useList,moduleClassNames,moduleRefs,enableFeatures," +
                               "disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
-                              "contentTypeHeader,schemaResolver,autoDiscoverSchemaResolver,unmarshalTypeName")
+                              "contentTypeHeader,schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
 public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final String GENERIC_CONTAINER_CLASSNAME = GenericContainer.class.getName();

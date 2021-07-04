@@ -3695,7 +3695,7 @@
             "auto-discover-schema-resolver" : {
               "type" : "boolean"
             },
-            "collection-type-name" : {
+            "collection-type" : {
               "type" : "string"
             },
             "content-type-header" : {
@@ -3716,7 +3716,7 @@
             "instance-class-name" : {
               "type" : "string"
             },
-            "json-view-type-name" : {
+            "json-view" : {
               "type" : "string"
             },
             "library" : {
@@ -3738,7 +3738,7 @@
             "timezone" : {
               "type" : "string"
             },
-            "unmarshal-type-name" : {
+            "unmarshal-type" : {
               "type" : "string"
             },
             "use-default-object-mapper" : {
@@ -3853,7 +3853,7 @@
           "allow-unmarshall-type" : {
             "type" : "boolean"
           },
-          "collection-type-name" : {
+          "collection-type" : {
             "type" : "string"
           },
           "disable-features" : {
@@ -3871,7 +3871,7 @@
           "pretty-print" : {
             "type" : "boolean"
           },
-          "unmarshal-type-name" : {
+          "unmarshal-type" : {
             "type" : "string"
           },
           "use-default-object-mapper" : {
@@ -4367,7 +4367,7 @@
           "allow-unmarshall-type" : {
             "type" : "boolean"
           },
-          "collection-type-name" : {
+          "collection-type" : {
             "type" : "string"
           },
           "content-type-header" : {
@@ -4388,7 +4388,7 @@
           "include" : {
             "type" : "string"
           },
-          "json-view-type-name" : {
+          "json-view" : {
             "type" : "string"
           },
           "module-class-names" : {
@@ -4400,7 +4400,7 @@
           "pretty-print" : {
             "type" : "boolean"
           },
-          "unmarshal-type-name" : {
+          "unmarshal-type" : {
             "type" : "string"
           },
           "use-list" : {
@@ -4503,7 +4503,7 @@
           "auto-discover-schema-resolver" : {
             "type" : "boolean"
           },
-          "collection-type-name" : {
+          "collection-type" : {
             "type" : "string"
           },
           "content-type-header" : {
@@ -4524,7 +4524,7 @@
           "include" : {
             "type" : "string"
           },
-          "json-view-type-name" : {
+          "json-view" : {
             "type" : "string"
           },
           "library" : {
@@ -4552,7 +4552,7 @@
           "timezone" : {
             "type" : "string"
           },
-          "unmarshal-type-name" : {
+          "unmarshal-type" : {
             "type" : "string"
           },
           "use-default-object-mapper" : {
@@ -4665,7 +4665,7 @@
             "auto-discover-schema-resolver" : {
               "type" : "boolean"
             },
-            "collection-type-name" : {
+            "collection-type" : {
               "type" : "string"
             },
             "content-type-format" : {
@@ -4689,7 +4689,7 @@
             "instance-class" : {
               "type" : "string"
             },
-            "json-view-type-name" : {
+            "json-view" : {
               "type" : "string"
             },
             "library" : {
@@ -4711,7 +4711,7 @@
             "timezone" : {
               "type" : "string"
             },
-            "unmarshal-type-name" : {
+            "unmarshal-type" : {
               "type" : "string"
             },
             "use-default-object-mapper" : {
@@ -5168,7 +5168,7 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLTypeFilterDefinition"
             }
           },
-          "unmarshal-type-name" : {
+          "unmarshal-type" : {
             "type" : "string"
           },
           "use-application-context-class-loader" : {

@@ -66,7 +66,7 @@
     <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.1.0</awaitility-version>
-    <aws-java-sdk2-version>2.16.92</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.16.94</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -75,11 +75,11 @@
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
     <bouncycastle-version>1.69</bouncycastle-version>
     <box-java-sdk-version>2.54.0</box-java-sdk-version>
-    <braintree-gateway-version>3.10.0</braintree-gateway-version>
+    <braintree-gateway-version>3.11.0</braintree-gateway-version>
     <brave-zipkin-version>5.13.3</brave-zipkin-version>
     <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.5</c3p0-version>
-    <caffeine-version>2.9.1</caffeine-version>
+    <caffeine-version>2.9.2</caffeine-version>
     <californium-version>2.6.3</californium-version>
     <camel.osgi.activator></camel.osgi.activator>
     <camel.osgi.dynamic></camel.osgi.dynamic>
@@ -173,7 +173,7 @@
     <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
     <djl-version>0.11.0</djl-version>
     <dnsjava-version>3.3.1</dnsjava-version>
-    <docker-java-version>3.2.8</docker-java-version>
+    <docker-java-version>3.2.10</docker-java-version>
     <dozer-version>6.5.2</dozer-version>
     <dropbox-version>3.2.0</dropbox-version>
     <eddsa-version>0.3.0</eddsa-version>
@@ -260,6 +260,7 @@
     <httpclient4-version>4.5.13</httpclient4-version>
     <httpcore4-version>4.4.14</httpcore4-version>
     <httpunit-version>1.7</httpunit-version>
+    <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
     <huaweicloud-sdk-version>3.0.32-rc</huaweicloud-sdk-version>
     <hystrix-version>1.5.18</hystrix-version>
     <ical4j-version>1.0.7</ical4j-version>
@@ -306,7 +307,7 @@
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
     <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
-    <jbpm-version>7.55.0.Final</jbpm-version>
+    <jbpm-version>7.56.0.Final</jbpm-version>
     <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
     <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
     <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
@@ -445,7 +446,7 @@
     <opentracing-version>0.33.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
-    <optaplanner-version>8.7.0.Final</optaplanner-version>
+    <optaplanner-version>8.8.0.Final</optaplanner-version>
     <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
     <paho-version>1.2.5</paho-version>
     <partial-build-plugin-version>2.7</partial-build-plugin-version>
@@ -517,7 +518,7 @@
     <spring-data-redis-version>2.5.1</spring-data-redis-version>
     <spring-integration-version>5.4.3</spring-integration-version>
     <spring-ldap-version>2.3.4.RELEASE</spring-ldap-version>
-    <spring-rabbitmq-version>2.3.8</spring-rabbitmq-version>
+    <spring-rabbitmq-version>2.3.9</spring-rabbitmq-version>
     <spring-security-version>5.5.1</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
@@ -547,7 +548,7 @@
     <vavr-version>0.10.2</vavr-version>
     <velocity-tools-version>3.1</velocity-tools-version>
     <velocity-version>2.3</velocity-version>
-    <vertx-version>4.1.0</vertx-version>
+    <vertx-version>4.1.1</vertx-version>
     <vysper-version>0.7</vysper-version>
     <web3j-quorum-version>0.8.0</web3j-quorum-version>
     <web3j-version>3.6.0</web3j-version>

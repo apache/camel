@@ -23,6 +23,7 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxCollaboration;
 import com.box.sdk.BoxCollaborator;
 import com.box.sdk.BoxFolder;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class BoxCollaborationsManager {
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             return folder.getCollaborations();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -95,7 +96,7 @@ public class BoxCollaborationsManager {
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             return folder.collaborate(collaborator, role).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -126,7 +127,7 @@ public class BoxCollaborationsManager {
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
             return folder.collaborate(email, role).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -148,7 +149,7 @@ public class BoxCollaborationsManager {
 
             return collaboration.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -172,7 +173,7 @@ public class BoxCollaborationsManager {
             collaboration.updateInfo(info);
             return collaboration;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -191,7 +192,7 @@ public class BoxCollaborationsManager {
             BoxCollaboration collaboration = new BoxCollaboration(boxConnection, collaborationId);
             collaboration.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -205,7 +206,7 @@ public class BoxCollaborationsManager {
         try {
             return BoxCollaboration.getPendingCollaborations(boxConnection);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }

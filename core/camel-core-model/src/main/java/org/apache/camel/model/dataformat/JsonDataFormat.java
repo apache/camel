@@ -45,11 +45,11 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute
     @Metadata(defaultValue = "Jackson")
     private JsonLibrary library = JsonLibrary.Jackson;
-    @XmlAttribute
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
-    @XmlAttribute
+    @XmlAttribute(name = "jsonView")
     private String jsonViewTypeName;
     @XmlTransient
     private Class<?> jsonView;
@@ -58,7 +58,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowJmsType;
-    @XmlAttribute
+    @XmlAttribute(name = "collectionType")
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;

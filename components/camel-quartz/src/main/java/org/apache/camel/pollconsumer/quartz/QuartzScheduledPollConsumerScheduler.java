@@ -16,6 +16,8 @@
  */
 package org.apache.camel.pollconsumer.quartz;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.camel.CamelContext;
@@ -26,7 +28,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.component.quartz.QuartzConstants;
 import org.apache.camel.component.quartz.QuartzHelper;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 import org.quartz.CronScheduleBuilder;
@@ -48,6 +52,7 @@ import org.slf4j.LoggerFactory;
  * A quartz based {@link ScheduledPollConsumerScheduler} which uses a {@link CronTrigger} to define when the poll should
  * be triggered.
  */
+@Configurer
 public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
         implements ScheduledPollConsumerScheduler, NonManagedService {
 
@@ -59,6 +64,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
     private Runnable runnable;
     private String cron;
     private String triggerId;
+    private Map<String, Object> triggerParameters;
+    private Map<String, Object> jobParameters;
     private String triggerGroup = "QuartzScheduledPollConsumerScheduler";
     private TimeZone timeZone = TimeZone.getDefault();
     private boolean deleteJob = true;
@@ -157,6 +164,22 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
         this.triggerGroup = triggerGroup;
     }
 
+    public Map<String, Object> getTriggerParameters() {
+        return triggerParameters;
+    }
+
+    public void setTriggerParameters(Map<String, Object> triggerParameters) {
+        this.triggerParameters = triggerParameters;
+    }
+
+    public Map<String, Object> getJobParameters() {
+        return jobParameters;
+    }
+
+    public void setJobParameters(Map<String, Object> jobParameters) {
+        this.jobParameters = jobParameters;
+    }
+
     public boolean isDeleteJob() {
         return deleteJob;
     }
@@ -203,6 +226,13 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
             map.put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, getTimeZone().getID());
 
             job = JobBuilder.newJob(QuartzScheduledPollConsumerJob.class).usingJobData(map).build();
+            // Let user parameters to further set JobDetail properties.
+            if (jobParameters != null && jobParameters.size() > 0) {
+                // need to use a copy to keep the parameters
+                Map<String, Object> copy = new HashMap<>(jobParameters);
+                LOG.debug("Setting user extra jobParameters {}", copy);
+                PropertyBindingSupport.bindProperties(camelContext, job, copy);
+            }
 
             // store additional information on job such as camel context etc
             QuartzHelper.updateJobDataMap(getCamelContext(), job, null);
@@ -210,6 +240,12 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
             trigger = TriggerBuilder.newTrigger().withIdentity(id, triggerGroup)
                     .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
                     .build();
+            if (triggerParameters != null && triggerParameters.size() > 0) {
+                // need to use a copy to keep the parameters
+                Map<String, Object> copy = new HashMap<>(triggerParameters);
+                LOG.debug("Setting user extra triggerParameters {}", copy);
+                PropertyBindingSupport.bindProperties(camelContext, trigger, copy);
+            }
 
             LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
             quartzScheduler.scheduleJob(job, trigger);

@@ -1027,13 +1027,15 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-The webhookNotification API has 2 method(s) which is represented by the following method signatures
+The webhookNotification API has 3 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
 
 [source,java]
 ----
 
 com.braintreegateway.WebhookNotification parse(String signature, String payload);
+
+com.braintreegateway.WebhookNotification parseWithoutSignatureVerification(String payload);
 
 String verify(String challenge);
 
@@ -1045,13 +1047,14 @@ The webhookNotification API is defined in the syntax as follows:
 braintree:webhookNotification/methodName?[parameters]
 ----
 
-The 2 method(s) is listed in the table below.
+The 3 method(s) is listed in the table below.
 (API methods can have a shorthand alias name which can be used in the syntax instead of the name)
 
 [width="100%",cols="2,2,6",options="header"]
 |===
 | Method | Alias | Description
 | *parse* |  | 
+| *parseWithoutSignatureVerification* |  | 
 | *verify* |  | 
 |===
 
@@ -1061,6 +1064,7 @@ The webhookNotification API method(s) has the following set of parameters listed
 | Method | Parameter | Description | Type
 | parse | *payload* |   | String
 | parse | *signature* |   | String
+| parseWithoutSignatureVerification | *payload* |   | String
 | verify | *challenge* |   | String
 |===
 

@@ -47,7 +47,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     private String id;
     private String routeId;
-    private LoopState state;
+    private volatile LoopState state;
     private boolean shutdownPending;
     private final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
@@ -92,7 +92,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     @Override
     public int getPendingExchangesSize() {
-        return state.getPendingSize();
+        return state != null ? state.getPendingSize() : 0;
     }
 
     @Override

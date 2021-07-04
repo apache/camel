@@ -16,7 +16,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "webhookNotification", 
            description = "To retrieve notifications via webhooks",
-           apiMethods = {@ApiMethod(methodName = "parse", signatures={"com.braintreegateway.WebhookNotification parse(String signature, String payload)"}), @ApiMethod(methodName = "verify", signatures={"String verify(String challenge)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "parse", signatures={"com.braintreegateway.WebhookNotification parse(String signature, String payload)"}), @ApiMethod(methodName = "parseWithoutSignatureVerification", signatures={"com.braintreegateway.WebhookNotification parseWithoutSignatureVerification(String payload)"}), @ApiMethod(methodName = "verify", signatures={"String verify(String challenge)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class WebhookNotificationGatewayEndpointConfiguration extends BraintreeConfiguration {
@@ -24,7 +24,7 @@ public final class WebhookNotificationGatewayEndpointConfiguration extends Brain
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "verify")})
     private String challenge;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "parse")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "parse"), @ApiMethod(methodName = "parseWithoutSignatureVerification")})
     private String payload;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "parse")})

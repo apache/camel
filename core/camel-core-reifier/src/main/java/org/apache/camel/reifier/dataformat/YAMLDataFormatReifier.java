@@ -41,11 +41,7 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
     }
 
     protected void configureSnakeDataFormat(Map<String, Object> properties) {
-        if (definition.getUnmarshalType() != null) {
-            properties.put("unmarshalTypeName", asTypeName(definition.getUnmarshalType()));
-        } else {
-            properties.put("unmarshalTypeName", definition.getUnmarshalTypeName());
-        }
+        properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
         properties.put("classLoader", definition.getClassLoader());
         properties.put("useApplicationContextClassLoader", definition.getUseApplicationContextClassLoader());
         properties.put("prettyFlow", definition.getPrettyFlow());
