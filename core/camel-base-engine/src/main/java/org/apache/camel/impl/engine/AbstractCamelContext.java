@@ -369,11 +369,11 @@ public abstract class AbstractCamelContext extends BaseService
         // add a default LifecycleStrategy that discover strategies on the registry and invoke them
         this.lifecycleStrategies.add(new OnCamelContextLifecycleStrategy());
 
-        // add a default autowired strategy
-        this.lifecycleStrategies.add(new DefaultAutowiredLifecycleStrategy(this));
-
         // add a default LifecycleStrategy to customize services using customizers from registry
         this.lifecycleStrategies.add(new CustomizersLifecycleStrategy(this));
+
+        // add a default autowired strategy
+        this.lifecycleStrategies.add(new DefaultAutowiredLifecycleStrategy(this));
 
         // add the default bootstrap closer
         this.bootstraps.add(new DefaultServiceBootstrapCloseable(this));
@@ -2669,6 +2669,7 @@ public abstract class AbstractCamelContext extends BaseService
         forceLazyInitialization();
 
         addService(getManagementStrategy(), false);
+        lifecycleStrategies.sort(OrderedComparator.get());
         ServiceHelper.initService(lifecycleStrategies);
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             try {

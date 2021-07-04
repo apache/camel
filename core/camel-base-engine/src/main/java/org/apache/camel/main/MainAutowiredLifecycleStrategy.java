@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Ordered;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.DataFormat;
@@ -33,7 +34,7 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport implements AutowiredLifecycleStrategy {
+public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport implements AutowiredLifecycleStrategy, Ordered {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainAutowiredLifecycleStrategy.class);
 
@@ -48,6 +49,12 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
 
     public MainAutowiredLifecycleStrategy(CamelContext camelContext) {
         this.camelContext = (ExtendedCamelContext) camelContext;
+    }
+
+    @Override
+    public int getOrder() {
+        // we should be last
+        return Ordered.LOWEST;
     }
 
     @Override
