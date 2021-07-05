@@ -16,23 +16,21 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
-import java.io.InputStream;
-
 import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
 import org.apache.camel.CamelContext;
 
 /**
- * @deprecated use DefaultJsonUriSchemaLoader instead
+ * Can be used to create custom schema for the JSON validator endpoint.
  */
-@Deprecated
-public class DefaultJsonSchemaLoader implements JsonSchemaLoader {
+public interface JsonUriSchemaLoader {
 
-    @Override
-    @Deprecated
-    public JsonSchema createSchema(CamelContext camelContext, InputStream inputStream) throws Exception {
-        JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
-        return factory.getSchema(inputStream);
-    }
+    /**
+     * Create a new Schema based on the schema input stream.
+     *
+     * @param  camelContext camel context
+     * @param  schemaUri    the schema URI
+     * @return              a Schema to be used when validating incoming requests
+     */
+    JsonSchema createSchema(CamelContext camelContext, String schemaUri) throws Exception;
 
 }
