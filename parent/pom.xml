@@ -219,8 +219,7 @@
         <gson-version>2.8.7</gson-version>
         <guava-eventbus-version>28.2-jre</guava-eventbus-version>
         <guice3-version>3.0</guice3-version>
-        <hadoop2-version>2.10.0</hadoop2-version>
-        <hadoop3-version>3.3.0</hadoop3-version>
+        <hadoop3-version>3.3.1</hadoop3-version>
         <hadoop3-guava-version>29.0-jre</hadoop3-guava-version>
         <hamcrest-version>2.2</hamcrest-version>
         <hapi-version>2.3</hapi-version>
@@ -239,7 +238,7 @@
         <httpcore4-version>4.4.14</httpcore4-version>
         <httpclient4-version>4.5.13</httpclient4-version>
         <httpasyncclient-version>4.1.4</httpasyncclient-version>
-	<huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
+	    <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.0.32-rc</huaweicloud-sdk-version>
         <hystrix-version>1.5.18</hystrix-version>
         <ical4j-version>1.0.7</ical4j-version>
@@ -498,7 +497,7 @@
         <solr-version>8.8.2</solr-version>
         <solr-version-range>[8,9)</solr-version-range>
         <solr-zookeeper-version>3.6.2</solr-zookeeper-version>
-        <spark-version>2.4.8</spark-version>
+        <spark-version>3.1.2</spark-version>
         <splunk-version>1.6.5.0_1</splunk-version>
         <spock-version>2.0-M4-groovy-3.0</spock-version>
         <spring-batch-version>4.3.3</spring-batch-version>
