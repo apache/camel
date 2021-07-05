@@ -595,6 +595,18 @@ This repository has two additional configuration parameters
 |lockKeepAliveIntervalMillis | The frequency at which keep alive updates are done to createdAt Timestamp column.
 |===
 
+=== Caching Jdbc IdempotentRepository 
+
+Some SQL implementations are not fast on a per query basis.  The 
+`JdbcMessageIdRepository` implementation does its idempotent checks
+individually within SQL transactions.  Checking a mere 100 keys can 
+take minutes.  The `JdbcCachedMessageIdRepository` preloads an in-memory 
+cache on start with the entire list of keys.  This cache is then 
+checked first before passing through to the original implementation.
+
+As with all cache implementations, there are considerations that should
+be made with regard to stale data and your specific usage.
+
 == Using the JDBC based aggregation repository
 
 *Since Camel 2.6*
