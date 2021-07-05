@@ -16,27 +16,25 @@
  */
 package org.apache.camel.processor.idempotent.jdbc;
 
+import java.sql.ResultSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Caching version of {@link JdbcMessageIdRepository}
  */
 public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
-    private final Map<String, Integer> cache = new HashMap<>();
+    private Map<String, Integer> cache = new HashMap<>();
     private int hitCount;
     private int missCount;
     private String queryAllString
-            = "SELECT messageId, CAST(COUNT(*) AS INTEGER) AS messageCount FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? GROUP BY messageId";
+            = "SELECT messageId, COUNT(*) AS messageCount FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? GROUP BY messageId";
 
     public JdbcCachedMessageIdRepository() {
     }
@@ -121,24 +119,27 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
     }
 
     public void reload() {
-        transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            @Override
-            public Boolean doInTransaction(TransactionStatus status) {
-                try {
-                    List<Map<String, Object>> result = jdbcTemplate.queryForList(getQueryAllString(), getProcessorName());
-                    for (Map<String, Object> messageMap : result) {
-                        Integer messageCount = (Integer) messageMap.get("messageCount");
-                        cache.put((String) messageMap.get("messageId"), messageCount);
-                    }
-                    log.info("JdbcCachedMessageIdRepository cache loaded with {} entries", result.size());
-                } catch (DataAccessException dae) {
-                    log.error(
-                            "Unable to populate JdbcCachedMessageIdRepository cache because of: {}.",
-                            dae.getMessage());
-                    throw dae;
-                }
-                return Boolean.TRUE;
+        transactionTemplate.execute(status -> {
+            try {
+                cache = jdbcTemplate.query(getQueryAllString(),
+                        (ResultSet rs) -> {
+                            Map<String, Integer> messageIdCount = new HashMap<>();
+                            while (rs.next()) {
+                                messageIdCount.put(
+                                        rs.getString("messageId"),
+                                        rs.getInt("messageCount"));
+                            }
+                            return messageIdCount;
+                        }, getProcessorName());
+                log.info("JdbcCachedMessageIdRepository cache loaded with {} entries", cache.size());
+            } catch (DataAccessException dae) {
+                log.error(
+                        "Unable to populate JdbcCachedMessageIdRepository cache because of: {}.",
+                        dae.getMessage());
+                throw dae;
             }
+            return Boolean.TRUE;
+
         });
     }
 
