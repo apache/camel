@@ -356,7 +356,7 @@
     <json-api>1.0</json-api>
     <json-path-version>2.4.0</json-path-version>
     <json-simple-version>1.1.1</json-simple-version>
-    <json-smart-version>2.4.2</json-smart-version>
+    <json-smart-version>2.4.7</json-smart-version>
     <jsonassert-version>1.5.0</jsonassert-version>
     <jsonata4java-version>1.4.8</jsonata4java-version>
     <jsoup-version>1.13.1</jsoup-version>
