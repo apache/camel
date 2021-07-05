@@ -1049,7 +1049,7 @@ Serialize and deserialize Java objects using Google's Protocol buffers.
   <xs:element name="proxy" type="tns:camelProxyFactoryDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-To proxy a service call using a interface
+Deprecated: To proxy a service call using a interface
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
