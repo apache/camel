@@ -23,6 +23,7 @@ import com.azure.core.amqp.AmqpRetryOptions;
 import com.azure.core.amqp.AmqpTransportType;
 import com.azure.core.amqp.ProxyOptions;
 import com.azure.core.util.ClientOptions;
+import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusTransactionContext;
@@ -83,7 +84,8 @@ public class ServiceBusConfiguration implements Cloneable {
     private OffsetDateTime scheduledEnqueueTime;
 
     /**
-     * d
+     * Selected topic name or the queue name, that is depending on serviceBusType config. For example if
+     * serviceBusType=queue, then this will be the queue name and if serviceBusType=topic, this will be the topic name.
      */
     public String getTopicOrQueueName() {
         return topicOrQueueName;
@@ -94,7 +96,8 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * d
+     * The service bus type of connection to execute. Queue is for typical queue option and topic for subscription based
+     * model.
      */
     public ServiceBusType getServiceBusType() {
         return serviceBusType;
@@ -105,7 +108,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * d
+     * Sets the connection string for a Service Bus namespace or a specific Service Bus resource.
      */
     public String getConnectionString() {
         return connectionString;
@@ -116,7 +119,8 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * d
+     * Sets the name of the subscription in the topic to listen to. topicOrQueueName and serviceBusType=topic must also
+     * be set.
      */
     public String getSubscriptionName() {
         return subscriptionName;
@@ -127,7 +131,9 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the {@link ClientOptions} to be sent from the client built from this builder, enabling customization of
+     * certain properties, as well as support the addition of custom header information. Refer to the
+     * {@link ClientOptions} documentation for more information.
      */
     public ClientOptions getClientOptions() {
         return clientOptions;
@@ -138,7 +144,8 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the proxy configuration to use for {@link ServiceBusSenderAsyncClient}. When a proxy is configured,
+     * {@link AmqpTransportType#AMQP_WEB_SOCKETS} must be used for the transport type.
      */
     public ProxyOptions getProxyOptions() {
         return proxyOptions;
@@ -149,7 +156,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the retry options for Service Bus clients. If not specified, the default retry options are used.
      */
     public AmqpRetryOptions getAmqpRetryOptions() {
         return amqpRetryOptions;
@@ -160,7 +167,8 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the transport type by which all the communication with Azure Service Bus occurs. Default value is
+     * {@link AmqpTransportType#AMQP}.
      */
     public AmqpTransportType getAmqpTransportType() {
         return amqpTransportType;
@@ -171,7 +179,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the receiverAsyncClient in order to consume messages in the Consumer
      */
     public ServiceBusReceiverAsyncClient getReceiverAsyncClient() {
         return receiverAsyncClient;
@@ -182,7 +190,9 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Disables auto-complete and auto-abandon of received messages. By default, a successfully processed message is
+     * {@link ServiceBusReceiverAsyncClient#complete(ServiceBusReceivedMessage) completed}. If an error happens when the
+     * message is processed, it is {@link ServiceBusReceiverAsyncClient#abandon(ServiceBusReceivedMessage) abandoned}.
      */
     public boolean isDisableAutoComplete() {
         return disableAutoComplete;
@@ -193,7 +203,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the receive mode for the receiver.
      */
     public ServiceBusReceiveMode getServiceBusReceiveMode() {
         return serviceBusReceiveMode;
@@ -204,7 +214,9 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the amount of time to continue auto-renewing the lock. Setting {@link Duration#ZERO} or {@code null}
+     * disables auto-renewal. For {@link ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} mode, auto-renewal
+     * is disabled.
      */
     public Duration getMaxAutoLockRenewDuration() {
         return maxAutoLockRenewDuration;
@@ -215,7 +227,12 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the prefetch count of the receiver. For both {@link ServiceBusReceiveMode#PEEK_LOCK PEEK_LOCK} and
+     * {@link ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} modes the default value is 1.
+     *
+     * Prefetch speeds up the message flow by aiming to have a message readily available for local retrieval when and
+     * before the application asks for one using {@link ServiceBusReceiverAsyncClient#receiveMessages()}. Setting a
+     * non-zero value will prefetch that number of messages. Setting the value to zero turns prefetch off.
      */
     public int getPrefetchCount() {
         return prefetchCount;
@@ -226,7 +243,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the type of the {@link SubQueue} to connect to.
      */
     public SubQueue getSubQueue() {
         return subQueue;
@@ -237,7 +254,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets SenderAsyncClient to be used in the producer.
      */
     public ServiceBusSenderAsyncClient getSenderAsyncClient() {
         return senderAsyncClient;
@@ -248,7 +265,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the desired operation to be used in the consumer
      */
     public ServiceBusConsumerOperationDefinition getConsumerOperation() {
         return consumerOperation;
@@ -259,7 +276,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets the desired operation to be used in the producer
      */
     public ServiceBusProducerOperationDefinition getProducerOperation() {
         return producerOperation;
@@ -270,7 +287,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Represents transaction in service. This object just contains transaction id.
      */
     public ServiceBusTransactionContext getServiceBusTransactionContext() {
         return serviceBusTransactionContext;
@@ -281,7 +298,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Sets OffsetDateTime at which the message should appear in the Service Bus queue or topic.
      */
     public OffsetDateTime getScheduledEnqueueTime() {
         return scheduledEnqueueTime;
@@ -292,7 +309,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * Set the max number of messages to be peeked during the peek operation.
      */
     public Integer getPeekNumMaxMessages() {
         return peekNumMaxMessages;

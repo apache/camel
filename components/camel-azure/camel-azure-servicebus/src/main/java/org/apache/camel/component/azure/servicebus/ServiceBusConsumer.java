@@ -156,11 +156,10 @@ public class ServiceBusConsumer extends DefaultConsumer {
         // set headers
         message.setHeader(ServiceBusConstants.APPLICATION_PROPERTIES, receivedMessage.getApplicationProperties());
         message.setHeader(ServiceBusConstants.CONTENT_TYPE, receivedMessage.getContentType());
-        message.setHeader(ServiceBusConstants.APPLICATION_PROPERTIES, receivedMessage.getContentType());
         message.setHeader(ServiceBusConstants.MESSAGE_ID, receivedMessage.getMessageId());
         message.setHeader(ServiceBusConstants.CORRELATION_ID, receivedMessage.getCorrelationId());
         message.setHeader(ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION, receivedMessage.getDeadLetterErrorDescription());
-        message.setHeader(ServiceBusConstants.DEAD_LETTER_REASON, receivedMessage.getDeadLetterSource());
+        message.setHeader(ServiceBusConstants.DEAD_LETTER_REASON, receivedMessage.getDeadLetterReason());
         message.setHeader(ServiceBusConstants.DEAD_LETTER_SOURCE, receivedMessage.getDeadLetterSource());
         message.setHeader(ServiceBusConstants.DELIVERY_COUNT, receivedMessage.getDeliveryCount());
         message.setHeader(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, receivedMessage.getScheduledEnqueueTime());

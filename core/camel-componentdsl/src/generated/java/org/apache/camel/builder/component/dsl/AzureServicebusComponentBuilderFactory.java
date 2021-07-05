@@ -60,7 +60,8 @@ public interface AzureServicebusComponentBuilderFactory {
             extends
                 ComponentBuilder<ServiceBusComponent> {
         /**
-         * dd.
+         * Sets the retry options for Service Bus clients. If not specified, the
+         * default retry options are used.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
@@ -76,7 +77,8 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the transport type by which all the communication with Azure
+         * Service Bus occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
@@ -93,7 +95,10 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the ClientOptions to be sent from the client built from this
+         * builder, enabling customization of certain properties, as well as
+         * support the addition of custom header information. Refer to the
+         * ClientOptions documentation for more information.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
@@ -125,7 +130,9 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
+         * When a proxy is configured, AmqpTransportType#AMQP_WEB_SOCKETS must
+         * be used for the transport type.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
@@ -141,7 +148,8 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * d.
+         * The service bus type of connection to execute. Queue is for typical
+         * queue option and topic for subscription based model.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
@@ -180,7 +188,7 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the desired operation to be used in the consumer.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition&lt;/code&gt; type.
@@ -197,7 +205,13 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Disables auto-complete and auto-abandon of received messages. By
+         * default, a successfully processed message is {link
+         * ServiceBusReceiverAsyncClient#complete(ServiceBusReceivedMessage)
+         * completed}. If an error happens when the message is processed, it is
+         * {link
+         * ServiceBusReceiverAsyncClient#abandon(ServiceBusReceivedMessage)
+         * abandoned}.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -213,7 +227,10 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the amount of time to continue auto-renewing the lock. Setting
+         * Duration#ZERO or null disables auto-renewal. For {link
+         * ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} mode,
+         * auto-renewal is disabled.
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
@@ -229,7 +246,8 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Set the max number of messages to be peeked during the peek
+         * operation.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -244,7 +262,15 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the prefetch count of the receiver. For both {link
+         * ServiceBusReceiveMode#PEEK_LOCK PEEK_LOCK} and {link
+         * ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} modes
+         * the default value is 1. Prefetch speeds up the message flow by aiming
+         * to have a message readily available for local retrieval when and
+         * before the application asks for one using
+         * ServiceBusReceiverAsyncClient#receiveMessages(). Setting a non-zero
+         * value will prefetch that number of messages. Setting the value to
+         * zero turns prefetch off.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -259,7 +285,8 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the receiverAsyncClient in order to consume messages in the
+         * Consumer.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient&lt;/code&gt; type.
@@ -275,7 +302,7 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the receive mode for the receiver.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.models.ServiceBusReceiveMode&lt;/code&gt; type.
@@ -292,7 +319,7 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the type of the SubQueue to connect to.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.models.SubQueue&lt;/code&gt; type.
@@ -308,7 +335,8 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * d.
+         * Sets the name of the subscription in the topic to listen to.
+         * topicOrQueueName and serviceBusType=topic must also be set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -347,7 +375,7 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets the desired operation to be used in the producer.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition&lt;/code&gt; type.
@@ -364,7 +392,8 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets OffsetDateTime at which the message should appear in the Service
+         * Bus queue or topic.
          * 
          * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
          * type.
@@ -380,7 +409,7 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Sets SenderAsyncClient to be used in the producer.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
@@ -396,7 +425,8 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Represents transaction in service. This object just contains
+         * transaction id.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusTransactionContext&lt;/code&gt; type.
@@ -433,7 +463,8 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * d.
+         * Sets the connection string for a Service Bus namespace or a specific
+         * Service Bus resource.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
