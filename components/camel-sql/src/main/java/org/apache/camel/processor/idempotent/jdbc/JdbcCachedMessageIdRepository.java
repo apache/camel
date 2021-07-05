@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.idempotent.jdbc;
 
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,16 +120,13 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
     public void reload() {
         transactionTemplate.execute(status -> {
             try {
-                cache = jdbcTemplate.query(getQueryAllString(),
-                        (ResultSet rs) -> {
-                            Map<String, Integer> messageIdCount = new HashMap<>();
-                            while (rs.next()) {
-                                messageIdCount.put(
-                                        rs.getString("messageId"),
-                                        rs.getInt("messageCount"));
-                            }
-                            return messageIdCount;
-                        }, getProcessorName());
+                cache = jdbcTemplate.query(getQueryAllString(), resultSet -> {
+                    Map<String, Integer> messageIdCount = new HashMap<>();
+                    while (resultSet.next()) {
+                        messageIdCount.put(resultSet.getString("messageId"), resultSet.getInt("messageCount"));
+                    }
+                    return messageIdCount;
+                }, getProcessorName());
                 log.info("JdbcCachedMessageIdRepository cache loaded with {} entries", cache.size());
             } catch (DataAccessException dae) {
                 log.error(
