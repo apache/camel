@@ -105,6 +105,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String snapshotCustomClass;
     @UriParam(label = LABEL_NAME, defaultValue = "debezium")
     private String slotName = "debezium";
+    @UriParam(label = LABEL_NAME, defaultValue = "1024")
+    private int incrementalSnapshotChunkSize = 1024;
     @UriParam(label = LABEL_NAME, defaultValue = "json")
     private String hstoreHandlingMode = "json";
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
@@ -520,7 +522,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     /**
      *  This property contains a comma-separated list of fully-qualified tables
      * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
-     * thespecific connectors . Select statements for the individual tables are
+     * thespecific connectors. Select statements for the individual tables are
      * specified in further configuration properties, one for each table,
      * identified by the id
      * 'snapshot.select.statement.overrides.[DB_NAME].[TABLE_NAME]' or
@@ -722,9 +724,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
      * stop after completing the snapshot and before it would normally start
      * emitting changes;'never' to specify the connector should never run a
      * snapshot and that upon first startup the connector should read from the
-     * last position (LSN) recorded by the server; and'exported' to specify the
-     * connector should run a snapshot based on the position when the
-     * replication slot was created; 'custom' to specify a custom class with
+     * last position (LSN) recorded by the server; and'exported' deprecated, use
+     * 'initial' instead; 'custom' to specify a custom class with
      * 'snapshot.custom_class' which will be loaded and used to determine the
      * snapshot, see docs for more details.
      */
@@ -774,6 +775,17 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getSlotName() {
         return slotName;
+    }
+
+    /**
+     * The maximum size of chunk for incremental snapshotting
+     */
+    public void setIncrementalSnapshotChunkSize(int incrementalSnapshotChunkSize) {
+        this.incrementalSnapshotChunkSize = incrementalSnapshotChunkSize;
+    }
+
+    public int getIncrementalSnapshotChunkSize() {
+        return incrementalSnapshotChunkSize;
     }
 
     /**
@@ -1201,6 +1213,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "snapshot.custom.class", snapshotCustomClass);
         addPropertyIfNotNull(configBuilder, "slot.name", slotName);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.chunk.size", incrementalSnapshotChunkSize);
         addPropertyIfNotNull(configBuilder, "hstore.handling.mode", hstoreHandlingMode);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);

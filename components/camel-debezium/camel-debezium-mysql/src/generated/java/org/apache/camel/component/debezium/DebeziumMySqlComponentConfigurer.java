@@ -70,6 +70,12 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration(target).setDatabaseHistoryKafkaRecoveryPollIntervalMs(property(camelContext, int.class, value)); return true;
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": getOrCreateConfiguration(target).setDatabaseHistoryKafkaTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistoryskipunparseableddl":
+        case "databaseHistorySkipUnparseableDdl": getOrCreateConfiguration(target).setDatabaseHistorySkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
+        case "databasehistorystoreonlycapturedtablesddl":
+        case "databaseHistoryStoreOnlyCapturedTablesDdl": getOrCreateConfiguration(target).setDatabaseHistoryStoreOnlyCapturedTablesDdl(property(camelContext, boolean.class, value)); return true;
+        case "databasehistorystoreonlymonitoredtablesddl":
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": getOrCreateConfiguration(target).setDatabaseHistoryStoreOnlyMonitoredTablesDdl(property(camelContext, boolean.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseincludelist":
@@ -126,6 +132,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "includeSchemaChanges": getOrCreateConfiguration(target).setIncludeSchemaChanges(property(camelContext, boolean.class, value)); return true;
         case "inconsistentschemahandlingmode":
         case "inconsistentSchemaHandlingMode": getOrCreateConfiguration(target).setInconsistentSchemaHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": getOrCreateConfiguration(target).setIncrementalSnapshotChunkSize(property(camelContext, int.class, value)); return true;
         case "internalkeyconverter":
         case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
@@ -251,6 +259,12 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseHistoryKafkaRecoveryPollIntervalMs": return int.class;
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": return java.lang.String.class;
+        case "databasehistoryskipunparseableddl":
+        case "databaseHistorySkipUnparseableDdl": return boolean.class;
+        case "databasehistorystoreonlycapturedtablesddl":
+        case "databaseHistoryStoreOnlyCapturedTablesDdl": return boolean.class;
+        case "databasehistorystoreonlymonitoredtablesddl":
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return boolean.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
         case "databaseincludelist":
@@ -307,6 +321,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "includeSchemaChanges": return boolean.class;
         case "inconsistentschemahandlingmode":
         case "inconsistentSchemaHandlingMode": return java.lang.String.class;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return int.class;
         case "internalkeyconverter":
         case "internalKeyConverter": return java.lang.String.class;
         case "internalvalueconverter":
@@ -433,6 +449,12 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseHistoryKafkaRecoveryPollIntervalMs": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaRecoveryPollIntervalMs();
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaTopic();
+        case "databasehistoryskipunparseableddl":
+        case "databaseHistorySkipUnparseableDdl": return getOrCreateConfiguration(target).isDatabaseHistorySkipUnparseableDdl();
+        case "databasehistorystoreonlycapturedtablesddl":
+        case "databaseHistoryStoreOnlyCapturedTablesDdl": return getOrCreateConfiguration(target).isDatabaseHistoryStoreOnlyCapturedTablesDdl();
+        case "databasehistorystoreonlymonitoredtablesddl":
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return getOrCreateConfiguration(target).isDatabaseHistoryStoreOnlyMonitoredTablesDdl();
         case "databasehostname":
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
         case "databaseincludelist":
@@ -489,6 +511,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "includeSchemaChanges": return getOrCreateConfiguration(target).isIncludeSchemaChanges();
         case "inconsistentschemahandlingmode":
         case "inconsistentSchemaHandlingMode": return getOrCreateConfiguration(target).getInconsistentSchemaHandlingMode();
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return getOrCreateConfiguration(target).getIncrementalSnapshotChunkSize();
         case "internalkeyconverter":
         case "internalKeyConverter": return getOrCreateConfiguration(target).getInternalKeyConverter();
         case "internalvalueconverter":

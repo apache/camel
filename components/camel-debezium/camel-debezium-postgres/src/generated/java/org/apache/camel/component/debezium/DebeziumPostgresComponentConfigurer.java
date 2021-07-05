@@ -94,6 +94,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "hstoreHandlingMode": getOrCreateConfiguration(target).setHstoreHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "includeunknowndatatypes":
         case "includeUnknownDatatypes": getOrCreateConfiguration(target).setIncludeUnknownDatatypes(property(camelContext, boolean.class, value)); return true;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": getOrCreateConfiguration(target).setIncrementalSnapshotChunkSize(property(camelContext, int.class, value)); return true;
         case "internalkeyconverter":
         case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
@@ -275,6 +277,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "hstoreHandlingMode": return java.lang.String.class;
         case "includeunknowndatatypes":
         case "includeUnknownDatatypes": return boolean.class;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return int.class;
         case "internalkeyconverter":
         case "internalKeyConverter": return java.lang.String.class;
         case "internalvalueconverter":
@@ -457,6 +461,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "hstoreHandlingMode": return getOrCreateConfiguration(target).getHstoreHandlingMode();
         case "includeunknowndatatypes":
         case "includeUnknownDatatypes": return getOrCreateConfiguration(target).isIncludeUnknownDatatypes();
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return getOrCreateConfiguration(target).getIncrementalSnapshotChunkSize();
         case "internalkeyconverter":
         case "internalKeyConverter": return getOrCreateConfiguration(target).getInternalKeyConverter();
         case "internalvalueconverter":
