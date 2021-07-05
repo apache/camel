@@ -162,14 +162,21 @@ public final class ElasticsearchActionRequestConverter {
 
     @Converter
     public static SearchRequest toSearchRequest(Object queryObject, Exchange exchange) throws IOException {
+        String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
+
         if (queryObject instanceof SearchRequest) {
-            return (SearchRequest) queryObject;
+            SearchRequest searchRequest = (SearchRequest) queryObject;
+            String[] indices = searchRequest.indices();
+            if (indices == null || indices.length == 0) {
+                searchRequest.indices(indexName);
+            }
+            return searchRequest;
         }
         SearchRequest searchRequest = new SearchRequest();
 
         // Only setup the indexName and indexType if the message header has the
         // setting
-        String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
+
         Integer size = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_SIZE, Integer.class);
         Integer from = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_FROM, Integer.class);
         if (ObjectHelper.isNotEmpty(indexName)) {
