@@ -103,7 +103,7 @@
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
-        <chunk-templates-version>3.5.0</chunk-templates-version>
+        <chunk-templates-version>3.6.1</chunk-templates-version>
         <citrus-version>2.8.0</citrus-version>
         <classgraph-version>4.8.52</classgraph-version>
         <cmis-version>1.1.0</cmis-version>
