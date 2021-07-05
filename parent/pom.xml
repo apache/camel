@@ -42,7 +42,7 @@
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
-        <activemq-version>5.16.0</activemq-version>
+        <activemq-version>5.16.2</activemq-version>
         <activemq-artemis-version>2.16.0</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.12.1</ahc-version>
@@ -137,9 +137,9 @@
         <corda-version>4.6</corda-version>
         <couchbase-client-version>3.1.0</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
-        <cxf-version>3.4.2</cxf-version>
+        <cxf-version>3.4.4</cxf-version>
         <cxf-version-range>[3.3,4.0)</cxf-version-range>
-        <cxf-codegen-plugin-version>3.4.2</cxf-codegen-plugin-version>
+        <cxf-codegen-plugin-version>3.4.4</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
@@ -308,7 +308,7 @@
         <jedis-client-version>3.3.0</jedis-client-version>
         <jersey-version>2.28</jersey-version>
         <jetcd-version>0.5.4</jetcd-version>
-        <jetty9-version>9.4.36.v20210114</jetty9-version>
+        <jetty9-version>9.4.42.v20210604</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -330,7 +330,7 @@
         <jool-version>0.9.12</jool-version>
         <jooq-version>3.14.4</jooq-version>
         <joor-version>0.9.13</joor-version>
-        <johnzon-version>1.2.8</johnzon-version>
+        <johnzon-version>1.2.13</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
         <jslt-version>0.1.10</jslt-version>
@@ -352,7 +352,7 @@
         <jython-version>2.5.3</jython-version>
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>2.6.0</kafka-version>
+        <kafka-version>2.6.2</kafka-version>
         <kie-version>7.46.0.Final</kie-version>
         <kubernetes-client-version>4.13.0</kubernetes-client-version>
         <kubernetes-model-version>4.13.0</kubernetes-model-version>
@@ -396,8 +396,8 @@
         <maven-shade-plugin-version>3.2.1</maven-shade-plugin-version>
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.2.3</maven-war-plugin-version>
-        <metrics-version>4.1.12.1</metrics-version>
-        <micrometer-version>1.6.1</micrometer-version>
+        <metrics-version>4.1.24</metrics-version>
+        <micrometer-version>1.6.8</micrometer-version>
         <microprofile-config-version>1.4</microprofile-config-version>
         <microprofile-metrics-version>2.3</microprofile-metrics-version>
         <microprofile-health-version>2.2</microprofile-health-version>
@@ -424,7 +424,7 @@
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty3-version>3.10.6.Final</netty3-version>
-        <netty-version>4.1.60.Final</netty-version>
+        <netty-version>4.1.65.Final</netty-version>
         <netty-reactive-streams-version>2.0.4</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.45</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
@@ -479,7 +479,7 @@
         <robotframework-version>3.2.2</robotframework-version>
         <rome-version>1.15.0</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
-        <rxjava2-version>2.2.20</rxjava2-version>
+        <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>9.9.1-7</saxon-version>
         <scala-version>2.11.7</scala-version>
         <scala-datasonnet-version>2.13.3</scala-datasonnet-version>
@@ -506,14 +506,14 @@
         <solr-version-range>[8,9)</solr-version-range>
         <spark-version>2.4.6</spark-version>
         <splunk-version>1.6.5.0_1</splunk-version>
-        <spring-batch-version>4.3.1</spring-batch-version>
+        <spring-batch-version>4.3.3</spring-batch-version>
         <spring-data-redis-version>2.3.0.RELEASE</spring-data-redis-version>
-        <spring-integration-version>5.4.3</spring-integration-version>
-        <spring-ldap-version>2.3.3.RELEASE</spring-ldap-version>
+        <spring-integration-version>5.4.8</spring-integration-version>
+        <spring-ldap-version>2.3.4.RELEASE</spring-ldap-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.6</spring5-version>
-        <spring-security-version>5.4.2</spring-security-version>
+        <spring5-version>5.3.8</spring5-version>
+        <spring-security-version>5.4.7</spring-security-version>
         <spring-ws-version>3.0.10.RELEASE</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
@@ -532,7 +532,7 @@
         <tika-version>1.25</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.2.0.Final</undertow-version>
+        <undertow-version>2.2.8.Final</undertow-version>
         <univocity-parsers-version>2.9.0</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.2</vavr-version>
