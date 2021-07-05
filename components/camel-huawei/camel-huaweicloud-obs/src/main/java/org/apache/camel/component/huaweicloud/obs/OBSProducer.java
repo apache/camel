@@ -70,6 +70,9 @@ public class OBSProducer extends DefaultProducer {
             case OBSOperations.DELETE_BUCKET:
                 deleteBucket(exchange);
                 break;
+            case OBSOperations.CHECK_BUCKET_EXISTS:
+                checkBucketExists(exchange);
+                break;
             default:
                 throw new UnsupportedOperationException(
                         String.format("%s is not a supported operation", clientConfigurations.getOperation()));
@@ -149,6 +152,23 @@ public class OBSProducer extends DefaultProducer {
         // invoke delete bucket method and map response object to exchange body
         HeaderResponse response = obsClient.deleteBucket(clientConfigurations.getBucketName());
         exchange.getMessage().setBody(gson.toJson(response.getResponseHeaders()));
+    }
+
+    /**
+     * Perform check bucket exists operation
+     *
+     * @param exchange
+     */
+    private void checkBucketExists(Exchange exchange) throws ObsException {
+        // check for bucket name, which is mandatory to check if a bucket exists
+        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
+            LOG.error("No bucket name given");
+            throw new IllegalArgumentException("Bucket name is mandatory to check if bucket exists");
+        }
+
+        // invoke check bucket exists method and map response to exchange property
+        boolean bucketExists = obsClient.headBucket(clientConfigurations.getBucketName());
+        exchange.setProperty(OBSProperties.BUCKET_EXISTS, bucketExists);
     }
 
     /**

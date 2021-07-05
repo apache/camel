@@ -26,5 +26,6 @@ public class OBSPropertiesTest {
         assertEquals("CamelHwCloudObsOperation", OBSProperties.OPERATION);
         assertEquals("CamelHwCloudObsBucketName", OBSProperties.BUCKET_NAME);
         assertEquals("CamelHwCloudObsBucketLocation", OBSProperties.BUCKET_LOCATION);
+        assertEquals("CamelHwCloudObsBucketExists", OBSProperties.BUCKET_EXISTS);
     }
 }
