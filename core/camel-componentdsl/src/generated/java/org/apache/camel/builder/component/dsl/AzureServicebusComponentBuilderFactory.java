@@ -235,12 +235,12 @@ public interface AzureServicebusComponentBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @param peakNumMaxMessages the value to set
+         * @param peekNumMaxMessages the value to set
          * @return the dsl builder
          */
-        default AzureServicebusComponentBuilder peakNumMaxMessages(
-                java.lang.Integer peakNumMaxMessages) {
-            doSetProperty("peakNumMaxMessages", peakNumMaxMessages);
+        default AzureServicebusComponentBuilder peekNumMaxMessages(
+                java.lang.Integer peekNumMaxMessages) {
+            doSetProperty("peekNumMaxMessages", peekNumMaxMessages);
             return this;
         }
         /**
@@ -481,7 +481,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "consumerOperation": getOrCreateConfiguration((ServiceBusComponent) component).setConsumerOperation((org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition) value); return true;
             case "disableAutoComplete": getOrCreateConfiguration((ServiceBusComponent) component).setDisableAutoComplete((boolean) value); return true;
             case "maxAutoLockRenewDuration": getOrCreateConfiguration((ServiceBusComponent) component).setMaxAutoLockRenewDuration((java.time.Duration) value); return true;
-            case "peakNumMaxMessages": getOrCreateConfiguration((ServiceBusComponent) component).setPeakNumMaxMessages((java.lang.Integer) value); return true;
+            case "peekNumMaxMessages": getOrCreateConfiguration((ServiceBusComponent) component).setPeekNumMaxMessages((java.lang.Integer) value); return true;
             case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;
             case "receiverAsyncClient": getOrCreateConfiguration((ServiceBusComponent) component).setReceiverAsyncClient((com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient) value); return true;
             case "serviceBusReceiveMode": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusReceiveMode((com.azure.messaging.servicebus.models.ServiceBusReceiveMode) value); return true;

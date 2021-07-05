@@ -33,12 +33,8 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ServiceBusConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ServiceBusConsumer.class);
 
     private Synchronization onCompletion;
     private ServiceBusReceiverAsyncClientWrapper clientWrapper;
@@ -135,7 +131,7 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     private void peekMessages() {
-        operations.peekMessages(getConfiguration().getPeakNumMaxMessages())
+        operations.peekMessages(getConfiguration().getPeekNumMaxMessages())
                 .subscribe(this::onEventListener, this::onErrorListener, () -> {
                 });
     }

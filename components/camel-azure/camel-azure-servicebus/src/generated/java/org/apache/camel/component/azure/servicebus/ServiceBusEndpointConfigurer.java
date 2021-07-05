@@ -43,8 +43,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": target.getConfiguration().setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value)); return true;
-        case "peaknummaxmessages":
-        case "peakNumMaxMessages": target.getConfiguration().setPeakNumMaxMessages(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "peeknummaxmessages":
+        case "peekNumMaxMessages": target.getConfiguration().setPeekNumMaxMessages(property(camelContext, java.lang.Integer.class, value)); return true;
         case "prefetchcount":
         case "prefetchCount": target.getConfiguration().setPrefetchCount(property(camelContext, int.class, value)); return true;
         case "produceroperation":
@@ -101,8 +101,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return boolean.class;
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": return java.time.Duration.class;
-        case "peaknummaxmessages":
-        case "peakNumMaxMessages": return java.lang.Integer.class;
+        case "peeknummaxmessages":
+        case "peekNumMaxMessages": return java.lang.Integer.class;
         case "prefetchcount":
         case "prefetchCount": return int.class;
         case "produceroperation":
@@ -155,8 +155,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": return target.getConfiguration().getMaxAutoLockRenewDuration();
-        case "peaknummaxmessages":
-        case "peakNumMaxMessages": return target.getConfiguration().getPeakNumMaxMessages();
+        case "peeknummaxmessages":
+        case "peekNumMaxMessages": return target.getConfiguration().getPeekNumMaxMessages();
         case "prefetchcount":
         case "prefetchCount": return target.getConfiguration().getPrefetchCount();
         case "produceroperation":

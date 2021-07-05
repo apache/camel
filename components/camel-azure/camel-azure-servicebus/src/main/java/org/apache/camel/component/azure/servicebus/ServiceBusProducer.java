@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
@@ -141,7 +140,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
     @SuppressWarnings("unchecked")
     private BiConsumer<Exchange, AsyncCallback> sendMessages() {
-        return ((exchange, callback) -> {
+        return (exchange, callback) -> {
             final Object inputBody = exchange.getMessage().getBody();
 
             Mono<Void> sendMessageAsync;
@@ -151,18 +150,18 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                         = serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<Object>) inputBody),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange));
             } else {
-                sendMessageAsync = serviceBusSenderOperations.sendMessages(exchange.getMessage().getBody(BinaryData.class),
+                sendMessageAsync = serviceBusSenderOperations.sendMessages(exchange.getMessage().getBody(String.class),
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange));
             }
 
-            subscribeToMono(sendMessageAsync, exchange, (noop) -> {
+            subscribeToMono(sendMessageAsync, exchange, noop -> {
             }, callback);
-        });
+        };
     }
 
     @SuppressWarnings("unchecked")
     private BiConsumer<Exchange, AsyncCallback> scheduleMessages() {
-        return ((exchange, callback) -> {
+        return (exchange, callback) -> {
             final Object inputBody = exchange.getMessage().getBody();
 
             Mono<List<Long>> scheduleMessagesAsync;
@@ -174,19 +173,19 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange));
             } else {
                 scheduleMessagesAsync
-                        = serviceBusSenderOperations.scheduleMessages(exchange.getMessage().getBody(BinaryData.class),
+                        = serviceBusSenderOperations.scheduleMessages(exchange.getMessage().getBody(String.class),
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange));
             }
 
             subscribeToMono(scheduleMessagesAsync, exchange,
-                    (sequenceNumbers) -> exchange.getMessage().setBody(sequenceNumbers), callback);
-        });
+                    sequenceNumbers -> exchange.getMessage().setBody(sequenceNumbers), callback);
+        };
     }
 
-    private List<BinaryData> convertBodyToList(final Iterable<Object> inputBody) {
+    private List<String> convertBodyToList(final Iterable<Object> inputBody) {
         return StreamSupport.stream(inputBody.spliterator(), false)
-                .map(body -> getEndpoint().getCamelContext().getTypeConverter().convertTo(BinaryData.class, body))
+                .map(body -> getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, body))
                 .collect(Collectors.toList());
     }
 

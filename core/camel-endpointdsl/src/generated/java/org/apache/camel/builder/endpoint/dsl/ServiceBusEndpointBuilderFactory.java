@@ -365,12 +365,12 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @param peakNumMaxMessages the value to set
+         * @param peekNumMaxMessages the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder peakNumMaxMessages(
-                Integer peakNumMaxMessages) {
-            doSetProperty("peakNumMaxMessages", peakNumMaxMessages);
+        default ServiceBusEndpointConsumerBuilder peekNumMaxMessages(
+                Integer peekNumMaxMessages) {
+            doSetProperty("peekNumMaxMessages", peekNumMaxMessages);
             return this;
         }
         /**
@@ -381,12 +381,12 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @param peakNumMaxMessages the value to set
+         * @param peekNumMaxMessages the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder peakNumMaxMessages(
-                String peakNumMaxMessages) {
-            doSetProperty("peakNumMaxMessages", peakNumMaxMessages);
+        default ServiceBusEndpointConsumerBuilder peekNumMaxMessages(
+                String peekNumMaxMessages) {
+            doSetProperty("peekNumMaxMessages", peekNumMaxMessages);
             return this;
         }
         /**

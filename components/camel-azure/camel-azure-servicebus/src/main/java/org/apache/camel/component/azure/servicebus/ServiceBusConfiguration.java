@@ -61,17 +61,17 @@ public class ServiceBusConfiguration implements Cloneable {
     @UriParam(label = "consumer")
     private String subscriptionName;
     @UriParam(label = "consumer", defaultValue = "false")
-    private boolean disableAutoComplete = false;
+    private boolean disableAutoComplete;
     @UriParam(label = "consumer", defaultValue = "PEER_LOCK")
     private ServiceBusReceiveMode serviceBusReceiveMode = ServiceBusReceiveMode.PEEK_LOCK;
     @UriParam(label = "consumer", defaultValue = "5min")
     private Duration maxAutoLockRenewDuration = Duration.ofMinutes(5);
     @UriParam(label = "consumer", defaultValue = "0")
-    private int prefetchCount = 0;
+    private int prefetchCount;
     @UriParam(label = "consumer")
     private SubQueue subQueue;
     @UriParam(label = "consumer")
-    private Integer peakNumMaxMessages;
+    private Integer peekNumMaxMessages;
     @UriParam(label = "producer", defaultValue = "sendMessages")
     private ServiceBusProducerOperationDefinition producerOperation = ServiceBusProducerOperationDefinition.sendMessages;
     @UriParam(label = "producer")
@@ -294,12 +294,12 @@ public class ServiceBusConfiguration implements Cloneable {
     /**
      * dd
      */
-    public Integer getPeakNumMaxMessages() {
-        return peakNumMaxMessages;
+    public Integer getPeekNumMaxMessages() {
+        return peekNumMaxMessages;
     }
 
-    public void setPeakNumMaxMessages(Integer peakNumMaxMessages) {
-        this.peakNumMaxMessages = peakNumMaxMessages;
+    public void setPeekNumMaxMessages(Integer peekNumMaxMessages) {
+        this.peekNumMaxMessages = peekNumMaxMessages;
     }
 
     // *************************************************

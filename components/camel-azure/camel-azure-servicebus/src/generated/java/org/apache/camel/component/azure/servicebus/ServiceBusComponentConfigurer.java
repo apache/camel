@@ -49,8 +49,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": getOrCreateConfiguration(target).setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value)); return true;
-        case "peaknummaxmessages":
-        case "peakNumMaxMessages": getOrCreateConfiguration(target).setPeakNumMaxMessages(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "peeknummaxmessages":
+        case "peekNumMaxMessages": getOrCreateConfiguration(target).setPeekNumMaxMessages(property(camelContext, java.lang.Integer.class, value)); return true;
         case "prefetchcount":
         case "prefetchCount": getOrCreateConfiguration(target).setPrefetchCount(property(camelContext, int.class, value)); return true;
         case "produceroperation":
@@ -106,8 +106,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": return boolean.class;
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": return java.time.Duration.class;
-        case "peaknummaxmessages":
-        case "peakNumMaxMessages": return java.lang.Integer.class;
+        case "peeknummaxmessages":
+        case "peekNumMaxMessages": return java.lang.Integer.class;
         case "prefetchcount":
         case "prefetchCount": return int.class;
         case "produceroperation":
@@ -159,8 +159,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": return getOrCreateConfiguration(target).getMaxAutoLockRenewDuration();
-        case "peaknummaxmessages":
-        case "peakNumMaxMessages": return getOrCreateConfiguration(target).getPeakNumMaxMessages();
+        case "peeknummaxmessages":
+        case "peekNumMaxMessages": return getOrCreateConfiguration(target).getPeekNumMaxMessages();
         case "prefetchcount":
         case "prefetchCount": return getOrCreateConfiguration(target).getPrefetchCount();
         case "produceroperation":

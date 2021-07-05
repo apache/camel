@@ -25,7 +25,6 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
         props.add("serviceBusType");
         props.add("connectionString");
         props.add("prefetchCount");
-        props.add("peakNumMaxMessages");
         props.add("receiverAsyncClient");
         props.add("serviceBusTransactionContext");
         props.add("scheduledEnqueueTime");
@@ -37,6 +36,7 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
         props.add("senderAsyncClient");
         props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
+        props.add("peekNumMaxMessages");
         props.add("subQueue");
         props.add("topicOrQueueName");
         props.add("subscriptionName");
