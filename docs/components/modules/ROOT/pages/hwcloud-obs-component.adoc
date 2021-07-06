@@ -116,11 +116,23 @@ with the following path and query parameters:
 
 If any of the above properties are set, they will override their corresponding query parameter.
 
+=== Message properties set by the OBS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelHwCloudObsBucketExists` |`boolean` | Return value when invoking the `checkBucketExists` operation
+
+|=======================================================================
+
+
 == List of Supported OBS Operations
 
 - listBuckets
 - createBucket - `bucketName` parameter is *required*, `bucketLocation` parameter is optional
 - deleteBucket - `bucketName` parameter is *required*
+- checkBucketExists - `bucketName` parameter is *required*
 
 
 == Using ServiceKey Configuration Bean
