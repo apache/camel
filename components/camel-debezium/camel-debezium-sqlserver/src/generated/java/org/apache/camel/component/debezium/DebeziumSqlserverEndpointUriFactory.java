@@ -20,7 +20,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(70);
+        Set<String> props = new HashSet<>(74);
         props.add("maxBatchSize");
         props.add("internalKeyConverter");
         props.add("snapshotDelayMs");
@@ -41,6 +41,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("databaseServerTimezone");
         props.add("binaryHandlingMode");
         props.add("databaseHostname");
+        props.add("databaseHistorySkipUnparseableDdl");
         props.add("eventProcessingFailureHandlingMode");
         props.add("offsetCommitTimeoutMs");
         props.add("snapshotSelectStatementOverrides");
@@ -50,6 +51,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("name");
         props.add("snapshotFetchSize");
         props.add("offsetStoragePartitions");
+        props.add("maxIterationTransactions");
         props.add("additionalProperties");
         props.add("offsetStorageReplicationFactor");
         props.add("exceptionHandler");
@@ -60,6 +62,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("databaseHistoryFileFilename");
         props.add("databaseHistory");
         props.add("columnPropagateSourceType");
+        props.add("databaseHistoryStoreOnlyCapturedTablesDdl");
         props.add("offsetStorage");
         props.add("includeSchemaChanges");
         props.add("internalValueConverter");
@@ -73,6 +76,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("sanitizeFieldNames");
         props.add("databaseHistoryKafkaTopic");
         props.add("tableWhitelist");
+        props.add("databaseHistoryStoreOnlyMonitoredTablesDdl");
         props.add("tableIgnoreBuiltin");
         props.add("signalDataCollection");
         props.add("exchangePattern");
