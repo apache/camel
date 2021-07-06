@@ -58,4 +58,52 @@ class RoutesConfigurationTest extends YamlTestSupport {
         then:
             MockEndpoint.assertIsSatisfied(context)
     }
+
+    def "routes-configuration-separate"() {
+        setup:
+        // global configurations
+        loadRoutes """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                - routes-configuration:
+                    - on-exception:
+                        handled:
+                          constant: "true"
+                        exception:
+                          - ${MyException.name}
+                        steps:
+                          - transform:
+                              constant: "Sorry"
+                          - to: "mock:on-exception"  
+            """
+        // routes
+        loadRoutes """
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - process: 
+                          ref: "myFailingProcessor"            
+                - from:
+                    uri: "direct:start2"
+                    steps:
+                      - process: 
+                          ref: "myFailingProcessor"            
+            """
+
+        withMock('mock:on-exception') {
+            expectedBodiesReceived 'Sorry', 'Sorry'
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+            to('direct:start2').withBody('hello2').send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
 }
