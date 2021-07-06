@@ -2150,6 +2150,41 @@
           }
         } ]
       },
+      "org.apache.camel.model.RoutesConfigurationDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "intercept" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.InterceptDefinition"
+            }
+          },
+          "intercept-from" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.InterceptFromDefinition"
+            }
+          },
+          "intercept-send-to-endpoint" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.InterceptSendToEndpointDefinition"
+            }
+          },
+          "on-completion" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.OnCompletionDefinition"
+            }
+          },
+          "on-exception" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.OnExceptionDefinition"
+            }
+          }
+        }
+      },
       "org.apache.camel.model.RoutingSlipDefinition" : {
         "oneOf" : [ {
           "type" : "string"

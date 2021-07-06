@@ -73,6 +73,7 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RouteTemplateScriptDefinition;
+import org.apache.camel.model.RoutesConfigurationDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
@@ -12869,6 +12870,75 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "script": {
                     String val = asText(node);
                     target.setScript(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.RoutesConfigurationDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "routes-configuration",
+            properties = {
+                    @YamlProperty(name = "intercept", type = "array:org.apache.camel.model.InterceptDefinition"),
+                    @YamlProperty(name = "intercept-from", type = "array:org.apache.camel.model.InterceptFromDefinition"),
+                    @YamlProperty(name = "intercept-send-to-endpoint", type = "array:org.apache.camel.model.InterceptSendToEndpointDefinition"),
+                    @YamlProperty(name = "on-completion", type = "array:org.apache.camel.model.OnCompletionDefinition"),
+                    @YamlProperty(name = "on-exception", type = "array:org.apache.camel.model.OnExceptionDefinition")
+            }
+    )
+    public static class RoutesConfigurationDefinitionDeserializer extends YamlDeserializerBase<RoutesConfigurationDefinition> {
+        public RoutesConfigurationDefinitionDeserializer() {
+            super(RoutesConfigurationDefinition.class);
+        }
+
+        @Override
+        protected RoutesConfigurationDefinition newInstance() {
+            return new RoutesConfigurationDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(RoutesConfigurationDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "intercept-from": {
+                    java.util.List<org.apache.camel.model.InterceptFromDefinition> val = asFlatList(node, org.apache.camel.model.InterceptFromDefinition.class);
+                    target.setInterceptFroms(val);
+                    break;
+                }
+                case "intercept-send-to-endpoint": {
+                    java.util.List<org.apache.camel.model.InterceptSendToEndpointDefinition> val = asFlatList(node, org.apache.camel.model.InterceptSendToEndpointDefinition.class);
+                    target.setInterceptSendTos(val);
+                    break;
+                }
+                case "intercept": {
+                    java.util.List<org.apache.camel.model.InterceptDefinition> val = asFlatList(node, org.apache.camel.model.InterceptDefinition.class);
+                    target.setIntercepts(val);
+                    break;
+                }
+                case "on-completion": {
+                    java.util.List<org.apache.camel.model.OnCompletionDefinition> val = asFlatList(node, org.apache.camel.model.OnCompletionDefinition.class);
+                    target.setOnCompletions(val);
+                    break;
+                }
+                case "on-exception": {
+                    java.util.List<org.apache.camel.model.OnExceptionDefinition> val = asFlatList(node, org.apache.camel.model.OnExceptionDefinition.class);
+                    target.setOnExceptions(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    target.setDescription(val);
                     break;
                 }
                 default: {

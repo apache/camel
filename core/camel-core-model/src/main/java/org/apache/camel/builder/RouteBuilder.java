@@ -34,11 +34,13 @@ import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
+import org.apache.camel.model.RoutesConfigurationDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -198,6 +200,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
 
         return restConfiguration;
+    }
+
+    /**
+     * Global routes configuration
+     *
+     * @return the builder
+     */
+    public RoutesConfigurationDefinition routesConfiguration() {
+        RoutesConfigurationDefinition answer = new RoutesConfigurationDefinition();
+        getContext().adapt(ModelCamelContext.class).addRoutesConfiguration(answer);
+        configureRoutesConfiguration(answer);
+        return answer;
     }
 
     /**
@@ -462,8 +476,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         configureRoutes(context);
         configureRests(context);
 
-        // but populate rests before routes, as we want to turn rests into
-        // routes
+        // but populate rests before routes, as we want to turn rests into routes
+        populateRoutesConfiguration();
         populateRests();
         populateTransformers();
         populateValidators();
@@ -549,6 +563,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 interceptor.afterConfigure(this);
             }
         }
+    }
+
+    protected void populateRoutesConfiguration() throws Exception {
+        // noop
     }
 
     protected void populateRouteTemplates() throws Exception {
@@ -671,6 +689,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void configureRouteTemplate(RouteTemplateDefinition routeTemplate) {
+        // noop
+    }
+
+    protected void configureRoutesConfiguration(RoutesConfigurationDefinition routesConfiguration) {
         // noop
     }
 }

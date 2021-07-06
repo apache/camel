@@ -1329,6 +1329,14 @@ A series of Camel routes
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="routesConfiguration" type="tns:routesConfigurationDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Global configuration for Camel routes
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="routingSlip" type="tns:routingSlipDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -10832,6 +10840,23 @@ Description of the parameter.
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplate"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="routesConfigurationDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onException"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onCompletion"/>
+          <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element ref="tns:intercept"/>
+            <xs:element ref="tns:interceptFrom"/>
+          </xs:choice>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptFrom"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptSendToEndpoint"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

@@ -52,6 +52,7 @@ import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.model.RoutesConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -79,6 +80,7 @@ public class DefaultModel implements Model {
 
     private ModelReifierFactory modelReifierFactory = new DefaultModelReifierFactory();
     private final List<ModelLifecycleStrategy> modelLifecycleStrategies = new ArrayList<>();
+    private final List<RoutesConfigurationDefinition> routesConfigurations = new ArrayList<>();
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
     private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<>();
@@ -111,6 +113,27 @@ public class DefaultModel implements Model {
     @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
         return modelLifecycleStrategies;
+    }
+
+    @Override
+    public void addRoutesConfiguration(RoutesConfigurationDefinition routesConfiguration) {
+        if (routesConfiguration == null) {
+            return;
+        }
+        this.routesConfigurations.add(routesConfiguration);
+    }
+
+    @Override
+    public void addRoutesConfigurations(List<RoutesConfigurationDefinition> routesConfigurations) {
+        if (routesConfigurations == null || routesConfigurations.isEmpty()) {
+            return;
+        }
+        this.routesConfigurations.addAll(routesConfigurations);
+    }
+
+    @Override
+    public List<RoutesConfigurationDefinition> getRoutesConfigurationDefinition() {
+        return routesConfigurations;
     }
 
     @Override

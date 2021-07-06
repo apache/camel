@@ -49,6 +49,13 @@ public interface Model {
      */
     List<ModelLifecycleStrategy> getModelLifecycleStrategies();
 
+    // TODO: better names
+    void addRoutesConfigurations(List<RoutesConfigurationDefinition> routesConfigurations);
+
+    void addRoutesConfiguration(RoutesConfigurationDefinition routesConfiguration);
+
+    List<RoutesConfigurationDefinition> getRoutesConfigurationDefinition();
+
     /**
      * Returns a list of the current route definitions
      *

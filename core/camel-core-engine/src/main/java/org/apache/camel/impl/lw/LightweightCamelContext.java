@@ -63,6 +63,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RoutesConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -1684,6 +1685,21 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
         return getModelCamelContext().getModelLifecycleStrategies();
+    }
+
+    @Override
+    public void addRoutesConfiguration(RoutesConfigurationDefinition routesConfiguration) {
+        getModelCamelContext().addRoutesConfiguration(routesConfiguration);
+    }
+
+    @Override
+    public void addRoutesConfigurations(List<RoutesConfigurationDefinition> routesConfigurations) {
+        getModelCamelContext().addRoutesConfigurations(routesConfigurations);
+    }
+
+    @Override
+    public List<RoutesConfigurationDefinition> getRoutesConfigurationDefinition() {
+        return getModelCamelContext().getRoutesConfigurationDefinition();
     }
 
     @Override

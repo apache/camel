@@ -71,6 +71,7 @@ RouteTemplateDefinition
 RouteTemplateParameterDefinition
 RouteTemplateScriptDefinition
 RouteTemplatesDefinition
+RoutesConfigurationDefinition
 RoutesDefinition
 RoutingSlipDefinition
 SagaCompletionMode

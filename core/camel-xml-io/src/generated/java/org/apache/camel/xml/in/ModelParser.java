@@ -1112,6 +1112,20 @@ public class ModelParser extends BaseParser {
             return optionalIdentifiedDefinitionElementHandler().accept(def, key);
         }, noValueHandler());
     }
+    protected RoutesConfigurationDefinition doParseRoutesConfigurationDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RoutesConfigurationDefinition(),
+            optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+            switch (key) {
+                case "interceptFrom": doAdd(doParseInterceptFromDefinition(), def.getIntercepts(), def::setIntercepts); break;
+                case "interceptSendToEndpoint": doAdd(doParseInterceptSendToEndpointDefinition(), def.getInterceptSendTos(), def::setInterceptSendTos); break;
+                case "intercept": doAdd(doParseInterceptDefinition(), def.getIntercepts(), def::setIntercepts); break;
+                case "onCompletion": doAdd(doParseOnCompletionDefinition(), def.getOnCompletions(), def::setOnCompletions); break;
+                case "onException": doAdd(doParseOnExceptionDefinition(), def.getOnExceptions(), def::setOnExceptions); break;
+                default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+            }
+            return true;
+        }, noValueHandler());
+    }
     public Optional<RoutesDefinition> parseRoutesDefinition()
             throws IOException, XmlPullParserException {
         String tag = getNextTag("routes", "route");

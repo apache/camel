@@ -41,6 +41,7 @@ import org.apache.camel.spi.Metadata;
 public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition> implements RouteContainer {
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<>();
+    // TODO: Use RoutesConfigurationDefinition instead
     @XmlTransient
     private List<InterceptDefinition> intercepts = new ArrayList<>();
     @XmlTransient
@@ -202,9 +203,28 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
             route.setErrorHandlerFactoryIfNull(handler);
         }
 
+        // merge global and route scoped together
+        List<OnExceptionDefinition> oe = new ArrayList<>(onExceptions);
+        List<InterceptDefinition> icp = new ArrayList<>(intercepts);
+        List<InterceptFromDefinition> ifrom = new ArrayList<>(interceptFroms);
+        List<InterceptSendToEndpointDefinition> ito = new ArrayList<>(interceptSendTos);
+        List<OnCompletionDefinition> oc = new ArrayList<>(onCompletions);
+        if (getCamelContext() != null) {
+            List<RoutesConfigurationDefinition> globalConfigurations
+                    = getCamelContext().adapt(ModelCamelContext.class).getRoutesConfigurationDefinition();
+            if (globalConfigurations != null) {
+                globalConfigurations.forEach(g -> {
+                    oe.addAll(g.getOnExceptions());
+                    icp.addAll(g.getIntercepts());
+                    ifrom.addAll(g.getInterceptFroms());
+                    ito.addAll(g.getInterceptSendTos());
+                    oc.addAll(g.getOnCompletions());
+                });
+            }
+        }
+
         // must prepare the route before we can add it to the routes list
-        RouteDefinitionHelper.prepareRoute(getCamelContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
-                getInterceptSendTos(), getOnCompletions());
+        RouteDefinitionHelper.prepareRoute(getCamelContext(), route, oe, icp, ifrom, ito, oc);
 
         getRoutes().add(route);
         // mark this route as prepared
