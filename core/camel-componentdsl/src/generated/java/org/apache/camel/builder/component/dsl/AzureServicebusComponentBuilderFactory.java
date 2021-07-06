@@ -307,7 +307,7 @@ public interface AzureServicebusComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.models.ServiceBusReceiveMode&lt;/code&gt; type.
          * 
-         * Default: PEER_LOCK
+         * Default: PEEK_LOCK
          * Group: consumer
          * 
          * @param serviceBusReceiveMode the value to set

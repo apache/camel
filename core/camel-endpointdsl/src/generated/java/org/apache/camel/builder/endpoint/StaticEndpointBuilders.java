@@ -1961,7 +1961,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
      * 
      * Path parameter: topicOrQueueName
-     * d
+     * Selected topic name or the queue name, that is depending on
+     * serviceBusType config. For example if serviceBusType=queue, then this
+     * will be the queue name and if serviceBusType=topic, this will be the
+     * topic name.
      * 
      * @param path queueNameOrTopicName
      * @return the dsl builder
@@ -1986,7 +1989,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
      * 
      * Path parameter: topicOrQueueName
-     * d
+     * Selected topic name or the queue name, that is depending on
+     * serviceBusType config. For example if serviceBusType=queue, then this
+     * will be the queue name and if serviceBusType=topic, this will be the
+     * topic name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
