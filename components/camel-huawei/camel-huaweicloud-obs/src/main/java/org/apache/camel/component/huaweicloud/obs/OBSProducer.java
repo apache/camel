@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
+import com.obs.services.model.BucketMetadataInfoRequest;
+import com.obs.services.model.BucketMetadataInfoResult;
 import com.obs.services.model.CreateBucketRequest;
 import com.obs.services.model.HeaderResponse;
 import com.obs.services.model.ListBucketsRequest;
@@ -72,6 +74,9 @@ public class OBSProducer extends DefaultProducer {
                 break;
             case OBSOperations.CHECK_BUCKET_EXISTS:
                 checkBucketExists(exchange);
+                break;
+            case OBSOperations.GET_BUCKET_METADATA:
+                getBucketMetadata(exchange);
                 break;
             default:
                 throw new UnsupportedOperationException(
@@ -169,6 +174,24 @@ public class OBSProducer extends DefaultProducer {
         // invoke check bucket exists method and map response to exchange property
         boolean bucketExists = obsClient.headBucket(clientConfigurations.getBucketName());
         exchange.setProperty(OBSProperties.BUCKET_EXISTS, bucketExists);
+    }
+
+    /**
+     * Perform get bucket metadata operation
+     *
+     * @param exchange
+     */
+    private void getBucketMetadata(Exchange exchange) throws ObsException {
+        // check for bucket name, which is mandatory to get bucket metadata
+        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
+            LOG.error("No bucket name given");
+            throw new IllegalArgumentException("Bucket name is mandatory to get bucket metadata");
+        }
+
+        // invoke get bucket metadata method and map response object to exchange body
+        BucketMetadataInfoRequest request = new BucketMetadataInfoRequest(clientConfigurations.getBucketName());
+        BucketMetadataInfoResult response = obsClient.getBucketMetadata(request);
+        exchange.getMessage().setBody(gson.toJson(response));
     }
 
     /**
