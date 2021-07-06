@@ -63,7 +63,7 @@ public class ServiceBusConfiguration implements Cloneable {
     private String subscriptionName;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean disableAutoComplete;
-    @UriParam(label = "consumer", defaultValue = "PEER_LOCK")
+    @UriParam(label = "consumer", defaultValue = "PEEK_LOCK")
     private ServiceBusReceiveMode serviceBusReceiveMode = ServiceBusReceiveMode.PEEK_LOCK;
     @UriParam(label = "consumer", defaultValue = "5min")
     private Duration maxAutoLockRenewDuration = Duration.ofMinutes(5);
