@@ -1005,6 +1005,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-azure-servicebus</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-azure-storage-blob</artifactId>
 				<version>${project.version}</version>
 			</dependency>

@@ -1946,6 +1946,59 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure ServiceBus (camel-azure-servicebus)
+     * The azure-servicebus component that integrates Azure ServiceBus. Azure
+     * ServiceBus is a fully managed enterprise integration message broker.
+     * Service Bus can decouple applications and services. Service Bus offers a
+     * reliable and secure platform for asynchronous transfer of data and state.
+     * Data is transferred between different applications and services using
+     * messages.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-azure-servicebus
+     * 
+     * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
+     * 
+     * Path parameter: topicOrQueueName
+     * d
+     * 
+     * @param path queueNameOrTopicName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory.ServiceBusEndpointBuilder azureServicebus(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory.endpointBuilder("azure-servicebus", path);
+    }
+    /**
+     * Azure ServiceBus (camel-azure-servicebus)
+     * The azure-servicebus component that integrates Azure ServiceBus. Azure
+     * ServiceBus is a fully managed enterprise integration message broker.
+     * Service Bus can decouple applications and services. Service Bus offers a
+     * reliable and secure platform for asynchronous transfer of data and state.
+     * Data is transferred between different applications and services using
+     * messages.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-azure-servicebus
+     * 
+     * Syntax: <code>azure-servicebus:queueNameOrTopicName</code>
+     * 
+     * Path parameter: topicOrQueueName
+     * d
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path queueNameOrTopicName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory.ServiceBusEndpointBuilder azureServicebus(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
      * Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
      * 

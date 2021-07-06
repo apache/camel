@@ -950,6 +950,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "AzureServicebusComponentBuilderFactory": {
+    "kind": "component",
+    "name": "azure-servicebus",
+    "title": "Azure ServiceBus",
+    "description": "The azure-servicebus component that integrates Azure ServiceBus. Azure ServiceBus is a fully managed enterprise integration message broker. Service Bus can decouple applications and services. Service Bus offers a reliable and secure platform for asynchronous transfer of data and state. Data is transferred between different applications and services using messages.",
+    "deprecated": false,
+    "firstVersion": "3.12.0",
+    "label": "cloud,messaging",
+    "javaType": "org.apache.camel.component.azure.servicebus.ServiceBusComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-azure-servicebus",
+    "version": "3.12.0-SNAPSHOT",
+    "scheme": "azure-servicebus",
+    "extendsScheme": "",
+    "syntax": "azure-servicebus:queueNameOrTopicName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "AzureStorageBlobComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-storage-blob",

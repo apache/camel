@@ -1,0 +1,31 @@
+[[azure-servicebus-component]]
+= Azure ServiceBus Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-azure/camel-azure-servicebus/src/main/docs/azure-servicebus-component.adoc
+:docTitle: Azure ServiceBus
+:artifactId: camel-azure-servicebus
+:description: The azure-servicebus component that integrates Azure ServiceBus. Azure ServiceBus is a fully managed enterprise integration message broker. Service Bus can decouple applications and services. Service Bus offers a reliable and secure platform for asynchronous transfer of data and state. Data is transferred between different applications and services using messages.
+:since: 3.12
+:supportLevel: Preview
+:component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-servicebus.adoc[opts=optional]
+//Manually maintained attributes
+:group: Azure
+
+*Since Camel {since}*
+
+*{component-header}*
+
+```
+
+=== Development Notes (Important)
+When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests
+you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
+To run the integration tests, on this component directory, run the following maven command:
+----
+mvn verify -PfullTests -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key
+----
+Whereby `blobAccountName` is your Azure account name and `blobAccessKey` is the access key being generated from Azure portal and `connectionString` is the eventHub connection string.
+
+
+include::{page-component-version}@camel-spring-boot::page$azure-servicebus-starter.adoc[]
