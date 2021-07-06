@@ -149,6 +149,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                             + " with many object allocations for the JVM garbage collector.")
     private boolean skipResponseHeaders;
 
+    @UriParam(label = "producer,advanced", description = "The custom User-Agent name.")
+    private String userAgent;
+
     public HttpEndpoint() {
     }
 
@@ -258,6 +261,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         if (isBridgeEndpoint()) {
             // need to use noop cookiestore as we do not want to keep cookies in memory
             clientBuilder.setDefaultCookieStore(new NoopCookieStore());
+        }
+        String userAgent = getUserAgent();
+        if (userAgent != null) {
+            clientBuilder.setUserAgent(userAgent);
         }
 
         LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
@@ -568,6 +575,14 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setSkipResponseHeaders(boolean skipResponseHeaders) {
         this.skipResponseHeaders = skipResponseHeaders;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")
