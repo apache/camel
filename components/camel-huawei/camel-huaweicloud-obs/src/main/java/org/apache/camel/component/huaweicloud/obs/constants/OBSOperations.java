@@ -23,6 +23,7 @@ public final class OBSOperations {
     public static final String LIST_BUCKETS = "listBuckets";
     public static final String CREATE_BUCKET = "createBucket";
     public static final String DELETE_BUCKET = "deleteBucket";
+    public static final String CHECK_BUCKET_EXISTS = "checkBucketExists";
 
     private OBSOperations() {
     }

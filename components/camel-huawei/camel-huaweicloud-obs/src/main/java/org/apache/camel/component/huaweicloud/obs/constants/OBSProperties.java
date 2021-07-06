@@ -23,6 +23,7 @@ public final class OBSProperties {
     public static final String OPERATION = "CamelHwCloudObsOperation";
     public static final String BUCKET_NAME = "CamelHwCloudObsBucketName";
     public static final String BUCKET_LOCATION = "CamelHwCloudObsBucketLocation";
+    public static final String BUCKET_EXISTS = "CamelHwCloudObsBucketExists";
 
     private OBSProperties() {
     }
