@@ -149,7 +149,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                             + " with many object allocations for the JVM garbage collector.")
     private boolean skipResponseHeaders;
 
-    @UriParam(label = "producer,advanced", description = "The custom User-Agent name.")
+    @UriParam(label = "producer,advanced", description = "Custom User-Agent name")
     private String userAgent;
 
     public HttpEndpoint() {
