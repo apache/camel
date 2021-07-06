@@ -637,7 +637,7 @@ Will for example create a file named `foo.done` if the target file was
 
 == Samples
 
-#=== Read from a directory and write to another directory
+=== Read from a directory and write to another directory
 
 [source,java]
 ----
