@@ -103,7 +103,7 @@ public class WebsocketSubprotocolNegotiationTest {
         WebSocketFactory factory = mock(WebSocketFactory.class);
         when(factoryMap.get(WebsocketComponentServlet.UNSPECIFIED_SUBPROTOCOL)).thenReturn(factory);
         when(factoryMap.get(expectedSelectedSubprotocol)).thenReturn(factory);
-        when(factory.newInstance(any(), any(), any(), any(), any())).thenReturn(implementation);
+        when(factory.newInstance(any(), any(), any(), any(), any(), any())).thenReturn(implementation);
 
         // this is the core functionality we are testing
         WebsocketComponentServlet wcs = new WebsocketComponentServlet(sync, "/anypath", factoryMap);

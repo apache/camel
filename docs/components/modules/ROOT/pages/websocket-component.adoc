@@ -143,6 +143,10 @@ The WebSocket component uses headers to provide information about incoming messa
 
 |`WebsocketConstants.SUBPROTOCOL` |If a specific subprotocol was negotiated, it will be specfied in this header.  Note that if you specify the "any" subprotocol to be supported, and a client requests a specific subprotocol, the connection will be accepted without a specific subprotocol being used.  You need to specifically support a given protocol by name if you want it returned to the client and to show up in the message header.
 
+|`WebsocketConstants.RELATIVE_PATH` |If you specify a wildcard URI path for an endpoint, and a websocket client connects to that websocket endpoing, the relative path that the client specified will be provided in this header.
+
+For example, if you specified `websocket://0.0.0.0:80/api/*` as your endpoint URI, and a client connects to the server at `ws://host.com/api/specialized/apipath` then `specialized/apipath` is provided in the relative path header of all messages from that client.
+
 |=======================================================================
 
 === Headers for Producers

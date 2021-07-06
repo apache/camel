@@ -89,7 +89,21 @@ public class WebsocketComponentServlet extends WebSocketServlet {
             resp.setHeader(SEC_WEBSOCKET_PROTOCOL, subprotocol);    // confirm selected subprotocol to client
         }
 
-        return factory.newInstance(request, pathSpec, sync, consumer, subprotocol);
+        // if the websocket component was configured with a wildcard path, determine the releative path used by this client
+        final String relativePath;
+        if (pathSpec != null && pathSpec.endsWith("*")) {
+            final String prefix = pathSpec.substring(0, pathSpec.length() - 1);
+            final String reqPath = request.getRequestPath();
+            if (reqPath.startsWith(prefix) && reqPath.length() > prefix.length()) {
+                relativePath = reqPath.substring(prefix.length());
+            } else {
+                relativePath = null;
+            }
+        } else {
+            relativePath = null;
+        }
+
+        return factory.newInstance(request, pathSpec, sync, consumer, subprotocol, relativePath);
     }
 
     private String negotiateSubprotocol(ServletUpgradeRequest request, WebsocketConsumer consumer) {

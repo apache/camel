@@ -29,7 +29,8 @@ public class DefaultWebsocketFactory implements WebSocketFactory {
             String pathSpec,
             NodeSynchronization sync,
             WebsocketConsumer consumer,
-            String subprotocol) {
-        return new DefaultWebsocket(sync, pathSpec, consumer, subprotocol);
+            String subprotocol,
+            String relativePath) {
+        return new DefaultWebsocket(sync, pathSpec, consumer, subprotocol, relativePath);
     }
 }

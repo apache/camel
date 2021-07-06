@@ -95,7 +95,7 @@ public class WebsocketComponentServletTest {
         defaultWebsocket.setSession(session);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);
-        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS, null);
+        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS, null, null);
         inOrder.verifyNoMoreInteractions();
     }
 

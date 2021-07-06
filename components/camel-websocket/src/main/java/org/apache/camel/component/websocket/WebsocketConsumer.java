@@ -57,15 +57,17 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
             final String connectionKey,
             final String message,
             final InetSocketAddress remote,
-            final String subprotocol) {
-        sendMessage(connectionKey, (Object) message, remote, subprotocol);
+            final String subprotocol,
+            final String relativePath) {
+        sendMessage(connectionKey, (Object) message, remote, subprotocol, relativePath);
     }
 
     public void sendMessage(
             final String connectionKey,
             final Object message,
             final InetSocketAddress remote,
-            final String subprotocol) {
+            final String subprotocol,
+            final String relativePath) {
 
         final Exchange exchange = createExchange(true);
 
@@ -74,6 +76,9 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
         if (subprotocol != null) {
             exchange.getIn().setHeader(WebsocketConstants.SUBPROTOCOL, subprotocol);
+        }
+        if (relativePath != null) {
+            exchange.getIn().setHeader(WebsocketConstants.RELATIVE_PATH, relativePath);
         }
         exchange.getIn().setBody(message);
 
