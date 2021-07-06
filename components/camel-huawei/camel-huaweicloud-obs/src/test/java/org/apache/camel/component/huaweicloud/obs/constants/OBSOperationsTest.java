@@ -27,5 +27,6 @@ public class OBSOperationsTest {
         assertEquals("createBucket", OBSOperations.CREATE_BUCKET);
         assertEquals("deleteBucket", OBSOperations.DELETE_BUCKET);
         assertEquals("checkBucketExists", OBSOperations.CHECK_BUCKET_EXISTS);
+        assertEquals("getBucketMetadata", OBSOperations.GET_BUCKET_METADATA);
     }
 }
