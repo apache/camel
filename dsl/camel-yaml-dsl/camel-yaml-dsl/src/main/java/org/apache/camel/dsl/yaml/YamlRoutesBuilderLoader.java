@@ -16,13 +16,16 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RoutesConfigurationDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -52,16 +55,23 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                         RouteDefinition route = new RouteDefinition();
                         route.setInput(((OutputAwareFromDefinition) item).getDelegate());
                         route.setOutputs(((OutputAwareFromDefinition) item).getOutputs());
+
+                        CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                         getRouteCollection().route(route);
                     } else if (item instanceof RouteDefinition) {
+                        CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                         getRouteCollection().route((RouteDefinition) item);
                     } else if (item instanceof CamelContextCustomizer) {
                         ((CamelContextCustomizer) item).configure(getCamelContext());
+                    } else if (item instanceof RoutesConfigurationDefinition) {
+                        getContext().adapt(ModelCamelContext.class)
+                                .addRoutesConfiguration((RoutesConfigurationDefinition) item);
                     } else if (item instanceof OnExceptionDefinition) {
                         if (!getRouteCollection().getRoutes().isEmpty()) {
                             throw new IllegalArgumentException(
                                     "onException must be defined before any routes in the RouteBuilder");
                         }
+                        CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                         getRouteCollection().getOnExceptions().add((OnExceptionDefinition) item);
                     } else if (item instanceof ErrorHandlerBuilder) {
                         if (!getRouteCollection().getRoutes().isEmpty()) {
@@ -70,12 +80,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                         }
                         errorHandler((ErrorHandlerBuilder) item);
                     } else if (item instanceof RouteTemplateDefinition) {
+                        CamelContextAware.trySetCamelContext(getRouteTemplateCollection(), getCamelContext());
                         getRouteTemplateCollection().routeTemplate((RouteTemplateDefinition) item);
                     } else if (item instanceof RestDefinition) {
                         RestDefinition definition = (RestDefinition) item;
                         for (VerbDefinition verb : definition.getVerbs()) {
                             verb.setRest(definition);
                         }
+                        CamelContextAware.trySetCamelContext(getRestCollection(), getCamelContext());
                         getRestCollection().rest(definition);
                     } else if (item instanceof RestConfigurationDefinition) {
                         ((RestConfigurationDefinition) item).asRestConfiguration(

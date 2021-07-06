@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -38,7 +39,8 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition> implements RouteContainer {
+public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition>
+        implements RouteContainer, CamelContextAware {
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<>();
     // TODO: Use RoutesConfigurationDefinition instead

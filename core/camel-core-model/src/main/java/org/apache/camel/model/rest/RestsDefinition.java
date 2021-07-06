@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -35,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest")
 @XmlRootElement(name = "rests")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer {
+public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer, CamelContextAware {
     @XmlElementRef
     private List<RestDefinition> rests = new ArrayList<>();
     @XmlTransient
