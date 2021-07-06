@@ -819,6 +819,22 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * The maximum size of chunk for incremental snapshotting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1024
+         * Group: postgres
+         * 
+         * @param incrementalSnapshotChunkSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder incrementalSnapshotChunkSize(
+                int incrementalSnapshotChunkSize) {
+            doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+        /**
          * Specify how INTERVAL columns should be represented in change events,
          * including:'string' represents values as an exact ISO formatted
          * string'numeric' (default) represents values using the inexact
@@ -1380,9 +1396,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * would normally start emitting changes;'never' to specify the
          * connector should never run a snapshot and that upon first startup the
          * connector should read from the last position (LSN) recorded by the
-         * server; and'exported' to specify the connector should run a snapshot
-         * based on the position when the replication slot was created; 'custom'
-         * to specify a custom class with 'snapshot.custom_class' which will be
+         * server; and'exported' deprecated, use 'initial' instead; 'custom' to
+         * specify a custom class with 'snapshot.custom_class' which will be
          * loaded and used to determine the snapshot, see docs for more details.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1401,7 +1416,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
         /**
          * This property contains a comma-separated list of fully-qualified
          * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
-         * thespecific connectors . Select statements for the individual tables
+         * thespecific connectors. Select statements for the individual tables
          * are specified in further configuration properties, one for each
          * table, identified by the id
          * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
@@ -1691,6 +1706,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "hstoreHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHstoreHandlingMode((java.lang.String) value); return true;
             case "includeUnknownDatatypes": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncludeUnknownDatatypes((boolean) value); return true;
+            case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxQueueSize((int) value); return true;
