@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -47,11 +48,12 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.spi.TypeConverterRegistry;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 public final class JaxbHelper {
+    private static final String CAMEL_NS = "http://camel.apache.org/schema/spring";
+
     private JaxbHelper() {
     }
 
@@ -99,14 +101,7 @@ public final class JaxbHelper {
      * @return         a new XmlConverter instance
      */
     public static XmlConverter newXmlConverter(CamelContext context) {
-        XmlConverter xmlConverter;
-        if (context != null) {
-            TypeConverterRegistry registry = context.getTypeConverterRegistry();
-            xmlConverter = registry.getInjector().newInstance(XmlConverter.class, false);
-        } else {
-            xmlConverter = new XmlConverter();
-        }
-        return xmlConverter;
+        return new XmlConverter();
     }
 
     /**
@@ -199,6 +194,9 @@ public final class JaxbHelper {
 
         Map<String, String> namespaces = new LinkedHashMap<>();
         extractNamespaces(dom, namespaces);
+        if (!namespaces.containsValue(CAMEL_NS)) {
+            addNamespaceToDom(dom);
+        }
 
         Binder<Node> binder = jaxbContext.createBinder();
         Object result = binder.unmarshal(dom);
@@ -236,6 +234,9 @@ public final class JaxbHelper {
 
         Map<String, String> namespaces = new LinkedHashMap<>();
         extractNamespaces(dom, namespaces);
+        if (!namespaces.containsValue(CAMEL_NS)) {
+            addNamespaceToDom(dom);
+        }
 
         Binder<Node> binder = jaxbContext.createBinder();
         Object result = binder.unmarshal(dom);
@@ -264,10 +265,30 @@ public final class JaxbHelper {
         return answer;
     }
 
+    private static void addNamespaceToDom(Document dom) {
+        // Add the namespace URI to all elements
+        Element root = dom.getDocumentElement();
+        renameElementWithNamespace(dom, root, CAMEL_NS);
+    }
+
+    private static void renameElementWithNamespace(Document doc, Element elem, String camelNs) {
+        doc.renameNode(elem, camelNs, elem.getLocalName());
+        for (Node child = elem.getFirstChild(); child != null; child = child.getNextSibling()) {
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                renameElementWithNamespace(doc, (Element) child, camelNs);
+            }
+        }
+    }
+
     public static RestsDefinition loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception {
         // load routes using JAXB
+        Document dom = newXmlConverter(context).toDOMDocument(inputStream, null);
+
+        if (!CAMEL_NS.equals(dom.getDocumentElement().getNamespaceURI())) {
+            addNamespaceToDom(dom);
+        }
         Unmarshaller unmarshaller = getJAXBContext(context).createUnmarshaller();
-        Object result = unmarshaller.unmarshal(inputStream);
+        Object result = unmarshaller.unmarshal(dom);
 
         if (result == null) {
             throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + inputStream);

@@ -290,7 +290,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         assertEquals(null, msg);
         assertNotNull(connectionKey);
 
-        if ((eventType instanceof Integer) && eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)) {
+        if (eventType instanceof Integer && eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)) {
 
             String param1 = (String) exchange.getIn().getHeader("param1");
             String param2 = (String) exchange.getIn().getHeader("param2");

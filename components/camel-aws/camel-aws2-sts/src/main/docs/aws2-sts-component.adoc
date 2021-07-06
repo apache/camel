@@ -1,6 +1,6 @@
 [[aws2-sts-component]]
-= AWS 2 Security Token Service (STS) Component
-:docTitle: AWS 2 Security Token Service (STS)
+= AWS Security Token Service (STS) Component
+:docTitle: AWS Security Token Service (STS)
 :artifactId: camel-aws2-sts
 :description: Manage AWS STS cluster instances using AWS SDK version 2.x.
 :since: 3.5
@@ -8,7 +8,7 @@
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-sts.adoc[opts=optional]
 //Manually maintained attributes
-:group: AWS 2
+:group: AWS
 
 *Since Camel {since}*
 
@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Security Token Service (STS) component supports 16 options, which are listed below.
+The AWS Security Token Service (STS) component supports 16 options, which are listed below.
 
 
 
@@ -72,7 +72,7 @@ The AWS 2 Security Token Service (STS) component supports 16 options, which are 
 
 
 // endpoint options: START
-The AWS 2 Security Token Service (STS) endpoint is configured using URI syntax:
+The AWS Security Token Service (STS) endpoint is configured using URI syntax:
 
 ----
 aws2-sts:label

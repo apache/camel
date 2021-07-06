@@ -20,16 +20,16 @@ public class JacksonXMLDataFormatConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "xmlmapper":
         case "xmlMapper": dataformat.setXmlMapper(property(camelContext, com.fasterxml.jackson.dataformat.xml.XmlMapper.class, value)); return true;
-        case "collectiontypename":
-        case "collectionTypeName": dataformat.setCollectionTypeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectiontype":
+        case "collectionType": dataformat.setCollectionType(property(camelContext, java.lang.Class.class, value)); return true;
         case "moduleclassnames":
         case "moduleClassNames": dataformat.setModuleClassNames(property(camelContext, java.lang.String.class, value)); return true;
         case "modulerefs":
         case "moduleRefs": dataformat.setModuleRefs(property(camelContext, java.lang.String.class, value)); return true;
-        case "unmarshaltypename":
-        case "unmarshalTypeName": dataformat.setUnmarshalTypeName(property(camelContext, java.lang.String.class, value)); return true;
-        case "jsonviewtypename":
-        case "jsonViewTypeName": dataformat.setJsonViewTypeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "unmarshaltype":
+        case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
+        case "jsonview":
+        case "jsonView": dataformat.setJsonView(property(camelContext, java.lang.Class.class, value)); return true;
         case "include": dataformat.setInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": dataformat.setPrettyPrint(property(camelContext, boolean.class, value)); return true;

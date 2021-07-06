@@ -64,6 +64,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "consumerStreams": getOrCreateConfiguration(target).setConsumerStreams(property(camelContext, int.class, value)); return true;
         case "consumerscount":
         case "consumersCount": getOrCreateConfiguration(target).setConsumersCount(property(camelContext, int.class, value)); return true;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": getOrCreateConfiguration(target).setDeliveryTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "enableidempotence":
         case "enableIdempotence": getOrCreateConfiguration(target).setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
         case "fetchmaxbytes":
@@ -74,6 +76,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "fetchWaitMaxMs": getOrCreateConfiguration(target).setFetchWaitMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "groupid":
         case "groupId": getOrCreateConfiguration(target).setGroupId(property(camelContext, java.lang.String.class, value)); return true;
+        case "groupinstanceid":
+        case "groupInstanceId": getOrCreateConfiguration(target).setGroupInstanceId(property(camelContext, java.lang.String.class, value)); return true;
         case "headerdeserializer":
         case "headerDeserializer": getOrCreateConfiguration(target).setHeaderDeserializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class, value)); return true;
         case "headerfilterstrategy":
@@ -272,6 +276,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "consumerStreams": return int.class;
         case "consumerscount":
         case "consumersCount": return int.class;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return java.lang.Integer.class;
         case "enableidempotence":
         case "enableIdempotence": return boolean.class;
         case "fetchmaxbytes":
@@ -282,6 +288,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "fetchWaitMaxMs": return java.lang.Integer.class;
         case "groupid":
         case "groupId": return java.lang.String.class;
+        case "groupinstanceid":
+        case "groupInstanceId": return java.lang.String.class;
         case "headerdeserializer":
         case "headerDeserializer": return org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class;
         case "headerfilterstrategy":
@@ -476,6 +484,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "consumerStreams": return getOrCreateConfiguration(target).getConsumerStreams();
         case "consumerscount":
         case "consumersCount": return getOrCreateConfiguration(target).getConsumersCount();
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return getOrCreateConfiguration(target).getDeliveryTimeoutMs();
         case "enableidempotence":
         case "enableIdempotence": return getOrCreateConfiguration(target).isEnableIdempotence();
         case "fetchmaxbytes":
@@ -486,6 +496,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "fetchWaitMaxMs": return getOrCreateConfiguration(target).getFetchWaitMaxMs();
         case "groupid":
         case "groupId": return getOrCreateConfiguration(target).getGroupId();
+        case "groupinstanceid":
+        case "groupInstanceId": return getOrCreateConfiguration(target).getGroupInstanceId();
         case "headerdeserializer":
         case "headerDeserializer": return getOrCreateConfiguration(target).getHeaderDeserializer();
         case "headerfilterstrategy":

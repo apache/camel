@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.dsl.yaml.support.model.MySetBody
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteTemplateDefinition
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Assertions
 class RouteTemplateTest extends YamlTestSupport {
     def "create template"() {
         when:
-            loadRoutes '''
+        loadRoutes '''
                 - template:
                     id: "myTemplate"
                     from:
@@ -37,45 +38,45 @@ class RouteTemplateTest extends YamlTestSupport {
                         - log: "message"
             '''
         then:
-            context.routeTemplateDefinitions.size() == 1
+        context.routeTemplateDefinitions.size() == 1
 
-            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
-                id == 'myTemplate'
+        with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+            id == 'myTemplate'
 
-                route.input.endpointUri == 'direct:info'
-                with (route.outputs[0], LogDefinition) {
-                    message == 'message'
-                }
+            route.input.endpointUri == 'direct:info'
+            with(route.outputs[0], LogDefinition) {
+                message == 'message'
             }
+        }
     }
 
     def "create template with beans (#resource.location)"(Resource resource) {
         setup:
-            context.routesLoader.loadRoutes(resource)
+        context.routesLoader.loadRoutes(resource)
 
-            withMock('mock:result') {
-                expectedMessageCount 1
-                expectedBodiesReceived 'HELLO'
-            }
+        withMock('mock:result') {
+            expectedMessageCount 1
+            expectedBodiesReceived 'HELLO'
+        }
         when:
-            context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
-            context.start()
+        context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
+        context.start()
 
-            withTemplate {
-                to('direct:start').withBody('hello').send()
-            }
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
         then:
-            context.routeTemplateDefinitions.size() == 1
+        context.routeTemplateDefinitions.size() == 1
 
-            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
-                id == 'myTemplate'
-                templateBeans.size() == 1
-            }
+        with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+            id == 'myTemplate'
+            templateBeans.size() == 1
+        }
 
-            MockEndpoint.assertIsSatisfied(context)
+        MockEndpoint.assertIsSatisfied(context)
         where:
-            resource << [
-                    asResource('beans', """
+        resource << [
+                asResource('beans', """
                         - template:
                             id: "myTemplate"
                             beans:
@@ -92,7 +93,7 @@ class RouteTemplateTest extends YamlTestSupport {
                               - to: "direct:myId"
                               - to: "mock:result"
                     """),
-                    asResource('script', """
+                asResource('script', """
                         - template:
                             id: "myTemplate"
                             beans:
@@ -110,7 +111,7 @@ class RouteTemplateTest extends YamlTestSupport {
                               - to: "direct:myId"
                               - to: "mock:result"
                     """),
-                    asResource('script-bean-type', """
+                asResource('script-bean-type', """
                         - template:
                             id: "myTemplate"
                             beans:
@@ -129,7 +130,7 @@ class RouteTemplateTest extends YamlTestSupport {
                               - to: "direct:myId"
                               - to: "mock:result"
                     """),
-                    asResource('script-block', """
+                asResource('script-block', """
                         - template:
                             id: "myTemplate"
                             beans:
@@ -148,12 +149,101 @@ class RouteTemplateTest extends YamlTestSupport {
                               - to: "direct:myId"
                               - to: "mock:result"
                     """)
-            ]
+        ]
+    }
+
+    def "create template with bean and properties"() {
+        setup:
+        loadRoutes """                
+                - template:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myProcessor"
+                        type: "#class:${MySetBody.class.name}"
+                        properties:
+                          payload: "test-payload"
+                    from:
+                      uri: "direct:{{directName}}"
+                      steps:
+                        - process:
+                            ref: "{{myProcessor}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "direct:myId"
+                      - to: "mock:result"
+            """
+
+        withMock('mock:result') {
+            expectedMessageCount 1
+            expectedBodiesReceived 'test-payload'
+        }
+        when:
+        context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
+        then:
+        context.routeTemplateDefinitions.size() == 1
+
+        with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+            id == 'myTemplate'
+            templateBeans.size() == 1
+        }
+
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "create template with bean and property"() {
+        setup:
+        loadRoutes """                
+                - template:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myProcessor"
+                        type: "#class:${MySetBody.class.name}"
+                        property:
+                          - key: "payload"
+                            value: "test-payload"
+                    from:
+                      uri: "direct:{{directName}}"
+                      steps:
+                        - process:
+                            ref: "{{myProcessor}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "direct:myId"
+                      - to: "mock:result"
+            """
+
+        withMock('mock:result') {
+            expectedMessageCount 1
+            expectedBodiesReceived 'test-payload'
+        }
+        when:
+        context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
+        then:
+        context.routeTemplateDefinitions.size() == 1
+
+        with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+            id == 'myTemplate'
+            templateBeans.size() == 1
+        }
+
+        MockEndpoint.assertIsSatisfied(context)
     }
 
     def "create template with properties"() {
         when:
-            loadRoutes """
+        loadRoutes """
                 - template:
                     id: "myTemplate"
                     parameters:
@@ -168,24 +258,24 @@ class RouteTemplateTest extends YamlTestSupport {
                         - log: "message"
             """
         then:
-            context.routeTemplateDefinitions.size() == 1
+        context.routeTemplateDefinitions.size() == 1
 
-            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
-                id == 'myTemplate'
-                configurer == null
+        with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+            id == 'myTemplate'
+            configurer == null
 
-                templateParameters.any {
-                    it.name == 'foo' && it.defaultValue == 'myDefaultFoo' && it.description == 'myFooDescription'
-                }
-                templateParameters.any {
-                    it.name == 'bar' && it.defaultValue == null && it.description == 'myBarDescription'
-                }
-
-                route.input.endpointUri == 'direct:info'
-                with (route.outputs[0], LogDefinition) {
-                    message == 'message'
-                }
+            templateParameters.any {
+                it.name == 'foo' && it.defaultValue == 'myDefaultFoo' && it.description == 'myFooDescription'
             }
+            templateParameters.any {
+                it.name == 'bar' && it.defaultValue == null && it.description == 'myBarDescription'
+            }
+
+            route.input.endpointUri == 'direct:info'
+            with(route.outputs[0], LogDefinition) {
+                message == 'message'
+            }
+        }
     }
 
     def "create template with optional properties"() {
@@ -217,7 +307,7 @@ class RouteTemplateTest extends YamlTestSupport {
             }
 
             route.input.endpointUri == 'direct:{{foo}}'
-            with (route.outputs[0], ToDefinition) {
+            with(route.outputs[0], ToDefinition) {
                 uri == 'mock:result?retainFirst={{?bar}}'
             }
         }
@@ -238,6 +328,96 @@ class RouteTemplateTest extends YamlTestSupport {
         mock2.expectedBodiesReceived("Bye World")
         context.createProducerTemplate().sendBody("direct:start2", "Bye World");
         mock2.assertIsSatisfied()
+    }
+
+    def "create template with joor"() {
+        setup:
+            loadRoutes """                
+                    - template:
+                        id: "myTemplate"
+                        beans:
+                          - name: "myAgg"
+                            type: "joor"
+                            script: "(e1, e2) -> { return e2.getMessage().getBody(); }"
+                        from:
+                          uri: "direct:route"
+                          steps:
+                            - aggregate:
+                                strategy-ref: "{{myAgg}}"
+                                completion-size: 2
+                                correlation-expression:
+                                  header: "StockSymbol"
+                                steps:  
+                                  - to: "mock:result"
+                """
+            withMock('mock:result') {
+                expectedMessageCount 2
+                expectedBodiesReceived '101', '199'
+            }
+        when:
+            context.addRouteFromTemplate('myId', 'myTemplate', [:])
+            context.start()
+
+            withTemplate {
+                to('direct:route').withBody('99').withHeader('StockSymbol', 1).send()
+                to('direct:route').withBody('101').withHeader('StockSymbol', 1).send()
+                to('direct:route').withBody('200').withHeader('StockSymbol', 2).send()
+                to('direct:route').withBody('199').withHeader('StockSymbol', 2).send()
+            }
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+                id == 'myTemplate'
+                templateBeans.size() == 1
+            }
+
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "create template with groovy"() {
+        setup:
+            loadRoutes """                
+                    - template:
+                        id: "myTemplate"
+                        beans:
+                          - name: "myAgg"
+                            type: "groovy"
+                            script: "class MaxAgg { int agg(int s1, int s2) { return Math.max(s1, s2) }}; new MaxAgg()"
+                        from:
+                          uri: "direct:route"
+                          steps:
+                            - aggregate:
+                                strategy-ref: "{{myAgg}}"
+                                completion-size: 2
+                                correlation-expression:
+                                  header: "StockSymbol"
+                                steps:  
+                                  - to: "mock:result"
+                """
+            withMock('mock:result') {
+                expectedMessageCount 2
+                expectedBodiesReceived '101', '200'
+            }
+        when:
+            context.addRouteFromTemplate('myId', 'myTemplate', [:])
+            context.start()
+
+            withTemplate {
+                to('direct:route').withBody('99').withHeader('StockSymbol', 1).send()
+                to('direct:route').withBody('101').withHeader('StockSymbol', 1).send()
+                to('direct:route').withBody('200').withHeader('StockSymbol', 2).send()
+                to('direct:route').withBody('199').withHeader('StockSymbol', 2).send()
+            }
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+                id == 'myTemplate'
+                templateBeans.size() == 1
+            }
+
+            MockEndpoint.assertIsSatisfied(context)
     }
 
 }

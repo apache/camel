@@ -93,7 +93,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation, String namespaceName) throws Exception {
+    protected void doList(Exchange exchange, String operation, String namespaceName) {
         JsonObject customResourcesListJSON = new JsonObject(
                 getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName));
         if (LOG.isDebugEnabled()) {
@@ -111,7 +111,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourcesListItems);
     }
 
-    protected void doListByLabels(Exchange exchange, String operation, String namespaceName) throws Exception {
+    protected void doListByLabels(Exchange exchange, String operation, String namespaceName) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_LABELS, Map.class);
         JsonObject customResourcesListJSON = new JsonObject(
                 getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName,

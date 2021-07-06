@@ -67,14 +67,15 @@ public class AS2ServerConnection {
                                      AS2SignatureAlgorithm signatureAlgorithm,
                                      Certificate[] signingCertificateChain,
                                      PrivateKey signingPrivateKey,
-                                     PrivateKey decryptingPrivateKey)
-                                                                      throws IOException {
+                                     PrivateKey decryptingPrivateKey,
+                                     String mdnMessageTemplate)
+                                                                throws IOException {
             setName(REQUEST_LISTENER_THREAD_NAME_PREFIX + port);
             serversocket = new ServerSocket(port);
 
             // Set up HTTP protocol processor for incoming connections
             final HttpProcessor inhttpproc = initProtocolProcessor(as2Version, originServer, serverFqdn, port,
-                    signatureAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey);
+                    signatureAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey, mdnMessageTemplate);
 
             reqistry = new UriHttpRequestHandlerMapper();
 
@@ -177,6 +178,7 @@ public class AS2ServerConnection {
     }
 
     private RequestListenerThread listenerThread;
+    private final Object lock = new Object();
     private String as2Version;
     private String originServer;
     private String serverFqdn;
@@ -185,6 +187,7 @@ public class AS2ServerConnection {
     private Certificate[] signingCertificateChain;
     private PrivateKey signingPrivateKey;
     private PrivateKey decryptingPrivateKey;
+    private String mdnMessageTemplate;
 
     public AS2ServerConnection(String as2Version,
                                String originServer,
@@ -193,8 +196,9 @@ public class AS2ServerConnection {
                                AS2SignatureAlgorithm signingAlgorithm,
                                Certificate[] signingCertificateChain,
                                PrivateKey signingPrivateKey,
-                               PrivateKey decryptingPrivateKey)
-                                                                throws IOException {
+                               PrivateKey decryptingPrivateKey,
+                               String mdnMessageTemplate)
+                                                          throws IOException {
         this.as2Version = Args.notNull(as2Version, "as2Version");
         this.originServer = Args.notNull(originServer, "userAgent");
         this.serverFqdn = Args.notNull(serverFqdn, "serverFqdn");
@@ -203,11 +207,12 @@ public class AS2ServerConnection {
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
         this.decryptingPrivateKey = decryptingPrivateKey;
+        this.mdnMessageTemplate = mdnMessageTemplate;
 
         listenerThread = new RequestListenerThread(
                 this.as2Version, this.originServer, this.serverFqdn,
                 this.serverPortNumber, this.signingAlgorithm, this.signingCertificateChain, this.signingPrivateKey,
-                this.decryptingPrivateKey);
+                this.decryptingPrivateKey, this.mdnMessageTemplate);
         listenerThread.setDaemon(true);
         listenerThread.start();
     }
@@ -222,7 +227,7 @@ public class AS2ServerConnection {
 
     public void close() {
         if (listenerThread != null) {
-            synchronized (listenerThread) {
+            synchronized (lock) {
                 try {
                     listenerThread.serversocket.close();
                 } catch (IOException e) {
@@ -234,16 +239,15 @@ public class AS2ServerConnection {
         }
     }
 
-    public void listen(String requestUri, HttpRequestHandler handler) throws IOException {
+    public void listen(String requestUri, HttpRequestHandler handler) {
         if (listenerThread != null) {
-            synchronized (listenerThread) {
+            synchronized (lock) {
                 listenerThread.registerHandler(requestUri, handler);
             }
         }
     }
 
     public void stopListening(String requestUri) {
-
         if (listenerThread != null) {
             listenerThread.unregisterHandler(requestUri);
         }
@@ -257,11 +261,13 @@ public class AS2ServerConnection {
             AS2SignatureAlgorithm signatureAlgorithm,
             Certificate[] signingCertificateChain,
             PrivateKey signingPrivateKey,
-            PrivateKey decryptingPrivateKey) {
+            PrivateKey decryptingPrivateKey,
+            String mdnMessageTemplate) {
         return HttpProcessorBuilder.create().add(new ResponseContent(true)).add(new ResponseServer(originServer))
                 .add(new ResponseDate()).add(new ResponseConnControl()).add(new ResponseMDN(
                         as2Version, serverFqdn,
-                        signatureAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey))
+                        signatureAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey,
+                        mdnMessageTemplate))
                 .build();
     }
 

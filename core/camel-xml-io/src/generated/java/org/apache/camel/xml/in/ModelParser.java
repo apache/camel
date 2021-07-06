@@ -815,11 +815,12 @@ public class ModelParser extends BaseParser {
     }
     protected RemoveHeaderDefinition doParseRemoveHeaderDefinition() throws IOException, XmlPullParserException {
         return doParse(new RemoveHeaderDefinition(), (def, key, val) -> {
-            if ("headerName".equals(key)) {
-                def.setHeaderName(val);
-                return true;
+            switch (key) {
+                case "headerName": def.setHeaderName(val); break;
+                case "name": def.setName(val); break;
+                default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
-            return processorDefinitionAttributeHandler().accept(def, key, val);
+            return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected RemoveHeadersDefinition doParseRemoveHeadersDefinition() throws IOException, XmlPullParserException {
@@ -1760,7 +1761,7 @@ public class ModelParser extends BaseParser {
     protected ASN1DataFormat doParseASN1DataFormat() throws IOException, XmlPullParserException {
         return doParse(new ASN1DataFormat(), (def, key, val) -> {
             switch (key) {
-                case "clazzName": def.setClazzName(val); break;
+                case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 case "usingIterator": def.setUsingIterator(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
@@ -1791,20 +1792,20 @@ public class ModelParser extends BaseParser {
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
                 case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
-                case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "collectionType": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "include": def.setInclude(val); break;
                 case "instanceClassName": def.setInstanceClassName(val); break;
-                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
+                case "jsonView": def.setJsonViewTypeName(val); break;
                 case "library": def.setLibrary(AvroLibrary.valueOf(val)); break;
                 case "moduleClassNames": def.setModuleClassNames(val); break;
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "objectMapper": def.setObjectMapper(val); break;
                 case "schemaResolver": def.setSchemaResolver(val); break;
                 case "timezone": def.setTimezone(val); break;
-                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
                 case "useList": def.setUseList(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
@@ -1869,12 +1870,12 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "allowJmsType": def.setAllowJmsType(val); break;
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
-                case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "collectionType": def.setCollectionTypeName(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "objectMapper": def.setObjectMapper(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
-                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
                 case "useList": def.setUseList(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
@@ -1903,6 +1904,7 @@ public class ModelParser extends BaseParser {
         return doParse(new CsvDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "allowMissingColumnNames": def.setAllowMissingColumnNames(val); break;
+                case "captureHeaderRecord": def.setCaptureHeaderRecord(val); break;
                 case "commentMarker": def.setCommentMarker(val); break;
                 case "commentMarkerDisabled": def.setCommentMarkerDisabled(val); break;
                 case "delimiter": def.setDelimiter(val); break;
@@ -2044,17 +2046,17 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "allowJmsType": def.setAllowJmsType(val); break;
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
-                case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "collectionType": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "enableJaxbAnnotationModule": def.setEnableJaxbAnnotationModule(val); break;
                 case "include": def.setInclude(val); break;
-                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
+                case "jsonView": def.setJsonViewTypeName(val); break;
                 case "moduleClassNames": def.setModuleClassNames(val); break;
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
-                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 case "useList": def.setUseList(val); break;
                 case "xmlMapper": def.setXmlMapper(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
@@ -2106,13 +2108,13 @@ public class ModelParser extends BaseParser {
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
                 case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
-                case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "collectionType": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "dropRootNode": def.setDropRootNode(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "include": def.setInclude(val); break;
-                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
+                case "jsonView": def.setJsonViewTypeName(val); break;
                 case "library": def.setLibrary(JsonLibrary.valueOf(val)); break;
                 case "moduleClassNames": def.setModuleClassNames(val); break;
                 case "moduleRefs": def.setModuleRefs(val); break;
@@ -2121,7 +2123,7 @@ public class ModelParser extends BaseParser {
                 case "prettyPrint": def.setPrettyPrint(val); break;
                 case "schemaResolver": def.setSchemaResolver(val); break;
                 case "timezone": def.setTimezone(val); break;
-                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
                 case "useList": def.setUseList(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
@@ -2180,21 +2182,21 @@ public class ModelParser extends BaseParser {
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
                 case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
-                case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "collectionType": def.setCollectionTypeName(val); break;
                 case "contentTypeFormat": def.setContentTypeFormat(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "include": def.setInclude(val); break;
                 case "instanceClass": def.setInstanceClass(val); break;
-                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
+                case "jsonView": def.setJsonViewTypeName(val); break;
                 case "library": def.setLibrary(ProtobufLibrary.valueOf(val)); break;
                 case "moduleClassNames": def.setModuleClassNames(val); break;
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "objectMapper": def.setObjectMapper(val); break;
                 case "schemaResolver": def.setSchemaResolver(val); break;
                 case "timezone": def.setTimezone(val); break;
-                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
                 case "useList": def.setUseList(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
@@ -2392,7 +2394,7 @@ public class ModelParser extends BaseParser {
                 case "prettyFlow": def.setPrettyFlow(val); break;
                 case "representer": def.setRepresenter(val); break;
                 case "resolver": def.setResolver(val); break;
-                case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
+                case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 case "useApplicationContextClassLoader": def.setUseApplicationContextClassLoader(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }

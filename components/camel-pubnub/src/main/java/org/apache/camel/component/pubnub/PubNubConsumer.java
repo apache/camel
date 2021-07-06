@@ -48,7 +48,7 @@ public class PubNubConsumer extends DefaultConsumer {
         this.pubNubConfiguration = pubNubConfiguration;
     }
 
-    private void initCommunication() throws Exception {
+    private void initCommunication() {
         endpoint.getPubnub().addListener(new PubNubCallback());
         if (pubNubConfiguration.isWithPresence()) {
             endpoint.getPubnub().subscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).withPresence().execute();
@@ -108,6 +108,7 @@ public class PubNubConsumer extends DefaultConsumer {
             inmessage.setBody(message);
             inmessage.setHeader(TIMETOKEN, message.getTimetoken());
             inmessage.setHeader(CHANNEL, message.getChannel());
+            inmessage.setHeader(Exchange.MESSAGE_TIMESTAMP, message.getTimetoken());
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
@@ -122,6 +123,7 @@ public class PubNubConsumer extends DefaultConsumer {
             inmessage.setBody(presence);
             inmessage.setHeader(TIMETOKEN, presence.getTimetoken());
             inmessage.setHeader(CHANNEL, presence.getChannel());
+            inmessage.setHeader(Exchange.MESSAGE_TIMESTAMP, presence.getTimetoken());
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {

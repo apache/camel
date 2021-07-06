@@ -502,13 +502,14 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         //this for handle connection retry if sending request failed.
         for (int count = 0; count <= maxConnectionRetry; count++) {
             waitBeforeRetry(count);
-            MultiPart multipart = new MultiPart();
-            multipart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
-            multipart.bodyPart(new StreamDataBodyPart("file", inputStream, null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
-            try {
+
+            try (MultiPart multipart = new MultiPart()) {
+                multipart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+                multipart.bodyPart(new StreamDataBodyPart("file", inputStream, null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("try to upload " + fileType + " for the " + StringUtils.ordinal(count + 1) + " time for message:"
-                              + message);
+                    LOG.debug("try to upload {} for the {} time for message: {}", fileType,
+                            StringUtils.ordinal(count + 1), message);
                 }
                 response = getUploadFileTarget().request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.entity(multipart, multipart.getMediaType()));
@@ -543,30 +544,24 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * @throws SoroushException if soroush reject the file
      */
     void handleFileUpload(SoroushMessage message) throws SoroushException, InterruptedException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("try to upload file(s) to server if exists for message:" + message.toString());
-        }
+        LOG.trace("try to upload file(s) to server if exists for message: {}", message);
+
         InputStream file = message.getFile();
         if (file != null && (message.getFileUrl() == null || forceUpload)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("uploading file to server for message: " + message);
-            }
+            LOG.debug("uploading file to server for message: {}", message);
+
             UploadFileResponse response = uploadToServer(file, message, "file");
             message.setFileUrl(response.getFileUrl());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("uploaded file url is: " + response.getFileUrl() + " for message: " + message);
-            }
+            LOG.debug("uploaded file url is: {} for message: {}", response.getFileUrl(), message);
         }
         InputStream thumbnail = message.getThumbnail();
         if (thumbnail != null && message.getThumbnailUrl() == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("uploading thumbnail to server for message: " + message);
-            }
+            LOG.debug("uploading thumbnail to server for message: {}", message);
+
             UploadFileResponse response = uploadToServer(thumbnail, message, "thumbnail");
             message.setThumbnailUrl(response.getFileUrl());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("uploaded thumbnail url is: " + response.getFileUrl() + " for message: " + message);
-            }
+
+            LOG.debug("uploaded thumbnail url is: {} for message: {}", response.getFileUrl(), message);
         }
     }
 
@@ -579,24 +574,21 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      */
     public void handleDownloadFiles(SoroushMessage message) throws SoroushException {
         if (message.getFileUrl() != null && (message.getFile() == null || forceDownload)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("downloading file from server for message: " + message);
-            }
+            LOG.debug("downloading file from server for message: {}", message);
+
             InputStream inputStream = downloadFromServer(message.getFileUrl(), message, "file");
             message.setFile(inputStream);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("file successfully downloaded for message: " + message);
-            }
+
+            LOG.debug("file successfully downloaded for message: {}", message);
+
         }
         if (downloadThumbnail && message.getThumbnailUrl() != null && (message.getThumbnail() == null || forceDownload)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("downloading thumbnail from server for message: " + message);
-            }
+            LOG.debug("downloading thumbnail from server for message: {}", message);
+
             InputStream inputStream = downloadFromServer(message.getThumbnailUrl(), message, "thumbnail");
             message.setThumbnail(inputStream);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("thumbnail successfully downloaded for message: " + message);
-            }
+
+            LOG.debug("thumbnail successfully downloaded for message: {}", message);
         }
     }
 
@@ -612,10 +604,9 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
             WebTarget target = getDownloadFileTarget(fileUrl);
             if (LOG.isDebugEnabled()) {
                 if (i != 0) {
-                    LOG.debug("retry downloading " + type + ": " + fileUrl + " for the " + StringUtils.ordinal(i) + " time");
+                    LOG.debug("retry downloading {}: {} for the {} time", type, fileUrl, StringUtils.ordinal(i));
                 }
-                LOG.debug("try to download " + type + ": " + fileUrl + " with url: " + target.getUri() + "\nfor message: "
-                          + message);
+                LOG.debug("try to download {}: {} with url: {}\nfor message: {}", type, fileUrl, target.getUri(), message);
             }
             try {
                 response = target.request().get();
@@ -625,9 +616,9 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
                     throw new MaximumConnectionRetryReachedException(
                             "maximum connection retry reached for " + type + ": " + fileUrl, ex, message);
                 }
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("can not download " + type + ": " + fileUrl + " from soroush. Response code is", ex);
-                }
+
+                LOG.warn("can not download {}: {} from soroush. Response code is {}", type, fileUrl, ex.getMessage());
+
             }
         }
         //should never reach this line

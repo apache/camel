@@ -51,9 +51,6 @@ public final class CoAPHelper {
 
     /**
      * Determines which method verbs the CoAP server should be restricted to handling.
-     *
-     * @param  methodRestrict
-     * @return
      */
     public static String getDefaultMethodRestrict(String methodRestrict) {
         if (ObjectHelper.isNotEmpty(methodRestrict)) {

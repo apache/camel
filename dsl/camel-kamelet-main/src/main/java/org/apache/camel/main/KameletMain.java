@@ -30,28 +30,17 @@ import org.apache.camel.spi.Registry;
  */
 public class KameletMain extends MainCommandLineSupport {
 
-    protected static KameletMain instance;
     private static ClassLoader kameletClassLoader;
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
 
     public static void main(String... args) throws Exception {
         KameletMain main = new KameletMain();
-        instance = main;
         int code = main.run(args);
         if (code != 0) {
             System.exit(code);
         }
         // normal exit
-    }
-
-    /**
-     * Returns the currently executing main
-     *
-     * @return the current running instance
-     */
-    public static KameletMain getInstance() {
-        return instance;
     }
 
     /**
@@ -157,9 +146,9 @@ public class KameletMain extends MainCommandLineSupport {
         }
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
-        instance.addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
-        instance.addInitialProperty("camel.main.routes-include-pattern", "classpath:camel/*");
-        instance.addInitialProperty("camel.main.lightweight", "true");
+
+        addInitialProperty("camel.component.kamelet.location", "classpath:/kamelets,github:apache:camel-kamelets");
+        addInitialProperty("camel.main.lightweight", "true");
 
         if (download) {
             try {

@@ -29,7 +29,7 @@ public final class VertxWebsocketHelper {
     public static int extractPortNumber(String remaining) {
         int index1 = remaining.indexOf(':');
         int index2 = remaining.indexOf('/');
-        if ((index1 != -1) && (index2 != -1)) {
+        if (index1 != -1 && index2 != -1) {
             String result = remaining.substring(index1 + 1, index2);
             if (result.isEmpty()) {
                 throw new IllegalArgumentException("Unable to resolve port from URI: " + remaining);

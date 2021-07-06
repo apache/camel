@@ -25,7 +25,7 @@ public final class CouchbaseServiceFactory {
     }
 
     public static SimpleTestServiceBuilder<CouchbaseService> builder() {
-        return new SimpleTestServiceBuilder<>("consul");
+        return new SimpleTestServiceBuilder<>("couchbase");
     }
 
     public static CouchbaseService createService() {

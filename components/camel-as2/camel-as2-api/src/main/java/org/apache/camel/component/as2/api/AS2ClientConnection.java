@@ -18,7 +18,6 @@ package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import org.apache.camel.component.as2.api.io.AS2BHttpClientConnection;
 import org.apache.camel.component.as2.api.protocol.RequestAS2;
@@ -50,7 +49,7 @@ public class AS2ClientConnection {
     private String clientFqdn;
 
     public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName,
-                               Integer targetPortNumber) throws UnknownHostException, IOException {
+                               Integer targetPortNumber) throws IOException {
 
         this.as2Version = Args.notNull(as2Version, "as2Version");
         this.userAgent = Args.notNull(userAgent, "userAgent");

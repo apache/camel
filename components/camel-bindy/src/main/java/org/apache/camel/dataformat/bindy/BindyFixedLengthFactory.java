@@ -87,7 +87,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      * method uses to initialize the model representing the classes who will bind the data. This process will scan for
      * classes according to the package name provided, check the annotated classes and fields
      */
-    public void initFixedLengthModel() throws Exception {
+    public void initFixedLengthModel() {
 
         // Find annotated fields declared in the Model classes
         initAnnotatedFields();
@@ -462,7 +462,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                     int fieldLength = datafield.length();
 
-                    if (fieldLength == 0 && (datafield.lengthPos() > 0)) {
+                    if (fieldLength == 0 && datafield.lengthPos() > 0) {
                         List<String> resultVals = results.get(datafield.lengthPos());
                         fieldLength = Integer.valueOf(resultVals.get(0));
                     }

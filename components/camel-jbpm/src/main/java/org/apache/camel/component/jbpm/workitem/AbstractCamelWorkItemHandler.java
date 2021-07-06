@@ -151,7 +151,7 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
 
         try {
             Exchange requestExchange = buildExchange(producerTemplate, workItem);
-            logger.debug("Sending Camel Exchange to: " + camelUri);
+            logger.debug("Sending Camel Exchange to: {}", camelUri);
             Exchange responseExchange = producerTemplate.send(camelUri, requestExchange);
             // producerTemplate.send does not throw exceptions, instead they are set on the returned Exchange.
             if (responseExchange.getException() != null) {

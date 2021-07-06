@@ -29,8 +29,8 @@
         
         <!-- we define the json xstream data formats to be used -->
         <dataFormats>
-            <json id="json" library="XStream" unmarshalTypeName="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
-            <json id="pretty" library="XStream" prettyPrint="true" unmarshalTypeName="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
+            <json id="json" library="XStream" unmarshalType="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
+            <json id="pretty" library="XStream" prettyPrint="true" unmarshalType="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
         </dataFormats>
 
         <route>

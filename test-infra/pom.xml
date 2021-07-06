@@ -22,7 +22,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -63,6 +63,7 @@
         <module>camel-test-infra-nsq</module>
         <module>camel-test-infra-pulsar</module>
         <module>camel-test-infra-redis</module>
+        <module>camel-test-infra-solr</module>
         <module>camel-test-infra-xmpp</module>
         <module>camel-test-infra-zookeeper</module>
         <module>camel-test-infra-postgres</module>

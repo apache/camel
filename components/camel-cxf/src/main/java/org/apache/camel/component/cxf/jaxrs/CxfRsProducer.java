@@ -872,17 +872,17 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             this.cache = LRUCacheFactory.newLRUSoftCache(maxCacheSize);
         }
 
-        public void start() throws Exception {
+        public void start() {
             if (cache instanceof LRUCache) {
                 ((LRUCache) cache).resetStatistics();
             }
         }
 
-        public void stop() throws Exception {
+        public void stop() {
             cache.clear();
         }
 
-        public JAXRSClientFactoryBean get(String address) throws Exception {
+        public JAXRSClientFactoryBean get(String address) {
             JAXRSClientFactoryBean retVal = null;
             synchronized (cache) {
                 retVal = cache.get(address);

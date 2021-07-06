@@ -45,7 +45,7 @@ import org.apache.commons.io.IOUtils;
 @Metadata(excludeProperties = "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType," +
                               "collectionTypeName,collectionType,useList,moduleClassNames,moduleRefs,enableFeatures," +
                               "disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
-                              "schemaResolver,autoDiscoverSchemaResolver,unmarshalTypeName")
+                              "schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
 public class ProtobufDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
@@ -101,7 +101,7 @@ public class ProtobufDataFormat extends ServiceSupport
         }
     }
 
-    public void setInstanceClass(String className) throws Exception {
+    public void setInstanceClass(String className) {
         ObjectHelper.notNull(className, "ProtobufDataFormat instaceClass");
         instanceClassName = className;
     }

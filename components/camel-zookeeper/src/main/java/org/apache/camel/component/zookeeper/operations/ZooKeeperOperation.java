@@ -103,6 +103,6 @@ public abstract class ZooKeeperOperation<ResultType> {
 
     // TODO slightly different to a clone as it uses the constructor
     public ZooKeeperOperation<?> createCopy() throws Exception {
-        return getClass().getConstructor(CONSTRUCTOR_ARGS).newInstance(new Object[] { connection, node });
+        return getClass().getConstructor(CONSTRUCTOR_ARGS).newInstance(connection, node);
     }
 }

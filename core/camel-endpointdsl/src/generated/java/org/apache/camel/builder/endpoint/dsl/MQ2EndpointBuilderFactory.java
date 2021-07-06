@@ -31,7 +31,7 @@ public interface MQ2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 MQ component.
+     * Builder for endpoint for the AWS MQ component.
      */
     public interface MQ2EndpointBuilder extends EndpointProducerBuilder {
         /**
@@ -444,7 +444,7 @@ public interface MQ2EndpointBuilderFactory {
 
     public interface MQ2Builders {
         /**
-         * AWS 2 MQ (camel-aws2-mq)
+         * AWS MQ (camel-aws2-mq)
          * Manage AWS MQ instances using AWS SDK version 2.x.
          * 
          * Category: cloud,messaging
@@ -463,7 +463,7 @@ public interface MQ2EndpointBuilderFactory {
             return MQ2EndpointBuilderFactory.endpointBuilder("aws2-mq", path);
         }
         /**
-         * AWS 2 MQ (camel-aws2-mq)
+         * AWS MQ (camel-aws2-mq)
          * Manage AWS MQ instances using AWS SDK version 2.x.
          * 
          * Category: cloud,messaging

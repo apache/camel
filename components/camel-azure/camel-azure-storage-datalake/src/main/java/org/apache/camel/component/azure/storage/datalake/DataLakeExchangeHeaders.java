@@ -368,6 +368,10 @@ public class DataLakeExchangeHeaders {
 
     public DataLakeExchangeHeaders lastModified(final OffsetDateTime lastModified) {
         headers.put(DataLakeConstants.LAST_MODIFIED, lastModified);
+        if (lastModified != null) {
+            long ts = lastModified.toEpochSecond() * 1000;
+            headers.put(Exchange.MESSAGE_TIMESTAMP, ts);
+        }
         return this;
     }
 

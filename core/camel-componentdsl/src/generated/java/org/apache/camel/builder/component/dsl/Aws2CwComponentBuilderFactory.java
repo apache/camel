@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.cw.Cw2Component;
 public interface Aws2CwComponentBuilderFactory {
 
     /**
-     * AWS 2 CloudWatch (camel-aws2-cw)
+     * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
      * 
      * Category: cloud,monitoring
@@ -45,7 +45,7 @@ public interface Aws2CwComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 CloudWatch component.
+     * Builder for the AWS CloudWatch component.
      */
     interface Aws2CwComponentBuilder extends ComponentBuilder<Cw2Component> {
         /**

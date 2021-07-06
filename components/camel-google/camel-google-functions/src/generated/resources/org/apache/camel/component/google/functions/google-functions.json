@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "google-functions",
-    "title": "GoogleCloudFunctions",
+    "title": "Google Cloud Functions",
     "description": "Manage and invoke Google Cloud Functions",
     "deprecated": false,
     "firstVersion": "3.9.0",
@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-functions",
-    "version": "3.11.0-SNAPSHOT",
+    "version": "3.12.0-SNAPSHOT",
     "scheme": "google-functions",
     "extendsScheme": "",
     "syntax": "google-functions:functionName",

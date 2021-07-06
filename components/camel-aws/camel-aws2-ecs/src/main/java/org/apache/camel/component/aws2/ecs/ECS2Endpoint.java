@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.ecs.EcsClient;
 /**
  * Manage AWS ECS cluster instances using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ecs", title = "AWS 2 Elastic Container Service (ECS)",
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ecs", title = "AWS Elastic Container Service (ECS)",
              syntax = "aws2-ecs:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
 public class ECS2Endpoint extends ScheduledPollEndpoint {
 

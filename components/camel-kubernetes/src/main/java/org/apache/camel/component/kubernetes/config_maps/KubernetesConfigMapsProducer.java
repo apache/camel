@@ -83,14 +83,14 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange, String operation) {
         ConfigMapList configMapsList = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(configMapsList.getItems());
     }
 
-    protected void doListConfigMapsByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListConfigMapsByLabels(Exchange exchange, String operation) {
         ConfigMapList configMapsList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
         FilterWatchListMultiDeletable<ConfigMap, ConfigMapList> configMaps

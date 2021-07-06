@@ -1725,9 +1725,9 @@ public interface ActivemqComponentBuilderFactory {
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
          * a regular payload. Use this with caution as the data is using Java
-         * Object serialization and requires the received to be able to
+         * Object serialization and requires the receiver to be able to
          * deserialize the data at Class level, which forces a strong coupling
-         * between the producers and consumer having to use compatible Camel
+         * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.

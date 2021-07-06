@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>tooling</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-openapi-rest-dsl-generator</artifactId>
@@ -57,6 +57,17 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3-version}</version>
+        </dependency>
+        <!-- yaml dsl (via xml) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson2-version}</version>
         </dependency>
 
         <!-- test -->

@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws2-kms",
-    "title": "AWS 2 Key Management Service (KMS)",
+    "title": "AWS Key Management Service (KMS)",
     "description": "Manage keys stored in AWS KMS instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kms",
-    "version": "3.11.0-SNAPSHOT",
+    "version": "3.12.0-SNAPSHOT",
     "scheme": "aws2-kms",
     "extendsScheme": "",
     "syntax": "aws2-kms:label",

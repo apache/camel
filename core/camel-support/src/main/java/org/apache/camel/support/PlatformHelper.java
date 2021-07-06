@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility dedicated for resolving runtime information related to the platform on which Camel is currently running.
  */
+@Deprecated
 public final class PlatformHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PlatformHelper.class);
@@ -34,9 +35,11 @@ public final class PlatformHelper {
      * Determine whether Camel is OSGi-aware. Current implementation of the method checks if the name of the
      * {@link CamelContext} matches the names of the known OSGi-aware contexts.
      *
-     * @param  camelContext context to be tested against OSGi-awareness
-     * @return              true if given context is OSGi-aware, false otherwise
+     * @param      camelContext context to be tested against OSGi-awareness
+     * @return                  true if given context is OSGi-aware, false otherwise
+     * @deprecated              additional logic for OSGi should be in their own components in the camel-karaf project
      */
+    @Deprecated
     public static boolean isOsgiContext(CamelContext camelContext) {
         String contextType = camelContext.getClass().getSimpleName();
         if (contextType.startsWith("Osgi") || contextType.equals("BlueprintCamelContext")) {

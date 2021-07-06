@@ -178,9 +178,9 @@ public class JsonXmlStreamReader implements XMLStreamReader {
 
     private void removeStackElement(JsonToken jsonToken) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.jsonToken != jsonToken)) {
+        if (stackElement == null || stackElement.jsonToken != jsonToken) {
             if (stackElement != null && jsonToken == JsonToken.FIELD_NAME
-                    && (stackElement.jsonToken == JsonToken.START_ARRAY)) {
+                    && stackElement.jsonToken == JsonToken.START_ARRAY) {
                 // anonymous array
                 return;
             }
@@ -280,7 +280,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public int getAttributeCount() {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT)) {
+        if (stackElement == null || stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
@@ -290,7 +290,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public QName getAttributeName(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT)) {
+        if (stackElement == null || stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
@@ -300,7 +300,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public String getAttributeNamespace(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT)) {
+        if (stackElement == null || stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
@@ -310,7 +310,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public String getAttributeLocalName(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT)) {
+        if (stackElement == null || stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
@@ -320,7 +320,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public String getAttributePrefix(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT)) {
+        if (stackElement == null || stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
@@ -330,7 +330,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public String getAttributeType(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT)) {
+        if (stackElement == null || stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
@@ -340,7 +340,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public String getAttributeValue(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT)) {
+        if (stackElement == null || stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_ELEMENT);
         }
 
@@ -365,8 +365,8 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public String getNamespacePrefix(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT
-                && stackElement.xmlEvent != XMLStreamConstants.END_ELEMENT)) {
+        if (stackElement == null || stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT
+                && stackElement.xmlEvent != XMLStreamConstants.END_ELEMENT) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_END_ELEMENT);
         }
 
@@ -376,8 +376,8 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     @Override
     public String getNamespaceURI(int index) {
         final StackElement stackElement = tokenStack.peek();
-        if (stackElement == null || (stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT
-                && stackElement.xmlEvent != XMLStreamConstants.END_ELEMENT)) {
+        if (stackElement == null || stackElement.xmlEvent != XMLStreamConstants.START_ELEMENT
+                && stackElement.xmlEvent != XMLStreamConstants.END_ELEMENT) {
             throw new IllegalStateException(ERROR_MSG_NOT_IN_START_END_ELEMENT);
         }
 
@@ -556,7 +556,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
 
         for (int i = offset; i < (offset + length); i++) {
             final char cur = input[i];
-            if ((cur < 9) || (cur > 10 && cur < 13) || (cur > 13 && cur < 32)) { // non valid xml characters
+            if (cur < 9 || cur > 10 && cur < 13 || cur > 13 && cur < 32) { // non valid xml characters
                 continue;
             }
 

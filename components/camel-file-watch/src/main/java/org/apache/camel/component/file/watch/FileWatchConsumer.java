@@ -158,6 +158,7 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         message.setHeader(Exchange.FILE_PARENT, PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
         message.setHeader(Exchange.FILE_LAST_MODIFIED, event.getEventDate());
+        message.setHeader(Exchange.MESSAGE_TIMESTAMP, event.getEventDate());
 
         return exchange;
     }

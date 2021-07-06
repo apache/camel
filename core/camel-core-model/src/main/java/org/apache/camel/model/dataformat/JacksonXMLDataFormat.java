@@ -37,11 +37,11 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String prettyPrint;
-    @XmlAttribute
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
-    @XmlAttribute
+    @XmlAttribute(name = "jsonView")
     private String jsonViewTypeName;
     @XmlTransient
     private Class<?> jsonView;
@@ -50,7 +50,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String allowJmsType;
-    @XmlAttribute
+    @XmlAttribute(name = "collectionType")
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;

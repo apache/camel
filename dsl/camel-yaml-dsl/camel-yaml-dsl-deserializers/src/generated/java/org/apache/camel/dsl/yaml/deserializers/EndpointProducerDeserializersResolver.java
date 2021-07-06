@@ -20,7 +20,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "ahc-ws":
             case "ahc-wss":
             case "amqp":
-            case "apns":
             case "arangodb":
             case "as2":
             case "asterisk":
@@ -150,6 +149,8 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "hdfs":
             case "http":
             case "https":
+            case "hwcloud-functiongraph":
+            case "hwcloud-iam":
             case "hwcloud-smn":
             case "iec60870-client":
             case "iec60870-server":

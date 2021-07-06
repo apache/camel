@@ -24,7 +24,7 @@ The ASN.1 File dataformat supports 2 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | usingIterator | false | Boolean | If the asn1 file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode.
-| clazzName |  | String | Name of class to use when unmarshalling
+| unmarshalType |  | String | Class to use when unmarshalling.
 |===
 // dataformat options: END
 

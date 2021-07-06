@@ -54,7 +54,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     private ReplyManager replyManager;
 
-    public RabbitMQProducer(RabbitMQEndpoint endpoint) throws IOException {
+    public RabbitMQProducer(RabbitMQEndpoint endpoint) {
         super(endpoint);
     }
 
@@ -402,7 +402,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         }
     }
 
-    protected ReplyManager createReplyManager() throws Exception {
+    protected ReplyManager createReplyManager() {
         // use a temporary queue
         ReplyManager replyManager = new TemporaryQueueReplyManager(getEndpoint().getCamelContext());
         replyManager.setEndpoint(getEndpoint());

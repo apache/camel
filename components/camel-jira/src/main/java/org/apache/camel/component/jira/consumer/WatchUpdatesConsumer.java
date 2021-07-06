@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jira.consumer;
 
 import java.lang.reflect.Method;
@@ -55,8 +54,8 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
     private void initIssues() {
         watchedIssues = new HashMap<>();
-        List<Issue> issues = getIssues(((JiraEndpoint) getEndpoint()).getJql(), 0, 50,
-                ((JiraEndpoint) getEndpoint()).getMaxResults());
+        List<Issue> issues = getIssues(getEndpoint().getJql(), 0, 50,
+                getEndpoint().getMaxResults());
         issues.forEach(i -> watchedIssues.put(i.getId(), i));
         watchedIssuesKeys = issues.stream()
                 .map(Issue::getKey)
@@ -64,9 +63,9 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {
-        List<Issue> issues = getIssues(((JiraEndpoint) getEndpoint()).getJql(), 0, 50,
-                ((JiraEndpoint) getEndpoint()).getMaxResults());
+    protected int doPoll() throws Exception {
+        List<Issue> issues = getIssues(getEndpoint().getJql(), 0, 50,
+                getEndpoint().getMaxResults());
         if (watchedIssues.values().size() != issues.size()) {
             init();
         }
@@ -97,7 +96,7 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
         Object changedField = get.invoke(changed);
 
         if (!Objects.equals(originalField, changedField)) {
-            if (!((JiraEndpoint) getEndpoint()).isSendOnlyUpdatedField()) {
+            if (!getEndpoint().isSendOnlyUpdatedField()) {
                 processExchange(changed, changed.getKey(), fieldName);
             } else {
                 processExchange(changedField, changed.getKey(), fieldName);

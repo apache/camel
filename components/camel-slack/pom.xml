@@ -24,16 +24,13 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-slack</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Slack</name>
     <description>Camel Slack Support</description>
-
-    <properties>
-    </properties>
 
     <dependencies>
 

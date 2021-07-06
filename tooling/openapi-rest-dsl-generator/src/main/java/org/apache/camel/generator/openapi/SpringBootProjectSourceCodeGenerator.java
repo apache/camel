@@ -18,6 +18,7 @@ package org.apache.camel.generator.openapi;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
@@ -28,6 +29,8 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import static org.apache.camel.util.StringHelper.notEmpty;
 
@@ -38,6 +41,8 @@ public class SpringBootProjectSourceCodeGenerator {
     private String indent = DEFAULT_INDENT;
 
     private String packageName;
+
+    private String[] mappingValues;
 
     public void generate(final Path destination) throws IOException {
         final JavaFile javaFile = generateSourceCode();
@@ -56,13 +61,32 @@ public class SpringBootProjectSourceCodeGenerator {
         return this;
     }
 
+    public SpringBootProjectSourceCodeGenerator withMappingValues(final String... mappingValues) {
+        if (!ArrayUtils.isEmpty(mappingValues)) {
+            this.mappingValues = mappingValues;
+        }
+        return this;
+    }
+
+    String genereateMappingValues() {
+        if (ArrayUtils.isEmpty(mappingValues)) {
+            return StringUtils.wrap("/**", '"');
+        }
+
+        StringBuilder sb = new StringBuilder("{");
+        Arrays.stream(mappingValues)
+                .forEach(str -> sb.append(sb.toString().endsWith("\"") ? "," : "").append(StringUtils.wrap(str, '"')));
+        sb.append("}");
+        return sb.toString();
+    }
+
     MethodSpec generateRestMethod() {
         final ClassName req = ClassName.bestGuess("javax.servlet.http.HttpServletRequest");
         final ClassName res = ClassName.bestGuess("javax.servlet.http.HttpServletResponse");
 
         final AnnotationSpec.Builder reqAnnotation
                 = AnnotationSpec.builder(ClassName.bestGuess("org.springframework.web.bind.annotation.RequestMapping"))
-                        .addMember("value", "\"/**\"");
+                        .addMember("value", genereateMappingValues());
 
         final MethodSpec.Builder forward = MethodSpec.methodBuilder("camelServlet").addModifiers(Modifier.PUBLIC)
                 .addParameter(req, "request")

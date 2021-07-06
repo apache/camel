@@ -72,7 +72,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.trace(
                         "Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
-                        new Object[] { commandStr, iSeries.getSystemName(), iSeries.getUserId() });
+                        commandStr, iSeries.getSystemName(), iSeries.getUserId());
             }
 
             boolean result = pgmCall.run();
@@ -219,7 +219,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         return iSeries;
     }
 
-    private void release(AS400 iSeries) throws Exception {
+    private void release(AS400 iSeries) {
         if (iSeries != null) {
             LOG.debug("Releasing connection to {}", getISeriesEndpoint());
             getISeriesEndpoint().releaseSystem(iSeries);

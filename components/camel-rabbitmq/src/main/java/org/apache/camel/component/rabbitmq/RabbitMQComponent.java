@@ -148,6 +148,8 @@ public class RabbitMQComponent extends DefaultComponent {
     private Map<String, Object> clientProperties;
     @Metadata(label = "advanced")
     private ExceptionHandler connectionFactoryExceptionHandler;
+    @Metadata(label = "consumer")
+    private boolean recoverFromDeclareException = true;
 
     public RabbitMQComponent() {
     }
@@ -270,10 +272,11 @@ public class RabbitMQComponent extends DefaultComponent {
         endpoint.setDeadLetterRoutingKey(getDeadLetterRoutingKey());
         endpoint.setAllowNullHeaders(isAllowNullHeaders());
         endpoint.setConnectionFactoryExceptionHandler(getConnectionFactoryExceptionHandler());
+        endpoint.setRecoverFromDeclareException(isRecoverFromDeclareException());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
-                    new Object[] { endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName() });
+                    endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName());
         }
 
         Map<String, Object> localArgs = new HashMap<>();
@@ -910,4 +913,19 @@ public class RabbitMQComponent extends DefaultComponent {
     public void setConnectionFactoryExceptionHandler(ExceptionHandler connectionFactoryExceptionHandler) {
         this.connectionFactoryExceptionHandler = connectionFactoryExceptionHandler;
     }
+
+    public boolean isRecoverFromDeclareException() {
+        return recoverFromDeclareException;
+    }
+
+    /**
+     * Decides whether an exception during declaration of exchanges or queues is recoverable or not. If the option is
+     * false, camel will throw an exception when starting the consumer, which will interrupt application startup (e.g.
+     * in the case when the exchange / queue is already declared in RabbitMQ and has incompatible configuration). If set
+     * to true, the consumer will try to reconnect periodically.
+     */
+    public void setRecoverFromDeclareException(boolean recoverFromDeclareException) {
+        this.recoverFromDeclareException = recoverFromDeclareException;
+    }
+
 }

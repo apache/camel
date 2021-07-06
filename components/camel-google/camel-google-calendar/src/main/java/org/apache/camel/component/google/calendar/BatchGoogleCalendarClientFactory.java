@@ -75,7 +75,7 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
     }
 
     // Authorizes the installed application to access user's protected data.
-    private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) throws Exception {
+    private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) {
         // authorize
         return new GoogleCredential.Builder()
                 .setJsonFactory(jsonFactory)

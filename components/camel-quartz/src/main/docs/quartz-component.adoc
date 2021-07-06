@@ -71,7 +71,7 @@ The Quartz component supports 13 options, which are listed below.
 | *scheduler* (advanced) | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. |  | Scheduler
 | *schedulerFactory* (advanced) | To use the custom SchedulerFactory which is used to create the Scheduler. |  | SchedulerFactory
 | *autoStartScheduler* (scheduler) | Whether or not the scheduler should be auto started. This options is default true | true | boolean
-| *interruptJobsOnShutdown* (scheduler) | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | boolean
+| *interruptJobsOnShutdown* (scheduler) | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. When a job is interrupted then Camel will mark the exchange to stop continue routing and set java.util.concurrent.RejectedExecutionException as caused exception. Therefore use this with care, as its often better to allow Camel jobs to complete and shutdown gracefully. | false | boolean
 | *startDelayedSeconds* (scheduler) | Seconds to wait before starting the quartz scheduler. |  | int
 |===
 // component options: END

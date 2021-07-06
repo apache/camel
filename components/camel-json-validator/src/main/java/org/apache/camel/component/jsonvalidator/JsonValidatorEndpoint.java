@@ -55,8 +55,9 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     private String headerName;
     @UriParam(label = "advanced")
     private JsonValidatorErrorHandler errorHandler = new DefaultJsonValidationErrorHandler();
+    private JsonSchemaLoader schemaLoader;
     @UriParam(label = "advanced")
-    private JsonSchemaLoader schemaLoader = new DefaultJsonSchemaLoader();
+    private JsonUriSchemaLoader uriSchemaLoader = new DefaultJsonUriSchemaLoader();
 
     public JsonValidatorEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
@@ -161,7 +162,12 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     private JsonSchema getOrCreateSchema() throws Exception {
         synchronized (this) {
             if (this.schema == null) {
-                this.schema = this.schemaLoader.createSchema(getCamelContext(), this.getResourceAsInputStream());
+                if (this.schemaLoader == null) {
+                    this.schema = this.uriSchemaLoader.createSchema(getCamelContext(), getResourceUri());
+                } else {
+                    // for backwards compatility, will continue to use the old schema loader if one was provided
+                    this.schema = this.schemaLoader.createSchema(getCamelContext(), this.getResourceAsInputStream());
+                }
             }
         }
         return this.schema;
@@ -185,6 +191,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
         this.errorHandler = errorHandler;
     }
 
+    @Deprecated
     public JsonSchemaLoader getSchemaLoader() {
         return schemaLoader;
     }
@@ -192,9 +199,25 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     /**
      * To use a custom schema loader allowing for adding custom format validation. The default implementation will
      * create a schema loader with draft v4 support.
+     *
+     * @deprecated Use {@link #setUriSchemaLoader(JsonUriSchemaLoader)} instead
      */
+    @Deprecated
     public void setSchemaLoader(JsonSchemaLoader schemaLoader) {
         this.schemaLoader = schemaLoader;
+    }
+
+    public JsonUriSchemaLoader getUriSchemaLoader() {
+        return uriSchemaLoader;
+    }
+
+    /**
+     * To use a custom schema loader allowing for adding custom format validation. The default implementation will
+     * create a schema loader that tries to determine the schema version from the $schema property of the specified
+     * schema.
+     */
+    public void setUriSchemaLoader(JsonUriSchemaLoader uriSchemaLoader) {
+        this.uriSchemaLoader = uriSchemaLoader;
     }
 
     public boolean isFailOnNullBody() {

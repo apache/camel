@@ -223,19 +223,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                        + "endpoint uris</a>")
     protected String include;
     @UriParam(label = "consumer,filter", description = "Is used to exclude files, if filename matches the regex "
-                                                       + "pattern (matching is case in-senstive). <p/> Notice if you use symbols such as plus sign and others "
+                                                       + "pattern (matching is case in-sensitive). <p/> Notice if you use symbols such as plus sign and others "
                                                        + "you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See "
                                                        + "more details at <a href=\"http://camel.apache.org/how-do-i-configure-endpoints.html\">configuring "
-                                                       + ""
                                                        + "endpoint uris</a>")
     protected String exclude;
     @UriParam(label = "consumer,filter",
               description = "Is used to include files matching file extension name (case insensitive). For example to include txt files, then use includeExt=txt."
-                            + " Multiple extensions can be separated by comma, for example to include txt and xml files, use includeExt=txt,xml")
+                            + " Multiple extensions can be separated by comma, for example to include txt and xml files, use includeExt=txt,xml."
+                            + " Note that the file extension includes all parts, for example having a file named mydata.tar.gz will have extension as tar.gz."
+                            + " For more flexibility then use the include/exclude options.")
     protected String includeExt;
     @UriParam(label = "consumer,filter",
               description = "Is used to exclude files matching file extension name (case insensitive). For example to exclude bak files, then use excludeExt=bak."
-                            + " Multiple extensions can be separated by comma, for example to exclude bak and dat files, use excludeExt=bak,dat.")
+                            + " Multiple extensions can be separated by comma, for example to exclude bak and dat files, use excludeExt=bak,dat."
+                            + " Note that the file extension includes all parts, for example having a file named mydata.tar.gz will have extension as tar.gz."
+                            + " For more flexibility then use the include/exclude options.")
     protected String excludeExt;
     @UriParam(label = "consumer,filter", javaType = "java.lang.String", description = "Expression (such as Simple "
                                                                                       + "Language) used to dynamically set the filename when moving it after processing. To move files into "

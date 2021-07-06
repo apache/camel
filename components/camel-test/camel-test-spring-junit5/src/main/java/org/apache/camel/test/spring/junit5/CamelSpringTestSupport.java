@@ -33,8 +33,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.DefaultPropertiesParser;
-import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -322,7 +320,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
                         sw.write(buf, 0, l);
                     }
                 }
-                PropertiesParser parser = new DefaultPropertiesParser();
                 String before = sw.toString();
                 String p = properties.keySet().stream().map(Pattern::quote)
                         .collect(Collectors.joining("|", Pattern.quote("{{") + "(", ")" + Pattern.quote("}}")));

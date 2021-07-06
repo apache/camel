@@ -186,6 +186,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean allowMessageBodySerialization;
     @UriParam(label = "consumer")
     private boolean reQueue;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean recoverFromDeclareException = true;
     // camel-jms supports this setting but it is not currently configurable in
     // camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
@@ -702,6 +704,20 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public boolean isDeclare() {
         return declare;
+    }
+
+    /**
+     * Decides whether an exception during declaration of exchanges or queues is recoverable or not. If the option is
+     * false, camel will throw an exception when starting the consumer, which will interrupt application startup (e.g.
+     * in the case when the exchange / queue is already declared in RabbitMQ and has incompatible configuration). If set
+     * to true, the consumer will try to reconnect periodically.
+     */
+    public boolean isRecoverFromDeclareException() {
+        return recoverFromDeclareException;
+    }
+
+    public void setRecoverFromDeclareException(boolean recoverFromDeclareException) {
+        this.recoverFromDeclareException = recoverFromDeclareException;
     }
 
     /**

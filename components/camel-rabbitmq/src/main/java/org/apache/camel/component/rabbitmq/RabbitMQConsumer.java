@@ -82,7 +82,6 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
             openConnection();
             return this.conn;
         } else {
-            openConnection();
             return this.conn;
         }
     }
@@ -94,7 +93,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     /**
      * Create the consumers but don't start yet
      */
-    private void createConsumers() throws IOException {
+    private void createConsumers() {
         // Create consumers but don't start yet
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
             createConsumer();
@@ -124,7 +123,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     /**
      * Add a consumer thread for given channel
      */
-    private void createConsumer() throws IOException {
+    private void createConsumer() {
         RabbitConsumer consumer = new RabbitConsumer(this);
         this.consumers.add(consumer);
     }
@@ -151,7 +150,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     /**
      * If needed, close Connection and Channels
      */
-    private void closeConnectionAndChannel() throws IOException, TimeoutException {
+    private void closeConnectionAndChannel() throws IOException {
         if (startConsumerCallable != null) {
             startConsumerCallable.stop();
         }

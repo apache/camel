@@ -681,6 +681,10 @@ public class MailBinding {
             }
         }
 
+        if (mailMessage.getSentDate() != null) {
+            answer.put(Exchange.MESSAGE_TIMESTAMP, mailMessage.getSentDate().getTime());
+        }
+
         return answer;
     }
 
@@ -777,7 +781,7 @@ public class MailBinding {
     }
 
     private static boolean isCollection(Object value) {
-        return value instanceof Collection || (value != null && value.getClass().isArray());
+        return value instanceof Collection || value != null && value.getClass().isArray();
     }
 
 }

@@ -72,6 +72,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "filename":
         case "fileName": target.getConfiguration().setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "ignorebody":
+        case "ignoreBody": target.getConfiguration().setIgnoreBody(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": target.getConfiguration().setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -210,6 +212,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "filename":
         case "fileName": return java.lang.String.class;
         case "greedy": return boolean.class;
+        case "ignorebody":
+        case "ignoreBody": return boolean.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includefolders":
@@ -344,6 +348,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "filename":
         case "fileName": return target.getConfiguration().getFileName();
         case "greedy": return target.isGreedy();
+        case "ignorebody":
+        case "ignoreBody": return target.getConfiguration().isIgnoreBody();
         case "includebody":
         case "includeBody": return target.getConfiguration().isIncludeBody();
         case "includefolders":

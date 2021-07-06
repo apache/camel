@@ -101,22 +101,20 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String consumerType;
     @UriParam(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
     private long cursorRegenerationDelay = 1000L;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackIncreasingField;
-
-    @UriParam(label = "changeStream")
+    @UriParam(label = "consumer,changeStream")
     private String streamFilter;
-
     // persistent tail tracking
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private boolean persistentTailTracking;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String persistentId;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackDb;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackCollection;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackField;
     @UriParam(label = "common")
     private MongoDbOutputType outputType;
@@ -235,7 +233,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      */
     public void initializeConnection() throws CamelMongoDbException {
         LOG.info("Initialising MongoDb endpoint: {}", this);
-        if (database == null || (collection == null && !(getDbStats.equals(operation) || command.equals(operation)))) {
+        if (database == null || collection == null && !(getDbStats.equals(operation) || command.equals(operation))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
 
@@ -262,7 +260,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
             LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. "
                       + "Cluster description: {}, Db: {}, Collection: {}",
-                    new Object[] { mongoConnection.getClusterDescription(), mongoDatabase.getName(), collection });
+                    mongoConnection.getClusterDescription(), mongoDatabase.getName(), collection);
 
             try {
                 if (ObjectHelper.isNotEmpty(collectionIndex)) {

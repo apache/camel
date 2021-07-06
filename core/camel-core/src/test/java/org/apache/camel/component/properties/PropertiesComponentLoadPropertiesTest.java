@@ -40,10 +40,11 @@ public class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
         Properties prop = pc.loadProperties();
 
         assertNotNull(prop);
-        assertEquals(19, prop.size());
+        assertEquals(20, prop.size());
 
         assertEquals("{{cool.b}}", prop.getProperty("cool.a"));
         assertEquals("10", prop.getProperty("myQueueSize"));
+        assertEquals("true", prop.getProperty("integration.ftpEnabled"));
     }
 
     @Override

@@ -31,7 +31,7 @@ public interface EKS2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Elastic Kubernetes Service (EKS)
+     * Builder for endpoint for the AWS Elastic Kubernetes Service (EKS)
      * component.
      */
     public interface EKS2EndpointBuilder extends EndpointProducerBuilder {
@@ -439,7 +439,7 @@ public interface EKS2EndpointBuilderFactory {
 
     public interface EKS2Builders {
         /**
-         * AWS 2 Elastic Kubernetes Service (EKS) (camel-aws2-eks)
+         * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
          * Manage AWS EKS cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -458,7 +458,7 @@ public interface EKS2EndpointBuilderFactory {
             return EKS2EndpointBuilderFactory.endpointBuilder("aws2-eks", path);
         }
         /**
-         * AWS 2 Elastic Kubernetes Service (EKS) (camel-aws2-eks)
+         * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
          * Manage AWS EKS cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management

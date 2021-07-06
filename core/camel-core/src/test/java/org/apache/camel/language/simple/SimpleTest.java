@@ -1951,6 +1951,12 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression(exp, "99");
     }
 
+    @Test
+    public void testMessageTimestamp() throws Exception {
+        exchange.getIn().setHeader(Exchange.MESSAGE_TIMESTAMP, 1234L);
+        assertExpression("${messageTimestamp}", 1234L);
+    }
+
     @Override
     protected String getLanguageName() {
         return "simple";

@@ -109,7 +109,7 @@ public class SalesforceSession extends ServiceSupport {
 
         // check if we need a new session
         // this way there's always a single valid session
-        if ((accessToken == null) || accessToken.equals(oldToken)) {
+        if (accessToken == null || accessToken.equals(oldToken)) {
 
             // try revoking the old access token before creating a new one
             accessToken = oldToken;

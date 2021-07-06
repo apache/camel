@@ -44,11 +44,11 @@ public class AvroDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String useDefaultObjectMapper;
-    @XmlAttribute
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
-    @XmlAttribute
+    @XmlAttribute(name = "jsonView")
     private String jsonViewTypeName;
     @XmlTransient
     private Class<?> jsonView;
@@ -57,7 +57,7 @@ public class AvroDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowJmsType;
-    @XmlAttribute
+    @XmlAttribute(name = "collectionType")
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;

@@ -17,6 +17,8 @@
 package org.apache.camel.impl.engine;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,9 +29,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
@@ -58,17 +57,17 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            final Path path = Paths.get(tryDecodeUri(remaining));
+            final File path = new File(tryDecodeUri(remaining));
 
             return new ResourceSupport(location) {
                 @Override
                 public boolean exists() {
-                    return Files.exists(path);
+                    return path.exists();
                 }
 
                 @Override
                 public URI getURI() {
-                    return path.toUri();
+                    return path.toURI();
                 }
 
                 @Override
@@ -76,11 +75,11 @@ public final class DefaultResourceResolvers {
                     if (!exists()) {
                         throw new FileNotFoundException(path + " does not exists");
                     }
-                    if (Files.isDirectory(path)) {
+                    if (path.isDirectory()) {
                         throw new FileNotFoundException(path + " is a directory");
                     }
 
-                    return Files.newInputStream(path);
+                    return new FileInputStream(path);
                 }
             };
         }

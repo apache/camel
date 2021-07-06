@@ -430,8 +430,16 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     }
 
     private MockEndpoint setupMock(String payload) {
+        String payload2;
+        int pos = payload.indexOf('\n');
+        if (pos != -1) {
+            payload2 = payload.substring(0, pos) + payload.substring(pos + 1);
+        } else {
+            payload2 = payload.replaceFirst("\\?>", "\\?>\n");
+        }
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived(payload);
+        mock.expectedMessageCount(1);
+        mock.message(0).body(String.class).in(payload, payload2);
         return mock;
     }
 
@@ -567,8 +575,8 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
         }
 
         static boolean algEquals(String algURI, String algName) {
-            return (algName.equalsIgnoreCase("DSA") && algURI.equalsIgnoreCase(SignatureMethod.DSA_SHA1))
-                    || (algName.equalsIgnoreCase("RSA") && algURI.equalsIgnoreCase(SignatureMethod.RSA_SHA1));
+            return algName.equalsIgnoreCase("DSA") && algURI.equalsIgnoreCase(SignatureMethod.DSA_SHA1)
+                    || algName.equalsIgnoreCase("RSA") && algURI.equalsIgnoreCase(SignatureMethod.RSA_SHA1);
         }
     }
 

@@ -35,6 +35,7 @@ import com.box.sdk.BoxSharedLink;
 import com.box.sdk.FileUploadParams;
 import com.box.sdk.Metadata;
 import com.box.sdk.ProgressListener;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,7 @@ public class BoxFilesManager {
                 return file.getInfo(fields);
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -106,7 +107,7 @@ public class BoxFilesManager {
             file.updateInfo(info);
             return file;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -217,7 +218,7 @@ public class BoxFilesManager {
             }
             return boxFile;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -258,7 +259,7 @@ public class BoxFilesManager {
 
             return file;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -281,7 +282,7 @@ public class BoxFilesManager {
             return file.getVersions();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -327,7 +328,7 @@ public class BoxFilesManager {
             }
             return output;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -369,7 +370,7 @@ public class BoxFilesManager {
             }
             return output;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -399,7 +400,7 @@ public class BoxFilesManager {
             fileVersion.promote();
             return fileVersion;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -432,7 +433,7 @@ public class BoxFilesManager {
                 return fileToCopy.copy(destinationFolder, newName).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -465,7 +466,7 @@ public class BoxFilesManager {
                 return (BoxFile) fileToMove.move(destinationFolder, newName).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -490,7 +491,7 @@ public class BoxFilesManager {
             fileToRename.rename(newFileName);
             return fileToRename;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -509,7 +510,7 @@ public class BoxFilesManager {
             BoxFile file = new BoxFile(boxConnection, fileId);
             file.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -537,7 +538,7 @@ public class BoxFilesManager {
 
             fileVersion.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -573,7 +574,7 @@ public class BoxFilesManager {
             BoxFile file = new BoxFile(boxConnection, fileId);
             return file.createSharedLink(access, unshareDate, permissions);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -597,7 +598,7 @@ public class BoxFilesManager {
             return file.getDownloadURL();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -620,7 +621,7 @@ public class BoxFilesManager {
             BoxFile file = new BoxFile(boxConnection, fileId);
             return file.getPreviewLink();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -667,7 +668,7 @@ public class BoxFilesManager {
             BoxFile file = new BoxFile(boxConnection, fileId);
             return file.getThumbnail(fileType, minWidth, minHeight, maxWidth, maxHeight);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -700,7 +701,7 @@ public class BoxFilesManager {
                 return file.createMetadata(metadata);
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -729,7 +730,7 @@ public class BoxFilesManager {
                 return file.getMetadata();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
 
@@ -754,7 +755,7 @@ public class BoxFilesManager {
             BoxFile file = new BoxFile(boxConnection, fileId);
             return file.updateMetadata(metadata);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -773,7 +774,7 @@ public class BoxFilesManager {
             BoxFile file = new BoxFile(boxConnection, fileId);
             file.deleteMetadata();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -803,7 +804,7 @@ public class BoxFilesManager {
             BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
             parentFolder.canUpload(fileName, size);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }

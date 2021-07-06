@@ -312,7 +312,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     protected void doInit() throws Exception {
         super.doInit();
 
-        if (unmarshalTypeName != null && (unmarshalType == null)) {
+        if (unmarshalTypeName != null && unmarshalType == null) {
             unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
         if (collectionTypeName != null && collectionType == null) {

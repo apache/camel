@@ -1,6 +1,6 @@
 [[aws2-iam-component]]
-= AWS 2 Identity and Access Management (IAM) Component
-:docTitle: AWS 2 Identity and Access Management (IAM)
+= AWS Identity and Access Management (IAM) Component
+:docTitle: AWS Identity and Access Management (IAM)
 :artifactId: camel-aws2-iam
 :description: Manage AWS IAM instances using AWS SDK version 2.x.
 :since: 3.1
@@ -8,7 +8,7 @@
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-iam.adoc[opts=optional]
 //Manually maintained attributes
-:group: AWS 2
+:group: AWS
 
 *Since Camel {since}*
 
@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Identity and Access Management (IAM) component supports 16 options, which are listed below.
+The AWS Identity and Access Management (IAM) component supports 16 options, which are listed below.
 
 
 
@@ -72,7 +72,7 @@ The AWS 2 Identity and Access Management (IAM) component supports 16 options, wh
 
 
 // endpoint options: START
-The AWS 2 Identity and Access Management (IAM) endpoint is configured using URI syntax:
+The AWS Identity and Access Management (IAM) endpoint is configured using URI syntax:
 
 ----
 aws2-iam:label

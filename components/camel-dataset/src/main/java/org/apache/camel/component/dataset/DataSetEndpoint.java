@@ -247,10 +247,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         if (log.isDebugEnabled()) {
             if (copy.getIn().getHeader(Exchange.DATASET_INDEX) != null) {
                 log.debug("Received message: {} (DataSet index={}) = {}",
-                        new Object[] { index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy });
+                        index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy);
             } else {
-                log.debug("Received message: {} = {}",
-                        new Object[] { index, copy });
+                log.debug("Received message: {} = {}", index, copy);
             }
         }
 

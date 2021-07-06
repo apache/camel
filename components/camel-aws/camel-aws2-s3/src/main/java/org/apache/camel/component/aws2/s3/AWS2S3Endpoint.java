@@ -40,7 +40,7 @@ import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
 /**
  * Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-s3", title = "AWS 2 S3 Storage Service",
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-s3", title = "AWS S3 Storage Service",
              syntax = "aws2-s3://bucketNameOrArn", category = { Category.CLOUD, Category.FILE })
 public class AWS2S3Endpoint extends ScheduledPollEndpoint {
 
@@ -96,8 +96,6 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
 
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Querying whether bucket [{}] already exists...", bucketName);
-
-        String prefix = getConfiguration().getPrefix();
 
         try {
             s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());

@@ -98,6 +98,8 @@ public class PropertiesComponent extends ServiceSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
+    private static final String NEGATE_PREFIX = PREFIX_TOKEN + "!";
+
     private CamelContext camelContext;
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
@@ -249,17 +251,34 @@ public class PropertiesComponent extends ServiceSupport
         return prop;
     }
 
-    protected String parseUri(String uri, PropertiesLookup properties, boolean keepUnresolvedOptional) {
+    protected String parseUri(final String uri, PropertiesLookup properties, boolean keepUnresolvedOptional) {
+        LOG.trace("Parsing uri {}", uri);
+
+        String key = uri;
         // enclose tokens if missing
-        if (!uri.contains(PREFIX_TOKEN) && !uri.startsWith(PREFIX_TOKEN)) {
-            uri = PREFIX_TOKEN + uri;
+        if (!key.contains(PREFIX_TOKEN) && !key.startsWith(PREFIX_TOKEN)) {
+            key = PREFIX_TOKEN + key;
         }
-        if (!uri.contains(SUFFIX_TOKEN) && !uri.endsWith(SUFFIX_TOKEN)) {
-            uri = uri + SUFFIX_TOKEN;
+        if (!key.contains(SUFFIX_TOKEN) && !key.endsWith(SUFFIX_TOKEN)) {
+            key = key + SUFFIX_TOKEN;
         }
 
-        LOG.trace("Parsing uri {}", uri);
-        return propertiesParser.parseUri(uri, properties, defaultFallbackEnabled, keepUnresolvedOptional);
+        // if key starts with a ! then negate a boolean response
+        boolean negate = key.startsWith(NEGATE_PREFIX);
+        if (negate) {
+            key = PREFIX_TOKEN + key.substring(NEGATE_PREFIX.length());
+        }
+
+        String answer = propertiesParser.parseUri(key, properties, defaultFallbackEnabled, keepUnresolvedOptional);
+        if (negate) {
+            if ("true".equalsIgnoreCase(answer)) {
+                answer = "false";
+            } else if ("false".equalsIgnoreCase(answer)) {
+                answer = "true";
+            }
+        }
+        LOG.trace("Parsed uri {} -> {}", uri, answer);
+        return answer;
     }
 
     @Override
@@ -598,14 +617,13 @@ public class PropertiesComponent extends ServiceSupport
                         LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
                     } else if (obj != null) {
                         LOG.warn(
-                                "PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: "
-                                 + type.getName());
+                                "PropertiesComponent cannot add custom PropertiesSource as the type is not a {} but: {}",
+                                PropertiesSource.class.getName(), type.getName());
                     }
                 }
             } catch (Exception e) {
-                LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage()
-                          + ". This exception is ignored",
-                        e);
+                LOG.debug("Error discovering and using custom PropertiesSource due to {}. This exception is ignored",
+                        e.getMessage(), e);
             }
         }
 

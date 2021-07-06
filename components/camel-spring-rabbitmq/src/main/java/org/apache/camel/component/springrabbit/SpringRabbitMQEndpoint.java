@@ -531,7 +531,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         return new AsyncRabbitTemplate(template);
     }
 
-    public AbstractMessageListenerContainer createMessageListenerContainer() throws Exception {
+    public AbstractMessageListenerContainer createMessageListenerContainer() {
         return getComponent().getListenerContainerFactory().createListenerContainer(this);
     }
 
@@ -598,11 +598,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
             boolean durable = parseArgsBoolean(map, "durable", "true");
             boolean autoDelete = parseArgsBoolean(map, "autoDelete", "false");
             if (!durable || autoDelete) {
-                LOG.info("Auto-declaring a non-durable or auto-delete Exchange ("
-                         + exchangeName
-                         + ") durable:" + durable + ", auto-delete:" + autoDelete + ". "
+                LOG.info("Auto-declaring a non-durable or auto-delete Exchange ({}) durable:{}, auto-delete:{}. "
                          + "It will be deleted by the broker if it shuts down, and can be redeclared by closing and "
-                         + "reopening the connection.");
+                         + "reopening the connection.",
+                        exchangeName, durable, autoDelete);
             }
 
             String en = SpringRabbitMQHelper.isDefaultExchange(getExchangeName()) ? "" : getExchangeName();
@@ -658,12 +657,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 final Queue rabbitQueue = qb.build();
 
                 if (!durable || autoDelete || exclusive) {
-                    LOG.info("Auto-declaring a non-durable, auto-delete, or exclusive Queue ("
-                             + rabbitQueue.getName()
-                             + ") durable:" + durable + ", auto-delete:" + autoDelete + ", exclusive:"
-                             + exclusive + ". "
-                             + "It will be redeclared if the broker stops and is restarted while the connection factory is "
-                             + "alive, but all messages will be lost.");
+                    LOG.info("Auto-declaring a non-durable, auto-delete, or exclusive Queue ({})"
+                             + "durable:{}, auto-delete:{}, exclusive:{}. It will be redeclared if the broker stops and "
+                             + "is restarted while the connection factory is alive, but all messages will be lost.",
+                            rabbitQueue.getName(), durable, autoDelete, exclusive);
                 }
 
                 String qn = admin.declareQueue(rabbitQueue);

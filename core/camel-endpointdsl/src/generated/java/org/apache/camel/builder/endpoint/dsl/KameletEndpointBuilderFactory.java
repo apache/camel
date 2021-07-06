@@ -42,6 +42,23 @@ public interface KameletEndpointBuilderFactory {
             return (AdvancedKameletEndpointConsumerBuilder) this;
         }
         /**
+         * Location of the Kamelet to use which can be specified as a resource
+         * from file system, classpath etc. The location cannot use wildcards,
+         * and must refer to a file including extension, for example
+         * file:/etc/foo-kamelet.xml.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param location the value to set
+         * @return the dsl builder
+         */
+        default KameletEndpointConsumerBuilder location(String location) {
+            doSetProperty("location", location);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -177,6 +194,23 @@ public interface KameletEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedKameletEndpointProducerBuilder advanced() {
             return (AdvancedKameletEndpointProducerBuilder) this;
+        }
+        /**
+         * Location of the Kamelet to use which can be specified as a resource
+         * from file system, classpath etc. The location cannot use wildcards,
+         * and must refer to a file including extension, for example
+         * file:/etc/foo-kamelet.xml.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param location the value to set
+         * @return the dsl builder
+         */
+        default KameletEndpointProducerBuilder location(String location) {
+            doSetProperty("location", location);
+            return this;
         }
         /**
          * If sending a message to a direct endpoint which has no active
@@ -349,6 +383,23 @@ public interface KameletEndpointBuilderFactory {
                 KameletEndpointProducerBuilder {
         default AdvancedKameletEndpointBuilder advanced() {
             return (AdvancedKameletEndpointBuilder) this;
+        }
+        /**
+         * Location of the Kamelet to use which can be specified as a resource
+         * from file system, classpath etc. The location cannot use wildcards,
+         * and must refer to a file including extension, for example
+         * file:/etc/foo-kamelet.xml.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param location the value to set
+         * @return the dsl builder
+         */
+        default KameletEndpointBuilder location(String location) {
+            doSetProperty("location", location);
+            return this;
         }
     }
 

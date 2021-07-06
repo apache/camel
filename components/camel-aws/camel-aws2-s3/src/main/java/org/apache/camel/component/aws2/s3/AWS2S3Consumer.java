@@ -379,20 +379,21 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         exchange.setPattern(pattern);
         Message message = exchange.getIn();
 
-        if (getConfiguration().isIncludeBody()) {
-            try {
-                message.setBody(IoUtils.toByteArray(s3Object));
-            } catch (IOException e) {
-                throw new RuntimeCamelException(e);
+        if (!getConfiguration().isIgnoreBody()) {
+            if (getConfiguration().isIncludeBody()) {
+                try {
+                    message.setBody(IoUtils.toByteArray(s3Object));
+                } catch (IOException e) {
+                    throw new RuntimeCamelException(e);
+                }
+            } else {
+                message.setBody(s3Object);
             }
-        } else {
-            message.setBody(s3Object);
         }
 
         message.setHeader(AWS2S3Constants.KEY, key);
         message.setHeader(AWS2S3Constants.BUCKET_NAME, getConfiguration().getBucketName());
         message.setHeader(AWS2S3Constants.E_TAG, s3Object.response().eTag());
-        message.setHeader(AWS2S3Constants.LAST_MODIFIED, s3Object.response().lastModified());
         message.setHeader(AWS2S3Constants.VERSION_ID, s3Object.response().versionId());
         message.setHeader(AWS2S3Constants.CONTENT_TYPE, s3Object.response().contentType());
         message.setHeader(AWS2S3Constants.CONTENT_LENGTH, s3Object.response().contentLength());
@@ -404,6 +405,11 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         message.setHeader(AWS2S3Constants.REPLICATION_STATUS, s3Object.response().replicationStatus());
         message.setHeader(AWS2S3Constants.STORAGE_CLASS, s3Object.response().storageClass());
         message.setHeader(AWS2S3Constants.METADATA, s3Object.response().metadata());
+        if (s3Object.response().lastModified() != null) {
+            message.setHeader(AWS2S3Constants.LAST_MODIFIED, s3Object.response().lastModified());
+            long ts = s3Object.response().lastModified().getEpochSecond() * 1000;
+            message.setHeader(Exchange.MESSAGE_TIMESTAMP, ts);
+        }
 
         /*
          * If includeBody == true, it is safe to close the object here because the S3Object

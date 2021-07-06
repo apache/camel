@@ -40,7 +40,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
     private DockerComponent component;
     private EventsCmd eventsCmd;
 
-    public DockerEventsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
+    public DockerEventsConsumer(DockerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.component = (DockerComponent) endpoint.getComponent();

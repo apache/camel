@@ -196,7 +196,8 @@ public interface IOTAEndpointBuilderFactory {
             return this;
         }
         /**
-         * Address security level.
+         * Security level to be used for the private key / address. Can be 1, 2
+         * or 3.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -211,7 +212,8 @@ public interface IOTAEndpointBuilderFactory {
             return this;
         }
         /**
-         * Address security level.
+         * Security level to be used for the private key / address. Can be 1, 2
+         * or 3.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.

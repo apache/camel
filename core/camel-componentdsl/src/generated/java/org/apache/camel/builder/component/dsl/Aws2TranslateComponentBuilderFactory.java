@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.translate.Translate2Component;
 public interface Aws2TranslateComponentBuilderFactory {
 
     /**
-     * AWS 2 Translate (camel-aws2-translate)
+     * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -45,7 +45,7 @@ public interface Aws2TranslateComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Translate component.
+     * Builder for the AWS Translate component.
      */
     interface Aws2TranslateComponentBuilder
             extends

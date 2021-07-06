@@ -341,7 +341,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    protected Server createServer() throws Exception {
+    protected Server createServer() {
         Server server = new Server();
         ContextHandlerCollection collection = new ContextHandlerCollection();
         server.setHandler(collection);

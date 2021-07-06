@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hdfs</artifactId>
@@ -46,9 +46,6 @@
             org.apache.hadoop.net,
             org.apache.hadoop.ipc
         </camel.osgi.import.additional>
-        <camel.osgi.activator>
-            org.apache.camel.component.hdfs.osgi.HdfsActivator
-        </camel.osgi.activator>
     </properties>
 
     <dependencies>
@@ -138,13 +135,6 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
         </dependency>
 
         <!-- test infra -->

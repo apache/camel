@@ -23,13 +23,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kamelet-reify</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Kamelet Reifiy</name>
+    <name>Camel :: Kamelet Reifiy (deprecated)</name>
     <description>To call Kamelets (indirectly)</description>
 
     <dependencies>

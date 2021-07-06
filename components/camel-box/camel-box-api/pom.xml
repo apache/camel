@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-box-parent</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-box-api</artifactId>
@@ -47,6 +47,12 @@
             <groupId>com.box</groupId>
             <artifactId>box-java-sdk</artifactId>
             <version>${box-java-sdk-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

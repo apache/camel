@@ -46,6 +46,7 @@ import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.saga.CamelSagaService;
+import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
@@ -114,8 +115,7 @@ public abstract class BaseMainSupport extends BaseService {
         CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
                 .newInstance("lra-saga-service", CamelSagaService.class)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find LRASagaService on classpath. "
-                                                                + "Add camel-lra to classpath."));
+                        "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
 
         // add as service so its discover by saga eip
         camelContext.addService(answer, true, false);
@@ -515,6 +515,10 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        // use the main autowired lifecycle strategy instead of the default
+        camelContext.getLifecycleStrategies().removeIf(s -> s instanceof AutowiredLifecycleStrategy);
+        camelContext.addLifecycleStrategy(new MainAutowiredLifecycleStrategy(camelContext));
+
         // setup properties
         configurePropertiesService(camelContext);
         // setup startup recorder before building context
@@ -716,6 +720,7 @@ public abstract class BaseMainSupport extends BaseService {
         Map<String, Object> lraProperties = new LinkedHashMap<>();
         Map<String, Object> routeTemplateProperties = new LinkedHashMap<>();
         Map<String, Object> beansProperties = new LinkedHashMap<>();
+        Map<String, String> globalOptions = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
                 // grab the value
@@ -777,9 +782,19 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(12);
                 validateOptionAndValue(key, option, value);
                 beansProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.global-options.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(12);
+                validateOptionAndValue(key, option, value);
+                globalOptions.put(optionKey(option), value);
             }
         }
 
+        // global options first
+        if (!globalOptions.isEmpty()) {
+            mainConfigurationProperties.setGlobalOptions(globalOptions);
+        }
         // create beans first as they may be used later
         if (!beansProperties.isEmpty()) {
             LOG.debug("Creating and binding beans to registry from loaded properties: {}", beansProperties.size());
@@ -981,7 +996,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (hc == null) {
                 hc = hcr.resolveById(parent);
                 if (hc == null) {
-                    LOG.warn("Cannot resolve HealthCheck with id: " + parent + " from classpath.");
+                    LOG.warn("Cannot resolve HealthCheck with id: {} from classpath.", parent);
                     continue;
                 }
                 hcr.register(hc);

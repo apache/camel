@@ -45,7 +45,9 @@ public class DefaultMessageConverter extends AbstractMessageConverter implements
                 throw new MessageConversionException(
                         "Cannot send message as message body is null, and option allowNullBody is false.");
             } else {
-                return new Message(null, messageProperties);
+                // cannot use null so use an empty array
+                byte[] empty = new byte[0];
+                return new Message(empty, messageProperties);
             }
         }
 

@@ -45,7 +45,7 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     private final Supplier<Consul> client;
     private final QueryOptions queryOptions;
 
-    public ConsulServiceDiscovery(ConsulConfiguration configuration) throws Exception {
+    public ConsulServiceDiscovery(ConsulConfiguration configuration) {
         this.client = Suppliers.memorize(() -> configuration.createConsulClient(getCamelContext()),
                 e -> {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);

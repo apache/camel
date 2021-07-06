@@ -81,8 +81,10 @@ public class AWS2S3Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean ignoreBody;
     @UriParam(label = "producer",
-              enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange")
+              enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange,createDownloadLink")
     private AWS2S3Operations operation;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
@@ -266,9 +268,9 @@ public class AWS2S3Configuration implements Cloneable {
      * If it is true, the S3Object exchange will be consumed and put into the body and closed. If false the S3Object
      * stream will be put raw into the body and the headers will be set with the S3 object metadata. This option is
      * strongly related to autocloseBody option. In case of setting includeBody to true because the S3Object stream will
-     * be consumed then it will also be closed in case of includeBody false then it will be up to the caller to close
-     * the S3Object stream. However setting autocloseBody to true when includeBody is false it will schedule to close
-     * the S3Object stream automatically on exchange completion.
+     * be consumed then it will also be closed, while in case of includeBody false then it will be up to the caller to
+     * close the S3Object stream. However setting autocloseBody to true when includeBody is false it will schedule to
+     * close the S3Object stream automatically on exchange completion.
      */
     public void setIncludeBody(boolean includeBody) {
         this.includeBody = includeBody;
@@ -276,6 +278,18 @@ public class AWS2S3Configuration implements Cloneable {
 
     public boolean isIncludeBody() {
         return includeBody;
+    }
+
+    /**
+     * If it is true, the S3 Object Body will be ignored completely, if it is set to false the S3 Object will be put in
+     * the body. Setting this to true, will override any behavior defined by includeBody option.
+     */
+    public boolean isIgnoreBody() {
+        return ignoreBody;
+    }
+
+    public void setIgnoreBody(boolean ignoreBody) {
+        this.ignoreBody = ignoreBody;
     }
 
     public boolean isDeleteAfterRead() {

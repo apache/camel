@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 /**
  * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.6.0", scheme = "aws2-eventbridge", title = "AWS 2 Eventbridge",
+@UriEndpoint(firstVersion = "3.6.0", scheme = "aws2-eventbridge", title = "AWS Eventbridge",
              syntax = "aws2-eventbridge://eventbusNameOrArn", producerOnly = true, category = {
                      Category.CLOUD,
                      Category.MANAGEMENT })

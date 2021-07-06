@@ -27,7 +27,7 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -75,7 +75,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends BaseMinaTest {
     @Test
     public void testExchangeFailedOutShouldBeNull() throws Exception {
         String out = sendAndReceive("force-exception");
-        assertFalse("force-exception".equals(out), "out should not be the same as in when the exchange has failed");
+        assertNotEquals("force-exception", out, "out should not be the same as in when the exchange has failed");
         assertEquals("java.lang.IllegalArgumentException: Forced exception", out, "should get the exception here");
     }
 

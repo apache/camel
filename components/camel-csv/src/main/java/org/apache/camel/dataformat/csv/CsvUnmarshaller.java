@@ -38,14 +38,20 @@ import org.apache.commons.csv.CSVRecord;
  */
 abstract class CsvUnmarshaller {
     protected final CSVFormat format;
+    protected final CsvDataFormat dataFormat;
     protected final CsvRecordConverter<?> converter;
 
     private CsvUnmarshaller(CSVFormat format, CsvDataFormat dataFormat) {
         this.format = format;
+        this.dataFormat = dataFormat;
         this.converter = extractConverter(dataFormat);
     }
 
     public static CsvUnmarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
+        // If we want to capture the header record, thus the header must be either fixed or automatic
+        if (dataFormat.isCaptureHeaderRecord() && format.getHeader() == null) {
+            format = format.withHeader();
+        }
         // If we want to use maps, thus the header must be either fixed or automatic
         if ((dataFormat.isUseMaps() || dataFormat.isUseOrderedMaps()) && format.getHeader() == null) {
             format = format.withHeader();
@@ -98,6 +104,9 @@ abstract class CsvUnmarshaller {
             CSVParser parser
                     = new CSVParser(new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange)), format);
             try {
+                if (dataFormat.isCaptureHeaderRecord()) {
+                    exchange.getMessage().setHeader(CsvConstants.HEADER_RECORD, parser.getHeaderNames());
+                }
                 return asList(parser.iterator(), converter);
             } finally {
                 IOHelper.close(parser);

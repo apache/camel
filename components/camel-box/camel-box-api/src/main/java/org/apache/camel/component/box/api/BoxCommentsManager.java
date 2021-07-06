@@ -22,6 +22,7 @@ import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxComment;
 import com.box.sdk.BoxFile;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class BoxCommentsManager {
             fileToCommentOn.addComment(message);
             return fileToCommentOn;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -90,7 +91,7 @@ public class BoxCommentsManager {
             return file.getComments();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -112,7 +113,7 @@ public class BoxCommentsManager {
 
             return comment.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -136,7 +137,7 @@ public class BoxCommentsManager {
             BoxComment comment = new BoxComment(boxConnection, commentId);
             return comment.reply(message).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -160,7 +161,7 @@ public class BoxCommentsManager {
             BoxComment comment = new BoxComment(boxConnection, commentId);
             return comment.changeMessage(message).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
@@ -179,7 +180,7 @@ public class BoxCommentsManager {
             BoxComment comment = new BoxComment(boxConnection, commentId);
             comment.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }

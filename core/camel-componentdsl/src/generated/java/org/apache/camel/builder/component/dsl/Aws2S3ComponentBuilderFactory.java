@@ -32,7 +32,7 @@ import org.apache.camel.component.aws2.s3.AWS2S3Component;
 public interface Aws2S3ComponentBuilderFactory {
 
     /**
-     * AWS 2 S3 Storage Service (camel-aws2-s3)
+     * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
      * version 2.x.
      * 
@@ -47,7 +47,7 @@ public interface Aws2S3ComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 S3 Storage Service component.
+     * Builder for the AWS S3 Storage Service component.
      */
     interface Aws2S3ComponentBuilder
             extends
@@ -461,13 +461,30 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * If it is true, the S3 Object Body will be ignored completely, if it
+         * is set to false the S3 Object will be put in the body. Setting this
+         * to true, will override any behavior defined by includeBody option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder ignoreBody(boolean ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+        /**
          * If it is true, the S3Object exchange will be consumed and put into
          * the body and closed. If false the S3Object stream will be put raw
          * into the body and the headers will be set with the S3 object
          * metadata. This option is strongly related to autocloseBody option. In
          * case of setting includeBody to true because the S3Object stream will
-         * be consumed then it will also be closed in case of includeBody false
-         * then it will be up to the caller to close the S3Object stream.
+         * be consumed then it will also be closed, while in case of includeBody
+         * false then it will be up to the caller to close the S3Object stream.
          * However setting autocloseBody to true when includeBody is false it
          * will schedule to close the S3Object stream automatically on exchange
          * completion.
@@ -912,6 +929,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "destinationBucketSuffix": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucketSuffix((java.lang.String) value); return true;
             case "doneFileName": getOrCreateConfiguration((AWS2S3Component) component).setDoneFileName((java.lang.String) value); return true;
             case "fileName": getOrCreateConfiguration((AWS2S3Component) component).setFileName((java.lang.String) value); return true;
+            case "ignoreBody": getOrCreateConfiguration((AWS2S3Component) component).setIgnoreBody((boolean) value); return true;
             case "includeBody": getOrCreateConfiguration((AWS2S3Component) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((AWS2S3Component) component).setIncludeFolders((boolean) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setMoveAfterRead((boolean) value); return true;

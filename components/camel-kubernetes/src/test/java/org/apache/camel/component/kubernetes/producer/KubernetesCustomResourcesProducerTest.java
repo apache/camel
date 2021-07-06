@@ -34,7 +34,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport {
 
@@ -102,7 +102,7 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
 
         List<Map<String, Object>> result = ex.getMessage().getBody(List.class);
 
-        assertTrue(1 == result.size());
+        assertEquals(1, result.size());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
 
         List<Map<String, Object>> result = ex.getMessage().getBody(List.class);
 
-        assertTrue(1 == result.size());
+        assertEquals(1, result.size());
     }
 
     @Test
@@ -195,7 +195,7 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
 
         List<Map<String, Object>> result1 = ex4.getMessage().getBody(List.class);
 
-        assertTrue(result1.size() == 0);
+        assertEquals(0, result1.size());
     }
 
     @Override

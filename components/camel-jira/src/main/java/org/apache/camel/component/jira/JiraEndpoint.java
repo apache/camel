@@ -79,6 +79,8 @@ public class JiraEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);
 
+    private final Object lock = new Object();
+
     @UriPath
     @Metadata(required = true)
     private JiraType type;
@@ -107,32 +109,49 @@ public class JiraEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-
-        Registry registry = getCamelContext().getRegistry();
-        JiraRestClientFactory factory = registry.lookupByNameAndType(JIRA_REST_CLIENT_FACTORY, JiraRestClientFactory.class);
-        if (factory == null) {
-            factory = new OAuthAsynchronousJiraRestClientFactory();
-        }
-        final URI jiraServerUri = URI.create(configuration.getJiraUrl());
-        if (configuration.getUsername() != null) {
-            LOG.info("Jira Basic authentication with username/password.");
-            client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(),
-                    configuration.getPassword());
-        } else {
-            LOG.info("Jira OAuth authentication.");
-            JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
-                    configuration.getConsumerKey(),
-                    configuration.getVerificationCode(), configuration.getPrivateKey(), configuration.getAccessToken(),
-                    configuration.getJiraUrl());
-            client = factory.create(jiraServerUri, oAuthHandler);
-        }
+        connect();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        disconnect();
+    }
+
+    public void connect() {
+        if (client == null) {
+            synchronized (lock) {
+                if (client == null) {
+                    Registry registry = getCamelContext().getRegistry();
+                    JiraRestClientFactory factory
+                            = registry.lookupByNameAndType(JIRA_REST_CLIENT_FACTORY, JiraRestClientFactory.class);
+                    if (factory == null) {
+                        factory = new OAuthAsynchronousJiraRestClientFactory();
+                    }
+                    final URI jiraServerUri = URI.create(configuration.getJiraUrl());
+                    if (configuration.getUsername() != null) {
+                        LOG.debug("Connecting to JIRA with Basic authentication with username/password");
+                        client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(),
+                                configuration.getPassword());
+                    } else {
+                        LOG.debug("Connecting to JIRA with OAuth authentication");
+                        JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
+                                configuration.getConsumerKey(),
+                                configuration.getVerificationCode(), configuration.getPrivateKey(),
+                                configuration.getAccessToken(),
+                                configuration.getJiraUrl());
+                        client = factory.create(jiraServerUri, oAuthHandler);
+                    }
+                }
+            }
+        }
+    }
+
+    public void disconnect() throws Exception {
         if (client != null) {
+            LOG.debug("Disconnecting from JIRA");
             client.close();
+            client = null;
         }
     }
 
@@ -213,6 +232,8 @@ public class JiraEndpoint extends DefaultEndpoint {
     }
 
     public JiraRestClient getClient() {
+        // ensure connected
+        connect();
         return client;
     }
 

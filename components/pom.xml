@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -87,7 +87,6 @@
         <module>camel-ahc</module>
         <module>camel-amqp</module>
         <module>camel-any23</module>
-        <module>camel-apns</module>
         <module>camel-arangodb</module>
         <module>camel-as2</module>
         <module>camel-asn1</module>
@@ -171,7 +170,7 @@
         <module>camel-hdfs</module>
         <module>camel-headersmap</module>
         <module>camel-hl7</module>
-        <module>camel-huaweicloud-smn</module>
+        <module>camel-huawei</module>
         <module>camel-ical</module>
         <module>camel-iec60870</module>
         <module>camel-ignite</module>
@@ -381,7 +380,7 @@
                     <configuration>
                         <reuseForks>true</reuseForks>
                         <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         <systemPropertyVariables>
                             <visibleassertions.silence>true</visibleassertions.silence>
                         </systemPropertyVariables>

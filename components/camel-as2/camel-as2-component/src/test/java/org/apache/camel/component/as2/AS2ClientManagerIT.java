@@ -120,6 +120,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
     private static final String MDN_FROM = "as2Test@server.example.com";
     private static final String MDN_SUBJECT_PREFIX = "MDN Response:";
+    private static final String MDN_MESSAGE_TEMPLATE = "TBD";
 
     private static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
                                               + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
@@ -742,7 +743,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         serverConnection = new AS2ServerConnection(
                 AS2_VERSION, ORIGIN_SERVER_NAME,
                 SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
-                serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate(), serverSigningKP.getPrivate());
+                serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate(), serverSigningKP.getPrivate(),
+                MDN_MESSAGE_TEMPLATE);
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
     }

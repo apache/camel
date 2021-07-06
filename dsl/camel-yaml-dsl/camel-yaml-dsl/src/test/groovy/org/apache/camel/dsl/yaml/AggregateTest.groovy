@@ -62,8 +62,6 @@ class AggregateTest extends YamlTestSupport {
 
     def 'aggregate (flow)'() {
         setup:
-            setFlowMode(YamlDeserializationMode.FLOW)
-
             loadRoutes '''
                 - beans:
                   - name: myAggregatorStrategy
@@ -94,7 +92,9 @@ class AggregateTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def 'aggregate (disabled)'() {
+    def 'aggregate (flow disabled)'() {
+        setup:
+            setFlowMode(YamlDeserializationMode.CLASSIC)
         when:
             loadRoutes '''
                 - beans:
@@ -113,5 +113,35 @@ class AggregateTest extends YamlTestSupport {
         then:
             def ex = thrown(FailedToCreateRouteException)
             ex.message.contains('Failed to create route')
+    }
+
+    def 'aggregate (strategy-ref class)'() {
+        setup:
+        loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - aggregate:
+                          strategy-ref: "#class:org.apache.camel.processor.aggregate.UseLatestAggregationStrategy"
+                          completion-size: 2
+                          correlation-expression:
+                            simple: "${header.StockSymbol}"
+                          steps:  
+                            - to: "mock:route"
+            '''
+
+        withMock('mock:route') {
+            expectedBodiesReceived '2', '4'
+        }
+
+        when:
+        withTemplate {
+            to('direct:route').withBody('1').withHeader('StockSymbol', 1).send()
+            to('direct:route').withBody('2').withHeader('StockSymbol', 1).send()
+            to('direct:route').withBody('3').withHeader('StockSymbol', 2).send()
+            to('direct:route').withBody('4').withHeader('StockSymbol', 2).send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
     }
 }

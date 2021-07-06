@@ -4,7 +4,7 @@
 :page-source: components/camel-microprofile/camel-microprofile-health/src/main/docs/microprofile-health.adoc
 :docTitle: Microprofile Health
 :artifactId: camel-microprofile-health
-:description: Bridging Eclipse MicroProfile Health with Camel health checks
+:description: Expose Camel health checks via MicroProfile Health
 :since: 3.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/microprofile-health.adoc[opts=optional]

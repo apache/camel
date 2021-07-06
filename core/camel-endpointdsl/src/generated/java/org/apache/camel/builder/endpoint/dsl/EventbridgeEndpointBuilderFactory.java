@@ -31,7 +31,7 @@ public interface EventbridgeEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Eventbridge component.
+     * Builder for endpoint for the AWS Eventbridge component.
      */
     public interface EventbridgeEndpointBuilder
             extends
@@ -470,7 +470,7 @@ public interface EventbridgeEndpointBuilderFactory {
 
     public interface EventbridgeBuilders {
         /**
-         * AWS 2 Eventbridge (camel-aws2-eventbridge)
+         * AWS Eventbridge (camel-aws2-eventbridge)
          * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -489,7 +489,7 @@ public interface EventbridgeEndpointBuilderFactory {
             return EventbridgeEndpointBuilderFactory.endpointBuilder("aws2-eventbridge", path);
         }
         /**
-         * AWS 2 Eventbridge (camel-aws2-eventbridge)
+         * AWS Eventbridge (camel-aws2-eventbridge)
          * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management

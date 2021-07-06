@@ -31,7 +31,7 @@ public class ASN1DataFormatReifier extends DataFormatReifier<ASN1DataFormat> {
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("usingIterator", definition.getUsingIterator());
-        properties.put("clazzName", definition.getClazzName());
+        properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
     }
 
 }

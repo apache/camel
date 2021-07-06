@@ -31,7 +31,7 @@ The JSON Gson dataformat supports 3 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
-| unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
+| unmarshalType |  | String | Class name of the java type to use when unmarshalling
 | contentTypeHeader | true | Boolean | Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
 |===
 // dataformat options: END

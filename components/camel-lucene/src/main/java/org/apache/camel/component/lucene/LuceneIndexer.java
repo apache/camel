@@ -60,7 +60,7 @@ public class LuceneIndexer {
 
         this.setAnalyzer(analyzer);
 
-        if ((sourceDirectory != null) && (!sourceDirectoryIndexed)) {
+        if (sourceDirectory != null && !sourceDirectoryIndexed) {
             this.setSourceDirectory(sourceDirectory);
             add(getSourceDirectory());
             sourceDirectoryIndexed = true;

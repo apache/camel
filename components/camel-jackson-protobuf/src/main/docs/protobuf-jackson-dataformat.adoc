@@ -4,7 +4,7 @@
 :artifactId: camel-jackson-protobuf
 :description: Marshal POJOs to Protobuf and back using Jackson.
 :since: 3.10
-:supportLevel: Preview
+:supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/protobuf-jackson.adoc[opts=optional]
 
 *Since Camel {since}*
@@ -49,11 +49,11 @@ The Protobuf Jackson dataformat supports 18 options, which are listed below.
 | contentTypeHeader | true | Boolean | Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
 | objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
 | useDefaultObjectMapper | true | Boolean | Whether to lookup and use default Jackson ObjectMapper from the registry.
-| unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
-| jsonViewTypeName |  | String | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
+| unmarshalType |  | String | Class name of the java type to use when unmarshalling
+| jsonView |  | String | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
 | include |  | String | If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL
 | allowJmsType | false | Boolean | Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.
-| collectionTypeName |  | String | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.
+| collectionType |  | String | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.
 | useList | false | Boolean | To unmarshal to a List of Map or a List of Pojo.
 | moduleClassNames |  | String | To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.
 | moduleRefs |  | String | To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.

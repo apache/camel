@@ -286,12 +286,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
         public String variableName(final String given) {
             final String base = StringUtils.uncapitalize(given);
-
-            AtomicInteger counter = varNames.get(base);
-            if (counter == null) {
-                counter = new AtomicInteger();
-                varNames.put(base, counter);
-            }
+            AtomicInteger counter = varNames.computeIfAbsent(base, k -> new AtomicInteger());
 
             return base + counter.incrementAndGet();
         }
@@ -459,7 +454,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         }
 
         // write required Enumerations for any picklists
-        if (!useStringsForPicklists || (picklistToEnums != null && picklistToEnums.length > 0)) {
+        if (!useStringsForPicklists || picklistToEnums != null && picklistToEnums.length > 0) {
             for (final SObjectField field : description.getFields()) {
                 if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
                     final String enumName = utility.enumTypeName(description.getName(),

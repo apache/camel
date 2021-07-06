@@ -956,9 +956,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         if (null != charset) {
             headers.put(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
         }
-        if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
-            headers.put(HttpHeaders.CONTENT_TYPE, getContentType());
-        }
+
+        headers.computeIfAbsent(HttpHeaders.CONTENT_TYPE, k -> getContentType());
 
         // add request headers
         headers.putAll(batchRequest.getHeaders());
@@ -981,7 +980,7 @@ public final class Olingo2AppImpl implements Olingo2App {
             // Olingo is sensitive to batch part charset case!!
             headers.put(HttpHeaders.ACCEPT, contentType.withCharset("").toString().toLowerCase());
         }
-        if (!headers.containsKey(HttpHeaders.ACCEPT_CHARSET) && (null != charset)) {
+        if (!headers.containsKey(HttpHeaders.ACCEPT_CHARSET) && null != charset) {
             headers.put(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
         }
 
@@ -1231,7 +1230,7 @@ public final class Olingo2AppImpl implements Olingo2App {
         }
 
         // set user specified endpoint headers
-        if ((endpointHttpHeaders != null) && !endpointHttpHeaders.isEmpty()) {
+        if (endpointHttpHeaders != null && !endpointHttpHeaders.isEmpty()) {
             for (Map.Entry<String, String> entry : endpointHttpHeaders.entrySet()) {
                 httpUriRequest.setHeader(entry.getKey(), entry.getValue());
             }

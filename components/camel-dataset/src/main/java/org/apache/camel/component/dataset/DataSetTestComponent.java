@@ -19,8 +19,8 @@ package org.apache.camel.component.dataset;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -31,7 +31,7 @@ import org.apache.camel.util.URISupport;
  * receive during testing.
  */
 @org.apache.camel.spi.annotations.Component("dataset-test")
-public class DataSetTestComponent extends DefaultComponent {
+public class DataSetTestComponent extends MockComponent {
 
     public DataSetTestComponent() {
     }
@@ -43,6 +43,7 @@ public class DataSetTestComponent extends DefaultComponent {
         if (timeout != null) {
             answer.setTimeout(timeout);
         }
+        answer.setLog(isLog());
         setProperties(answer, parameters);
 
         // from the rest create a new uri with those parameters

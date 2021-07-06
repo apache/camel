@@ -290,8 +290,19 @@ public class SimplePredicateParser extends BaseSimpleParser {
         // this can be many things but lets check if this is numeric based, then we can optimize this
         String text = imageToken.getText();
 
-        // lets see if its numeric then we can optimize this
-        boolean numeric = isNumber(text) || isFloatingNumber(text);
+        // is this image from within a quoted block (single or double quoted)
+        boolean quoted = false;
+        if (!nodes.isEmpty()) {
+            SimpleNode last = nodes.get(nodes.size() - 1);
+            quoted = last instanceof SingleQuoteStart || last instanceof DoubleQuoteStart;
+        }
+
+        boolean numeric = false;
+        if (!quoted) {
+            // if the text is not in a quoted block (literal text), then lets see if
+            // its numeric then we can optimize this
+            numeric = isNumber(text) || isFloatingNumber(text);
+        }
         if (numeric) {
             nodes.add(new NumericExpression(imageToken.getToken(), text));
         } else {

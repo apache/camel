@@ -40,6 +40,7 @@ public interface KameletReifyComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static KameletReifyComponentBuilder kameletReify() {
         return new KameletReifyComponentBuilderImpl();
     }

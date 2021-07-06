@@ -153,7 +153,7 @@ public class RestModelConverters {
                 case "integer":
                     break;
                 default:
-                    LOG.warn("Encountered unexpected type " + type + " in processing schema.");
+                    LOG.warn("Encountered unexpected type {} in processing schema.", type);
                     break;
             }
         }

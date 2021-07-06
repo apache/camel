@@ -238,8 +238,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureHttpProxy(
-            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure)
-            throws Exception {
+            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) {
         String proxyAuthScheme = getParameter(parameters, "proxyAuthScheme", String.class, getProxyAuthScheme());
         if (proxyAuthScheme == null) {
             // fallback and use either http or https depending on secure
@@ -437,8 +436,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     protected HttpClientBuilder createHttpClientBuilder(
             final String uri, final Map<String, Object> parameters,
-            final Map<String, Object> httpClientOptions)
-            throws Exception {
+            final Map<String, Object> httpClientOptions) {
         // http client can be configured from URI options
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         // allow the builder pattern

@@ -519,10 +519,9 @@ public class CMISProducer extends DefaultProducer {
         return message.getBody() == null;
     }
 
-    private Folder storeFolder(Folder parentFolder, Map<String, Object> cmisProperties) throws Exception {
-        if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
-            cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
-        }
+    private Folder storeFolder(Folder parentFolder, Map<String, Object> cmisProperties) {
+        cmisProperties.putIfAbsent(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
+
         LOG.debug("Creating folder with properties: {}", cmisProperties);
         return parentFolder.createFolder(cmisProperties);
     }
@@ -530,9 +529,7 @@ public class CMISProducer extends DefaultProducer {
     private Document storeDocument(
             Folder parentFolder, Map<String, Object> cmisProperties, ContentStream contentStream, String versioning)
             throws Exception {
-        if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
-            cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
-        }
+        cmisProperties.putIfAbsent(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
 
         VersioningState versioningState = VersioningState.NONE;
 
@@ -564,7 +561,7 @@ public class CMISProducer extends DefaultProducer {
         return message.getBody(byte[].class);
     }
 
-    private String getMimeType(Message message) throws NoSuchHeaderException {
+    private String getMimeType(Message message) {
         String mimeType = message.getHeader(PropertyIds.CONTENT_STREAM_MIME_TYPE, String.class);
         if (mimeType == null) {
             mimeType = MessageHelper.getContentType(message);

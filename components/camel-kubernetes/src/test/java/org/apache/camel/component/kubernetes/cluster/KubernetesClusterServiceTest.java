@@ -314,7 +314,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
                 String leader = null;
                 for (LeaderRecorder recorder : partitionRecorders.get(partition)) {
                     String partitionLeader = recorder.getCurrentLeader();
-                    if (partitionLeader == null || (leader != null && !leader.equals(partitionLeader))) {
+                    if (partitionLeader == null || isCurrentLeader(leader, partitionLeader)) {
                         return false;
                     }
                     leader = partitionLeader;
@@ -326,6 +326,10 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
             }
             return condition.test(leaders);
         });
+    }
+
+    private boolean isCurrentLeader(String leader, String partitionLeader) {
+        return leader != null && !leader.equals(partitionLeader);
     }
 
     private void withLockServer(String pod, Consumer<LockTestServer<?>> consumer) {
@@ -374,7 +378,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
             } else {
                 if (Objects.equals(info.getLeader(), currentLeaderLastSeen.getLeader())) {
                     currentLeaderLastSeen = info;
-                } else if (info.getLeader() != null && !info.getLeader().equals(currentLeaderLastSeen.getLeader())) {
+                } else if (isCurrentLeader(info.getLeader(), currentLeaderLastSeen.getLeader())) {
                     // switch
                     long delay = info.getChangeTimestamp() - currentLeaderLastSeen.getChangeTimestamp();
                     assertTrue(delay >= TimeUnit.MILLISECONDS.convert(minimum, unit),

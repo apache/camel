@@ -20,15 +20,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kamelet.KameletComponent;
-import org.apache.camel.component.kamelet.KameletResourceLoaderListener;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * To automatic downloaded dependencies that Kamelets requires.
  */
-public final class DependencyDownloader extends ServiceSupport implements CamelContextAware, KameletResourceLoaderListener {
+public final class DependencyDownloader extends ServiceSupport implements CamelContextAware, RouteTemplateLoaderListener {
 
     private final KameletDependencyDownloader downloader = new KameletDependencyDownloader("yaml");
     private CamelContext camelContext;
@@ -46,7 +46,7 @@ public final class DependencyDownloader extends ServiceSupport implements CamelC
     @Override
     protected void doBuild() throws Exception {
         KameletComponent kc = camelContext.getComponent("kamelet", KameletComponent.class);
-        kc.setKameletResourceLoaderListener(this);
+        kc.setRouteTemplateLoaderListener(this);
 
         downloader.setCamelContext(camelContext);
         ServiceHelper.buildService(downloader);
@@ -68,7 +68,7 @@ public final class DependencyDownloader extends ServiceSupport implements CamelC
     }
 
     @Override
-    public void loadKamelets(Resource resource) {
+    public void loadRouteTemplate(Resource resource) {
         if (resource.getLocation().endsWith(".yaml")) {
             try {
                 downloader.doLoadRouteBuilder(resource);

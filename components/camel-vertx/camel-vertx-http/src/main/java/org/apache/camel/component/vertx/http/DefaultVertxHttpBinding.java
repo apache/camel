@@ -154,7 +154,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
             Message message = exchange.getMessage();
             VertxHttpConfiguration configuration = endpoint.getConfiguration();
             boolean ok = endpoint.isStatusCodeOk(result.statusCode());
-            if ((!configuration.isThrowExceptionOnFailure()) || (configuration.isThrowExceptionOnFailure() && ok)) {
+            if (!configuration.isThrowExceptionOnFailure() || configuration.isThrowExceptionOnFailure() && ok) {
                 populateResponseHeaders(exchange, result, configuration.getHeaderFilterStrategy());
                 message.setBody(processResponseBody(endpoint, exchange, result));
             } else {
@@ -203,7 +203,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                 boolean transferException = endpoint.getConfiguration().isTransferException();
                 boolean allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
 
-                if (allowJavaSerializedObject || (exceptionOnly && transferException)) {
+                if (allowJavaSerializedObject || exceptionOnly && transferException) {
                     InputStream inputStream
                             = exchange.getContext().getTypeConverter().convertTo(InputStream.class, responseBody.getBytes());
                     if (inputStream != null) {

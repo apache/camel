@@ -1303,10 +1303,23 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(asn1Df);
     }
 
-    public T asn1(String clazzName) {
-        return dataFormat(new ASN1DataFormat(clazzName));
+    /**
+     * Uses the ASN.1 file data format
+     */
+    public T asn1(String unmarshalType) {
+        return dataFormat(new ASN1DataFormat(unmarshalType));
     }
 
+    /**
+     * Uses the ASN.1 file data format
+     */
+    public T asn1(Class<?> unmarshalType) {
+        return dataFormat(new ASN1DataFormat(unmarshalType));
+    }
+
+    /**
+     * Uses the ASN.1 file data format
+     */
     public T asn1(Boolean usingIterator) {
         return dataFormat(new ASN1DataFormat(usingIterator));
     }

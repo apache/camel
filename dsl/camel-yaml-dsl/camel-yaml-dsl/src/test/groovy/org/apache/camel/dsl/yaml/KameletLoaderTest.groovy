@@ -257,4 +257,53 @@ class KameletLoaderTest extends YamlTestSupport {
 
             MockEndpoint.assertIsSatisfied(context)
     }
+
+    def "kamelet with filter and flow"() {
+        setup:
+            loadKamelets '''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: Kamelet
+                metadata:
+                  name: filter-action
+                spec:
+                  definition:
+                    title: "Filter"
+                    description: "Filter based on the body"
+                  flow:
+                    from:
+                      uri: kamelet:source
+                      steps:
+                      - filter:
+                          simple: "${body} range '5..7'"
+                      - to: "log:filter"
+                      - to: "kamelet:sink"    
+            '''
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - kamelet:
+                          name: "filter-action"
+                      - to: "log:route"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedBodiesReceived 5, 6, 7
+            }
+
+        when:
+            context.start()
+
+            withTemplate {
+                (1..10).each {
+                    to('direct:start')
+                        .withBody(it)
+                        .send()
+                }
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
 }

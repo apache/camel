@@ -85,7 +85,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange, String operation) {
         PersistentVolumeClaimList persistentVolumeClaimList
                 = getEndpoint().getKubernetesClient().persistentVolumeClaims().list();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
@@ -93,7 +93,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         exchange.getOut().setBody(persistentVolumeClaimList.getItems());
     }
 
-    protected void doListPersistentVolumesClaimsByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListPersistentVolumesClaimsByLabels(Exchange exchange, String operation) {
         PersistentVolumeClaimList pvcList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, Map.class);

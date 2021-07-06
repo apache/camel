@@ -18,8 +18,6 @@ package org.apache.camel.component.file.remote;
 
 import java.io.IOException;
 
-import javax.net.ssl.SSLException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
@@ -64,9 +62,6 @@ public class FtpsOperations extends FtpOperations {
                     log.debug("FTPClient initializing with execProt={}", execProt);
                     getFtpClient().execPROT(execProt);
                 }
-            } catch (SSLException e) {
-                throw new GenericFileOperationFailedException(
-                        client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(
                         client.getReplyCode(), client.getReplyString(), e.getMessage(), e);

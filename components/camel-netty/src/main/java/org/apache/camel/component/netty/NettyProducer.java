@@ -175,18 +175,6 @@ public class NettyProducer extends DefaultAsyncProducer {
     @Override
     protected void doStop() throws Exception {
         LOG.debug("Stopping producer at address: {}", configuration.getAddress());
-        // close all channels
-        LOG.trace("Closing {} channels", allChannels.size());
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-
-        // and then shutdown the thread pools
-        if (workerGroup != null) {
-            workerGroup.shutdownGracefully();
-            workerGroup = null;
-        }
-
-        ServiceHelper.stopService(correlationManager);
 
         if (pool != null) {
             if (LOG.isDebugEnabled()) {
@@ -195,6 +183,22 @@ public class NettyProducer extends DefaultAsyncProducer {
             pool.close();
         }
 
+        // close all channels
+        LOG.debug("Closing {} channels", allChannels.size());
+        ChannelGroupFuture future = allChannels.close();
+        future.awaitUninterruptibly();
+
+        // and then shutdown the thread pools
+        if (workerGroup != null) {
+            LOG.debug("Stopping worker group: {}", workerGroup);
+            workerGroup.shutdownGracefully();
+            workerGroup = null;
+        }
+
+        LOG.trace("Stopping correlation manager: {}", correlationManager);
+        ServiceHelper.stopService(correlationManager);
+
+        LOG.debug("Stopped producer at address: {}", configuration.getAddress());
         super.doStop();
     }
 
@@ -337,7 +341,8 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // setup state as attachment on the channel, so we can access the state later when needed
-        channelCorrelationManager.putState(channel, new NettyCamelState(producerCallback, exchange));
+        final NettyCamelState state = new NettyCamelState(producerCallback, exchange);
+        channelCorrelationManager.putState(channel, state);
         // here we need to setup the remote address information here
         InetSocketAddress remoteAddress = null;
         if (!isTcp()) {
@@ -349,7 +354,20 @@ public class NettyProducer extends DefaultAsyncProducer {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
+                    Throwable cause = null;
                     // no success then exit, (any exception has been handled by ClientChannelHandler#exceptionCaught)
+                    try {
+                        // need to get real caused exception from netty, which is not possible in a nice API
+                        // but we can try to get a result with a 0 timeout, then netty will throw the caused
+                        // exception wrapped in an outer exception
+                        channelFuture.get(0, TimeUnit.MILLISECONDS);
+                    } catch (Exception e) {
+                        cause = e.getCause();
+                    }
+                    if (cause != null) {
+                        exchange.setException(cause);
+                    }
+                    state.onExceptionCaughtOnce(false);
                     return;
                 }
 

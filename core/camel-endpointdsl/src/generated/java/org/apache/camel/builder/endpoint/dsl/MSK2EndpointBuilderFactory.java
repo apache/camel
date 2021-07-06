@@ -31,8 +31,8 @@ public interface MSK2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Managed Streaming for Apache Kafka
-     * (MSK) component.
+     * Builder for endpoint for the AWS Managed Streaming for Apache Kafka (MSK)
+     * component.
      */
     public interface MSK2EndpointBuilder extends EndpointProducerBuilder {
         /**
@@ -439,7 +439,7 @@ public interface MSK2EndpointBuilderFactory {
 
     public interface MSK2Builders {
         /**
-         * AWS 2 Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
+         * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
          * Manage AWS MSK instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -458,7 +458,7 @@ public interface MSK2EndpointBuilderFactory {
             return MSK2EndpointBuilderFactory.endpointBuilder("aws2-msk", path);
         }
         /**
-         * AWS 2 Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
+         * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
          * Manage AWS MSK instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management

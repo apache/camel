@@ -162,7 +162,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         Object overrideTimeStamp = exchange.getIn().removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
-        if ((overrideTimeStamp != null) && (overrideTimeStamp instanceof Long)) {
+        if (overrideTimeStamp != null && overrideTimeStamp instanceof Long) {
             LOG.debug("Using override TimeStamp: {}", overrideTimeStamp);
             timeStamp = ((Long) overrideTimeStamp).longValue();
         }

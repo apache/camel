@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.jira.consumer;
 
+import java.util.Collections;
 import java.util.List;
 
+import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jira.JiraEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumes new JIRA issues.
@@ -30,6 +34,8 @@ import org.apache.camel.component.jira.JiraEndpoint;
  * rather than having to index everything.
  */
 public class NewIssuesConsumer extends AbstractJiraConsumer {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(NewIssuesConsumer.class);
 
     private final String jql;
     private long latestIssueId = -1;
@@ -44,38 +50,70 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
         super.doStart();
         // read the actual issues, the next poll outputs only the new issues added after the route start
         // grab only the top
-        List<Issue> issues = getIssues(jql, 0, 1, 1);
-        // in case there aren't any issues...
-        if (!issues.isEmpty()) {
-            latestIssueId = issues.get(0).getId();
-        }
+        latestIssueId = findLatestIssueId();
     }
 
-    @Override
-    protected int poll() throws Exception {
+    protected long findLatestIssueId() {
+        // read the actual issues, the next poll outputs only the new issues added after the route start
+        // grab only the top
+        try {
+            List<Issue> issues = getIssues(jql, 0, 1, 1);
+            // in case there aren't any issues...
+            if (!issues.isEmpty()) {
+                return issues.get(0).getId();
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return -1;
+    }
+
+    protected int doPoll() throws Exception {
         // it may happen the poll() is called while the route is doing the initial load,
         // this way we need to wait for the latestIssueId being associated to the last indexed issue id
-        int nMessages = 0;
-        if (latestIssueId > -1) {
-            List<Issue> newIssues = getNewIssues();
-            // In the end, we want only *new* issues oldest to newest.
-            for (int i = newIssues.size() - 1; i > -1; i--) {
-                Issue newIssue = newIssues.get(i);
-                Exchange e = createExchange(true);
-                e.getIn().setBody(newIssue);
-                getProcessor().process(e);
-            }
-            nMessages = newIssues.size();
+        List<Issue> newIssues = getNewIssues();
+        // In the end, we want only *new* issues oldest to newest.
+        for (int i = newIssues.size() - 1; i > -1; i--) {
+            Issue newIssue = newIssues.get(i);
+            Exchange e = createExchange(true);
+            e.getIn().setBody(newIssue);
+            getProcessor().process(e);
         }
-        return nMessages;
+        return newIssues.size();
     }
 
     private List<Issue> getNewIssues() {
-        // search only for issues created after the latest id
-        String jqlFilter = "id > " + latestIssueId + " AND " + jql;
-        List<Issue> issues = getIssues(jqlFilter, 0, 50, ((JiraEndpoint) getEndpoint()).getMaxResults());
+        String jqlFilter;
+        if (latestIssueId > -1) {
+            // search only for issues created after the latest id
+            jqlFilter = "id > " + latestIssueId + " AND " + jql;
+        } else {
+            jqlFilter = jql;
+        }
+        // the last issue may be deleted, so to recover we re-find it and go from there
+        List<Issue> issues;
+        try {
+            issues = getIssues(jqlFilter, 0, 50, getEndpoint().getMaxResults());
+        } catch (RestClientException e) {
+            if (e.getStatusCode().isPresent()) {
+                int code = e.getStatusCode().get();
+                if (code == 400) {
+                    String msg = e.getMessage();
+                    if (msg != null && msg.contains("does not exist for the field 'id'")) {
+                        LOG.warn("Last issue id: " + latestIssueId + " no longer exists (could have been deleted)."
+                                 + " Will recover by fetching last issue id from JIRA and try again on next poll");
+                        latestIssueId = findLatestIssueId();
+                        return Collections.EMPTY_LIST;
+                    }
+                }
+            }
+            throw e;
+        }
+
         if (!issues.isEmpty()) {
-            latestIssueId = issues.get(0).getId();
+            // remember last id we have processed
+            int last = issues.size() - 1;
+            latestIssueId = issues.get(last).getId();
         }
         return issues;
     }

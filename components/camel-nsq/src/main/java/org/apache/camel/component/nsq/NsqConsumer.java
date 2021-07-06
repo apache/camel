@@ -44,7 +44,6 @@ public class NsqConsumer extends DefaultConsumer {
 
     private final Processor processor;
     private ExecutorService executor;
-    private boolean active;
     private final NsqConfiguration configuration;
 
     public NsqConsumer(NsqEndpoint endpoint, Processor processor) {
@@ -88,7 +87,6 @@ public class NsqConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-
         LOG.debug("Stopping NSQ Consumer");
         if (consumer != null) {
             consumer.shutdown();
@@ -117,7 +115,10 @@ public class NsqConsumer extends DefaultConsumer {
                 exchange.getIn().setBody(msg.getMessage());
                 exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ID, msg.getId());
                 exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, msg.getAttempts());
-                exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_TIMESTAMP, msg.getTimestamp());
+                if (msg.getTimestamp() != null) {
+                    exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_TIMESTAMP, msg.getTimestamp());
+                    exchange.getIn().setHeader(Exchange.MESSAGE_TIMESTAMP, msg.getTimestamp().getTime());
+                }
                 if (configuration.getAutoFinish()) {
                     msg.finished();
                 } else {

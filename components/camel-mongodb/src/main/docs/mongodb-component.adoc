@@ -994,21 +994,21 @@ It could be easily specified using XML DSL configuration:
 [source,xml]
 -------------
 <route id="filterConsumer">
-    <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets"/>
+    <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets&amp;streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }"/>
     <to uri="mock:test"/>
-
-    <routeProperty key="streamFilter" value="{'$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]}}"/>
 </route>
 -------------
 
 Java configuration:
 [source,java]
 -------------
-from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=tickets")
-    .routeProperty("streamFilter", "{'$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]}}")
+from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=tickets&streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }")
     .to("mock:test");
-
 -------------
+
+TIP: You can externalize the streamFilter value into a property placeholder which allows the endpoint
+URI parameters to be _cleaner_ and easier to read.
+
 The `changeStreams` consumer type will also return the following OUT headers:
 
 [width="100%",cols="10%,10%,60%,20%",options="header",]

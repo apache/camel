@@ -416,6 +416,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.bodyOneLine();
         } else if (ObjectHelper.equal(expression, "id")) {
             return ExpressionBuilder.messageIdExpression();
+        } else if (ObjectHelper.equal(expression, "messageTimestamp")) {
+            return ExpressionBuilder.messageTimestampExpression();
         } else if (ObjectHelper.equal(expression, "exchangeId")) {
             return ExpressionBuilder.exchangeIdExpression();
         } else if (ObjectHelper.equal(expression, "exchange")) {
@@ -774,6 +776,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "bodyOneLine(exchange)";
         } else if (ObjectHelper.equal(expression, "id")) {
             return "message.getMessageId()";
+        } else if (ObjectHelper.equal(expression, "messageTimestamp")) {
+            return "message.getMessageTimestamp()";
         } else if (ObjectHelper.equal(expression, "exchangeId")) {
             return "exchange.getExchangeId()";
         } else if (ObjectHelper.equal(expression, "exchange")) {

@@ -81,7 +81,7 @@ public class BigQueryITSupport extends CamelTestSupport {
     // This is used by JUnit to to dynamically enable / disable the integration tests
     @SuppressWarnings("unused")
     private static boolean hasCredentials() {
-        return (SERVICE_KEY != null && SERVICE_ACCOUNT != null) || CREDENTIALS_FILE_LOCATION != null;
+        return SERVICE_KEY != null && SERVICE_ACCOUNT != null || CREDENTIALS_FILE_LOCATION != null;
     }
 
     protected void addBigqueryComponent(CamelContext context) {

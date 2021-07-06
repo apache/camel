@@ -29,8 +29,8 @@
 
         <!-- we define the json jackson data formats to be used -->
         <dataFormats>
-            <cbor id="test" unmarshalTypeName="java.util.Map"></cbor>
-            <cbor id="auth" unmarshalTypeName="org.apache.camel.component.cbor.Author"></cbor>
+            <cbor id="test" unmarshalType="java.util.Map"></cbor>
+            <cbor id="auth" unmarshalType="org.apache.camel.component.cbor.Author"></cbor>
         </dataFormats>
 
         <route>

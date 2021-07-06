@@ -322,8 +322,8 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             }
 
             // is the body empty
-            if ((exchange.hasOut() && exchange.getOut().getBody() == null)
-                    || (!exchange.hasOut() && exchange.getIn().getBody() == null)) {
+            if (exchange.hasOut() && exchange.getOut().getBody() == null
+                    || !exchange.hasOut() && exchange.getIn().getBody() == null) {
                 return;
             }
 

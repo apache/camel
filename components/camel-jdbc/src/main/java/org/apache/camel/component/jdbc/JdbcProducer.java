@@ -48,7 +48,7 @@ public class JdbcProducer extends DefaultProducer {
     private final Map<String, Object> parameters;
 
     public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, ConnectionStrategy connectionStrategy,
-                        int readSize, Map<String, Object> parameters) throws Exception {
+                        int readSize, Map<String, Object> parameters) {
         super(endpoint);
         this.dataSource = dataSource;
         this.connectionStrategy = connectionStrategy;

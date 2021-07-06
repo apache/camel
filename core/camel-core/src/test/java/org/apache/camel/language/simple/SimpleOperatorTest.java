@@ -792,6 +792,16 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testStartsWithTextAsNumeric() throws Exception {
+        exchange.getIn().setBody("01234");
+        assertPredicate("${in.body} starts with '1234'", false);
+        assertPredicate("${in.body} starts with 1234", false);
+        assertPredicate("${in.body} starts with '01234'", true);
+        assertPredicate("${in.body} starts with \"01234\"", true);
+        assertPredicate("${in.body} starts with 01234", false);
+    }
+
+    @Test
     public void testEndsWith() throws Exception {
         exchange.getIn().setBody("Hello there");
         assertPredicate("${in.body} ends with 'there'", true);

@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import javax.sql.DataSource;
-
 import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.ElSqlConfig;
 import com.opengamma.elsql.SpringSqlParams;
@@ -57,28 +55,22 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(ElsqlEndpoint.class);
 
     private ElSql elSql;
-    private final NamedParameterJdbcTemplate namedJdbcTemplate;
+    private NamedParameterJdbcTemplate namedJdbcTemplate;
 
     @UriPath
     @Metadata(required = true)
-    private final String elsqlName;
+    private String elsqlName;
     @UriPath
     private String resourceUri;
-    @UriParam
-    private DataSource dataSource;
     @UriParam
     private ElSqlDatabaseVendor databaseVendor;
     @UriParam(label = "advanced")
     private ElSqlConfig elSqlConfig;
 
-    public ElsqlEndpoint(final String uri, final Component component, final NamedParameterJdbcTemplate namedJdbcTemplate,
-                         final DataSource dataSource,
-                         final String elsqlName, final String resourceUri) {
-        super(uri, component, null);
+    public ElsqlEndpoint(String endpointUri, Component component, String elsqlName, String resourceUri) {
+        super(endpointUri, component);
         this.elsqlName = elsqlName;
         this.resourceUri = resourceUri;
-        this.namedJdbcTemplate = namedJdbcTemplate;
-        this.dataSource = dataSource;
     }
 
     @Override
@@ -110,7 +102,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         final SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null
                 ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
         final ElsqlProducer result
-                = new ElsqlProducer(this, elSql, elsqlName, namedJdbcTemplate, dataSource, prepareStrategy, isBatch());
+                = new ElsqlProducer(this, elSql, elsqlName, namedJdbcTemplate, getDataSource(), prepareStrategy, isBatch());
         return result;
     }
 
@@ -157,11 +149,23 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         }
     }
 
+    public NamedParameterJdbcTemplate getNamedJdbcTemplate() {
+        return namedJdbcTemplate;
+    }
+
+    public void setNamedJdbcTemplate(NamedParameterJdbcTemplate namedJdbcTemplate) {
+        this.namedJdbcTemplate = namedJdbcTemplate;
+    }
+
+    public String getElsqlName() {
+        return elsqlName;
+    }
+
     /**
      * The name of the elsql to use (is @NAMED in the elsql file)
      */
-    public String getElsqlName() {
-        return elsqlName;
+    public void setElsqlName(String elsqlName) {
+        this.elsqlName = elsqlName;
     }
 
     public ElSqlDatabaseVendor getDatabaseVendor() {
@@ -200,16 +204,4 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         this.resourceUri = resourceUri;
     }
 
-    @Override
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    /**
-     * Sets the DataSource to use to communicate with the database.
-     */
-    @Override
-    public void setDataSource(final DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 }

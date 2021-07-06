@@ -1591,6 +1591,22 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an Expression for the inbound message timestamp
+     */
+    public static Expression messageTimestampExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getMessageTimestamp();
+            }
+
+            @Override
+            public String toString() {
+                return "messageTimestamp";
+            }
+        };
+    }
+
+    /**
      * Returns an Expression for the exchange id
      */
     public static Expression exchangeIdExpression() {

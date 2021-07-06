@@ -21,9 +21,11 @@ public class SolrEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(17);
+        Set<String> props = new HashSet<>(20);
         props.add("defaultMaxConnectionsPerHost");
+        props.add("httpClient");
         props.add("maxTotalConnections");
+        props.add("solrClient");
         props.add("streamingThreadCount");
         props.add("collection");
         props.add("zkHost");
@@ -32,8 +34,9 @@ public class SolrEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("lazyStartProducer");
         props.add("maxRetries");
         props.add("password");
-        props.add("allowCompression");
         props.add("requestHandler");
+        props.add("allowCompression");
+        props.add("zkChroot");
         props.add("followRedirects");
         props.add("streamingQueueSize");
         props.add("autoCommit");

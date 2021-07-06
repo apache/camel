@@ -80,6 +80,7 @@ public class SmppConfigurationTest {
         assertEquals(null, configuration.getSessionStateListener());
         assertEquals(3, configuration.getPduProcessorDegree());
         assertEquals(100, configuration.getPduProcessorQueueCapacity());
+        assertEquals(false, configuration.isSingleDLR());
     }
 
     @Test
@@ -118,6 +119,7 @@ public class SmppConfigurationTest {
         assertEquals("1", configuration.getProxyHeaders().get("X-Proxy-Header"));
         assertEquals(80, configuration.getPduProcessorQueueCapacity());
         assertEquals(1, configuration.getPduProcessorDegree());
+        assertEquals(true, configuration.isSingleDLR());
     }
 
     @Test
@@ -177,6 +179,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getHttpProxyPassword(), configuration.getHttpProxyPassword());
         assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
         assertEquals(config.getProxyHeaders(), configuration.getProxyHeaders());
+        assertEquals(config.isSingleDLR(), configuration.isSingleDLR());
     }
 
     @Test
@@ -196,6 +199,7 @@ public class SmppConfigurationTest {
                           + "pduProcessorQueueCapacity=100, "
                           + "pduProcessorDegree=3, "
                           + "registeredDelivery=1, "
+                          + "singleDLR=false, "
                           + "serviceType=CMT, "
                           + "sourceAddrTon=0, "
                           + "destAddrTon=0, "
@@ -261,5 +265,6 @@ public class SmppConfigurationTest {
         config.setProxyHeaders(proxyHeaders);
         config.setPduProcessorQueueCapacity(80);
         config.setPduProcessorDegree(1);
+        config.setSingleDLR(true);
     }
 }

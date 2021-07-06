@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.dsl.yaml.support.model.MySetBody
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
 import org.apache.camel.spi.Resource
@@ -178,10 +179,42 @@ class KameletTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+
+    def "kamelet (filter with flow)"() {
+        setup:
+            addTemplate('simple-filter') {
+                from('kamelet:source')
+                    .filter().simple('${header.foo} == "a"')
+                    .to("kamelet:sink")
+            }
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - kamelet: 
+                          name: "simple-filter"
+                      - to: 
+                          uri: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedBodiesReceived '1', '3'
+            }
+
+        when:
+            withTemplate {
+                to('direct:route').withBody('1').withHeader('foo', 'a').send()
+                to('direct:route').withBody('2').withHeader('foo', 'b').send()
+                to('direct:route').withBody('3').withHeader('foo', 'a').send()
+                to('direct:route').withBody('4').withHeader('foo', 'c').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
     def "kamelet (aggregation with flow)"() {
         setup:
-            setFlowMode(YamlDeserializationMode.FLOW)
-
             addTemplate('aggregate') {
                 from('kamelet:source')
                         .aggregate()
@@ -237,6 +270,77 @@ class KameletTest extends YamlTestSupport {
             withMock('mock:result') {
                 expectedMessageCount 1
                 expectedBodiesReceived 'HELLO'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet (definition with local bean and properties)"() {
+        setup:
+            loadRoutes """
+                - template:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myProcessor"
+                        type: "#class:${MySetBody.class.name}"
+                        properties:
+                          payload: "test-payload"
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - process:
+                            ref: "{{myProcessor}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "kamelet:myTemplate"
+                      - to: "mock:result"
+            """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'test-payload'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet (definition with local bean and property)"() {
+        setup:
+            loadRoutes """
+                - template:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myProcessor"
+                        type: "#class:${MySetBody.class.name}"
+                        property:
+                          - key: "payload"
+                            value: "test-payload"
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - process:
+                            ref: "{{myProcessor}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "kamelet:myTemplate"
+                      - to: "mock:result"
+            """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'test-payload'
             }
         when:
             withTemplate {

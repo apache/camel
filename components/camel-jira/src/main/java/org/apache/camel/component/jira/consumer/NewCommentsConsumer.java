@@ -46,7 +46,7 @@ public class NewCommentsConsumer extends AbstractJiraConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {
+    protected int doPoll() throws Exception {
         List<Comment> newComments = getComments();
         int max = newComments.size() - 1;
         // retrieve from last to first item LIFO

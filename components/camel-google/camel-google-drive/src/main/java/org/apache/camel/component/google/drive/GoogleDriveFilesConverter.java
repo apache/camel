@@ -100,8 +100,7 @@ public final class GoogleDriveFilesConverter {
 
     @Converter
     public static com.google.api.services.drive.model.ChildReference genericStringToChildReference(
-            String payload, Exchange exchange)
-            throws Exception {
+            String payload, Exchange exchange) {
         if (payload != null) {
             com.google.api.services.drive.model.ChildReference childReference
                     = new com.google.api.services.drive.model.ChildReference();

@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kotlin-dsl</artifactId>
@@ -172,6 +172,7 @@
                             <sourceDirs>
                                 <sourceDir>src/main/kotlin</sourceDir>
                             </sourceDirs>
+                            <myIncremental>true</myIncremental>
                         </configuration>
                     </execution>
                     <execution>
@@ -228,5 +229,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- skip tests on java 8 -->
+    <profiles>
+        <profile>
+            <id>java-8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

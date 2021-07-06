@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.util.ArrayList;
@@ -391,7 +390,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 }
 
                 @Override
-                public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+                public Socket createSocket(String host, int port) throws IOException {
                     return createSocketUtil(host, port, sftpConfig.getBindAddress(), session.getTimeout());
                 }
             });
@@ -493,7 +492,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             channel.rm(name);
             return true;
         } catch (SftpException e) {
-            LOG.debug("Cannot delete file: {}", name, e);
+            LOG.debug("Cannot delete file {}: {}", name, e.getMessage(), e);
             throw new GenericFileOperationFailedException("Cannot delete file: " + name, e);
         }
     }
@@ -555,7 +554,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     success = buildDirectoryChunks(directory);
                 }
             }
-        } catch (IOException | SftpException e) {
+        } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
         } finally {
             // change back to original directory
@@ -566,7 +565,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         return success;
     }
 
-    private boolean buildDirectoryChunks(String dirName) throws IOException, SftpException {
+    private boolean buildDirectoryChunks(String dirName) throws SftpException {
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("/|\\\\");
 
@@ -895,8 +894,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             IOHelper.close(os, "retrieve: " + name, LOG);
             boolean deleted = FileUtil.deleteFile(temp);
             if (!deleted) {
-                LOG.warn("Error occurred during retrieving file: " + name
-                         + " to local directory. Cannot delete local work file: " + temp);
+                LOG.warn("Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
+                        name, temp);
             }
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
@@ -1020,7 +1019,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             if (LOG.isDebugEnabled()) {
                 long time = watch.taken();
                 LOG.debug("Took {} ({} millis) to store file: {} and FTP client returned: true",
-                        new Object[] { TimeUtils.printDuration(time), time, targetName });
+                        TimeUtils.printDuration(time), time, targetName);
             }
 
             // after storing file, we may set chmod on the file
@@ -1157,10 +1156,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 } catch (Exception e) {
                     ee[0] = e;
                     if (sockp[0] != null && sockp[0].isConnected()) {
-                        try {
-                            sockp[0].close();
-                        } catch (Exception eee) {
-                        }
+                        IOHelper.close(sockp[0]);
                     }
                     sockp[0] = null;
                 }

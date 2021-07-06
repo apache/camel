@@ -21,10 +21,27 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyBean
 import org.apache.camel.dsl.yaml.support.model.MyFooBar
 import org.apache.camel.model.ToDefinition
+import org.apache.camel.model.rest.GetVerbDefinition
+import org.apache.camel.model.rest.PostVerbDefinition
 import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.model.rest.VerbDefinition
 
 class RestTest extends YamlTestSupport {
+
+    def "load rest configuration"() {
+        when:
+            loadRoutes """
+                - beans:
+                  - name: myRestConsumerFactory
+                    type: ${MockRestConsumerFactory.name}
+                - rest-configuration:
+                    component: "servlet"
+                    context-path: "/foo"       
+            """
+        then:
+            context.restConfiguration.component == 'servlet'
+            context.restConfiguration.contextPath == '/foo'
+    }
 
     def "load rest (to)"() {
         when:
@@ -97,5 +114,79 @@ class RestTest extends YamlTestSupport {
                     }
                 }
             }
+    }
+
+    def "load rest (verb alias)"() {
+        when:
+            loadRoutes """
+                - beans:
+                  - name: myRestConsumerFactory
+                    type: ${MockRestConsumerFactory.name}
+                - rest:
+                    post:
+                      - uri: "/foo"
+                        type: ${MyFooBar.name}
+                        out-type: ${MyBean.name}
+                        to: "direct:foo"
+                      - uri: "/baz"
+                        to: "direct:baz"
+                    get:
+                      - uri: "/getFoo"
+                        to: "direct:getFoo"
+                - from:
+                    uri: 'direct:bar'
+                    steps:
+                      - to: 'mock:bar'          
+            """
+        then:
+            context.restDefinitions.size() == 1
+
+            with(context.restDefinitions[0], RestDefinition) {
+                verbs.size() == 3
+
+                with(verbs[0], PostVerbDefinition) {
+                    uri == '/foo'
+                    type == MyFooBar.name
+                    outType == MyBean.name
+
+                    with(to, ToDefinition) {
+                        endpointUri == 'direct:foo'
+                    }
+                }
+                with(verbs[1], PostVerbDefinition) {
+                    uri == '/baz'
+                    with(to, ToDefinition) {
+                        endpointUri == 'direct:baz'
+                    }
+                }
+                with(verbs[2], GetVerbDefinition) {
+                    uri == '/getFoo'
+                    with(to, ToDefinition) {
+                        endpointUri == 'direct:getFoo'
+                    }
+                }
+            }
+    }
+
+    def "load rest (full)"() {
+        setup:
+            def rloc = 'classpath:/routes/rest-dsl.yaml'
+            def rdsl = context.resourceLoader.resolveResource(rloc)
+        when:
+            loadRoutes rdsl
+        then:
+            context.restDefinitions != null
+            !context.restDefinitions.isEmpty()
+    }
+
+    def "load rest (generated)"() {
+        setup:
+            def rloc = 'classpath:/rest-dsl/generated-rest-dsl.yaml'
+            def rdsl = context.resourceLoader.resolveResource(rloc)
+        when:
+            loadRoutes rdsl
+        then:
+            context.restDefinitions != null
+            !context.restDefinitions.isEmpty()
     }
 }

@@ -38,20 +38,15 @@ import org.bouncycastle.asn1.ASN1Primitive;
 @Dataformat("asn1")
 public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean usingIterator;
-    private String clazzName;
+    private Class<?> unmarshalType;
 
     public ASN1DataFormat() {
         this.usingIterator = false;
     }
 
-    public ASN1DataFormat(String clazzName) {
+    public ASN1DataFormat(Class<?> unmarshalType) {
         this.usingIterator = true;
-        this.clazzName = clazzName;
-    }
-
-    public ASN1DataFormat(Class<?> clazz) {
-        this.usingIterator = true;
-        this.clazzName = clazz.getName();
+        this.unmarshalType = unmarshalType;
     }
 
     @Override
@@ -63,9 +58,8 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         InputStream berOut = null;
         if (usingIterator) {
-            if (clazzName != null) {
-                Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
-                encodeGenericTypeObject(exchange, clazz, stream);
+            if (unmarshalType != null) {
+                encodeGenericTypeObject(exchange, stream);
                 return;
             }
             Object record = exchange.getIn().getBody();
@@ -86,28 +80,26 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
-    private void encodeGenericTypeObject(Exchange exchange, Class<?> clazz, OutputStream stream)
+    private void encodeGenericTypeObject(Exchange exchange, OutputStream stream)
             throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, IOException {
         Class<?>[] paramOut = new Class<?>[1];
         paramOut[0] = OutputStream.class;
-        ReverseByteArrayOutputStream berOut = new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true);
-        Method encodeMethod = exchange.getIn().getBody().getClass().getDeclaredMethod("encode", paramOut);
-        encodeMethod.invoke(exchange.getIn().getBody(), berOut);
-        stream.write(berOut.getArray());
+        try (ReverseByteArrayOutputStream berOut = new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true)) {
+            Method encodeMethod = exchange.getIn().getBody().getClass().getDeclaredMethod("encode", paramOut);
+            encodeMethod.invoke(exchange.getIn().getBody(), berOut);
+            stream.write(berOut.getArray());
+        }
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         if (usingIterator) {
-            if (clazzName != null) {
-                Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
-                ASN1GenericIterator asn1GenericIterator = new ASN1GenericIterator(clazz, stream);
-                return asn1GenericIterator;
+            if (unmarshalType != null) {
+                return new ASN1GenericIterator(unmarshalType, stream);
             }
-            ASN1MessageIterator asn1MessageIterator = new ASN1MessageIterator(exchange, stream);
-            return asn1MessageIterator;
+            return new ASN1MessageIterator(exchange, stream);
         } else {
             ASN1Primitive asn1Record = null;
             byte[] asn1Bytes;
@@ -131,12 +123,12 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         this.usingIterator = usingIterator;
     }
 
-    public String getClazzName() {
-        return clazzName;
+    public Class<?> getUnmarshalType() {
+        return unmarshalType;
     }
 
-    public void setClazzName(String clazzName) {
-        this.clazzName = clazzName;
+    public void setUnmarshalType(Class<?> unmarshalType) {
+        this.unmarshalType = unmarshalType;
     }
 
     @Override

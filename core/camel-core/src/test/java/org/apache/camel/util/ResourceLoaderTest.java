@@ -136,7 +136,7 @@ public class ResourceLoaderTest extends TestSupport {
 
                 String text = context.getTypeConverter().convertTo(String.class, is);
                 assertNotNull(text);
-                assertTrue(text.equals("fallback"));
+                assertEquals("fallback", text);
             }
         }
     }

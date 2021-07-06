@@ -94,8 +94,8 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
         configuration.setToken(System.getProperty(SYSPROP_ZENDESK_TOKEN, configuration.getToken()));
         configuration.setOauthToken(System.getProperty(SYSPROP_ZENDESK_OAUTH_TOKEN, configuration.getOauthToken()));
         if (configuration.getServerUrl() == null || configuration.getUsername() == null
-                || (configuration.getPassword() == null && configuration.getToken() == null
-                        && configuration.getOauthToken() == null)) {
+                || configuration.getPassword() == null && configuration.getToken() == null
+                        && configuration.getOauthToken() == null) {
             throw new IllegalArgumentException("Zendesk configuration is missing");
         }
 

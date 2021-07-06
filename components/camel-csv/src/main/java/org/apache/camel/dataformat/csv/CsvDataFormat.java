@@ -62,6 +62,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private Boolean trailingDelimiter;
 
     // Unmarshal options
+    private boolean captureHeaderRecord;
     private boolean lazyLoad;
     private boolean useMaps;
     private boolean useOrderedMaps;
@@ -639,6 +640,26 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
      */
     public CsvDataFormat setSkipHeaderRecord(Boolean skipHeaderRecord) {
         this.skipHeaderRecord = skipHeaderRecord;
+        return this;
+    }
+
+    /**
+     * Indicates whether or not the unmarshalling should capture the header record.
+     *
+     * @return {@code true} for capture header record, {@code false} otherwise
+     */
+    public boolean isCaptureHeaderRecord() {
+        return captureHeaderRecord;
+    }
+
+    /**
+     * Indicates whether or not the unmarshalling should capture the header record.
+     *
+     * @param  captureHeaderRecord {@code true} for capture header record, {@code false} otherwise
+     * @return                     Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setCaptureHeaderRecord(boolean captureHeaderRecord) {
+        this.captureHeaderRecord = captureHeaderRecord;
         return this;
     }
 

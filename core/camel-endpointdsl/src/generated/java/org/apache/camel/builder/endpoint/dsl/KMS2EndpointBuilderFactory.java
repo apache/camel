@@ -31,8 +31,7 @@ public interface KMS2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Key Management Service (KMS)
-     * component.
+     * Builder for endpoint for the AWS Key Management Service (KMS) component.
      */
     public interface KMS2EndpointBuilder extends EndpointProducerBuilder {
         /**
@@ -441,7 +440,7 @@ public interface KMS2EndpointBuilderFactory {
 
     public interface KMS2Builders {
         /**
-         * AWS 2 Key Management Service (KMS) (camel-aws2-kms)
+         * AWS Key Management Service (KMS) (camel-aws2-kms)
          * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -460,7 +459,7 @@ public interface KMS2EndpointBuilderFactory {
             return KMS2EndpointBuilderFactory.endpointBuilder("aws2-kms", path);
         }
         /**
-         * AWS 2 Key Management Service (KMS) (camel-aws2-kms)
+         * AWS Key Management Service (KMS) (camel-aws2-kms)
          * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management

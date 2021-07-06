@@ -872,17 +872,20 @@ public class AggregateProcessor extends AsyncProcessorSupport
         exchange.adapt(ExtendedExchange.class).addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
 
         // send this exchange
-        // the call to schedule is needed to ensure in-order processing of the aggregates
-        executorService.execute(() -> reactiveExecutor.schedule(() -> processor.process(exchange, done -> {
-            // log exception if there was a problem
-            if (exchange.getException() != null) {
-                // if there was an exception then let the exception handler handle it
-                getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
-                        exchange.getException());
-            } else {
-                LOG.trace("Processing aggregated exchange: {} complete.", exchange);
-            }
-        })));
+        executorService.execute(() -> {
+            Runnable task = () -> processor.process(exchange, done -> {
+                // log exception if there was a problem
+                if (exchange.getException() != null) {
+                    // if there was an exception then let the exception handler handle it
+                    getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
+                            exchange.getException());
+                } else {
+                    LOG.trace("Processing aggregated exchange: {} complete.", exchange);
+                }
+            });
+            // the call to schedule is needed to ensure in-order processing of the aggregates
+            reactiveExecutor.schedule(task);
+        });
     }
 
     /**
@@ -1395,9 +1398,9 @@ public class AggregateProcessor extends AsyncProcessorSupport
                             // if we are exhausted, then move to dead letter channel
                             if (data != null && recoverable.getMaximumRedeliveries() > 0
                                     && data.redeliveryCounter >= recoverable.getMaximumRedeliveries()) {
-                                LOG.warn("The recovered exchange is exhausted after " + recoverable.getMaximumRedeliveries()
-                                         + " attempts, will now be moved to dead letter channel: "
-                                         + recoverable.getDeadLetterUri());
+                                LOG.warn("The recovered exchange is exhausted after {} attempts, will now be moved to "
+                                         + "dead letter channel: {}",
+                                        recoverable.getMaximumRedeliveries(), recoverable.getDeadLetterUri());
 
                                 // send to DLC
                                 try {

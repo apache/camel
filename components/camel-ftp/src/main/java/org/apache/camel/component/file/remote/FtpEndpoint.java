@@ -36,7 +36,6 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.PlatformHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -225,19 +224,10 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
     protected FTPClient createFtpClient() throws Exception {
         FTPClient client = new FTPClient();
-        // If we're in an OSGI environment, set the parser factory to
-        // OsgiParserFactory, because commons-net uses Class.forName in their
-        // default ParserFactory
-        if (isOsgi()) {
-            ClassResolver cr = getCamelContext().getClassResolver();
-            OsgiParserFactory opf = new OsgiParserFactory(cr);
-            client.setParserFactory(opf);
-        }
+        // use parser factory that can load classes via Camel to work in all runtimes
+        ClassResolver cr = getCamelContext().getClassResolver();
+        client.setParserFactory(new CamelFTPParserFactory(cr));
         return client;
-    }
-
-    private boolean isOsgi() {
-        return PlatformHelper.isOsgiContext(getCamelContext());
     }
 
     @Override

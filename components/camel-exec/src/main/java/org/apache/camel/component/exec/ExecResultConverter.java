@@ -50,7 +50,7 @@ public final class ExecResultConverter {
     }
 
     @Converter
-    public static byte[] convertToByteArray(ExecResult result, Exchange exchange) throws FileNotFoundException, IOException {
+    public static byte[] convertToByteArray(ExecResult result, Exchange exchange) throws IOException {
         try (InputStream stream = toInputStream(result)) {
             return IOUtils.toByteArray(stream);
         }

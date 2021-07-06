@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.eventbridge.EventbridgeComponent;
 public interface Aws2EventbridgeComponentBuilderFactory {
 
     /**
-     * AWS 2 Eventbridge (camel-aws2-eventbridge)
+     * AWS Eventbridge (camel-aws2-eventbridge)
      * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -45,7 +45,7 @@ public interface Aws2EventbridgeComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Eventbridge component.
+     * Builder for the AWS Eventbridge component.
      */
     interface Aws2EventbridgeComponentBuilder
             extends

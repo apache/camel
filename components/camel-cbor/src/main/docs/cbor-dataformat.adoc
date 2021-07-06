@@ -34,8 +34,8 @@ The CBOR dataformat supports 10 options, which are listed below.
 | Name | Default | Java Type | Description
 | objectMapper |  | String | Lookup and use the existing CBOR ObjectMapper with the given id when using Jackson.
 | useDefaultObjectMapper | true | Boolean | Whether to lookup and use default Jackson CBOR ObjectMapper from the registry.
-| unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
-| collectionTypeName |  | String | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.
+| unmarshalType |  | String | Class name of the java type to use when unmarshalling
+| collectionType |  | String | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.
 | useList | false | Boolean | To unmarshal to a List of Map or a List of Pojo.
 | allowUnmarshallType | false | Boolean | If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
@@ -56,7 +56,7 @@ tag.
 <dataFormats>
     <!-- here we define a CBOR data format with the id test and that it should use the TestPojo as the class type when
     doing unmarshal. -->
-    <cbor id="test" unmarshalTypeName="org.apache.camel.component.cbor.TestPojo"/>
+    <cbor id="test" unmarshalType="org.apache.camel.component.cbor.TestPojo"/>
 </dataFormats>
 -----------------------------------------------------------------------------------------------------------------------------
 

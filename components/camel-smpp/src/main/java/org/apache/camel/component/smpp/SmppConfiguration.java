@@ -116,6 +116,8 @@ public class SmppConfiguration implements Cloneable {
     private Integer pduProcessorDegree = 3;
     @UriParam(label = "advanced", defaultValue = "100")
     private Integer pduProcessorQueueCapacity = 100;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean singleDLR;
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -702,6 +704,18 @@ public class SmppConfiguration implements Cloneable {
         this.pduProcessorQueueCapacity = pduProcessorQueueCapacity;
     }
 
+    public boolean isSingleDLR() {
+        return singleDLR;
+    }
+
+    /**
+     * When true, the SMSC delivery receipt would be requested only for the last segment of a multi-segment (long)
+     * message. For short messages, with only 1 segment the behaviour is unchanged.
+     */
+    public void setSingleDLR(boolean singleDLR) {
+        this.singleDLR = singleDLR;
+    }
+
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL
@@ -718,6 +732,7 @@ public class SmppConfiguration implements Cloneable {
                + ", pduProcessorQueueCapacity=" + pduProcessorQueueCapacity
                + ", pduProcessorDegree=" + pduProcessorDegree
                + ", registeredDelivery=" + registeredDelivery
+               + ", singleDLR=" + singleDLR
                + ", serviceType=" + serviceType
                + ", sourceAddrTon=" + sourceAddrTon
                + ", destAddrTon=" + destAddrTon

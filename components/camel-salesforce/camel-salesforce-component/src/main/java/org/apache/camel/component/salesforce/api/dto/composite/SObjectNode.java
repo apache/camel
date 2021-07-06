@@ -253,11 +253,7 @@ public final class SObjectNode implements Serializable {
     }
 
     SObjectNode addChild(final String labelPlural, final SObjectNode node) {
-        List<SObjectNode> children = records.get(labelPlural);
-        if (children == null) {
-            children = new ArrayList<>();
-            records.put(labelPlural, children);
-        }
+        List<SObjectNode> children = records.computeIfAbsent(labelPlural, k -> new ArrayList<>());
 
         children.add(node);
 

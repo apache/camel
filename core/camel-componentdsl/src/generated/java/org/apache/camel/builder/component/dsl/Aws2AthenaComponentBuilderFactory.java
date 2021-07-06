@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.athena.Athena2Component;
 public interface Aws2AthenaComponentBuilderFactory {
 
     /**
-     * AWS 2 Athena (camel-aws2-athena)
+     * AWS Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 
      * Category: cloud,database
@@ -45,7 +45,7 @@ public interface Aws2AthenaComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Athena component.
+     * Builder for the AWS Athena component.
      */
     interface Aws2AthenaComponentBuilder
             extends

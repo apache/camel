@@ -50,7 +50,7 @@ abstract class DefaultHdfsFile<T extends Closeable, U extends Closeable> impleme
             while (bytesRead >= 0) {
                 out.write(buf, 0, bytesRead);
                 numBytes += bytesRead;
-                if ((ps != null) && ps.checkError()) {
+                if (ps != null && ps.checkError()) {
                     throw new IOException("Unable to write to output stream.");
                 }
                 bytesRead = in.read(buf);

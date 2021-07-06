@@ -313,6 +313,11 @@ public final class PropertyBindingSupport {
                 newTarget = prop;
                 newClass = newTarget.getClass();
                 newName = parts[i + 1];
+
+                // if we have not yet found a configurer for the new target
+                if (configurer == null) {
+                    configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, newTarget);
+                }
             }
         }
 
@@ -1202,7 +1207,17 @@ public final class PropertyBindingSupport {
         return true;
     }
 
-    private static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
+    /**
+     * Creates a new bean instance using the constructor that takes the given set of parameters.
+     *
+     * @param  camelContext the camel context
+     * @param  type         the class type of the bean to create
+     * @param  parameters   the parameters for the constructor
+     * @return              the created bean, or null if there was no constructor that matched the given set of
+     *                      parameters
+     * @throws Exception    is thrown if error creating the bean
+     */
+    public static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
             throws Exception {
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');
         Constructor found = findMatchingConstructor(type.getConstructors(), params);
@@ -1276,7 +1291,17 @@ public final class PropertyBindingSupport {
         return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
     }
 
-    private static Object newInstanceFactoryParameters(
+    /**
+     * Creates a new bean instance using a public static factory method from the given class
+     *
+     * @param  camelContext the camel context
+     * @param  type         the class with the public static factory method
+     * @param  parameters   optional parameters for the factory method
+     * @return              the created bean, or null if there was no factory method (optionally matched the given set
+     *                      of parameters)
+     * @throws Exception    is thrown if error creating the bean
+     */
+    public static Object newInstanceFactoryParameters(
             CamelContext camelContext, Class<?> type, String factoryMethod, String parameters)
             throws Exception {
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');

@@ -184,6 +184,7 @@ public interface Exchange {
     String MESSAGE_HISTORY = "CamelMessageHistory";
     String MESSAGE_HISTORY_HEADER_FORMAT = "CamelMessageHistoryHeaderFormat";
     String MESSAGE_HISTORY_OUTPUT_FORMAT = "CamelMessageHistoryOutputFormat";
+    String MESSAGE_TIMESTAMP = "CamelMessageTimestamp";
     String MULTICAST_INDEX = "CamelMulticastIndex";
     String MULTICAST_COMPLETE = "CamelMulticastComplete";
 
@@ -413,9 +414,9 @@ public interface Exchange {
     Map<String, Object> getProperties();
 
     /**
-     * Returns all (both internal and custom) of the properties associated with the exchange
+     * Returns all (both internal and custom) properties associated with the exchange
      *
-     * @return all (both internal and custom) the properties in a Map
+     * @return all (both internal and custom) properties in a Map
      * @see    #getProperties()
      */
     Map<String, Object> getAllProperties();
@@ -668,6 +669,8 @@ public interface Exchange {
 
     /**
      * Gets the timestamp in millis when this exchange was created.
+     *
+     * @see Message#getMessageTimestamp()
      */
     long getCreated();
 

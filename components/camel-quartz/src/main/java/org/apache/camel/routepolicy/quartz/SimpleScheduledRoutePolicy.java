@@ -50,7 +50,7 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
         }
     }
 
-    protected void doOnInit(Route route) throws Exception {
+    protected void doOnInit(Route route) {
         QuartzComponent quartz = route.getCamelContext().getComponent("quartz", QuartzComponent.class);
         quartz.addScheduleInitTask(scheduler -> {
             setScheduler(scheduler);
@@ -67,8 +67,8 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
             }
 
             // validate time options has been configured
-            if ((getRouteStartDate() == null) && (getRouteStopDate() == null) && (getRouteSuspendDate() == null)
-                    && (getRouteResumeDate() == null)) {
+            if (getRouteStartDate() == null && getRouteStopDate() == null && getRouteSuspendDate() == null
+                    && getRouteResumeDate() == null) {
                 throw new IllegalArgumentException(
                         "Scheduled Route Policy for route " + route.getId()
                                                    + " has no start/stop/suspend/resume times specified");

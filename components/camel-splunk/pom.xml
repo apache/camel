@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <name>Camel :: Splunk</name>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>${jodatime2-bundle-version}</version>
+            <version>${jodatime2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

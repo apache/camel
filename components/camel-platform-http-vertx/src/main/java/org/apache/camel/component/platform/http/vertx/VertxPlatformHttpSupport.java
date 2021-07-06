@@ -146,7 +146,7 @@ public final class VertxPlatformHttpSupport {
         int codeToUse = currentCode == null ? defaultCode : currentCode;
 
         if (codeToUse != 500) {
-            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+            if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
                 // no content
                 codeToUse = currentCode == null ? 204 : currentCode;
             }
@@ -176,6 +176,8 @@ public final class VertxPlatformHttpSupport {
                 }
             }
             response.end();
+        } else if (body instanceof Buffer) {
+            response.end((Buffer) body);
         } else {
             final TypeConverter tc = camelExchange.getContext().getTypeConverter();
             final ByteBuffer bb = tc.mandatoryConvertTo(ByteBuffer.class, body);
@@ -184,7 +186,6 @@ public final class VertxPlatformHttpSupport {
             b.setBytes(0, bb);
             response.end(b);
         }
-
     }
 
     static void populateCamelHeaders(

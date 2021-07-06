@@ -228,1742 +228,1742 @@ public final class HL7231Converter {
     }
 
     @Converter
-    public static ACK toACK(String body) throws HL7Exception {
+    public static ACK toACK(String body) {
         return toMessage(ACK.class, body);
     }
 
     @Converter
-    public static ACK toACK(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ACK toACK(byte[] body, Exchange exchange) {
         return toMessage(ACK.class, body, exchange);
     }
 
     @Converter
-    public static ADR_A19 toAdrA19(String body) throws HL7Exception {
+    public static ADR_A19 toAdrA19(String body) {
         return toMessage(ADR_A19.class, body);
     }
 
     @Converter
-    public static ADR_A19 toAdrA19(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADR_A19 toAdrA19(byte[] body, Exchange exchange) {
         return toMessage(ADR_A19.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A01 toAdtA01(String body) throws HL7Exception {
+    public static ADT_A01 toAdtA01(String body) {
         return toMessage(ADT_A01.class, body);
     }
 
     @Converter
-    public static ADT_A01 toAdtA01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A01 toAdtA01(byte[] body, Exchange exchange) {
         return toMessage(ADT_A01.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A02 toAdtA02(String body) throws HL7Exception {
+    public static ADT_A02 toAdtA02(String body) {
         return toMessage(ADT_A02.class, body);
     }
 
     @Converter
-    public static ADT_A02 toAdtA02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A02 toAdtA02(byte[] body, Exchange exchange) {
         return toMessage(ADT_A02.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A03 toAdtA03(String body) throws HL7Exception {
+    public static ADT_A03 toAdtA03(String body) {
         return toMessage(ADT_A03.class, body);
     }
 
     @Converter
-    public static ADT_A03 toAdtA03(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A03 toAdtA03(byte[] body, Exchange exchange) {
         return toMessage(ADT_A03.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A04 toAdtA04(String body) throws HL7Exception {
+    public static ADT_A04 toAdtA04(String body) {
         return toMessage(ADT_A04.class, body);
     }
 
     @Converter
-    public static ADT_A04 toAdtA04(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A04 toAdtA04(byte[] body, Exchange exchange) {
         return toMessage(ADT_A04.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A05 toAdtA05(String body) throws HL7Exception {
+    public static ADT_A05 toAdtA05(String body) {
         return toMessage(ADT_A05.class, body);
     }
 
     @Converter
-    public static ADT_A05 toAdtA05(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A05 toAdtA05(byte[] body, Exchange exchange) {
         return toMessage(ADT_A05.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A06 toAdtA06(String body) throws HL7Exception {
+    public static ADT_A06 toAdtA06(String body) {
         return toMessage(ADT_A06.class, body);
     }
 
     @Converter
-    public static ADT_A06 toAdtA06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A06 toAdtA06(byte[] body, Exchange exchange) {
         return toMessage(ADT_A06.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A07 toAdtA07(String body) throws HL7Exception {
+    public static ADT_A07 toAdtA07(String body) {
         return toMessage(ADT_A07.class, body);
     }
 
     @Converter
-    public static ADT_A07 toAdtA07(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A07 toAdtA07(byte[] body, Exchange exchange) {
         return toMessage(ADT_A07.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A08 toAdtA08(String body) throws HL7Exception {
+    public static ADT_A08 toAdtA08(String body) {
         return toMessage(ADT_A08.class, body);
     }
 
     @Converter
-    public static ADT_A08 toAdtA08(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A08 toAdtA08(byte[] body, Exchange exchange) {
         return toMessage(ADT_A08.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A09 toAdtA09(String body) throws HL7Exception {
+    public static ADT_A09 toAdtA09(String body) {
         return toMessage(ADT_A09.class, body);
     }
 
     @Converter
-    public static ADT_A09 toAdtA09(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A09 toAdtA09(byte[] body, Exchange exchange) {
         return toMessage(ADT_A09.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A10 toAdtA10(String body) throws HL7Exception {
+    public static ADT_A10 toAdtA10(String body) {
         return toMessage(ADT_A10.class, body);
     }
 
     @Converter
-    public static ADT_A10 toAdtA10(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A10 toAdtA10(byte[] body, Exchange exchange) {
         return toMessage(ADT_A10.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A11 toAdtA11(String body) throws HL7Exception {
+    public static ADT_A11 toAdtA11(String body) {
         return toMessage(ADT_A11.class, body);
     }
 
     @Converter
-    public static ADT_A11 toAdtA11(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A11 toAdtA11(byte[] body, Exchange exchange) {
         return toMessage(ADT_A11.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A12 toAdtA12(String body) throws HL7Exception {
+    public static ADT_A12 toAdtA12(String body) {
         return toMessage(ADT_A12.class, body);
     }
 
     @Converter
-    public static ADT_A12 toAdtA12(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A12 toAdtA12(byte[] body, Exchange exchange) {
         return toMessage(ADT_A12.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A13 toAdtA13(String body) throws HL7Exception {
+    public static ADT_A13 toAdtA13(String body) {
         return toMessage(ADT_A13.class, body);
     }
 
     @Converter
-    public static ADT_A13 toAdtA13(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A13 toAdtA13(byte[] body, Exchange exchange) {
         return toMessage(ADT_A13.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A14 toAdtA14(String body) throws HL7Exception {
+    public static ADT_A14 toAdtA14(String body) {
         return toMessage(ADT_A14.class, body);
     }
 
     @Converter
-    public static ADT_A14 toAdtA14(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A14 toAdtA14(byte[] body, Exchange exchange) {
         return toMessage(ADT_A14.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A15 toAdtA15(String body) throws HL7Exception {
+    public static ADT_A15 toAdtA15(String body) {
         return toMessage(ADT_A15.class, body);
     }
 
     @Converter
-    public static ADT_A15 toAdtA15(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A15 toAdtA15(byte[] body, Exchange exchange) {
         return toMessage(ADT_A15.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A16 toAdtA16(String body) throws HL7Exception {
+    public static ADT_A16 toAdtA16(String body) {
         return toMessage(ADT_A16.class, body);
     }
 
     @Converter
-    public static ADT_A16 toAdtA16(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A16 toAdtA16(byte[] body, Exchange exchange) {
         return toMessage(ADT_A16.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A17 toAdtA17(String body) throws HL7Exception {
+    public static ADT_A17 toAdtA17(String body) {
         return toMessage(ADT_A17.class, body);
     }
 
     @Converter
-    public static ADT_A17 toAdtA17(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A17 toAdtA17(byte[] body, Exchange exchange) {
         return toMessage(ADT_A17.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A18 toAdtA18(String body) throws HL7Exception {
+    public static ADT_A18 toAdtA18(String body) {
         return toMessage(ADT_A18.class, body);
     }
 
     @Converter
-    public static ADT_A18 toAdtA18(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A18 toAdtA18(byte[] body, Exchange exchange) {
         return toMessage(ADT_A18.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A20 toAdtA20(String body) throws HL7Exception {
+    public static ADT_A20 toAdtA20(String body) {
         return toMessage(ADT_A20.class, body);
     }
 
     @Converter
-    public static ADT_A20 toAdtA20(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A20 toAdtA20(byte[] body, Exchange exchange) {
         return toMessage(ADT_A20.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A21 toAdtA21(String body) throws HL7Exception {
+    public static ADT_A21 toAdtA21(String body) {
         return toMessage(ADT_A21.class, body);
     }
 
     @Converter
-    public static ADT_A21 toAdtA21(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A21 toAdtA21(byte[] body, Exchange exchange) {
         return toMessage(ADT_A21.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A22 toAdtA22(String body) throws HL7Exception {
+    public static ADT_A22 toAdtA22(String body) {
         return toMessage(ADT_A22.class, body);
     }
 
     @Converter
-    public static ADT_A22 toAdtA22(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A22 toAdtA22(byte[] body, Exchange exchange) {
         return toMessage(ADT_A22.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A23 toAdtA23(String body) throws HL7Exception {
+    public static ADT_A23 toAdtA23(String body) {
         return toMessage(ADT_A23.class, body);
     }
 
     @Converter
-    public static ADT_A23 toAdtA23(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A23 toAdtA23(byte[] body, Exchange exchange) {
         return toMessage(ADT_A23.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A24 toAdtA24(String body) throws HL7Exception {
+    public static ADT_A24 toAdtA24(String body) {
         return toMessage(ADT_A24.class, body);
     }
 
     @Converter
-    public static ADT_A24 toAdtA24(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A24 toAdtA24(byte[] body, Exchange exchange) {
         return toMessage(ADT_A24.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A25 toAdtA25(String body) throws HL7Exception {
+    public static ADT_A25 toAdtA25(String body) {
         return toMessage(ADT_A25.class, body);
     }
 
     @Converter
-    public static ADT_A25 toAdtA25(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A25 toAdtA25(byte[] body, Exchange exchange) {
         return toMessage(ADT_A25.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A26 toAdtA26(String body) throws HL7Exception {
+    public static ADT_A26 toAdtA26(String body) {
         return toMessage(ADT_A26.class, body);
     }
 
     @Converter
-    public static ADT_A26 toAdtA26(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A26 toAdtA26(byte[] body, Exchange exchange) {
         return toMessage(ADT_A26.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A27 toAdtA27(String body) throws HL7Exception {
+    public static ADT_A27 toAdtA27(String body) {
         return toMessage(ADT_A27.class, body);
     }
 
     @Converter
-    public static ADT_A27 toAdtA27(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A27 toAdtA27(byte[] body, Exchange exchange) {
         return toMessage(ADT_A27.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A28 toAdtA28(String body) throws HL7Exception {
+    public static ADT_A28 toAdtA28(String body) {
         return toMessage(ADT_A28.class, body);
     }
 
     @Converter
-    public static ADT_A28 toAdtA28(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A28 toAdtA28(byte[] body, Exchange exchange) {
         return toMessage(ADT_A28.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A29 toAdtA29(String body) throws HL7Exception {
+    public static ADT_A29 toAdtA29(String body) {
         return toMessage(ADT_A29.class, body);
     }
 
     @Converter
-    public static ADT_A29 toAdtA29(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A29 toAdtA29(byte[] body, Exchange exchange) {
         return toMessage(ADT_A29.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A30 toAdtA30(String body) throws HL7Exception {
+    public static ADT_A30 toAdtA30(String body) {
         return toMessage(ADT_A30.class, body);
     }
 
     @Converter
-    public static ADT_A30 toAdtA30(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A30 toAdtA30(byte[] body, Exchange exchange) {
         return toMessage(ADT_A30.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A31 toAdtA31(String body) throws HL7Exception {
+    public static ADT_A31 toAdtA31(String body) {
         return toMessage(ADT_A31.class, body);
     }
 
     @Converter
-    public static ADT_A31 toAdtA31(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A31 toAdtA31(byte[] body, Exchange exchange) {
         return toMessage(ADT_A31.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A32 toAdtA32(String body) throws HL7Exception {
+    public static ADT_A32 toAdtA32(String body) {
         return toMessage(ADT_A32.class, body);
     }
 
     @Converter
-    public static ADT_A32 toAdtA32(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A32 toAdtA32(byte[] body, Exchange exchange) {
         return toMessage(ADT_A32.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A33 toAdtA33(String body) throws HL7Exception {
+    public static ADT_A33 toAdtA33(String body) {
         return toMessage(ADT_A33.class, body);
     }
 
     @Converter
-    public static ADT_A33 toAdtA33(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A33 toAdtA33(byte[] body, Exchange exchange) {
         return toMessage(ADT_A33.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A34 toAdtA34(String body) throws HL7Exception {
+    public static ADT_A34 toAdtA34(String body) {
         return toMessage(ADT_A34.class, body);
     }
 
     @Converter
-    public static ADT_A34 toAdtA34(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A34 toAdtA34(byte[] body, Exchange exchange) {
         return toMessage(ADT_A34.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A35 toAdtA35(String body) throws HL7Exception {
+    public static ADT_A35 toAdtA35(String body) {
         return toMessage(ADT_A35.class, body);
     }
 
     @Converter
-    public static ADT_A35 toAdtA35(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A35 toAdtA35(byte[] body, Exchange exchange) {
         return toMessage(ADT_A35.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A36 toAdtA36(String body) throws HL7Exception {
+    public static ADT_A36 toAdtA36(String body) {
         return toMessage(ADT_A36.class, body);
     }
 
     @Converter
-    public static ADT_A36 toAdtA36(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A36 toAdtA36(byte[] body, Exchange exchange) {
         return toMessage(ADT_A36.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A37 toAdtA37(String body) throws HL7Exception {
+    public static ADT_A37 toAdtA37(String body) {
         return toMessage(ADT_A37.class, body);
     }
 
     @Converter
-    public static ADT_A37 toAdtA37(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A37 toAdtA37(byte[] body, Exchange exchange) {
         return toMessage(ADT_A37.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A38 toAdtA38(String body) throws HL7Exception {
+    public static ADT_A38 toAdtA38(String body) {
         return toMessage(ADT_A38.class, body);
     }
 
     @Converter
-    public static ADT_A38 toAdtA38(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A38 toAdtA38(byte[] body, Exchange exchange) {
         return toMessage(ADT_A38.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A39 toAdtA39(String body) throws HL7Exception {
+    public static ADT_A39 toAdtA39(String body) {
         return toMessage(ADT_A39.class, body);
     }
 
     @Converter
-    public static ADT_A39 toAdtA39(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A39 toAdtA39(byte[] body, Exchange exchange) {
         return toMessage(ADT_A39.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A40 toAdtA40(String body) throws HL7Exception {
+    public static ADT_A40 toAdtA40(String body) {
         return toMessage(ADT_A40.class, body);
     }
 
     @Converter
-    public static ADT_A40 toAdtA40(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A40 toAdtA40(byte[] body, Exchange exchange) {
         return toMessage(ADT_A40.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A41 toAdtA41(String body) throws HL7Exception {
+    public static ADT_A41 toAdtA41(String body) {
         return toMessage(ADT_A41.class, body);
     }
 
     @Converter
-    public static ADT_A41 toAdtA41(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A41 toAdtA41(byte[] body, Exchange exchange) {
         return toMessage(ADT_A41.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A42 toAdtA42(String body) throws HL7Exception {
+    public static ADT_A42 toAdtA42(String body) {
         return toMessage(ADT_A42.class, body);
     }
 
     @Converter
-    public static ADT_A42 toAdtA42(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A42 toAdtA42(byte[] body, Exchange exchange) {
         return toMessage(ADT_A42.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A43 toAdtA43(String body) throws HL7Exception {
+    public static ADT_A43 toAdtA43(String body) {
         return toMessage(ADT_A43.class, body);
     }
 
     @Converter
-    public static ADT_A43 toAdtA43(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A43 toAdtA43(byte[] body, Exchange exchange) {
         return toMessage(ADT_A43.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A44 toAdtA44(String body) throws HL7Exception {
+    public static ADT_A44 toAdtA44(String body) {
         return toMessage(ADT_A44.class, body);
     }
 
     @Converter
-    public static ADT_A44 toAdtA44(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A44 toAdtA44(byte[] body, Exchange exchange) {
         return toMessage(ADT_A44.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A45 toAdtA45(String body) throws HL7Exception {
+    public static ADT_A45 toAdtA45(String body) {
         return toMessage(ADT_A45.class, body);
     }
 
     @Converter
-    public static ADT_A45 toAdtA45(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A45 toAdtA45(byte[] body, Exchange exchange) {
         return toMessage(ADT_A45.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A46 toAdtA66(String body) throws HL7Exception {
+    public static ADT_A46 toAdtA66(String body) {
         return toMessage(ADT_A46.class, body);
     }
 
     @Converter
-    public static ADT_A46 toAdtA46(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A46 toAdtA46(byte[] body, Exchange exchange) {
         return toMessage(ADT_A46.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A47 toAdtA47(String body) throws HL7Exception {
+    public static ADT_A47 toAdtA47(String body) {
         return toMessage(ADT_A47.class, body);
     }
 
     @Converter
-    public static ADT_A47 toAdtA47(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A47 toAdtA47(byte[] body, Exchange exchange) {
         return toMessage(ADT_A47.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A48 toAdtA48(String body) throws HL7Exception {
+    public static ADT_A48 toAdtA48(String body) {
         return toMessage(ADT_A48.class, body);
     }
 
     @Converter
-    public static ADT_A48 toAdtA48(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A48 toAdtA48(byte[] body, Exchange exchange) {
         return toMessage(ADT_A48.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A49 toAdtA49(String body) throws HL7Exception {
+    public static ADT_A49 toAdtA49(String body) {
         return toMessage(ADT_A49.class, body);
     }
 
     @Converter
-    public static ADT_A49 toAdtA49(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A49 toAdtA49(byte[] body, Exchange exchange) {
         return toMessage(ADT_A49.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A50 toAdtA50(String body) throws HL7Exception {
+    public static ADT_A50 toAdtA50(String body) {
         return toMessage(ADT_A50.class, body);
     }
 
     @Converter
-    public static ADT_A50 toAdtA50(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A50 toAdtA50(byte[] body, Exchange exchange) {
         return toMessage(ADT_A50.class, body, exchange);
     }
 
     @Converter
-    public static ADT_A51 toAdtA51(String body) throws HL7Exception {
+    public static ADT_A51 toAdtA51(String body) {
         return toMessage(ADT_A51.class, body);
     }
 
     @Converter
-    public static ADT_A51 toAdtA51(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_A51 toAdtA51(byte[] body, Exchange exchange) {
         return toMessage(ADT_A51.class, body, exchange);
     }
 
     @Converter
-    public static ADT_AXX toAdtAXX(String body) throws HL7Exception {
+    public static ADT_AXX toAdtAXX(String body) {
         return toMessage(ADT_AXX.class, body);
     }
 
     @Converter
-    public static ADT_AXX toAdtAXX(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ADT_AXX toAdtAXX(byte[] body, Exchange exchange) {
         return toMessage(ADT_AXX.class, body, exchange);
     }
 
     @Converter
-    public static BAR_P01 toBarP01(String body) throws HL7Exception {
+    public static BAR_P01 toBarP01(String body) {
         return toMessage(BAR_P01.class, body);
     }
 
     @Converter
-    public static BAR_P01 toBarP01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static BAR_P01 toBarP01(byte[] body, Exchange exchange) {
         return toMessage(BAR_P01.class, body, exchange);
     }
 
     @Converter
-    public static BAR_P02 toBarP02(String body) throws HL7Exception {
+    public static BAR_P02 toBarP02(String body) {
         return toMessage(BAR_P02.class, body);
     }
 
     @Converter
-    public static BAR_P02 toBarP02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static BAR_P02 toBarP02(byte[] body, Exchange exchange) {
         return toMessage(BAR_P02.class, body, exchange);
     }
 
     @Converter
-    public static BAR_P05 toBarP05(String body) throws HL7Exception {
+    public static BAR_P05 toBarP05(String body) {
         return toMessage(BAR_P05.class, body);
     }
 
     @Converter
-    public static BAR_P05 toBarP05(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static BAR_P05 toBarP05(byte[] body, Exchange exchange) {
         return toMessage(BAR_P05.class, body, exchange);
     }
 
     @Converter
-    public static BAR_P06 toBarP06(String body) throws HL7Exception {
+    public static BAR_P06 toBarP06(String body) {
         return toMessage(BAR_P06.class, body);
     }
 
     @Converter
-    public static BAR_P06 toBarP06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static BAR_P06 toBarP06(byte[] body, Exchange exchange) {
         return toMessage(BAR_P06.class, body, exchange);
     }
 
     @Converter
-    public static CRM_C01 toCrmC01(String body) throws HL7Exception {
+    public static CRM_C01 toCrmC01(String body) {
         return toMessage(CRM_C01.class, body);
     }
 
     @Converter
-    public static CRM_C01 toCrmC01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static CRM_C01 toCrmC01(byte[] body, Exchange exchange) {
         return toMessage(CRM_C01.class, body, exchange);
     }
 
     @Converter
-    public static CSU_C09 toCsuC09(String body) throws HL7Exception {
+    public static CSU_C09 toCsuC09(String body) {
         return toMessage(CSU_C09.class, body);
     }
 
     @Converter
-    public static CSU_C09 toCsuC09(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static CSU_C09 toCsuC09(byte[] body, Exchange exchange) {
         return toMessage(CSU_C09.class, body, exchange);
     }
 
     @Converter
-    public static DFT_P03 toDftP03(String body) throws HL7Exception {
+    public static DFT_P03 toDftP03(String body) {
         return toMessage(DFT_P03.class, body);
     }
 
     @Converter
-    public static DFT_P03 toDftP03(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static DFT_P03 toDftP03(byte[] body, Exchange exchange) {
         return toMessage(DFT_P03.class, body, exchange);
     }
 
     @Converter
-    public static DOC_T12 toDocT12(String body) throws HL7Exception {
+    public static DOC_T12 toDocT12(String body) {
         return toMessage(DOC_T12.class, body);
     }
 
     @Converter
-    public static DOC_T12 toDocT12(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static DOC_T12 toDocT12(byte[] body, Exchange exchange) {
         return toMessage(DOC_T12.class, body, exchange);
     }
 
     @Converter
-    public static DSR_Q01 toDsrQ01(String body) throws HL7Exception {
+    public static DSR_Q01 toDsrQ01(String body) {
         return toMessage(DSR_Q01.class, body);
     }
 
     @Converter
-    public static DSR_Q01 toDsrQ01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static DSR_Q01 toDsrQ01(byte[] body, Exchange exchange) {
         return toMessage(DSR_Q01.class, body, exchange);
     }
 
     @Converter
-    public static DSR_Q03 toDsrQ03(String body) throws HL7Exception {
+    public static DSR_Q03 toDsrQ03(String body) {
         return toMessage(DSR_Q03.class, body);
     }
 
     @Converter
-    public static DSR_Q03 toDsrQ03(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static DSR_Q03 toDsrQ03(byte[] body, Exchange exchange) {
         return toMessage(DSR_Q03.class, body, exchange);
     }
 
     @Converter
-    public static EDR_R07 toEdrR07(String body) throws HL7Exception {
+    public static EDR_R07 toEdrR07(String body) {
         return toMessage(EDR_R07.class, body);
     }
 
     @Converter
-    public static EDR_R07 toEdrR07(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static EDR_R07 toEdrR07(byte[] body, Exchange exchange) {
         return toMessage(EDR_R07.class, body, exchange);
     }
 
     @Converter
-    public static EQQ_Q04 toEqqQ04(String body) throws HL7Exception {
+    public static EQQ_Q04 toEqqQ04(String body) {
         return toMessage(EQQ_Q04.class, body);
     }
 
     @Converter
-    public static EQQ_Q04 toEqqQ04(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static EQQ_Q04 toEqqQ04(byte[] body, Exchange exchange) {
         return toMessage(EQQ_Q04.class, body, exchange);
     }
 
     @Converter
-    public static ERP_R09 toErpR09(String body) throws HL7Exception {
+    public static ERP_R09 toErpR09(String body) {
         return toMessage(ERP_R09.class, body);
     }
 
     @Converter
-    public static ERP_R09 toErpR09(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ERP_R09 toErpR09(byte[] body, Exchange exchange) {
         return toMessage(ERP_R09.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T01 toMdmT01(String body) throws HL7Exception {
+    public static MDM_T01 toMdmT01(String body) {
         return toMessage(MDM_T01.class, body);
     }
 
     @Converter
-    public static MDM_T01 toMdmT01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T01 toMdmT01(byte[] body, Exchange exchange) {
         return toMessage(MDM_T01.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T02 toMdmT02(String body) throws HL7Exception {
+    public static MDM_T02 toMdmT02(String body) {
         return toMessage(MDM_T02.class, body);
     }
 
     @Converter
-    public static MDM_T02 toMdmT02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T02 toMdmT02(byte[] body, Exchange exchange) {
         return toMessage(MDM_T02.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T03 toMdmT03(String body) throws HL7Exception {
+    public static MDM_T03 toMdmT03(String body) {
         return toMessage(MDM_T03.class, body);
     }
 
     @Converter
-    public static MDM_T03 toMdmT03(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T03 toMdmT03(byte[] body, Exchange exchange) {
         return toMessage(MDM_T03.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T04 toMdmT04(String body) throws HL7Exception {
+    public static MDM_T04 toMdmT04(String body) {
         return toMessage(MDM_T04.class, body);
     }
 
     @Converter
-    public static MDM_T04 toMdmT04(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T04 toMdmT04(byte[] body, Exchange exchange) {
         return toMessage(MDM_T04.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T05 toMdmT05(String body) throws HL7Exception {
+    public static MDM_T05 toMdmT05(String body) {
         return toMessage(MDM_T05.class, body);
     }
 
     @Converter
-    public static MDM_T05 toMdmT05(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T05 toMdmT05(byte[] body, Exchange exchange) {
         return toMessage(MDM_T05.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T06 toMdmT06(String body) throws HL7Exception {
+    public static MDM_T06 toMdmT06(String body) {
         return toMessage(MDM_T06.class, body);
     }
 
     @Converter
-    public static MDM_T06 toMdmT06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T06 toMdmT06(byte[] body, Exchange exchange) {
         return toMessage(MDM_T06.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T07 toMdmT07(String body) throws HL7Exception {
+    public static MDM_T07 toMdmT07(String body) {
         return toMessage(MDM_T07.class, body);
     }
 
     @Converter
-    public static MDM_T07 toMdmT07(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T07 toMdmT07(byte[] body, Exchange exchange) {
         return toMessage(MDM_T07.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T08 toMdmT08(String body) throws HL7Exception {
+    public static MDM_T08 toMdmT08(String body) {
         return toMessage(MDM_T08.class, body);
     }
 
     @Converter
-    public static MDM_T08 toMdmT08(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T08 toMdmT08(byte[] body, Exchange exchange) {
         return toMessage(MDM_T08.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T09 toMdmT09(String body) throws HL7Exception {
+    public static MDM_T09 toMdmT09(String body) {
         return toMessage(MDM_T09.class, body);
     }
 
     @Converter
-    public static MDM_T09 toMdmT09(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T09 toMdmT09(byte[] body, Exchange exchange) {
         return toMessage(MDM_T09.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T10 toMdmT10(String body) throws HL7Exception {
+    public static MDM_T10 toMdmT10(String body) {
         return toMessage(MDM_T10.class, body);
     }
 
     @Converter
-    public static MDM_T10 toMdmT10(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T10 toMdmT10(byte[] body, Exchange exchange) {
         return toMessage(MDM_T10.class, body, exchange);
     }
 
     @Converter
-    public static MDM_T11 toMdmT11(String body) throws HL7Exception {
+    public static MDM_T11 toMdmT11(String body) {
         return toMessage(MDM_T11.class, body);
     }
 
     @Converter
-    public static MDM_T11 toMdmT11(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MDM_T11 toMdmT11(byte[] body, Exchange exchange) {
         return toMessage(MDM_T11.class, body, exchange);
     }
 
     @Converter
-    public static MFK_M01 toMfkM01(String body) throws HL7Exception {
+    public static MFK_M01 toMfkM01(String body) {
         return toMessage(MFK_M01.class, body);
     }
 
     @Converter
-    public static MFK_M01 toMfkM01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFK_M01 toMfkM01(byte[] body, Exchange exchange) {
         return toMessage(MFK_M01.class, body, exchange);
     }
 
     @Converter
-    public static MFK_M04 toMfkM04(String body) throws HL7Exception {
+    public static MFK_M04 toMfkM04(String body) {
         return toMessage(MFK_M04.class, body);
     }
 
     @Converter
-    public static MFK_M04 toMfkM04(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFK_M04 toMfkM04(byte[] body, Exchange exchange) {
         return toMessage(MFK_M04.class, body, exchange);
     }
 
     @Converter
-    public static MFK_M05 toMfkM05(String body) throws HL7Exception {
+    public static MFK_M05 toMfkM05(String body) {
         return toMessage(MFK_M05.class, body);
     }
 
     @Converter
-    public static MFK_M05 toMfkM05(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFK_M05 toMfkM05(byte[] body, Exchange exchange) {
         return toMessage(MFK_M05.class, body, exchange);
     }
 
     @Converter
-    public static MFK_M06 toMfkM06(String body) throws HL7Exception {
+    public static MFK_M06 toMfkM06(String body) {
         return toMessage(MFK_M06.class, body);
     }
 
     @Converter
-    public static MFK_M06 toMfkM06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFK_M06 toMfkM06(byte[] body, Exchange exchange) {
         return toMessage(MFK_M06.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M01 toMfnM01(String body) throws HL7Exception {
+    public static MFN_M01 toMfnM01(String body) {
         return toMessage(MFN_M01.class, body);
     }
 
     @Converter
-    public static MFN_M01 toMfnM01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M01 toMfnM01(byte[] body, Exchange exchange) {
         return toMessage(MFN_M01.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M02 toMfnM02(String body) throws HL7Exception {
+    public static MFN_M02 toMfnM02(String body) {
         return toMessage(MFN_M02.class, body);
     }
 
     @Converter
-    public static MFN_M02 toMfnM02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M02 toMfnM02(byte[] body, Exchange exchange) {
         return toMessage(MFN_M02.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M03 toMfnM03(String body) throws HL7Exception {
+    public static MFN_M03 toMfnM03(String body) {
         return toMessage(MFN_M03.class, body);
     }
 
     @Converter
-    public static MFN_M03 toMfnM03(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M03 toMfnM03(byte[] body, Exchange exchange) {
         return toMessage(MFN_M03.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M04 toMfnM04(String body) throws HL7Exception {
+    public static MFN_M04 toMfnM04(String body) {
         return toMessage(MFN_M04.class, body);
     }
 
     @Converter
-    public static MFN_M04 toMfnM04(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M04 toMfnM04(byte[] body, Exchange exchange) {
         return toMessage(MFN_M04.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M05 toMfnM05(String body) throws HL7Exception {
+    public static MFN_M05 toMfnM05(String body) {
         return toMessage(MFN_M05.class, body);
     }
 
     @Converter
-    public static MFN_M05 toMfnM05(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M05 toMfnM05(byte[] body, Exchange exchange) {
         return toMessage(MFN_M05.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M06 toMfnM06(String body) throws HL7Exception {
+    public static MFN_M06 toMfnM06(String body) {
         return toMessage(MFN_M06.class, body);
     }
 
     @Converter
-    public static MFN_M06 toMfnM06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M06 toMfnM06(byte[] body, Exchange exchange) {
         return toMessage(MFN_M06.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M08 toMfnM08(String body) throws HL7Exception {
+    public static MFN_M08 toMfnM08(String body) {
         return toMessage(MFN_M08.class, body);
     }
 
     @Converter
-    public static MFN_M08 toMfnM08(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M08 toMfnM08(byte[] body, Exchange exchange) {
         return toMessage(MFN_M08.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M09 toMfnM09(String body) throws HL7Exception {
+    public static MFN_M09 toMfnM09(String body) {
         return toMessage(MFN_M09.class, body);
     }
 
     @Converter
-    public static MFN_M09 toMfnM09(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M09 toMfnM09(byte[] body, Exchange exchange) {
         return toMessage(MFN_M09.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M10 toMfnM10(String body) throws HL7Exception {
+    public static MFN_M10 toMfnM10(String body) {
         return toMessage(MFN_M10.class, body);
     }
 
     @Converter
-    public static MFN_M10 toMfnM10(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M10 toMfnM10(byte[] body, Exchange exchange) {
         return toMessage(MFN_M10.class, body, exchange);
     }
 
     @Converter
-    public static MFN_M11 toMfnM11(String body) throws HL7Exception {
+    public static MFN_M11 toMfnM11(String body) {
         return toMessage(MFN_M11.class, body);
     }
 
     @Converter
-    public static MFN_M11 toMfnM11(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFN_M11 toMfnM11(byte[] body, Exchange exchange) {
         return toMessage(MFN_M11.class, body, exchange);
     }
 
     @Converter
-    public static MFQ_M01 toMfqM01(String body) throws HL7Exception {
+    public static MFQ_M01 toMfqM01(String body) {
         return toMessage(MFQ_M01.class, body);
     }
 
     @Converter
-    public static MFQ_M01 toMfqM01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFQ_M01 toMfqM01(byte[] body, Exchange exchange) {
         return toMessage(MFQ_M01.class, body, exchange);
     }
 
     @Converter
-    public static MFR_M01 toMfrM01(String body) throws HL7Exception {
+    public static MFR_M01 toMfrM01(String body) {
         return toMessage(MFR_M01.class, body);
     }
 
     @Converter
-    public static MFR_M01 toMfrM01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static MFR_M01 toMfrM01(byte[] body, Exchange exchange) {
         return toMessage(MFR_M01.class, body, exchange);
     }
 
     @Converter
-    public static NMD_N02 toNmdN02(String body) throws HL7Exception {
+    public static NMD_N02 toNmdN02(String body) {
         return toMessage(NMD_N02.class, body);
     }
 
     @Converter
-    public static NMD_N02 toNmdN02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static NMD_N02 toNmdN02(byte[] body, Exchange exchange) {
         return toMessage(NMD_N02.class, body, exchange);
     }
 
     @Converter
-    public static NMQ_N01 toNmqN01(String body) throws HL7Exception {
+    public static NMQ_N01 toNmqN01(String body) {
         return toMessage(NMQ_N01.class, body);
     }
 
     @Converter
-    public static NMQ_N01 toNmqN01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static NMQ_N01 toNmqN01(byte[] body, Exchange exchange) {
         return toMessage(NMQ_N01.class, body, exchange);
     }
 
     @Converter
-    public static NMR_N01 toNmrN01(String body) throws HL7Exception {
+    public static NMR_N01 toNmrN01(String body) {
         return toMessage(NMR_N01.class, body);
     }
 
     @Converter
-    public static NMR_N01 toNmrN01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static NMR_N01 toNmrN01(byte[] body, Exchange exchange) {
         return toMessage(NMR_N01.class, body, exchange);
     }
 
     @Converter
-    public static OMD_O01 toOmdO01(String body) throws HL7Exception {
+    public static OMD_O01 toOmdO01(String body) {
         return toMessage(OMD_O01.class, body);
     }
 
     @Converter
-    public static OMD_O01 toOmdO01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static OMD_O01 toOmdO01(byte[] body, Exchange exchange) {
         return toMessage(OMD_O01.class, body, exchange);
     }
 
     @Converter
-    public static OMN_O01 toOmnO01(String body) throws HL7Exception {
+    public static OMN_O01 toOmnO01(String body) {
         return toMessage(OMN_O01.class, body);
     }
 
     @Converter
-    public static OMN_O01 toOmnO01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static OMN_O01 toOmnO01(byte[] body, Exchange exchange) {
         return toMessage(OMN_O01.class, body, exchange);
     }
 
     @Converter
-    public static OMS_O01 toOmsO01(String body) throws HL7Exception {
+    public static OMS_O01 toOmsO01(String body) {
         return toMessage(OMS_O01.class, body);
     }
 
     @Converter
-    public static OMS_O01 toOmsO01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static OMS_O01 toOmsO01(byte[] body, Exchange exchange) {
         return toMessage(OMS_O01.class, body, exchange);
     }
 
     @Converter
-    public static ORD_O02 toOrdO02(String body) throws HL7Exception {
+    public static ORD_O02 toOrdO02(String body) {
         return toMessage(ORD_O02.class, body);
     }
 
     @Converter
-    public static ORD_O02 toOrdO02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ORD_O02 toOrdO02(byte[] body, Exchange exchange) {
         return toMessage(ORD_O02.class, body, exchange);
     }
 
     @Converter
-    public static ORF_R04 toOrfR04(String body) throws HL7Exception {
+    public static ORF_R04 toOrfR04(String body) {
         return toMessage(ORF_R04.class, body);
     }
 
     @Converter
-    public static ORF_R04 toOrfR04(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ORF_R04 toOrfR04(byte[] body, Exchange exchange) {
         return toMessage(ORF_R04.class, body, exchange);
     }
 
     @Converter
-    public static ORM_O01 toOrmO01(String body) throws HL7Exception {
+    public static ORM_O01 toOrmO01(String body) {
         return toMessage(ORM_O01.class, body);
     }
 
     @Converter
-    public static ORM_O01 toOrmO01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ORM_O01 toOrmO01(byte[] body, Exchange exchange) {
         return toMessage(ORM_O01.class, body, exchange);
     }
 
     @Converter
-    public static ORN_O02 toOrnO02(String body) throws HL7Exception {
+    public static ORN_O02 toOrnO02(String body) {
         return toMessage(ORN_O02.class, body);
     }
 
     @Converter
-    public static ORN_O02 toOrnO02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ORN_O02 toOrnO02(byte[] body, Exchange exchange) {
         return toMessage(ORN_O02.class, body, exchange);
     }
 
     @Converter
-    public static ORR_O02 toOrrO02(String body) throws HL7Exception {
+    public static ORR_O02 toOrrO02(String body) {
         return toMessage(ORR_O02.class, body);
     }
 
     @Converter
-    public static ORR_O02 toOrrO02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ORR_O02 toOrrO02(byte[] body, Exchange exchange) {
         return toMessage(ORR_O02.class, body, exchange);
     }
 
     @Converter
-    public static ORS_O02 toOrsO02(String body) throws HL7Exception {
+    public static ORS_O02 toOrsO02(String body) {
         return toMessage(ORS_O02.class, body);
     }
 
     @Converter
-    public static ORS_O02 toOrsO02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ORS_O02 toOrsO02(byte[] body, Exchange exchange) {
         return toMessage(ORS_O02.class, body, exchange);
     }
 
     @Converter
-    public static ORU_R01 toOruR01(String body) throws HL7Exception {
+    public static ORU_R01 toOruR01(String body) {
         return toMessage(ORU_R01.class, body);
     }
 
     @Converter
-    public static ORU_R01 toOruR01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ORU_R01 toOruR01(byte[] body, Exchange exchange) {
         return toMessage(ORU_R01.class, body, exchange);
     }
 
     @Converter
-    public static OSQ_Q06 toOsqQ06(String body) throws HL7Exception {
+    public static OSQ_Q06 toOsqQ06(String body) {
         return toMessage(OSQ_Q06.class, body);
     }
 
     @Converter
-    public static OSQ_Q06 toOsqQ06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static OSQ_Q06 toOsqQ06(byte[] body, Exchange exchange) {
         return toMessage(OSQ_Q06.class, body, exchange);
     }
 
     @Converter
-    public static OSR_Q06 toOsrQ06(String body) throws HL7Exception {
+    public static OSR_Q06 toOsrQ06(String body) {
         return toMessage(OSR_Q06.class, body);
     }
 
     @Converter
-    public static OSR_Q06 toOsrQ06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static OSR_Q06 toOsrQ06(byte[] body, Exchange exchange) {
         return toMessage(OSR_Q06.class, body, exchange);
     }
 
     @Converter
-    public static PEX_P07 toPexP07(String body) throws HL7Exception {
+    public static PEX_P07 toPexP07(String body) {
         return toMessage(PEX_P07.class, body);
     }
 
     @Converter
-    public static PEX_P07 toPexP07(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PEX_P07 toPexP07(byte[] body, Exchange exchange) {
         return toMessage(PEX_P07.class, body, exchange);
     }
 
     @Converter
-    public static PGL_PC6 toPglPc6(String body) throws HL7Exception {
+    public static PGL_PC6 toPglPc6(String body) {
         return toMessage(PGL_PC6.class, body);
     }
 
     @Converter
-    public static PGL_PC6 toPglPc6(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PGL_PC6 toPglPc6(byte[] body, Exchange exchange) {
         return toMessage(PGL_PC6.class, body, exchange);
     }
 
     @Converter
-    public static PIN_I07 toPinI07(String body) throws HL7Exception {
+    public static PIN_I07 toPinI07(String body) {
         return toMessage(PIN_I07.class, body);
     }
 
     @Converter
-    public static PIN_I07 toPinI07(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PIN_I07 toPinI07(byte[] body, Exchange exchange) {
         return toMessage(PIN_I07.class, body, exchange);
     }
 
     @Converter
-    public static PPG_PCG toPpgPcg(String body) throws HL7Exception {
+    public static PPG_PCG toPpgPcg(String body) {
         return toMessage(PPG_PCG.class, body);
     }
 
     @Converter
-    public static PPG_PCG toPpgPcg(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PPG_PCG toPpgPcg(byte[] body, Exchange exchange) {
         return toMessage(PPG_PCG.class, body, exchange);
     }
 
     @Converter
-    public static PPP_PCB toPppPcb(String body) throws HL7Exception {
+    public static PPP_PCB toPppPcb(String body) {
         return toMessage(PPP_PCB.class, body);
     }
 
     @Converter
-    public static PPP_PCB toPppPcb(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PPP_PCB toPppPcb(byte[] body, Exchange exchange) {
         return toMessage(PPP_PCB.class, body, exchange);
     }
 
     @Converter
-    public static PPR_PC1 toPprPc1(String body) throws HL7Exception {
+    public static PPR_PC1 toPprPc1(String body) {
         return toMessage(PPR_PC1.class, body);
     }
 
     @Converter
-    public static PPR_PC1 toPprPc1(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PPR_PC1 toPprPc1(byte[] body, Exchange exchange) {
         return toMessage(PPR_PC1.class, body, exchange);
     }
 
     @Converter
-    public static PPT_PCL toPptPcl(String body) throws HL7Exception {
+    public static PPT_PCL toPptPcl(String body) {
         return toMessage(PPT_PCL.class, body);
     }
 
     @Converter
-    public static PPT_PCL toPptPcl(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PPT_PCL toPptPcl(byte[] body, Exchange exchange) {
         return toMessage(PPT_PCL.class, body, exchange);
     }
 
     @Converter
-    public static PPV_PCA toPpvPca(String body) throws HL7Exception {
+    public static PPV_PCA toPpvPca(String body) {
         return toMessage(PPV_PCA.class, body);
     }
 
     @Converter
-    public static PPV_PCA toPpvPca(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PPV_PCA toPpvPca(byte[] body, Exchange exchange) {
         return toMessage(PPV_PCA.class, body, exchange);
     }
 
     @Converter
-    public static PRR_PC5 toPrrPc5(String body) throws HL7Exception {
+    public static PRR_PC5 toPrrPc5(String body) {
         return toMessage(PRR_PC5.class, body);
     }
 
     @Converter
-    public static PRR_PC5 toPrrPc5(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PRR_PC5 toPrrPc5(byte[] body, Exchange exchange) {
         return toMessage(PRR_PC5.class, body, exchange);
     }
 
     @Converter
-    public static PTR_PCF toPtrPcf(String body) throws HL7Exception {
+    public static PTR_PCF toPtrPcf(String body) {
         return toMessage(PTR_PCF.class, body);
     }
 
     @Converter
-    public static PTR_PCF toPtrPcf(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static PTR_PCF toPtrPcf(byte[] body, Exchange exchange) {
         return toMessage(PTR_PCF.class, body, exchange);
     }
 
     @Converter
-    public static QCK_Q02 toQckQ02(String body) throws HL7Exception {
+    public static QCK_Q02 toQckQ02(String body) {
         return toMessage(QCK_Q02.class, body);
     }
 
     @Converter
-    public static QCK_Q02 toQckQ02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QCK_Q02 toQckQ02(byte[] body, Exchange exchange) {
         return toMessage(QCK_Q02.class, body, exchange);
     }
 
     @Converter
-    public static QRY_A19 toQryA19(String body) throws HL7Exception {
+    public static QRY_A19 toQryA19(String body) {
         return toMessage(QRY_A19.class, body);
     }
 
     @Converter
-    public static QRY_A19 toQryA19(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QRY_A19 toQryA19(byte[] body, Exchange exchange) {
         return toMessage(QRY_A19.class, body, exchange);
     }
 
     @Converter
-    public static QRY_PC4 toQryPC4(String body) throws HL7Exception {
+    public static QRY_PC4 toQryPC4(String body) {
         return toMessage(QRY_PC4.class, body);
     }
 
     @Converter
-    public static QRY_PC4 toQryPC4(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QRY_PC4 toQryPC4(byte[] body, Exchange exchange) {
         return toMessage(QRY_PC4.class, body, exchange);
     }
 
     @Converter
-    public static QRY_PC9 toQryPC9(String body) throws HL7Exception {
+    public static QRY_PC9 toQryPC9(String body) {
         return toMessage(QRY_PC9.class, body);
     }
 
     @Converter
-    public static QRY_PC9 toQryPC9(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QRY_PC9 toQryPC9(byte[] body, Exchange exchange) {
         return toMessage(QRY_PC9.class, body, exchange);
     }
 
     @Converter
-    public static QRY_PCE toQryPCE(String body) throws HL7Exception {
+    public static QRY_PCE toQryPCE(String body) {
         return toMessage(QRY_PCE.class, body);
     }
 
     @Converter
-    public static QRY_PCE toQryPCE(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QRY_PCE toQryPCE(byte[] body, Exchange exchange) {
         return toMessage(QRY_PCE.class, body, exchange);
     }
 
     @Converter
-    public static QRY_PCK toQryPCK(String body) throws HL7Exception {
+    public static QRY_PCK toQryPCK(String body) {
         return toMessage(QRY_PCK.class, body);
     }
 
     @Converter
-    public static QRY_PCK toQryPCK(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QRY_PCK toQryPCK(byte[] body, Exchange exchange) {
         return toMessage(QRY_PCK.class, body, exchange);
     }
 
     @Converter
-    public static QRY_Q01 toQryQ01(String body) throws HL7Exception {
+    public static QRY_Q01 toQryQ01(String body) {
         return toMessage(QRY_Q01.class, body);
     }
 
     @Converter
-    public static QRY_Q01 toQryQ01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QRY_Q01 toQryQ01(byte[] body, Exchange exchange) {
         return toMessage(QRY_Q01.class, body, exchange);
     }
 
     @Converter
-    public static QRY_Q02 toQryQ02(String body) throws HL7Exception {
+    public static QRY_Q02 toQryQ02(String body) {
         return toMessage(QRY_Q02.class, body);
     }
 
     @Converter
-    public static QRY_Q02 toQryQ02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QRY_Q02 toQryQ02(byte[] body, Exchange exchange) {
         return toMessage(QRY_Q02.class, body, exchange);
     }
 
     @Converter
-    public static QRY_R02 toQryR02(String body) throws HL7Exception {
+    public static QRY_R02 toQryR02(String body) {
         return toMessage(QRY_R02.class, body);
     }
 
     @Converter
-    public static QRY_R02 toQryR02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QRY_R02 toQryR02(byte[] body, Exchange exchange) {
         return toMessage(QRY_R02.class, body, exchange);
     }
 
     @Converter
-    public static QRY_T12 toQryT12(String body) throws HL7Exception {
+    public static QRY_T12 toQryT12(String body) {
         return toMessage(QRY_T12.class, body);
     }
 
     @Converter
-    public static QRY_T12 toQryT12(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static QRY_T12 toQryT12(byte[] body, Exchange exchange) {
         return toMessage(QRY_T12.class, body, exchange);
     }
 
     @Converter
-    public static RAR_RAR toRarRar(String body) throws HL7Exception {
+    public static RAR_RAR toRarRar(String body) {
         return toMessage(RAR_RAR.class, body);
     }
 
     @Converter
-    public static RAR_RAR toRarRar(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RAR_RAR toRarRar(byte[] body, Exchange exchange) {
         return toMessage(RAR_RAR.class, body, exchange);
     }
 
     @Converter
-    public static RAS_O01 toRasO01(String body) throws HL7Exception {
+    public static RAS_O01 toRasO01(String body) {
         return toMessage(RAS_O01.class, body);
     }
 
     @Converter
-    public static RAS_O01 toRasO01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RAS_O01 toRasO01(byte[] body, Exchange exchange) {
         return toMessage(RAS_O01.class, body, exchange);
     }
 
     @Converter
-    public static RCI_I05 toRciI05(String body) throws HL7Exception {
+    public static RCI_I05 toRciI05(String body) {
         return toMessage(RCI_I05.class, body);
     }
 
     @Converter
-    public static RCI_I05 toRciI05(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RCI_I05 toRciI05(byte[] body, Exchange exchange) {
         return toMessage(RCI_I05.class, body, exchange);
     }
 
     @Converter
-    public static RCL_I06 toRclI06(String body) throws HL7Exception {
+    public static RCL_I06 toRclI06(String body) {
         return toMessage(RCL_I06.class, body);
     }
 
     @Converter
-    public static RCL_I06 toRclI06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RCL_I06 toRclI06(byte[] body, Exchange exchange) {
         return toMessage(RCL_I06.class, body, exchange);
     }
 
     @Converter
-    public static RDE_O01 toRdeO01(String body) throws HL7Exception {
+    public static RDE_O01 toRdeO01(String body) {
         return toMessage(RDE_O01.class, body);
     }
 
     @Converter
-    public static RDE_O01 toRdeO01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RDE_O01 toRdeO01(byte[] body, Exchange exchange) {
         return toMessage(RDE_O01.class, body, exchange);
     }
 
     @Converter
-    public static RDO_O01 toRdoO01(String body) throws HL7Exception {
+    public static RDO_O01 toRdoO01(String body) {
         return toMessage(RDO_O01.class, body);
     }
 
     @Converter
-    public static RDO_O01 toRdoO01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RDO_O01 toRdoO01(byte[] body, Exchange exchange) {
         return toMessage(RDO_O01.class, body, exchange);
     }
 
     @Converter
-    public static RDR_RDR toRdrRdr(String body) throws HL7Exception {
+    public static RDR_RDR toRdrRdr(String body) {
         return toMessage(RDR_RDR.class, body);
     }
 
     @Converter
-    public static RDR_RDR toRdrRdr(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RDR_RDR toRdrRdr(byte[] body, Exchange exchange) {
         return toMessage(RDR_RDR.class, body, exchange);
     }
 
     @Converter
-    public static RDS_O01 toRdsO01(String body) throws HL7Exception {
+    public static RDS_O01 toRdsO01(String body) {
         return toMessage(RDS_O01.class, body);
     }
 
     @Converter
-    public static RDS_O01 toRdsO01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RDS_O01 toRdsO01(byte[] body, Exchange exchange) {
         return toMessage(RDS_O01.class, body, exchange);
     }
 
     @Converter
-    public static REF_I12 toRefI12(String body) throws HL7Exception {
+    public static REF_I12 toRefI12(String body) {
         return toMessage(REF_I12.class, body);
     }
 
     @Converter
-    public static REF_I12 toRefI12(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static REF_I12 toRefI12(byte[] body, Exchange exchange) {
         return toMessage(REF_I12.class, body, exchange);
     }
 
     @Converter
-    public static RER_RER toRerRer(String body) throws HL7Exception {
+    public static RER_RER toRerRer(String body) {
         return toMessage(RER_RER.class, body);
     }
 
     @Converter
-    public static RER_RER toRerRer(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RER_RER toRerRer(byte[] body, Exchange exchange) {
         return toMessage(RER_RER.class, body, exchange);
     }
 
     @Converter
-    public static RGR_RGR toRgrRgr(String body) throws HL7Exception {
+    public static RGR_RGR toRgrRgr(String body) {
         return toMessage(RGR_RGR.class, body);
     }
 
     @Converter
-    public static RGR_RGR toRgrRgr(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RGR_RGR toRgrRgr(byte[] body, Exchange exchange) {
         return toMessage(RGR_RGR.class, body, exchange);
     }
 
     @Converter
-    public static RGV_O01 toRgvO01(String body) throws HL7Exception {
+    public static RGV_O01 toRgvO01(String body) {
         return toMessage(RGV_O01.class, body);
     }
 
     @Converter
-    public static RGV_O01 toRgvO01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RGV_O01 toRgvO01(byte[] body, Exchange exchange) {
         return toMessage(RGV_O01.class, body, exchange);
     }
 
     @Converter
-    public static ROR_R0R toRorR0r(String body) throws HL7Exception {
+    public static ROR_R0R toRorR0r(String body) {
         return toMessage(ROR_R0R.class, body);
     }
 
     @Converter
-    public static ROR_R0R toRorR0r(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static ROR_R0R toRorR0r(byte[] body, Exchange exchange) {
         return toMessage(ROR_R0R.class, body, exchange);
     }
 
     @Converter
-    public static RPA_I08 toRpaI08(String body) throws HL7Exception {
+    public static RPA_I08 toRpaI08(String body) {
         return toMessage(RPA_I08.class, body);
     }
 
     @Converter
-    public static RPA_I08 toRpaI08(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RPA_I08 toRpaI08(byte[] body, Exchange exchange) {
         return toMessage(RPA_I08.class, body, exchange);
     }
 
     @Converter
-    public static RPI_I01 toRpiI01(String body) throws HL7Exception {
+    public static RPI_I01 toRpiI01(String body) {
         return toMessage(RPI_I01.class, body);
     }
 
     @Converter
-    public static RPI_I01 toRpiI01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RPI_I01 toRpiI01(byte[] body, Exchange exchange) {
         return toMessage(RPI_I01.class, body, exchange);
     }
 
     @Converter
-    public static RPI_I04 toRpiI04(String body) throws HL7Exception {
+    public static RPI_I04 toRpiI04(String body) {
         return toMessage(RPI_I04.class, body);
     }
 
     @Converter
-    public static RPI_I04 toRpiI04(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RPI_I04 toRpiI04(byte[] body, Exchange exchange) {
         return toMessage(RPI_I04.class, body, exchange);
     }
 
     @Converter
-    public static RPL_I02 toRplI02(String body) throws HL7Exception {
+    public static RPL_I02 toRplI02(String body) {
         return toMessage(RPL_I02.class, body);
     }
 
     @Converter
-    public static RPL_I02 toRplI02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RPL_I02 toRplI02(byte[] body, Exchange exchange) {
         return toMessage(RPL_I02.class, body, exchange);
     }
 
     @Converter
-    public static RPR_I03 toRprI03(String body) throws HL7Exception {
+    public static RPR_I03 toRprI03(String body) {
         return toMessage(RPR_I03.class, body);
     }
 
     @Converter
-    public static RPR_I03 toRprI03(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RPR_I03 toRprI03(byte[] body, Exchange exchange) {
         return toMessage(RPR_I03.class, body, exchange);
     }
 
     @Converter
-    public static RQA_I08 toRqaI08(String body) throws HL7Exception {
+    public static RQA_I08 toRqaI08(String body) {
         return toMessage(RQA_I08.class, body);
     }
 
     @Converter
-    public static RQA_I08 toRqaI08(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RQA_I08 toRqaI08(byte[] body, Exchange exchange) {
         return toMessage(RQA_I08.class, body, exchange);
     }
 
     @Converter
-    public static RQC_I05 toRqcI05(String body) throws HL7Exception {
+    public static RQC_I05 toRqcI05(String body) {
         return toMessage(RQC_I05.class, body);
     }
 
     @Converter
-    public static RQC_I05 toRqcI05(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RQC_I05 toRqcI05(byte[] body, Exchange exchange) {
         return toMessage(RQC_I05.class, body, exchange);
     }
 
     @Converter
-    public static RQC_I06 toRqcI06(String body) throws HL7Exception {
+    public static RQC_I06 toRqcI06(String body) {
         return toMessage(RQC_I06.class, body);
     }
 
     @Converter
-    public static RQC_I06 toRqcI06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RQC_I06 toRqcI06(byte[] body, Exchange exchange) {
         return toMessage(RQC_I06.class, body, exchange);
     }
 
     @Converter
-    public static RQI_I01 toRqiI01(String body) throws HL7Exception {
+    public static RQI_I01 toRqiI01(String body) {
         return toMessage(RQI_I01.class, body);
     }
 
     @Converter
-    public static RQI_I01 toRqiI01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RQI_I01 toRqiI01(byte[] body, Exchange exchange) {
         return toMessage(RQI_I01.class, body, exchange);
     }
 
     @Converter
-    public static RQI_I02 toRqiI02(String body) throws HL7Exception {
+    public static RQI_I02 toRqiI02(String body) {
         return toMessage(RQI_I02.class, body);
     }
 
     @Converter
-    public static RQI_I02 toRqiI02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RQI_I02 toRqiI02(byte[] body, Exchange exchange) {
         return toMessage(RQI_I02.class, body, exchange);
     }
 
     @Converter
-    public static RQI_I03 toRqiI03(String body) throws HL7Exception {
+    public static RQI_I03 toRqiI03(String body) {
         return toMessage(RQI_I03.class, body);
     }
 
     @Converter
-    public static RQI_I03 toRqiI03(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RQI_I03 toRqiI03(byte[] body, Exchange exchange) {
         return toMessage(RQI_I03.class, body, exchange);
     }
 
     @Converter
-    public static RQP_I04 toRqpI04(String body) throws HL7Exception {
+    public static RQP_I04 toRqpI04(String body) {
         return toMessage(RQP_I04.class, body);
     }
 
     @Converter
-    public static RQP_I04 toRqpI04(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RQP_I04 toRqpI04(byte[] body, Exchange exchange) {
         return toMessage(RQP_I04.class, body, exchange);
     }
 
     @Converter
-    public static RQQ_Q09 toRqqQ09(String body) throws HL7Exception {
+    public static RQQ_Q09 toRqqQ09(String body) {
         return toMessage(RQQ_Q09.class, body);
     }
 
     @Converter
-    public static RQQ_Q09 toRqqQ09(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RQQ_Q09 toRqqQ09(byte[] body, Exchange exchange) {
         return toMessage(RQQ_Q09.class, body, exchange);
     }
 
     @Converter
-    public static RRA_O02 toRraO02(String body) throws HL7Exception {
+    public static RRA_O02 toRraO02(String body) {
         return toMessage(RRA_O02.class, body);
     }
 
     @Converter
-    public static RRA_O02 toRraO02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RRA_O02 toRraO02(byte[] body, Exchange exchange) {
         return toMessage(RRA_O02.class, body, exchange);
     }
 
     @Converter
-    public static RRD_O02 toRrdO02(String body) throws HL7Exception {
+    public static RRD_O02 toRrdO02(String body) {
         return toMessage(RRD_O02.class, body);
     }
 
     @Converter
-    public static RRD_O02 toRrdO02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RRD_O02 toRrdO02(byte[] body, Exchange exchange) {
         return toMessage(RRD_O02.class, body, exchange);
     }
 
     @Converter
-    public static RRE_O02 toRreO02(String body) throws HL7Exception {
+    public static RRE_O02 toRreO02(String body) {
         return toMessage(RRE_O02.class, body);
     }
 
     @Converter
-    public static RRE_O02 toRreO02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RRE_O02 toRreO02(byte[] body, Exchange exchange) {
         return toMessage(RRE_O02.class, body, exchange);
     }
 
     @Converter
-    public static RRG_O02 toRrgO02(String body) throws HL7Exception {
+    public static RRG_O02 toRrgO02(String body) {
         return toMessage(RRG_O02.class, body);
     }
 
     @Converter
-    public static RRG_O02 toRrgO02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RRG_O02 toRrgO02(byte[] body, Exchange exchange) {
         return toMessage(RRG_O02.class, body, exchange);
     }
 
     @Converter
-    public static RRI_I12 toRriI12(String body) throws HL7Exception {
+    public static RRI_I12 toRriI12(String body) {
         return toMessage(RRI_I12.class, body);
     }
 
     @Converter
-    public static RRI_I12 toRriI12(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RRI_I12 toRriI12(byte[] body, Exchange exchange) {
         return toMessage(RRI_I12.class, body, exchange);
     }
 
     @Converter
-    public static RRO_O02 toRroO02(String body) throws HL7Exception {
+    public static RRO_O02 toRroO02(String body) {
         return toMessage(RRO_O02.class, body);
     }
 
     @Converter
-    public static RRO_O02 toRroO02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static RRO_O02 toRroO02(byte[] body, Exchange exchange) {
         return toMessage(RRO_O02.class, body, exchange);
     }
 
     @Converter
-    public static SIU_S12 toSiuS12(String body) throws HL7Exception {
+    public static SIU_S12 toSiuS12(String body) {
         return toMessage(SIU_S12.class, body);
     }
 
     @Converter
-    public static SIU_S12 toSiuS12(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static SIU_S12 toSiuS12(byte[] body, Exchange exchange) {
         return toMessage(SIU_S12.class, body, exchange);
     }
 
     @Converter
-    public static SPQ_Q08 toSpqQ08(String body) throws HL7Exception {
+    public static SPQ_Q08 toSpqQ08(String body) {
         return toMessage(SPQ_Q08.class, body);
     }
 
     @Converter
-    public static SPQ_Q08 toSpqQ08(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static SPQ_Q08 toSpqQ08(byte[] body, Exchange exchange) {
         return toMessage(SPQ_Q08.class, body, exchange);
     }
 
     @Converter
-    public static SQM_S25 toSqmS25(String body) throws HL7Exception {
+    public static SQM_S25 toSqmS25(String body) {
         return toMessage(SQM_S25.class, body);
     }
 
     @Converter
-    public static SQM_S25 toSqmS25(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static SQM_S25 toSqmS25(byte[] body, Exchange exchange) {
         return toMessage(SQM_S25.class, body, exchange);
     }
 
     @Converter
-    public static SQR_S25 toSqrS25(String body) throws HL7Exception {
+    public static SQR_S25 toSqrS25(String body) {
         return toMessage(SQR_S25.class, body);
     }
 
     @Converter
-    public static SQR_S25 toSqrS25(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static SQR_S25 toSqrS25(byte[] body, Exchange exchange) {
         return toMessage(SQR_S25.class, body, exchange);
     }
 
     @Converter
-    public static SRM_S01 toSrmS01(String body) throws HL7Exception {
+    public static SRM_S01 toSrmS01(String body) {
         return toMessage(SRM_S01.class, body);
     }
 
     @Converter
-    public static SRM_S01 toSrmS01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static SRM_S01 toSrmS01(byte[] body, Exchange exchange) {
         return toMessage(SRM_S01.class, body, exchange);
     }
 
     @Converter
-    public static SRR_S01 toSrrS01(String body) throws HL7Exception {
+    public static SRR_S01 toSrrS01(String body) {
         return toMessage(SRR_S01.class, body);
     }
 
     @Converter
-    public static SRR_S01 toSrrS01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static SRR_S01 toSrrS01(byte[] body, Exchange exchange) {
         return toMessage(SRR_S01.class, body, exchange);
     }
 
     @Converter
-    public static SUR_P09 toSurP09(String body) throws HL7Exception {
+    public static SUR_P09 toSurP09(String body) {
         return toMessage(SUR_P09.class, body);
     }
 
     @Converter
-    public static SUR_P09 toSurP09(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static SUR_P09 toSurP09(byte[] body, Exchange exchange) {
         return toMessage(SUR_P09.class, body, exchange);
     }
 
     @Converter
-    public static TBR_R08 toTbrR08(String body) throws HL7Exception {
+    public static TBR_R08 toTbrR08(String body) {
         return toMessage(TBR_R08.class, body);
     }
 
     @Converter
-    public static TBR_R08 toTbrR08(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static TBR_R08 toTbrR08(byte[] body, Exchange exchange) {
         return toMessage(TBR_R08.class, body, exchange);
     }
 
     @Converter
-    public static UDM_Q05 toUdmQ05(String body) throws HL7Exception {
+    public static UDM_Q05 toUdmQ05(String body) {
         return toMessage(UDM_Q05.class, body);
     }
 
     @Converter
-    public static UDM_Q05 toUdmQ05(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static UDM_Q05 toUdmQ05(byte[] body, Exchange exchange) {
         return toMessage(UDM_Q05.class, body, exchange);
     }
 
     @Converter
-    public static VQQ_Q07 toVqqQ07(String body) throws HL7Exception {
+    public static VQQ_Q07 toVqqQ07(String body) {
         return toMessage(VQQ_Q07.class, body);
     }
 
     @Converter
-    public static VQQ_Q07 toVqqQ07(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static VQQ_Q07 toVqqQ07(byte[] body, Exchange exchange) {
         return toMessage(VQQ_Q07.class, body, exchange);
     }
 
     @Converter
-    public static VXQ_V01 toVxqV01(String body) throws HL7Exception {
+    public static VXQ_V01 toVxqV01(String body) {
         return toMessage(VXQ_V01.class, body);
     }
 
     @Converter
-    public static VXQ_V01 toVxqV01(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static VXQ_V01 toVxqV01(byte[] body, Exchange exchange) {
         return toMessage(VXQ_V01.class, body, exchange);
     }
 
     @Converter
-    public static VXR_V03 toVxrV03(String body) throws HL7Exception {
+    public static VXR_V03 toVxrV03(String body) {
         return toMessage(VXR_V03.class, body);
     }
 
     @Converter
-    public static VXR_V03 toVxrV03(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static VXR_V03 toVxrV03(byte[] body, Exchange exchange) {
         return toMessage(VXR_V03.class, body, exchange);
     }
 
     @Converter
-    public static VXU_V04 toVxuV04(String body) throws HL7Exception {
+    public static VXU_V04 toVxuV04(String body) {
         return toMessage(VXU_V04.class, body);
     }
 
     @Converter
-    public static VXU_V04 toVxuV04(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static VXU_V04 toVxuV04(byte[] body, Exchange exchange) {
         return toMessage(VXU_V04.class, body, exchange);
     }
 
     @Converter
-    public static VXX_V02 toVxxV02(String body) throws HL7Exception {
+    public static VXX_V02 toVxxV02(String body) {
         return toMessage(VXX_V02.class, body);
     }
 
     @Converter
-    public static VXX_V02 toVxxV02(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+    public static VXX_V02 toVxxV02(byte[] body, Exchange exchange) {
         return toMessage(VXX_V02.class, body, exchange);
     }
 

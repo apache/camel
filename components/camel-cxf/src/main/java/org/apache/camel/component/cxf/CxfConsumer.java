@@ -63,7 +63,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
     private Server server;
     private CxfEndpoint cxfEndpoint;
 
-    public CxfConsumer(final CxfEndpoint endpoint, Processor processor) throws Exception {
+    public CxfConsumer(final CxfEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         cxfEndpoint = endpoint;
     }
@@ -202,7 +202,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                         throw ex;
                     }
 
-                } else if (continuation.isTimeout() || (!continuation.isResumed() && !continuation.isPending())) {
+                } else if (continuation.isTimeout() || !continuation.isResumed() && !continuation.isPending()) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
                     try {
                         if (!continuation.isPending()) {

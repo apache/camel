@@ -754,12 +754,12 @@ public class GitProducerTest extends GitTestSupport {
         assertEquals(true, gitDir.exists());
         Git git = new Git(repository);
         List<RemoteConfig> remoteConfigList = git.remoteList().call();
-        assertTrue(remoteConfigList.size() == 0);
+        assertEquals(0, remoteConfigList.size());
         Object result = template.requestBody("direct:remoteAdd", "");
         assertTrue(result instanceof RemoteConfig);
         RemoteConfig remoteConfig = (RemoteConfig) result;
         remoteConfigList = git.remoteList().call();
-        assertTrue(remoteConfigList.size() == 1);
+        assertEquals(1, remoteConfigList.size());
         assertEquals(remoteConfigList.get(0).getName(), remoteConfig.getName());
         assertEquals(remoteConfigList.get(0).getURIs(), remoteConfig.getURIs());
         git.close();

@@ -70,6 +70,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean topicIsPattern;
     @UriParam(label = "consumer")
     private String groupId;
+    @UriParam(label = "consumer")
+    private String groupInstanceId;
     @UriParam(label = "consumer", defaultValue = "10")
     private int consumerStreams = 10;
     @UriParam(label = "consumer", defaultValue = "1")
@@ -200,6 +202,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // request.timeout.ms
     @UriParam(label = "producer", defaultValue = "30000")
     private Integer requestTimeoutMs = 30000;
+    // delivery.timeout.ms
+    @UriParam(label = "producer", defaultValue = "120000")
+    private Integer deliveryTimeoutMs = 120000;
     // send.buffer.bytes
     @UriParam(label = "producer", defaultValue = "131072")
     private Integer sendBufferBytes = 131072;
@@ -362,6 +367,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, getPartitioner());
         addPropertyIfNotNull(props, ProducerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotNull(props, ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, getRequestTimeoutMs());
+        addPropertyIfNotNull(props, ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, getDeliveryTimeoutMs());
         addPropertyIfNotNull(props, ProducerConfig.SEND_BUFFER_CONFIG, getSendBufferBytes());
         addPropertyIfNotNull(props, ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, getMaxInFlightRequest());
         addPropertyIfNotNull(props, ProducerConfig.METADATA_MAX_AGE_CONFIG, getMetadataMaxAgeMs());
@@ -575,6 +581,21 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getGroupInstanceId() {
+        return groupInstanceId;
+    }
+
+    /**
+     * A unique identifier of the consumer instance provided by the end user. Only non-empty strings are permitted. If
+     * set, the consumer is treated as a static member, which means that only one instance with this ID is allowed in
+     * the consumer group at any time. This can be used in combination with a larger session timeout to avoid group
+     * rebalances caused by transient unavailability (e.g. process restarts). If not set, the consumer will join the
+     * group as a dynamic member, which is the traditional behavior.
+     */
+    public void setGroupInstanceId(String groupInstanceId) {
+        this.groupInstanceId = groupInstanceId;
     }
 
     public String getPartitioner() {
@@ -867,6 +888,19 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setRequestTimeoutMs(Integer requestTimeoutMs) {
         this.requestTimeoutMs = requestTimeoutMs;
+    }
+
+    public Integer getDeliveryTimeoutMs() {
+        return deliveryTimeoutMs;
+    }
+
+    /**
+     * An upper bound on the time to report success or failure after a call to send() returns. This limits the total
+     * time that a record will be delayed prior to sending, the time to await acknowledgement from the broker (if
+     * expected), and the time allowed for retriable send failures.
+     */
+    public void setDeliveryTimeoutMs(Integer deliveryTimeoutMs) {
+        this.deliveryTimeoutMs = deliveryTimeoutMs;
     }
 
     public Integer getQueueBufferingMaxMessages() {

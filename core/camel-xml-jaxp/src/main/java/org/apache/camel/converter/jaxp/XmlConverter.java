@@ -904,7 +904,10 @@ public class XmlConverter {
     //-------------------------------------------------------------------------
 
     protected void setupFeatures(DocumentBuilderFactory factory) {
-        Properties properties = System.getProperties();
+        // must do defensive copy in case of concurrency
+        Properties properties = new Properties();
+        properties.putAll(System.getProperties());
+
         List<String> features = new ArrayList<>();
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
             String key = (String) prop.getKey();
@@ -1087,7 +1090,7 @@ public class XmlConverter {
             sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (Exception e) {
             LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
-                    new Object[] { "http://xml.org/sax/features/external-general-entities", false, e.getMessage() });
+                    "http://xml.org/sax/features/external-general-entities", false, e.getMessage());
         }
         sfactory.setNamespaceAware(true);
         return sfactory;

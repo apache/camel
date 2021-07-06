@@ -1,9 +1,9 @@
-= AWS2 Component
-:docTitle: AWS 2
+= AWS Component
+:docTitle: AWS
 
-The *aws2-* component allows you to work with the
-https://aws.amazon.com/[AWS 2].
-AWS 2 offers a great palette of different components like cloudwatch, DynamoDB streams, 
+The *aws-* component allows you to work with the
+https://aws.amazon.com/[AWS].
+AWS offers a great palette of different components like cloudwatch, DynamoDB streams, 
 storage service, email and queue services. The main reason to use AWS is its cloud computing platform.
 
 

@@ -70,6 +70,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "doneFileName": getOrCreateConfiguration(target).setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "filename":
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "ignorebody":
+        case "ignoreBody": getOrCreateConfiguration(target).setIgnoreBody(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -174,6 +176,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "doneFileName": return java.lang.String.class;
         case "filename":
         case "fileName": return java.lang.String.class;
+        case "ignorebody":
+        case "ignoreBody": return boolean.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includefolders":
@@ -274,6 +278,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "doneFileName": return getOrCreateConfiguration(target).getDoneFileName();
         case "filename":
         case "fileName": return getOrCreateConfiguration(target).getFileName();
+        case "ignorebody":
+        case "ignoreBody": return getOrCreateConfiguration(target).isIgnoreBody();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "includefolders":

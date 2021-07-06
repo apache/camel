@@ -31,7 +31,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the GoogleCloudFunctions component.
+     * Builder for endpoint for the Google Cloud Functions component.
      */
     public interface GoogleCloudFunctionsEndpointBuilder
             extends
@@ -199,7 +199,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the GoogleCloudFunctions component.
+     * Advanced builder for endpoint for the Google Cloud Functions component.
      */
     public interface AdvancedGoogleCloudFunctionsEndpointBuilder
             extends
@@ -256,7 +256,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
 
     public interface GoogleCloudFunctionsBuilders {
         /**
-         * GoogleCloudFunctions (camel-google-functions)
+         * Google Cloud Functions (camel-google-functions)
          * Manage and invoke Google Cloud Functions
          * 
          * Category: cloud
@@ -275,7 +275,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
             return GoogleCloudFunctionsEndpointBuilderFactory.endpointBuilder("google-functions", path);
         }
         /**
-         * GoogleCloudFunctions (camel-google-functions)
+         * Google Cloud Functions (camel-google-functions)
          * Manage and invoke Google Cloud Functions
          * 
          * Category: cloud

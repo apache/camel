@@ -72,8 +72,8 @@ tag.
 ------------------------------------------------------------------------------------------------------------------------------
         <dataFormats>
             <!-- here we define a Json data format with the id jack and that it should use the TestPojo as the class type when
-                 doing unmarshal. The unmarshalTypeName is optional, if not provided Camel will use a Map as the type -->
-            <json id="jack" library="Jackson" unmarshalTypeName="org.apache.camel.component.jackson.TestPojo"/>
+                 doing unmarshal. The unmarshalType is optional, if not provided Camel will use a Map as the type -->
+            <json id="jack" library="Jackson" unmarshalType="org.apache.camel.component.jackson.TestPojo"/>
         </dataFormats>
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -248,7 +248,7 @@ And the same in XML DSL:
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 <from uri="direct:inPojoAgeView"/>
   <marshal>
-    <json library="Jackson" unmarshalTypeName="org.apache.camel.component.jackson.TestPojoView" jsonView="org.apache.camel.component.jackson.Views$Age"/>
+    <json library="Jackson" unmarshalType="org.apache.camel.component.jackson.TestPojoView" jsonView="org.apache.camel.component.jackson.Views$Age"/>
   </marshal>
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -354,7 +354,7 @@ And you can specify the pojo type also
 [source,java]
 -------------------------------------------------------------------------------------------
     <dataFormats>
-      <json id="json" library="Jackson" useList="true" unmarshalTypeName="com.foo.MyPojo"/>
+      <json id="json" library="Jackson" useList="true" unmarshalType="com.foo.MyPojo"/>
     </dataFormats>
 -------------------------------------------------------------------------------------------
 
@@ -387,7 +387,7 @@ those using the moduleClassNames option as shown below.
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------------------------------------
     <dataFormats>
-      <json id="json" library="Jackson" useList="true" unmarshalTypeName="com.foo.MyPojo" moduleClassNames="com.foo.MyModule,com.foo.MyOtherModule"/>
+      <json id="json" library="Jackson" useList="true" unmarshalType="com.foo.MyPojo" moduleClassNames="com.foo.MyModule,com.foo.MyOtherModule"/>
     </dataFormats>
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -404,7 +404,7 @@ to the module as shown below:
     </bean>
  
     <dataFormats>
-      <json id="json" library="Jackson" useList="true" unmarshalTypeName="com.foo.MyPojo" moduleRefs="myJacksonModule"/>
+      <json id="json" library="Jackson" useList="true" unmarshalType="com.foo.MyPojo" moduleRefs="myJacksonModule"/>
     </dataFormats>
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -423,7 +423,7 @@ when marshalling, you can configure this using the disableFeatures:
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------
  <dataFormats>
-      <json id="json" library="Jackson" unmarshalTypeName="com.foo.MyPojo" disableFeatures="FAIL_ON_UNKNOWN_PROPERTIES"/>
+      <json id="json" library="Jackson" unmarshalType="com.foo.MyPojo" disableFeatures="FAIL_ON_UNKNOWN_PROPERTIES"/>
  </dataFormats>
 -------------------------------------------------------------------------------------------------------------------------
 

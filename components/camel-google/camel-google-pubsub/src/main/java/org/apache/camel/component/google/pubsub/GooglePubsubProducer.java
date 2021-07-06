@@ -40,7 +40,7 @@ public class GooglePubsubProducer extends DefaultProducer {
 
     public Logger logger;
 
-    public GooglePubsubProducer(GooglePubsubEndpoint endpoint) throws Exception {
+    public GooglePubsubProducer(GooglePubsubEndpoint endpoint) {
         super(endpoint);
 
         String loggerId = endpoint.getLoggerId();

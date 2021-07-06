@@ -755,6 +755,28 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * A unique identifier of the consumer instance provided by the end
+         * user. Only non-empty strings are permitted. If set, the consumer is
+         * treated as a static member, which means that only one instance with
+         * this ID is allowed in the consumer group at any time. This can be
+         * used in combination with a larger session timeout to avoid group
+         * rebalances caused by transient unavailability (e.g. process
+         * restarts). If not set, the consumer will join the group as a dynamic
+         * member, which is the traditional behavior.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param groupInstanceId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder groupInstanceId(
+                String groupInstanceId) {
+            doSetProperty("groupInstanceId", groupInstanceId);
+            return this;
+        }
+        /**
          * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
          * values.
          * 
@@ -2108,6 +2130,47 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointProducerBuilder connectionMaxIdleMs(
                 String connectionMaxIdleMs) {
             doSetProperty("connectionMaxIdleMs", connectionMaxIdleMs);
+            return this;
+        }
+        /**
+         * An upper bound on the time to report success or failure after a call
+         * to send() returns. This limits the total time that a record will be
+         * delayed prior to sending, the time to await acknowledgement from the
+         * broker (if expected), and the time allowed for retriable send
+         * failures.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: producer
+         * 
+         * @param deliveryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder deliveryTimeoutMs(
+                Integer deliveryTimeoutMs) {
+            doSetProperty("deliveryTimeoutMs", deliveryTimeoutMs);
+            return this;
+        }
+        /**
+         * An upper bound on the time to report success or failure after a call
+         * to send() returns. This limits the total time that a record will be
+         * delayed prior to sending, the time to await acknowledgement from the
+         * broker (if expected), and the time allowed for retriable send
+         * failures.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: producer
+         * 
+         * @param deliveryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder deliveryTimeoutMs(
+                String deliveryTimeoutMs) {
+            doSetProperty("deliveryTimeoutMs", deliveryTimeoutMs);
             return this;
         }
         /**

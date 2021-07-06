@@ -36,6 +36,11 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"dataSource"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
