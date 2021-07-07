@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
@@ -36,15 +37,15 @@ import org.apache.camel.util.ObjectHelper;
  * Base class for implementation inheritance for different clauses in the
  * <a href="http://camel.apache.org/dsl.html">Java DSL</a>
  */
-public abstract class BuilderSupport {
-    private CamelContext context;
+public abstract class BuilderSupport implements CamelContextAware {
+    private CamelContext camelContext;
     private ErrorHandlerBuilder errorHandlerBuilder;
 
     protected BuilderSupport() {
     }
 
     protected BuilderSupport(CamelContext context) {
-        this.context = context;
+        this.camelContext = context;
     }
 
     // Builder methods
@@ -451,13 +452,33 @@ public abstract class BuilderSupport {
     // Properties
     // -------------------------------------------------------------------------
 
-    public CamelContext getContext() {
-        return context;
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        if (camelContext != null) {
+            this.camelContext = camelContext;
+        }
+    }
+
+    /**
+     * Get the {@link CamelContext}
+     *
+     * @return camelContext the Camel context
+     */
+    public CamelContext getContext() {
+        return getCamelContext();
+    }
+
+    /**
+     * @deprecated use {@link #setCamelContext(CamelContext)}
+     */
+    @Deprecated
     public void setContext(CamelContext context) {
-        ObjectHelper.notNull(context, "CamelContext", this);
-        this.context = context;
+        setCamelContext(context);
     }
 
     public boolean hasErrorHandlerBuilder() {

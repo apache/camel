@@ -497,7 +497,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public RoutesDefinition configureRoutes(CamelContext context) throws Exception {
-        setContext(context);
+        setCamelContext(context);
         checkInitialized();
         routeCollection.setCamelContext(context);
         return routeCollection;
@@ -511,7 +511,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public RestsDefinition configureRests(CamelContext context) throws Exception {
-        setContext(context);
+        setCamelContext(context);
         restCollection.setCamelContext(context);
         return restCollection;
     }
