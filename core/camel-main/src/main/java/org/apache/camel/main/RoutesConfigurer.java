@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RoutesConfigurationsBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.support.OrderedComparator;
@@ -205,9 +206,14 @@ public class RoutesConfigurer {
         // sort routes according to ordered
         routes.sort(OrderedComparator.get());
 
-        // TODO: 1st-pass for RoutesConfiguration
-        // TODO: 2nd-pass for the routes
-
+        // first add the routes configurations as they are globally for all routes
+        for (RoutesBuilder builder : routes) {
+            if (builder instanceof RoutesConfigurationsBuilder) {
+                RoutesConfigurationsBuilder rcb = (RoutesConfigurationsBuilder) builder;
+                LOG.debug("Adding routes configurations into CamelContext from RoutesConfigurationsBuilder: {}", rcb);
+                camelContext.addRoutesConfigurations(rcb);
+            }
+        }
         // then add the routes
         for (RoutesBuilder builder : routes) {
             LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);

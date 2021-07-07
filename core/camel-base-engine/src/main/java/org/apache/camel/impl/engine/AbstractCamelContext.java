@@ -65,6 +65,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RoutesConfigurationsBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
@@ -1148,6 +1149,15 @@ public abstract class AbstractCamelContext extends BaseService
             build();
             LOG.debug("Adding routes from builder: {}", builder);
             builder.addRoutesToCamelContext(AbstractCamelContext.this);
+        }
+    }
+
+    @Override
+    public void addRoutesConfigurations(RoutesConfigurationsBuilder builder) throws Exception {
+        try (LifecycleHelper helper = new LifecycleHelper()) {
+            build();
+            LOG.debug("Adding route configurations from builder: {}", builder);
+            builder.addRoutesConfigurationsToCamelContext(AbstractCamelContext.this);
         }
     }
 

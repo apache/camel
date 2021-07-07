@@ -29,6 +29,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RoutesConfigurationsBuilder;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -61,10 +62,11 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to build {@link Route} instances in a
  * {@link CamelContext} for smart routing.
  */
-public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered {
+public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, RoutesConfigurationsBuilder, Ordered {
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     private final AtomicBoolean initialized = new AtomicBoolean();
+    private final AtomicBoolean initializedConfiguration = new AtomicBoolean();
     private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
     private final List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private final List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
@@ -167,6 +169,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public abstract void configure() throws Exception;
+
+    /**
+     * <b>Called on initialization to build routes configuration (global routes configurations) using the fluent builder
+     * syntax.</b>
+     *
+     * @throws Exception can be thrown during configuration
+     */
+    public void configuration() throws Exception {
+        // noop
+    }
 
     /**
      * Binds the bean to the repository (if possible).
@@ -477,7 +489,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         configureRests(context);
 
         // but populate rests before routes, as we want to turn rests into routes
-        populateRoutesConfiguration();
         populateRests();
         populateTransformers();
         populateValidators();
@@ -487,6 +498,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (this instanceof OnCamelContextEvent) {
             context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent) this));
         }
+    }
+
+    @Override
+    public void addRoutesConfigurationsToCamelContext(CamelContext context) throws Exception {
+        setCamelContext(context);
+        routeCollection.setCamelContext(context);
+        if (initializedConfiguration.compareAndSet(false, true)) {
+            configuration();
+        }
+        populateRoutesConfiguration();
     }
 
     /**
