@@ -54,28 +54,26 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
     private final CamelContext camelContext;
     private String id;
     private String routeId;
-    private final Processor processor;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
-    private final boolean onCompleteOnly;
-    private final boolean onFailureOnly;
+    private final Processor onCompleteProcessor;
+    private final Processor onFailureProcessor;
     private final Predicate onWhen;
     private final boolean useOriginalBody;
     private final boolean afterConsumer;
     private final boolean routeScoped;
 
-    public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
+    public OnCompletionProcessor(CamelContext camelContext, Processor onCompleteProcessor,
+                                 Processor onFailureProcessor, ExecutorService executorService,
                                  boolean shutdownExecutorService,
-                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody,
+                                 Predicate onWhen, boolean useOriginalBody,
                                  boolean afterConsumer, boolean routeScoped) {
         notNull(camelContext, "camelContext");
-        notNull(processor, "processor");
         this.camelContext = camelContext;
-        this.processor = processor;
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
-        this.onCompleteOnly = onCompleteOnly;
-        this.onFailureOnly = onFailureOnly;
+        this.onCompleteProcessor = onCompleteProcessor;
+        this.onFailureProcessor = onFailureProcessor;
         this.onWhen = onWhen;
         this.useOriginalBody = useOriginalBody;
         this.afterConsumer = afterConsumer;
@@ -84,27 +82,27 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
     @Override
     protected void doBuild() throws Exception {
-        ServiceHelper.buildService(processor);
+        ServiceHelper.buildService(onCompleteProcessor, onFailureProcessor);
     }
 
     @Override
     protected void doInit() throws Exception {
-        ServiceHelper.initService(processor);
+        ServiceHelper.initService(onCompleteProcessor, onFailureProcessor);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(processor);
+        ServiceHelper.startService(onCompleteProcessor, onFailureProcessor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processor);
+        ServiceHelper.stopService(onCompleteProcessor, onFailureProcessor);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(processor);
+        ServiceHelper.stopAndShutdownServices(onCompleteProcessor, onFailureProcessor);
         if (shutdownExecutorService) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
         }
@@ -136,7 +134,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (processor != null) {
+        if (onCompleteProcessor != null || onFailureProcessor != null) {
             // register callback
             if (afterConsumer) {
                 exchange.getUnitOfWork()
@@ -292,7 +290,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 }
             }
 
-            if (onFailureOnly) {
+            if (onCompleteProcessor == null) {
                 return;
             }
 
@@ -308,20 +306,20 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
                         LOG.debug("Processing onComplete: {}", copy);
-                        doProcess(processor, copy);
+                        doProcess(onCompleteProcessor, copy);
                         return copy;
                     }
                 });
             } else {
                 // run without thread-pool
                 LOG.debug("Processing onComplete: {}", copy);
-                doProcess(processor, copy);
+                doProcess(onCompleteProcessor, copy);
             }
         }
 
         @Override
         public void onFailure(final Exchange exchange) {
-            if (onCompleteOnly) {
+            if (onFailureProcessor == null) {
                 return;
             }
 
@@ -343,7 +341,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
                         LOG.debug("Processing onFailure: {}", copy);
-                        doProcess(processor, copy);
+                        doProcess(onFailureProcessor, copy);
                         // restore exception after processing
                         copy.setException(original);
                         return null;
@@ -352,7 +350,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             } else {
                 // run without thread-pool
                 LOG.debug("Processing onFailure: {}", copy);
-                doProcess(processor, copy);
+                doProcess(onFailureProcessor, copy);
                 // restore exception after processing
                 copy.setException(original);
             }
@@ -360,9 +358,9 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
         @Override
         public String toString() {
-            if (!onCompleteOnly && !onFailureOnly) {
+            if (onCompleteProcessor != null && onFailureProcessor != null) {
                 return "onCompleteOrFailure";
-            } else if (onCompleteOnly) {
+            } else if (onCompleteProcessor != null) {
                 return "onCompleteOnly";
             } else {
                 return "onFailureOnly";
@@ -397,12 +395,8 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             if (!routeScoped && (!route.getRouteId().equals(routeId) || !exchange.getFromRouteId().equals(routeId))) {
                 return;
             }
-
-            if (exchange.isFailed() && onCompleteOnly) {
-                return;
-            }
-
-            if (!exchange.isFailed() && onFailureOnly) {
+            final Processor processor = exchange.isFailed() ? onFailureProcessor : onCompleteProcessor;
+            if (processor == null) {
                 return;
             }
 

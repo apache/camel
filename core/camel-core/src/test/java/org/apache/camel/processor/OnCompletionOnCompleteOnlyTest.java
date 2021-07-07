@@ -56,7 +56,7 @@ public class OnCompletionOnCompleteOnlyTest extends OnCompletionTest {
                         // exchange completed with success
                         // if the exchange failed this onCompletion route will NOT
                         // be routed then
-                        .onCompletion().onCompleteOnly().to("log:sync").to("mock:sync")
+                        .onCompletion().onSuccess().to("log:sync").to("mock:sync")
                         // must use end to denote the end of the onCompletion route
                         .end()
                         // here the original route contiues

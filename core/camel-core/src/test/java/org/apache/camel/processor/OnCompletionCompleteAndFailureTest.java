@@ -48,4 +48,23 @@ public class OnCompletionCompleteAndFailureTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    public void testValid() {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start")
+                    .onCompletion()
+                    .onSuccess().to("mock:ok")
+                    .onFailure().to("mock:error")
+                    .end()
+                    .to("mock:result");
+                }
+            });
+        } catch (Exception e) {
+            fail("Should not throw exception");
+        }
+    }
+
 }

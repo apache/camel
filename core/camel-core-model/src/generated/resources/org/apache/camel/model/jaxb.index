@@ -39,7 +39,9 @@ MulticastDefinition
 OnCompletionDefinition
 OnCompletionMode
 OnExceptionDefinition
+OnFailureDefinition
 OnFallbackDefinition
+OnSuccessDefinition
 OptimisticLockRetryPolicyDefinition
 OptionalIdentifiedDefinition
 OtherwiseDefinition

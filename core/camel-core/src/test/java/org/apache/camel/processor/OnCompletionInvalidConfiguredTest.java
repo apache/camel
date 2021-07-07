@@ -48,4 +48,42 @@ public class OnCompletionInvalidConfiguredTest extends ContextTestSupport {
                     e.getMessage());
         }
     }
+
+    @Test
+    public void testInvalidConfiguredFailureOnlyAndSuccessRoute() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    onCompletion().onFailureOnly().onSuccess().to("mock:foo");
+
+                    from("direct:start").to("mock:result");
+                }
+            });
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                    "The option onFailureOnly is set so there cannot be an onSuccess route. On node: onCompletion[[]]",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void testInvalidConfiguredCompleteOnlyAndFailureRoute() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    onCompletion().onCompleteOnly().onFailure().to("mock:foo");
+
+                    from("direct:start").to("mock:result");
+                }
+            });
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                    "The option onCompleteOnly is set so there cannot be an onFailure route. On node: onCompletion[[]]",
+                    e.getMessage());
+        }
+    }
 }
