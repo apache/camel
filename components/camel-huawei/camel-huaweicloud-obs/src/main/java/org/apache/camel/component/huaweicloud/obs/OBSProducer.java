@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.huaweicloud.obs;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -27,7 +30,10 @@ import com.obs.services.model.CreateBucketRequest;
 import com.obs.services.model.HeaderResponse;
 import com.obs.services.model.ListBucketsRequest;
 import com.obs.services.model.ListBucketsResult;
+import com.obs.services.model.ListObjectsRequest;
+import com.obs.services.model.ObjectListing;
 import com.obs.services.model.ObsBucket;
+import com.obs.services.model.ObsObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSConstants;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSOperations;
@@ -77,6 +83,9 @@ public class OBSProducer extends DefaultProducer {
                 break;
             case OBSOperations.GET_BUCKET_METADATA:
                 getBucketMetadata(exchange);
+                break;
+            case OBSOperations.LIST_OBJECTS:
+                listObjects(exchange);
                 break;
             default:
                 throw new UnsupportedOperationException(
@@ -192,6 +201,50 @@ public class OBSProducer extends DefaultProducer {
         BucketMetadataInfoRequest request = new BucketMetadataInfoRequest(clientConfigurations.getBucketName());
         BucketMetadataInfoResult response = obsClient.getBucketMetadata(request);
         exchange.getMessage().setBody(gson.toJson(response));
+    }
+
+    /**
+     * Perform list objects operation
+     *
+     * @param exchange
+     */
+    private void listObjects(Exchange exchange) throws ObsException {
+        ListObjectsRequest request = null;
+
+        // checking if user inputted exchange body containing list objects information. Body must be a ListObjectsRequest or a valid JSON string (Advanced users)
+        Object exchangeBody = exchange.getMessage().getBody();
+        if (exchangeBody instanceof ListObjectsRequest) {
+            request = (ListObjectsRequest) exchangeBody;
+        } else if (exchangeBody instanceof String) {
+            String strBody = (String) exchangeBody;
+            try {
+                request = new ObjectMapper().readValue(strBody, ListObjectsRequest.class);
+            } catch (JsonProcessingException e) {
+                LOG.warn(
+                        "String request body must be a valid JSON representation of a ListObjectsRequest. Attempting to list objects from endpoint parameters");
+            }
+        }
+
+        // if no ListObjectsRequest was found in the exchange body, then list from endpoint parameters (Basic users)
+        if (request == null) {
+            // check for bucket name, which is mandatory to list objects
+            if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
+                LOG.error("No bucket name given");
+                throw new IllegalArgumentException("Bucket name is mandatory to list objects");
+            }
+            request = new ListObjectsRequest(clientConfigurations.getBucketName());
+        }
+
+        // invoke list objects method. Each result only holds a maximum of 1000 objects, so keep listing each object until all objects have been listed
+        ObjectListing result;
+        List<ObsObject> objects = new ArrayList<>();
+        do {
+            result = obsClient.listObjects(request);
+            objects.addAll(result.getObjects());
+            request.setMarker(result.getNextMarker());
+        } while (result.isTruncated());
+
+        exchange.getMessage().setBody(gson.toJson(objects));
     }
 
     /**
