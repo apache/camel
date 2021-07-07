@@ -205,6 +205,9 @@ public class RoutesConfigurer {
         // sort routes according to ordered
         routes.sort(OrderedComparator.get());
 
+        // TODO: 1st-pass for RoutesConfiguration
+        // TODO: 2nd-pass for the routes
+
         // then add the routes
         for (RoutesBuilder builder : routes) {
             LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
