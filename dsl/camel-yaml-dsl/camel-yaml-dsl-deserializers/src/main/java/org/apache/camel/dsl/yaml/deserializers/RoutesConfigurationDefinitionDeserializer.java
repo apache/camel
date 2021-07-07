@@ -5,18 +5,12 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RoutesConfigurationDefinition;
-import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
-import org.snakeyaml.engine.v2.nodes.NodeType;
-import org.snakeyaml.engine.v2.nodes.ScalarNode;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @YamlType(
           inline = true,
