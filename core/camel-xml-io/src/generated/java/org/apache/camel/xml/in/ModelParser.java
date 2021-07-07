@@ -1126,6 +1126,39 @@ public class ModelParser extends BaseParser {
             return true;
         }, noValueHandler());
     }
+    public Optional<RoutesConfigurationsDefinition> parseRoutesConfigurationsDefinition()
+            throws IOException, XmlPullParserException {
+        String tag = getNextTag("routesConfigurations", "routesConfiguration");
+        if (tag != null) {
+            switch (tag) {
+                case "routesConfigurations" : return Optional.of(doParseRoutesConfigurationsDefinition());
+                case "routesConfiguration" : return parseSingleRoutesConfigurationsDefinition();
+            }
+        }
+        return Optional.empty();
+    }
+    private Optional<RoutesConfigurationsDefinition> parseSingleRoutesConfigurationsDefinition()
+            throws IOException, XmlPullParserException {
+        Optional<RoutesConfigurationDefinition> single = Optional.of(doParseRoutesConfigurationDefinition());
+        if (single.isPresent()) {
+            List<RoutesConfigurationDefinition> list = new ArrayList<>();
+            list.add(single.get());
+            RoutesConfigurationsDefinition def = new RoutesConfigurationsDefinition();
+            def.setRoutesConfigurations(list);
+            return Optional.of(def);
+        }
+        return Optional.empty();
+    }
+    protected RoutesConfigurationsDefinition doParseRoutesConfigurationsDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RoutesConfigurationsDefinition(),
+            optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+            if ("routesConfiguration".equals(key)) {
+                doAdd(doParseRoutesConfigurationDefinition(), def.getRoutesConfigurations(), def::setRoutesConfigurations);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
+    }
     public Optional<RoutesDefinition> parseRoutesDefinition()
             throws IOException, XmlPullParserException {
         String tag = getNextTag("routes", "route");

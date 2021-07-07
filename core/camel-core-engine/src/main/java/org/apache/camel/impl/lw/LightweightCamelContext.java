@@ -43,6 +43,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RoutesConfigurationsBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
@@ -550,6 +551,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void addRoutes(RoutesBuilder builder) throws Exception {
         delegate.addRoutes(builder);
+    }
+
+    @Override
+    public void addRoutesConfigurations(RoutesConfigurationsBuilder builder) throws Exception {
+        delegate.addRoutesConfigurations(builder);
     }
 
     @Override

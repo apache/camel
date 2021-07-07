@@ -51,6 +51,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RoutesConfigurationsBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
@@ -1859,6 +1860,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void addRoutes(RoutesBuilder builder) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void addRoutesConfigurations(RoutesConfigurationsBuilder builder) throws Exception {
         throw new UnsupportedOperationException();
     }
 

@@ -96,6 +96,17 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                 }
             }
+
+            @Override
+            public void configuration() throws Exception {
+                for (Node node : asSequenceNode(root).getValue()) {
+                    Object item = getDeserializationContext().mandatoryResolve(node).construct(node);
+                    if (item instanceof RoutesConfigurationDefinition) {
+                        getContext().adapt(ModelCamelContext.class)
+                                .addRoutesConfiguration((RoutesConfigurationDefinition) item);
+                    }
+                }
+            }
         };
     }
 

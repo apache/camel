@@ -73,6 +73,7 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RouteTemplateScriptDefinition;
+import org.apache.camel.model.RoutesConfigurationsDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
@@ -12869,6 +12870,49 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "script": {
                     String val = asText(node);
                     target.setScript(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.RoutesConfigurationsDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "routes-configurations",
+            properties = @YamlProperty(name = "routes-configuration", type = "array:org.apache.camel.model.RoutesConfigurationDefinition")
+    )
+    public static class RoutesConfigurationsDefinitionDeserializer extends YamlDeserializerBase<RoutesConfigurationsDefinition> {
+        public RoutesConfigurationsDefinitionDeserializer() {
+            super(RoutesConfigurationsDefinition.class);
+        }
+
+        @Override
+        protected RoutesConfigurationsDefinition newInstance() {
+            return new RoutesConfigurationsDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(RoutesConfigurationsDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "routes-configuration": {
+                    java.util.List<org.apache.camel.model.RoutesConfigurationDefinition> val = asFlatList(node, org.apache.camel.model.RoutesConfigurationDefinition.class);
+                    target.setRoutesConfigurations(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    target.setDescription(val);
                     break;
                 }
                 default: {

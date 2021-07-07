@@ -2189,6 +2189,17 @@
           }
         } ]
       },
+      "org.apache.camel.model.RoutesConfigurationsDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "routes-configuration" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RoutesConfigurationDefinition"
+            }
+          }
+        }
+      },
       "org.apache.camel.model.RoutingSlipDefinition" : {
         "oneOf" : [ {
           "type" : "string"
