@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
+import com.myjeeva.digitalocean.exception.DigitalOceanException;
+import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.pojo.Delete;
 import com.myjeeva.digitalocean.pojo.Snapshot;
 import com.myjeeva.digitalocean.pojo.Snapshots;
@@ -56,7 +58,7 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
     }
 
-    private void getSnapshots(Exchange exchange) throws Exception {
+    private void getSnapshots(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         DigitalOceanSnapshotTypes type = exchange.getIn().getHeader(DigitalOceanHeaders.TYPE, DigitalOceanSnapshotTypes.class);
         Snapshots snapshots;
 
@@ -78,7 +80,7 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(snapshots.getSnapshots());
     }
 
-    private void getSnapshot(Exchange exchange) throws Exception {
+    private void getSnapshot(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         String snapshotId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, String.class);
 
         if (ObjectHelper.isEmpty(snapshotId)) {
@@ -91,7 +93,7 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
     }
 
-    private void deleteSnapshot(Exchange exchange) throws Exception {
+    private void deleteSnapshot(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         String snapshotId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, String.class);
 
         if (ObjectHelper.isEmpty(snapshotId)) {

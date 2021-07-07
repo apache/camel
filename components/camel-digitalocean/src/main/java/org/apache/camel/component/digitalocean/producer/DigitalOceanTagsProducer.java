@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
+import com.myjeeva.digitalocean.exception.DigitalOceanException;
+import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.pojo.Delete;
 import com.myjeeva.digitalocean.pojo.Tag;
 import com.myjeeva.digitalocean.pojo.Tags;
@@ -35,7 +37,7 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         switch (determineOperation(exchange)) {
             case list:
                 getTags(exchange);
@@ -55,7 +57,7 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
 
     }
 
-    private void createTag(Exchange exchange) throws Exception {
+    private void createTag(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
         if (ObjectHelper.isEmpty(name)) {
@@ -66,7 +68,7 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(tag);
     }
 
-    private void getTag(Exchange exchange) throws Exception {
+    private void getTag(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
         if (ObjectHelper.isEmpty(name)) {
@@ -77,14 +79,14 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(tag);
     }
 
-    private void getTags(Exchange exchange) throws Exception {
+    private void getTags(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Tags tags = getEndpoint().getDigitalOceanClient().getAvailableTags(configuration.getPage(), configuration.getPerPage());
         LOG.trace("All Tags : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
                 tags.getTags());
         exchange.getMessage().setBody(tags.getTags());
     }
 
-    private void deleteTag(Exchange exchange) throws Exception {
+    private void deleteTag(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
         if (ObjectHelper.isEmpty(name)) {
