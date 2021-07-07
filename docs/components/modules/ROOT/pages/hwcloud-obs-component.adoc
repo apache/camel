@@ -133,6 +133,7 @@ If any of the above properties are set, they will override their corresponding q
 - createBucket - `bucketName` parameter is *required*, `bucketLocation` parameter is optional
 - deleteBucket - `bucketName` parameter is *required*
 - checkBucketExists - `bucketName` parameter is *required*
+- getBucketMetadata - `bucketName` parameter is *required*
 
 
 == Using ServiceKey Configuration Bean
