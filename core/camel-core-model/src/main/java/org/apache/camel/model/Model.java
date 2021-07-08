@@ -49,11 +49,25 @@ public interface Model {
      */
     List<ModelLifecycleStrategy> getModelLifecycleStrategies();
 
-    // TODO: better names
+    /**
+     * Adds a collection of route configuration definitions to the context
+     *
+     * @param  routesConfigurations    the route configuration(s) definition to add
+     */
     void addRouteConfigurations(List<RouteConfigurationDefinition> routesConfigurations);
 
+    /**
+     * Adds a single route configuration definition to the context
+     *
+     * @param  routesConfiguration    the route configuration to add
+     */
     void addRouteConfiguration(RouteConfigurationDefinition routesConfiguration);
 
+    /**
+     * Returns a list of the current route configuration definitions
+     *
+     * @return list of the current route configuration definitions
+     */
     List<RouteConfigurationDefinition> getRouteConfigurationDefinitions();
 
     /**
