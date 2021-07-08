@@ -37,7 +37,6 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
-import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -73,7 +72,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private RestConfigurationDefinition restConfiguration;
     private RoutesDefinition routeCollection = new RoutesDefinition();
     private RouteTemplatesDefinition routeTemplateCollection = new RouteTemplatesDefinition();
-    RouteConfigurationsDefinition routeConfigurationCollection = new RouteConfigurationsDefinition();
 
     public RouteBuilder() {
         this(null);
@@ -672,14 +670,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public void setRouteTemplateCollection(RouteTemplatesDefinition routeTemplateCollection) {
         this.routeTemplateCollection = routeTemplateCollection;
-    }
-
-    public RouteConfigurationsDefinition getRouteConfigurationCollection() {
-        return routeConfigurationCollection;
-    }
-
-    public void setRouteConfigurationCollection(RouteConfigurationsDefinition routeConfigurationCollection) {
-        this.routeConfigurationCollection = routeConfigurationCollection;
     }
 
     protected void configureRest(RestDefinition rest) {

@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used for building route configuration(s).
@@ -29,6 +30,7 @@ import org.apache.camel.model.RouteConfigurationDefinition;
 public abstract class RouteConfigurationBuilder extends RouteBuilder implements RouteConfigurationsBuilder {
 
     private final AtomicBoolean initializedConfiguration = new AtomicBoolean();
+    private RouteConfigurationsDefinition routeConfigurationCollection = new RouteConfigurationsDefinition();
 
     @Override
     public void configure() throws Exception {
@@ -36,6 +38,14 @@ public abstract class RouteConfigurationBuilder extends RouteBuilder implements 
     }
 
     public abstract void configuration() throws Exception;
+
+    public RouteConfigurationsDefinition getRouteConfigurationCollection() {
+        return routeConfigurationCollection;
+    }
+
+    public void setRouteConfigurationCollection(RouteConfigurationsDefinition routeConfigurationCollection) {
+        this.routeConfigurationCollection = routeConfigurationCollection;
+    }
 
     /**
      * Creates a new route configuration

@@ -52,14 +52,14 @@ public interface Model {
     /**
      * Adds a collection of route configuration definitions to the context
      *
-     * @param  routesConfigurations    the route configuration(s) definition to add
+     * @param routesConfigurations the route configuration(s) definition to add
      */
     void addRouteConfigurations(List<RouteConfigurationDefinition> routesConfigurations);
 
     /**
      * Adds a single route configuration definition to the context
      *
-     * @param  routesConfiguration    the route configuration to add
+     * @param routesConfiguration the route configuration to add
      */
     void addRouteConfiguration(RouteConfigurationDefinition routesConfiguration);
 
