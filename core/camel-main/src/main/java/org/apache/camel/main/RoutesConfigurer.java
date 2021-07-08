@@ -144,7 +144,6 @@ public class RoutesConfigurer {
 
                 // lets use Camel's injector so the class has some support for dependency injection
                 RoutesBuilder builder = camelContext.getInjector().newInstance(routeClazz);
-
                 routes.add(builder);
             }
         }
@@ -154,7 +153,6 @@ public class RoutesConfigurer {
             Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class)
                     .getPackageScanClassResolver()
                     .findImplementations(RoutesBuilder.class, pkgs);
-
             for (Class<?> routeClazz : set) {
                 Object builder = camelContext.getInjector().newInstance(routeClazz);
                 if (builder instanceof RoutesBuilder) {
@@ -176,6 +174,11 @@ public class RoutesConfigurer {
                         getJavaRoutesIncludePattern());
                 routes.addAll(routesFromRegistry);
 
+                if (LOG.isDebugEnabled() && !routesFromRegistry.isEmpty()) {
+                    LOG.debug("Discovered {} additional RoutesBuilder from registry: {}", routesFromRegistry.size(),
+                            getRoutesIncludePattern());
+                }
+
                 // add discovered routes from directories
                 StopWatch watch = new StopWatch();
                 Collection<RoutesBuilder> routesFromDirectory = getRoutesCollector().collectRoutesFromDirectory(
@@ -184,8 +187,8 @@ public class RoutesConfigurer {
                         getRoutesIncludePattern());
                 routes.addAll(routesFromDirectory);
 
-                if (!routesFromDirectory.isEmpty()) {
-                    LOG.info("Loaded {} additional RoutesBuilder from: {} (took {})", routesFromDirectory.size(),
+                if (LOG.isDebugEnabled() && !routesFromDirectory.isEmpty()) {
+                    LOG.debug("Loaded {} additional RoutesBuilder from: {} (took {})", routesFromDirectory.size(),
                             getRoutesIncludePattern(), TimeUtils.printDuration(watch.taken()));
                 }
             } catch (Exception e) {
@@ -196,13 +199,24 @@ public class RoutesConfigurer {
         if (getBeanPostProcessor() != null) {
             // lets use Camel's bean post processor on any existing route builder classes
             // so the instance has some support for dependency injection
-
             for (RoutesBuilder routeBuilder : routes) {
                 getBeanPostProcessor().postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
                 getBeanPostProcessor().postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
             }
         }
 
+        // add the discovered routes
+        addDiscoveredRoutes(camelContext, routes);
+
+        // then discover and add templates
+        Set<ConfigureRouteTemplates> set = camelContext.getRegistry().findByType(ConfigureRouteTemplates.class);
+        for (ConfigureRouteTemplates crt : set) {
+            LOG.debug("Configuring route templates via: {}", crt);
+            crt.configure(camelContext);
+        }
+    }
+
+    private void addDiscoveredRoutes(CamelContext camelContext, List<RoutesBuilder> routes) throws Exception {
         // sort routes according to ordered
         routes.sort(OrderedComparator.get());
 
@@ -218,12 +232,6 @@ public class RoutesConfigurer {
         for (RoutesBuilder builder : routes) {
             LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
             camelContext.addRoutes(builder);
-        }
-
-        Set<ConfigureRouteTemplates> set = camelContext.getRegistry().findByType(ConfigureRouteTemplates.class);
-        for (ConfigureRouteTemplates crt : set) {
-            LOG.debug("Configuring route templates via: {}", crt);
-            crt.configure(camelContext);
         }
     }
 }
