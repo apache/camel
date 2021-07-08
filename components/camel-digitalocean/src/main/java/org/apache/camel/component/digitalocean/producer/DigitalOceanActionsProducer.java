@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
+import com.myjeeva.digitalocean.exception.DigitalOceanException;
+import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.pojo.Action;
 import com.myjeeva.digitalocean.pojo.Actions;
 import org.apache.camel.Exchange;
@@ -49,7 +51,7 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
 
     }
 
-    private void getAction(Exchange exchange) throws Exception {
+    private void getAction(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer actionId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
 
         if (ObjectHelper.isEmpty(actionId)) {
@@ -60,7 +62,7 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(action);
     }
 
-    private void getActions(Exchange exchange) throws Exception {
+    private void getActions(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Actions actions = getEndpoint().getDigitalOceanClient().getAvailableActions(configuration.getPage(),
                 configuration.getPerPage());
         LOG.trace("All Actions : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
