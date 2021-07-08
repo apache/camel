@@ -210,7 +210,7 @@ public class RoutesConfigurer {
         for (RoutesBuilder builder : routes) {
             if (builder instanceof RouteConfigurationsBuilder) {
                 RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
-                LOG.debug("Adding routes configurations into CamelContext from RoutesConfigurationsBuilder: {}", rcb);
+                LOG.debug("Adding routes configurations into CamelContext from RouteConfigurationsBuilder: {}", rcb);
                 camelContext.addRoutesConfigurations(rcb);
             }
         }

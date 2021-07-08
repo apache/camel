@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 
 /**
@@ -39,7 +40,14 @@ public interface RoutesLoader extends CamelContextAware {
      * @param resources the resources to be loaded.
      */
     default void loadRoutes(Collection<Resource> resources) throws Exception {
-        for (RoutesBuilder builder : findRoutesBuilders(resources)) {
+        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+        // add configuration first before the routes
+        for (RoutesBuilder builder : builders) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                getCamelContext().addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+            }
+        }
+        for (RoutesBuilder builder : builders) {
             getCamelContext().addRoutes(builder);
         }
     }
@@ -51,7 +59,14 @@ public interface RoutesLoader extends CamelContextAware {
      * @param resources the resources to be loaded.
      */
     default void loadRoutes(Resource... resources) throws Exception {
-        for (RoutesBuilder builder : findRoutesBuilders(resources)) {
+        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+        // add configuration first before the routes
+        for (RoutesBuilder builder : builders) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                getCamelContext().addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+            }
+        }
+        for (RoutesBuilder builder : builders) {
             getCamelContext().addRoutes(builder);
         }
     }
