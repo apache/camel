@@ -1144,7 +1144,12 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public void addRoutes(final RoutesBuilder builder) throws Exception {
+    public void addRoutes(RoutesBuilder builder) throws Exception {
+        // in case the builder is also a route configuration builder
+        // then we need to add the configuration first
+        if (builder instanceof RouteConfigurationsBuilder) {
+            addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+        }
         try (LifecycleHelper helper = new LifecycleHelper()) {
             build();
             LOG.debug("Adding routes from builder: {}", builder);

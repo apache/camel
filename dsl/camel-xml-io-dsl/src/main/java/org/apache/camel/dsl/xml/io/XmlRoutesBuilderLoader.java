@@ -21,6 +21,7 @@ import java.io.InputStream;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteConfigurationDefinition;
@@ -43,7 +44,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
     @Override
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
-        return new RouteBuilder() {
+        return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
                 // we use configure to load the routes (with namespace and without namespace)

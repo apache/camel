@@ -20,8 +20,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -45,7 +45,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     }
 
     protected RouteBuilder builder(Node root) {
-        return new RouteBuilder() {
+        return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
                 for (Node node : asSequenceNode(root).getValue()) {
@@ -61,9 +61,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     } else if (item instanceof RouteDefinition) {
                         CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                         getRouteCollection().route((RouteDefinition) item);
-                    } else if (item instanceof RouteConfigurationDefinition) {
-                        CamelContextAware.trySetCamelContext(getRouteConfigurationCollection(), getCamelContext());
-                        getRouteConfigurationCollection().routeConfiguration((RouteConfigurationDefinition) item);
                     } else if (item instanceof CamelContextCustomizer) {
                         ((CamelContextCustomizer) item).configure(getCamelContext());
                     } else if (item instanceof OnExceptionDefinition) {
@@ -102,8 +99,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 for (Node node : asSequenceNode(root).getValue()) {
                     Object item = getDeserializationContext().mandatoryResolve(node).construct(node);
                     if (item instanceof RouteConfigurationDefinition) {
-                        getContext().adapt(ModelCamelContext.class)
-                                .addRouteConfiguration((RouteConfigurationDefinition) item);
+                        CamelContextAware.trySetCamelContext(getRouteConfigurationCollection(), getCamelContext());
+                        getRouteConfigurationCollection().routeConfiguration((RouteConfigurationDefinition) item);
                     }
                 }
             }
