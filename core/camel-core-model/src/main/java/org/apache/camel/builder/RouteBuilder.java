@@ -29,19 +29,18 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.RoutesConfigurationsBuilder;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
-import org.apache.camel.model.RoutesConfigurationDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -62,11 +61,10 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to build {@link Route} instances in a
  * {@link CamelContext} for smart routing.
  */
-public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, RoutesConfigurationsBuilder, Ordered {
+public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered {
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     private final AtomicBoolean initialized = new AtomicBoolean();
-    private final AtomicBoolean initializedConfiguration = new AtomicBoolean();
     private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
     private final List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private final List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
@@ -75,6 +73,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private RestConfigurationDefinition restConfiguration;
     private RoutesDefinition routeCollection = new RoutesDefinition();
     private RouteTemplatesDefinition routeTemplateCollection = new RouteTemplatesDefinition();
+    RouteConfigurationsDefinition routeConfigurationCollection = new RouteConfigurationsDefinition();
 
     public RouteBuilder() {
         this(null);
@@ -212,18 +211,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
 
         return restConfiguration;
-    }
-
-    /**
-     * Global routes configuration
-     *
-     * @return the builder
-     */
-    public RoutesConfigurationDefinition routesConfiguration() {
-        RoutesConfigurationDefinition answer = new RoutesConfigurationDefinition();
-        getContext().adapt(ModelCamelContext.class).addRoutesConfiguration(answer);
-        configureRoutesConfiguration(answer);
-        return answer;
     }
 
     /**
@@ -500,16 +487,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
     }
 
-    @Override
-    public void addRoutesConfigurationsToCamelContext(CamelContext context) throws Exception {
-        setCamelContext(context);
-        routeCollection.setCamelContext(context);
-        if (initializedConfiguration.compareAndSet(false, true)) {
-            configuration();
-        }
-        populateRoutesConfiguration();
-    }
-
     /**
      * Configures the routes
      *
@@ -584,10 +561,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 interceptor.afterConfigure(this);
             }
         }
-    }
-
-    protected void populateRoutesConfiguration() throws Exception {
-        // noop
     }
 
     protected void populateRouteTemplates() throws Exception {
@@ -701,6 +674,14 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         this.routeTemplateCollection = routeTemplateCollection;
     }
 
+    public RouteConfigurationsDefinition getRouteConfigurationCollection() {
+        return routeConfigurationCollection;
+    }
+
+    public void setRouteConfigurationCollection(RouteConfigurationsDefinition routeConfigurationCollection) {
+        this.routeConfigurationCollection = routeConfigurationCollection;
+    }
+
     protected void configureRest(RestDefinition rest) {
         // noop
     }
@@ -713,7 +694,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         // noop
     }
 
-    protected void configureRoutesConfiguration(RoutesConfigurationDefinition routesConfiguration) {
+    protected void configureRouteConfiguration(RouteConfigurationDefinition routesConfiguration) {
         // noop
     }
 }

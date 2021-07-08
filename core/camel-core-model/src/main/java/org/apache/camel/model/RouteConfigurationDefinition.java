@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Global configuration for Camel routes
+ * Reusable configuration for Camel route(s).
  */
 @Metadata(label = "configuration")
-@XmlRootElement(name = "routesConfiguration")
+@XmlRootElement(name = "routeConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutesConfigurationDefinition extends OptionalIdentifiedDefinition<RoutesDefinition> {
+public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<RouteConfigurationDefinition> {
 
     // TODO: Model for ErrorHandler
 
@@ -48,7 +48,7 @@ public class RoutesConfigurationDefinition extends OptionalIdentifiedDefinition<
     @XmlElementRef
     private List<InterceptSendToEndpointDefinition> interceptSendTos = new ArrayList<>();
 
-    public RoutesConfigurationDefinition() {
+    public RouteConfigurationDefinition() {
     }
 
     @Override

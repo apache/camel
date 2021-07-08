@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.junit.jupiter.api.Test;
 
 public class RoutesConfigurationMultipleRouteBuilderTest extends ContextTestSupport {
@@ -29,14 +30,13 @@ public class RoutesConfigurationMultipleRouteBuilderTest extends ContextTestSupp
 
     @Test
     public void testRoutesConfiguration() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+        context.addRoutesConfigurations(new RouteConfigurationBuilder() {
             @Override
-            public void configure() throws Exception {
-                // global routes configuration
-                routesConfiguration().onException(Exception.class).handled(true).to("mock:error");
+            public void configuration() throws Exception {
+                // global configuration for all routes
+                routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
             }
         });
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

@@ -17,17 +17,16 @@
 package org.apache.camel;
 
 /**
- * A routes configurations builder is capable of building routes configurations (global configuration for all routes)
- * using the builder and model classes.
+ * A route configurations builder is capable of building route configurations using the builder and model classes.
  */
-public interface RoutesConfigurationsBuilder {
+public interface RouteConfigurationsBuilder {
 
     /**
-     * Adds the routes configurations from this Routes Configurations Builder to the CamelContext.
+     * Adds the route configurations from this builder to the CamelContext.
      *
      * @param  context   the Camel context
-     * @throws Exception is thrown if initialization of routes configurations failed
+     * @throws Exception is thrown if initialization of route configurations failed
      */
-    void addRoutesConfigurationsToCamelContext(CamelContext context) throws Exception;
+    void addRouteConfigurationsToCamelContext(CamelContext context) throws Exception;
 
 }

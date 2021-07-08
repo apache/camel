@@ -21,14 +21,14 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyException
 import org.apache.camel.dsl.yaml.support.model.MyFailingProcessor
 
-class RoutesConfigurationTest extends YamlTestSupport {
-    def "routes-configuration"() {
+class RouteConfigurationTest extends YamlTestSupport {
+    def "route-configuration"() {
         setup:
             loadRoutes """
                 - beans:
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
-                - routes-configuration:
+                - route-configuration:
                     - on-exception:
                         handled:
                           constant: "true"
@@ -59,14 +59,14 @@ class RoutesConfigurationTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "routes-configuration-separate"() {
+    def "route-configuration-separate"() {
         setup:
         // global configurations
         loadRoutes """
                 - beans:
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
-                - routes-configuration:
+                - route-configuration:
                     - on-exception:
                         handled:
                           constant: "true"

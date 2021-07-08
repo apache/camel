@@ -23,8 +23,8 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.RoutesConfigurationsBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.support.OrderedComparator;
@@ -208,8 +208,8 @@ public class RoutesConfigurer {
 
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
-            if (builder instanceof RoutesConfigurationsBuilder) {
-                RoutesConfigurationsBuilder rcb = (RoutesConfigurationsBuilder) builder;
+            if (builder instanceof RouteConfigurationsBuilder) {
+                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
                 LOG.debug("Adding routes configurations into CamelContext from RoutesConfigurationsBuilder: {}", rcb);
                 camelContext.addRoutesConfigurations(rcb);
             }

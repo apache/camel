@@ -212,8 +212,8 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         List<InterceptSendToEndpointDefinition> ito = new ArrayList<>(interceptSendTos);
         List<OnCompletionDefinition> oc = new ArrayList<>(onCompletions);
         if (getCamelContext() != null) {
-            List<RoutesConfigurationDefinition> globalConfigurations
-                    = getCamelContext().adapt(ModelCamelContext.class).getRoutesConfigurationDefinition();
+            List<RouteConfigurationDefinition> globalConfigurations
+                    = getCamelContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
             if (globalConfigurations != null) {
                 globalConfigurations.forEach(g -> {
                     oe.addAll(g.getOnExceptions());

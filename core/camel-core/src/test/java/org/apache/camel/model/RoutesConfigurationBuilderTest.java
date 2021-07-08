@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.RoutesConfigurationsBuilder;
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.support.OrderedComparator;
 import org.junit.jupiter.api.Test;
 
@@ -51,11 +52,11 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
                         .throwException(new IllegalArgumentException("Foo2"));
             }
         });
-        routes.add(new RoutesConfigurationsBuilder() {
+        routes.add(new RouteConfigurationBuilder() {
             @Override
             public void configuration() throws Exception {
                 // global routes configuration
-                routesConfiguration().onException(Exception.class).handled(true).to("mock:error");
+                routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
             }
         });
         context.start();
@@ -65,8 +66,8 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
 
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
-            if (builder instanceof org.apache.camel.RoutesConfigurationsBuilder) {
-                org.apache.camel.RoutesConfigurationsBuilder rcb = (org.apache.camel.RoutesConfigurationsBuilder) builder;
+            if (builder instanceof RouteConfigurationsBuilder) {
+                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
                 context.addRoutesConfigurations(rcb);
             }
         }

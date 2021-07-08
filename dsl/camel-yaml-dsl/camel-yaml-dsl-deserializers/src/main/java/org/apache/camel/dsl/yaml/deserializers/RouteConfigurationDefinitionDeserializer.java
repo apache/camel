@@ -4,7 +4,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.RoutesConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
@@ -14,9 +14,9 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
 
 @YamlType(
           inline = true,
-          types = org.apache.camel.model.RoutesConfigurationDefinition.class,
+          types = org.apache.camel.model.RouteConfigurationDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
-          nodes = "routes-configuration",
+          nodes = "route-configuration",
           properties = {
                   @YamlProperty(name = "intercept", type = "array:org.apache.camel.model.InterceptDefinition"),
                   @YamlProperty(name = "intercept-from", type = "array:org.apache.camel.model.InterceptFromDefinition"),
@@ -25,19 +25,19 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
                   @YamlProperty(name = "on-completion", type = "array:org.apache.camel.model.OnCompletionDefinition"),
                   @YamlProperty(name = "on-exception", type = "array:org.apache.camel.model.OnExceptionDefinition")
           })
-public class RoutesConfigurationDefinitionDeserializer extends YamlDeserializerBase<RoutesConfigurationDefinition> {
-    public RoutesConfigurationDefinitionDeserializer() {
-        super(RoutesConfigurationDefinition.class);
+public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBase<RouteConfigurationDefinition> {
+    public RouteConfigurationDefinitionDeserializer() {
+        super(RouteConfigurationDefinition.class);
     }
 
     @Override
-    protected RoutesConfigurationDefinition newInstance() {
-        return new RoutesConfigurationDefinition();
+    protected RouteConfigurationDefinition newInstance() {
+        return new RouteConfigurationDefinition();
     }
 
     @Override
     public Object construct(Node node) {
-        final RoutesConfigurationDefinition target = newInstance();
+        final RouteConfigurationDefinition target = newInstance();
 
         final YamlDeserializationContext dc = getDeserializationContext(node);
         final SequenceNode sn = asSequenceNode(node);

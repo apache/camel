@@ -23,9 +23,9 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RoutesConfigurationDefinition;
-import org.apache.camel.model.RoutesConfigurationsDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
@@ -83,7 +83,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             public void configuration() throws Exception {
                 try (InputStream is = resource.getInputStream()) {
                     new ModelParser(is)
-                            .parseRoutesConfigurationsDefinition()
+                            .parseRouteConfigurationsDefinition()
                             .ifPresent(this::addConfigurations);
                 }
             }
@@ -98,10 +98,10 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 }
             }
 
-            private void addConfigurations(RoutesConfigurationsDefinition configurations) {
+            private void addConfigurations(RouteConfigurationsDefinition configurations) {
                 CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
-                for (RoutesConfigurationDefinition config : configurations.getRoutesConfigurations()) {
-                    getCamelContext().adapt(ModelCamelContext.class).addRoutesConfiguration(config);
+                for (RouteConfigurationDefinition config : configurations.getRouteConfigurations()) {
+                    getCamelContext().adapt(ModelCamelContext.class).addRouteConfiguration(config);
                 }
             }
         };

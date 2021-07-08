@@ -23,9 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
-import org.apache.camel.model.RoutesConfigurationDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -61,11 +61,11 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     } else if (item instanceof RouteDefinition) {
                         CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                         getRouteCollection().route((RouteDefinition) item);
+                    } else if (item instanceof RouteConfigurationDefinition) {
+                        CamelContextAware.trySetCamelContext(getRouteConfigurationCollection(), getCamelContext());
+                        getRouteConfigurationCollection().routeConfiguration((RouteConfigurationDefinition) item);
                     } else if (item instanceof CamelContextCustomizer) {
                         ((CamelContextCustomizer) item).configure(getCamelContext());
-                    } else if (item instanceof RoutesConfigurationDefinition) {
-                        getContext().adapt(ModelCamelContext.class)
-                                .addRoutesConfiguration((RoutesConfigurationDefinition) item);
                     } else if (item instanceof OnExceptionDefinition) {
                         if (!getRouteCollection().getRoutes().isEmpty()) {
                             throw new IllegalArgumentException(
@@ -101,9 +101,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             public void configuration() throws Exception {
                 for (Node node : asSequenceNode(root).getValue()) {
                     Object item = getDeserializationContext().mandatoryResolve(node).construct(node);
-                    if (item instanceof RoutesConfigurationDefinition) {
+                    if (item instanceof RouteConfigurationDefinition) {
                         getContext().adapt(ModelCamelContext.class)
-                                .addRoutesConfiguration((RoutesConfigurationDefinition) item);
+                                .addRouteConfiguration((RouteConfigurationDefinition) item);
                     }
                 }
             }

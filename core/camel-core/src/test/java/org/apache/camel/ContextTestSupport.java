@@ -115,9 +115,18 @@ public abstract class ContextTestSupport extends TestSupport {
 
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
+            // add configuration before routes
             for (RouteBuilder builder : builders) {
-                log.debug("Using created route builder: {}", builder);
-                context.addRoutes(builder);
+                if (builder instanceof RouteConfigurationsBuilder) {
+                    log.debug("Using created route configuration: {}", builder);
+                    context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+                }
+            }
+            for (RouteBuilder builder : builders) {
+                if (!(builder instanceof RouteConfigurationsBuilder)) {
+                    log.debug("Using created route builder: {}", builder);
+                    context.addRoutes(builder);
+                }
             }
         } else {
             log.debug("isUseRouteBuilder() is false");

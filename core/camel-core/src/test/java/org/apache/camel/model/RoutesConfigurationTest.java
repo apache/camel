@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.junit.jupiter.api.Test;
 
 public class RoutesConfigurationTest extends ContextTestSupport {
@@ -33,19 +34,26 @@ public class RoutesConfigurationTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // global routes configuration
-                routesConfiguration().onException(Exception.class).handled(true).to("mock:error");
+    protected RouteBuilder[] createRouteBuilders() throws Exception {
+        return new RouteBuilder[] {
+                new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from("direct:start")
+                                .throwException(new IllegalArgumentException("Foo"));
 
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Foo"));
-
-                from("direct:start2")
-                        .throwException(new IllegalArgumentException("Foo2"));
-            }
+                        from("direct:start2")
+                                .throwException(new IllegalArgumentException("Foo2"));
+                    }
+                },
+                new RouteConfigurationBuilder() {
+                    @Override
+                    public void configuration() throws Exception {
+                        // global routes configuration
+                        routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
+                    }
+                }
         };
     }
+
 }

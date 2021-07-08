@@ -41,9 +41,9 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
+import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.RoutesConfigurationsBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
@@ -62,9 +62,9 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
-import org.apache.camel.model.RoutesConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -554,7 +554,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public void addRoutesConfigurations(RoutesConfigurationsBuilder builder) throws Exception {
+    public void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception {
         delegate.addRoutesConfigurations(builder);
     }
 
@@ -1694,18 +1694,18 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public void addRoutesConfiguration(RoutesConfigurationDefinition routesConfiguration) {
-        getModelCamelContext().addRoutesConfiguration(routesConfiguration);
+    public void addRouteConfiguration(RouteConfigurationDefinition routesConfiguration) {
+        getModelCamelContext().addRouteConfiguration(routesConfiguration);
     }
 
     @Override
-    public void addRoutesConfigurations(List<RoutesConfigurationDefinition> routesConfigurations) {
-        getModelCamelContext().addRoutesConfigurations(routesConfigurations);
+    public void addRouteConfigurations(List<RouteConfigurationDefinition> routesConfigurations) {
+        getModelCamelContext().addRouteConfigurations(routesConfigurations);
     }
 
     @Override
-    public List<RoutesConfigurationDefinition> getRoutesConfigurationDefinition() {
-        return getModelCamelContext().getRoutesConfigurationDefinition();
+    public List<RouteConfigurationDefinition> getRouteConfigurationDefinitions() {
+        return getModelCamelContext().getRouteConfigurationDefinitions();
     }
 
     @Override

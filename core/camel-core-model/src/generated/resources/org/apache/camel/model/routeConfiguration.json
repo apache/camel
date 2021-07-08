@@ -1,12 +1,12 @@
 {
   "model": {
     "kind": "model",
-    "name": "routesConfigurations",
-    "title": "Routes Configurations",
-    "description": "A series of global configuration for Camel routes",
+    "name": "routeConfiguration",
+    "title": "Route Configuration",
+    "description": "Reusable configuration for Camel route(s).",
     "deprecated": false,
     "label": "configuration",
-    "javaType": "org.apache.camel.model.RoutesConfigurationsDefinition",
+    "javaType": "org.apache.camel.model.RouteConfigurationDefinition",
     "input": false,
     "output": false
   },

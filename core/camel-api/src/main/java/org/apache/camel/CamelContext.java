@@ -578,7 +578,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  builder   the builder which has routes configurations
      * @throws Exception if the routes configurations could not be created for whatever reason
      */
-    void addRoutesConfigurations(RoutesConfigurationsBuilder builder) throws Exception;
+    void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception;
 
     /**
      * Removes the given route (the route <b>must</b> be stopped before it can be removed).
