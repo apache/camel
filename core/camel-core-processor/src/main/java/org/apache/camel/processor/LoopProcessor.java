@@ -68,7 +68,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     }
 
     @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
+    public synchronized boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             state = new LoopState(exchange, callback);
 
