@@ -33,7 +33,7 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
     private int hitCount;
     private int missCount;
     private String queryAllString
-            = "SELECT messageId, COUNT(*) AS messageCount FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? GROUP BY messageId";
+            = "SELECT messageId, COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? GROUP BY messageId";
 
     public JdbcCachedMessageIdRepository() {
     }
@@ -123,7 +123,7 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
                 cache = jdbcTemplate.query(getQueryAllString(), resultSet -> {
                     Map<String, Integer> messageIdCount = new HashMap<>();
                     while (resultSet.next()) {
-                        messageIdCount.put(resultSet.getString("messageId"), resultSet.getInt("messageCount"));
+                        messageIdCount.put(resultSet.getString(1), resultSet.getInt(2));
                     }
                     return messageIdCount;
                 }, getProcessorName());
