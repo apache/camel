@@ -25,8 +25,12 @@ public class DefaultWebsocketFactory implements WebSocketFactory {
 
     @Override
     public DefaultWebsocket newInstance(
-            ServletUpgradeRequest request, String protocol, String pathSpec, NodeSynchronization sync,
-            WebsocketConsumer consumer) {
-        return new DefaultWebsocket(sync, pathSpec, consumer);
+            ServletUpgradeRequest request,
+            String pathSpec,
+            NodeSynchronization sync,
+            WebsocketConsumer consumer,
+            String subprotocol,
+            String relativePath) {
+        return new DefaultWebsocket(sync, pathSpec, consumer, subprotocol, relativePath);
     }
 }

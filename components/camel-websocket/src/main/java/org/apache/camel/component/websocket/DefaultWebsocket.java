@@ -38,11 +38,23 @@ public class DefaultWebsocket implements Serializable {
     private Session session;
     private String connectionKey;
     private String pathSpec;
+    private String subprotocol;
+    private String relativePath;
 
     public DefaultWebsocket(NodeSynchronization sync, String pathSpec, WebsocketConsumer consumer) {
+        this(sync, pathSpec, consumer, null, null);
+    }
+
+    public DefaultWebsocket(NodeSynchronization sync,
+                            String pathSpec,
+                            WebsocketConsumer consumer,
+                            String subprotocol,
+                            String relativePath) {
         this.sync = sync;
         this.consumer = consumer;
         this.pathSpec = pathSpec;
+        this.subprotocol = subprotocol;
+        this.relativePath = relativePath;
     }
 
     @OnWebSocketClose
@@ -63,7 +75,7 @@ public class DefaultWebsocket implements Serializable {
     public void onMessage(String message) {
         LOG.debug("onMessage: {}", message);
         if (this.consumer != null) {
-            this.consumer.sendMessage(this.connectionKey, message, getRemoteAddress());
+            this.consumer.sendMessage(this.connectionKey, message, getRemoteAddress(), subprotocol, relativePath);
         } else {
             LOG.debug("No consumer to handle message received: {}", message);
         }
@@ -75,7 +87,7 @@ public class DefaultWebsocket implements Serializable {
         if (this.consumer != null) {
             byte[] message = new byte[length];
             System.arraycopy(data, offset, message, 0, length);
-            this.consumer.sendMessage(this.connectionKey, message, getRemoteAddress());
+            this.consumer.sendMessage(this.connectionKey, message, getRemoteAddress(), subprotocol, relativePath);
         } else {
             LOG.debug("No consumer to handle message received: byte[]");
         }

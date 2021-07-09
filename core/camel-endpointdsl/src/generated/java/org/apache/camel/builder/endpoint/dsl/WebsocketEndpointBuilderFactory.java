@@ -179,6 +179,29 @@ public interface WebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * This is a comma-separated list of subprotocols that are supported by
+         * the application. The list is in priority order. The first subprotocol
+         * on this list that is proposed by the client is the one that will be
+         * accepted. If no subprotocol on this list is proposed by the client,
+         * then the websocket connection is refused. The special value 'any'
+         * means that any subprotocol is acceptable. 'any' can be used on its
+         * own, or as a failsafe at the end of a list of more specific
+         * protocols. 'any' will also match the case where no subprotocol is
+         * proposed by the client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: any
+         * Group: consumer
+         * 
+         * @param subprotocol the value to set
+         * @return the dsl builder
+         */
+        default WebsocketEndpointConsumerBuilder subprotocol(String subprotocol) {
+            doSetProperty("subprotocol", subprotocol);
+            return this;
+        }
+        /**
          * The CORS allowed origins. Use to allow all.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
