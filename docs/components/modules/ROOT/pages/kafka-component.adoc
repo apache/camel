@@ -370,11 +370,23 @@ from("kafka:test?brokers=localhost:9092")
     .log("    with the key ${headers[kafka.KEY]}")
 ----
 
-If you need to consume messages from multiple topics you can use a comma separated list of topic names
+If you need to consume messages from multiple topics you can use a comma separated list of topic names.
 
 [source,java]
 ----
 from("kafka:test,test1,test2?brokers=localhost:9092")
+    .log("Message received from Kafka : ${body}")
+    .log("    on the topic ${headers[kafka.TOPIC]}")
+    .log("    on the partition ${headers[kafka.PARTITION]}")
+    .log("    with the offset ${headers[kafka.OFFSET]}")
+    .log("    with the key ${headers[kafka.KEY]}")
+----
+
+It's also possible to subscribe to multiple topics giving a pattern as the topic name and using the `topicIsPattern` option.
+
+[source,java]
+----
+from("kafka:test*?brokers=localhost:9092&topicIsPattern=true")
     .log("Message received from Kafka : ${body}")
     .log("    on the topic ${headers[kafka.TOPIC]}")
     .log("    on the partition ${headers[kafka.PARTITION]}")
