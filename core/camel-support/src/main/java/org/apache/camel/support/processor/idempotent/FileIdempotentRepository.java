@@ -464,7 +464,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             if (parent != null) {
                 boolean mkdirsResult = parent.mkdirs();
                 if (!mkdirsResult) {
-                    LOG.error("mkdirs() failed for " + parent);
+                    LOG.error("Couldn't create the filestore at {} because creating the directory has failed", parent);
                 }
             }
             boolean created = FileUtil.createNewFile(fileStore);
