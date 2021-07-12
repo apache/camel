@@ -66,11 +66,12 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         return configuration;
     }
 
-    protected <D> D getMandatoryHeader(Message message, String header, Class<D> type) throws Exception {
+    protected <D> D getMandatoryHeader(Message message, String header, Class<D> type) throws NoSuchHeaderException {
         return getMandatoryHeader(message, header, (D) null, type);
     }
 
-    protected <D> D getMandatoryHeader(Message message, String header, D defaultValue, Class<D> type) throws Exception {
+    protected <D> D getMandatoryHeader(Message message, String header, D defaultValue, Class<D> type)
+            throws NoSuchHeaderException {
         D value = message.getHeader(header, defaultValue, type);
         if (value == null) {
             throw new NoSuchHeaderException(message.getExchange(), header, type);

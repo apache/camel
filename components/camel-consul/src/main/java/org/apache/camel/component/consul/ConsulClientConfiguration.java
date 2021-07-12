@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.consul;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashSet;
@@ -352,7 +354,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return createConsulClient(null);
     }
 
-    public Consul createConsulClient(CamelContext camelContext) throws Exception {
+    public Consul createConsulClient(CamelContext camelContext) throws GeneralSecurityException, IOException {
         Consul.Builder builder = Consul.builder();
         builder.withPing(pingInstance);
 
