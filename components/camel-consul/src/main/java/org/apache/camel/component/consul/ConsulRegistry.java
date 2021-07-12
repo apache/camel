@@ -286,7 +286,7 @@ public class ConsulRegistry implements Registry {
             try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
                 return in.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
 
@@ -312,7 +312,7 @@ public class ConsulRegistry implements Registry {
                 out.writeObject(serializable);
                 return baos.toByteArray();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
     }
