@@ -369,7 +369,7 @@
     <leveldb-guava-version>21.0</leveldb-guava-version>
     <leveldb-version>0.12</leveldb-version>
     <leveldbjni-version>1.8</leveldbjni-version>
-    <libphonenumber-version>8.12.23</libphonenumber-version>
+    <libphonenumber-version>8.12.26</libphonenumber-version>
     <libthrift-version>0.12.0</libthrift-version>
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lightcouch-version>0.2.0</lightcouch-version>
