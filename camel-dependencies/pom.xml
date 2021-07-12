@@ -313,7 +313,7 @@
     <jclouds-version>2.2.1</jclouds-version>
     <jcommander-version>1.72</jcommander-version>
     <jcr-version>2.0</jcr-version>
-    <jedis-client-version>3.6.0</jedis-client-version>
+    <jedis-client-version>3.6.1</jedis-client-version>
     <jersey-version>2.28</jersey-version>
     <jetcd-version>0.5.7</jetcd-version>
     <jettison-version>1.4.1</jettison-version>
@@ -514,7 +514,7 @@
     <splunk-version>1.6.5.0_1</splunk-version>
     <spock-version>2.0-M4-groovy-3.0</spock-version>
     <spring-batch-version>4.3.3</spring-batch-version>
-    <spring-data-redis-version>2.5.1</spring-data-redis-version>
+    <spring-data-redis-version>2.5.2</spring-data-redis-version>
     <spring-integration-version>5.4.3</spring-integration-version>
     <spring-ldap-version>2.3.4.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.3.9</spring-rabbitmq-version>
