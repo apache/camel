@@ -284,48 +284,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SSLContextParameters sslContextParameters
-                = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
-
-        Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
-        String staticResources = getAndRemoveParameter(parameters, "staticResources", String.class);
-        int port = extractPortNumber(remaining);
-        String host = extractHostName(remaining);
-
-        WebsocketEndpoint endpoint = new WebsocketEndpoint(this, uri, remaining, parameters);
-
-        if (enableJmx != null) {
-            endpoint.setEnableJmx(enableJmx);
-        } else {
-            endpoint.setEnableJmx(isEnableJmx());
-        }
-
-        // prefer to use endpoint configured over component configured
-        if (sslContextParameters == null) {
-            // fallback to component configured
-            sslContextParameters = getSslContextParameters();
-        }
-        if (sslContextParameters == null) {
-            sslContextParameters = retrieveGlobalSslContextParameters();
-        }
-
-        // prefer to use endpoint configured over component configured
-        if (staticResources == null) {
-            // fallback to component configured
-            staticResources = getStaticResources();
-        }
-
-        if (staticResources != null) {
-            endpoint.setStaticResources(staticResources);
-        }
-
-        endpoint.setSslContextParameters(sslContextParameters);
-        endpoint.setPort(port);
-        endpoint.setHost(host);
-        endpoint.setSubprotocol(subprotocol);
-
-        setProperties(endpoint, parameters);
-        return endpoint;
+        return new WebsocketEndpoint(this, uri, remaining, parameters);
     }
 
     protected void setWebSocketComponentServletInitialParameter(ServletContextHandler context, WebsocketEndpoint endpoint) {
@@ -569,27 +528,6 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
             return remaining.substring(index, remaining.length());
         } else {
             return "/" + remaining;
-        }
-    }
-
-    private int extractPortNumber(String remaining) {
-        int index1 = remaining.indexOf(':');
-        int index2 = remaining.indexOf('/');
-
-        if (index1 != -1 && index2 != -1) {
-            String result = remaining.substring(index1 + 1, index2);
-            return Integer.parseInt(result);
-        } else {
-            return port;
-        }
-    }
-
-    private String extractHostName(String remaining) {
-        int index = remaining.indexOf(':');
-        if (index != -1) {
-            return remaining.substring(0, index);
-        } else {
-            return host;
         }
     }
 

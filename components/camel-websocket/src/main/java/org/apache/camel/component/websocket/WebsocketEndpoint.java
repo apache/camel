@@ -93,6 +93,66 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }
+
+        SSLContextParameters sslContextParameters
+                = component.resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
+
+        Boolean enableJmx = component.getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
+        String staticResources = component.getAndRemoveParameter(parameters, "staticResources", String.class);
+        int port = extractPortNumber(resourceUri);
+        String host = extractHostName(resourceUri);
+
+        if (enableJmx != null) {
+            setEnableJmx(enableJmx);
+        } else {
+            setEnableJmx(component.isEnableJmx());
+        }
+
+        // prefer to use endpoint configured over component configured
+        if (sslContextParameters == null) {
+            // fallback to component configured
+            sslContextParameters = component.getSslContextParameters();
+        }
+        if (sslContextParameters == null) {
+            sslContextParameters = component.retrieveGlobalSslContextParameters();
+        }
+
+        // prefer to use endpoint configured over component configured
+        if (staticResources == null) {
+            // fallback to component configured
+            staticResources = component.getStaticResources();
+        }
+        if (staticResources != null) {
+            setStaticResources(staticResources);
+        }
+
+        setSslContextParameters(sslContextParameters);
+        setPort(port);
+        setHost(host);
+        setSubprotocol(component.getSubprotocol());
+
+        configureProperties(parameters);
+    }
+
+    private int extractPortNumber(String remaining) {
+        int index1 = remaining.indexOf(':');
+        int index2 = remaining.indexOf('/');
+
+        if (index1 != -1 && index2 != -1) {
+            String result = remaining.substring(index1 + 1, index2);
+            return Integer.parseInt(result);
+        } else {
+            return component.getPort();
+        }
+    }
+
+    private String extractHostName(String remaining) {
+        int index = remaining.indexOf(':');
+        if (index != -1) {
+            return remaining.substring(0, index);
+        } else {
+            return component.getHost();
+        }
     }
 
     @Override
