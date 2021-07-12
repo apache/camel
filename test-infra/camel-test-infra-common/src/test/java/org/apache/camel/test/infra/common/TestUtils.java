@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.common;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -98,9 +99,7 @@ public final class TestUtils {
      * @return
      */
     public static int randomWithRange(int min, int max) {
-        int range = (max - min) + 1;
-
-        return (int) (Math.random() * range) + min;
+        return ThreadLocalRandom.current().nextInt(min, max);
     }
 
     /**
