@@ -142,7 +142,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         if (listenerContainer == null) {
             createMessageListenerContainer();
         }
-        getEndpoint().onListenerContainerStarting(listenerContainer);
+        getEndpoint().onListenerContainerStarting();
 
         if (getEndpoint().getConfiguration().isAsyncStartListener()) {
             getEndpoint().getAsyncStartStopExecutorService().submit(new Runnable() {
@@ -188,7 +188,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                 listenerContainer.stop();
                 listenerContainer.destroy();
             } finally {
-                getEndpoint().onListenerContainerStopped(listenerContainer);
+                getEndpoint().onListenerContainerStopped();
             }
         }
         // null container and listener so they are fully re created if this consumer is restarted
