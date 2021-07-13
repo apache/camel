@@ -466,6 +466,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
                             boolean drained = false;
                             while (isInBatchCompleted(queue.size())) {
                                 drained = true;
+                                // TODO id in this branch is 100% null
                                 drainQueueTo(collection, batchSize, id);
                             }
                             if (drained) {

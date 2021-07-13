@@ -1480,9 +1480,7 @@ public final class PropertyBindingSupport {
         Object answer = value;
 
         // resolve placeholders
-        if (strval != null) {
-            strval = camelContext.resolvePropertyPlaceholders(strval);
-        }
+        strval = camelContext.resolvePropertyPlaceholders(strval);
 
         if (strval.startsWith("#class:")) {
             // its a new class to be created

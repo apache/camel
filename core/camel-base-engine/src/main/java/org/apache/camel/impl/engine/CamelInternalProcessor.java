@@ -1076,6 +1076,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      */
     public static <T> CamelInternalProcessorAdvice<T> wrap(InstrumentationProcessor<T> instrumentationProcessor) {
         if (instrumentationProcessor instanceof CamelInternalProcessor) {
+            // TODO Findbugs alerts:
+            //  Unchecked/unconfirmed cast from org.apache.camel.impl.engine.CamelInternalProcessor<T>
+            //  to org.apache.camel.spi.CamelInternalProcessorAdvice in
+            //  org.apache.camel.impl.engine.CamelInternalProcessor.wrap(ManagementInterceptStrategy$InstrumentationProcessor)
             return (CamelInternalProcessorAdvice<T>) instrumentationProcessor;
         } else {
             return new CamelInternalProcessorAdviceWrapper<>(instrumentationProcessor);

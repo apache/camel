@@ -143,7 +143,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
     private final AtomicLong discarded = new AtomicLong();
 
     // keep booking about redelivery
-    private class RedeliveryData {
+    private static class RedeliveryData {
         int redeliveryCounter;
     }
 

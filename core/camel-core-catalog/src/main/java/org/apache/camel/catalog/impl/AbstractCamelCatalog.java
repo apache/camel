@@ -832,8 +832,6 @@ public abstract class AbstractCamelCatalog {
         model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
         model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
-        // clip the scheme from the syntax
-        String syntax = "";
         if (originalSyntax.contains(":")) {
             originalSyntax = CatalogHelper.after(originalSyntax, ":");
         }
@@ -842,12 +840,15 @@ public abstract class AbstractCamelCatalog {
         Map<String, String> copy = new TreeMap<>(properties);
 
         Matcher syntaxMatcher = COMPONENT_SYNTAX_PARSER.matcher(originalSyntax);
+        StringBuffer buf = new StringBuffer();
         while (syntaxMatcher.find()) {
-            syntax += syntaxMatcher.group(1);
+            buf.append(syntaxMatcher.group(1));
             String propertyName = syntaxMatcher.group(2);
             String propertyValue = copy.remove(propertyName);
-            syntax += propertyValue != null ? propertyValue : propertyName;
+            buf.append(propertyValue != null ? propertyValue : propertyName);
         }
+        // clip the scheme from the syntax
+        String syntax = buf.toString();
 
         // do we have all the options the original syntax needs (easy way)
         String[] keys = syntaxKeys(originalSyntax);
@@ -1113,7 +1114,7 @@ public abstract class AbstractCamelCatalog {
                 || key.startsWith("rest.")) {
             int idx = key.indexOf('.');
             String name = key.substring(0, idx);
-            String option = key.substring(idx + 1);
+            //String option = key.substring(idx + 1); // unused variable
             if (value != null) {
                 MainModel model = mainModel();
                 if (model == null) {

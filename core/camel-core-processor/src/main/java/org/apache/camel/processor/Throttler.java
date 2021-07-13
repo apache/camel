@@ -375,7 +375,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     /**
      * Permit that implements the Delayed interface needed by DelayQueue.
      */
-    private class ThrottlePermit implements Delayed {
+    private static class ThrottlePermit implements Delayed {
         private volatile long scheduledTime;
 
         ThrottlePermit(final long delayMs) {

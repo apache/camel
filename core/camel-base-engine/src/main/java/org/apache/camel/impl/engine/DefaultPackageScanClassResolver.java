@@ -294,6 +294,11 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
         File[] files = location.listFiles();
         StringBuilder builder;
 
+        // this will prevent NullPointerException, but there are no means to tell caller class that the location folder is empty
+        if (files == null) {
+            return;
+        }
+
         for (File file : files) {
             builder = new StringBuilder(100);
             String name = file.getName();

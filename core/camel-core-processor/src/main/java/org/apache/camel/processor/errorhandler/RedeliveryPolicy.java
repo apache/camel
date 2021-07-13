@@ -253,8 +253,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         // find the group where the redelivery counter matches
         long answer = 0;
         for (String group : groups) {
-            long delay = Long.valueOf(StringHelper.after(group, ":"));
-            int count = Integer.valueOf(StringHelper.before(group, ":"));
+            long delay = Long.parseLong(StringHelper.after(group, ":"));
+            int count = Integer.parseInt(StringHelper.before(group, ":"));
             if (count > redeliveryCounter) {
                 break;
             } else {

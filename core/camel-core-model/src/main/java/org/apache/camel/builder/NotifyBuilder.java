@@ -1537,7 +1537,7 @@ public class NotifyBuilder {
     /**
      * To hold an operation and predicate
      */
-    private final class EventPredicateHolder {
+    private static final class EventPredicateHolder {
         private final EventOperation operation;
         private final EventPredicate predicate;
 
@@ -1567,7 +1567,7 @@ public class NotifyBuilder {
     /**
      * To hold multiple predicates which are part of same expression
      */
-    private final class CompoundEventPredicate implements EventPredicate {
+    private static final class CompoundEventPredicate implements EventPredicate {
 
         private List<EventPredicate> predicates = new ArrayList<>();
 

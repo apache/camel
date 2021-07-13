@@ -103,7 +103,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     /**
      * Wrap {@link RecipientList} in {@link Pipeline}.
      */
-    private final class RecipientListPipeline extends Pipeline {
+    private static final class RecipientListPipeline extends Pipeline {
 
         private final RecipientList recipientList;
 

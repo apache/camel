@@ -125,6 +125,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
                 throw new InvalidPayloadException(e, type, this, cause);
             }
         }
+        // TODO Null value in e. Is it expected?
         throw new InvalidPayloadException(e, type, this);
     }
 
