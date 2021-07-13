@@ -203,7 +203,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     /**
      * Sets a custom HttpClient to be used by the producer
      */
-    public void setHttpClient(HttpClient httpClient) {
+    public synchronized void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
