@@ -55,7 +55,7 @@
     <aspectj-version>1.9.7</aspectj-version>
     <assertj-version>3.20.2</assertj-version>
     <asterisk-java-version>3.12.0</asterisk-java-version>
-    <atlasmap-version>2.2.2</atlasmap-version>
+    <atlasmap-version>2.2.3</atlasmap-version>
     <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
     <atmos-client-version>3.1.0</atmos-client-version>
     <atmosphere-version>2.6.4</atmosphere-version>
