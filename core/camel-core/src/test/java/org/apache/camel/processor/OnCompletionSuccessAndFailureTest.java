@@ -17,20 +17,22 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class OnCompletionOnCompleteOnlyTest extends OnCompletionTest {
+class OnCompletionSuccessAndFailureTest extends OnCompletionTest {
 
     @Override
     @Test
     public void testSynchronizeFailure() throws Exception {
-        // do not expect a message since we only do onCompleteOnly
-        getMockEndpoint("mock:sync").expectedMessageCount(0);
+        getMockEndpoint("mock:error").expectedMessageCount(1);
+        getMockEndpoint("mock:error").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
+        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -52,15 +54,13 @@ public class OnCompletionOnCompleteOnlyTest extends OnCompletionTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                        // here we qualify onCompletion to only invoke when the
-                        // exchange completed with success
-                        // if the exchange failed this onCompletion route will NOT
-                        // be routed then
-                        .onCompletion().onSuccess().to("log:sync").to("mock:sync")
-                        // must use end to denote the end of the onCompletion route
-                        .end()
-                        // here the original route contiues
-                        .process(new MyProcessor()).to("mock:result");
+                .onCompletion()
+                .onFailure().to("log:error").to("mock:error")
+                .onSuccess().to("log:sync").to("mock:sync")
+                // must use end to denote the end of the onCompletion route
+                .end()
+                // here the original route continues
+                .process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

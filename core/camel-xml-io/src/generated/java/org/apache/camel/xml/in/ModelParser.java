@@ -639,12 +639,22 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, (def, key) -> {
-            if ("onWhen".equals(key)) {
-                def.setOnWhen(doParseWhenDefinition());
-                return true;
+            switch (key) {
+                case "onFailure": def.setOnFailureDefinition(doParseOnFailureDefinition()); break;
+                case "onSuccess": def.setOnSuccessDefinition(doParseOnSuccessDefinition()); break;
+                case "onWhen": def.setOnWhen(doParseWhenDefinition()); break;
+                default: return outputDefinitionElementHandler().accept(def, key);
             }
-            return outputDefinitionElementHandler().accept(def, key);
+            return true;
         }, noValueHandler());
+    }
+    protected OnSuccessDefinition doParseOnSuccessDefinition() throws IOException, XmlPullParserException {
+        return doParse(new OnSuccessDefinition(),
+            processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
+    }
+    protected OnFailureDefinition doParseOnFailureDefinition() throws IOException, XmlPullParserException {
+        return doParse(new OnFailureDefinition(),
+            processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
     }
     protected OnExceptionDefinition doParseOnExceptionDefinition() throws IOException, XmlPullParserException {
         return doParse(new OnExceptionDefinition(), (def, key, val) -> {
@@ -3116,6 +3126,8 @@ public class ModelParser extends BaseParser {
             case "marshal": return doParseMarshalDefinition();
             case "multicast": return doParseMulticastDefinition();
             case "onCompletion": return doParseOnCompletionDefinition();
+            case "onSuccess": return doParseOnSuccessDefinition();
+            case "onFailure": return doParseOnFailureDefinition();
             case "onException": return doParseOnExceptionDefinition();
             case "onFallback": return doParseOnFallbackDefinition();
             case "pipeline": return doParsePipelineDefinition();

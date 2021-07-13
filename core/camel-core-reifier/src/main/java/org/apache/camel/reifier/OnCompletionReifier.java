@@ -40,6 +40,8 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         boolean isOnFailureOnly = parseBoolean(definition.getOnFailureOnly(), false);
         boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
         boolean original = parseBoolean(definition.getUseOriginalMessage(), false);
+        AsyncProcessor onSuccessProcessor = null;
+        AsyncProcessor onFailureProcessor = null;
 
         if (isOnCompleteOnly && isOnFailureOnly) {
             throw new IllegalArgumentException(
@@ -49,14 +51,30 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
             // ensure allow original is turned on
             route.setAllowUseOriginalMessage(true);
         }
+        // wrap the on completion success and/or failure routes in unit of work processors
+        if (definition.getOnSuccessDefinition() != null) {
+            onSuccessProcessor = createUoWProcessor(createOutputsProcessor(definition.getOnSuccessDefinition().getOutputs()));
+        }
+        if (definition.getOnFailureDefinition() != null) {
+            onFailureProcessor = createUoWProcessor(createOutputsProcessor(definition.getOnFailureDefinition().getOutputs()));
+        }
+        // If neither success nor failure is explicitly specified use specified route and complete or failure flags
+        if (onSuccessProcessor == null && onFailureProcessor == null) {
+            // Route will be in outputs
+            AsyncProcessor target = createUoWProcessor(this.createChildProcessor(true));
+            if (isOnCompleteOnly) {
+                onSuccessProcessor = target;
+            } else if (isOnFailureOnly) {
+                onFailureProcessor = target;
+            } else {
+                // Use same processor for both success and failure
+                onSuccessProcessor = onFailureProcessor = target;
+            }
+        }
 
-        Processor childProcessor = this.createChildProcessor(true);
-
-        // wrap the on completion route in a unit of work processor
-        AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
-                .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
-
-        route.setOnCompletion(getId(definition), target);
+        //      TODO! Previously there could be only one target route but now there can be two.
+        route.setOnCompletion(getId(definition),
+                onSuccessProcessor != null ? onSuccessProcessor : onFailureProcessor); // There can only be one target here!
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
@@ -71,9 +89,15 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
                 || parse(OnCompletionMode.class, definition.getMode()) == OnCompletionMode.AfterConsumer;
 
         OnCompletionProcessor answer = new OnCompletionProcessor(
-                camelContext, target, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
+                camelContext, onSuccessProcessor, onFailureProcessor, threadPool, shutdownThreadPool, when,
                 original, afterConsumer, definition.isRouteScoped());
         return answer;
+    }
+
+    // wrap the on completion route in a unit of work processor
+    private AsyncProcessor createUoWProcessor(Processor childProcessor) {
+        return camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
     }
 
 }

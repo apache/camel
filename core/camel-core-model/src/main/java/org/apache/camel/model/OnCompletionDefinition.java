@@ -37,7 +37,7 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "onCompletion")
-@XmlType(propOrder = { "onWhen", "outputs" })
+@XmlType(propOrder = { "onWhen", "onSuccessDefinition", "onFailureDefinition", "outputs" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition>
         implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
@@ -66,6 +66,10 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     private ExecutorService executorService;
     @XmlTransient
     private boolean routeScoped = true;
+    @XmlElement(name = "onSuccess")
+    private OnSuccessDefinition onSuccessDefinition;
+    @XmlElement(name = "onFailure")
+    private OnFailureDefinition onFailureDefinition;
 
     public OnCompletionDefinition() {
     }
@@ -126,6 +130,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     public ProcessorDefinition<?> end() {
         // pop parent block, as we added our self as block to parent when
         // synchronized was defined in the route
+        // If we have a block it is a success or failure route so pop it.
+        popBlock();
         getParent().popBlock();
         return super.end();
     }
@@ -167,11 +173,58 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
             throw new IllegalArgumentException(
                     "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
+        if (getOnFailureDefinition() != null) {
+            throw new IllegalArgumentException(
+                    "There is already a failure definition so onCompleteOnly cannot be set. On node: " + this);
+        }
         // must define return type as OutputDefinition and not this type to
         // avoid end user being able
         // to invoke onFailureOnly/onCompleteOnly more than once
         setOnCompleteOnly(Boolean.toString(true));
         setOnFailureOnly(Boolean.toString(false));
+
+        return this;
+    }
+
+    /**
+     * Defines a route which is executed when the exchange is completed successfully
+     * 
+     * @return a new OnCompleteDefinition which will hold the route definition for the success.
+     */
+    public OnCompletionDefinition onSuccess() {
+        if (Boolean.toString(true).equals(onFailureOnly)) {
+            throw new IllegalArgumentException(
+                    "The option onFailureOnly is set so there cannot be an onSuccess route. On node: " + this);
+        }
+        // create new block with the onCompletion
+        OnSuccessDefinition onSuccess = new OnSuccessDefinition();
+        if (getOnFailureDefinition() != null) {
+            popBlock();
+        }
+        this.onSuccessDefinition = onSuccess;
+        onSuccess.setParent(this);
+        pushBlock(onSuccess);
+        return this;
+    }
+
+    /**
+     * Defines a route which is executed when the exchange is completed successfully
+     * 
+     * @return a new OnCompleteDefinition which will hold the route definition for the success.
+     */
+    public OnCompletionDefinition onFailure() {
+        if (Boolean.toString(true).equals(onCompleteOnly)) {
+            throw new IllegalArgumentException(
+                    "The option onCompleteOnly is set so there cannot be an onFailure route. On node: " + this);
+        }
+        // create new block with the onCompletion
+        OnFailureDefinition onFailure = new OnFailureDefinition();
+        if (getOnSuccessDefinition() != null) {
+            popBlock();
+        }
+        this.onFailureDefinition = onFailure;
+        onFailure.setParent(this);
+        pushBlock(onFailure);
         return this;
     }
 
@@ -185,6 +238,10 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         if (isOnCompleteOnly) {
             throw new IllegalArgumentException(
                     "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+        }
+        if (getOnSuccessDefinition() != null) {
+            throw new IllegalArgumentException(
+                    "There is already a success definition so onFailureOnly cannot be set. On node: " + this);
         }
         // must define return type as OutputDefinition and not this type to
         // avoid end user being able
@@ -350,6 +407,22 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     public void setParallelProcessing(String parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
+    }
+
+    public OnSuccessDefinition getOnSuccessDefinition() {
+        return this.onSuccessDefinition;
+    }
+
+    public OnFailureDefinition getOnFailureDefinition() {
+        return this.onFailureDefinition;
+    }
+
+    public void setOnSuccessDefinition(OnSuccessDefinition onSuccessDef) {
+        this.onSuccessDefinition = onSuccessDef;
+    }
+
+    public void setOnFailureDefinition(OnFailureDefinition onFailureDef) {
+        this.onFailureDefinition = onFailureDef;
     }
 
 }

@@ -45,7 +45,7 @@ public class OnCompletionOnFailureOnlyTest extends OnCompletionTest {
                 from("direct:start")
                         // here we qualify onCompletion to only invoke when the
                         // exchange failed (exception or FAULT body)
-                        .onCompletion().onFailureOnly().to("log:sync").to("mock:sync")
+                        .onCompletion().onFailure().to("log:sync").to("mock:sync")
                         // must use end to denote the end of the onCompletion route
                         .end()
                         // here the original route continues

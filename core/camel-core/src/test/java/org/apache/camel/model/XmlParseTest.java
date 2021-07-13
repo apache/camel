@@ -201,6 +201,31 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @Test
+    public void testParseRouteWithCompletionSuccessAndFailureXml() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithCompletionSuccessAndFailure.xml");
+        assertFrom(route, "direct:start");
+
+        OnCompletionDefinition onComplete = assertNthProcessorInstanceOf(OnCompletionDefinition.class, route, 0);
+        OnSuccessDefinition success = onComplete.getOnSuccessDefinition();
+        assertNotNull(success);
+        assertChildTo("success", success, "mock:success");
+        OnFailureDefinition failure = onComplete.getOnFailureDefinition();
+        assertNotNull(failure);
+        assertChildTo("failure", failure, "mock:failure");
+        assertChildTo(route, "mock:result", 1);
+    }
+
+    @Test
+    public void testParseRouteWithCompletionXml() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithCompletion.xml");
+        assertFrom(route, "seda:a");
+        OnCompletionDefinition onComplete = assertNthProcessorInstanceOf(OnCompletionDefinition.class, route, 0);
+        assertEquals("true", onComplete.getOnFailureOnly());
+        assertChildTo("failure", onComplete, "log:failure");
+        assertChildTo(route, "mock:result", 1);
+    }
+
+    @Test
     public void testParseSplitterXml() throws Exception {
         RouteDefinition route = assertOneRoute("splitter.xml");
         assertFrom(route, "seda:a");
