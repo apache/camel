@@ -349,7 +349,7 @@ Note that the corresponding URI parameter is simply `chatId`.
 
 == Customizing keyboard
 
-You can customize the user keyboard instead of asking him to write an option. `OutgoingTextMessage` has the property `ReplyKeyboardMarkup` which can be used for such thing.
+You can customize the user keyboard instead of asking him to write an option. `OutgoingTextMessage` has the property `ReplyMarkup` which can be used for such thing.
 
 [source,java]
 ---------------------------------------------------------
@@ -376,7 +376,7 @@ from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHer
                 .oneTimeKeyboard(true)
                 .build();
 
-        msg.setReplyKeyboardMarkup(replyMarkup);
+        msg.setReplyMarkup(replyMarkup);
 
         exchange.getIn().setBody(msg);
     })
