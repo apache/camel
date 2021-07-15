@@ -468,7 +468,7 @@
         <servo-version>0.10.1</servo-version>
         <roaster-version>2.22.0.Final</roaster-version>
         <robotframework-version>4.0.1</robotframework-version>
-        <rome-version>1.15.0</rome-version>
+        <rome-version>1.16.0</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>9.9.1-7</saxon-version>
