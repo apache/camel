@@ -85,10 +85,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             restConfigurationProperties.close();
             restConfigurationProperties = null;
         }
-        routesBuilders.clear();
-        routesBuilders = null;
-        configurations.clear();
-        configurations = null;
+        if (routesBuilders != null) {
+            routesBuilders.clear();
+            routesBuilders = null;
+        }
+        if (configurations != null) {
+            configurations.clear();
+            configurations = null;
+        }
     }
 
     // extended
