@@ -343,6 +343,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     public KafkaConfiguration copy() {
         try {
             KafkaConfiguration copy = (KafkaConfiguration) clone();
+            copy.additionalProperties = new HashMap<>(this.additionalProperties);
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
