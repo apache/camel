@@ -111,28 +111,17 @@ public final class AhcHelper {
         }
 
         // resolve placeholders in uri
-        try {
-            uri = exchange.getContext().resolvePropertyPlaceholders(uri);
-        } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uri, exchange, e);
-        }
+        uri = resolvePlaceholdersInURI(exchange, uri);
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
         String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
         if (path != null) {
             if (path.startsWith("/")) {
                 URI baseURI;
-                String baseURIString = exchange.getIn().getHeader(Exchange.HTTP_BASE_URI, String.class);
+
                 try {
-                    if (baseURIString == null) {
-                        if (exchange.getFromEndpoint() != null) {
-                            baseURIString = exchange.getFromEndpoint().getEndpointUri();
-                        } else {
-                            // will set a default one for it
-                            baseURIString = "/";
-                        }
-                    }
-                    baseURI = new URI(baseURIString);
+                    baseURI = getBaseURI(exchange);
+
                     String basePath = baseURI.getPath();
                     if (path.startsWith(basePath)) {
                         path = path.substring(basePath.length());
@@ -162,6 +151,30 @@ public final class AhcHelper {
         // ensure uri is encoded to be valid
         uri = UnsafeUriCharactersEncoder.encodeHttpURI(uri);
 
+        return uri;
+    }
+
+    private static URI getBaseURI(Exchange exchange) throws URISyntaxException {
+        URI baseURI;
+        String baseURIString = exchange.getIn().getHeader(Exchange.HTTP_BASE_URI, String.class);
+        if (baseURIString == null) {
+            if (exchange.getFromEndpoint() != null) {
+                baseURIString = exchange.getFromEndpoint().getEndpointUri();
+            } else {
+                // will set a default one for it
+                baseURIString = "/";
+            }
+        }
+        baseURI = new URI(baseURIString);
+        return baseURI;
+    }
+
+    private static String resolvePlaceholdersInURI(Exchange exchange, String uri) {
+        try {
+            uri = exchange.getContext().resolvePropertyPlaceholders(uri);
+        } catch (Exception e) {
+            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uri, exchange, e);
+        }
         return uri;
     }
 
