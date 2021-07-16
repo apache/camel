@@ -1152,32 +1152,6 @@ public final class PropertyBindingSupport {
         return null;
     }
 
-    private static Class getGetterType(CamelContext context, Object target, String name, boolean ignoreCase) {
-        try {
-            if (ignoreCase) {
-                Method getter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection()
-                        .getPropertyGetter(target.getClass(), name, true);
-                if (getter != null) {
-                    return getter.getReturnType();
-                }
-            } else {
-                Method getter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection()
-                        .getPropertyGetter(target.getClass(), name, false);
-                if (getter != null) {
-                    return getter.getReturnType();
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            // ignore
-        }
-        return null;
-    }
-
-    private static boolean isComplexUserType(Class type) {
-        // lets consider all non java, as complex types
-        return type != null && !type.isPrimitive() && !type.getName().startsWith("java.");
-    }
-
     /**
      * Is the given parameter a reference parameter (starting with a # char)
      *

@@ -259,15 +259,6 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return context;
     }
 
-    private String replaceAlias(String name) {
-        for (ApiMethodAlias alias : aliases) {
-            if (name.matches(alias.getMethodPattern())) {
-                return alias.getMethodAlias();
-            }
-        }
-        return name;
-    }
-
     private File getConfigurationFile() throws MojoExecutionException {
         final StringBuilder fileName = new StringBuilder();
         // endpoint configuration goes in component package

@@ -86,10 +86,6 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         }
     }
 
-    private boolean isAutomaticRecoveryEnabled() {
-        return this.endpoint.getAutomaticRecoveryEnabled() != null && this.endpoint.getAutomaticRecoveryEnabled();
-    }
-
     /**
      * Create the consumers but don't start yet
      */

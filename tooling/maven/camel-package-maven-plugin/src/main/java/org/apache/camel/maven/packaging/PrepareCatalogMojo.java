@@ -218,15 +218,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         return name;
     }
 
-    private static boolean excludeDocumentDir(String name) {
-        for (String exclude : EXCLUDE_DOC_FILES) {
-            if (exclude.equals(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * Execute goal.
      *
