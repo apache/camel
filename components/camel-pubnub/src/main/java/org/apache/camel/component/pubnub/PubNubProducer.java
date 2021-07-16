@@ -222,7 +222,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
         if (status.isError()) {
             PNErrorData errorData = status.getErrorData();
             exchange.setException(errorData.getThrowable());
-            if (errorData != null && errorData.getThrowable() instanceof PubNubException) {
+            if (errorData.getThrowable() instanceof PubNubException) {
                 PubNubException pubNubException = (PubNubException) errorData.getThrowable();
                 throw new RuntimeException(pubNubException.getPubnubError().getMessage(), errorData.getThrowable());
             }

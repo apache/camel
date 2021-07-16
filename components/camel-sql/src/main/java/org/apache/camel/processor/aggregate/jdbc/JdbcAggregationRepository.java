@@ -317,7 +317,7 @@ public class JdbcAggregationRepository extends ServiceSupport
                         ps.setLong(++totalParameterIndex, version);
                     }
                 });
-        if (updateCount == 1) {
+        if (updateCount != null && updateCount == 1) {
             return updateCount;
         } else {
             // Found stale version while updating record
@@ -395,10 +395,9 @@ public class JdbcAggregationRepository extends ServiceSupport
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 LOG.debug("Confirming exchangeId {}", exchangeId);
-                final String confirmKey = exchangeId;
 
                 jdbcTemplate.update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?",
-                        confirmKey);
+                        exchangeId);
 
             }
         });

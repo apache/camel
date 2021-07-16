@@ -165,7 +165,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         }
     }
 
-    private synchronized void startConsumer(Route route) {
+    // unused
+    /*private synchronized void startConsumer(Route route) {
         try {
             if (suspendedRoutes.contains(route)) {
                 startConsumer(route.getConsumer());
@@ -174,7 +175,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         } catch (Exception e) {
             handleException(e);
         }
-    }
+    }*/
 
     private synchronized void stopConsumer(Route route) {
         try {

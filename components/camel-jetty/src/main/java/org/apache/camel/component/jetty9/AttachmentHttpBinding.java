@@ -129,7 +129,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         }
     }
 
-    final class PartDataSource implements DataSource {
+    static final class PartDataSource implements DataSource {
         private final Part part;
 
         PartDataSource(Part part) {

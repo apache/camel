@@ -766,6 +766,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             transportHeaders.putAll(headers);
         }
 
+        // TODO camelExchange may be null
         DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class);
 
         for (Map.Entry<String, Object> entry : camelHeaders.entrySet()) {

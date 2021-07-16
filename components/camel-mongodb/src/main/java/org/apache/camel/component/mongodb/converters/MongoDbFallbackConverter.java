@@ -48,21 +48,21 @@ public final class MongoDbFallbackConverter {
 
             if (type == DBObject.class) {
                 Object out = BasicDBObject.parse(value.toString());
-                if (out instanceof DBObject) {
+                if (out instanceof DBObject) { // condition is always true!
                     return out;
                 } else {
                     throw new InvalidPayloadException(exchange, type);
                 }
             } else if (type == BasicDBList.class) {
                 Object out = BasicDBObject.parse(value.toString());
-                if (out instanceof BasicDBList) {
+                if (out instanceof BasicDBList) { // condition is always false
                     return out;
                 } else {
                     throw new InvalidPayloadException(exchange, type);
                 }
             } else if (type == BasicDBObject.class) {
                 Object out = BasicDBObject.parse(value.toString());
-                if (out instanceof BasicDBObject) {
+                if (out instanceof BasicDBObject) { // condition is always true
                     return out;
                 } else {
                     throw new InvalidPayloadException(exchange, type);

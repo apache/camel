@@ -69,6 +69,8 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * The JSCH session and channel are not thread-safe so we need to synchronize access to using this operation.
  */
 public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private static final int OK_STATUS = 0;
@@ -833,7 +835,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             local = new File(local, relativeName);
 
             // create directory to local work file
-            local.mkdirs();
+            boolean result = local.mkdirs();
+            if (!result) {
+                log.error("mkdirs() failed for " + local);
+            }
 
             // delete any existing files
             if (temp.exists()) {

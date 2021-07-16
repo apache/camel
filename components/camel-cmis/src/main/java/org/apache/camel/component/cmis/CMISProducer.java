@@ -433,7 +433,7 @@ public class CMISProducer extends DefaultProducer {
         String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
         try {
             CmisObject object = getSessionFacade().getObjectById(objectId);
-            CmisObject object1 = object.rename(newName);
+            object.rename(newName);
 
             return object;
         } catch (Exception e) {
@@ -455,7 +455,6 @@ public class CMISProducer extends DefaultProducer {
         String checkInComment = message.getHeader(PropertyIds.CHECKIN_COMMENT, String.class);
         String fileName = message.getHeader(PropertyIds.NAME, String.class);
         String mimeType = getMimeType(message);
-        InputStream inputStream = (InputStream) message.getBody();
 
         byte[] bytes = message.getBody(byte[].class);
         Document document = (Document) getSessionFacade().getObjectById(objectId);
@@ -467,8 +466,8 @@ public class CMISProducer extends DefaultProducer {
         ContentStream contentStream = getSessionFacade().createContentStream(fileName, bytes, mimeType);
 
         String versioningState = message.getHeader(CamelCMISConstants.VERSIONING_STATE, String.class);
-        Boolean versioning = org.apache.camel.util.ObjectHelper.isNotEmpty(versioningState)
-                && versioningState.equals(VersioningState.MINOR.value()) ? false : true;
+        boolean versioning = !org.apache.camel.util.ObjectHelper.isNotEmpty(versioningState)
+                || !versioningState.equals(VersioningState.MINOR.value());
 
         try {
             return document.checkIn(versioning, properties, contentStream, checkInComment);

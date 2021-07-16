@@ -74,7 +74,7 @@ class ClientSessions implements Closeable {
             apply.accept(session);
         } catch (final RuntimeException re) {
             log.error(re.getMessage(), re);
-            if (session.isOpen()) {
+            if (session != null && session.isOpen()) {
                 try {
                     session.close(new CloseReason(CloseReason.CloseCodes.CLOSED_ABNORMALLY, re.getMessage()));
                 } catch (final IOException errorOnClose) {

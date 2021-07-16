@@ -324,7 +324,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
         }
     }
 
-    private final class TracingLogListener implements LogListener {
+    private static final class TracingLogListener implements LogListener {
 
         @Override
         public String onLog(Exchange exchange, CamelLogger camelLogger, String message) {

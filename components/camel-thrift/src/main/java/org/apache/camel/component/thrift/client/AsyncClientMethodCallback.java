@@ -34,6 +34,7 @@ public class AsyncClientMethodCallback implements AsyncMethodCallback {
     public void onComplete(Object response) {
         exchange.getOut().setHeaders(exchange.getIn().getHeaders());
         if (response == null) {
+            // Suspicious! load of known null value
             exchange.getOut().setBody(response);
         } else {
             exchange.getOut().setBody(response, response.getClass());

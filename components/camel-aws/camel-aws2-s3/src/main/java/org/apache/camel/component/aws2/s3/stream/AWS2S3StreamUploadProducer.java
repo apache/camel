@@ -302,7 +302,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 if (position != -1) {
                     String partString = fileName.substring(position + 1);
                     if (ObjectHelper.isNotEmpty(partString)) {
-                        part.getAndSet(Integer.valueOf(partString) + 1);
+                        part.getAndSet(Integer.parseInt(partString) + 1);
                     }
                 } else {
                     part.getAndSet(1);

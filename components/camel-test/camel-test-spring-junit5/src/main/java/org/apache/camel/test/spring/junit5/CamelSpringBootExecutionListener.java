@@ -25,7 +25,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 public class CamelSpringBootExecutionListener extends AbstractTestExecutionListener {
 
-    protected static ThreadLocal<ConfigurableApplicationContext> threadApplicationContext = new ThreadLocal<>();
+    protected static final ThreadLocal<ConfigurableApplicationContext> THREAD_APPLICATION_CONTEXT = new ThreadLocal<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootExecutionListener.class);
     private static final String PROPERTY_SKIP_STARTING_CAMEL_CONTEXT = "skipStartingCamelContext";
@@ -93,7 +93,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         String testName = testContext.getTestMethod().getName();
 
         ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
-        threadApplicationContext.set(context);
+        THREAD_APPLICATION_CONTEXT.set(context);
 
         // mark Camel to be startable again and start Camel
         System.clearProperty(PROPERTY_SKIP_STARTING_CAMEL_CONTEXT);
@@ -113,7 +113,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         Class<?> testClass = testContext.getTestClass();
         String testName = testContext.getTestMethod().getName();
 
-        ConfigurableApplicationContext context = threadApplicationContext.get();
+        ConfigurableApplicationContext context = THREAD_APPLICATION_CONTEXT.get();
         if (context != null && context.isRunning()) {
             // dump route coverage for each test method so its accurate
             // statistics

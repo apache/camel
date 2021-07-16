@@ -182,7 +182,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
     }
 
-    private final class BridgePropertiesParser implements PropertiesParser {
+    private static final class BridgePropertiesParser implements PropertiesParser {
 
         private final PropertiesParser delegate;
         private final PropertiesParser parser;

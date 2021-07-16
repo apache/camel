@@ -33,6 +33,7 @@ import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.AbstractContextLoader;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
@@ -166,9 +167,14 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         Map<String, String> props = CamelSpringTestSupport.getTranslationProperties(clazz);
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(context);
         for (String location : locations) {
-            Resource r = reader.getResourceLoader().getResource(location);
-            Resource t = new CamelSpringTestSupport.TranslatedResource(r, props);
-            reader.loadBeanDefinitions(t);
+            ResourceLoader resourceLoader = reader.getResourceLoader();
+            if (resourceLoader != null) {
+                Resource r = resourceLoader.getResource(location);
+                Resource t = new CamelSpringTestSupport.TranslatedResource(r, props);
+                reader.loadBeanDefinitions(t);
+            } else {
+                LOG.error("resourceLoader is null");
+            }
         }
     }
 

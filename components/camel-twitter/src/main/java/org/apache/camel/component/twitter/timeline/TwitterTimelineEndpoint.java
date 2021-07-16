@@ -100,7 +100,6 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
                 handler = new RetweetsConsumerHandler(this);
                 break;
             case LIST:
-                TwitterTimelineComponent component = (TwitterTimelineComponent) getComponent();
                 handler = new UserListConsumerHandler(this, user, list);
                 break;
             case USER:

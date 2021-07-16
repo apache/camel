@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
  */
 @org.apache.camel.spi.annotations.Component("seda")
 public class SedaComponent extends DefaultComponent {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected final int maxConcurrentConsumers = SedaConstants.MAX_CONCURRENT_CONSUMERS;
+    protected static final Logger LOG = LoggerFactory.getLogger(SedaComponent.class);
+    protected static final int MAX_CONCURRENT_CONSUMERS = SedaConstants.MAX_CONCURRENT_CONSUMERS;
 
     @Metadata(label = "consumer", defaultValue = "" + SedaConstants.CONCURRENT_CONSUMERS)
     protected int concurrentConsumers = SedaConstants.CONCURRENT_CONSUMERS;
@@ -152,8 +152,8 @@ public class SedaComponent extends DefaultComponent {
             // add the reference before returning queue
             ref.addReference(endpoint);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Reusing existing queue {} with size {} and reference count {}", key, size, ref.getCount());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Reusing existing queue {} with size {} and reference count {}", key, size, ref.getCount());
             }
             return ref;
         }
@@ -171,7 +171,7 @@ public class SedaComponent extends DefaultComponent {
                 queue = queueFactory.create();
             }
         }
-        log.debug("Created queue {} with size {}", key, size);
+        LOG.debug("Created queue {} with size {}", key, size);
 
         // create and add a new reference queue
         ref = new QueueReference(queue, size, multipleConsumers);
@@ -209,10 +209,10 @@ public class SedaComponent extends DefaultComponent {
                 concurrentConsumers);
         boolean limitConcurrentConsumers
                 = getAndRemoveOrResolveReferenceParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
-        if (limitConcurrentConsumers && consumers > maxConcurrentConsumers) {
+        if (limitConcurrentConsumers && consumers > MAX_CONCURRENT_CONSUMERS) {
             throw new IllegalArgumentException(
                     "The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
-                                               + maxConcurrentConsumers + " was " + consumers);
+                                               + MAX_CONCURRENT_CONSUMERS + " was " + consumers);
         }
 
         // Resolve queue reference

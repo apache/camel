@@ -31,6 +31,8 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -49,6 +51,8 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.ExpandedTitleContentHandler;
 
 public class TikaProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TikaProducer.class);
 
     private final TikaConfiguration tikaConfiguration;
 
@@ -170,8 +174,12 @@ public class TikaProducer extends DefaultProducer {
         handler.getTransformer().setOutputProperty(OutputKeys.INDENT, prettyPrint ? "yes" : "no");
         if (this.encoding != null) {
             handler.getTransformer().setOutputProperty(OutputKeys.ENCODING, this.encoding);
+            handler.setResult(new StreamResult(new OutputStreamWriter(output, this.encoding)));
+        } else {
+            LOG.error("encoding is null");
+            return null;
         }
-        handler.setResult(new StreamResult(new OutputStreamWriter(output, this.encoding)));
+
         return handler;
     }
 }

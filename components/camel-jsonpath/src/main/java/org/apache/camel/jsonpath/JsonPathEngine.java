@@ -122,11 +122,9 @@ public class JsonPathEngine {
                 List<String> list = new ArrayList<>();
                 Iterable it = (Iterable) answer;
                 for (Object o : it) {
-                    if (adapter != null) {
-                        String json = adapter.writeAsString(o, exchange);
-                        if (json != null) {
-                            list.add(json);
-                        }
+                    String json = adapter.writeAsString(o, exchange);
+                    if (json != null) {
+                        list.add(json);
                     }
                 }
                 return list;

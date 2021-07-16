@@ -165,7 +165,8 @@ public class EtcdRoutePolicy extends RoutePolicySupport
         }
     }
 
-    private void startConsumer(Route route) {
+    // unused
+    /*private void startConsumer(Route route) {
         synchronized (lock) {
             try {
                 if (suspendedRoutes.contains(route)) {
@@ -176,7 +177,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport
                 handleException(e);
             }
         }
-    }
+    }*/
 
     private void stopConsumer(Route route) {
         synchronized (lock) {

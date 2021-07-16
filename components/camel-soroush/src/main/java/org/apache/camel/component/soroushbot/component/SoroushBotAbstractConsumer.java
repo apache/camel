@@ -171,7 +171,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
 
 class ReconnectableEventSourceListener extends EventSourceListener {
     private boolean manuallyClosed;
-    private OkHttpClient client;
+    //private OkHttpClient client;
     private final int maxConnectionRetry;
     private int connectionRetry;
     private Request request;
@@ -179,7 +179,7 @@ class ReconnectableEventSourceListener extends EventSourceListener {
     private EventSource eventSource;
 
     public ReconnectableEventSourceListener(OkHttpClient client, Request request, int maxConnectionRetry) {
-        this.client = client;
+        //this.client = client;
         this.maxConnectionRetry = maxConnectionRetry;
         this.request = request;
         factory = EventSources.createFactory(client);

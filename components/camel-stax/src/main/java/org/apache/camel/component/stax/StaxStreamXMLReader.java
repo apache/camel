@@ -25,6 +25,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -49,15 +51,17 @@ import org.apache.camel.util.ObjectHelper;
 // CHECKSTYLE:OFF
 public class StaxStreamXMLReader implements XMLReader {
 
+  private static final Logger LOG = LoggerFactory.getLogger(StaxStreamXMLReader.class);
+
   private static final String DEFAULT_XML_VERSION = "1.0";
 
-    private static final String NAMESPACES_FEATURE_NAME = "http://xml.org/sax/features/namespaces";
+  private static final String NAMESPACES_FEATURE_NAME = "http://xml.org/sax/features/namespaces";
 
   private static final String NAMESPACE_PREFIXES_FEATURE_NAME = "http://xml.org/sax/features/namespace-prefixes";
 
   private static final String IS_STANDALONE_FEATURE_NAME = "http://xml.org/sax/features/is-standalone";
 
-    private DTDHandler dtdHandler;
+  private DTDHandler dtdHandler;
 
   private ContentHandler contentHandler;
 
@@ -147,6 +151,8 @@ public class StaxStreamXMLReader implements XMLReader {
         case XMLStreamConstants.ENTITY_REFERENCE:
           handleEntityReference();
           break;
+        default:
+          LOG.error("unexpected eventType " + eventType);
       }
       if (reader.hasNext() && elementDepth >= 0) {
         eventType = reader.next();

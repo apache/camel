@@ -84,6 +84,7 @@ public class HystrixProcessor extends AsyncProcessorSupport
         return groupKey.name();
     }
 
+    // TODO Recursion?
     @ManagedAttribute
     public boolean isFallbackViaNetwork() {
         return isFallbackViaNetwork();
