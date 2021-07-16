@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
 import org.apache.camel.component.telegram.model.EditMessageDelete;
@@ -161,19 +162,19 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                     }
                     return mapper.readValue(responseBody, resultType);
                 } catch (IOException e) {
-                    throw new RuntimeException(
+                    throw new RuntimeCamelException(
                             "Could not parse the response from " + request.getMethod() + " " + request.getUrl(), e);
                 }
             } else {
-                throw new RuntimeException(
+                throw new RuntimeCamelException(
                         "Could not " + request.getMethod() + " " + request.getUrl() + ": " + response.getStatusCode() + " "
-                                           + response.getStatusText());
+                                                + response.getStatusText());
             }
         } catch (ExecutionException e) {
-            throw new RuntimeException("Could not request " + request.getMethod() + " " + request.getUrl(), e);
+            throw new RuntimeCamelException("Could not request " + request.getMethod() + " " + request.getUrl(), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 
@@ -187,7 +188,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             final String body = mapper.writeValueAsString(message);
             request.setBody(body);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Could not serialize " + message);
+            throw new RuntimeCamelException("Could not serialize " + message);
         }
         WebhookResult res = sendSyncRequest(request.build(), WebhookResult.class);
         return res.isOk() && res.isResult();
@@ -228,7 +229,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 final String body = mapper.writeValueAsString(message);
                 builder.setBody(body);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Could not serialize " + message);
+                throw new RuntimeCamelException("Could not serialize " + message);
             }
         }
 
@@ -434,11 +435,11 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
                         exchange.getMessage().setBody(result);
                     } else {
-                        throw new RuntimeException(
+                        throw new RuntimeCamelException(
                                 url + " responded: " + statusCode + " " + statusText + " " + IOHelper.toString(r));
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException("Could not parse the response from " + url, e);
+                    throw new RuntimeCamelException("Could not parse the response from " + url, e);
                 }
             } catch (Exception e) {
                 exchange.setException(e);

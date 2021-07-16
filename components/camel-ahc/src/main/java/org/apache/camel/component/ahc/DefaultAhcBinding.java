@@ -42,7 +42,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.asynchttpclient.HttpResponseStatus;
 import org.asynchttpclient.Request;
@@ -130,7 +129,7 @@ public class DefaultAhcBinding implements AhcBinding {
                         joiner.add(value);
                     }
                     if (log.isTraceEnabled()) {
-                        log.trace("Adding header {} = {}", key, joiner.toString());
+                        log.trace("Adding header {} = {}", key, joiner);
                     }
                     headers.put(key, joiner.toString());
                 }
@@ -156,56 +155,7 @@ public class DefaultAhcBinding implements AhcBinding {
         BodyGenerator body = in.getBody(BodyGenerator.class);
         String charset = ExchangeHelper.getCharsetName(exchange, false);
 
-        if (body == null) {
-            try {
-                Object data = in.getBody();
-                if (data != null) {
-                    if (contentType != null && AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
-
-                        if (!endpoint.getComponent().isAllowJavaSerializedObject()) {
-                            throw new CamelExchangeException(
-                                    "Content-type " + AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed",
-                                    exchange);
-                        }
-
-                        // serialized java object
-                        Serializable obj = in.getMandatoryBody(Serializable.class);
-                        // write object to output stream
-                        ByteArrayOutputStream bos = new ByteArrayOutputStream(endpoint.getBufferSize());
-                        AhcHelper.writeObjectToStream(bos, obj);
-                        byte[] bytes = bos.toByteArray();
-                        body = new ByteArrayBodyGenerator(bytes);
-                        IOHelper.close(bos);
-                    } else if (data instanceof File || data instanceof GenericFile) {
-                        // file based (could potentially also be a FTP file etc)
-                        File file = in.getBody(File.class);
-                        if (file != null) {
-                            body = new FileBodyGenerator(file);
-                        }
-                    } else if (data instanceof String) {
-                        // be a bit careful with String as any type can most likely be converted to String
-                        // so we only do an instanceof check and accept String if the body is really a String
-                        // do not fallback to use the default charset as it can influence the request
-                        // (for example application/x-www-form-urlencoded forms being sent)
-                        if (charset != null) {
-                            body = new ByteArrayBodyGenerator(((String) data).getBytes(charset));
-                        } else {
-                            body = new ByteArrayBodyGenerator(((String) data).getBytes());
-                        }
-                    }
-                    // fallback as input stream
-                    if (body == null) {
-                        // force the body as an input stream since this is the fallback
-                        InputStream is = in.getMandatoryBody(InputStream.class);
-                        body = new InputStreamBodyGenerator(is);
-                    }
-                }
-            } catch (UnsupportedEncodingException e) {
-                throw new CamelExchangeException("Error creating BodyGenerator from message body", exchange, e);
-            } catch (IOException e) {
-                throw new CamelExchangeException("Error serializing message body", exchange, e);
-            }
-        }
+        body = createBodyGenerator(endpoint, exchange, in, contentType, body, charset);
 
         if (body != null) {
             log.trace("Setting body {}", body);
@@ -221,6 +171,73 @@ public class DefaultAhcBinding implements AhcBinding {
         if (ObjectHelper.isNotEmpty(contentType)) {
             builder.setHeader(Exchange.CONTENT_TYPE, contentType);
         }
+    }
+
+    private BodyGenerator createBodyGenerator(
+            AhcEndpoint endpoint, Exchange exchange, Message in, String contentType, BodyGenerator body, String charset)
+            throws CamelExchangeException {
+        if (body != null) {
+            return body;
+        }
+
+        try {
+            Object data = in.getBody();
+            if (data != null) {
+                if (contentType != null && AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+
+                    if (!endpoint.getComponent().isAllowJavaSerializedObject()) {
+                        throw new CamelExchangeException(
+                                "Content-type " + AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed",
+                                exchange);
+                    }
+
+                    // serialized java object
+                    Serializable obj = in.getMandatoryBody(Serializable.class);
+                    // write object to output stream
+                    body = writeObjectToOutputStream(endpoint, obj);
+                } else if (data instanceof File || data instanceof GenericFile) {
+                    // file based (could potentially also be a FTP file etc)
+                    File file = in.getBody(File.class);
+                    if (file != null) {
+                        body = new FileBodyGenerator(file);
+                    }
+                } else if (data instanceof String) {
+                    // be a bit careful with String as any type can most likely be converted to String
+                    // so we only do an instanceof check and accept String if the body is really a String
+                    // do not fallback to use the default charset as it can influence the request
+                    // (for example application/x-www-form-urlencoded forms being sent)
+                    if (charset != null) {
+                        body = new ByteArrayBodyGenerator(((String) data).getBytes(charset));
+                    } else {
+                        body = new ByteArrayBodyGenerator(((String) data).getBytes());
+                    }
+                }
+                // fallback as input stream
+                if (body == null) {
+                    // force the body as an input stream since this is the fallback
+                    InputStream is = in.getMandatoryBody(InputStream.class);
+                    body = new InputStreamBodyGenerator(is);
+                }
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new CamelExchangeException("Error creating BodyGenerator from message body", exchange, e);
+        } catch (IOException e) {
+            throw new CamelExchangeException("Error serializing message body", exchange, e);
+        }
+
+        return body;
+    }
+
+    private BodyGenerator writeObjectToOutputStream(AhcEndpoint endpoint, Serializable obj) throws IOException {
+        BodyGenerator body;
+
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream(endpoint.getBufferSize());) {
+            AhcHelper.writeObjectToStream(bos, obj);
+            byte[] bytes = bos.toByteArray();
+            body = new ByteArrayBodyGenerator(bytes);
+        }
+
+        return body;
     }
 
     @Override
@@ -288,31 +305,36 @@ public class DefaultAhcBinding implements AhcBinding {
         Object body = is;
         // if content type is a serialized java object then de-serialize it back to a Java object but only if its allowed
         // an exception can also be transferred as java object
-        if (contentType != null && contentType.equals(AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            if (endpoint.getComponent().isAllowJavaSerializedObject() || endpoint.isTransferException()) {
-                body = AhcHelper.deserializeJavaObjectFromStream(is);
-            }
+        if (isSerializationAllowed(contentType, endpoint)) {
+            body = AhcHelper.deserializeJavaObjectFromStream(is);
         }
 
         if (!endpoint.isThrowExceptionOnFailure()) {
             // if we do not use failed exception then populate response for all response codes
-            populateResponse(exchange, body, contentLength, statusCode);
+            populateResponse(exchange, body, contentLength);
         } else {
             if (statusCode >= 100 && statusCode < 300) {
                 // only populate response for OK response
-                populateResponse(exchange, body, contentLength, statusCode);
+                populateResponse(exchange, body, contentLength);
             } else {
                 // operation failed so populate exception to throw
-                throw populateHttpOperationFailedException(endpoint, exchange, url, body, contentLength, statusCode,
+                throw populateHttpOperationFailedException(endpoint, exchange, url, body, statusCode,
                         statusText);
             }
         }
     }
 
+    private boolean isSerializationAllowed(String contentType, AhcEndpoint endpoint) {
+        if (contentType != null && contentType.equals(AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
+            return endpoint.getComponent().isAllowJavaSerializedObject() || endpoint.isTransferException();
+        }
+
+        return false;
+    }
+
     private Exception populateHttpOperationFailedException(
             AhcEndpoint endpoint, Exchange exchange, String url,
-            Object body, int contentLength,
-            int statusCode, String statusText) {
+            Object body, int statusCode, String statusText) {
         Exception answer;
 
         if (endpoint.isTransferException() && body != null && body instanceof Exception) {
@@ -356,7 +378,7 @@ public class DefaultAhcBinding implements AhcBinding {
         return answer;
     }
 
-    private void populateResponse(Exchange exchange, Object body, int contentLength, int responseCode) {
+    private void populateResponse(Exchange exchange, Object body, int contentLength) {
         exchange.getOut().setBody(body);
         exchange.getOut().setHeader(Exchange.CONTENT_LENGTH, contentLength);
     }
