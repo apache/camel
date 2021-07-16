@@ -229,7 +229,8 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    protected String createAddressUri(String uri, String remaining) {
+    // The URI parameter is used on the camel-ahc-ws component
+    protected String createAddressUri(@SuppressWarnings("unused") String uri, String remaining) {
         return remaining;
     }
 
