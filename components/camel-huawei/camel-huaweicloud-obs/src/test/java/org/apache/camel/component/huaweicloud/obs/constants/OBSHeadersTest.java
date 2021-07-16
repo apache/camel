@@ -20,10 +20,15 @@ import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OBSConstantsTest {
+public class OBSHeadersTest {
     @Test
-    public void testConstants() {
-        assertEquals("cn-north-1", OBSConstants.DEFAULT_LOCATION);
-        assertEquals("binary/octet-stream", OBSConstants.FOLDER_CONTENT_TYPE);
+    public void testHeaders() {
+        assertEquals("bucketName", OBSHeaders.BUCKET_NAME);
+        assertEquals("objectKey", OBSHeaders.OBJECT_KEY);
+        assertEquals("lastModified", OBSHeaders.LAST_MODIFIED);
+        assertEquals("contentLength", OBSHeaders.CONTENT_LENGTH);
+        assertEquals("contentType", OBSHeaders.CONTENT_TYPE);
+        assertEquals("etag", OBSHeaders.ETAG);
+        assertEquals("contentMd5", OBSHeaders.CONTENT_MD5);
     }
 }

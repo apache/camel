@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.huaweicloud.obs.constants;
 
-import org.junit.Test;
+/**
+ * Constants for the exchange headers when consuming objects
+ */
+public final class OBSHeaders {
+    public static final String BUCKET_NAME = "bucketName";
+    public static final String OBJECT_KEY = "objectKey";
+    public static final String LAST_MODIFIED = "lastModified";
+    public static final String CONTENT_LENGTH = "contentLength";
+    public static final String CONTENT_TYPE = "contentType";
+    public static final String ETAG = "etag";
+    public static final String CONTENT_MD5 = "contentMd5";
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class OBSConstantsTest {
-    @Test
-    public void testConstants() {
-        assertEquals("cn-north-1", OBSConstants.DEFAULT_LOCATION);
-        assertEquals("binary/octet-stream", OBSConstants.FOLDER_CONTENT_TYPE);
+    private OBSHeaders() {
     }
 }
