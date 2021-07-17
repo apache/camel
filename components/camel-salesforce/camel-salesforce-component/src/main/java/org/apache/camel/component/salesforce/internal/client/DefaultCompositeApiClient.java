@@ -294,7 +294,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         final String reason = response.getReason();
 
-        return new SalesforceException("Unexpected error: " + reason, status);
+        return new SalesforceException(errors, status, "Unexpected error: " + reason);
     }
 
     @Override
