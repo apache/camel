@@ -59,7 +59,7 @@ class TransactionOnCompletion extends SynchronizationAdapter {
 
     @Override
     public boolean equals(Object o) {
-        if ( !(o instanceof TransactionOnCompletion)) {
+        if (!(o instanceof TransactionOnCompletion)) {
             return false;
         }
 
