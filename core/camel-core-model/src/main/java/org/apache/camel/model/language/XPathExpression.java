@@ -23,10 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Evaluate an XPath expression against an XML payload.
@@ -230,28 +228,5 @@ public class XPathExpression extends NamespaceAwareExpression {
      */
     public void setPreCompile(String preCompile) {
         this.preCompile = preCompile;
-    }
-
-    private void resolveXPathFactory(CamelContext camelContext) {
-        // Factory and Object Model can be set simultaneously. The underlying
-        // XPathBuilder allows for setting Saxon too, as it is simply a shortcut
-        // for
-        // setting the appropriate Object Model, it is not wise to allow this in
-        // XML because the order of invocation of the setters by JAXB may cause
-        // undeterministic behaviour
-        if ((ObjectHelper.isNotEmpty(factoryRef) || ObjectHelper.isNotEmpty(objectModel)) && saxon != null) {
-            throw new IllegalArgumentException(
-                    "The saxon attribute cannot be set on the xpath element if any of the following is also set: factory, objectModel"
-                                               + this);
-        }
-
-        // Validate the factory class
-        if (ObjectHelper.isNotEmpty(factoryRef)) {
-            xpathFactory = camelContext.getRegistry().lookupByNameAndType(factoryRef, XPathFactory.class);
-            if (xpathFactory == null) {
-                throw new IllegalArgumentException(
-                        "The provided XPath Factory is invalid; either it cannot be resolved or it is not an XPathFactory instance");
-            }
-        }
     }
 }

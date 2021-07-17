@@ -199,34 +199,5 @@ public interface LanguageCustomizer extends Ordered {
                 }
             };
         }
-
-        private BiPredicate<String, Language> condition() {
-            if (type.equals(Language.class)) {
-                return this.condition != null
-                        ? this.condition
-                        : new BiPredicate<String, Language>() {
-                            @Override
-                            public boolean test(String s, Language language) {
-                                return true;
-                            }
-                        };
-            }
-
-            if (condition == null) {
-                return new BiPredicate<String, Language>() {
-                    @Override
-                    public boolean test(String name, Language target) {
-                        return type.isAssignableFrom(target.getClass());
-                    }
-                };
-            }
-
-            return new BiPredicate<String, Language>() {
-                @Override
-                public boolean test(String name, Language target) {
-                    return type.isAssignableFrom(target.getClass()) && condition.test(name, target);
-                }
-            };
-        }
     }
 }

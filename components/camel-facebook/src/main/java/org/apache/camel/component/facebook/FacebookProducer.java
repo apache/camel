@@ -125,15 +125,6 @@ public class FacebookProducer extends DefaultAsyncProducer {
         return false;
     }
 
-    private boolean hasReadingParameters(Map<String, Object> properties) {
-        for (String parameterName : properties.keySet()) {
-            if (parameterName.startsWith(FacebookConstants.READING_PREFIX)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private FacebookMethodsType findMethod(Exchange exchange, Map<String, Object> properties) {
 
         FacebookMethodsType method = null;
