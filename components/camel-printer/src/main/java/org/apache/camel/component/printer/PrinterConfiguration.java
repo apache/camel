@@ -107,7 +107,7 @@ public class PrinterConfiguration {
         setInternalSides(assignSides(sides));
         setInternalOrientation(assignOrientation(orientation));
         if (printSettings.containsKey("sendToPrinter")) {
-            if (!(Boolean.valueOf((String) printSettings.get("sendToPrinter")))) {
+            if (!(Boolean.parseBoolean((String) printSettings.get("sendToPrinter")))) {
                 setSendToPrinter(false);
             }
         }

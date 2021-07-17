@@ -22,6 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -518,8 +519,14 @@ public class JmsProducer extends DefaultAsyncProducer {
                 LOG.debug("Testing JMS Connection on startup for destination: {}", template.getDefaultDestinationName());
             }
 
-            Connection conn = template.getConnectionFactory().createConnection();
-            JmsUtils.closeConnection(conn);
+            ConnectionFactory connectionfactory = template.getConnectionFactory();
+            if (connectionfactory != null) {
+                Connection conn = connectionfactory.createConnection();
+                JmsUtils.closeConnection(conn);
+            } else {
+                LOG.error("connection factory is null");
+                throw new IllegalStateException("connection factory is null");
+            }
 
             LOG.debug("Successfully tested JMS Connection on startup for destination: {}",
                     template.getDefaultDestinationName());

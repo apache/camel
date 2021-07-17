@@ -130,7 +130,7 @@ public class MiloClientConfiguration implements Cloneable {
         this.keyAlias = other.keyAlias;
         this.keyStorePassword = other.keyStorePassword;
         this.keyPassword = other.keyPassword;
-        this.allowedSecurityPolicies = allowedSecurityPolicies != null ? new HashSet<>(other.allowedSecurityPolicies) : null;
+        this.allowedSecurityPolicies = new HashSet<>(other.allowedSecurityPolicies);
         this.overrideHost = other.overrideHost;
         this.requestedPublishingInterval = other.requestedPublishingInterval;
     }

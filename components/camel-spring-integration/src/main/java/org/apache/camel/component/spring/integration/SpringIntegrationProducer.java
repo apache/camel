@@ -81,7 +81,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
             StringHelper.notEmpty(getEndpoint().getInputChannel(), "InputChannel", getEndpoint());
             inputChannel = (DirectChannel) destinationResolver.resolveDestination(getEndpoint().getInputChannel());
 
-            if (inputChannel == null) {
+            if (inputChannel == null) { // this condition is always false
                 throw new IllegalArgumentException("Cannot resolve InputChannel on " + getEndpoint());
             }
         }

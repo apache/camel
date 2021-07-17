@@ -188,8 +188,12 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
             return;
         }
 
-        LOGGER.debug("Adding consumer {} on {}", consumer, consumerAware);
-        consumerAware.addConsumer(consumer);
+        if (consumerAware != null) {
+            LOGGER.debug("Adding consumer {} on {}", consumer, consumerAware);
+            consumerAware.addConsumer(consumer);
+        } else {
+            LOGGER.error("null in consumerAware");
+        }
     }
 
     @Override

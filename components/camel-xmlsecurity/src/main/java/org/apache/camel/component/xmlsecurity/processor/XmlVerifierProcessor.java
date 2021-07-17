@@ -118,7 +118,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         valContext.setProperty("javax.xml.crypto.dsig.cacheReference", Boolean.TRUE);
         valContext.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
 
-        if (getConfiguration().getSecureValidation() == Boolean.TRUE) {
+        if (getConfiguration().getSecureValidation().equals(Boolean.TRUE)) {
             valContext.setProperty("org.apache.jcp.xml.dsig.secureValidation", Boolean.TRUE);
             valContext.setProperty("org.jcp.xml.dsig.secureValidation", Boolean.TRUE);
         }

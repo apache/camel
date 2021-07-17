@@ -635,7 +635,10 @@ public class JaxbDataFormat extends ServiceSupport
 
     private void returnSchemaFactory(SchemaFactory factory) {
         if (factory != schemaFactory) {
-            SCHEMA_FACTORY_POOL.offer(factory);
+            boolean result = SCHEMA_FACTORY_POOL.offer(factory);
+            if (!result) {
+                LOG.error("offer() failed for SCHEMA_FACTORY_POOL");
+            }
         }
     }
 

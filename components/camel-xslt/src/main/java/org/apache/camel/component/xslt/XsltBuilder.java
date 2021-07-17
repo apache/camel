@@ -413,7 +413,10 @@ public class XsltBuilder implements Processor {
     private void releaseTransformer(Transformer transformer) {
         if (transformers != null) {
             transformer.reset();
-            transformers.offer(transformer);
+            boolean result = transformers.offer(transformer);
+            if (!result) {
+                LOG.error("failed to offer() a transform");
+            }
         }
     }
 

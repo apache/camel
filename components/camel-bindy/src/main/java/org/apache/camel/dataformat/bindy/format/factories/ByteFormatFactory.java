@@ -49,7 +49,7 @@ public class ByteFormatFactory extends AbstractFormatFactory {
 
         @Override
         public Byte parse(String string) throws Exception {
-            return new Byte(string);
+            return Byte.valueOf(string);
         }
 
     }

@@ -40,7 +40,7 @@ public class ChatScriptProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         Object body = exchange.getIn().getBody();
-        ChatScriptMessage inputMessage = new ChatScriptMessage();
+        ChatScriptMessage inputMessage;
         /* use can pass message object as json or the object it self */
         if (!(body instanceof ChatScriptMessage)) {
             inputMessage = buildMessage(body);
