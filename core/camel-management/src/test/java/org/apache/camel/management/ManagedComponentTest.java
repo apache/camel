@@ -33,12 +33,15 @@ import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExt
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.support.DefaultComponent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedComponentTest extends ManagementTestSupport {
     private static final String[] VERIFY_SIGNATURE = new String[] {
             "java.lang.String", "java.util.Map"

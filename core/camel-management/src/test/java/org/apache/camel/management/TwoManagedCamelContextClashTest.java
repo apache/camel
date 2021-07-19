@@ -25,10 +25,13 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@DisabledOnOs(OS.AIX)
 public class TwoManagedCamelContextClashTest extends TestSupport {
 
     private CamelContext camel1;

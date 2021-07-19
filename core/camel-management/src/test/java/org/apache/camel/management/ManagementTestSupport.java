@@ -32,6 +32,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NamedNode;
 import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.spi.NodeIdFactory;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN;
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_CONTEXT;
@@ -48,6 +50,7 @@ import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TY
 /**
  * Base class for JMX tests.
  */
+@DisabledOnOs(OS.AIX)
 public abstract class ManagementTestSupport extends ContextTestSupport {
 
     @Override

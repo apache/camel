@@ -31,11 +31,14 @@ import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
 
     private File store = testFile("idempotentfilestore.dat").toFile();

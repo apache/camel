@@ -21,6 +21,8 @@ import javax.management.ObjectName;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * This module contains test cases that verifies jmx system property uses.
  */
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
+@DisabledOnOs(OS.AIX)
 public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsingDefaultsTest {
 
     @Override

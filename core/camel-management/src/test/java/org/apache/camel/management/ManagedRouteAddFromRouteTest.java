@@ -25,6 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Tests mbeans is registered when adding a 2nd route from within an existing route.
  */
+@DisabledOnOs(OS.AIX)
 public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
 
     @Override

@@ -27,11 +27,14 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
 
     @Override

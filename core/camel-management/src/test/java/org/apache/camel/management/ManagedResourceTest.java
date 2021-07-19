@@ -22,6 +22,8 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ManagementAgent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedResourceTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedResourceTest.class);
 

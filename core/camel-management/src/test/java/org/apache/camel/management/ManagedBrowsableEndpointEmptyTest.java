@@ -21,10 +21,13 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedBrowsableEndpointEmptyTest extends ManagementTestSupport {
 
     @Test

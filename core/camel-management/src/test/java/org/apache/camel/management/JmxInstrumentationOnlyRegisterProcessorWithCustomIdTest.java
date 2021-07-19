@@ -27,9 +27,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(OS.AIX)
 public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends ManagementTestSupport {
 
     protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
