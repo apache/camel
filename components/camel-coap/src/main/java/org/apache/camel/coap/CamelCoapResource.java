@@ -152,7 +152,8 @@ final class CamelCoapResource extends CoapResource {
                 }
                 consumer.releaseExchange(camelExchange, false);
             } else {
-                LOG.warn("Skipping releasing the consumer exchange because the consumer is null. It may haven't been properly created earlier - exception was thrown");
+                LOG.warn(
+                        "Skipping releasing the consumer exchange because the consumer is null. It may haven't been properly created earlier - exception was thrown");
             }
         }
     }

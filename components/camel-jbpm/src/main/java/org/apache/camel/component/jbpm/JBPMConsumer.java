@@ -192,7 +192,8 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
             LOGGER.debug("Adding consumer {} on {}", consumer, consumerAware);
             consumerAware.addConsumer(consumer);
         } else {
-            LOGGER.error("Skipping adding of consumer on instance of JBPMCamelConsumerAware, as we failed either to get non-null instance of JBPMCamelConsumerAware from cache or to create it.");
+            LOGGER.error(
+                    "Skipping adding of consumer on instance of JBPMCamelConsumerAware, as we failed either to get non-null instance of JBPMCamelConsumerAware from cache or to create it.");
         }
     }
 
