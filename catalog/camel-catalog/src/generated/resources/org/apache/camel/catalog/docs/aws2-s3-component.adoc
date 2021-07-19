@@ -271,11 +271,11 @@ aggregate this number of messages.
 |`CamelAwsS3StorageClass` |`String` |The storage class of this object.
 
 |`CamelAwsS3CannedAcl` |`String` |The canned acl that will be applied to the object. see
-`com.amazonaws.services.s3.model.CannedAccessControlList` for allowed
+`software.amazon.awssdk.services.s3.model.ObjectCannedACL` for allowed
 values.
 
-|`CamelAwsS3Acl` |`com.amazonaws.services.s3.model.AccessControlList` |A well constructed Amazon S3 Access Control List object.
-see `com.amazonaws.services.s3.model.AccessControlList` for more details
+|`CamelAwsS3Acl` |`software.amazon.awssdk.services.s3.model.BucketCannedACL` |A well constructed Amazon S3 Access Control List object.
+see `software.amazon.awssdk.services.s3.model.BucketCannedACL` for more details
 
 |`CamelAwsS3Headers` |`Map<String,String>` |Support to get or set custom objectMetadata headers.
 
