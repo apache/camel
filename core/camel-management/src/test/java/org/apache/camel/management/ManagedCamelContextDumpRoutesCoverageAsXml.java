@@ -22,10 +22,13 @@ import javax.management.ObjectName;
 import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedCamelContextDumpRoutesCoverageAsXml extends ManagementTestSupport {
 
     public void testRouteCoverageStats() throws Exception {

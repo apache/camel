@@ -30,6 +30,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedTransformerRegistryTest.class);
 

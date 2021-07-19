@@ -23,10 +23,13 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedRouteDumpStatsAsXmlAndResetWithCustomDomainTest extends ManagementTestSupport {
 
     private static final String CUSTOM_DOMAIN_NAME = "custom";

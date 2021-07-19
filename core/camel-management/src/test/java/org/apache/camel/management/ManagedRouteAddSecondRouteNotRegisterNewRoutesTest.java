@@ -22,6 +22,8 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * Tests mbeans is NOT registered when adding a 2nd route after CamelContext has been started, because the
  * registerNewRoutes is set to false
  */
+@DisabledOnOs(OS.AIX)
 public class ManagedRouteAddSecondRouteNotRegisterNewRoutesTest extends ManagementTestSupport {
 
     @Override

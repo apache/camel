@@ -21,9 +21,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
+@DisabledOnOs(OS.AIX)
 public class CamelChoiceWithManagementTest extends ContextTestSupport {
     private MockEndpoint a;
     private MockEndpoint b;

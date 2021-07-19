@@ -23,11 +23,14 @@ import org.apache.camel.TimerListener;
 import org.apache.camel.management.mbean.LoadTriplet;
 import org.apache.camel.support.TimerListenerManager;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class LoadTimerTest extends ContextTestSupport {
 
     private static final int SAMPLES = 2;

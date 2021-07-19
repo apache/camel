@@ -30,11 +30,14 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
 
     private File store = testFile("idempotentfilestore.dat").toFile();

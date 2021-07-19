@@ -24,6 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
+@DisabledOnOs(OS.AIX)
 public class ManagedNamePatternJvmSystemPropertyTest extends ManagementTestSupport {
 
     @Override

@@ -22,9 +22,12 @@ import javax.management.ObjectName;
 
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedCamelContextNewProxyTest extends ManagementTestSupport {
 
     @Test

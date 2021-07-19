@@ -30,6 +30,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
@@ -43,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * is not enabled by default.
  */
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
+@DisabledOnOs(OS.AIX)
 public class JmxInstrumentationUsingDefaultsTest extends ManagementTestSupport {
 
     protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;

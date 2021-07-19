@@ -269,18 +269,6 @@
             </build>
         </profile>
 
-        <!-- skip management tests on AIX as it hangs CI servers -->
-        <profile>
-            <id>aix</id>
-            <activation>
-                <os>
-                    <name>aix</name>
-                </os>
-            </activation>
-            <properties>
-                <platform.skip.tests>org/apache/camel/management/**/*.java</platform.skip.tests>
-            </properties>
-        </profile>
         <profile>
             <id>xalan</id>
             <dependencies>
@@ -341,7 +329,6 @@
                                 <exclude>org/apache/camel/component/file/stress/**.java</exclude>
                                 <exclude>**/DistributedCompletionIntervalTest.java</exclude>
                                 <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
-                                <exclude>${platform.skip.tests}</exclude>
                             </excludes>
                             <!-- needed for testing the properties component -->
                             <environmentVariables>

@@ -20,6 +20,8 @@ import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * CustomEndpoint is used to test {@link org.apache.camel.management.JmxInstrumentationCustomMBeanTest} and must be
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 // START SNIPPET: e1
 @ManagedResource(description = "Our custom managed endpoint")
+@DisabledOnOs(OS.AIX)
 public class CustomEndpoint extends MockEndpoint {
 
     public CustomEndpoint(final String endpointUri, final Component component) {
