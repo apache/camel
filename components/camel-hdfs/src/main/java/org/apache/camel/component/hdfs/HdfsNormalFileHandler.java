@@ -157,7 +157,7 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
             if (outputDest.exists()) {
                 boolean result = outputDest.delete();
                 if (!result) {
-                    LOG.error("failed to delete " + outputDest);
+                    LOG.error("failed to delete {}" + outputDest);
                 }
             }
 

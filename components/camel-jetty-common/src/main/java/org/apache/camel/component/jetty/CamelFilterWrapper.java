@@ -68,7 +68,7 @@ public class CamelFilterWrapper implements Filter {
                 File file = Files.createTempFile("camel", "").toFile();
                 boolean result = file.delete();
                 if (!result) {
-                    LOG.error("failed to delete " + file);
+                    LOG.error("failed to delete {}" + file);
                 }
                 config.getServletContext().setAttribute("javax.servlet.context.tempdir",
                         file.getParentFile());

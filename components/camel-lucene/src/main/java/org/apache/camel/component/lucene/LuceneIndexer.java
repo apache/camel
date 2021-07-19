@@ -53,7 +53,7 @@ public class LuceneIndexer {
             if (!indexDirectory.exists()) {
                 boolean result = indexDirectory.mkdir();
                 if (!result) {
-                    LOG.error("mkdir failed for " + indexDirectory);
+                    LOG.error("mkdir failed for {}. Maybe this folder was created externally" + indexDirectory);
                 }
             }
             this.setNiofsDirectory(new NIOFSDirectory(indexDirectory.toPath()));

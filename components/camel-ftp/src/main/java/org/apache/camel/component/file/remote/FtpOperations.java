@@ -526,7 +526,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // create directory to local work file
             boolean result = local.mkdirs();
             if (!result) {
-                log.error("mkdirs() failed for " + local);
+                log.warn("Failed to create local directory {} while retrieving file in local work directory. Directory may already exist or have been created externally", local);
             }
 
             // delete any local file (as its the temp file that is in the

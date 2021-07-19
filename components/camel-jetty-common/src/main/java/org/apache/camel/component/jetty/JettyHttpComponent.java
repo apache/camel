@@ -1175,7 +1175,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         File file = File.createTempFile("camel", "");
         boolean result = file.delete();
         if (!result) {
-            LOG.error("failed to delete " + file);
+            LOG.error("failed to delete {}", file);
         }
 
         //must register the MultipartConfig to make jetty server multipart aware
