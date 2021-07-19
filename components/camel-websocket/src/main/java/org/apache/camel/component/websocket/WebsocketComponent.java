@@ -292,7 +292,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         int port = extractPortNumber(remaining);
         String host = extractHostName(remaining);
 
-        WebsocketEndpoint endpoint = new WebsocketEndpoint(this, uri, remaining, parameters);
+        WebsocketEndpoint endpoint = newEndpoint(uri, remaining, parameters);
 
         if (enableJmx != null) {
             endpoint.setEnableJmx(enableJmx);
@@ -326,6 +326,10 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
 
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    protected WebsocketEndpoint newEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+        return new WebsocketEndpoint(this, uri, remaining, parameters);
     }
 
     protected void setWebSocketComponentServletInitialParameter(ServletContextHandler context, WebsocketEndpoint endpoint) {
