@@ -1701,6 +1701,21 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
+         * To set a custom HTTP User-Agent request header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param userAgent the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointProducerBuilder userAgent(
+                String userAgent) {
+            doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 

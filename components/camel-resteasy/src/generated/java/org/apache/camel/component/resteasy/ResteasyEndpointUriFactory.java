@@ -20,7 +20,7 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(43);
+        Set<String> props = new HashSet<>(44);
         props.add("getWithBody");
         props.add("ignoreResponseBody");
         props.add("mapHttpMessageBody");
@@ -47,6 +47,7 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
         props.add("matchOnUriPrefix");
         props.add("exchangePattern");
         props.add("chunked");
+        props.add("userAgent");
         props.add("connectionClose");
         props.add("useSystemProperties");
         props.add("mapHttpMessageFormUrlEncodedBody");
