@@ -98,8 +98,6 @@ The HTTP component supports 37 options, which are listed below.
 | *connectionRequestTimeout* (timeout) | The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). | -1 | int
 | *connectTimeout* (timeout) | Determines the timeout in milliseconds until a connection is established. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). | -1 | int
 | *socketTimeout* (timeout) | Defines the socket timeout in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). | -1 | int
-| *userAgent* (producer) | Custom User-Agent name |  | String
-
 |===
 // component options: END
 
@@ -159,6 +157,7 @@ with the following path and query parameters:
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. | 200-299 | String
 | *skipRequestHeaders* (producer) | Whether to skip mapping all the Camel headers as HTTP request headers. If there are no data from Camel headers needed to be included in the HTTP request then this can avoid parsing overhead with many object allocations for the JVM garbage collector. | false | boolean
 | *skipResponseHeaders* (producer) | Whether to skip mapping all the HTTP response headers to Camel headers. If there are no data needed from HTTP headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector. | false | boolean
+| *userAgent* (producer) | Custom User-Agent name |  | String
 | *clientBuilder* (advanced) | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint. |  | HttpClientBuilder
 | *clientConnectionManager* (advanced) | To use a custom HttpClientConnectionManager to manage connections |  | HttpClientConnectionManager
 | *connectionsPerRoute* (advanced) | The maximum number of connections per route. | 20 | int

@@ -89,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (42 parameters):
+=== Query Parameters (43 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -130,6 +130,7 @@ with the following path and query parameters:
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. | 200-299 | String
 | *skipRequestHeaders* (producer) | Whether to skip mapping all the Camel headers as HTTP request headers. If there are no data from Camel headers needed to be included in the HTTP request then this can avoid parsing overhead with many object allocations for the JVM garbage collector. | false | boolean
 | *skipResponseHeaders* (producer) | Whether to skip mapping all the HTTP response headers to Camel headers. If there are no data needed from HTTP headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector. | false | boolean
+| *userAgent* (producer) | Custom User-Agent name |  | String
 | *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *setHttpResponseDuring{zwsp}Processing* (advanced) | Sets the flag to use the endpoint where you can either populate camel exchange from servlet response or use request itself which may be thought as if it is a proxy. |  | Boolean
 | *skipServletProcessing* (advanced) | Sets the flag to use skip servlet processing and let camel take over processing |  | Boolean
