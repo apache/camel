@@ -148,8 +148,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                             + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
                             + " with many object allocations for the JVM garbage collector.")
     private boolean skipResponseHeaders;
-
-    @UriParam(label = "producer,advanced", description = "Custom User-Agent name")
+    @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
     private String userAgent;
 
     public HttpEndpoint() {
@@ -252,6 +251,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             // setup the PreemptiveAuthInterceptor here
             clientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
         }
+        String userAgent = getUserAgent();
+        if (userAgent != null) {
+            clientBuilder.setUserAgent(userAgent);
+        }
 
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
@@ -261,10 +264,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         if (isBridgeEndpoint()) {
             // need to use noop cookiestore as we do not want to keep cookies in memory
             clientBuilder.setDefaultCookieStore(new NoopCookieStore());
-        }
-        String userAgent = getUserAgent();
-        if (userAgent != null) {
-            clientBuilder.setUserAgent(userAgent);
         }
 
         LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
@@ -581,6 +580,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         return userAgent;
     }
 
+    /**
+     * To set a custom HTTP User-Agent request header
+     */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
     }
