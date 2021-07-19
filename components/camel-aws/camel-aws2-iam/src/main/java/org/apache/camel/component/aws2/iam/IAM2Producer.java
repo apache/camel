@@ -455,7 +455,7 @@ public class IAM2Producer extends DefaultProducer {
     private void deleteGroup(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateGroupRequest) {
+            if (payload instanceof DeleteGroupResponse) {
                 DeleteGroupResponse result;
                 try {
                     result = iamClient.deleteGroup((DeleteGroupRequest) payload);
