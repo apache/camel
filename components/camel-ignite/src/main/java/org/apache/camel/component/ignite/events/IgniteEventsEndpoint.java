@@ -76,27 +76,27 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // Initialize the Consumer.
-        IgniteEvents events = createIgniteEvents();
-        IgniteEventsConsumer consumer = new IgniteEventsConsumer(this, processor, events);
+        IgniteEvents igniteEvents = createIgniteEvents();
+        IgniteEventsConsumer consumer = new IgniteEventsConsumer(this, processor, igniteEvents);
         configureConsumer(consumer);
 
-        LOG.info("Created Ignite Events consumer for event types: {}.", events);
+        LOG.info("Created Ignite Events consumer for event types: {}.", igniteEvents);
 
         return consumer;
     }
 
     private IgniteEvents createIgniteEvents() {
         Ignite ignite = ignite();
-        IgniteEvents events;
+        IgniteEvents igniteEvents;
         if (clusterGroupExpression == null) {
             LOG.info("Ignite Events endpoint for event types {} using no Cluster Group.", this.events);
-            events = ignite.events();
+            igniteEvents = ignite.events();
         } else {
             ClusterGroup group = clusterGroupExpression.getClusterGroup(ignite);
             LOG.info("Ignite Events endpoint for event types {} using Cluster Group: {}.", this.events, group);
-            events = ignite.events(group);
+            igniteEvents = ignite.events(group);
         }
-        return events;
+        return igniteEvents;
     }
 
     /**

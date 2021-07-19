@@ -22,6 +22,7 @@ import java.util.Collection;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.ignite.IgniteConstants;
@@ -56,31 +57,31 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
             switch (executionTypeFor(exchange)) {
 
                 case CALL:
-                    doCall(exchange, callback, compute);
+                    doCall(exchange, compute);
                     break;
 
                 case BROADCAST:
-                    doBroadcast(exchange, callback, compute);
+                    doBroadcast(exchange, compute);
                     break;
 
                 case EXECUTE:
-                    doExecute(exchange, callback, compute);
+                    doExecute(exchange, compute);
                     break;
 
                 case RUN:
-                    doRun(exchange, callback, compute);
+                    doRun(exchange, compute);
                     break;
 
                 case APPLY:
-                    doApply(exchange, callback, compute);
+                    doApply(exchange, compute);
                     break;
 
                 case AFFINITY_CALL:
-                    doAffinityCall(exchange, callback, compute);
+                    doAffinityCall(exchange, compute);
                     break;
 
                 case AFFINITY_RUN:
-                    doAffinityRun(exchange, callback, compute);
+                    doAffinityRun(exchange, compute);
                     break;
 
                 default:
@@ -101,7 +102,7 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void doCall(final Exchange exchange, final AsyncCallback callback, IgniteCompute compute) throws Exception {
+    private void doCall(final Exchange exchange, IgniteCompute compute) throws NoTypeConversionAvailableException {
         Object job = exchange.getIn().getBody();
         IgniteReducer<Object, Object> reducer
                 = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_REDUCER, IgniteReducer.class);
@@ -130,7 +131,7 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void doBroadcast(final Exchange exchange, final AsyncCallback callback, IgniteCompute compute) throws Exception {
+    private void doBroadcast(final Exchange exchange, IgniteCompute compute) {
         Object job = exchange.getIn().getBody();
 
         if (IgniteCallable.class.isAssignableFrom(job.getClass())) {
@@ -149,7 +150,7 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void doExecute(final Exchange exchange, final AsyncCallback callback, IgniteCompute compute) throws Exception {
+    private void doExecute(final Exchange exchange, IgniteCompute compute) {
         Object job = exchange.getIn().getBody();
         Object params = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_PARAMS);
 
@@ -172,7 +173,7 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
         }
     }
 
-    private void doRun(final Exchange exchange, final AsyncCallback callback, IgniteCompute compute) throws Exception {
+    private void doRun(final Exchange exchange, IgniteCompute compute) throws NoTypeConversionAvailableException {
         Object job = exchange.getIn().getBody();
 
         if (Collection.class.isAssignableFrom(job.getClass())) {
@@ -195,8 +196,7 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private <T, R1, R2> void doApply(final Exchange exchange, final AsyncCallback callback, IgniteCompute compute)
-            throws Exception {
+    private <T, R1, R2> void doApply(final Exchange exchange, IgniteCompute compute) {
         IgniteClosure<T, R1> job = exchange.getIn().getBody(IgniteClosure.class);
         T params = (T) exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_PARAMS);
 
@@ -222,7 +222,7 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void doAffinityCall(final Exchange exchange, final AsyncCallback callback, IgniteCompute compute) throws Exception {
+    private void doAffinityCall(final Exchange exchange, IgniteCompute compute) {
         IgniteCallable<Object> job = exchange.getIn().getBody(IgniteCallable.class);
         String affinityCache = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME, String.class);
         Object affinityKey = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY, Object.class);
@@ -238,7 +238,7 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
         compute.affinityCall(affinityCache, affinityKey, job);
     }
 
-    private void doAffinityRun(final Exchange exchange, final AsyncCallback callback, IgniteCompute compute) throws Exception {
+    private void doAffinityRun(final Exchange exchange, IgniteCompute compute) {
         IgniteRunnable job = exchange.getIn().getBody(IgniteRunnable.class);
         String affinityCache = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME, String.class);
         Object affinityKey = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY, Object.class);

@@ -68,11 +68,11 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
     private void maybeFireExistingQueryResults() {
         if (!endpoint.isFireExistingQueryResults()) {
-            LOG.info(String.format("Skipping existing cache results for cache name = %s.", endpoint.getCacheName()));
+            LOG.info("Skipping existing cache results for cache name = {}.", endpoint.getCacheName());
             return;
         }
 
-        LOG.info(String.format("Processing existing cache results for cache name = %s.", endpoint.getCacheName()));
+        LOG.info("Processing existing cache results for cache name = {}.", endpoint.getCacheName());
 
         for (Entry<Object, Object> entry : cursor) {
             Exchange exchange = createExchange(entry.getValue());
