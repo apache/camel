@@ -30,5 +30,6 @@ public class OBSHeadersTest {
         assertEquals("contentType", OBSHeaders.CONTENT_TYPE);
         assertEquals("etag", OBSHeaders.ETAG);
         assertEquals("contentMd5", OBSHeaders.CONTENT_MD5);
+        assertEquals("objectType", OBSHeaders.OBJECT_TYPE);
     }
 }

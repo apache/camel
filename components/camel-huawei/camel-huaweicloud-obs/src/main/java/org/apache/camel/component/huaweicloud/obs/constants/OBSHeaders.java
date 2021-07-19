@@ -27,6 +27,7 @@ public final class OBSHeaders {
     public static final String CONTENT_TYPE = "contentType";
     public static final String ETAG = "etag";
     public static final String CONTENT_MD5 = "contentMd5";
+    public static final String OBJECT_TYPE = "objectType";
 
     private OBSHeaders() {
     }

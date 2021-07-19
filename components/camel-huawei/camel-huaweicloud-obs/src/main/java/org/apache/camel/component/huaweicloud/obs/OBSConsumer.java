@@ -40,7 +40,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSConstants;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSHeaders;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -228,8 +227,7 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
      * @param obsObject
      */
     private boolean includeObsObject(ObsObject obsObject) {
-        return endpoint.isIncludeFolders()
-                || !obsObject.getMetadata().getContentType().equals(OBSConstants.FOLDER_CONTENT_TYPE);
+        return endpoint.isIncludeFolders() || !obsObject.getObjectKey().endsWith("/");
     }
 
     /**
@@ -244,7 +242,7 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
 
         // set exchange body to a byte array of object contents
         try {
-            message.setBody(IOConverter.toBytes(obsObject.getObjectContent()));
+            message.setBody(OBSUtils.toBytes(obsObject.getObjectContent()));
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
@@ -257,6 +255,11 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
         message.setHeader(OBSHeaders.CONTENT_TYPE, obsObject.getMetadata().getContentType());
         message.setHeader(OBSHeaders.ETAG, obsObject.getMetadata().getEtag());
         message.setHeader(OBSHeaders.CONTENT_MD5, obsObject.getMetadata().getContentMd5());
+        if (obsObject.getObjectKey().endsWith("/")) {
+            message.setHeader(OBSHeaders.OBJECT_TYPE, OBSConstants.FOLDER);
+        } else {
+            message.setHeader(OBSHeaders.OBJECT_TYPE, OBSConstants.FILE);
+        }
 
         return exchange;
     }
