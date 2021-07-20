@@ -58,11 +58,11 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_PERSISTENT_VOLUMES:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_PERSISTENT_VOLUMES_BY_LABELS_OPERATION:
-                doListPersistentVolumesByLabels(exchange, operation);
+                doListPersistentVolumesByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_PERSISTENT_VOLUME_OPERATION:
@@ -74,14 +74,14 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) {
+    protected void doList(Exchange exchange) {
         PersistentVolumeList persistentVolumeList = getEndpoint().getKubernetesClient().persistentVolumes().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(persistentVolumeList.getItems());
     }
 
-    protected void doListPersistentVolumesByLabels(Exchange exchange, String operation) {
+    protected void doListPersistentVolumesByLabels(Exchange exchange) {
         PersistentVolumeList pvList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);

@@ -59,23 +59,23 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_SECRETS:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
-                doListSecretsByLabels(exchange, operation);
+                doListSecretsByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_SECRET_OPERATION:
-                doGetSecret(exchange, operation);
+                doGetSecret(exchange);
                 break;
 
             case KubernetesOperations.CREATE_SECRET_OPERATION:
-                doCreateSecret(exchange, operation);
+                doCreateSecret(exchange);
                 break;
 
             case KubernetesOperations.DELETE_SECRET_OPERATION:
-                doDeleteSecret(exchange, operation);
+                doDeleteSecret(exchange);
                 break;
 
             default:
@@ -83,13 +83,13 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) {
+    protected void doList(Exchange exchange) {
         SecretList secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace().list();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretsList.getItems());
     }
 
-    protected void doListSecretsByLabels(Exchange exchange, String operation) {
+    protected void doListSecretsByLabels(Exchange exchange) {
         SecretList secretsList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -113,7 +113,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         exchange.getOut().setBody(secretsList.getItems());
     }
 
-    protected void doGetSecret(Exchange exchange, String operation) throws Exception {
+    protected void doGetSecret(Exchange exchange) throws Exception {
         Secret secret = null;
         String secretName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -131,7 +131,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         exchange.getOut().setBody(secret);
     }
 
-    protected void doCreateSecret(Exchange exchange, String operation) throws Exception {
+    protected void doCreateSecret(Exchange exchange) throws Exception {
         Secret secret = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Secret secretToCreate = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET, Secret.class);
@@ -149,7 +149,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         exchange.getOut().setBody(secret);
     }
 
-    protected void doDeleteSecret(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteSecret(Exchange exchange) throws Exception {
         String secretName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(secretName)) {

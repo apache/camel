@@ -59,23 +59,23 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_NAMESPACE_OPERATION:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_NAMESPACE_BY_LABELS_OPERATION:
-                doListNamespaceByLabel(exchange, operation);
+                doListNamespaceByLabel(exchange);
                 break;
 
             case KubernetesOperations.GET_NAMESPACE_OPERATION:
-                doGetNamespace(exchange, operation);
+                doGetNamespace(exchange);
                 break;
 
             case KubernetesOperations.CREATE_NAMESPACE_OPERATION:
-                doCreateNamespace(exchange, operation);
+                doCreateNamespace(exchange);
                 break;
 
             case KubernetesOperations.DELETE_NAMESPACE_OPERATION:
-                doDeleteNamespace(exchange, operation);
+                doDeleteNamespace(exchange);
                 break;
 
             default:
@@ -83,14 +83,14 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) {
+    protected void doList(Exchange exchange) {
         NamespaceList namespacesList = getEndpoint().getKubernetesClient().namespaces().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespacesList.getItems());
     }
 
-    protected void doListNamespaceByLabel(Exchange exchange, String operation) {
+    protected void doListNamespaceByLabel(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get a specific namespace by labels require specify a labels set");
@@ -107,7 +107,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         exchange.getOut().setBody(namespace.getItems());
     }
 
-    protected void doGetNamespace(Exchange exchange, String operation) {
+    protected void doGetNamespace(Exchange exchange) {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Get a specific namespace require specify a namespace name");
@@ -119,7 +119,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         exchange.getOut().setBody(namespace);
     }
 
-    protected void doCreateNamespace(Exchange exchange, String operation) {
+    protected void doCreateNamespace(Exchange exchange) {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Create a specific namespace require specify a namespace name");
@@ -134,7 +134,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         exchange.getOut().setBody(namespace);
     }
 
-    protected void doDeleteNamespace(Exchange exchange, String operation) {
+    protected void doDeleteNamespace(Exchange exchange) {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Delete a specific namespace require specify a namespace name");

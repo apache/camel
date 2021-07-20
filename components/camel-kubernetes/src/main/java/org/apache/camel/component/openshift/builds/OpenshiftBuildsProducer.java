@@ -61,15 +61,15 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_BUILD:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_BUILD_BY_LABELS_OPERATION:
-                doListBuildByLabels(exchange, operation);
+                doListBuildByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_BUILD_OPERATION:
-                doGetBuild(exchange, operation);
+                doGetBuild(exchange);
                 break;
 
             default:
@@ -77,12 +77,12 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) {
+    protected void doList(Exchange exchange) {
         BuildList buildList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inAnyNamespace().list();
         exchange.getOut().setBody(buildList.getItems());
     }
 
-    protected void doListBuildByLabels(Exchange exchange, String operation) {
+    protected void doListBuildByLabels(Exchange exchange) {
         BuildList buildList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -106,7 +106,7 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         exchange.getOut().setBody(buildList.getItems());
     }
 
-    protected void doGetBuild(Exchange exchange, String operation) throws Exception {
+    protected void doGetBuild(Exchange exchange) throws Exception {
         Build build = null;
         String buildName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);

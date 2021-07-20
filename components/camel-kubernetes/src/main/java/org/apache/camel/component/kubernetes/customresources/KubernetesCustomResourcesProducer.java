@@ -69,23 +69,23 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_CUSTOMRESOURCES:
-                doList(exchange, operation, namespace);
+                doList(exchange, namespace);
                 break;
 
             case KubernetesOperations.LIST_CUSTOMRESOURCES_BY_LABELS_OPERATION:
-                doListByLabels(exchange, operation, namespace);
+                doListByLabels(exchange, namespace);
                 break;
 
             case KubernetesOperations.GET_CUSTOMRESOURCE:
-                doGet(exchange, operation, namespace);
+                doGet(exchange, namespace);
                 break;
 
             case KubernetesOperations.DELETE_CUSTOMRESOURCE:
-                doDelete(exchange, operation, namespace);
+                doDelete(exchange, namespace);
                 break;
 
             case KubernetesOperations.CREATE_CUSTOMRESOURCE:
-                doCreate(exchange, operation, namespace);
+                doCreate(exchange, namespace);
                 break;
 
             default:
@@ -93,7 +93,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation, String namespaceName) {
+    protected void doList(Exchange exchange, String namespaceName) {
         JsonObject customResourcesListJSON = new JsonObject(
                 getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName));
         if (LOG.isDebugEnabled()) {
@@ -111,7 +111,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourcesListItems);
     }
 
-    protected void doListByLabels(Exchange exchange, String operation, String namespaceName) {
+    protected void doListByLabels(Exchange exchange, String namespaceName) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_LABELS, Map.class);
         JsonObject customResourcesListJSON = new JsonObject(
                 getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName,
@@ -125,7 +125,8 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourcesListItems);
     }
 
-    protected void doGet(Exchange exchange, String operation, String namespaceName) throws Exception {
+    protected void doGet(Exchange exchange, String namespaceName)
+            throws Exception {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
             throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
@@ -147,7 +148,8 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourceJSON);
     }
 
-    protected void doDelete(Exchange exchange, String operation, String namespaceName) throws Exception {
+    protected void doDelete(Exchange exchange, String namespaceName)
+            throws Exception {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
             LOG.error("Delete a specific deployment require specify a deployment name");
@@ -168,7 +170,8 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         }
     }
 
-    protected void doCreate(Exchange exchange, String operation, String namespaceName) throws Exception {
+    protected void doCreate(Exchange exchange, String namespaceName)
+            throws Exception {
         String customResourceInstance = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, String.class);
         JsonObject gitHubSourceJSON = new JsonObject();
         try {
