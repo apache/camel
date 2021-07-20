@@ -75,6 +75,9 @@ class Run implements Callable<Integer> {
     @Parameters(description = "The path to the kamelet binding", arity = "1")
     private String binding;
 
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
+
     @Option(names = { "--debug-level" }, defaultValue = "info", description = "Default debug level")
     private String debugLevel;
 
@@ -149,6 +152,9 @@ class Run implements Callable<Integer> {
 
 @Command(name = "search", description = "Search for kameletes, components and patterns (use --help)")
 class Search extends AbstractSearch implements Callable<Integer> {
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
+
     public Search() {
         super(null, null);
     }
@@ -158,7 +164,7 @@ class Search extends AbstractSearch implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        CommandLine.usage(this, System.out);
+        new CommandLine(this).execute("--help");
 
         return 0;
     }
@@ -166,6 +172,7 @@ class Search extends AbstractSearch implements Callable<Integer> {
 
 @Command(name = "kamelets", description = "Search for a Kamelet in the Kamelet catalog")
 class SearchKamelets extends AbstractSearch implements Callable<Integer> {
+
     /*
      * Matches the following line. Separate them into groups and pick the last
      * which contains the description:
@@ -173,6 +180,9 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
      * xref:ROOT:mariadb-sink.adoc[image:kamelets/mariadb-sink.svg[] MariaDB Sink]
      */
     private static final Pattern PATTERN = Pattern.compile("(.*):(.*):(.*)\\[(.*)\\[\\] (.*)\\]");
+
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
 
     @Option(names = { "--search-term" }, defaultValue = "", description = "Default debug level")
     private String searchTerm;
@@ -209,6 +219,7 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
 
 @Command(name = "components", description = "Search for Camel Core components")
 class SearchComponents extends AbstractSearch implements Callable<Integer> {
+
     /*
      * Matches the following line. Separate them into groups and pick the last
      * which contains the description:
@@ -216,6 +227,9 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
      * * xref:ROOT:index.adoc[Components]
      */
     private static final Pattern PATTERN = Pattern.compile("(.*):(.*)\\[(.*)\\]");
+
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
 
     @Option(names = { "--search-term" }, defaultValue = "", description = "Default debug level")
     private String searchTerm;
@@ -259,6 +273,9 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
      */
     private static final Pattern PATTERN = Pattern.compile("(.*):(.*)\\[(.*)\\]");
 
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
+
     @Option(names = { "--search-term" }, defaultValue = "", description = "Default debug level")
     private String searchTerm;
 
@@ -300,6 +317,9 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
      * * xref:ROOT:index.adoc[Components]
      */
     private static final Pattern PATTERN = Pattern.compile("(.*):(.*)\\[(.*)\\]");
+
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
 
     @Option(names = { "--search-term" }, defaultValue = "", description = "Default debug level")
     private String searchTerm;
