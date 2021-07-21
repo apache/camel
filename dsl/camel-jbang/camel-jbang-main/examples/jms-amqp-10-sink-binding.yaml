@@ -18,7 +18,7 @@
     from:
       uri: "kamelet:timer-source"
       parameters:
-        period: 12399
+        period: 1000
         # You can override it using jbang run -D=message="new message" CamelJbang.java opts...
         message: "Hello Camel JBang"
     steps:

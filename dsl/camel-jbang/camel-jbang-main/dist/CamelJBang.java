@@ -72,7 +72,7 @@ import picocli.CommandLine.Parameters;
 class Run implements Callable<Integer> {
     private CamelContext context;
 
-    @Parameters(description = "The path to the kamelet binding", arity = "1")
+    @Parameters(description = "The path to the kamelet binding", arity = "0..1")
     private String binding;
 
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
@@ -80,6 +80,12 @@ class Run implements Callable<Integer> {
 
     @Option(names = { "--debug-level" }, defaultValue = "info", description = "Default debug level")
     private String debugLevel;
+
+    @Option(names = { "--stop" }, description = "Stop all running instances of Camel JBang")
+    private boolean stopRequested;
+
+    @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
+    private int maxMessages;
 
     class ShutdownRoute extends RouteBuilder {
         private File lockFile;
@@ -96,6 +102,39 @@ class Run implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        System.setProperty("camel.main.name", "CamelJBang");
+
+        if (stopRequested) {
+            stop();
+        } else {
+            run();
+        }
+
+        return 0;
+    }
+
+    private int stop() {
+        File currentDir = new File(".");
+
+        File[] lockFiles = currentDir.listFiles(f -> f.getName().endsWith(".camel.lock"));
+
+        for (File lockFile : lockFiles) {
+            System.out.println("Removing file " + lockFile);
+            if (!lockFile.delete()) {
+                System.out.println("Failed to remove lock file " + lockFile);
+            }
+        }
+
+        return 0;
+    }
+
+    private int run() throws Exception {
+        if (maxMessages > 0) {
+            System.setProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
+        }
+
+        System.setProperty("camel.main.routes-include-pattern", "file:" + binding);
+
         switch (debugLevel) {
             case "trace":
                 Configurator.setRootLevel(Level.TRACE);
@@ -124,9 +163,6 @@ class Run implements Callable<Integer> {
 
             return 1;
         }
-
-        System.setProperty("camel.main.routes-include-pattern", "file:" + binding);
-        System.setProperty("camel.main.name", "CamelJBang");
 
         System.out.println("Starting Camel JBang!");
         KameletMain main = new KameletMain();
