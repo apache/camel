@@ -61,15 +61,15 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_BUILD_CONFIGS:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_BUILD_CONFIGS_BY_LABELS_OPERATION:
-                doListBuildConfigsByLabels(exchange, operation);
+                doListBuildConfigsByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_BUILD_CONFIG_OPERATION:
-                doGetBuildConfig(exchange, operation);
+                doGetBuildConfig(exchange);
                 break;
 
             default:
@@ -77,13 +77,13 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) {
+    protected void doList(Exchange exchange) {
         BuildConfigList buildConfigsList
                 = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs().inAnyNamespace().list();
         exchange.getOut().setBody(buildConfigsList.getItems());
     }
 
-    protected void doListBuildConfigsByLabels(Exchange exchange, String operation) {
+    protected void doListBuildConfigsByLabels(Exchange exchange) {
         BuildConfigList buildConfigsList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -107,7 +107,7 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
         exchange.getOut().setBody(buildConfigsList.getItems());
     }
 
-    protected void doGetBuildConfig(Exchange exchange, String operation) throws Exception {
+    protected void doGetBuildConfig(Exchange exchange) throws Exception {
         BuildConfig buildConfig = null;
         String buildConfigName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIG_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);

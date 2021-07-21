@@ -60,23 +60,23 @@ public class KubernetesNodesProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_NODES:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_NODES_BY_LABELS_OPERATION:
-                doListNodesByLabels(exchange, operation);
+                doListNodesByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_NODE_OPERATION:
-                doGetNode(exchange, operation);
+                doGetNode(exchange);
                 break;
 
             case KubernetesOperations.CREATE_NODE_OPERATION:
-                doCreateNode(exchange, operation);
+                doCreateNode(exchange);
                 break;
 
             case KubernetesOperations.DELETE_NODE_OPERATION:
-                doDeleteNode(exchange, operation);
+                doDeleteNode(exchange);
                 break;
 
             default:
@@ -84,14 +84,14 @@ public class KubernetesNodesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange) throws Exception {
         NodeList nodeList = getEndpoint().getKubernetesClient().nodes().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(nodeList.getItems());
     }
 
-    protected void doListNodesByLabels(Exchange exchange, String operation) {
+    protected void doListNodesByLabels(Exchange exchange) {
         NodeList nodeList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
         NonNamespaceOperation<Node, NodeList, Resource<Node>> nodes = getEndpoint().getKubernetesClient().nodes();
@@ -104,7 +104,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         exchange.getOut().setBody(nodeList.getItems());
     }
 
-    protected void doGetNode(Exchange exchange, String operation) throws Exception {
+    protected void doGetNode(Exchange exchange) throws Exception {
         Node node = null;
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
@@ -117,7 +117,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         exchange.getOut().setBody(node);
     }
 
-    protected void doCreateNode(Exchange exchange, String operation) throws Exception {
+    protected void doCreateNode(Exchange exchange) throws Exception {
         Node node = null;
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         NodeSpec nodeSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_SPEC, NodeSpec.class);
@@ -138,7 +138,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         exchange.getOut().setBody(node);
     }
 
-    protected void doDeleteNode(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteNode(Exchange exchange) throws Exception {
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(nodeName)) {
             LOG.error("Deleting a specific Node require specify a Node name");
