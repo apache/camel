@@ -96,15 +96,15 @@ public class GitProducer extends DefaultProducer {
         switch (operation) {
 
             case GitOperation.CLONE_OPERATION:
-                doClone(exchange, operation);
+                doClone(operation);
                 break;
 
             case GitOperation.CHECKOUT_OPERATION:
-                doCheckout(exchange, operation);
+                doCheckout(operation);
                 break;
 
             case GitOperation.INIT_OPERATION:
-                doInit(exchange, operation);
+                doInit(operation);
                 break;
 
             case GitOperation.ADD_OPERATION:
@@ -128,11 +128,11 @@ public class GitProducer extends DefaultProducer {
                 break;
 
             case GitOperation.CREATE_BRANCH_OPERATION:
-                doCreateBranch(exchange, operation);
+                doCreateBranch(operation);
                 break;
 
             case GitOperation.DELETE_BRANCH_OPERATION:
-                doDeleteBranch(exchange, operation);
+                doDeleteBranch(operation);
                 break;
 
             case GitOperation.STATUS_OPERATION:
@@ -160,11 +160,11 @@ public class GitProducer extends DefaultProducer {
                 break;
 
             case GitOperation.CREATE_TAG_OPERATION:
-                doCreateTag(exchange, operation);
+                doCreateTag(operation);
                 break;
 
             case GitOperation.DELETE_TAG_OPERATION:
-                doDeleteTag(exchange, operation);
+                doDeleteTag(operation);
                 break;
 
             case GitOperation.SHOW_BRANCHES_OPERATION:
@@ -196,7 +196,7 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doClone(Exchange exchange, String operation) throws GitAPIException {
+    protected void doClone(String operation) throws GitAPIException {
         Git result = null;
         if (ObjectHelper.isEmpty(endpoint.getLocalPath())) {
             throw new IllegalArgumentException("Local path must specified to execute " + operation);
@@ -239,7 +239,7 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doCheckout(Exchange exchange, String operation) throws GitAPIException {
+    protected void doCheckout(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         }
@@ -256,7 +256,7 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doInit(Exchange exchange, String operation) throws GitAPIException {
+    protected void doInit(String operation) throws GitAPIException {
         Git result = null;
         if (ObjectHelper.isEmpty(endpoint.getLocalPath())) {
             throw new IllegalArgumentException("Local path must specified to execute " + operation);
@@ -378,7 +378,7 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doCreateBranch(Exchange exchange, String operation) throws GitAPIException {
+    protected void doCreateBranch(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         }
@@ -390,7 +390,7 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doDeleteBranch(Exchange exchange, String operation) throws GitAPIException {
+    protected void doDeleteBranch(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         }
@@ -517,7 +517,7 @@ public class GitProducer extends DefaultProducer {
         updateExchange(exchange, result);
     }
 
-    protected void doCreateTag(Exchange exchange, String operation) throws GitAPIException {
+    protected void doCreateTag(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getTagName())) {
             throw new IllegalArgumentException("Tag Name must be specified to execute " + operation);
         }
@@ -529,7 +529,7 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doDeleteTag(Exchange exchange, String operation) throws GitAPIException {
+    protected void doDeleteTag(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getTagName())) {
             throw new IllegalArgumentException("Tag Name must be specified to execute " + operation);
         }
