@@ -85,7 +85,7 @@ public class WorkdayCommonAPIProducer extends WorkdayDefaultProducer {
     @Override
     public String prepareUri(WorkdayConfiguration configuration) throws Exception {
 
-        String pathString = new String(configuration.getPath());
+        String pathString = configuration.getPath();
         String genericPath = pathString.replaceAll(WORKDAY_ID_PATTERN, WORKDAY_GENERIC_ID);
 
         if (!this.workdayValidEndpointSet.contains(genericPath)) {

@@ -36,7 +36,7 @@ import org.apache.pulsar.client.api.PulsarClient;
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarClient pulsarClient;
-    private String uri;
+    private String uri; // TODO this field is reported unread
 
     @UriPath(enums = "persistent,non-persistent")
     @Metadata(required = true)

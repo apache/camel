@@ -100,7 +100,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
      */
     private Map<String, WebsocketComponentServlet> servlets = new HashMap<>();
 
-    class ConnectorRef {
+    static class ConnectorRef {
         Server server;
         ServerConnector connector;
         WebsocketComponentServlet servlet;

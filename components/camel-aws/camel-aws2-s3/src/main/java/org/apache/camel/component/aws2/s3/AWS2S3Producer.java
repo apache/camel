@@ -197,7 +197,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
         CreateMultipartUploadResponse initResponse
                 = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
-        final long contentLength = Long.valueOf(objectMetadata.get("Content-Length"));
+        final long contentLength = Long.parseLong(objectMetadata.get("Content-Length"));
         List<CompletedPart> completedParts = new ArrayList<CompletedPart>();
         long partSize = getConfiguration().getPartSize();
         CompleteMultipartUploadResponse uploadResult = null;
@@ -214,7 +214,10 @@ public class AWS2S3Producer extends DefaultProducer {
 
                 LOG.trace("Uploading part [{}] for {}", part, keyName);
                 try (InputStream fileInputStream = new FileInputStream(filePayload)) {
-                    fileInputStream.skip(filePosition);
+                    long skipped = fileInputStream.skip(filePosition);
+                    if (skipped == 0) {
+                        LOG.warn("While trying to upload the file {} file, 0 bytes were skipped", keyName);
+                    }
 
                     String etag = getEndpoint().getS3Client()
                             .uploadPart(uploadRequest, RequestBody.fromInputStream(fileInputStream, partSize)).eTag();

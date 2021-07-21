@@ -250,7 +250,7 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
         }
     }
 
-    private final class UndertowClientResponseFuture extends AbstractIoFuture<ClientExchange>
+    private static final class UndertowClientResponseFuture extends AbstractIoFuture<ClientExchange>
             implements ClientCallback<ClientExchange> {
         @Override
         public void completed(ClientExchange result) {

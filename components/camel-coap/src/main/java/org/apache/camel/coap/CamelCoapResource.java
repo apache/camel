@@ -29,8 +29,13 @@ import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.network.Exchange;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.eclipse.californium.core.server.resources.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class CamelCoapResource extends CoapResource {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelCoapResource.class);
+
     private final Map<String, CoAPConsumer> consumers = new ConcurrentHashMap<>();
     private final List<CamelCoapResource> possibles;
 
@@ -141,10 +146,15 @@ final class CamelCoapResource extends CoapResource {
         } catch (Exception e) {
             cexchange.respond(ResponseCode.INTERNAL_SERVER_ERROR, e.getMessage());
         } finally {
-            if (camelExchange != null) {
-                consumer.doneUoW(camelExchange);
+            if (consumer != null) {
+                if (camelExchange != null) {
+                    consumer.doneUoW(camelExchange);
+                }
+                consumer.releaseExchange(camelExchange, false);
+            } else {
+                LOG.warn(
+                        "Skipping releasing the consumer exchange because the consumer is null. It may haven't been properly created earlier - exception was thrown");
             }
-            consumer.releaseExchange(camelExchange, false);
         }
     }
 }

@@ -66,7 +66,7 @@ public class GaugeProducer extends AbstractMetricsProducer {
         }
     }
 
-    class CamelMetricsGauge implements Gauge<Object> {
+    static class CamelMetricsGauge implements Gauge<Object> {
         private Object subject;
 
         CamelMetricsGauge(Object subject) {

@@ -27,11 +27,15 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The camel filter wrapper that processes only initially dispatched requests. Re-dispatched requests are ignored.
  */
 public class CamelFilterWrapper implements Filter {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CamelFilterWrapper.class);
     private Filter wrapped;
 
     public CamelFilterWrapper(Filter wrapped) {
@@ -62,7 +66,10 @@ public class CamelFilterWrapper implements Filter {
             //go ahead and set it to the default tmp dir on the system.
             try {
                 File file = Files.createTempFile("camel", "").toFile();
-                file.delete();
+                boolean result = file.delete();
+                if (!result) {
+                    LOG.error("failed to delete {}", file);
+                }
                 config.getServletContext().setAttribute("javax.servlet.context.tempdir",
                         file.getParentFile());
             } catch (IOException e) {

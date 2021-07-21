@@ -75,7 +75,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
-    class ConnectorRef {
+    static class ConnectorRef {
         Connector connector;
         CometDServlet servlet;
         Server server;

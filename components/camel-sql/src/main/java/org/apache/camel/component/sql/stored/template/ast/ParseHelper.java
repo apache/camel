@@ -36,7 +36,7 @@ public final class ParseHelper {
 
         //if number then use it(probably Vendor spesific SQL-type)
         if (sqlTypeToken.kind == SSPTParserConstants.NUMBER) {
-            return Integer.valueOf(sqlType);
+            return Integer.parseInt(sqlType);
         }
 
         //if contains .

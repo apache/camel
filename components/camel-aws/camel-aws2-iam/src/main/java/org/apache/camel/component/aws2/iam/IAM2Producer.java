@@ -458,7 +458,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof DeleteGroupResponse) {
                 DeleteGroupResponse result;
                 try {
-                    result = iamClient.deleteGroup((DeleteGroupRequest) payload);
+                    result = iamClient.deleteGroup((DeleteGroupRequest) payload); // TODO this cast is impossible and will produce ClassCastException for non-null value
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

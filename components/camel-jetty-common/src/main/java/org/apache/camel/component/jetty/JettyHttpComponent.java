@@ -138,15 +138,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     public JettyHttpComponent() {
     }
 
-    class ConnectorRef {
-        CamelContext camelContext;
+    static class ConnectorRef {
         Server server;
         Connector connector;
         CamelServlet servlet;
         int refCount;
 
-        ConnectorRef(CamelContext camelContext, Server server, Connector connector, CamelServlet servlet) {
-            this.camelContext = camelContext;
+        ConnectorRef(Server server, Connector connector, CamelServlet servlet) {
             this.server = server;
             this.connector = connector;
             this.servlet = servlet;
@@ -172,8 +170,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         // must extract well known parameters before we create the endpoint
         List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
-        JettyHttpBinding jettyBinding
-                = resolveAndRemoveReferenceParameter(parameters, "jettyHttpBindingRef", JettyHttpBinding.class);
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         Boolean enableMultipartFilter = getAndRemoveParameter(parameters, "enableMultipartFilter",
                 Boolean.class, true);
@@ -234,11 +230,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         }
         if (binding != null) {
             endpoint.setBinding(binding);
-        }
-        // prefer to use endpoint configured over component configured
-        if (jettyBinding == null) {
-            // fallback to component configured
-            jettyBinding = getJettyHttpBinding();
         }
         if (enableJmx != null) {
             endpoint.setEnableJmx(enableJmx);
@@ -335,7 +326,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                 server.addConnector(connector);
 
                 connectorRef = new ConnectorRef(
-                        getCamelContext(), server, connector,
+                        server, connector,
                         createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
                 // must enable session before we start
                 if (endpoint.isSessionSupport()) {
@@ -1171,7 +1162,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         context.addServlet(holder, "/*");
 
         File file = File.createTempFile("camel", "");
-        file.delete();
+        boolean result = file.delete();
+        if (!result) {
+            LOG.error("failed to delete {}", file);
+        }
 
         //must register the MultipartConfig to make jetty server multipart aware
         holder.getRegistration()

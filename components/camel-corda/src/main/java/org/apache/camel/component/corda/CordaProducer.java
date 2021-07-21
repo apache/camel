@@ -51,12 +51,12 @@ import static org.apache.camel.component.corda.CordaConstants.SORT;
  */
 
 public class CordaProducer extends HeaderSelectorProducer {
-    private CordaConfiguration configuration;
+    //private CordaConfiguration configuration;
     private CordaRPCOps cordaRPCOps;
 
     public CordaProducer(CordaEndpoint endpoint, final CordaConfiguration configuration, CordaRPCOps cordaRPCOps) {
         super(endpoint, CordaConstants.OPERATION, () -> configuration.getOperation(), false);
-        this.configuration = configuration;
+        //this.configuration = configuration;
         this.cordaRPCOps = cordaRPCOps;
     }
 

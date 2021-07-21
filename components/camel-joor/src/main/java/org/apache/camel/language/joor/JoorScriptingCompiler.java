@@ -167,7 +167,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
             for (Map.Entry<String, Object> bind : bindings.entrySet()) {
                 String vn = bind.getKey();
                 String cn = ObjectHelper.className(bind.getValue());
-                String b = String.format("        var %s = (%s) args.get(\"%s\");\n", vn, cn, vn);
+                String b = String.format("        var %s = (%s) args.get(\"%s\");%n", vn, cn, vn);
                 sb.append(b);
             }
             sb.append("\n");

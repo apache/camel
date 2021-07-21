@@ -282,7 +282,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
     /**
      * This callback class is used to clean up the temporary TAR file once the exchange has completed.
      */
-    private class DeleteTarFileOnCompletion implements Synchronization {
+    private static class DeleteTarFileOnCompletion implements Synchronization {
 
         private final File fileToDelete;
 

@@ -75,8 +75,8 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
     }
 
     public DetectedObjects classify(File input) throws Exception {
-        try {
-            Image image = ImageFactory.getInstance().fromInputStream(new FileInputStream(input));
+        try (InputStream fileInputStream = new FileInputStream(input)) {
+            Image image = ImageFactory.getInstance().fromInputStream(fileInputStream);
             return classify(image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");

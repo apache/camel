@@ -43,7 +43,7 @@ public class RestRootHandler implements HttpHandler {
 
     private final Set<UndertowConsumer> consumers = new CopyOnWriteArraySet<>();
 
-    private int port;
+    //private int port; // unread field
     private String token;
     private int len;
 
@@ -51,7 +51,7 @@ public class RestRootHandler implements HttpHandler {
      * Initializes this handler with the given port.
      */
     public void init(int port) {
-        this.port = port;
+        //this.port = port;
         this.token = ":" + port;
         this.len = token.length();
     }
