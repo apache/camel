@@ -28,7 +28,11 @@ public class GitHubResourceResolver extends ServiceSupport implements org.apache
     // github:apache:camel:aws-ddb-streams-source.kamelet.yaml
     // https://raw.githubusercontent.com/apache/camel-kamelets/main/aws-ddb-streams-source.kamelet.yaml
     private static final String GITHUB_URL = "https://raw.githubusercontent.com/%s/%s/%s/%s";
+    private static final String DEFAULT_BRANCH = "main";
+
     private CamelContext camelContext;
+
+    private String branch = DEFAULT_BRANCH;
 
     @Override
     public CamelContext getCamelContext() {
@@ -38,6 +42,10 @@ public class GitHubResourceResolver extends ServiceSupport implements org.apache
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
     @Override
@@ -51,7 +59,6 @@ public class GitHubResourceResolver extends ServiceSupport implements org.apache
         // scheme not in use as its github
         String org = null;
         String rep = null;
-        String branch = "main"; // default branch is main
         String name = null;
 
         if (parts.length == 3) {

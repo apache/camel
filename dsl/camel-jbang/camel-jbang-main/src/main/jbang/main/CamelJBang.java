@@ -30,19 +30,24 @@
 //DEPS org.apache.logging.log4j:log4j-api:${camel.jbang.log4j2.version}
 //DEPS org.apache.logging.log4j:log4j-core:${camel.jbang.log4j2.version}
 //DEPS org.apache.logging.log4j:log4j-slf4j-impl:${camel.jbang.log4j2.version}
+//DEPS org.apache.velocity:velocity-engine-core:${camel.jbang.velocity.version}
 //DEPS info.picocli:picocli:${camel.jbang.picocli.version}
 
 package main;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.dsl.jbang.core.commands.AbstractInitKamelet;
 import org.apache.camel.dsl.jbang.core.commands.AbstractSearch;
 import org.apache.camel.dsl.jbang.core.common.MatchExtractor;
+import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceAlreadyExists;
 import org.apache.camel.dsl.jbang.core.components.ComponentConverter;
 import org.apache.camel.dsl.jbang.core.components.ComponentDescriptionMatching;
 import org.apache.camel.dsl.jbang.core.components.ComponentPrinter;
@@ -55,6 +60,7 @@ import org.apache.camel.dsl.jbang.core.languages.LanguagePrinter;
 import org.apache.camel.dsl.jbang.core.others.OtherConverter;
 import org.apache.camel.dsl.jbang.core.others.OtherDescriptionMatching;
 import org.apache.camel.dsl.jbang.core.others.OtherPrinter;
+import org.apache.camel.dsl.jbang.core.templates.VelocityTemplateParser;
 import org.apache.camel.dsl.jbang.core.types.Component;
 import org.apache.camel.dsl.jbang.core.types.Kamelet;
 import org.apache.camel.dsl.jbang.core.types.Language;
@@ -410,6 +416,103 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
     }
 }
 
+@Command(name = "init", description = "Provide init templates for kamelets and bindings")
+class Init implements Callable<Integer> {
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
+
+    @Override
+    public Integer call() throws Exception {
+        new CommandLine(this).execute("--help");
+
+        return 0;
+    }
+}
+
+@Command(name = "kamelet", description = "Provide init templates for kamelets")
+class InitKamelet extends AbstractInitKamelet implements Callable<Integer> {
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
+
+    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1")
+    private ProcessOptions processOptions;
+
+    static class ProcessOptions {
+        @Option(names = { "--bootstrap" },
+                description = "Bootstrap the Kamelet template generator - download the properties file for editing")
+        private boolean bootstrap = false;
+
+        @Option(names = { "--properties-path" }, defaultValue = "", description = "Kamelet name")
+        private String propertiesPath;
+    }
+
+    @Option(names = { "--base-resource-location" }, defaultValue = "github:apache", hidden = true,
+            description = "Where to download the resources from (used for development/testing)")
+    private String baseResourceLocation;
+
+    @Option(names = { "--branch" }, defaultValue = "main", hidden = true,
+            description = "The branch to use when downloading resources from (used for development/testing)")
+    private String branch;
+
+    @Option(names = { "--destination" }, defaultValue = "work",
+            description = "The destination directory where to download the files")
+    private String destination;
+
+    @Override
+    public Integer call() throws Exception {
+        if (processOptions.bootstrap) {
+            bootstrap();
+        } else {
+            generateTemplate();
+        }
+
+        return 0;
+    }
+
+    private int generateTemplate() throws IOException, CamelException {
+        setBranch(branch);
+        setResourceLocation(baseResourceLocation, "camel-kamelets:templates/init-template.kamelet.yaml.vm");
+
+        File workDirectory = new File(destination);
+
+        File localTemplateFile;
+        try {
+            localTemplateFile = resolveResource(workDirectory);
+        } catch (ResourceAlreadyExists e) {
+            System.err.println(e.getMessage());
+            return 1;
+        }
+
+        localTemplateFile.deleteOnExit();
+
+        VelocityTemplateParser templateParser = new VelocityTemplateParser(
+                localTemplateFile.getParentFile(),
+                processOptions.propertiesPath);
+
+        String outputFileName = localTemplateFile.getName().replace(".vm", "");
+        File outputFile = new File(localTemplateFile.getParentFile(), outputFileName);
+
+        try (FileWriter fw = new FileWriter(outputFile)) {
+            templateParser.parse(localTemplateFile.getName(), fw);
+            System.out.println("Template file was written to " + outputFile);
+        }
+
+        return 0;
+    }
+
+    private int bootstrap() throws IOException, CamelException {
+        try {
+            super.bootstrap(branch, baseResourceLocation, destination);
+            return 0;
+        } catch (ResourceAlreadyExists e) {
+            System.err.println(e.getMessage());
+
+            return 1;
+        }
+    }
+
+}
+
 @Command(name = "CamelJBang", mixinStandardHelpOptions = true, version = "CamelJBang ${camel.jbang.version}",
          description = "A JBang-based Camel app for running Kamelets")
 class CamelJBang implements Callable<Integer> {
@@ -426,7 +529,9 @@ class CamelJBang implements Callable<Integer> {
                         .addSubcommand("kamelets", new SearchKamelets())
                         .addSubcommand("components", new SearchComponents())
                         .addSubcommand("languages", new SearchLanguages())
-                        .addSubcommand("others", new SearchOthers()));
+                        .addSubcommand("others", new SearchOthers()))
+                .addSubcommand("init", new CommandLine(new Init())
+                        .addSubcommand("kamelet", new InitKamelet()));
 
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);
