@@ -223,8 +223,12 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
     @Option(names = { "--search-term" }, defaultValue = "", description = "Default debug level")
     private String searchTerm;
 
+    @Option(names = { "--base-resource-location" }, defaultValue = "github:apache", hidden = true,
+            description = "Where to download the resources from")
+    private String resourceLocation;
+
     SearchKamelets() {
-        super("github:apache:camel-kamelets:docs/modules/ROOT/nav.adoc", PATTERN);
+        super(PATTERN);
     }
 
     @Override
@@ -235,6 +239,8 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        setResourceLocation(resourceLocation, "camel-kamelets:docs/modules/ROOT/nav.adoc");
+
         MatchExtractor<Kamelet> matchExtractor;
 
         if (searchTerm.isEmpty()) {
@@ -270,8 +276,12 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
     @Option(names = { "--search-term" }, defaultValue = "", description = "Default debug level")
     private String searchTerm;
 
+    @Option(names = { "--base-resource-location" }, defaultValue = "github:apache", hidden = true,
+            description = "Where to download the resources from")
+    private String resourceLocation;
+
     SearchComponents() {
-        super("github:apache:camel:docs/components/modules/ROOT/nav.adoc", PATTERN);
+        super(PATTERN);
     }
 
     @Override
@@ -282,6 +292,7 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        setResourceLocation(resourceLocation, "camel:docs/components/modules/ROOT/nav.adoc");
 
         MatchExtractor<Component> matchExtractor;
         if (searchTerm.isEmpty()) {
@@ -315,8 +326,12 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
     @Option(names = { "--search-term" }, defaultValue = "", description = "Default debug level")
     private String searchTerm;
 
+    @Option(names = { "--base-resource-location" }, defaultValue = "github:apache", hidden = true,
+            description = "Where to download the resources from")
+    private String resourceLocation;
+
     SearchLanguages() {
-        super("github:apache:camel:docs/components/modules/languages/nav.adoc", PATTERN);
+        super(PATTERN);
     }
 
     @Override
@@ -327,6 +342,7 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        setResourceLocation(resourceLocation, "camel:docs/components/modules/languages/nav.adoc");
 
         MatchExtractor<Language> matchExtractor;
         if (searchTerm.isEmpty()) {
@@ -360,8 +376,12 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
     @Option(names = { "--search-term" }, defaultValue = "", description = "Default debug level")
     private String searchTerm;
 
+    @Option(names = { "--base-resource-location" }, defaultValue = "github:apache", hidden = true,
+            description = "Where to download the resources from")
+    private String resourceLocation;
+
     SearchOthers() {
-        super("github:apache:camel:docs/components/modules/others/nav.adoc", PATTERN);
+        super(PATTERN);
     }
 
     @Override
@@ -372,6 +392,7 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        setResourceLocation(resourceLocation, "camel:docs/components/modules/others/nav.adoc");
 
         MatchExtractor<Other> matchExtractor;
         if (searchTerm.isEmpty()) {
