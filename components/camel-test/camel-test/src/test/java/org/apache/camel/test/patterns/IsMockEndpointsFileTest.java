@@ -39,6 +39,7 @@ public class IsMockEndpointsFileTest extends CamelTestSupport {
         return "file:target*";
     }
 
+    @Deprecated
     @Test
     public void testMockFileEndpoints() throws Exception {
         // notice we have automatic mocked all endpoints and the name of the endpoints is "mock:uri"

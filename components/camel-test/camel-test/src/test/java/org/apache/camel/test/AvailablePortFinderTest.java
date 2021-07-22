@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AvailablePortFinderTest {
 
+    @Deprecated
     @Test
     public void testNotAvailableTcpPort() throws Exception {
         int p1 = AvailablePortFinder.getNextAvailable();
@@ -39,6 +40,7 @@ public class AvailablePortFinderTest {
         socket.close();
     }
 
+    @Deprecated
     @Test
     public void testNotAvailableUdpPort() throws Exception {
         int p1 = AvailablePortFinder.getNextAvailable();
@@ -48,6 +50,7 @@ public class AvailablePortFinderTest {
         socket.close();
     }
 
+    @Deprecated
     @Test
     public void testNotAvailableMulticastPort() throws Exception {
         int p1 = AvailablePortFinder.getNextAvailable();
@@ -59,6 +62,7 @@ public class AvailablePortFinderTest {
         socket.close();
     }
 
+    @Deprecated
     @Test
     public void testPortRange() throws Exception {
         int p1 = AvailablePortFinder.getNextAvailable(49152, 65535);
@@ -69,6 +73,7 @@ public class AvailablePortFinderTest {
         socket2.close();
     }
 
+    @Deprecated
     @Test
     public void testAvailablePortFinderPropertiesFunction() throws Exception {
         AvailablePortFinderPropertiesFunction function = new AvailablePortFinderPropertiesFunction();
@@ -78,6 +83,7 @@ public class AvailablePortFinderTest {
         assertThat(function.apply(null)).isNull();
     }
 
+    @Deprecated
     @Test
     public void testAvailablePortFinderPropertiesFunctionWithRange() throws Exception {
         // range

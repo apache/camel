@@ -27,6 +27,7 @@ public class RouteFilterPatternIncludeTest extends CamelTestSupport {
         return "foo*";
     }
 
+    @Deprecated
     @Test
     public void testRouteFilter() throws Exception {
         assertEquals(1, context.getRoutes().size());
@@ -40,6 +41,7 @@ public class RouteFilterPatternIncludeTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Deprecated
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

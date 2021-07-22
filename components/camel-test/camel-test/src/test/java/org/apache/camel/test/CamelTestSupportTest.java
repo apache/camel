@@ -32,6 +32,7 @@ public class CamelTestSupportTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Deprecated
     @Test
     public void replacesFromEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
@@ -41,16 +42,19 @@ public class CamelTestSupportTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Deprecated
     @Test(expected = NoSuchEndpointException.class)
     public void exceptionThrownWhenEndpointNotFoundAndNoCreate() {
         getMockEndpoint("mock:bogus", false);
     }
 
+    @Deprecated
     @Test(expected = NoSuchEndpointException.class)
     public void exceptionThrownWhenEndpointNotAMockEndpoint() {
         getMockEndpoint("direct:something", false);
     }
 
+    @Deprecated
     @Test
     public void autoCreateNoneExisting() {
         MockEndpoint mock = getMockEndpoint("mock:bogus2", true);

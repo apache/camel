@@ -67,6 +67,7 @@ public class CreateCamelContextPerTestTrueTest extends CamelTestSupport {
         LATCH.await(5, TimeUnit.SECONDS);
     }
 
+    @Deprecated
     @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
@@ -81,6 +82,7 @@ public class CreateCamelContextPerTestTrueTest extends CamelTestSupport {
         assertEquals("Should not call postTearDown yet", 0, POST_TEAR_DOWN.get());
     }
 
+    @Deprecated
     @Test
     public void testSendAnotherMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
@@ -95,6 +97,7 @@ public class CreateCamelContextPerTestTrueTest extends CamelTestSupport {
         assertEquals("Should not call postTearDown yet", 0, POST_TEAR_DOWN.get());
     }
 
+    @Deprecated
     @Test
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);

@@ -32,6 +32,7 @@ public class IsMockEndpointsAndSkipJUnit4Test extends CamelTestSupport {
         return "direct:foo";
     }
 
+    @Deprecated
     @Test
     public void testMockEndpointAndSkip() throws Exception {
         // notice we have automatic mocked the direct:foo endpoints and the name of the endpoints is "mock:uri"

@@ -29,6 +29,7 @@ public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
         return true;
     }
 
+    @Deprecated
     @Test
     public void testProcessor() throws Exception {
         String out = template.requestBody("direct:start", "Hello World", String.class);

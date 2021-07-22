@@ -27,6 +27,7 @@ public class IsMockEndpointsTest extends CamelTestSupport {
         return "*";
     }
 
+    @Deprecated
     @Test
     public void testMockAllEndpoints() throws Exception {
         getMockEndpoint("mock:direct:start").expectedBodiesReceived("Hello World");

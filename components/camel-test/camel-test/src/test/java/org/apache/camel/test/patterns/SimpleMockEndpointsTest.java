@@ -28,6 +28,7 @@ public class SimpleMockEndpointsTest extends CamelTestSupport {
         return "seda:queue";
     }
 
+    @Deprecated
     @Test
     public void testMockAndSkip() throws Exception {
         getMockEndpoint("mock:seda:queue").expectedBodiesReceived("Bye Camel");

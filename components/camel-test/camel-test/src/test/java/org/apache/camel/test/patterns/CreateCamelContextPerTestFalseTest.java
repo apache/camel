@@ -62,6 +62,7 @@ public class CreateCamelContextPerTestFalseTest extends CamelTestSupport {
         super.doPostTearDown();
     }
 
+    @Deprecated
     @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
@@ -75,6 +76,7 @@ public class CreateCamelContextPerTestFalseTest extends CamelTestSupport {
         assertTrue("Should create 1 or more CamelContext per test class", CREATED_CONTEXTS.get() >= 1);
     }
 
+    @Deprecated
     @Test
     public void testSendAnotherMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
@@ -88,6 +90,7 @@ public class CreateCamelContextPerTestFalseTest extends CamelTestSupport {
         assertTrue("Should create 1 or more CamelContext per test class", CREATED_CONTEXTS.get() >= 1);
     }
 
+    @Deprecated
     @Test
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);

@@ -55,6 +55,7 @@ public class UseOverridePropertiesWithPropertiesComponentTest extends CamelTestS
         return pc;
     }
 
+    @Deprecated
     @Test
     public void testOverride() throws Exception {
         context.start();

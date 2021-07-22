@@ -42,6 +42,7 @@ public class FilterFluentTemplateTest extends CamelTestSupport {
         return true;
     }
 
+    @Deprecated
     @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
@@ -53,6 +54,7 @@ public class FilterFluentTemplateTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Deprecated
     @Test
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);

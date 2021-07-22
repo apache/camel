@@ -25,6 +25,7 @@ import org.junit.Test;
  */
 public class ProduceBeanTest extends CamelTestSupport {
 
+    @Deprecated
     @Test
     public void testProduceBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);

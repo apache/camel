@@ -23,6 +23,7 @@ import org.junit.Test;
 
 public class SimpleMockTest extends CamelTestSupport {
 
+    @Deprecated
     @Test
     public void testMock() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");

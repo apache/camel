@@ -31,6 +31,7 @@ public class IsMockEndpointsJUnit4Test extends CamelTestSupport {
         return "*";
     }
 
+    @Deprecated
     @Test
     public void testMockAllEndpoints() throws Exception {
         // notice we have automatic mocked all endpoints and the name of the endpoints is "mock:uri"

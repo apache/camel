@@ -29,6 +29,7 @@ public class AdviceWithLambdaTest extends CamelTestSupport {
         return true;
     }
 
+    @Deprecated
     @Test
     public void testAdviceWith() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);

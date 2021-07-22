@@ -26,6 +26,7 @@ import org.junit.Test;
 
 public class SimpleNotifyBuilderTest extends CamelTestSupport {
 
+    @Deprecated
     @Test
     public void testNotifyBuilder() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context)

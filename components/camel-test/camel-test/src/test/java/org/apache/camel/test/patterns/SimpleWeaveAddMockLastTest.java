@@ -30,6 +30,7 @@ public class SimpleWeaveAddMockLastTest extends CamelTestSupport {
         return true;
     }
 
+    @Deprecated
     @Test
     public void testWeaveAddMockLast() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {

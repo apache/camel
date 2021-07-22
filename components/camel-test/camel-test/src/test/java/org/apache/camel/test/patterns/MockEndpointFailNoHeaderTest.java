@@ -37,6 +37,7 @@ public class MockEndpointFailNoHeaderTest extends CamelTestSupport {
         return true;
     }
 
+    @Deprecated
     @Test
     public void withHeaderTestCase() throws InterruptedException {
         String expectedBody = "<matched/>";
@@ -45,6 +46,7 @@ public class MockEndpointFailNoHeaderTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Deprecated
     @Test
     public void noHeaderTestCase() throws InterruptedException {
         resultEndpoint.expectedHeaderReceived("foo", "bar");

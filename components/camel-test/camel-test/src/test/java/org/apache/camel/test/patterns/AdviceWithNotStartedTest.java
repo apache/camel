@@ -33,6 +33,7 @@ public class AdviceWithNotStartedTest extends CamelTestSupport {
         return true;
     }
 
+    @Deprecated
     @Test
     public void testNotStarted() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {

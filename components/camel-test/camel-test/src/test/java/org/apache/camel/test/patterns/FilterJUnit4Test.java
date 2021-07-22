@@ -36,6 +36,7 @@ public class FilterJUnit4Test extends CamelTestSupport {
     @Produce("direct:start")
     protected ProducerTemplate template;
 
+    @Deprecated
     @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
@@ -47,6 +48,7 @@ public class FilterJUnit4Test extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Deprecated
     @Test
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);

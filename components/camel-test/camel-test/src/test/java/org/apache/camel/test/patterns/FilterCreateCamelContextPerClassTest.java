@@ -34,6 +34,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
         return true;
     }
 
+    @Deprecated
     @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
@@ -45,6 +46,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Deprecated
     @Test
     public void testSendNotMatchingMessage() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);

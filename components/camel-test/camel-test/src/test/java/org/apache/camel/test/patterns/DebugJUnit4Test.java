@@ -42,6 +42,7 @@ public class DebugJUnit4Test extends CamelTestSupport {
     }
     // END SNIPPET: e1
 
+    @Deprecated
     @Test
     public void testDebugger() throws Exception {
         // set mock expectations
@@ -55,6 +56,7 @@ public class DebugJUnit4Test extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Deprecated
     @Test
     public void testTwo() throws Exception {
         // set mock expectations

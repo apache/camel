@@ -37,6 +37,7 @@ public class RouteBuilderConfigureExceptionTest extends CamelTestSupport {
         }
     }
 
+    @Deprecated
     @Test
     public void testFoo() throws Exception {
     }

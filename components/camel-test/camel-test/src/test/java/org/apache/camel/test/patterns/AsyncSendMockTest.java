@@ -30,6 +30,7 @@ public class AsyncSendMockTest extends CamelTestSupport {
         return "seda*";
     }
 
+    @Deprecated
     @Test
     public void testmakeAsyncApiCall() {
         try {

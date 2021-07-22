@@ -27,6 +27,7 @@ public class RouteFilterPatternExcludeTest extends CamelTestSupport {
         return "bar*";
     }
 
+    @Deprecated
     @Test
     public void testRouteFilter() throws Exception {
         assertEquals(1, context.getRoutes().size());
