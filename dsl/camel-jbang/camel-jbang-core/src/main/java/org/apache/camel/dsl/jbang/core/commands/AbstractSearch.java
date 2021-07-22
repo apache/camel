@@ -39,8 +39,21 @@ public abstract class AbstractSearch {
     protected AbstractSearch() {
     }
 
+    public AbstractSearch(Pattern pattern) {
+        this.pattern = pattern;
+    }
+
     public AbstractSearch(String resourceLocation, Pattern pattern) {
         this.resourceLocation = resourceLocation;
+        this.pattern = pattern;
+    }
+
+    protected void setResourceLocation(String baseResourceLocation, String resourcePath) {
+        this.resourceLocation = baseResourceLocation + ":" + resourcePath;
+        System.out.println("Resource location is " + resourceLocation);
+    }
+
+    protected void setPattern(Pattern pattern) {
         this.pattern = pattern;
     }
 
