@@ -68,14 +68,12 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
         this.obsClient = this.endpoint.initClient();
 
         if (ObjectHelper.isEmpty(endpoint.getBucketName())) {
-            LOG.error("No bucket name given");
             throw new IllegalArgumentException("Bucket name is mandatory to download objects");
         }
 
         if (endpoint.isMoveAfterRead()) {
             // check if destination bucket is set in the endpoint, which is mandatory when moveAfterRead = true
             if (ObjectHelper.isEmpty(endpoint.getDestinationBucket())) {
-                LOG.error("No destination bucket name given");
                 throw new IllegalArgumentException("Destination bucket is mandatory when moveAfterRead is true");
             }
 
@@ -251,8 +249,8 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
         message.setHeader(OBSHeaders.BUCKET_NAME, obsObject.getBucketName());
         message.setHeader(OBSHeaders.OBJECT_KEY, obsObject.getObjectKey());
         message.setHeader(OBSHeaders.LAST_MODIFIED, obsObject.getMetadata().getLastModified());
-        message.setHeader(OBSHeaders.CONTENT_LENGTH, obsObject.getMetadata().getContentLength());
-        message.setHeader(OBSHeaders.CONTENT_TYPE, obsObject.getMetadata().getContentType());
+        message.setHeader(Exchange.CONTENT_LENGTH, obsObject.getMetadata().getContentLength());
+        message.setHeader(Exchange.CONTENT_TYPE, obsObject.getMetadata().getContentType());
         message.setHeader(OBSHeaders.ETAG, obsObject.getMetadata().getEtag());
         message.setHeader(OBSHeaders.CONTENT_MD5, obsObject.getMetadata().getContentMd5());
         if (obsObject.getObjectKey().endsWith("/")) {

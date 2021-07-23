@@ -20,14 +20,12 @@ package org.apache.camel.component.huaweicloud.obs.constants;
  * Constants for the exchange headers when consuming objects
  */
 public final class OBSHeaders {
-    public static final String BUCKET_NAME = "bucketName";
-    public static final String OBJECT_KEY = "objectKey";
-    public static final String LAST_MODIFIED = "lastModified";
-    public static final String CONTENT_LENGTH = "contentLength";
-    public static final String CONTENT_TYPE = "contentType";
-    public static final String ETAG = "etag";
-    public static final String CONTENT_MD5 = "contentMd5";
-    public static final String OBJECT_TYPE = "objectType";
+    public static final String BUCKET_NAME = "CamelHwCloudObsBucketName";
+    public static final String OBJECT_KEY = "CamelHwCloudObsObjectKey";
+    public static final String LAST_MODIFIED = "CamelHwCloudObsLastModified";
+    public static final String ETAG = "CamelHwCloudObsETag";
+    public static final String CONTENT_MD5 = "CamelHwCloudObsContentMD5";
+    public static final String OBJECT_TYPE = "CamelHwCloudObsObjectType";
 
     private OBSHeaders() {
     }

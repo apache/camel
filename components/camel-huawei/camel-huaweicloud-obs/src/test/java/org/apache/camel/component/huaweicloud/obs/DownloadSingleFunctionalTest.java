@@ -75,7 +75,7 @@ public class DownloadSingleFunctionalTest extends CamelTestSupport {
 
         assertEquals(1, mock.getExchanges().size());
         assertEquals(FILENAME, responseExchange.getIn().getHeader(OBSHeaders.OBJECT_KEY, String.class));
-        if (responseExchange.getIn().getHeader(OBSHeaders.CONTENT_LENGTH, Integer.class) > 0) {
+        if (responseExchange.getIn().getHeader(Exchange.CONTENT_LENGTH, Integer.class) > 0) {
             assertNotNull(responseExchange.getIn().getBody(String.class));
             assertTrue(responseExchange.getIn().getBody(String.class).length() > 0);
         }

@@ -23,13 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OBSHeadersTest {
     @Test
     public void testHeaders() {
-        assertEquals("bucketName", OBSHeaders.BUCKET_NAME);
-        assertEquals("objectKey", OBSHeaders.OBJECT_KEY);
-        assertEquals("lastModified", OBSHeaders.LAST_MODIFIED);
-        assertEquals("contentLength", OBSHeaders.CONTENT_LENGTH);
-        assertEquals("contentType", OBSHeaders.CONTENT_TYPE);
-        assertEquals("etag", OBSHeaders.ETAG);
-        assertEquals("contentMd5", OBSHeaders.CONTENT_MD5);
-        assertEquals("objectType", OBSHeaders.OBJECT_TYPE);
+        assertEquals("CamelHwCloudObsBucketName", OBSHeaders.BUCKET_NAME);
+        assertEquals("CamelHwCloudObsObjectKey", OBSHeaders.OBJECT_KEY);
+        assertEquals("CamelHwCloudObsLastModified", OBSHeaders.LAST_MODIFIED);
+        assertEquals("CamelHwCloudObsETag", OBSHeaders.ETAG);
+        assertEquals("CamelHwCloudObsContentMD5", OBSHeaders.CONTENT_MD5);
+        assertEquals("CamelHwCloudObsObjectType", OBSHeaders.OBJECT_TYPE);
     }
 }

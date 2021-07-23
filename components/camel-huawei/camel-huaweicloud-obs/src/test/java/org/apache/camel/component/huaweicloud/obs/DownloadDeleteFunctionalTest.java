@@ -80,7 +80,7 @@ public class DownloadDeleteFunctionalTest extends CamelTestSupport {
         assertTrue(exchanges.size() >= NUMBER_TO_CONSUME);
         for (Exchange exchange : exchanges) {
             assertTrue(exchange.getIn().getHeader(OBSHeaders.OBJECT_KEY, String.class).length() > 0);
-            if (exchange.getIn().getHeader(OBSHeaders.CONTENT_LENGTH, Integer.class) > 0) {
+            if (exchange.getIn().getHeader(Exchange.CONTENT_LENGTH, Integer.class) > 0) {
                 assertNotNull(exchange.getIn().getBody(String.class));
                 assertTrue(exchange.getIn().getBody(String.class).length() > 0);
             }
