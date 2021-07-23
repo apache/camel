@@ -158,8 +158,6 @@ public class KeyStoreParameters extends JsseParameters {
      */
     public KeyStore createKeyStore() throws GeneralSecurityException, IOException {
         if (keyStore != null) {
-            LOG.warn(
-                    "Ignoring path from resource field (if present) and returning the instance of KeyStore passed by the user");
             if (LOG.isDebugEnabled()) {
                 List<String> aliases = extractAliases(keyStore);
                 LOG.debug(
