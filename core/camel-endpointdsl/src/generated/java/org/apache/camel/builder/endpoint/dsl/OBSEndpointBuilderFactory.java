@@ -16,12 +16,17 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * To provide stable, secure, efficient, and easy-to-use cloud storage service
@@ -42,36 +47,6 @@ public interface OBSEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedOBSEndpointConsumerBuilder advanced() {
             return (AdvancedOBSEndpointConsumerBuilder) this;
-        }
-        /**
-         * Authentication key for the cloud user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param authenticationKey the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder authenticationKey(
-                String authenticationKey) {
-            doSetProperty("authenticationKey", authenticationKey);
-            return this;
-        }
-        /**
-         * Location of bucket when creating a new bucket.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param bucketLocation the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder bucketLocation(String bucketLocation) {
-            doSetProperty("bucketLocation", bucketLocation);
-            return this;
         }
         /**
          * Name of bucket to perform operation on.
@@ -103,109 +78,6 @@ public interface OBSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Ignore SSL verification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder ignoreSslVerification(
-                boolean ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Ignore SSL verification.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder ignoreSslVerification(
-                String ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Proxy server ip/hostname.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * Proxy authentication password.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPassword the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder proxyPassword(String proxyPassword) {
-            doSetProperty("proxyPassword", proxyPassword);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder proxyPort(int proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy authentication user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyUser the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder proxyUser(String proxyUser) {
-            doSetProperty("proxyUser", proxyUser);
-            return this;
-        }
-        /**
          * OBS service region. This is lower precedence than endpoint based
          * configuration.
          * 
@@ -219,51 +91,6 @@ public interface OBSEndpointBuilderFactory {
          */
         default OBSEndpointConsumerBuilder region(String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Secret key for the cloud user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * Configuration object for cloud service authentication.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceKeys the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder serviceKeys(Object serviceKeys) {
-            doSetProperty("serviceKeys", serviceKeys);
-            return this;
-        }
-        /**
-         * Configuration object for cloud service authentication.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceKeys the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointConsumerBuilder serviceKeys(String serviceKeys) {
-            doSetProperty("serviceKeys", serviceKeys);
             return this;
         }
         /**
@@ -309,6 +136,869 @@ public interface OBSEndpointBuilderFactory {
         default OBSEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Determines if objects should be deleted after it has been retrieved.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder deleteAfterRead(
+                boolean deleteAfterRead) {
+            doSetProperty("deleteAfterRead", deleteAfterRead);
+            return this;
+        }
+        /**
+         * Determines if objects should be deleted after it has been retrieved.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder deleteAfterRead(
+                String deleteAfterRead) {
+            doSetProperty("deleteAfterRead", deleteAfterRead);
+            return this;
+        }
+        /**
+         * The character used for grouping object names.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder delimiter(String delimiter) {
+            doSetProperty("delimiter", delimiter);
+            return this;
+        }
+        /**
+         * Name of destination bucket where objects will be moved when
+         * moveAfterRead is set to true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param destinationBucket the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder destinationBucket(
+                String destinationBucket) {
+            doSetProperty("destinationBucket", destinationBucket);
+            return this;
+        }
+        /**
+         * Get the object from the bucket with the given file name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder fileName(String fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * If true, objects in folders will be consumed. Otherwise, they will be
+         * ignored and no Exchanges will be created for them.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param includeFolders the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder includeFolders(boolean includeFolders) {
+            doSetProperty("includeFolders", includeFolders);
+            return this;
+        }
+        /**
+         * If true, objects in folders will be consumed. Otherwise, they will be
+         * ignored and no Exchanges will be created for them.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param includeFolders the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder includeFolders(String includeFolders) {
+            doSetProperty("includeFolders", includeFolders);
+            return this;
+        }
+        /**
+         * The maximum number of messages to poll at each polling.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder maxMessagesPerPoll(
+                int maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * The maximum number of messages to poll at each polling.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder maxMessagesPerPoll(
+                String maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * Determines whether objects should be moved to a different bucket
+         * after they have been retrieved. The destinationBucket option must
+         * also be set for this option to work.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param moveAfterRead the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder moveAfterRead(boolean moveAfterRead) {
+            doSetProperty("moveAfterRead", moveAfterRead);
+            return this;
+        }
+        /**
+         * Determines whether objects should be moved to a different bucket
+         * after they have been retrieved. The destinationBucket option must
+         * also be set for this option to work.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param moveAfterRead the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder moveAfterRead(String moveAfterRead) {
+            doSetProperty("moveAfterRead", moveAfterRead);
+            return this;
+        }
+        /**
+         * The object name prefix used for filtering objects to be listed.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * Proxy server ip/hostname.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * Proxy authentication password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder proxyPassword(String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * Proxy server port.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder proxyPort(int proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Proxy server port.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Proxy authentication user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyUser the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder proxyUser(String proxyUser) {
+            doSetProperty("proxyUser", proxyUser);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder backoffErrorThreshold(
+                int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder backoffErrorThreshold(
+                String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder backoffIdleThreshold(
+                int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder backoffIdleThreshold(
+                String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder backoffMultiplier(
+                int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder backoffMultiplier(
+                String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder initialDelay(String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder runLoggingLevel(
+                LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder runLoggingLevel(
+                String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder scheduledExecutorService(
+                ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder scheduledExecutorService(
+                String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder schedulerProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder schedulerProperties(Map values) {
+            doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder startScheduler(boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder startScheduler(String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Authentication key for the cloud user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param authenticationKey the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder authenticationKey(
+                String authenticationKey) {
+            doSetProperty("authenticationKey", authenticationKey);
+            return this;
+        }
+        /**
+         * Ignore SSL verification.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ignoreSslVerification the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder ignoreSslVerification(
+                boolean ignoreSslVerification) {
+            doSetProperty("ignoreSslVerification", ignoreSslVerification);
+            return this;
+        }
+        /**
+         * Ignore SSL verification.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ignoreSslVerification the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder ignoreSslVerification(
+                String ignoreSslVerification) {
+            doSetProperty("ignoreSslVerification", ignoreSslVerification);
+            return this;
+        }
+        /**
+         * Secret key for the cloud user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Configuration object for cloud service authentication.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceKeys the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder serviceKeys(Object serviceKeys) {
+            doSetProperty("serviceKeys", serviceKeys);
+            return this;
+        }
+        /**
+         * Configuration object for cloud service authentication.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceKeys the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointConsumerBuilder serviceKeys(String serviceKeys) {
+            doSetProperty("serviceKeys", serviceKeys);
             return this;
         }
     }
@@ -393,6 +1083,44 @@ public interface OBSEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOBSEndpointConsumerBuilder pollStrategy(
+                PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOBSEndpointConsumerBuilder pollStrategy(
+                String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
     }
 
     /**
@@ -404,36 +1132,6 @@ public interface OBSEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedOBSEndpointProducerBuilder advanced() {
             return (AdvancedOBSEndpointProducerBuilder) this;
-        }
-        /**
-         * Authentication key for the cloud user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param authenticationKey the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder authenticationKey(
-                String authenticationKey) {
-            doSetProperty("authenticationKey", authenticationKey);
-            return this;
-        }
-        /**
-         * Location of bucket when creating a new bucket.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param bucketLocation the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder bucketLocation(String bucketLocation) {
-            doSetProperty("bucketLocation", bucketLocation);
-            return this;
         }
         /**
          * Name of bucket to perform operation on.
@@ -465,109 +1163,6 @@ public interface OBSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Ignore SSL verification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder ignoreSslVerification(
-                boolean ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Ignore SSL verification.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder ignoreSslVerification(
-                String ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Proxy server ip/hostname.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * Proxy authentication password.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPassword the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder proxyPassword(String proxyPassword) {
-            doSetProperty("proxyPassword", proxyPassword);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder proxyPort(int proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy authentication user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyUser the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder proxyUser(String proxyUser) {
-            doSetProperty("proxyUser", proxyUser);
-            return this;
-        }
-        /**
          * OBS service region. This is lower precedence than endpoint based
          * configuration.
          * 
@@ -584,48 +1179,17 @@ public interface OBSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Secret key for the cloud user.
+         * Location of bucket when creating a new bucket.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
-         * Group: common
+         * Group: producer
          * 
-         * @param secretKey the value to set
+         * @param bucketLocation the value to set
          * @return the dsl builder
          */
-        default OBSEndpointProducerBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * Configuration object for cloud service authentication.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceKeys the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder serviceKeys(Object serviceKeys) {
-            doSetProperty("serviceKeys", serviceKeys);
-            return this;
-        }
-        /**
-         * Configuration object for cloud service authentication.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceKeys the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointProducerBuilder serviceKeys(String serviceKeys) {
-            doSetProperty("serviceKeys", serviceKeys);
+        default OBSEndpointProducerBuilder bucketLocation(String bucketLocation) {
+            doSetProperty("bucketLocation", bucketLocation);
             return this;
         }
         /**
@@ -677,6 +1241,170 @@ public interface OBSEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Proxy server ip/hostname.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * Proxy authentication password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder proxyPassword(String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * Proxy server port.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder proxyPort(int proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Proxy server port.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Proxy authentication user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyUser the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder proxyUser(String proxyUser) {
+            doSetProperty("proxyUser", proxyUser);
+            return this;
+        }
+        /**
+         * Authentication key for the cloud user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param authenticationKey the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder authenticationKey(
+                String authenticationKey) {
+            doSetProperty("authenticationKey", authenticationKey);
+            return this;
+        }
+        /**
+         * Ignore SSL verification.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ignoreSslVerification the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder ignoreSslVerification(
+                boolean ignoreSslVerification) {
+            doSetProperty("ignoreSslVerification", ignoreSslVerification);
+            return this;
+        }
+        /**
+         * Ignore SSL verification.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ignoreSslVerification the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder ignoreSslVerification(
+                String ignoreSslVerification) {
+            doSetProperty("ignoreSslVerification", ignoreSslVerification);
+            return this;
+        }
+        /**
+         * Secret key for the cloud user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Configuration object for cloud service authentication.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceKeys the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder serviceKeys(Object serviceKeys) {
+            doSetProperty("serviceKeys", serviceKeys);
+            return this;
+        }
+        /**
+         * Configuration object for cloud service authentication.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceKeys the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointProducerBuilder serviceKeys(String serviceKeys) {
+            doSetProperty("serviceKeys", serviceKeys);
+            return this;
+        }
     }
 
     /**
@@ -701,35 +1429,6 @@ public interface OBSEndpointBuilderFactory {
                 OBSEndpointProducerBuilder {
         default AdvancedOBSEndpointBuilder advanced() {
             return (AdvancedOBSEndpointBuilder) this;
-        }
-        /**
-         * Authentication key for the cloud user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param authenticationKey the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointBuilder authenticationKey(String authenticationKey) {
-            doSetProperty("authenticationKey", authenticationKey);
-            return this;
-        }
-        /**
-         * Location of bucket when creating a new bucket.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param bucketLocation the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointBuilder bucketLocation(String bucketLocation) {
-            doSetProperty("bucketLocation", bucketLocation);
-            return this;
         }
         /**
          * Name of bucket to perform operation on.
@@ -761,109 +1460,6 @@ public interface OBSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Ignore SSL verification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointBuilder ignoreSslVerification(
-                boolean ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Ignore SSL verification.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ignoreSslVerification the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointBuilder ignoreSslVerification(
-                String ignoreSslVerification) {
-            doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Proxy server ip/hostname.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * Proxy authentication password.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPassword the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointBuilder proxyPassword(String proxyPassword) {
-            doSetProperty("proxyPassword", proxyPassword);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointBuilder proxyPort(int proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy server port.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy authentication user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyUser the value to set
-         * @return the dsl builder
-         */
-        default OBSEndpointBuilder proxyUser(String proxyUser) {
-            doSetProperty("proxyUser", proxyUser);
-            return this;
-        }
-        /**
          * OBS service region. This is lower precedence than endpoint based
          * configuration.
          * 
@@ -880,12 +1476,130 @@ public interface OBSEndpointBuilderFactory {
             return this;
         }
         /**
+         * Proxy server ip/hostname.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * Proxy authentication password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointBuilder proxyPassword(String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * Proxy server port.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointBuilder proxyPort(int proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Proxy server port.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Proxy authentication user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyUser the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointBuilder proxyUser(String proxyUser) {
+            doSetProperty("proxyUser", proxyUser);
+            return this;
+        }
+        /**
+         * Authentication key for the cloud user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param authenticationKey the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointBuilder authenticationKey(String authenticationKey) {
+            doSetProperty("authenticationKey", authenticationKey);
+            return this;
+        }
+        /**
+         * Ignore SSL verification.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ignoreSslVerification the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointBuilder ignoreSslVerification(
+                boolean ignoreSslVerification) {
+            doSetProperty("ignoreSslVerification", ignoreSslVerification);
+            return this;
+        }
+        /**
+         * Ignore SSL verification.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ignoreSslVerification the value to set
+         * @return the dsl builder
+         */
+        default OBSEndpointBuilder ignoreSslVerification(
+                String ignoreSslVerification) {
+            doSetProperty("ignoreSslVerification", ignoreSslVerification);
+            return this;
+        }
+        /**
          * Secret key for the cloud user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
-         * Group: common
+         * Group: security
          * 
          * @param secretKey the value to set
          * @return the dsl builder
@@ -900,7 +1614,7 @@ public interface OBSEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param serviceKeys the value to set
          * @return the dsl builder
@@ -915,7 +1629,7 @@ public interface OBSEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.huaweicloud.obs.models.ServiceKeys&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param serviceKeys the value to set
          * @return the dsl builder
