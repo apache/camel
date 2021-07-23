@@ -43,7 +43,8 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
 
     private static final String TOPIC_URI = "persistent://public/default/shared-camel-topic";
     private static final String PRODUCER = "camel-producer";
-    private static final String route2Name = "route2";
+    private static final String ROUTE_1 = "route1";
+    private static final String ROUTE_2 = "route2";
     private static final int NUMBER_OF_CONSUMERS = 1;
     private static final int NUMBER_OF_MESSAGES = 10;
 
@@ -75,8 +76,8 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
 
             @Override
             public void configure() {
-                from(from1).to(to1).process(processor);
-                from(from2).to(to2).process(processor).routeId(route2Name);
+                from(from1).to(to1).process(processor).routeId(ROUTE_1);
+                from(from2).to(to2).process(processor).routeId(ROUTE_2);
             }
         };
     }
@@ -110,7 +111,7 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
     public void testLateStartupOfSecondConsumer() throws Exception {
         // if we have 2 consumers on shared subscription, and one comes online later while there are messages pending,
         // both should handle messages
-        context().getRouteController().stopRoute(route2Name);
+        context().getRouteController().stopRoute(ROUTE_2);
 
         Producer<String> producer
                 = concurrentPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
@@ -122,11 +123,14 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
             producer.send("Hello World!");
         }
 
-        context().getRouteController().startRoute(route2Name);
+        context().getRouteController().startRoute(ROUTE_2);
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to1);
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to2);
 
         producer.close();
+
+        context().getRouteController().stopRoute(ROUTE_1);
+        context().getRouteController().stopRoute(ROUTE_2);
     }
 }

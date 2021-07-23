@@ -21,17 +21,18 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.component.pulsar.PulsarConfiguration;
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
-import org.apache.camel.component.pulsar.PulsarMessageListener;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.DeadLetterPolicy;
 import org.apache.pulsar.client.api.DeadLetterPolicy.DeadLetterPolicyBuilder;
 
-public final class CommonCreationStrategyImpl {
+public class CommonCreationStrategyImpl {
 
-    private CommonCreationStrategyImpl() {
+
+    public CommonCreationStrategyImpl() {
     }
 
-    public static ConsumerBuilder<byte[]> create(
+
+    protected static ConsumerBuilder<byte[]> getBuilder(
             final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
         final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
@@ -51,7 +52,6 @@ public final class CommonCreationStrategyImpl {
                         endpointConfiguration.getSubscriptionInitialPosition().toPulsarSubscriptionInitialPosition())
                 .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
                 .negativeAckRedeliveryDelay(endpointConfiguration.getNegativeAckRedeliveryDelayMicros(), TimeUnit.MICROSECONDS)
-                .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer))
                 .readCompacted(endpointConfiguration.isReadCompacted());
 
         if (endpointConfiguration.getMaxRedeliverCount() != null) {

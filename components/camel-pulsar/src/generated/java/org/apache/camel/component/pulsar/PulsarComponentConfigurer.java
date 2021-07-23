@@ -79,6 +79,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "negativeAckRedeliveryDelayMicros": getOrCreateConfiguration(target).setNegativeAckRedeliveryDelayMicros(property(camelContext, long.class, value)); return true;
         case "numberofconsumers":
         case "numberOfConsumers": getOrCreateConfiguration(target).setNumberOfConsumers(property(camelContext, int.class, value)); return true;
+        case "numberofconsumerthreads":
+        case "numberOfConsumerThreads": getOrCreateConfiguration(target).setNumberOfConsumerThreads(property(camelContext, int.class, value)); return true;
         case "producername":
         case "producerName": getOrCreateConfiguration(target).setProducerName(property(camelContext, java.lang.String.class, value)); return true;
         case "pulsarclient":
@@ -241,6 +243,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "negativeAckRedeliveryDelayMicros": return getOrCreateConfiguration(target).getNegativeAckRedeliveryDelayMicros();
         case "numberofconsumers":
         case "numberOfConsumers": return getOrCreateConfiguration(target).getNumberOfConsumers();
+        case "numberofconsumerthreads":
+        case "numberOfConsumerThreads": return getOrCreateConfiguration(target).getNumberOfConsumerThreads();
         case "producername":
         case "producerName": return getOrCreateConfiguration(target).getProducerName();
         case "pulsarclient":
