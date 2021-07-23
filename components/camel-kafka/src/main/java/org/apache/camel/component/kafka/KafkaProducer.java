@@ -164,7 +164,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         Object overrideTimeStamp = exchange.getIn().removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
         if (overrideTimeStamp != null && overrideTimeStamp instanceof Long) {
             LOG.debug("Using override TimeStamp: {}", overrideTimeStamp);
-            timeStamp = ((Long) overrideTimeStamp).longValue();
+            timeStamp = (Long) overrideTimeStamp;
         }
 
         // extracting headers which need to be propagated
@@ -234,7 +234,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                         if (innerMmessage.getHeader(KafkaConstants.OVERRIDE_TIMESTAMP) != null) {
                             if (innerMmessage.getHeader(KafkaConstants.OVERRIDE_TIMESTAMP) instanceof Long) {
                                 innerTimestamp
-                                        = ((Long) innerMmessage.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP)).longValue();
+                                        = (Long) innerMmessage.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
                             }
                         }
                         ex = innerExchange == null ? exchange : innerExchange;
@@ -405,7 +405,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         return answer != null ? answer : object;
     }
 
-    private final class DelegatingCallback implements Callback {
+    private static final class DelegatingCallback implements Callback {
 
         private final List<Callback> callbacks;
 

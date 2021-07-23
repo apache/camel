@@ -268,7 +268,7 @@ Complete the following steps to create a new Camel-karaf release:
   $ git checkout BRANCH_NAME
 
 . From Camel 3.3.0 ahead, the camel-karaf project uses camel-dependencies as parent.
-You'll need to set the version here https://github.com/apache/camel-karaf/blob/master/pom.xml#L26
+You'll need to set the version here https://github.com/apache/camel-karaf/blob/main/pom.xml#L26
 To the version released from the main Camel repository as first step.
   
 . Perform a license check with http://creadur.apache.org/rat/apache-rat-plugin[Apache Rat]:
@@ -281,7 +281,7 @@ To the version released from the main Camel repository as first step.
   proceeding with the next step.
 
 . You already have built the main camel repo for releasing, so you already have a final version in your local repository.
-Change the camel-version property in https://github.com/apache/camel-karaf/blob/master/pom.xml accordingly and commit.
+Change the camel-version property in https://github.com/apache/camel-karaf/blob/main/pom.xml accordingly and commit.
 
 . Do a release dry run to check for problems:
 

@@ -455,10 +455,10 @@ public class IAM2Producer extends DefaultProducer {
     private void deleteGroup(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateGroupRequest) {
+            if (payload instanceof DeleteGroupResponse) {
                 DeleteGroupResponse result;
                 try {
-                    result = iamClient.deleteGroup((DeleteGroupRequest) payload);
+                    result = iamClient.deleteGroup((DeleteGroupRequest) payload); // TODO this cast is impossible and will produce ClassCastException for non-null value
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

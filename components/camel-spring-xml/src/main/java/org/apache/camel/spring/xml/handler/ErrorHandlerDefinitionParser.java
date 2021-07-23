@@ -218,7 +218,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         }
     }
 
-    protected class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {
+    protected static class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {
 
         public RedeliveryPolicyDefinitionParser(Class<?> type) {
             super(type, false);

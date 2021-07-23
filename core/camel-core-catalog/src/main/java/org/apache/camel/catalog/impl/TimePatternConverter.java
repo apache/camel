@@ -47,7 +47,7 @@ public final class TimePatternConverter {
         if (matcher.find()) {
             // Note: This will also be used for regular numeric strings.
             //       This String -> long converter will be used for all strings.
-            milliseconds = Long.valueOf(source);
+            milliseconds = Long.parseLong(source);
         } else {
             matcher = createMatcher(HOUR_REGEX_PATTERN, source);
             if (matcher.find()) {

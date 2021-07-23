@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import java.util.concurrent.ExecutorService;
 
 import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
@@ -125,8 +126,14 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
     protected void testConnectionOnStartup() throws FailedToCreateConsumerException {
         try {
             LOG.debug("Testing JMS Connection on startup for destination: {}", getDestinationName());
-            Connection con = listenerContainer.getConnectionFactory().createConnection();
-            JmsUtils.closeConnection(con);
+            ConnectionFactory connectionfactory = listenerContainer.getConnectionFactory();
+            if (connectionfactory != null) {
+                Connection con = connectionfactory.createConnection();
+                JmsUtils.closeConnection(con);
+            } else {
+                LOG.error("connection factory is null");
+                throw new IllegalStateException("connection factory is null");
+            }
             LOG.debug("Successfully tested JMS Connection on startup for destination: {}", getDestinationName());
         } catch (Exception e) {
             String msg = "Cannot get JMS Connection on startup for destination " + getDestinationName();
@@ -142,7 +149,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         if (listenerContainer == null) {
             createMessageListenerContainer();
         }
-        getEndpoint().onListenerContainerStarting(listenerContainer);
+        getEndpoint().onListenerContainerStarting();
 
         if (getEndpoint().getConfiguration().isAsyncStartListener()) {
             getEndpoint().getAsyncStartStopExecutorService().submit(new Runnable() {
@@ -188,7 +195,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                 listenerContainer.stop();
                 listenerContainer.destroy();
             } finally {
-                getEndpoint().onListenerContainerStopped(listenerContainer);
+                getEndpoint().onListenerContainerStopped();
             }
         }
         // null container and listener so they are fully re created if this consumer is restarted

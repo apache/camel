@@ -42,6 +42,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -182,6 +183,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
                             + " with many object allocations for the JVM garbage collector.")
     protected boolean skipResponseHeaders;
+    @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
+    protected String userAgent;
 
     public HttpComponent() {
         this(HttpEndpoint.class);
@@ -360,6 +363,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         endpoint.setCopyHeaders(copyHeaders);
         endpoint.setSkipRequestHeaders(skipRequestHeaders);
         endpoint.setSkipResponseHeaders(skipResponseHeaders);
+        endpoint.setUserAgent(userAgent);
 
         // configure the endpoint with the common configuration from the component
         if (getHttpConfiguration() != null) {
@@ -908,6 +912,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     public void setSkipResponseHeaders(boolean skipResponseHeaders) {
         this.skipResponseHeaders = skipResponseHeaders;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     @Override

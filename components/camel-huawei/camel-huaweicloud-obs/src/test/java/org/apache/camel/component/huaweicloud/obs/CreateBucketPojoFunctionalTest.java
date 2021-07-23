@@ -64,7 +64,7 @@ public class CreateBucketPojoFunctionalTest extends CamelTestSupport {
     public void testCreateBucket() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:create_bucket_result");
         mock.expectedMinimumMessageCount(1);
-        // More parameters can be added to the CreateBucketRequest below. E.g. setDelimiter, setMarker, setMaxKeys, setPrefix
+        // More parameters can be added to the CreateBucketRequest below. E.g. setAcl, setAvailableZone, setBucketStorageClass
         CreateBucketRequest newBucket = new CreateBucketRequest(BUCKET_NAME, BUCKET_LOCATION);
         template.sendBody("direct:create_bucket", newBucket);
         Exchange responseExchange = mock.getExchanges().get(0);

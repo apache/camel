@@ -61,23 +61,23 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_RESOURCES_QUOTA:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
-                doListResourceQuotasByLabels(exchange, operation);
+                doListResourceQuotasByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_RESOURCE_QUOTA_OPERATION:
-                doGetResourceQuota(exchange, operation);
+                doGetResourceQuota(exchange);
                 break;
 
             case KubernetesOperations.CREATE_RESOURCE_QUOTA_OPERATION:
-                doCreateResourceQuota(exchange, operation);
+                doCreateResourceQuota(exchange);
                 break;
 
             case KubernetesOperations.DELETE_RESOURCE_QUOTA_OPERATION:
-                doDeleteResourceQuota(exchange, operation);
+                doDeleteResourceQuota(exchange);
                 break;
 
             default:
@@ -85,14 +85,14 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) {
+    protected void doList(Exchange exchange) {
         ResourceQuotaList resList = getEndpoint().getKubernetesClient().resourceQuotas().inAnyNamespace().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resList.getItems());
     }
 
-    protected void doListResourceQuotasByLabels(Exchange exchange, String operation) {
+    protected void doListResourceQuotasByLabels(Exchange exchange) {
         ResourceQuotaList resList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
@@ -117,7 +117,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         exchange.getOut().setBody(resList.getItems());
     }
 
-    protected void doGetResourceQuota(Exchange exchange, String operation) throws Exception {
+    protected void doGetResourceQuota(Exchange exchange) throws Exception {
         ResourceQuota rq = null;
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -135,7 +135,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         exchange.getOut().setBody(rq);
     }
 
-    protected void doCreateResourceQuota(Exchange exchange, String operation) throws Exception {
+    protected void doCreateResourceQuota(Exchange exchange) throws Exception {
         ResourceQuota rq = null;
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -163,7 +163,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         exchange.getOut().setBody(rq);
     }
 
-    protected void doDeleteResourceQuota(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteResourceQuota(Exchange exchange) throws Exception {
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(rqName)) {

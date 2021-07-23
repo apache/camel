@@ -60,23 +60,23 @@ public class KubernetesHPAProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_HPA:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_HPA_BY_LABELS_OPERATION:
-                doListHPAByLabel(exchange, operation);
+                doListHPAByLabel(exchange);
                 break;
 
             case KubernetesOperations.GET_HPA_OPERATION:
-                doGetHPA(exchange, operation);
+                doGetHPA(exchange);
                 break;
 
             case KubernetesOperations.CREATE_HPA_OPERATION:
-                doCreateHPA(exchange, operation);
+                doCreateHPA(exchange);
                 break;
 
             case KubernetesOperations.DELETE_HPA_OPERATION:
-                doDeleteHPA(exchange, operation);
+                doDeleteHPA(exchange);
                 break;
 
             default:
@@ -84,7 +84,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) {
+    protected void doList(Exchange exchange) {
         HorizontalPodAutoscalerList hpaList
                 = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().list();
 
@@ -92,7 +92,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         exchange.getOut().setBody(hpaList.getItems());
     }
 
-    protected void doListHPAByLabel(Exchange exchange, String operation) {
+    protected void doListHPAByLabel(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get HPA by labels require specify a labels set");
@@ -111,7 +111,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         exchange.getOut().setBody(hpaList.getItems());
     }
 
-    protected void doGetHPA(Exchange exchange, String operation) throws Exception {
+    protected void doGetHPA(Exchange exchange) throws Exception {
         HorizontalPodAutoscaler hpa = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -130,7 +130,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         exchange.getOut().setBody(hpa);
     }
 
-    protected void doCreateHPA(Exchange exchange, String operation) throws Exception {
+    protected void doCreateHPA(Exchange exchange) throws Exception {
         HorizontalPodAutoscaler hpa = null;
         String hpaName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -158,7 +158,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         exchange.getOut().setBody(hpa);
     }
 
-    protected void doDeleteHPA(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteHPA(Exchange exchange) throws Exception {
         String hpaName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(hpaName)) {

@@ -30,7 +30,6 @@ import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -694,16 +693,6 @@ public final class GenericsUtil {
             }
         }
         return genericTypes[mostSpecificIndex];
-    }
-
-    private static Class<?>[] getClassTypes(Class<?>[] rawTypes) {
-        List<Class<?>> classTypes = new ArrayList<>();
-        for (Class<?> rawType : rawTypes) {
-            if (!rawType.isInterface()) {
-                classTypes.add(rawType);
-            }
-        }
-        return classTypes.toArray(new Class[classTypes.size()]);
     }
 
     private static Type resolveTypeVariable(TypeVariable<?> variable, Type actualType, Collection<TypeVariable<?>> seen) {

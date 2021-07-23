@@ -155,10 +155,6 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
         this.preCompile = preCompile;
     }
 
-    private boolean isPreCompile() {
-        return preCompile != null && preCompile;
-    }
-
     protected void configureBuilder(XPathBuilder builder, Object[] properties) {
         Class<?> clazz = property(Class.class, properties, 0, documentType);
         if (clazz != null) {

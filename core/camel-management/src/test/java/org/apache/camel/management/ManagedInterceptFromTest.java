@@ -19,7 +19,10 @@ package org.apache.camel.management;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedInterceptFromTest extends ManagementTestSupport {
 
     @Test

@@ -44,12 +44,7 @@
             <artifactId>jackrabbit-core</artifactId>
             <version>${jackrabbit-version}</version>
         </dependency>
-        <!-- jackrabbit uses lucene 3.x -->
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>${lucene3-version}</version>
-        </dependency>
+
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>

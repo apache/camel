@@ -296,7 +296,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common,security", defaultValue = CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL)
     private String securityProtocol = CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL;
     // SASL
-    // sasl.kerberos.kinit.cmd
+    // sasl.mechanism
     @UriParam(label = "common,security", defaultValue = SaslConfigs.DEFAULT_SASL_MECHANISM)
     private String saslMechanism = SaslConfigs.DEFAULT_SASL_MECHANISM;
     // sasl.kerberos.kinit.cmd
@@ -343,6 +343,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     public KafkaConfiguration copy() {
         try {
             KafkaConfiguration copy = (KafkaConfiguration) clone();
+            copy.additionalProperties = new HashMap<>(this.additionalProperties);
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -1137,8 +1138,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * Expose the kafka sasl.jaas.config parameter Example: org.apache.kafka.common.security.plain.PlainLoginModule
      * required username="USERNAME" password="PASSWORD";
      */
-    public void setSaslJaasConfig(String saslMechanism) {
-        this.saslJaasConfig = saslMechanism;
+    public void setSaslJaasConfig(String saslJaasConfig) {
+        this.saslJaasConfig = saslJaasConfig;
     }
 
     public String getSecurityProtocol() {

@@ -101,7 +101,7 @@ with the following path and query parameters:
 
 == Example
 
-Assumed we have the following JSON Schema
+Assuming we have the following JSON Schema
 
 *myschema.json*
 
@@ -151,5 +151,9 @@ from("direct:start")
   .to("json-validator:myschema.json")
   .to("mock:end")
 ----
+
+If you use the default schema loader, it will try to determine the schema version from the $schema property and instruct the https://github.com/networknt[validator] appropriately.  If it can't find (or doesn't recognize) the $schema property, it will assume your schema is version https://json-schema.org/specification-links.html#draft-2019-09-formerly-known-as-draft-8[2019-09].
+
+If your schema is local to your application (e.g. a classpath location as opposed to URL), your schema can also contain $ref links to a relative subschema in the classpath.  Per the JSON schema spec, your schema must not have an $id identifier property for this to work properly.  See the https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/java/org/apache/camel/component/jsonvalidator/LocalRefSchemaTest.java[unit test] and https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/resources/org/apache/camel/component/jsonvalidator/Order.json[schema] for an example.
 
 include::{page-component-version}@camel-spring-boot::page$json-validator-starter.adoc[]

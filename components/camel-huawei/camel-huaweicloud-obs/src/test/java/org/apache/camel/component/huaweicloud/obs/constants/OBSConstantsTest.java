@@ -24,5 +24,7 @@ public class OBSConstantsTest {
     @Test
     public void testConstants() {
         assertEquals("cn-north-1", OBSConstants.DEFAULT_LOCATION);
+        assertEquals("folder", OBSConstants.FOLDER);
+        assertEquals("file", OBSConstants.FILE);
     }
 }

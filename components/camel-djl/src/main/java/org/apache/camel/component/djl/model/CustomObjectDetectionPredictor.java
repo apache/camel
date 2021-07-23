@@ -72,8 +72,8 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
     }
 
     public DetectedObjects classify(Model model, Translator translator, File input) throws Exception {
-        try {
-            Image image = ImageFactory.getInstance().fromInputStream(new FileInputStream(input));
+        try (InputStream fileInputStream = new FileInputStream(input)) {
+            Image image = ImageFactory.getInstance().fromInputStream(fileInputStream);
             return classify(model, translator, image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");

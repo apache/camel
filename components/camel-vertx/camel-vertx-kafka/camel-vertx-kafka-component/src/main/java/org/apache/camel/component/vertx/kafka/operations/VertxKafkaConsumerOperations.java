@@ -179,14 +179,6 @@ public class VertxKafkaConsumerOperations {
         return wrapToMono(kafkaConsumer::assign, topicPartitions);
     }
 
-    private <R> Mono<R> wrapResultToMono(final Consumer<Handler<R>> fn) {
-        return Mono.create(sink -> fn.accept(sink::success));
-    }
-
-    private <R> Mono<R> wrapToMono(final Consumer<Handler<AsyncResult<R>>> fn) {
-        return Mono.create(sink -> fn.accept(result -> wrapAsyncResult(sink, result)));
-    }
-
     private <R, V> Mono<R> wrapToMono(final BiConsumer<V, Handler<AsyncResult<R>>> fn, final V input) {
         return Mono.create(sink -> fn.accept(input, result -> wrapAsyncResult(sink, result)));
     }

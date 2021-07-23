@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.myjeeva.digitalocean.common.ResourceType;
+import com.myjeeva.digitalocean.exception.DigitalOceanException;
+import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.pojo.Action;
 import com.myjeeva.digitalocean.pojo.Actions;
 import com.myjeeva.digitalocean.pojo.Backups;
@@ -55,7 +57,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
 
         DigitalOceanOperations op = determineOperation(exchange);
         if (op != DigitalOceanOperations.create && op != DigitalOceanOperations.list
@@ -157,13 +159,13 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         }
     }
 
-    private void getDroplet(Exchange exchange) throws Exception {
+    private void getDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Droplet droplet = getEndpoint().getDigitalOceanClient().getDropletInfo(dropletId);
         LOG.trace("Droplet {}", droplet);
         exchange.getMessage().setBody(droplet);
     }
 
-    private void getDroplets(Exchange exchange) throws Exception {
+    private void getDroplets(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Droplets droplets = getEndpoint().getDigitalOceanClient().getAvailableDroplets(configuration.getPage(),
                 configuration.getPerPage());
         LOG.trace("All Droplets : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
@@ -171,7 +173,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(droplets.getDroplets());
     }
 
-    private void getDropletActions(Exchange exchange) throws Exception {
+    private void getDropletActions(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Actions actions = getEndpoint().getDigitalOceanClient().getAvailableDropletActions(dropletId, configuration.getPage(),
                 configuration.getPerPage());
         LOG.trace("Actions for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
@@ -179,7 +181,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(actions.getActions());
     }
 
-    private void getDropletKernels(Exchange exchange) throws Exception {
+    private void getDropletKernels(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Kernels kernels = getEndpoint().getDigitalOceanClient().getDropletKernels(dropletId, configuration.getPage(),
                 configuration.getPerPage());
         LOG.trace("Kernels for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
@@ -187,7 +189,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(kernels.getKernels());
     }
 
-    private void getDropletBackups(Exchange exchange) throws Exception {
+    private void getDropletBackups(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Backups backups = getEndpoint().getDigitalOceanClient().getDropletBackups(dropletId, configuration.getPage(),
                 configuration.getPerPage());
         LOG.trace("Backups for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
@@ -195,7 +197,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(backups.getBackups());
     }
 
-    private void getDropletSnapshots(Exchange exchange) throws Exception {
+    private void getDropletSnapshots(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Snapshots snapshots = getEndpoint().getDigitalOceanClient().getDropletSnapshots(dropletId, configuration.getPage(),
                 configuration.getPerPage());
         LOG.trace("Snapshots for Droplet {} : page {} / {} per page [{}] ", dropletId, configuration.getPage(),
@@ -203,26 +205,26 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(snapshots.getSnapshots());
     }
 
-    private void getDropletNeighbors(Exchange exchange) throws Exception {
+    private void getDropletNeighbors(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Droplets droplets = getEndpoint().getDigitalOceanClient().getDropletNeighbors(dropletId, configuration.getPage());
         LOG.trace("Neighbors for Droplet {} : page {} [{}] ", dropletId, configuration.getPage(), droplets.getDroplets());
         exchange.getMessage().setBody(droplets.getDroplets());
     }
 
-    private void getAllDropletNeighbors(Exchange exchange) throws Exception {
+    private void getAllDropletNeighbors(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Neighbors neighbors = getEndpoint().getDigitalOceanClient().getAllDropletNeighbors(configuration.getPage());
         LOG.trace("All Neighbors : page {} [{}] ", configuration.getPage(), neighbors.getNeighbors());
         exchange.getMessage().setBody(neighbors.getNeighbors());
     }
 
-    private void deleteDroplet(Exchange exchange) throws Exception {
+    private void deleteDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Delete delete = getEndpoint().getDigitalOceanClient().deleteDroplet(dropletId);
         LOG.trace("Delete Droplet {}", delete);
         exchange.getMessage().setBody(delete);
     }
 
     @SuppressWarnings("unchecked")
-    private void createDroplet(Exchange exchange) throws Exception {
+    private void createDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Message in = exchange.getIn();
 
         Droplet droplet = new Droplet();
@@ -292,7 +294,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
     }
 
-    private void restoreDroplet(Exchange exchange) throws Exception {
+    private void restoreDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.IMAGE_ID + " must be specified");
         }
@@ -304,7 +306,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
     }
 
-    private void resizeDroplet(Exchange exchange) throws Exception {
+    private void resizeDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.DROPLET_SIZE + " must be specified");
         }
@@ -315,7 +317,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(action);
     }
 
-    private void rebuildDroplet(Exchange exchange) throws Exception {
+    private void rebuildDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.IMAGE_ID + " must be specified");
         }
@@ -326,7 +328,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(action);
     }
 
-    private void renameDroplet(Exchange exchange) throws Exception {
+    private void renameDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
         }
@@ -337,7 +339,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(action);
     }
 
-    private void changeDropletKernel(Exchange exchange) throws Exception {
+    private void changeDropletKernel(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.KERNEL_ID + " must be specified");
         }
@@ -348,67 +350,67 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(action);
     }
 
-    private void resetDropletPassword(Exchange exchange) throws Exception {
+    private void resetDropletPassword(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().resetDropletPassword(dropletId);
         LOG.trace("Reset password Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void powerOnDroplet(Exchange exchange) throws Exception {
+    private void powerOnDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().powerOnDroplet(dropletId);
         LOG.trace("Power on Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void powerOffDroplet(Exchange exchange) throws Exception {
+    private void powerOffDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().powerOffDroplet(dropletId);
         LOG.trace("Power off Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void shutdownDroplet(Exchange exchange) throws Exception {
+    private void shutdownDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().shutdownDroplet(dropletId);
         LOG.trace("Shutdown Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void powerCycleDroplet(Exchange exchange) throws Exception {
+    private void powerCycleDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().powerCycleDroplet(dropletId);
         LOG.trace("Power cycle Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void enableDropletBackups(Exchange exchange) throws Exception {
+    private void enableDropletBackups(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().enableDropletBackups(dropletId);
         LOG.trace("Enable backups Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void disableDropletBackups(Exchange exchange) throws Exception {
+    private void disableDropletBackups(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().disableDropletBackups(dropletId);
         LOG.trace("Disable backups for Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void enableDropletIpv6(Exchange exchange) throws Exception {
+    private void enableDropletIpv6(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().enableDropletIpv6(dropletId);
         LOG.trace("Enable IP v6 for Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void enableDropletPrivateNetworking(Exchange exchange) throws Exception {
+    private void enableDropletPrivateNetworking(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().enableDropletPrivateNetworking(dropletId);
         LOG.trace("Enable private networking for Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void rebootDroplet(Exchange exchange) throws Exception {
+    private void rebootDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action = getEndpoint().getDigitalOceanClient().rebootDroplet(dropletId);
         LOG.trace("Reboot Droplet {} : [{}] ", dropletId, action);
         exchange.getMessage().setBody(action);
     }
 
-    private void takeDropletSnapshot(Exchange exchange) throws Exception {
+    private void takeDropletSnapshot(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Action action;
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
@@ -422,7 +424,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(action);
     }
 
-    private void tagDroplet(Exchange exchange) throws Exception {
+    private void tagDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
         }
@@ -434,7 +436,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         exchange.getMessage().setBody(response);
     }
 
-    private void untagDroplet(Exchange exchange) throws Exception {
+    private void untagDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
         }

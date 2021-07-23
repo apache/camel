@@ -318,10 +318,8 @@ MultiSearch on specific field(s)
 ----
 SearchRequest req = new SearchRequest();
 req.indices("twitter");
-req.types("tweet");
 SearchRequest req1 = new SearchRequest();
 req.indices("twitter");
-req.types("tweets");
 MultiSearchRequest request = new MultiSearchRequest().add(req1).add(req);
 Item[] response = template.requestBody("direct:search", request, Item[].class);
 ----

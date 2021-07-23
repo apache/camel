@@ -28,12 +28,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockComponent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * JmxInstrumentationCustomMBeanTest will verify that all endpoints are registered with the mbean server.
  */
+@DisabledOnOs(OS.AIX)
 public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDefaultsTest {
 
     @Override

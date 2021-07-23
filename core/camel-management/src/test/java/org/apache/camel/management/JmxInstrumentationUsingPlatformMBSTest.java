@@ -28,6 +28,8 @@ import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
@@ -37,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * This test verifies the system property to un-select platform mbean server.
  */
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
+@DisabledOnOs(OS.AIX)
 public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUsingPropertiesTest {
 
     @Override

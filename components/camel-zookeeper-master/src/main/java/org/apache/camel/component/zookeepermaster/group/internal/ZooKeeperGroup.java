@@ -612,7 +612,10 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
 
     private void offerOperation(Operation operation) {
         if (!operations.contains(operation)) {
-            operations.offer(operation);
+            boolean result = operations.offer(operation);
+            if (!result) {
+                LOG.error("failed to offer() an operation");
+            }
         }
         // operations.remove(operation);   // avoids herding for refresh operations
     }

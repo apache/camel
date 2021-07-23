@@ -54,7 +54,7 @@ public class RootObject {
     }
 
     public Map<String, Object> getProperties() {
-        return exchange.getProperties();
+        return exchange.getAllProperties();
     }
 
     public Object getProperty(String name) {

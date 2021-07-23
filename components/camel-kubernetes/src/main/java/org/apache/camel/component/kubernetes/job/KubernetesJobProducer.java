@@ -60,23 +60,23 @@ public class KubernetesJobProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_JOB:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_JOB_BY_LABELS_OPERATION:
-                doListJobByLabel(exchange, operation);
+                doListJobByLabel(exchange);
                 break;
 
             case KubernetesOperations.GET_JOB_OPERATION:
-                doGetJob(exchange, operation);
+                doGetJob(exchange);
                 break;
 
             case KubernetesOperations.CREATE_JOB_OPERATION:
-                doCreateJob(exchange, operation);
+                doCreateJob(exchange);
                 break;
 
             case KubernetesOperations.DELETE_JOB_OPERATION:
-                doDeleteJob(exchange, operation);
+                doDeleteJob(exchange);
                 break;
 
             default:
@@ -84,14 +84,14 @@ public class KubernetesJobProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) {
+    protected void doList(Exchange exchange) {
         JobList jobList = getEndpoint().getKubernetesClient().batch().jobs().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(jobList.getItems());
     }
 
-    protected void doListJobByLabel(Exchange exchange, String operation) {
+    protected void doListJobByLabel(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get Job by labels require specify a labels set");
@@ -108,7 +108,7 @@ public class KubernetesJobProducer extends DefaultProducer {
         exchange.getOut().setBody(jobList.getItems());
     }
 
-    protected void doGetJob(Exchange exchange, String operation) throws Exception {
+    protected void doGetJob(Exchange exchange) throws Exception {
         Job job = null;
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -126,7 +126,7 @@ public class KubernetesJobProducer extends DefaultProducer {
         exchange.getOut().setBody(job);
     }
 
-    protected void doCreateJob(Exchange exchange, String operation) throws Exception {
+    protected void doCreateJob(Exchange exchange) throws Exception {
         Job job = null;
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -152,7 +152,7 @@ public class KubernetesJobProducer extends DefaultProducer {
         exchange.getOut().setBody(job);
     }
 
-    protected void doDeleteJob(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteJob(Exchange exchange) throws Exception {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(jobName)) {

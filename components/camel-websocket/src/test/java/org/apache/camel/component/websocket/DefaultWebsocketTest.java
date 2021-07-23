@@ -82,7 +82,7 @@ public class DefaultWebsocketTest {
         defaultWebsocket.setSession(session);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(session, consumer, sync);
-        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
+        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS, null, null);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -92,7 +92,7 @@ public class DefaultWebsocketTest {
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(session, consumer, sync);
-        inOrder.verify(consumer, times(0)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
+        inOrder.verify(consumer, times(0)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS, null, null);
         inOrder.verifyNoMoreInteractions();
     }
 

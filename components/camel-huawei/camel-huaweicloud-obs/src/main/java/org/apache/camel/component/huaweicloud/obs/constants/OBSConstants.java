@@ -21,6 +21,8 @@ package org.apache.camel.component.huaweicloud.obs.constants;
  */
 public final class OBSConstants {
     public static final String DEFAULT_LOCATION = "cn-north-1";
+    public static final String FOLDER = "folder";
+    public static final String FILE = "file";
 
     private OBSConstants() {
     }

@@ -51,13 +51,13 @@ public class StaxStreamXMLReader implements XMLReader {
 
   private static final String DEFAULT_XML_VERSION = "1.0";
 
-    private static final String NAMESPACES_FEATURE_NAME = "http://xml.org/sax/features/namespaces";
+  private static final String NAMESPACES_FEATURE_NAME = "http://xml.org/sax/features/namespaces";
 
   private static final String NAMESPACE_PREFIXES_FEATURE_NAME = "http://xml.org/sax/features/namespace-prefixes";
 
   private static final String IS_STANDALONE_FEATURE_NAME = "http://xml.org/sax/features/is-standalone";
 
-    private DTDHandler dtdHandler;
+  private DTDHandler dtdHandler;
 
   private ContentHandler contentHandler;
 
@@ -147,6 +147,8 @@ public class StaxStreamXMLReader implements XMLReader {
         case XMLStreamConstants.ENTITY_REFERENCE:
           handleEntityReference();
           break;
+        default:
+          throw new IllegalStateException("unexpected eventType " + eventType);
       }
       if (reader.hasNext() && elementDepth >= 0) {
         eventType = reader.next();

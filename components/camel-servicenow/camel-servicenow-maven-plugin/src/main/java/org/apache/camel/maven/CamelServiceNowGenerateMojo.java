@@ -284,10 +284,6 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
         return result;
     }
 
-    private Optional<String> getNodeTextValue(JsonNode root, String... path) {
-        return getNode(root, path).map(JsonNode::asText);
-    }
-
     private Optional<JsonNode> getNode(JsonNode root, String... path) {
         JsonNode node = root;
         for (String name : path) {

@@ -137,3 +137,8 @@ Where the value of header "request-header" is "foo", the resulting trace from ex
 and the resulting message would contain:
 
 * Header "baggage-header" of value "foo"
+
+== MDC Logging
+When MDC Logging is enabled for the active Camel context the Trace ID and Span ID will be added and removed from the MDC for each route or processor (depending on the tracing strategy configured), the keys are `traceId` and `spanId`, respectively.
+
+If the `OpenTracingTracingStrategy` is enabled the span ID will be the one for the current processor that logs an entry, otherwise it will be the one for the current route.

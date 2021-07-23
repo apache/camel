@@ -26,9 +26,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport {
 
     private CamelContext camel1;

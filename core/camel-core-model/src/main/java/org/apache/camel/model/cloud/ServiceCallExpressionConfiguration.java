@@ -158,7 +158,7 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
         }
 
         ExpressionDefinition expressionType = getExpressionType();
-        if (expressionType != null && answer == null) {
+        if (expressionType != null) {
             return expressionType.createExpression(camelContext);
         }
 

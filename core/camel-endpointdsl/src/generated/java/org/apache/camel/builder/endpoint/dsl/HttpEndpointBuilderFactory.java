@@ -40,6 +40,39 @@ public interface HttpEndpointBuilderFactory {
             return (AdvancedHttpEndpointBuilder) this;
         }
         /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder chunked(boolean chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder chunked(String chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
          * Determines whether or not the raw input stream from Servlet is cached
          * or not (Camel will read the stream into a in memory/overflow to file,
          * Stream caching) cache. By default Camel will cache the Servlet input
@@ -172,39 +205,6 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
-            return this;
-        }
-        /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder chunked(boolean chunked) {
-            doSetProperty("chunked", chunked);
-            return this;
-        }
-        /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder chunked(String chunked) {
-            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -1221,6 +1221,20 @@ public interface HttpEndpointBuilderFactory {
         default AdvancedHttpEndpointBuilder skipResponseHeaders(
                 String skipResponseHeaders) {
             doSetProperty("skipResponseHeaders", skipResponseHeaders);
+            return this;
+        }
+        /**
+         * To set a custom HTTP User-Agent request header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param userAgent the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder userAgent(String userAgent) {
+            doSetProperty("userAgent", userAgent);
             return this;
         }
         /**

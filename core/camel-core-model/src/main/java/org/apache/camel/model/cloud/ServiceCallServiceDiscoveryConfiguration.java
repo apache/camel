@@ -127,14 +127,18 @@ public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfigu
                     return v;
                 });
 
-                // Convert properties to Map<String, String>
-                parameters.put("properties", getPropertiesAsMap(camelContext));
+                if (factory != null) {
+                    // Convert properties to Map<String, String>
+                    parameters.put("properties", getPropertiesAsMap(camelContext));
 
-                postProcessFactoryParameters(camelContext, parameters);
+                    postProcessFactoryParameters(camelContext, parameters);
 
-                PropertyBindingSupport.build().bind(camelContext, factory, parameters);
+                    PropertyBindingSupport.build().bind(camelContext, factory, parameters);
 
-                answer = factory.newInstance(camelContext);
+                    answer = factory.newInstance(camelContext);
+                } else {
+                    throw new IllegalStateException("factory is null");
+                }
             } catch (Exception e) {
                 throw new IllegalArgumentException(e);
             }

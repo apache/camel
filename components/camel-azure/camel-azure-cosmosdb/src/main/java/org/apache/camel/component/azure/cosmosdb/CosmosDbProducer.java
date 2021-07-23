@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosContainerResponse;
 import com.azure.cosmos.models.CosmosDatabaseProperties;
@@ -129,10 +128,6 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
 
     private CosmosDbConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
-    }
-
-    private CosmosAsyncClient getCosmosAsyncClient() {
-        return getEndpoint().getCosmosAsyncClient();
     }
 
     private BiConsumer<Exchange, AsyncCallback> listDatabases() {

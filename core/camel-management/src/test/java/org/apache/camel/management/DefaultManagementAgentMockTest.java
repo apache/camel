@@ -26,6 +26,8 @@ import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementAgent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
@@ -40,6 +42,7 @@ import static org.mockito.Mockito.when;
  * {@link ObjectInstance} with a different ObjectName
  */
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
+@DisabledOnOs(OS.AIX)
 public class DefaultManagementAgentMockTest {
 
     @Test

@@ -118,6 +118,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
         case "usesystemproperties":
         case "useSystemProperties": target.setUseSystemProperties(property(camelContext, boolean.class, value)); return true;
+        case "useragent":
+        case "userAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         case "x509hostnameverifier":
         case "x509HostnameVerifier": target.setX509HostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         default: return false;
@@ -224,6 +226,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transferException": return boolean.class;
         case "usesystemproperties":
         case "useSystemProperties": return boolean.class;
+        case "useragent":
+        case "userAgent": return java.lang.String.class;
         case "x509hostnameverifier":
         case "x509HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
         default: return null;
@@ -331,6 +335,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transferException": return target.isTransferException();
         case "usesystemproperties":
         case "useSystemProperties": return target.isUseSystemProperties();
+        case "useragent":
+        case "userAgent": return target.getUserAgent();
         case "x509hostnameverifier":
         case "x509HostnameVerifier": return target.getX509HostnameVerifier();
         default: return null;

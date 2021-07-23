@@ -26,6 +26,8 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Extended test to see if mbeans is removed and stats are correct
  */
+@DisabledOnOs(OS.AIX)
 public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
 
     @Override

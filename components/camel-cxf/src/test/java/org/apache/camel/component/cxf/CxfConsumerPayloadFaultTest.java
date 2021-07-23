@@ -110,6 +110,7 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
 
         assertNotNull(t);
         assertTrue(t instanceof UnknownPersonFault);
+        assertEquals(0, context.getInflightRepository().size());
 
     }
 }

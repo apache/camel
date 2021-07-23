@@ -148,6 +148,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                             + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
                             + " with many object allocations for the JVM garbage collector.")
     private boolean skipResponseHeaders;
+    @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
+    private String userAgent;
 
     public HttpEndpoint() {
     }
@@ -203,7 +205,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     /**
      * Sets a custom HttpClient to be used by the producer
      */
-    public void setHttpClient(HttpClient httpClient) {
+    public synchronized void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
@@ -248,6 +250,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         if (isAuthenticationPreemptive()) {
             // setup the PreemptiveAuthInterceptor here
             clientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
+        }
+        String userAgent = getUserAgent();
+        if (userAgent != null) {
+            clientBuilder.setUserAgent(userAgent);
         }
 
         HttpClientConfigurer configurer = getHttpClientConfigurer();
@@ -568,6 +574,17 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setSkipResponseHeaders(boolean skipResponseHeaders) {
         this.skipResponseHeaders = skipResponseHeaders;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    /**
+     * To set a custom HTTP User-Agent request header
+     */
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")

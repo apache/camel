@@ -17,6 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -648,7 +649,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     /**
      * Used for sorting the processor mbeans accordingly to their index.
      */
-    private static final class OrderProcessorMBeans implements Comparator<ManagedProcessorMBean> {
+    private static final class OrderProcessorMBeans implements Comparator<ManagedProcessorMBean>, Serializable {
 
         @Override
         public int compare(ManagedProcessorMBean o1, ManagedProcessorMBean o2) {

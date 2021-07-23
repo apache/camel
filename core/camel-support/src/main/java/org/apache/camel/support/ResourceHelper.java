@@ -25,7 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -231,23 +230,6 @@ public final class ResourceHelper {
     private static String resolveUriPath(String name) {
         // compact the path and use / as separator as that's used for loading resources on the classpath
         return FileUtil.compactPath(name, '/');
-    }
-
-    /**
-     * Tries decoding the uri.
-     *
-     * @param  uri the uri
-     * @return     the decoded uri, or the original uri
-     */
-    private static String tryDecodeUri(String uri) {
-        try {
-            // try to decode as the uri may contain %20 for spaces etc
-            uri = URLDecoder.decode(uri, "UTF-8");
-        } catch (Exception e) {
-            LOG.trace("Error URL decoding uri using UTF-8 encoding: {}. This exception is ignored.", uri);
-            // ignore
-        }
-        return uri;
     }
 
     /**

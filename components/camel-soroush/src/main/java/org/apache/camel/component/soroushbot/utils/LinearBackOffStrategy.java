@@ -19,12 +19,12 @@ package org.apache.camel.component.soroushbot.utils;
 public class LinearBackOffStrategy implements BackOffStrategy {
     Long retryWaitingTime;
     Long increment;
-    Long maxRetryWaitingTime;
+    //Long maxRetryWaitingTime;
 
     public LinearBackOffStrategy(Long retryWaitingTime, Long increment, Long maxRetryWaitingTime) {
         this.retryWaitingTime = retryWaitingTime;
         this.increment = increment;
-        this.maxRetryWaitingTime = maxRetryWaitingTime;
+        //this.maxRetryWaitingTime = maxRetryWaitingTime;
     }
 
     @Override

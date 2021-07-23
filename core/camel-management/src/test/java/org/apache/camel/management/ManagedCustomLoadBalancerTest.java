@@ -26,10 +26,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.loadbalancer.LoadBalancerSupport;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
 
     @Override
