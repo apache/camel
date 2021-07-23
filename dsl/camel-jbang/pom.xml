@@ -27,11 +27,11 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>camel-jbang</artifactId>
+    <artifactId>camel-jbang-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>Camel :: DSLs :: JBang Modules</name>
-    <description>Camel DSLs JBang Modules</description>
+    <name>Camel :: JBang :: Parent</name>
+    <description>Camel JBang Modules (parent)</description>
 
     <modules>
         <module>camel-jbang-core</module>

@@ -23,7 +23,7 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jbang</artifactId>
+        <artifactId>camel-jbang-parent</artifactId>
         <version>3.12.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -31,7 +31,7 @@
     <artifactId>camel-jbang-main</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: JBang</name>
+    <name>Camel :: JBang :: Main</name>
     <description>Camel JBang</description>
 
     <properties>
