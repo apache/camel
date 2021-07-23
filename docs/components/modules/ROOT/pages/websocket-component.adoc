@@ -21,6 +21,19 @@ http://tools.ietf.org/html/rfc6455[IETF] specification (drafts and RFC
 6455). It supports the protocols ws:// and wss://. To use wss://
 protocol, the SSLContextParameters must be defined.
 
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-websocket</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
 == URI format
 
 [source,java]
