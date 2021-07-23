@@ -20,11 +20,14 @@ import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OBSConstantsTest {
+public class OBSHeadersTest {
     @Test
-    public void testConstants() {
-        assertEquals("cn-north-1", OBSConstants.DEFAULT_LOCATION);
-        assertEquals("folder", OBSConstants.FOLDER);
-        assertEquals("file", OBSConstants.FILE);
+    public void testHeaders() {
+        assertEquals("CamelHwCloudObsBucketName", OBSHeaders.BUCKET_NAME);
+        assertEquals("CamelHwCloudObsObjectKey", OBSHeaders.OBJECT_KEY);
+        assertEquals("CamelHwCloudObsLastModified", OBSHeaders.LAST_MODIFIED);
+        assertEquals("CamelHwCloudObsETag", OBSHeaders.ETAG);
+        assertEquals("CamelHwCloudObsContentMD5", OBSHeaders.CONTENT_MD5);
+        assertEquals("CamelHwCloudObsObjectType", OBSHeaders.OBJECT_TYPE);
     }
 }

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-obs", title = "Huawei Object Storage Service (OBS)",
              syntax = "hwcloud-obs:operation",
              category = { Category.CLOUD })
-public class OBSEndpoint extends DefaultEndpoint {
+public class OBSEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
     @Metadata(required = true)
@@ -54,36 +54,39 @@ public class OBSEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String endpoint;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host")
+    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", label = "proxy")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port")
+    @UriParam(description = "Proxy server port", displayName = "Proxy server port", label = "proxy")
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", secret = true)
+    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", secret = true, label = "proxy")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true)
+    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true, label = "proxy")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", defaultValue = "false")
+    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", defaultValue = "false",
+              label = "security")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true)
+              secret = true, label = "security")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Authentication key for the cloud user", displayName = "API authentication key (AK)", secret = true)
+    @UriParam(description = "Authentication key for the cloud user", displayName = "API authentication key (AK)", secret = true,
+              label = "security")
     @Metadata(required = true)
     private String authenticationKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true)
+    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true,
+              label = "security")
     @Metadata(required = true)
     private String secretKey;
 
@@ -91,11 +94,51 @@ public class OBSEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String bucketName;
 
-    @UriParam(description = "Location of bucket when creating a new bucket", displayName = "Bucket Location")
+    @UriParam(description = "Location of bucket when creating a new bucket", displayName = "Bucket Location",
+              label = "producer")
     @Metadata(required = false)
     private String bucketLocation;
 
     private ObsClient obsClient;
+
+    @UriParam(description = "Determines whether objects should be moved to a different bucket after they have been retrieved. The destinationBucket option must also be set for this option to work.",
+              displayName = "Move After Read", defaultValue = "false", label = "consumer")
+    @Metadata(required = false)
+    private boolean moveAfterRead;
+
+    @UriParam(description = "Name of destination bucket where objects will be moved when moveAfterRead is set to true",
+              displayName = "Destination Bucket", label = "consumer")
+    @Metadata(required = false)
+    private String destinationBucket;
+
+    @UriParam(description = "Get the object from the bucket with the given file name", displayName = "File Name",
+              label = "consumer")
+    @Metadata(required = false)
+    private String fileName;
+
+    @UriParam(description = "The object name prefix used for filtering objects to be listed", displayName = "Prefix",
+              label = "consumer")
+    @Metadata(required = false)
+    private String prefix;
+
+    @UriParam(description = "The character used for grouping object names", displayName = "Delimiter", label = "consumer")
+    @Metadata(required = false)
+    private String delimiter;
+
+    @UriParam(description = "If true, objects in folders will be consumed. Otherwise, they will be ignored and no Exchanges will be created for them",
+              displayName = "Include Folders", defaultValue = "true", label = "consumer")
+    @Metadata(required = false)
+    private boolean includeFolders = true;
+
+    @UriParam(description = "Determines if objects should be deleted after it has been retrieved",
+              displayName = "Delete after read", defaultValue = "false", label = "consumer")
+    @Metadata(required = false)
+    private boolean deleteAfterRead;
+
+    @UriParam(description = "The maximum number of messages to poll at each polling", displayName = "Maximum messages per poll",
+              defaultValue = "10", label = "consumer")
+    @Metadata(required = false)
+    private int maxMessagesPerPoll = 10;
 
     public OBSEndpoint() {
     }
@@ -110,7 +153,10 @@ public class OBSEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
+        OBSConsumer consumer = new OBSConsumer(this, processor);
+        configureConsumer(consumer);
+        consumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
+        return consumer;
     }
 
     public String getOperation() {
@@ -223,6 +269,70 @@ public class OBSEndpoint extends DefaultEndpoint {
 
     public void setObsClient(ObsClient obsClient) {
         this.obsClient = obsClient;
+    }
+
+    public boolean isMoveAfterRead() {
+        return moveAfterRead;
+    }
+
+    public void setMoveAfterRead(boolean moveAfterRead) {
+        this.moveAfterRead = moveAfterRead;
+    }
+
+    public String getDestinationBucket() {
+        return destinationBucket;
+    }
+
+    public void setDestinationBucket(String destinationBucket) {
+        this.destinationBucket = destinationBucket;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    public boolean isIncludeFolders() {
+        return includeFolders;
+    }
+
+    public void setIncludeFolders(boolean includeFolders) {
+        this.includeFolders = includeFolders;
+    }
+
+    public boolean isDeleteAfterRead() {
+        return deleteAfterRead;
+    }
+
+    public void setDeleteAfterRead(boolean deleteAfterRead) {
+        this.deleteAfterRead = deleteAfterRead;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
     /**

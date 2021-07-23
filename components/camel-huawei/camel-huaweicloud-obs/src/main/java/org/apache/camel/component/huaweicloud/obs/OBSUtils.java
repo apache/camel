@@ -14,17 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.obs.constants;
+package org.apache.camel.component.huaweicloud.obs;
 
-import org.junit.Test;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.camel.util.IOHelper;
 
-public class OBSConstantsTest {
-    @Test
-    public void testConstants() {
-        assertEquals("cn-north-1", OBSConstants.DEFAULT_LOCATION);
-        assertEquals("folder", OBSConstants.FOLDER);
-        assertEquals("file", OBSConstants.FILE);
+public final class OBSUtils {
+    private OBSUtils() {
+    }
+
+    /**
+     * Convert input stream to a byte array
+     *
+     * @param  stream
+     * @return
+     * @throws IOException
+     */
+    public static byte[] toBytes(InputStream stream) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        IOHelper.copy(IOHelper.buffered(stream), bos);
+        return bos.toByteArray();
     }
 }
