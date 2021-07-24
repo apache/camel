@@ -540,13 +540,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 Exchange exchange = pair.getExchange();
                 int index = nbExchangeSent.getAndIncrement();
                 updateNewExchange(exchange, index, pairs, hasNext);
-
-                // Schedule the processing of the next pair
-                if (hasNext) {
-                    if (isParallelProcessing()) {
-                        schedule(this);
-                    }
-                } else {
+                if (!hasNext) {
                     allSent.set(true);
                 }
 
@@ -592,12 +586,15 @@ public class MulticastProcessor extends AsyncProcessorSupport
                         }
                     });
                 });
+                // after submitting this pair then move on to the next pair (if in parallel mode)
+                if (hasNext && isParallelProcessing()) {
+                    schedule(this);
+                }
             } catch (Exception e) {
                 original.setException(e);
                 doDone(null, false);
             }
         }
-
     }
 
     /**
@@ -655,13 +652,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             Exchange exchange = pair.getExchange();
             int index = nbExchangeSent.getAndIncrement();
             updateNewExchange(exchange, index, pairs, hasNext);
-
-            // Schedule the processing of the next pair
-            if (hasNext) {
-                if (isParallelProcessing()) {
-                    schedule(this);
-                }
-            } else {
+            if (!hasNext) {
                 allSent.set(true);
             }
 
@@ -710,6 +701,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 // aggregate exchanges if any
                 aggregate();
             });
+
+            // after submitting this pair then move on to the next pair (if in parallel mode)
+            if (hasNext && isParallelProcessing()) {
+                schedule(this);
+            }
 
             // next step
             boolean next = hasNext && !isParallelProcessing();
