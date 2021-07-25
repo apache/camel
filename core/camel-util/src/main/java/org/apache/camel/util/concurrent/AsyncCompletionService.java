@@ -24,6 +24,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
+/**
+ * A completion service that orders the completed tasks in the same order as they where submitted.
+ */
 public class AsyncCompletionService<V> {
 
     private final Executor executor;
