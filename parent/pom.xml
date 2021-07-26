@@ -403,7 +403,7 @@
         <mongo-java-driver-version>4.1.0</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msv-version>2013.6.1</msv-version>
-        <mustache-java-version>0.9.7</mustache-java-version>
+        <mustache-java-version>0.9.10</mustache-java-version>
         <mvel-version>2.4.12.Final</mvel-version>
         <mybatis-version>3.5.7</mybatis-version>
         <narayana-version>5.11.0.Final</narayana-version>
