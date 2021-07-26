@@ -112,7 +112,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                                   String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy,
                                   boolean useOriginalBodyPolicy,
                                   Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor,
-                                  Processor onExceptionProcessor) {
+                                  Processor onExceptionProcessor, ExceptionPolicyStrategy exceptionPolicyStrategy) {
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
@@ -159,6 +159,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
+        }
+
+        if (exceptionPolicyStrategy != null) {
+            this.exceptionPolicy = exceptionPolicyStrategy;
         }
     }
 

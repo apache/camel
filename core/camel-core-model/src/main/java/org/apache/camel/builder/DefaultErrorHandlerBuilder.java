@@ -26,6 +26,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerConfiguration;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
+import org.apache.camel.processor.errorhandler.DefaultExceptionPolicyStrategy;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Language;
@@ -498,6 +500,27 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
      */
     public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
         configuration.setRedeliveryPolicy(redeliveryPolicy);
+    }
+
+    @Override
+    public boolean hasExceptionPolicyStrategy() {
+        return configuration.getExceptionPolicyStrategy() != null;
+    }
+
+    @Override
+    public ExceptionPolicyStrategy getDefaultExceptionPolicyStrategy() {
+        return DefaultExceptionPolicyStrategy.INSTANCE;
+    }
+
+    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
+        if (configuration.getExceptionPolicyStrategy() == null) {
+            configuration.setExceptionPolicyStrategy(getDefaultExceptionPolicyStrategy());
+        }
+        return configuration.getExceptionPolicyStrategy();
+    }
+
+    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        configuration.setExceptionPolicyStrategy(exceptionPolicyStrategy);
     }
 
     @Override

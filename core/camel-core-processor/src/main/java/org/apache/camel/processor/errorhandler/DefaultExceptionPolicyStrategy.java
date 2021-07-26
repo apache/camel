@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * for more fine grained matching, so you can e.g. define multiple sets of exception types with the same exception
  * class(es) but have a predicate attached to select which to select at runtime.
  */
-public final class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
+public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     // thread safe so we can use a shared instance
     public static final DefaultExceptionPolicyStrategy INSTANCE = new DefaultExceptionPolicyStrategy();
