@@ -4,8 +4,11 @@ package org.apache.camel.component.pulsar;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 /**
@@ -68,16 +71,18 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "maxPendingMessagesAcrossPartitions": getOrCreateConfiguration(target).setMaxPendingMessagesAcrossPartitions(property(camelContext, int.class, value)); return true;
         case "maxredelivercount":
         case "maxRedeliverCount": getOrCreateConfiguration(target).setMaxRedeliverCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "messagelistener":
+        case "messageListener": getOrCreateConfiguration(target).setMessageListener(property(camelContext, boolean.class, value)); return true;
         case "messagerouter":
         case "messageRouter": getOrCreateConfiguration(target).setMessageRouter(property(camelContext, org.apache.pulsar.client.api.MessageRouter.class, value)); return true;
         case "messageroutingmode":
         case "messageRoutingMode": getOrCreateConfiguration(target).setMessageRoutingMode(property(camelContext, org.apache.pulsar.client.api.MessageRoutingMode.class, value)); return true;
         case "negativeackredeliverydelaymicros":
         case "negativeAckRedeliveryDelayMicros": getOrCreateConfiguration(target).setNegativeAckRedeliveryDelayMicros(property(camelContext, long.class, value)); return true;
-        case "numberofconsumers":
-        case "numberOfConsumers": getOrCreateConfiguration(target).setNumberOfConsumers(property(camelContext, int.class, value)); return true;
         case "numberofconsumerthreads":
         case "numberOfConsumerThreads": getOrCreateConfiguration(target).setNumberOfConsumerThreads(property(camelContext, int.class, value)); return true;
+        case "numberofconsumers":
+        case "numberOfConsumers": getOrCreateConfiguration(target).setNumberOfConsumers(property(camelContext, int.class, value)); return true;
         case "producername":
         case "producerName": getOrCreateConfiguration(target).setProducerName(property(camelContext, java.lang.String.class, value)); return true;
         case "pulsarclient":
@@ -98,8 +103,6 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionType": getOrCreateConfiguration(target).setSubscriptionType(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class, value)); return true;
         case "topicspattern":
         case "topicsPattern": getOrCreateConfiguration(target).setTopicsPattern(property(camelContext, boolean.class, value)); return true;
-        case "messagelistener":
-        case "messageListener": getOrCreateConfiguration(target).setMessageListener(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -155,12 +158,16 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "maxPendingMessagesAcrossPartitions": return int.class;
         case "maxredelivercount":
         case "maxRedeliverCount": return java.lang.Integer.class;
+        case "messagelistener":
+        case "messageListener": return boolean.class;
         case "messagerouter":
         case "messageRouter": return org.apache.pulsar.client.api.MessageRouter.class;
         case "messageroutingmode":
         case "messageRoutingMode": return org.apache.pulsar.client.api.MessageRoutingMode.class;
         case "negativeackredeliverydelaymicros":
         case "negativeAckRedeliveryDelayMicros": return long.class;
+        case "numberofconsumerthreads":
+        case "numberOfConsumerThreads": return int.class;
         case "numberofconsumers":
         case "numberOfConsumers": return int.class;
         case "producername":
@@ -234,16 +241,18 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "maxPendingMessagesAcrossPartitions": return getOrCreateConfiguration(target).getMaxPendingMessagesAcrossPartitions();
         case "maxredelivercount":
         case "maxRedeliverCount": return getOrCreateConfiguration(target).getMaxRedeliverCount();
+        case "messagelistener":
+        case "messageListener": return getOrCreateConfiguration(target).isMessageListener();
         case "messagerouter":
         case "messageRouter": return getOrCreateConfiguration(target).getMessageRouter();
         case "messageroutingmode":
         case "messageRoutingMode": return getOrCreateConfiguration(target).getMessageRoutingMode();
         case "negativeackredeliverydelaymicros":
         case "negativeAckRedeliveryDelayMicros": return getOrCreateConfiguration(target).getNegativeAckRedeliveryDelayMicros();
-        case "numberofconsumers":
-        case "numberOfConsumers": return getOrCreateConfiguration(target).getNumberOfConsumers();
         case "numberofconsumerthreads":
         case "numberOfConsumerThreads": return getOrCreateConfiguration(target).getNumberOfConsumerThreads();
+        case "numberofconsumers":
+        case "numberOfConsumers": return getOrCreateConfiguration(target).getNumberOfConsumers();
         case "producername":
         case "producerName": return getOrCreateConfiguration(target).getProducerName();
         case "pulsarclient":
@@ -264,8 +273,6 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionType": return getOrCreateConfiguration(target).getSubscriptionType();
         case "topicspattern":
         case "topicsPattern": return getOrCreateConfiguration(target).isTopicsPattern();
-        case "messagelistener":
-        case "messageListener": return getOrCreateConfiguration(target).isMessageListener();
         default: return null;
         }
     }

@@ -34,7 +34,7 @@ public final class PulsarUtils {
     }
 
     public static Queue<ExecutorService> stopExecutors(final Queue<ExecutorService> executors) {
-        for (ExecutorService executor: executors) {
+        for (ExecutorService executor : executors) {
             executor.shutdownNow();
             try {
                 if (!executor.awaitTermination(500, TimeUnit.MILLISECONDS)) {

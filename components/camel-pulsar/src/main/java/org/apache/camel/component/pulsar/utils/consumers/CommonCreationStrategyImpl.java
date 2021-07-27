@@ -26,12 +26,10 @@ import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.DeadLetterPolicy;
 import org.apache.pulsar.client.api.DeadLetterPolicy.DeadLetterPolicyBuilder;
 
-public class CommonCreationStrategyImpl {
+public final class CommonCreationStrategyImpl {
 
-
-    public CommonCreationStrategyImpl() {
+    private CommonCreationStrategyImpl() {
     }
-
 
     protected static ConsumerBuilder<byte[]> getBuilder(
             final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {

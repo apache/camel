@@ -90,7 +90,8 @@ public class PulsarConsumer extends DefaultConsumer {
         return strategy.create(endpoint);
     }
 
-    private Collection<ExecutorService> subscribeWithThreadPool(Collection<Consumer<byte[]>> consumers, PulsarEndpoint endpoint) throws Exception {
+    private Collection<ExecutorService> subscribeWithThreadPool(Collection<Consumer<byte[]>> consumers, PulsarEndpoint endpoint)
+            throws Exception {
         int numThreads = endpoint.getPulsarConfiguration().getNumberOfConsumerThreads();
         return consumers.stream().map(consumer -> {
             ExecutorService executor = Executors.newFixedThreadPool(numThreads);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.pulsar.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -35,8 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.TimeUnit;
-
 public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarSharedSubscriptionMessageDistributionIT.class);
@@ -48,12 +48,12 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
     private static final int NUMBER_OF_CONSUMERS = 1;
     private static final int NUMBER_OF_MESSAGES = 10;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers="+ NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=" + NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer1-&messageListener=false&numberOfConsumerThreads=2")
     private Endpoint from1;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers="+ NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer2-&messageListener=false&numberOfConsumerThreads=2")
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=" + NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer2-&messageListener=false&numberOfConsumerThreads=2")
     private Endpoint from2;
 
     @EndpointInject("mock:result1")
@@ -68,8 +68,9 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
 
             Processor processor = new Processor() {
                 @Override
-                public void process(final Exchange exchange)  {
-                    LOGGER.info("Processing message {} on Thread {}", exchange.getIn().getHeader("message_id"), Thread.currentThread());
+                public void process(final Exchange exchange) {
+                    LOGGER.info("Processing message {} on Thread {}", exchange.getIn().getHeader("message_id"),
+                            Thread.currentThread());
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
