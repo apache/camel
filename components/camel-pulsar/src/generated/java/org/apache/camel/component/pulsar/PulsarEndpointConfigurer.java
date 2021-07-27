@@ -63,6 +63,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxPendingMessagesAcrossPartitions": target.getPulsarConfiguration().setMaxPendingMessagesAcrossPartitions(property(camelContext, int.class, value)); return true;
         case "maxredelivercount":
         case "maxRedeliverCount": target.getPulsarConfiguration().setMaxRedeliverCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "messagelistener":
+        case "messageListener": target.getPulsarConfiguration().setMessageListener(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "messagerouter":
         case "messageRouter": target.getPulsarConfiguration().setMessageRouter(property(camelContext, org.apache.pulsar.client.api.MessageRouter.class, value)); return true;
         case "messageroutingmode":
@@ -71,6 +73,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "negativeAckRedeliveryDelayMicros": target.getPulsarConfiguration().setNegativeAckRedeliveryDelayMicros(property(camelContext, long.class, value)); return true;
         case "numberofconsumers":
         case "numberOfConsumers": target.getPulsarConfiguration().setNumberOfConsumers(property(camelContext, int.class, value)); return true;
+        case "numberofconsumerthreads":
+        case "numberOfConsumerThreads": target.getPulsarConfiguration().setNumberOfConsumerThreads(property(camelContext, int.class, value)); return true;
         case "producername":
         case "producerName": target.getPulsarConfiguration().setProducerName(property(camelContext, java.lang.String.class, value)); return true;
         case "readcompacted":
@@ -136,6 +140,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxPendingMessagesAcrossPartitions": return int.class;
         case "maxredelivercount":
         case "maxRedeliverCount": return java.lang.Integer.class;
+        case "messagelistener":
+        case "messageListener": return java.lang.Boolean.class;
         case "messagerouter":
         case "messageRouter": return org.apache.pulsar.client.api.MessageRouter.class;
         case "messageroutingmode":
@@ -144,6 +150,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "negativeAckRedeliveryDelayMicros": return long.class;
         case "numberofconsumers":
         case "numberOfConsumers": return int.class;
+        case "numberofconsumerthreads":
+        case "numberOfConsumerThreads": return int.class;
         case "producername":
         case "producerName": return java.lang.String.class;
         case "readcompacted":
@@ -210,6 +218,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxPendingMessagesAcrossPartitions": return target.getPulsarConfiguration().getMaxPendingMessagesAcrossPartitions();
         case "maxredelivercount":
         case "maxRedeliverCount": return target.getPulsarConfiguration().getMaxRedeliverCount();
+        case "messagelistener":
+        case "messageListener": return target.getPulsarConfiguration().isMessageListener();
         case "messagerouter":
         case "messageRouter": return target.getPulsarConfiguration().getMessageRouter();
         case "messageroutingmode":
@@ -218,6 +228,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "negativeAckRedeliveryDelayMicros": return target.getPulsarConfiguration().getNegativeAckRedeliveryDelayMicros();
         case "numberofconsumers":
         case "numberOfConsumers": return target.getPulsarConfiguration().getNumberOfConsumers();
+        case "numberofconsumerthreads":
+        case "numberOfConsumerThreads": return target.getPulsarConfiguration().getNumberOfConsumers();
         case "producername":
         case "producerName": return target.getPulsarConfiguration().getProducerName();
         case "readcompacted":

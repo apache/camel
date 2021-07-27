@@ -38,6 +38,8 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
         props.add("batcherBuilder");
         props.add("blockIfQueueFull");
         props.add("numberOfConsumers");
+        props.add("messageListener");
+        props.add("numberOfConsumerThreads");
         props.add("batchingMaxPublishDelayMicros");
         props.add("subscriptionTopicsMode");
         props.add("producerName");

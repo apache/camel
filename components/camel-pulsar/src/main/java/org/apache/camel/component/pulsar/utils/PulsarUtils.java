@@ -18,6 +18,8 @@ package org.apache.camel.component.pulsar.utils;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -29,6 +31,20 @@ public final class PulsarUtils {
     private static final Logger LOG = LoggerFactory.getLogger(PulsarUtils.class);
 
     private PulsarUtils() {
+    }
+
+    public static Queue<ExecutorService> stopExecutors(final Queue<ExecutorService> executors) {
+        for (ExecutorService executor: executors) {
+            executor.shutdownNow();
+            try {
+                if (!executor.awaitTermination(500, TimeUnit.MILLISECONDS)) {
+                    LOG.error("Timeout waiting for executor to terminate");
+                }
+            } catch (InterruptedException e) {
+                LOG.error("Exception awaiting termination", e);
+            }
+        }
+        return new ConcurrentLinkedQueue<>();
     }
 
     public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers) throws PulsarClientException {

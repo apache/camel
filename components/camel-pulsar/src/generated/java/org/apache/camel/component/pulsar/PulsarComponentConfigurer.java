@@ -4,11 +4,8 @@ package org.apache.camel.component.pulsar;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
-import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 /**
@@ -101,6 +98,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionType": getOrCreateConfiguration(target).setSubscriptionType(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class, value)); return true;
         case "topicspattern":
         case "topicsPattern": getOrCreateConfiguration(target).setTopicsPattern(property(camelContext, boolean.class, value)); return true;
+        case "messagelistener":
+        case "messageListener": getOrCreateConfiguration(target).setMessageListener(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -265,6 +264,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionType": return getOrCreateConfiguration(target).getSubscriptionType();
         case "topicspattern":
         case "topicsPattern": return getOrCreateConfiguration(target).isTopicsPattern();
+        case "messagelistener":
+        case "messageListener": return getOrCreateConfiguration(target).isMessageListener();
         default: return null;
         }
     }

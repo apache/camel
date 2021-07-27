@@ -49,11 +49,11 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
     private static final int NUMBER_OF_MESSAGES = 10;
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers="+ NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer1-")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer1-&messageListener=false&numberOfConsumerThreads=2")
     private Endpoint from1;
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers="+ NUMBER_OF_CONSUMERS + "&subscriptionType=Shared"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer2-")
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer2-&messageListener=false&numberOfConsumerThreads=2")
     private Endpoint from2;
 
     @EndpointInject("mock:result1")
@@ -68,9 +68,14 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
 
             Processor processor = new Processor() {
                 @Override
-                public void process(final Exchange exchange) throws InterruptedException {
+                public void process(final Exchange exchange)  {
                     LOGGER.info("Processing message {} on Thread {}", exchange.getIn().getHeader("message_id"), Thread.currentThread());
-                    Thread.sleep(1000);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        LOGGER.info("Propagating interrupt");
+                        Thread.currentThread().interrupt();
+                    }
                 }
             };
 
@@ -108,7 +113,7 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
     }
 
     @Test
-    public void testLateStartupOfSecondConsumer() throws Exception {
+    public void testLateStartupOfSecondConsumerUsingReceiveLoop() throws Exception {
         // if we have 2 consumers on shared subscription, and one comes online later while there are messages pending,
         // both should handle messages
         context().getRouteController().stopRoute(ROUTE_2);
@@ -127,8 +132,6 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to1);
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to2);
-
-        producer.close();
 
         context().getRouteController().stopRoute(ROUTE_1);
         context().getRouteController().stopRoute(ROUTE_2);

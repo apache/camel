@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopExecutors;
 
 public class PulsarConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumer.class);
@@ -42,7 +43,7 @@ public class PulsarConsumer extends DefaultConsumer {
     private final ConsumerCreationStrategyFactory consumerCreationStrategyFactory;
 
     private Queue<Consumer<byte[]>> pulsarConsumers;
-    private final Queue<ExecutorService> executors;
+    private Queue<ExecutorService> executors;
 
     public PulsarConsumer(PulsarEndpoint pulsarEndpoint, Processor processor) {
         super(pulsarEndpoint, processor);
@@ -57,22 +58,22 @@ public class PulsarConsumer extends DefaultConsumer {
         pulsarConsumers = stopConsumers(pulsarConsumers);
 
         Collection<Consumer<byte[]>> consumers = createConsumers(pulsarEndpoint, consumerCreationStrategyFactory);
-        executors.addAll(subscribe(consumers, pulsarEndpoint));
+        if (!pulsarEndpoint.getPulsarConfiguration().isMessageListener()) {
+            executors.addAll(subscribeWithThreadPool(consumers, pulsarEndpoint));
+        }
         pulsarConsumers.addAll(consumers);
     }
 
     @Override
     protected void doStop() throws PulsarClientException {
-        executors.forEach(ExecutorService::shutdownNow);
+        executors = stopExecutors(executors);
         pulsarConsumers = stopConsumers(pulsarConsumers);
-        executors.clear();
     }
 
     @Override
     protected void doSuspend() throws PulsarClientException {
-        executors.forEach(ExecutorService::shutdownNow);
+        executors = stopExecutors(executors);
         pulsarConsumers = stopConsumers(pulsarConsumers);
-        executors.clear();
     }
 
     @Override
@@ -89,7 +90,7 @@ public class PulsarConsumer extends DefaultConsumer {
         return strategy.create(endpoint);
     }
 
-    private Collection<ExecutorService> subscribe(Collection<Consumer<byte[]>> consumers, PulsarEndpoint endpoint) throws Exception {
+    private Collection<ExecutorService> subscribeWithThreadPool(Collection<Consumer<byte[]>> consumers, PulsarEndpoint endpoint) throws Exception {
         int numThreads = endpoint.getPulsarConfiguration().getNumberOfConsumerThreads();
         return consumers.stream().map(consumer -> {
             ExecutorService executor = Executors.newFixedThreadPool(numThreads);
@@ -98,14 +99,15 @@ public class PulsarConsumer extends DefaultConsumer {
                     PulsarMessageListener listener = new PulsarMessageListener(endpoint, this);
                     while (true) {
                         try {
-                            if (Thread.currentThread().isInterrupted()) {
-                                LOGGER.info("Received shutdown, exiting");
-                                break;
-                            }
                             Message<byte[]> msg = consumer.receive();
                             listener.received(consumer, msg);
                         } catch (PulsarClientException e) {
-                            LOGGER.error("Encountered exception", e);
+                            if (e.getCause() instanceof InterruptedException) {
+                                // propagate interrupt
+                                LOGGER.info("Received shutdown signal, exiting");
+                                break;
+                            }
+                            LOGGER.error("Encountered exception while receiving message", e);
                         }
                     }
                 });
