@@ -17,12 +17,11 @@
 
 package org.apache.camel.dsl.jbang.core.common.exceptions;
 
-import java.io.File;
-
 import org.apache.camel.CamelException;
+import org.apache.camel.spi.Resource;
 
-public class ResourceAlreadyExists extends CamelException {
-    public ResourceAlreadyExists(File resource) {
-        super("The destination file already exists: " + resource.getAbsolutePath());
+public class ResourceDoesNotExist extends CamelException {
+    public ResourceDoesNotExist(Resource resource) {
+        super("The resource does not exist at " + resource.getLocation());
     }
 }
