@@ -48,6 +48,7 @@ import org.apache.camel.dsl.jbang.core.commands.AbstractInitKamelet;
 import org.apache.camel.dsl.jbang.core.commands.AbstractSearch;
 import org.apache.camel.dsl.jbang.core.common.MatchExtractor;
 import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceAlreadyExists;
+import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceDoesNotExist;
 import org.apache.camel.dsl.jbang.core.components.ComponentConverter;
 import org.apache.camel.dsl.jbang.core.components.ComponentDescriptionMatching;
 import org.apache.camel.dsl.jbang.core.components.ComponentPrinter;
@@ -127,7 +128,7 @@ class Run implements Callable<Integer> {
         for (File lockFile : lockFiles) {
             System.out.println("Removing file " + lockFile);
             if (!lockFile.delete()) {
-                System.out.println("Failed to remove lock file " + lockFile);
+                System.err.println("Failed to remove lock file " + lockFile);
             }
         }
 
@@ -202,6 +203,7 @@ class Search extends AbstractSearch implements Callable<Integer> {
     }
 
     public void printHeader() {
+        // NO-OP
     }
 
     @Override
@@ -233,10 +235,6 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    SearchKamelets() {
-        super(PATTERN);
-    }
-
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "KAMELET", "DESCRIPTION", "LINK");
@@ -251,15 +249,13 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
 
         if (searchTerm.isEmpty()) {
             matchExtractor = new MatchExtractor<>(PATTERN, new KameletConverter(), new KameletPrinter());
-
-            search(matchExtractor);
         } else {
             matchExtractor = new MatchExtractor<>(
                     PATTERN, new KameletConverter(),
                     new KameletDescriptionMatching(searchTerm));
-
-            search(matchExtractor);
         }
+
+        search(matchExtractor);
 
         return 0;
     }
@@ -286,10 +282,6 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    SearchComponents() {
-        super(PATTERN);
-    }
-
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "COMPONENT", "DESCRIPTION", "LINK");
@@ -310,9 +302,14 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
                     new ComponentDescriptionMatching(searchTerm));
 
         }
-        search(matchExtractor);
 
-        return 0;
+        try {
+            search(matchExtractor);
+            return 0;
+        } catch (ResourceDoesNotExist e) {
+            System.err.println(e.getMessage());
+            return 1;
+        }
     }
 }
 
@@ -336,10 +333,6 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    SearchLanguages() {
-        super(PATTERN);
-    }
-
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "LANGUAGE", "DESCRIPTION", "LINK");
@@ -360,9 +353,13 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
                     new LanguageDescriptionMatching(searchTerm));
 
         }
-        search(matchExtractor);
-
-        return 0;
+        try {
+            search(matchExtractor);
+            return 0;
+        } catch (ResourceDoesNotExist e) {
+            System.err.println(e.getMessage());
+            return 1;
+        }
     }
 }
 
@@ -386,10 +383,6 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    SearchOthers() {
-        super(PATTERN);
-    }
-
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "COMPONENT", "DESCRIPTION", "LINK");
@@ -410,9 +403,14 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
                     new OtherDescriptionMatching(searchTerm));
 
         }
-        search(matchExtractor);
 
-        return 0;
+        try {
+            search(matchExtractor);
+            return 0;
+        } catch (ResourceDoesNotExist e) {
+            System.err.println(e.getMessage());
+            return 1;
+        }
     }
 }
 

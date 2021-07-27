@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.api.Extractor;
+import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceDoesNotExist;
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.spi.Resource;
@@ -33,30 +34,20 @@ import org.apache.commons.io.IOUtils;
 
 public abstract class AbstractSearch {
     private String resourceLocation;
-    private Pattern pattern;
 
     // Only used for the search subcommand
     protected AbstractSearch() {
     }
 
-    public AbstractSearch(Pattern pattern) {
-        this.pattern = pattern;
-    }
-
     public AbstractSearch(String resourceLocation, Pattern pattern) {
         this.resourceLocation = resourceLocation;
-        this.pattern = pattern;
     }
 
     protected void setResourceLocation(String baseResourceLocation, String resourcePath) {
         this.resourceLocation = baseResourceLocation + ":" + resourcePath;
     }
 
-    protected void setPattern(Pattern pattern) {
-        this.pattern = pattern;
-    }
-
-    protected void downloadResource(File indexFile) throws Exception {
+    protected void downloadResource(File indexFile) throws ResourceDoesNotExist, IOException {
         KameletMain main = new KameletMain();
         main.start();
         CamelContext context = main.getCamelContext();
@@ -67,7 +58,7 @@ public abstract class AbstractSearch {
             Resource resource = resolver.resolve(resourceLocation);
 
             if (!resource.exists()) {
-                throw new Exception("The resource does not exist");
+                throw new ResourceDoesNotExist(resource);
             }
 
             try (FileOutputStream fo = new FileOutputStream(indexFile)) {
@@ -96,7 +87,7 @@ public abstract class AbstractSearch {
 
     public abstract void printHeader();
 
-    public void search(Extractor extractor) throws Exception {
+    public void search(Extractor extractor) throws ResourceDoesNotExist, IOException {
         File indexFile = getIndexFile();
 
         printHeader();
@@ -104,7 +95,7 @@ public abstract class AbstractSearch {
         readFileByLine(indexFile, extractor);
     }
 
-    private File getIndexFile() throws Exception {
+    private File getIndexFile() throws ResourceDoesNotExist, IOException {
         File indexFile = new File("index");
         indexFile.deleteOnExit();
 
