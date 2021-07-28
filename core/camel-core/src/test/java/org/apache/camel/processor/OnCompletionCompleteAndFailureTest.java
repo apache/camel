@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionCompleteAndFailureTest extends ContextTestSupport {
 
@@ -31,7 +30,7 @@ public class OnCompletionCompleteAndFailureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInvalid() throws Exception {
+    public void testMultipleRouteOnComplete() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -39,10 +38,11 @@ public class OnCompletionCompleteAndFailureTest extends ContextTestSupport {
                     from("direct:start")
                             .onCompletion().onCompleteOnly().to("mock:ok").end()
                             .onCompletion().onFailureOnly().to("mock:error").end()
+                            .onCompletion().to("mock:all").end()
                             .to("mock:result");
                 }
             });
-            fail("Should throw exception");
+            //fail("Should throw exception"); Now allowed: CAMEL-16374
         } catch (IllegalArgumentException e) {
             assertEquals("Only 1 onCompletion is allowed per route.", e.getMessage());
         }

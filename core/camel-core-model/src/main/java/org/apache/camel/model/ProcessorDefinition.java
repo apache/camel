@@ -3574,15 +3574,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
 
-        Collection<OnCompletionDefinition> col
-                = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), OnCompletionDefinition.class);
-        // check if there is a clash
-        for (OnCompletionDefinition ocd : col) {
-            if (ocd.isRouteScoped()) {
-                throw new IllegalArgumentException("Only 1 onCompletion is allowed per route.");
-            }
-        }
-        // remove all on completions as they would be global scoped and we add a route scoped which
+        // remove all on completions if they are global scoped and we add a route scoped which
         // should override the global
         answer.removeAllOnCompletionDefinition(this);
 
