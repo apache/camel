@@ -14,32 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote.integration;
+package org.apache.camel.processor.aggregator;
 
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
+import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 
-/**
- * Test the ftps component over SSL (implicit) without client authentication
- */
-@EnabledIf(value = "org.apache.camel.component.file.remote.services.FtpsEmbeddedService#hasRequiredAlgorithms")
-public class FileToFtpsImplicitSSLWithoutClientAuthIT extends FtpsServerImplicitSSLWithoutClientAuthTestSupport {
+public class AggregateStrategyRefTest extends ContextTestSupport {
 
-    protected String getFtpUrl() {
-        return "ftps://admin@localhost:{{ftp.server.port}}"
-               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
-               + "&securityProtocol=SSLv3&implicit=true&delete=true";
-    }
-
-    @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")
     @Test
-    public void testFromFileToFtp() throws Exception {
+    public void testAggregateExpressionSize() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("A+A", "B+B", "Z");
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+        template.sendBody("direct:start", "A");
+        template.sendBody("direct:start", "B");
+        template.sendBody("direct:start", "A");
+        template.sendBody("direct:start", "B");
+        // send the last one with the batch size property
+        template.sendBodyAndProperty("direct:start", "Z", Exchange.BATCH_SIZE, 5);
 
         assertMockEndpointsSatisfied();
     }
@@ -47,10 +43,14 @@ public class FileToFtpsImplicitSSLWithoutClientAuthIT extends FtpsServerImplicit
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("file:src/main/data?noop=true").log("Got ${file:name}").to(getFtpUrl());
+                context.getRegistry().bind("myStrategy", new BodyInAggregatingStrategy());
 
-                from(getFtpUrl()).to("mock:result");
+                // START SNIPPET: e1
+                from("direct:start").aggregate(body()).aggregationStrategyRef("myStrategy").completionFromBatchConsumer()
+                        .to("mock:result");
+                // END SNIPPET: e1
             }
         };
     }

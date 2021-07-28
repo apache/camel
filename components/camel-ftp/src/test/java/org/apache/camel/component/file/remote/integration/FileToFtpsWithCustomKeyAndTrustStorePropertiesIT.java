@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -36,6 +37,7 @@ public class FileToFtpsWithCustomKeyAndTrustStorePropertiesIT extends FtpsServer
                + "&ftpClient.trustStore.algorithm=SunX509&ftpClient.trustStore.password=password&delete=true";
     }
 
+    @Disabled
     @Test
     public void testFromFileToFtp() throws Exception {
 

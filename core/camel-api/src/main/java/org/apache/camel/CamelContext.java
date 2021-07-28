@@ -385,7 +385,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return a readonly list with the names of the components
      */
-    List<String> getComponentNames();
+    Set<String> getComponentNames();
 
     /**
      * Removes a previously added component.
@@ -776,7 +776,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @deprecated not in use
      */
     @Deprecated
-    List<String> getLanguageNames();
+    Set<String> getLanguageNames();
 
     /**
      * Creates a new {@link ProducerTemplate} which is <b>started</b> and therefore ready to use right away.

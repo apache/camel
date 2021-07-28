@@ -66,7 +66,7 @@
     <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.1.0</awaitility-version>
-    <aws-java-sdk2-version>2.17.3</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.6</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -173,7 +173,7 @@
     <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
     <djl-version>0.11.0</djl-version>
     <dnsjava-version>3.4.0</dnsjava-version>
-    <docker-java-version>3.2.10</docker-java-version>
+    <docker-java-version>3.2.11</docker-java-version>
     <dozer-version>6.5.2</dozer-version>
     <dropbox-version>3.2.0</dropbox-version>
     <eddsa-version>0.3.0</eddsa-version>
@@ -306,7 +306,7 @@
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
     <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
-    <jbpm-version>7.56.0.Final</jbpm-version>
+    <jbpm-version>7.57.0.Final</jbpm-version>
     <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
     <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
     <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
@@ -369,7 +369,7 @@
     <leveldb-guava-version>21.0</leveldb-guava-version>
     <leveldb-version>0.12</leveldb-version>
     <leveldbjni-version>1.8</leveldbjni-version>
-    <libphonenumber-version>8.12.26</libphonenumber-version>
+    <libphonenumber-version>8.12.28</libphonenumber-version>
     <libthrift-version>0.12.0</libthrift-version>
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lightcouch-version>0.2.0</lightcouch-version>
@@ -403,7 +403,7 @@
     <micrometer-version>1.7.0</micrometer-version>
     <microprofile-config-version>2.0</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
-    <microprofile-health-version>3.0</microprofile-health-version>
+    <microprofile-health-version>3.1</microprofile-health-version>
     <microprofile-metrics-version>3.0</microprofile-metrics-version>
     <milo-guava-version>26.0-jre</milo-guava-version>
     <milo-version>0.3.7</milo-version>
@@ -418,7 +418,7 @@
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mongo-java-driver-version>4.1.0</mongo-java-driver-version>
     <msv-version>2013.6.1</msv-version>
-    <mustache-java-version>0.9.7</mustache-java-version>
+    <mustache-java-version>0.9.10</mustache-java-version>
     <mvel-version>2.4.12.Final</mvel-version>
     <mybatis-version>3.5.7</mybatis-version>
     <narayana-version>5.11.0.Final</narayana-version>
@@ -439,7 +439,7 @@
     <openjpa-version>3.2.0</openjpa-version>
     <openstack4j-version>3.8</openstack4j-version>
     <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
-    <opentelemetry-version>1.3.0</opentelemetry-version>
+    <opentelemetry-version>1.4.1</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
@@ -500,9 +500,9 @@
     <slf4j-api-version>1.7.30</slf4j-api-version>
     <slf4j-version>1.7.30</slf4j-version>
     <smack-version>4.3.5</smack-version>
-    <smallrye-config-version>2.3.0</smallrye-config-version>
-    <smallrye-fault-tolerance-version>5.1.0</smallrye-fault-tolerance-version>
-    <smallrye-health-version>3.0.2</smallrye-health-version>
+    <smallrye-config-version>2.4.2</smallrye-config-version>
+    <smallrye-fault-tolerance-version>5.2.1</smallrye-fault-tolerance-version>
+    <smallrye-health-version>3.1.1</smallrye-health-version>
     <smallrye-metrics-version>3.0.3</smallrye-metrics-version>
     <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
     <snakeyaml-version>1.29</snakeyaml-version>
@@ -547,7 +547,7 @@
     <vavr-version>0.10.2</vavr-version>
     <velocity-tools-version>3.1</velocity-tools-version>
     <velocity-version>2.3</velocity-version>
-    <vertx-version>4.1.1</vertx-version>
+    <vertx-version>4.1.2</vertx-version>
     <vysper-version>0.7</vysper-version>
     <web3j-quorum-version>0.8.0</web3j-quorum-version>
     <web3j-version>3.6.0</web3j-version>

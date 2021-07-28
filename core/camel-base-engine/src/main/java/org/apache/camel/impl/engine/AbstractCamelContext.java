@@ -2891,8 +2891,8 @@ public abstract class AbstractCamelContext extends BaseService
         // output how many instances of the same component class are in use, as multiple instances is potential a mistake
         if (LOG.isInfoEnabled()) {
             Map<Class<?>, Set<String>> counters = new LinkedHashMap<>();
-            List<String> cnames = getComponentNames();
-            Collections.sort(cnames);
+            // use TreeSet to sort the names
+            Set<String> cnames = new TreeSet<>(getComponentNames());
             for (String sourceName : cnames) {
                 Class<?> source = getComponent(sourceName).getClass();
                 if (!counters.containsKey(source)) {
@@ -3885,13 +3885,13 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public List<String> getComponentNames() {
-        return new ArrayList<>(components.keySet());
+    public Set<String> getComponentNames() {
+        return Collections.unmodifiableSet(components.keySet());
     }
 
     @Override
-    public List<String> getLanguageNames() {
-        return new ArrayList<>(languages.keySet());
+    public Set<String> getLanguageNames() {
+        return Collections.unmodifiableSet(languages.keySet());
     }
 
     @Override

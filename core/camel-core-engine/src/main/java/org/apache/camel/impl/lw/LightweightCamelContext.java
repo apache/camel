@@ -446,7 +446,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public List<String> getComponentNames() {
+    public Set<String> getComponentNames() {
         return delegate.getComponentNames();
     }
 
@@ -658,7 +658,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
 
     @Override
     @Deprecated
-    public List<String> getLanguageNames() {
+    public Set<String> getLanguageNames() {
         return delegate.getLanguageNames();
     }
 

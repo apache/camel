@@ -89,6 +89,12 @@
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-engine-core</artifactId>
+            <version>${velocity-version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -125,6 +131,9 @@
                                     <include name="**/*.java"/>
                                 </replace>
                                 <replace token="${camel.jbang.picocli.version}" value="${picocli-version}" dir="${dist.dir}">
+                                    <include name="**/*.java"/>
+                                </replace>
+                                <replace token="${camel.jbang.velocity.version}" value="${velocity-version}" dir="${dist.dir}">
                                     <include name="**/*.java"/>
                                 </replace>
                                 <chmod file="${dist.dir}/*.java" perm="u+x" />

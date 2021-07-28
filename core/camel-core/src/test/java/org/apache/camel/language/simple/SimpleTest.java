@@ -640,7 +640,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${id}", exchange.getIn().getMessageId());
 
         assertEquals(1, context.getLanguageNames().size());
-        assertEquals("simple", context.getLanguageNames().get(0));
+        assertEquals("simple", context.getLanguageNames().iterator().next());
     }
 
     @Test

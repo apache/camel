@@ -249,7 +249,7 @@ If you want to delete the file after processing, the route should be:
 
 [source,java]
 ----
-from("file://inobox?delete=true").to("bean:handleOrder");
+from("file://inbox?delete=true").to("bean:handleOrder");
 ----
 
 We have introduced a *pre* move operation to move files *before* they
