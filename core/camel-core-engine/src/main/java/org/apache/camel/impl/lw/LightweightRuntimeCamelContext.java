@@ -743,8 +743,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public List<String> getComponentNames() {
-        return new ArrayList<>(components.keySet());
+    public Set<String> getComponentNames() {
+        return Collections.unmodifiableSet(components.keySet());
     }
 
     @Override
@@ -952,7 +952,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public List<String> getLanguageNames() {
+    public Set<String> getLanguageNames() {
         throw new UnsupportedOperationException();
     }
 

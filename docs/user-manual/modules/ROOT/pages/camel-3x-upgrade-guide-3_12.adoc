@@ -6,6 +6,11 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.11 to 3.12
 
+=== API changes
+
+The method `getComponentNames` and `getLanguageNames` on `CamelContext` has changed to
+return `Set<String>` instead of `List<String>`.
+
 === Data Formats
 
 The `camel-asn1` data format has renamed the option `clazzName` to `unmarshalType`.
