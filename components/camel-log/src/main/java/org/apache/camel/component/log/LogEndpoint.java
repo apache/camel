@@ -229,7 +229,7 @@ public class LogEndpoint extends ProcessorEndpoint {
         // setup a new logger here
         CamelLogger camelLogger;
         LoggingLevel loggingLevel = LoggingLevel.INFO;
-        if (level != null) {
+        if (level != null && !level.equals("INFO")) {
             loggingLevel = LoggingLevel.valueOf(level);
         }
         if (providedLogger == null) {
