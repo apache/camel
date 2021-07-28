@@ -31,6 +31,8 @@ import io.smallrye.health.SmallRyeHealth;
 import io.smallrye.health.SmallRyeHealthReporter;
 import io.smallrye.health.registry.LivenessHealthRegistry;
 import io.smallrye.health.registry.ReadinessHealthRegistry;
+import io.smallrye.health.registry.StartupHealthRegistry;
+import io.smallrye.health.registry.WellnessHealthRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -58,6 +60,10 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
                 new LivenessHealthRegistry());
         ReflectionHelper.setField(reporter.getClass().getDeclaredField("readinessHealthRegistry"), reporter,
                 new ReadinessHealthRegistry());
+        ReflectionHelper.setField(reporter.getClass().getDeclaredField("wellnessHealthRegistry"), reporter,
+                new WellnessHealthRegistry());
+        ReflectionHelper.setField(reporter.getClass().getDeclaredField("startupHealthRegistry"), reporter,
+                new StartupHealthRegistry());
         ReflectionHelper.setField(reporter.getClass().getDeclaredField("timeoutSeconds"), reporter, 60);
     }
 
