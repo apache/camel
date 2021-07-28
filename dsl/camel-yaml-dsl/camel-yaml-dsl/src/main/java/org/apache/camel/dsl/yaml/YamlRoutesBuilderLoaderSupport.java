@@ -77,10 +77,12 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
 
         if (this.deserializationMode == null) {
             final Map<String, String> options = getCamelContext().getGlobalOptions();
-            final String mode = options.getOrDefault(DESERIALIZATION_MODE, YamlDeserializationMode.FLOW.name());
+            final String mode = options.get(DESERIALIZATION_MODE);
             if (mode != null) {
                 this.deserializationContext.setDeserializationMode(
                         YamlDeserializationMode.valueOf(mode.toUpperCase(Locale.US)));
+            } else {
+                this.deserializationContext.setDeserializationMode(YamlDeserializationMode.FLOW);
             }
         } else {
             this.deserializationContext.setDeserializationMode(deserializationMode);
