@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Processor;
@@ -66,13 +65,13 @@ public class PulsarConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws PulsarClientException {
-        executors = stopExecutors(executors);
+        executors = stopExecutors(pulsarEndpoint.getCamelContext().getExecutorServiceManager(), executors);
         pulsarConsumers = stopConsumers(pulsarConsumers);
     }
 
     @Override
     protected void doSuspend() throws PulsarClientException {
-        executors = stopExecutors(executors);
+        executors = stopExecutors(pulsarEndpoint.getCamelContext().getExecutorServiceManager(), executors);
         pulsarConsumers = stopConsumers(pulsarConsumers);
     }
 
@@ -90,31 +89,47 @@ public class PulsarConsumer extends DefaultConsumer {
         return strategy.create(endpoint);
     }
 
-    private Collection<ExecutorService> subscribeWithThreadPool(Collection<Consumer<byte[]>> consumers, PulsarEndpoint endpoint)
-            throws Exception {
+    private Collection<ExecutorService> subscribeWithThreadPool(
+            Collection<Consumer<byte[]>> consumers, PulsarEndpoint endpoint) {
         int numThreads = endpoint.getPulsarConfiguration().getNumberOfConsumerThreads();
         return consumers.stream().map(consumer -> {
-            ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+            ExecutorService executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                    "pulsar-consumer", numThreads);
             for (int i = 0; i < numThreads; i++) {
-                executor.submit(() -> {
-                    PulsarMessageListener listener = new PulsarMessageListener(endpoint, this);
-                    while (true) {
-                        try {
-                            Message<byte[]> msg = consumer.receive();
-                            listener.received(consumer, msg);
-                        } catch (PulsarClientException e) {
-                            if (e.getCause() instanceof InterruptedException) {
-                                // propagate interrupt
-                                LOGGER.info("Received shutdown signal, exiting");
-                                break;
-                            }
-                            LOGGER.error("Encountered exception while receiving message", e);
-                        }
-                    }
-                });
+                executor.submit(new PulsarConsumerLoop(endpoint, consumer));
             }
             return executor;
         }).collect(Collectors.toList());
     }
 
+    private class PulsarConsumerLoop implements Runnable {
+
+        private final PulsarEndpoint endpoint;
+        private final Consumer<byte[]> consumer;
+
+        public PulsarConsumerLoop(PulsarEndpoint endpoint, Consumer<byte[]> consumer) {
+            this.endpoint = endpoint;
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void run() {
+            PulsarMessageListener listener = new PulsarMessageListener(endpoint, PulsarConsumer.this);
+            while (true) {
+                try {
+                    Message<byte[]> msg = consumer.receive();
+                    listener.received(consumer, msg);
+                } catch (PulsarClientException e) {
+                    if (e.getCause() instanceof InterruptedException) {
+                        // this means that our executor is shutting down
+                        LOGGER.info("Received shutdown signal, exiting");
+                        break;
+                    }
+                    endpoint.getExceptionHandler().handleException(e);
+                } catch (Exception e) {
+                    endpoint.getExceptionHandler().handleException(e);
+                }
+            }
+        }
+    }
 }

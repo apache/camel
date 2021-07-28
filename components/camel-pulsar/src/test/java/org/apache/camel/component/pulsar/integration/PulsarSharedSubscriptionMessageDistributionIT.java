@@ -136,5 +136,7 @@ public class PulsarSharedSubscriptionMessageDistributionIT extends PulsarITSuppo
 
         context().getRouteController().stopRoute(ROUTE_1);
         context().getRouteController().stopRoute(ROUTE_2);
+
+        producer.close();
     }
 }

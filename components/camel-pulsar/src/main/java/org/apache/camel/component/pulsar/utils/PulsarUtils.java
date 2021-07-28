@@ -19,8 +19,8 @@ package org.apache.camel.component.pulsar.utils;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
@@ -33,16 +33,10 @@ public final class PulsarUtils {
     private PulsarUtils() {
     }
 
-    public static Queue<ExecutorService> stopExecutors(final Queue<ExecutorService> executors) {
+    public static Queue<ExecutorService> stopExecutors(
+            final ExecutorServiceManager executorServiceManager, final Queue<ExecutorService> executors) {
         for (ExecutorService executor : executors) {
-            executor.shutdownNow();
-            try {
-                if (!executor.awaitTermination(500, TimeUnit.MILLISECONDS)) {
-                    LOG.error("Timeout waiting for executor to terminate");
-                }
-            } catch (InterruptedException e) {
-                LOG.error("Exception awaiting termination", e);
-            }
+            executorServiceManager.shutdownGraceful(executor, 500);
         }
         return new ConcurrentLinkedQueue<>();
     }
