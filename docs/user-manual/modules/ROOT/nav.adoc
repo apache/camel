@@ -4,6 +4,7 @@
 * Resources & Guides
 ** link:/community/books/[Books]
 ** xref:building.adoc[Building]
+** xref:camel-jbang.adoc[Camel JBang]
 ** xref:camel-jar-dependencies.adoc[Camel JAR Dependencies]
 ** xref:camel-boot.adoc[Camel Boot]
 ** xref:camel-maven-plugin.adoc[Camel Maven Plugin]
