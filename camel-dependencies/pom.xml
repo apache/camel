@@ -173,7 +173,7 @@
     <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
     <djl-version>0.11.0</djl-version>
     <dnsjava-version>3.4.0</dnsjava-version>
-    <docker-java-version>3.2.10</docker-java-version>
+    <docker-java-version>3.2.11</docker-java-version>
     <dozer-version>6.5.2</dozer-version>
     <dropbox-version>3.2.0</dropbox-version>
     <eddsa-version>0.3.0</eddsa-version>
