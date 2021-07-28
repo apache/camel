@@ -148,6 +148,30 @@ If any of the above properties are set, they will override their corresponding q
 
 |=======================================================================
 
+=== Message headers set by the OBS consumer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelHwCloudObsBucketName` |`String` | Name of the bucket where object is contained
+
+|`CamelHwCloudObsObjectKey` |`String` | The key that the object is stored under
+
+|`CamelHwCloudObsLastModified` |`String` | The date and time that the object was last modified
+
+|`Content-Length` |`String` | The size of the object body in bytes
+
+|`Content-Type` |`String` | The type of content stored in the object
+
+|`CamelHwCloudObsETag` |`String` | The 128-bit MD5 digest of the Base64 code of the object. This data is the unique identifier of the object content
+
+|`CamelHwCloudObsContentMD5` |`String` | The 128-bit Base64-encoded digest used to decrypt the object
+
+|`CamelHwCloudObsObjectType` |`String` | Shows whether the object is a `file` or a `folder`
+
+|=======================================================================
+
 
 == List of Supported OBS Operations
 
