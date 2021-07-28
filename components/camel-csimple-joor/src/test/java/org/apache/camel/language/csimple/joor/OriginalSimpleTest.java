@@ -680,8 +680,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${id}", exchange.getIn().getMessageId());
 
         assertEquals(2, context.getLanguageNames().size());
-        assertEquals("csimple", context.getLanguageNames().get(0));
-        assertEquals("simple", context.getLanguageNames().get(1));
+        Iterator<String> it = context.getLanguageNames().iterator();
+        assertEquals("csimple", it.next());
+        assertEquals("simple", it.next());
     }
 
     @Test
