@@ -72,12 +72,39 @@ public class OnCompletionMoreGlobalRouteCompletionTest extends ContextTestSuppor
         getMockEndpoint("mock:failure").expectedMessageCount(0);
         getMockEndpoint("mock:two").expectedMessageCount(0);
         getMockEndpoint("mock:sync").expectedMessageCount(0);
-        getMockEndpoint("mock:route").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:routeComplete").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:routeFailure").expectedMessageCount(0);
+        getMockEndpoint("mock:routeAll").expectedBodiesReceived("Bye World");
 
         MockEndpoint mock = getMockEndpoint("mock:other");
         mock.expectedBodiesReceived("Bye World");
 
         template.sendBody("direct:other", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testSynchronizeOtherFailure() throws Exception {
+        // The global onComplete cases should not be invoked
+        getMockEndpoint("mock:complete").expectedMessageCount(0);
+        getMockEndpoint("mock:failure").expectedMessageCount(0);
+        getMockEndpoint("mock:two").expectedMessageCount(0);
+        getMockEndpoint("mock:sync").expectedMessageCount(0);
+        // The onComplete cases on the route for any outcome and for failure should be invoked
+        getMockEndpoint("mock:routeComplete").expectedMessageCount(0);
+        getMockEndpoint("mock:routeFailure").expectedMessageCount(1);
+        getMockEndpoint("mock:routeAll").expectedMessageCount(1);
+
+        MockEndpoint mock = getMockEndpoint("mock:other");
+        mock.expectedMessageCount(0);
+
+        try {
+            template.sendBody("direct:other", "Kabom");
+            fail("Should throw exception");
+        } catch (CamelExecutionException e) {
+            assertEquals("Kabom", e.getCause().getMessage());
+        }
 
         assertMockEndpointsSatisfied();
     }
@@ -99,8 +126,11 @@ public class OnCompletionMoreGlobalRouteCompletionTest extends ContextTestSuppor
                         .process(new MyProcessor()).to("mock:result");
 
                 from("direct:other")
-                        // this route completion should override the global
-                        .onCompletion().to("mock:route").end().process(new MyProcessor()).to("mock:other");
+                        // these route completions should override the global
+                        .onCompletion().onCompleteOnly().to("mock:routeComplete").end()
+                        .onCompletion().onFailureOnly().to("mock:routeFailure").end()
+                        .onCompletion().to("mock:routeAll").end()
+                        .process(new MyProcessor()).to("mock:other");
             }
         };
     }

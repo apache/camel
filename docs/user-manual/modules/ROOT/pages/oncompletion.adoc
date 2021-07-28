@@ -39,18 +39,18 @@ headers, or send to a log to log the response message, etc.
 == onCompletion with route scope
 
 The *onCompletion* DSL allows you to add custom routes/processors when
-the original Exchange is complete. Camel spin-off a
+the original Exchange is complete. Camel spins off a
 copy of the Exchange and routes it in a separate
-thread, kinda like a Wire Tap. This allows the
+thread, similar to a Wire Tap. This allows the
 original thread to continue while the *onCompletion* route is running
-concurrently. We decided for this model as we did not want the
+concurrently. We chose this model as we did not want the
 *onCompletion* route to interfere with the original route.
 
-*Only 1 onCompletion supported by route scope*
+*Multiple onCompletions allowed at both route and global scope*
 
-You can only have 1 onCompletion in a route. Only at context scoped
-level you can have multiple. And notice that when you use a route scoped
-onCompletion then any context scoped are disabled for that given route.
+You may define multiple onCompletions at both context and route scope.
+When you define route scoped
+onCompletions then any context scoped are disabled for that given route.
 
 [source,java]
 -----------------------------------------------------------
@@ -79,8 +79,12 @@ from("direct:start")
     // here we qualify onCompletion to only invoke when the exchange failed (exception or FAULT body)
     .onCompletion().onFailureOnly()
         .to("log:sync")
-        .to("mock:sync")
+        .to("mock:syncFail")
     // must use end to denote the end of the onCompletion route
+    .end()    
+    .onCompletion().onCompleteOnly()
+        .to("log:sync")
+        .to("mock:syncOK")
     .end()
     // here the original route continues
     .process(new MyProcessor())
