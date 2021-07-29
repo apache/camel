@@ -208,7 +208,7 @@
         <google-cloud-functions-gax-grpc-version>1.62.0</google-cloud-functions-gax-grpc-version>
         <google-cloud-guava-version>30.0-jre</google-cloud-guava-version>
         <google-mail-guava-version>17.0</google-mail-guava-version>
-        <graaljs-version>21.0.0.2</graaljs-version>
+        <graaljs-version>21.1.0</graaljs-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
         <grpc-version>1.38.0</grpc-version>
