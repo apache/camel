@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.undertow.cloud;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -28,19 +32,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowServiceCallRouteTest extends CamelTestSupport {
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(true);
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
+        return context;
+    }
+
     @Test
     public void testCustomCall() throws Exception {
+        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+
         assertEquals("8081", template.requestBody("direct:custom", "hello", String.class));
         assertEquals("8082", template.requestBody("direct:custom", "hello", String.class));
+
+        // should not use reflection
+        assertEquals(0, bi.getInvokedCounter());
     }
 
     @Test
     public void testDefaultSchema() throws Exception {
+        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+
         try {
             assertEquals("8081", template.requestBody("direct:default", "hello", String.class));
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof ResolveEndpointFailedException);
         }
+
+        // should not use reflection
+        assertEquals(0, bi.getInvokedCounter());
     }
 
     @Override
