@@ -87,6 +87,27 @@
                                 <class>org.apache.camel.model.FaultToleranceConfigurationDefinition</class>
                                 <class>org.apache.camel.model.Resilience4jConfigurationDefinition</class>
                                 <class>org.apache.camel.model.HystrixConfigurationDefinition</class>
+                                <class>org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration</class>
+                                <class>org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration</class>
+                                <class>org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration</class>
+                                <class>org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration</class>
+                                <class>org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration</class>
+                                <class>org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration</class>
+                                <class>org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration</class>
+                                <class>org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration</class>
+                                <class>org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration</class>
+                                <class>org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration</class>
+                                <class>org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration</class>
+                                <class>org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration</class>
+                                <class>org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration</class>
+                                <class>org.apache.camel.model.cloud.ServiceCallConfiguration</class>
+                                <class>org.apache.camel.model.cloud.ServiceCallExpressionConfiguration</class>
+                                <class>org.apache.camel.model.cloud.ServiceCallServiceChooserConfiguration</class>
+                                <class>org.apache.camel.model.cloud.ServiceCallServiceDiscoveryConfiguration</class>
+                                <class>org.apache.camel.model.cloud.ServiceCallServiceFilterConfiguration</class>
+                                <class>org.apache.camel.model.cloud.ServiceCallServiceLoadBalancerConfiguration</class>
+                                <class>org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration</class>
+                                <class>org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration</class>
                             </classes>
                         </configuration>
                     </execution>

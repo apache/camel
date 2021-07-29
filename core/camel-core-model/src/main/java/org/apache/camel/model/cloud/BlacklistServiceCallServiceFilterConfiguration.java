@@ -28,12 +28,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 @Metadata(label = "routing,cloud,service-filter")
 @XmlRootElement(name = "blacklistServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
 public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     @XmlElement
     private List<String> servers;

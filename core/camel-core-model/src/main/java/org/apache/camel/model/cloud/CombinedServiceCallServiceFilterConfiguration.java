@@ -28,11 +28,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceFilter;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,service-filter")
 @XmlRootElement(name = "combinedServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
 public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     @XmlElements({
             @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),

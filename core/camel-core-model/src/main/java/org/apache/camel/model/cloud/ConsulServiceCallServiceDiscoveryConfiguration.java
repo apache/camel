@@ -22,12 +22,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "consulServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
 public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     private String url;

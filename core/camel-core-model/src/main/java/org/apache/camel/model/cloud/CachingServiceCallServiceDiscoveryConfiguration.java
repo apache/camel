@@ -27,11 +27,13 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "cachingServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
 public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     @Metadata(defaultValue = "60", javaType = "java.lang.Integer")
