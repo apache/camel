@@ -71,6 +71,12 @@ public class PulsarConfiguration implements Cloneable {
     @UriParam(label = "consumer",
               description = "Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ")
     private String deadLetterTopic;
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether to use the `messageListener` interface, or to receive messages using a separate thread pool")
+    private boolean messageListener = true;
+    @UriParam(label = "consumer", defaultValue = "1",
+              description = "Number of threads to receive and handle messages when using a separate thread pool")
+    private int numberOfConsumerThreads = 1;
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
     @UriParam(label = "producer",
@@ -457,5 +463,24 @@ public class PulsarConfiguration implements Cloneable {
 
     public void setDeadLetterTopic(String deadLetterTopic) {
         this.deadLetterTopic = deadLetterTopic;
+    }
+
+    public boolean isMessageListener() {
+        return messageListener;
+    }
+
+    public void setMessageListener(boolean messageListener) {
+        this.messageListener = messageListener;
+    }
+
+    public int getNumberOfConsumerThreads() {
+        return numberOfConsumerThreads;
+    }
+
+    /**
+     * Number of consumers threads - defaults to 1
+     */
+    public void setNumberOfConsumerThreads(int numberOfConsumerThreads) {
+        this.numberOfConsumerThreads = numberOfConsumerThreads;
     }
 }

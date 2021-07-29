@@ -38,7 +38,7 @@ pulsar:[persistent|non-persistent]://tenant/namespace/topic
 
 
 // component options: START
-The Pulsar component supports 36 options, which are listed below.
+The Pulsar component supports 38 options, which are listed below.
 
 
 
@@ -55,8 +55,10 @@ The Pulsar component supports 36 options, which are listed below.
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
 | *deadLetterTopic* (consumer) | Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ |  | String
 | *maxRedeliverCount* (consumer) | Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created |  | Integer
+| *messageListener* (consumer) | Whether to use the messageListener interface, or to receive messages using a separate thread pool | true | boolean
 | *negativeAckRedeliveryDelay{zwsp}Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
+| *numberOfConsumerThreads* (consumer) | Number of threads to receive and handle messages when using a separate thread pool | 1 | int
 | *readCompacted* (consumer) | Enable compacted topic reading. | false | boolean
 | *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. There are 2 enums and the value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String
@@ -110,7 +112,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (33 parameters):
+=== Query Parameters (35 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -125,8 +127,10 @@ with the following path and query parameters:
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
 | *deadLetterTopic* (consumer) | Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ |  | String
 | *maxRedeliverCount* (consumer) | Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created |  | Integer
+| *messageListener* (consumer) | Whether to use the messageListener interface, or to receive messages using a separate thread pool | true | boolean
 | *negativeAckRedeliveryDelay{zwsp}Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
+| *numberOfConsumerThreads* (consumer) | Number of threads to receive and handle messages when using a separate thread pool | 1 | int
 | *readCompacted* (consumer) | Enable compacted topic reading. | false | boolean
 | *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. There are 2 enums and the value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String

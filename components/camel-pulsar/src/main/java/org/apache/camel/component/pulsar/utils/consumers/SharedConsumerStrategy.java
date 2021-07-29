@@ -52,7 +52,7 @@ public class SharedConsumerStrategy implements ConsumerCreationStrategy {
             final String consumerName = configuration.getConsumerNamePrefix() + i;
             try {
                 ConsumerBuilder<byte[]> builder
-                        = CommonCreationStrategyImpl.create(consumerName, pulsarEndpoint, pulsarConsumer);
+                        = CommonCreationStrategyImpl.getBuilder(consumerName, pulsarEndpoint, pulsarConsumer);
 
                 consumers.add(builder.subscriptionType(SubscriptionType.Shared).subscribe());
             } catch (PulsarClientException exception) {

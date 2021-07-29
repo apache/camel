@@ -314,6 +314,41 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to use the messageListener interface, or to receive messages
+         * using a separate thread pool.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param messageListener the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder messageListener(
+                boolean messageListener) {
+            doSetProperty("messageListener", messageListener);
+            return this;
+        }
+        /**
+         * Whether to use the messageListener interface, or to receive messages
+         * using a separate thread pool.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param messageListener the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder messageListener(
+                String messageListener) {
+            doSetProperty("messageListener", messageListener);
+            return this;
+        }
+        /**
          * Set the negative acknowledgement delay.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -375,6 +410,40 @@ public interface PulsarEndpointBuilderFactory {
         default PulsarEndpointConsumerBuilder numberOfConsumers(
                 String numberOfConsumers) {
             doSetProperty("numberOfConsumers", numberOfConsumers);
+            return this;
+        }
+        /**
+         * Number of threads to receive and handle messages when using a
+         * separate thread pool.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param numberOfConsumerThreads the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder numberOfConsumerThreads(
+                int numberOfConsumerThreads) {
+            doSetProperty("numberOfConsumerThreads", numberOfConsumerThreads);
+            return this;
+        }
+        /**
+         * Number of threads to receive and handle messages when using a
+         * separate thread pool.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param numberOfConsumerThreads the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder numberOfConsumerThreads(
+                String numberOfConsumerThreads) {
+            doSetProperty("numberOfConsumerThreads", numberOfConsumerThreads);
             return this;
         }
         /**
