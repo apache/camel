@@ -1,0 +1,127 @@
+[[CamelJBang]]
+= Camel JBang
+
+A JBang-based Camel app for searching for kamelets, components, languages,  running routes. This component is available from Camel 3.12 and newer versions.
+
+
+[[CamelJBang-Installation]]
+== Installation
+
+JBang makes it easy for us by providing an installation feature that works with Github. If you have JBang installed on your system, then you can run the following command to install CamelJBang:
+
+```
+jbang app install CamelJBang@apache/camel
+```
+
+
+[[CamelJBang-Usage]]
+== Usage
+
+The CamelJBang supports multiple commands. Running the command below, will print all of them:
+
+```
+CamelJBang.java [command]
+```
+
+All the commands support the `--help` and will display the appropriate help if that flag is provided.
+
+[[CamelJBang-Search]]
+== Search
+
+You can use the CLI to search for kamelets, components, languages and miscelaneous components (others). Running the following command will present a list of items that can be searched:
+
+```
+CamelJBang.java search --help
+```
+
+For example, to search for kamelets named `jms`, you can use:
+
+```
+CamelJBang.java search kamelets --search-term=jms
+```
+
+To list all the kamelets, just run the command without any search term:
+
+```
+CamelJBang.java search kamelets
+```
+
+
+The same behavior also works for all the other search commands. The table below lists all search commands available at the moment:
+
+|===
+|Command |Description
+
+|kamelets
+|search for kamelets
+
+
+|components
+|search for components
+
+
+|languages
+|search for languages
+
+|others
+|search for miscellaneous components
+
+|===
+
+
+[[CamelJBang-Init-Kamets]]
+== Search Init
+
+The init sub-command can be used to simplify creating Kamelets. Through this command, it is possible to create new Kamelets through pre-configured templates. It works in two steps: first it is necessary to bootstrap the Kamelet by creating a properties file with the parameters necessary to create the Kamelet. Once the properties file is correctly set, then it is possible to create a pre-filled Kamelet by processing that properties file.
+
+To bootstrap the Kamelet run:
+
+```
+CamelJBang init kamelet --bootstrap
+```
+
+This will create a sub-directory called `work` in the current directory with a properties file named `init-template.properties` inside it.
+
+The keys of the properties file are commented with the details about what need to be filled in order to generate the Kamelet. If a value is missing, it will be ignored when generating the Kamelet and will need to be filled in manually later.
+
+After you have filled the values, you can generate the Kamelet using:
+
+```
+CamelJBang init kamelet --properties-path work/init-template.properties
+```
+
+Running this command will create a file named `init-template.kamelet.yaml` in the `work` directory.
+
+After the file is generated, it may still need to require final adjustments, such as correctly setting the name, the icon and other requirements for official Kamelets. Please consult the Kamelet development documentation for updated details.
+
+
+[[CamelJBang-Running]]
+== Running Routes
+
+At the moment it is possible to run YAML-based routes which also refer to Kamelets in the catalog.
+
+In order to do so, write a YAML-based file with the `route`, the `steps` and the `to` destination for the route. The following example, shows a route that uses the Timer Source Kamelet to produce messages every second. The body of the messages will be logged to the standard output. Subsequently, they will be sent to a AMQP 1.0 compliant broker using the JMS AMQ 1.0 Sink Kamelet.
+
+```
+- route:
+    from:
+      uri: "kamelet:timer-source"
+      parameters:
+        period: 1000
+        message: "Hello Camel JBang"
+    steps:
+      - log: "${body}"
+      - to:
+          uri: "kamelet:jms-amqp-10-sink"
+          parameters:
+            remoteURI: amqp://localhost:61616
+            destinationName: test-queue
+```
+
+Execute the following command to run this route:
+
+```
+CamelJBang run jms-amqp-10-sink-binding.yaml
+```
+
+*Note*: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
