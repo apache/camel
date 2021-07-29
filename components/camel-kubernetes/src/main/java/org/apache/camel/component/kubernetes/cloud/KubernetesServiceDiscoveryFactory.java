@@ -20,10 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 import org.apache.camel.util.ObjectHelper;
 
 @CloudServiceFactory("kubernetes-service-discovery")
+@Configurer
 public class KubernetesServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private final KubernetesConfiguration configuration;
     private String lookup;

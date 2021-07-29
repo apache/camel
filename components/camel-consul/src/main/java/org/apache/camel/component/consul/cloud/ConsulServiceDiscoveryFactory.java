@@ -20,10 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 @CloudServiceFactory("consul-service-discovery")
+@Configurer
 public class ConsulServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private final ConsulConfiguration configuration;
 
@@ -45,24 +47,6 @@ public class ConsulServiceDiscoveryFactory implements ServiceDiscoveryFactory {
 
     public void setUrl(String url) {
         configuration.setUrl(url);
-    }
-
-    /**
-     * @deprecated, @deprecated replaced by {@link #getDatacenter()} ()}
-     * 
-     * @return
-     */
-    @Deprecated
-    public String getDc() {
-        return configuration.getDatacenter();
-    }
-
-    /**
-     * @deprecated, @deprecated replaced by {@link #setDatacenter(String)}} ()}
-     */
-    @Deprecated
-    public void setDc(String dc) {
-        configuration.setDc(dc);
     }
 
     public void setDatacenter(String dc) {
