@@ -181,6 +181,7 @@
                         <configuration>
                             <discoverClasses>true</discoverClasses>
                             <classes>org.apache.camel.component.netty.http.NettyHttpConfiguration</classes>
+                            <classes>org.apache.camel.component.netty.http.cloud.NettyHttpServiceExpressionFactory</classes>
                         </configuration>
                     </execution>
                 </executions>
