@@ -27,6 +27,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
@@ -127,6 +128,11 @@ public class HystrixProcessorCommand extends HystrixCommand {
         // prepare uow on copy
         uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
         copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+        // the copy must be starting from the route where its copied from
+        Route route = ExchangeHelper.getRoute(exchange);
+        if (route != null) {
+            uow.pushRoute(route);
+        }
         try {
             // process the processor until its fully done
             // (we do not hav any hystrix callback to leverage so we need to complete all work in this run method)

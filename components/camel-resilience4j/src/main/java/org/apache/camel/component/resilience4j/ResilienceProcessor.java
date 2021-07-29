@@ -43,6 +43,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -516,6 +517,11 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                 // prepare uow on copy
                 uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
                 copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+                // the copy must be starting from the route where its copied from
+                Route route = ExchangeHelper.getRoute(exchange);
+                if (route != null) {
+                    uow.pushRoute(route);
+                }
             }
 
             // process the processor until its fully done
