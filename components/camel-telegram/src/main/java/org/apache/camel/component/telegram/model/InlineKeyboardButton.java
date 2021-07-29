@@ -64,7 +64,8 @@ public class InlineKeyboardButton implements Serializable {
      * @param text            Label text on the button
      * @param url             Optional. HTTP or tg:// url to be opened when button is pressed
      * @param loginUrl        Optional. An HTTP URL used to automatically authorize the user.
-     * @param callbackData    Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes
+     * @param callbackData    Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64
+     *                        bytes
      * @param callbackGame    Optional. Description of the game that will be launched when the user presses the button.
      * @param requestContact  Optional. By clicking on the button, the user's phone will be sent.
      * @param requestLocation Optional. By clicking on the button, the user's location will be sent
