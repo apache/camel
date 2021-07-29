@@ -90,7 +90,7 @@ After you have filled the values, you can generate the Kamelet using:
 CamelJBang init kamelet --properties-path work/init-template.properties
 ```
 
-Running this command will create a file named `init-template.kamelet.yaml` in the `work` directory.
+Running this command will create a new file in the `work` directory. The name of the generated file is determined by the `kameletMetadataName` property in the properties file. As such, parsing the default properties file would generate a file named `my-sample-sink.kamelet.yaml` in the directory.
 
 After the file is generated, it may still need to require final adjustments, such as correctly setting the name, the icon and other requirements for official Kamelets. Please consult the Kamelet development documentation for updated details.
 
