@@ -320,7 +320,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
-    <jetty9-version>9.4.42.v20210604</jetty9-version>
+    <jetty9-version>9.4.43.v20210629</jetty9-version>
     <jgit-version>5.12.0.202106070339-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
