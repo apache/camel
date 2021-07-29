@@ -480,15 +480,19 @@ class InitKamelet extends AbstractInitKamelet implements Callable<Integer> {
             System.err.println(e.getMessage());
             return 1;
         }
-
         localTemplateFile.deleteOnExit();
 
         VelocityTemplateParser templateParser = new VelocityTemplateParser(
                 localTemplateFile.getParentFile(),
                 processOptions.propertiesPath);
 
-        String outputFileName = localTemplateFile.getName().replace(".vm", "");
-        File outputFile = new File(localTemplateFile.getParentFile(), outputFileName);
+        File outputFile;
+        try {
+            outputFile = templateParser.getOutputFile(workDirectory);
+        } catch (ResourceAlreadyExists e) {
+            System.err.println(e.getMessage());
+            return 1;
+        }
 
         try (FileWriter fw = new FileWriter(outputFile)) {
             templateParser.parse(localTemplateFile.getName(), fw);

@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.dsl.jbang.core.api.TemplateParser;
+import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceAlreadyExists;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -35,15 +36,18 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.RuntimeConstants;
 
 public class VelocityTemplateParser implements TemplateParser {
-    private final File propertiesFile;
+    private final Properties properties = new Properties();
 
-    public VelocityTemplateParser(File templateDir, String propertiesFile) {
+    public VelocityTemplateParser(File templateDir, String propertiesFile) throws IOException {
         this(templateDir, new File(propertiesFile));
     }
 
-    public VelocityTemplateParser(File templateDir, File propertiesFile) {
-        this.propertiesFile = propertiesFile;
+    public VelocityTemplateParser(File templateDir, File propertiesFile) throws IOException {
         initializeTemplateEngine(templateDir);
+
+        try (FileReader propertiesReader = new FileReader(propertiesFile)) {
+            properties.load(propertiesReader);
+        }
     }
 
     private void initializeTemplateEngine(File templateDir) {
@@ -90,12 +94,6 @@ public class VelocityTemplateParser implements TemplateParser {
     }
 
     private void loadTemplateProperties(VelocityContext context) throws IOException {
-        Properties properties = new Properties();
-
-        try (FileReader propertiesReader = new FileReader(propertiesFile)) {
-            properties.load(propertiesReader);
-        }
-
         properties.forEach((k, v) -> context.put(k.toString(), v));
 
         overridePropertyList(context, properties, "kameletProperties");
@@ -103,5 +101,16 @@ public class VelocityTemplateParser implements TemplateParser {
         overridePropertyList(context, properties, "kameletBeans");
         overridePropertyList(context, properties, "fromParameters");
         overridePropertyList(context, properties, "toParameters");
+    }
+
+    public File getOutputFile(File outputDir) throws ResourceAlreadyExists {
+        String outputFileName = properties.getProperty("kameletMetadataName") + ".kamelet.yaml";
+
+        File outputFile = new File(outputDir, outputFileName);
+        if (outputFile.exists()) {
+            throw new ResourceAlreadyExists(outputFile);
+        }
+
+        return outputFile;
     }
 }
