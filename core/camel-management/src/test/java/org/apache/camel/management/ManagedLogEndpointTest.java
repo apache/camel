@@ -52,7 +52,7 @@ public class ManagedLogEndpointTest extends ManagementTestSupport {
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");
         assertEquals(10, total.intValue());
 
-        Integer received = (Integer) mbeanServer.getAttribute(name, "ReceivedCounter");
+        Long received = (Long) mbeanServer.getAttribute(name, "ReceivedCounter");
         assertEquals(10, received.intValue());
 
         String last = (String) mbeanServer.getAttribute(name, "LastLogMessage");
@@ -78,7 +78,7 @@ public class ManagedLogEndpointTest extends ManagementTestSupport {
         last = (String) mbeanServer.getAttribute(name, "LastLogMessage");
         assertNull(last);
 
-        received = (Integer) mbeanServer.getAttribute(name, "ReceivedCounter");
+        received = (Long) mbeanServer.getAttribute(name, "ReceivedCounter");
         assertEquals(0, received.intValue());
 
         rate = (Double) mbeanServer.getAttribute(name, "Rate");

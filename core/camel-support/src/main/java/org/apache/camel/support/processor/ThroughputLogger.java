@@ -19,7 +19,7 @@ package org.apache.camel.support.processor;
 import java.text.NumberFormat;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -42,7 +42,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
 
     private String id;
     private String routeId;
-    private final AtomicInteger receivedCounter = new AtomicInteger();
+    private final AtomicLong receivedCounter = new AtomicLong();
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private long groupReceivedCount;
     private boolean groupActiveOnly;
@@ -104,7 +104,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         if (startTime == 0) {
             startTime = System.currentTimeMillis();
         }
-        int receivedCount = receivedCounter.incrementAndGet();
+        long receivedCount = receivedCounter.incrementAndGet();
 
         //only process if groupSize is set...otherwise we're in groupInterval mode
         if (groupSize != null) {
@@ -198,7 +198,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         return average;
     }
 
-    public int getReceivedCounter() {
+    public long getReceivedCounter() {
         return receivedCounter.get();
     }
 
@@ -229,7 +229,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         }
     }
 
-    protected String createLogMessage(Exchange exchange, int receivedCount) {
+    protected String createLogMessage(Exchange exchange, long receivedCount) {
         long time = System.currentTimeMillis();
         if (groupStartTime == 0) {
             groupStartTime = startTime;
@@ -271,7 +271,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
             return;
         }
 
-        int receivedCount = receivedCounter.get();
+        long receivedCount = receivedCounter.get();
 
         // if configured, hide logger messages when no new messages have been received
         if (groupActiveOnly && receivedCount == groupReceivedCount) {

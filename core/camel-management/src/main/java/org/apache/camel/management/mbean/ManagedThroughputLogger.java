@@ -46,7 +46,7 @@ public class ManagedThroughputLogger extends ManagedProcessor implements Managed
     }
 
     @Override
-    public int getReceivedCounter() {
+    public long getReceivedCounter() {
         return logger.getReceivedCounter();
     }
 
