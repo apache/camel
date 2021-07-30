@@ -60,10 +60,10 @@ public class DirectVmAdviceWithMockEndpointsTest extends AbstractDirectVmTestSup
             @Override
             public void configure() throws Exception {
                 from("direct-vm:quotes").routeId("quotes")
-                    .choice()
+                        .choice()
                         .when(simple("${body} contains 'Camel'"))
                         .to("seda:camel")
-                    .otherwise()
+                        .otherwise()
                         .to("seda:other");
             }
         };
