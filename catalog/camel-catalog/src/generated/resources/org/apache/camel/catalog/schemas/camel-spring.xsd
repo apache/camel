@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://camel.apache.org/schema/spring" elementFormDefault="qualified" targetNamespace="http://camel.apache.org/schema/spring" version="1.0">
 
-  <xs:import schemaLocation="schema2.xsd"/>
-
   <xs:element name="aggregate" type="tns:aggregateDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -12445,14 +12443,6 @@ properties are define in com.netflix.client.config.CommonClientConfigKey.
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="blacklistServiceCallServiceFilterConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:complexType name="cachingServiceCallServiceDiscoveryConfiguration">
     <xs:complexContent>
       <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
@@ -12824,22 +12814,6 @@ the format: servicehost:port,servicehost2:port,servicehost3:port.
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="cachingServiceCallServiceDiscoveryConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="combinedServiceCallServiceDiscoveryConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:complexType name="combinedServiceCallServiceFilterConfiguration">
     <xs:complexContent>
       <xs:extension base="tns:serviceCallServiceFilterConfiguration">
@@ -12886,30 +12860,6 @@ Reference of a ServiceFilter.
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="combinedServiceCallServiceFilterConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="consulServiceCallServiceDiscoveryConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="customServiceCallServiceFilterConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:complexType name="defaultServiceCallServiceLoadBalancerConfiguration">
     <xs:complexContent>
       <xs:extension base="tns:serviceCallServiceLoadBalancerConfiguration">
@@ -12921,54 +12871,6 @@ Reference of a ServiceFilter.
   <xs:complexType name="serviceCallServiceLoadBalancerConfiguration">
     <xs:complexContent>
       <xs:extension base="tns:serviceCallConfiguration">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="defaultServiceCallServiceLoadBalancerConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="dnsServiceCallServiceDiscoveryConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="etcdServiceCallServiceDiscoveryConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="healthyServiceCallServiceFilterConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="kubernetesServiceCallServiceDiscoveryConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="passThroughServiceCallServiceFilterConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
         <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
@@ -13006,22 +12908,6 @@ Sets the Ribbon client name.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="ribbonServiceCallServiceLoadBalancerConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="serviceCallConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -13346,65 +13232,9 @@ Set a reference to a custom Expression to use.
     <xs:sequence/>
   </xs:complexType>
 
-  <xs:complexType name="serviceCallExpressionConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:complexType name="serviceCallServiceChooserConfiguration">
     <xs:complexContent>
       <xs:extension base="tns:serviceCallConfiguration">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="serviceCallServiceChooserConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="serviceCallServiceDiscoveryConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="serviceCallServiceFilterConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="serviceCallServiceLoadBalancerConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="staticServiceCallServiceDiscoveryConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="zooKeeperServiceCallServiceDiscoveryConfigurationConfigurer">
-    <xs:complexContent>
-      <xs:extension base="propertyConfigurerSupport">
         <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
