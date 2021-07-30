@@ -29,6 +29,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
@@ -184,8 +185,15 @@ public class JpaProducer extends DefaultProducer {
                     entityManager.joinTransaction();
                 }
 
+                Message target;
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    target = exchange.getOut();
+                    // preserve headers
+                    target.getHeaders().putAll(exchange.getIn().getHeaders());
+                } else {
+                    target = exchange.getIn();
+                }
                 Object answer = isUseExecuteUpdate() ? query.executeUpdate() : query.getResultList();
-                Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
                 target.setBody(answer);
 
                 if (getEndpoint().isFlushOnSend()) {
@@ -234,7 +242,14 @@ public class JpaProducer extends DefaultProducer {
                     Object answer = entityManager.find(getEndpoint().getEntityType(), key);
                     LOG.debug("Find: {} -> {}", key, answer);
 
-                    Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
+                    Message target;
+                    if (ExchangeHelper.isOutCapable(exchange)) {
+                        target = exchange.getOut();
+                        // preserve headers
+                        target.getHeaders().putAll(exchange.getIn().getHeaders());
+                    } else {
+                        target = exchange.getIn();
+                    }
                     target.setBody(answer);
 
                     if (getEndpoint().isFlushOnSend()) {
