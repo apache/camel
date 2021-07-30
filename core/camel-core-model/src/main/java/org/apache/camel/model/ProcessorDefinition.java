@@ -1063,15 +1063,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the choice builder
      */
     public ChoiceDefinition endChoice() {
-        // are we nested choice?
         ProcessorDefinition<?> def = this;
-        if (def.getParent() instanceof WhenDefinition) {
-            return (ChoiceDefinition) def.getParent().getParent();
-        }
 
         // are we already a choice?
         if (def instanceof ChoiceDefinition) {
             return (ChoiceDefinition) def;
+        }
+
+        // are we nested choice?
+        if (def.getParent() instanceof WhenDefinition) {
+            return (ChoiceDefinition) def.getParent().getParent();
         }
 
         // okay end this and get back to the choice
