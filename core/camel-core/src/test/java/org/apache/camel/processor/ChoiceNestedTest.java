@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,20 +33,7 @@ public class ChoiceNestedTest extends ContextTestSupport {
 
     @Test
     public void testNestedX() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .choice()
-                        .when(simple("${body} > 500"))
-                        .choice().when(simple("${body} > 750")).to("mock:x").endChoice()
-                        .otherwise().to("mock:y").endChoice().end()
-                        .endChoice()
-                        .otherwise().to("mock:z").endChoice()
-                        .end()
-                        .to("mock:end");
-            }
-        });
+        context.addRoutes(createNestedChoice());
         context.start();
 
         x.expectedBodiesReceived(800);
@@ -58,20 +46,7 @@ public class ChoiceNestedTest extends ContextTestSupport {
 
     @Test
     public void testNestedY() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .choice()
-                        .when(simple("${body} > 500"))
-                        .choice().when(simple("${body} > 750")).to("mock:x").endChoice()
-                        .otherwise().to("mock:y").endChoice().end()
-                        .endChoice()
-                        .otherwise().to("mock:z").endChoice()
-                        .end()
-                        .to("mock:end");
-            }
-        });
+        context.addRoutes(createNestedChoice());
         context.start();
 
         y.expectedBodiesReceived(600);
@@ -84,20 +59,7 @@ public class ChoiceNestedTest extends ContextTestSupport {
 
     @Test
     public void testNestedZ() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .choice()
-                        .when(simple("${body} > 500"))
-                        .choice().when(simple("${body} > 750")).to("mock:x").endChoice()
-                        .otherwise().to("mock:y").endChoice().end()
-                        .endChoice()
-                        .otherwise().to("mock:z").endChoice()
-                        .end()
-                        .to("mock:end");
-            }
-        });
+        context.addRoutes(createNestedChoice());
         context.start();
 
         z.expectedBodiesReceived(300);
@@ -110,49 +72,8 @@ public class ChoiceNestedTest extends ContextTestSupport {
 
 
     @Test
-    public void testMulticast() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .choice()
-                        .when(simple("${body} > 500"))
-                        .multicast()
-                        .to("mock:x")
-                        .to("mock:y")
-                        .endChoice()
-                        .otherwise().to("mock:z").endChoice()
-                        .end()
-                        .to("mock:end");
-            }
-        });
-        context.start();
-
-        x.expectedBodiesReceived(600);
-        y.expectedBodiesReceived(600);
-        end.expectedBodiesReceived(600);
-
-        sendMessage(600);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
     public void testNestedMulticastX() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .choice()
-                        .when(simple("${body} > 500"))
-                        .choice().when(simple("${body} > 750")).multicast().to("mock:x1").to("mock:x2").endChoice()
-                        .otherwise().to("mock:y").endChoice().end()
-                        .endChoice()
-                        .otherwise().to("mock:z").endChoice()
-                        .end()
-                        .to("mock:end");
-            }
-        });
+        context.addRoutes(createNesteddMulticast());
         context.start();
 
         x1.expectedBodiesReceived(800);
@@ -166,20 +87,7 @@ public class ChoiceNestedTest extends ContextTestSupport {
 
     @Test
     public void testNestedMulticastY() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .choice()
-                        .when(simple("${body} > 500"))
-                        .choice().when(simple("${body} > 750")).multicast().to("mock:x1").to("mock:x2").endChoice()
-                        .otherwise().to("mock:y").endChoice().end()
-                        .endChoice()
-                        .otherwise().to("mock:z").endChoice()
-                        .end()
-                        .to("mock:end");
-            }
-        });
+        context.addRoutes(createNesteddMulticast());
         context.start();
 
         y.expectedBodiesReceived(600);
@@ -192,20 +100,7 @@ public class ChoiceNestedTest extends ContextTestSupport {
 
     @Test
     public void testNestedMulticastZ() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .choice()
-                        .when(simple("${body} > 500"))
-                        .choice().when(simple("${body} > 750")).multicast().to("mock:x1").to("mock:x2").endChoice()
-                        .otherwise().to("mock:y").endChoice().end()
-                        .endChoice()
-                        .otherwise().to("mock:z").endChoice()
-                        .end()
-                        .to("mock:end");
-            }
-        });
+        context.addRoutes(createNesteddMulticast());
         context.start();
 
         z.expectedBodiesReceived(300);
@@ -216,31 +111,44 @@ public class ChoiceNestedTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void testNestedSplit() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+    private RoutesBuilder createNesteddMulticast() {
+        return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
                         .choice()
                         .when(simple("${body} > 500"))
-                        .choice().when(simple("${body} > 750")).multicast().to("mock:x1").to("mock:x2").endChoice()
-                        .otherwise().to("mock:y").endChoice().end()
+                        .choice()
+                        .when(simple("${body} > 750")).multicast().to("mock:x1").to("mock:x2").endChoice()
+                        .otherwise().to("mock:y").endChoice()
+                        .end()
                         .endChoice()
                         .otherwise().to("mock:z").endChoice()
                         .end()
                         .to("mock:end");
             }
-        });
-        context.start();
-
-        z.expectedBodiesReceived(300);
-        end.expectedBodiesReceived(300);
-
-        sendMessage(300);
-
-        assertMockEndpointsSatisfied();
+        };
     }
+
+    private RoutesBuilder createNestedChoice() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .choice()
+                        .when(simple("${body} > 500"))
+                        .choice()
+                        .when(simple("${body} > 750")).to("mock:x").endChoice()
+                        .otherwise().to("mock:y").endChoice()
+                        .end()
+                        .endChoice()
+                        .otherwise().to("mock:z").endChoice()
+                        .end()
+                        .to("mock:end");
+            }
+        };
+    }
+
 
     protected void sendMessage(final Object body) throws Exception {
         template.sendBody("direct:start", body);
