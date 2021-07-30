@@ -21,6 +21,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
@@ -43,6 +45,12 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         } else {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
             exp = createExpression(uri);
+        }
+
+        // route templates should pre parse uri as they have dynamic values as part of their template parameters
+        RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+        if (rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
         }
 
         SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);

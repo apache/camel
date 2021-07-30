@@ -26,12 +26,15 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.StringHelper;
 
@@ -56,6 +59,12 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
             uri = definition.getEndpointProducerBuilder().getUri();
         } else {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
+        }
+
+        // route templates should pre parse uri as they have dynamic values as part of their template parameters
+        RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+        if (rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
         }
 
         SendDynamicProcessor dynamicSendProcessor = null;

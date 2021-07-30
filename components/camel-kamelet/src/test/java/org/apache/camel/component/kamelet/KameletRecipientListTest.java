@@ -21,10 +21,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class KameletToDTest extends CamelTestSupport {
+public class KameletRecipientListTest extends CamelTestSupport {
 
     @Test
-    public void testToD() throws Exception {
+    public void testRecipientList() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("A");
         getMockEndpoint("mock:bar").expectedBodiesReceived("B");
 
@@ -48,7 +48,7 @@ public class KameletToDTest extends CamelTestSupport {
                 routeTemplate("broker")
                         .templateParameter("queue")
                         .from("kamelet:source")
-                        .toD("mock:{{queue}}");
+                        .recipientList(constant("mock:{{queue}}"));
 
                 from("direct:foo")
                         .kamelet("broker?queue=foo");
