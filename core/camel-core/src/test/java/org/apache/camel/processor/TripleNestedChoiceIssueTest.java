@@ -86,6 +86,7 @@ public class TripleNestedChoiceIssueTest extends ContextTestSupport {
                         .end()
                         .endChoice()
                         .otherwise().to("mock:med").endChoice()
+                        .end()
                         .endChoice()
                         .otherwise().to("mock:low").endChoice()
                         .end();
