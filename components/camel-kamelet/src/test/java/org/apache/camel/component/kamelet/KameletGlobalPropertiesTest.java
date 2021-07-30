@@ -22,7 +22,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.PropertiesHelper.asProperties;
@@ -147,7 +146,7 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
                 Kamelet.PROPERTIES_PREFIX + "setBody.someId.bodyValue", "from-route-someId");
     }
 
-    @Obsolete
+    @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

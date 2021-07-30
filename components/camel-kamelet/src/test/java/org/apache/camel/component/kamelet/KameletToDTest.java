@@ -16,22 +16,22 @@
  */
 package org.apache.camel.component.kamelet;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class KameletLocalBeanTypeTest extends CamelTestSupport {
-
-    @BindToRegistry("myBar")
-    private MyBar bar = new MyBar();
+@Disabled
+public class KameletToDTest extends CamelTestSupport {
 
     @Test
-    public void testOne() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hi John we are going to Murphys");
+    public void testToD() throws Exception {
+        getMockEndpoint("mock:foo").expectedBodiesReceived("A");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("B");
 
-        template.sendBody("direct:bar", "John");
+        template.sendBody("direct:foo", "A");
+        template.sendBody("direct:bar", "B");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,30 +47,17 @@ public class KameletLocalBeanTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                routeTemplate("whereTo")
-                        .templateBean("myBar", "#type:org.apache.camel.component.kamelet.KameletLocalBeanTypeTest$Bar")
+                routeTemplate("broker")
+                        .templateParameter("queue")
                         .from("kamelet:source")
-                        // must use {{myBar}} to refer to the local bean
-                        .to("bean:{{myBar}}");
+                        .toD("seda:{{name}}");
+
+                from("direct:foo")
+                        .kamelet("broker?queue=foo");
 
                 from("direct:bar")
-                        .kamelet("whereTo")
-                        .to("mock:result");
+                        .kamelet("broker?queue=bar");
             }
         };
     }
-
-    public interface Bar {
-        String where(String name);
-    }
-
-    public static class MyBar implements Bar {
-
-        private final String bar = "Murphys";
-
-        public String where(String name) {
-            return "Hi " + name + " we are going to " + bar;
-        }
-    }
-
 }

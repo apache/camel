@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.Test;
 
 public class KameletLocationTest extends CamelTestSupport {
@@ -103,7 +102,7 @@ public class KameletLocationTest extends CamelTestSupport {
     //
     // **********************************************
 
-    @Obsolete
+    @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

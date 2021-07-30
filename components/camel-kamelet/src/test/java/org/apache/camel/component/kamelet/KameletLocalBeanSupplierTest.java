@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.Test;
 
 public class KameletLocalBeanSupplierTest extends CamelTestSupport {
@@ -44,7 +43,7 @@ public class KameletLocalBeanSupplierTest extends CamelTestSupport {
     //
     // **********************************************
 
-    @Obsolete
+    @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
