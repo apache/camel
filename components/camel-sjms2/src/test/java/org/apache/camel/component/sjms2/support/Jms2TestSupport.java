@@ -163,12 +163,12 @@ public class Jms2TestSupport extends CamelTestSupport {
 
     public MessageConsumer createQueueConsumer(String destination) throws Exception {
         return new Jms2ObjectFactory().createMessageConsumer(session,
-                destinationCreationStrategy.createDestination(session, destination, false), null, false, null, false, false);
+                destinationCreationStrategy.createDestination(session, destination, false), null, false, null, true, false);
     }
 
     public MessageConsumer createTopicConsumer(String destination, String messageSelector) throws Exception {
         return new Jms2ObjectFactory().createMessageConsumer(session,
-                destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, false,
+                destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, true,
                 false);
     }
 }
