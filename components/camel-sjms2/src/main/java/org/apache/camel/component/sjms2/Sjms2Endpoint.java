@@ -33,11 +33,11 @@ import org.apache.camel.spi.UriParam;
              syntax = "sjms2:destinationType:destinationName", category = { Category.MESSAGING })
 public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
 
-    @UriParam(label = "consumer", description = "Sets the subscription Id, required for durable or shared topics.")
+    @UriParam(label = "consumer", description = "Sets the topic subscription id, required for durable or shared topics.")
     private String subscriptionId;
-    @UriParam(label = "consumer", description = "Sets topic consumer to durable.")
+    @UriParam(label = "consumer", description = "Sets the topic to be durable")
     private boolean durable;
-    @UriParam(label = "consumer", description = "Sets the consumer to shared.")
+    @UriParam(label = "consumer", description = "Sets the topic to be shared")
     private boolean shared;
 
     public Sjms2Endpoint() {

@@ -69,7 +69,7 @@ public class SjmsTemplate {
             this.priority = priority;
             this.explicitQosEnabled = true;
         }
-        if (timeToLive != 0) {
+        if (timeToLive > 0) {
             this.timeToLive = timeToLive;
             this.explicitQosEnabled = true;
         }
