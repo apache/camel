@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -126,7 +127,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 return codec.unmarshallExchange(camelContext, new Buffer(rc));
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + key, e);
+            throw new RuntimeCamelException("Error adding to repository " + repositoryName + " with key " + key, e);
         }
 
         return null;
@@ -145,7 +146,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 answer = codec.unmarshallExchange(camelContext, new Buffer(rc));
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error getting key " + key + " from repository " + repositoryName, e);
+            throw new RuntimeCamelException("Error getting key " + key + " from repository " + repositoryName, e);
         }
 
         LOG.debug("Getting key  [{}] -> {}", key, answer);
@@ -182,7 +183,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             }
 
         } catch (IOException e) {
-            throw new RuntimeException("Error removing key " + key + " from repository " + repositoryName, e);
+            throw new RuntimeCamelException("Error removing key " + key + " from repository " + repositoryName, e);
         }
     }
 
@@ -292,7 +293,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 answer = codec.unmarshallExchange(camelContext, new Buffer(rc));
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error recovering exchangeId " + exchangeId + " from repository " + repositoryName, e);
+            throw new RuntimeCamelException(
+                    "Error recovering exchangeId " + exchangeId + " from repository " + repositoryName, e);
         }
 
         LOG.debug("Recovering exchangeId [{}] -> {}", exchangeId, answer);
@@ -460,7 +462,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         try {
             return (repo + '\0' + key).getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 
@@ -471,7 +473,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             try {
                 return new String(value, "UTF-8");
             } catch (UnsupportedEncodingException var2) {
-                throw new RuntimeException(var2);
+                throw new RuntimeCamelException(var2);
             }
         }
     }

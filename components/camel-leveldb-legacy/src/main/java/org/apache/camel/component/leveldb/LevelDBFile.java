@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -180,7 +181,7 @@ public class LevelDBFile implements Service {
             DBFactory factory = getFactory();
             db = factory.open(getFile(), options);
         } catch (IOException ioe) {
-            throw new RuntimeException("Error opening LevelDB with file " + getFile(), ioe);
+            throw new RuntimeCamelException("Error opening LevelDB with file " + getFile(), ioe);
         }
     }
 
@@ -197,7 +198,7 @@ public class LevelDBFile implements Service {
                     LOG.debug("Using {} implementation of org.iq80.leveldb.DBFactory", factory.getClass().getName());
                 }
                 return factory;
-            } catch (Throwable ignored) {
+            } catch (Exception ignored) {
             }
         }
         throw new IllegalStateException("Can't find implementation of org.iq80.leveldb.DBFactory");
