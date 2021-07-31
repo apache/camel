@@ -18,6 +18,7 @@ package org.apache.camel.processor.errorhandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -112,7 +113,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                                   String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy,
                                   boolean useOriginalBodyPolicy,
                                   Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor,
-                                  Processor onExceptionProcessor, ExceptionPolicyStrategy exceptionPolicyStrategy) {
+                                  Processor onExceptionProcessor) {
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
@@ -161,8 +162,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
         }
 
-        if (exceptionPolicyStrategy != null) {
-            this.exceptionPolicy = exceptionPolicyStrategy;
+        Set<ExceptionPolicyStrategy> policies = this.camelContext.getRegistry().findByType(ExceptionPolicyStrategy.class);
+        if (policies.size() == 1) {
+            exceptionPolicy = policies.iterator().next();
         }
     }
 

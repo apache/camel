@@ -59,35 +59,9 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
                                ScheduledExecutorService executorService, Processor onPrepareProcessor,
                                Processor onExceptionOccurredProcessor) {
 
-        this(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, retryWhile,
-              executorService, onPrepareProcessor, onExceptionOccurredProcessor, null);
-    }
-    /**
-     * Creates the default error handler.
-     *
-     * @param camelContext                 the camel context
-     * @param output                       outer processor that should use this default error handler
-     * @param logger                       logger to use for logging failures and redelivery attempts
-     * @param redeliveryProcessor          an optional processor to run before redelivery attempt
-     * @param redeliveryPolicy             policy for redelivery
-     * @param retryWhile                   retry while
-     * @param executorService              the {@link java.util.concurrent.ScheduledExecutorService} to be used for
-     *                                     redelivery thread pool. Can be <tt>null</tt>.
-     * @param exceptionPolicyStrategy      strategy for selecting exception policy for a given exception
-     * @param onPrepareProcessor           a custom {@link org.apache.camel.Processor} to prepare the
-     *                                     {@link org.apache.camel.Exchange} before handled by the failure processor /
-     *                                     dead letter channel.
-     * @param onExceptionOccurredProcessor a custom {@link org.apache.camel.Processor} to process the
-     *                                     {@link org.apache.camel.Exchange} just after an exception was thrown.
-     */
-    public DefaultErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
-                               RedeliveryPolicy redeliveryPolicy, Predicate retryWhile,
-                               ScheduledExecutorService executorService, Processor onPrepareProcessor,
-                               Processor onExceptionOccurredProcessor, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-
         super(camelContext, output, logger != null ? logger : DEFAULT_LOGGER, redeliveryProcessor, redeliveryPolicy, null, null,
               true, false, false, retryWhile,
-              executorService, onPrepareProcessor, onExceptionOccurredProcessor, exceptionPolicyStrategy);
+              executorService, onPrepareProcessor, onExceptionOccurredProcessor);
     }
 
     private DefaultErrorHandler(Logger log) {
@@ -108,7 +82,7 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
     public ErrorHandler clone(Processor output) {
         DefaultErrorHandler answer = new DefaultErrorHandler(
                 camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, retryWhilePolicy, executorService,
-                onPrepareProcessor, onExceptionProcessor, exceptionPolicy);
+                onPrepareProcessor, onExceptionProcessor);
         // shallow clone is okay as we do not mutate these
         if (exceptionPolicies != null) {
             answer.exceptionPolicies = exceptionPolicies;

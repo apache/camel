@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 
@@ -46,7 +45,6 @@ public class DefaultErrorHandlerConfiguration implements DefaultErrorHandlerProp
     private String onPrepareFailureRef;
     private Processor onExceptionOccurred;
     private String onExceptionOccurredRef;
-    private ExceptionPolicyStrategy exceptionPolicyStrategy;
 
     @Override
     public boolean hasLogger() {
@@ -197,15 +195,5 @@ public class DefaultErrorHandlerConfiguration implements DefaultErrorHandlerProp
 
     public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
         this.onExceptionOccurredRef = onExceptionOccurredRef;
-    }
-
-    @Override
-    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
-        return exceptionPolicyStrategy;
-    }
-
-    @Override
-    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 }

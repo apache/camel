@@ -21,7 +21,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 
@@ -100,8 +99,4 @@ public interface DefaultErrorHandlerProperties extends ErrorHandlerFactory {
     String getOnExceptionOccurredRef();
 
     void setOnExceptionOccurredRef(String onExceptionOccurredRef);
-
-    ExceptionPolicyStrategy getExceptionPolicyStrategy();
-
-    void setExceptionPolicyStrategy(ExceptionPolicyStrategy defaultExceptionPolicyStrategy);
 }
