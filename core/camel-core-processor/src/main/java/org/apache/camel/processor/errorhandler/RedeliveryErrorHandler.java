@@ -18,7 +18,6 @@ package org.apache.camel.processor.errorhandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -162,9 +161,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
         }
 
-        Set<ExceptionPolicyStrategy> policies = this.camelContext.getRegistry().findByType(ExceptionPolicyStrategy.class);
-        if (policies.size() == 1) {
-            exceptionPolicy = policies.iterator().next();
+        ExceptionPolicyStrategy customExceptionPolicy
+                = CamelContextHelper.findByType(camelContext, ExceptionPolicyStrategy.class);
+        if (customExceptionPolicy != null) {
+            exceptionPolicy = customExceptionPolicy;
         }
     }
 
