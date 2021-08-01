@@ -39,7 +39,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         DEFAULT_EXCHANGE_FORMATTER.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
     }
     // optimize to use a shared instance
-    protected final ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
+    protected ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
     protected Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies;
 
     public void addErrorHandler(Processor errorHandler) {
