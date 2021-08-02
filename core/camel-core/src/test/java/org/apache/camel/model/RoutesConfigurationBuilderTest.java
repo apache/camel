@@ -35,7 +35,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRoutesConfiguration() throws Exception {
+    public void testRoutesConfigurationOnException() throws Exception {
         List<RoutesBuilder> routes = new ArrayList<>();
 
         routes.add(new RouteBuilder() {
@@ -77,6 +77,229 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         }
 
         getMockEndpoint("mock:error").expectedBodiesReceived("Hello World", "Bye World");
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start2", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRoutesConfigurationOnCompletion() throws Exception {
+        List<RoutesBuilder> routes = new ArrayList<>();
+
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .to("mock:result");
+            }
+        });
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start2")
+                        // route scoped that overrides the global scoped
+                        .onCompletion().to("mock:done2").end()
+                        .to("mock:result");
+            }
+        });
+        routes.add(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() throws Exception {
+                // global routes configuration
+                routeConfiguration().onCompletion().to("mock:done");
+            }
+        });
+        context.start();
+
+        // sort routes according to ordered
+        routes.sort(OrderedComparator.get());
+
+        // first add the routes configurations as they are globally for all routes
+        for (RoutesBuilder builder : routes) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+                context.addRoutesConfigurations(rcb);
+            }
+        }
+        // then add the routes
+        for (RoutesBuilder builder : routes) {
+            context.addRoutes(builder);
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+        getMockEndpoint("mock:done").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:done2").expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start2", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRoutesConfigurationIntercept() throws Exception {
+        List<RoutesBuilder> routes = new ArrayList<>();
+
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .setBody(constant("A"))
+                        .setBody(constant("B"))
+                        .to("mock:result");
+            }
+        });
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start2")
+                        .setBody(constant("C"))
+                        .setBody(constant("D"))
+                        .to("mock:result");
+            }
+        });
+        routes.add(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() throws Exception {
+                // global routes configuration
+                routeConfiguration().intercept().to("mock:step");
+            }
+        });
+        context.start();
+
+        // sort routes according to ordered
+        routes.sort(OrderedComparator.get());
+
+        // first add the routes configurations as they are globally for all routes
+        for (RoutesBuilder builder : routes) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+                context.addRoutesConfigurations(rcb);
+            }
+        }
+        // then add the routes
+        for (RoutesBuilder builder : routes) {
+            context.addRoutes(builder);
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+        getMockEndpoint("mock:step").expectedBodiesReceived("Hello World", "A", "B", "Bye World", "C", "D");
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start2", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRoutesConfigurationInterceptFrom() throws Exception {
+        List<RoutesBuilder> routes = new ArrayList<>();
+
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:start")
+                        .setBody(constant("A"))
+                        .setBody(constant("B"))
+                        .to("mock:result");
+            }
+        });
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start2")
+                        .setBody(constant("C"))
+                        .setBody(constant("D"))
+                        .to("mock:result");
+            }
+        });
+        routes.add(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() throws Exception {
+                // global routes configuration
+                routeConfiguration().interceptFrom("direct*").to("mock:step");
+            }
+        });
+        context.start();
+
+        // sort routes according to ordered
+        routes.sort(OrderedComparator.get());
+
+        // first add the routes configurations as they are globally for all routes
+        for (RoutesBuilder builder : routes) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+                context.addRoutesConfigurations(rcb);
+            }
+        }
+        // then add the routes
+        for (RoutesBuilder builder : routes) {
+            context.addRoutes(builder);
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+        getMockEndpoint("mock:step").expectedBodiesReceived("Bye World");
+
+        template.sendBody("seda:start", "Hello World");
+        template.sendBody("direct:start2", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRoutesConfigurationInterceptSendTo() throws Exception {
+        List<RoutesBuilder> routes = new ArrayList<>();
+
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .setBody(constant("A"))
+                        .to("mock:foo")
+                        .setBody(constant("B"))
+                        .to("mock:bar")
+                        .to("mock:result");
+            }
+        });
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start2")
+                        .setBody(constant("C"))
+                        .to("mock:foo")
+                        .setBody(constant("D"))
+                        .to("mock:bar")
+                        .to("mock:result");
+            }
+        });
+        routes.add(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() throws Exception {
+                // global routes configuration
+                routeConfiguration().interceptSendToEndpoint("mock:foo").to("mock:step");
+            }
+        });
+        context.start();
+
+        // sort routes according to ordered
+        routes.sort(OrderedComparator.get());
+
+        // first add the routes configurations as they are globally for all routes
+        for (RoutesBuilder builder : routes) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+                context.addRoutesConfigurations(rcb);
+            }
+        }
+        // then add the routes
+        for (RoutesBuilder builder : routes) {
+            context.addRoutes(builder);
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+        getMockEndpoint("mock:step").expectedBodiesReceived("A", "C");
 
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start2", "Bye World");

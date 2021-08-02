@@ -1265,6 +1265,22 @@ To refer to a Java org.apache.camel.builder.RouteBuilder instance to use.
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="routeConfiguration" type="tns:routeConfigurationDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Reusable configuration for Camel route(s).
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="routeConfigurations" type="tns:routeConfigurationsDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A series of route configurations
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="routeContext" type="tns:camelRouteContextFactoryBean">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -1325,22 +1341,6 @@ A series of route templates
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 A series of Camel routes
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
-  <xs:element name="routesConfiguration" type="tns:routesConfigurationDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Global configuration for Camel routes
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
-  <xs:element name="routesConfigurations" type="tns:routesConfigurationsDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-A series of global configuration for Camel routes
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -10627,6 +10627,29 @@ Reference to the route builder instance.
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="routeConfigurationDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onException"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onCompletion"/>
+          <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element ref="tns:intercept"/>
+            <xs:element ref="tns:interceptFrom"/>
+          </xs:choice>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptFrom"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptSendToEndpoint"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="routeConfigurationsDefinition">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfiguration"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="routeContextRefDefinition">
     <xs:sequence/>
     <xs:attribute name="ref" type="xs:string" use="required">
@@ -10917,33 +10940,6 @@ Description of the parameter.
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplate"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="routesConfigurationDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:optionalIdentifiedDefinition">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onException"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onCompletion"/>
-          <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element ref="tns:intercept"/>
-            <xs:element ref="tns:interceptFrom"/>
-          </xs:choice>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptFrom"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptSendToEndpoint"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="routesConfigurationsDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:optionalIdentifiedDefinition">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routesConfiguration"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

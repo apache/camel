@@ -135,4 +135,64 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
         return answer;
     }
 
+    /**
+     * <a href="http://camel.apache.org/oncompletion.html">On completion</a> callback for doing custom routing when the
+     * {@link org.apache.camel.Exchange} is complete.
+     *
+     * @return the on completion builder to configure
+     */
+    public OnCompletionDefinition onCompletion() {
+        OnCompletionDefinition answer = new OnCompletionDefinition();
+        // is global scoped by default
+        answer.setRouteScoped(false);
+        onCompletions.add(answer);
+        return answer;
+    }
+
+    /**
+     * Adds a route for an interceptor that intercepts every processing step.
+     *
+     * @return the builder
+     */
+    public InterceptDefinition intercept() {
+        InterceptDefinition answer = new InterceptDefinition();
+        intercepts.add(answer);
+        return answer;
+    }
+
+    /**
+     * Adds a route for an interceptor that intercepts incoming messages on any inputs in this route
+     *
+     * @return the builder
+     */
+    public InterceptFromDefinition interceptFrom() {
+        InterceptFromDefinition answer = new InterceptFromDefinition();
+        interceptFroms.add(answer);
+        return answer;
+    }
+
+    /**
+     * Adds a route for an interceptor that intercepts incoming messages on the given endpoint.
+     *
+     * @param  uri endpoint uri
+     * @return     the builder
+     */
+    public InterceptFromDefinition interceptFrom(String uri) {
+        InterceptFromDefinition answer = new InterceptFromDefinition(uri);
+        interceptFroms.add(answer);
+        return answer;
+    }
+
+    /**
+     * Applies a route for an interceptor if an exchange is send to the given endpoint
+     *
+     * @param  uri endpoint uri
+     * @return     the builder
+     */
+    public InterceptSendToEndpointDefinition interceptSendToEndpoint(String uri) {
+        InterceptSendToEndpointDefinition answer = new InterceptSendToEndpointDefinition(uri);
+        interceptSendTos.add(answer);
+        return answer;
+    }
+
 }
