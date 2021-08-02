@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.rest;
+package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,54 +26,35 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * A series of rest services defined using the rest-dsl
+ * A series of route configurations
  */
-@Metadata(label = "rest")
-@XmlRootElement(name = "rests")
+@Metadata(label = "configuration")
+@XmlRootElement(name = "routeConfigurations")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer, CamelContextAware {
+public class RouteConfigurationsDefinition {
+
     @XmlElementRef
-    private List<RestDefinition> rests = new ArrayList<>();
+    private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
     @XmlTransient
     private CamelContext camelContext;
 
-    public RestsDefinition() {
+    public RouteConfigurationsDefinition() {
     }
 
     @Override
     public String toString() {
-        return "Rests: " + rests;
+        return "RouteConfigurations";
     }
 
-    @Override
-    public String getShortName() {
-        return "rests";
+    public List<RouteConfigurationDefinition> getRouteConfigurations() {
+        return routeConfigurations;
     }
 
-    @Override
-    public String getLabel() {
-        return "Rest " + getId();
-    }
-
-    // Properties
-    // -----------------------------------------------------------------------
-
-    @Override
-    public List<RestDefinition> getRests() {
-        return rests;
-    }
-
-    /**
-     * The rest services
-     */
-    @Override
-    public void setRests(List<RestDefinition> rests) {
-        this.rests = rests;
+    public void setRouteConfigurations(List<RouteConfigurationDefinition> routeConfigurations) {
+        this.routeConfigurations = routeConfigurations;
     }
 
     public CamelContext getCamelContext() {
@@ -88,37 +69,46 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     // -------------------------------------------------------------------------
 
     /**
-     * Creates a rest DSL
-     */
-    public RestDefinition rest() {
-        RestDefinition rest = createRest();
-        return rest(rest);
-    }
-
-    /**
-     * Creates a rest DSL
+     * Creates a new route configuration
      *
-     * @param uri the rest path
+     * @return the builder
      */
-    public RestDefinition rest(String uri) {
-        RestDefinition rest = createRest();
-        rest.setPath(uri);
-        return rest(rest);
+    public RouteConfigurationDefinition routeConfiguration() {
+        RouteConfigurationDefinition config = createRouteConfiguration(null);
+        getRouteConfigurations().add(config);
+        return config;
     }
 
     /**
-     * Adds the {@link org.apache.camel.model.rest.RestsDefinition}
+     * Creates a new route configuration
+     *
+     * @return the builder
      */
-    public RestDefinition rest(RestDefinition rest) {
-        getRests().add(rest);
-        return rest;
+    public RouteConfigurationDefinition routeConfiguration(String id) {
+        RouteConfigurationDefinition config = createRouteConfiguration(id);
+        getRouteConfigurations().add(config);
+        return config;
+    }
+
+    /**
+     * Adds the route configuration
+     *
+     * @return the builder
+     */
+    public RouteConfigurationDefinition routeConfiguration(RouteConfigurationDefinition config) {
+        getRouteConfigurations().add(config);
+        return config;
     }
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected RestDefinition createRest() {
-        RestDefinition rest = new RestDefinition();
-        return rest;
+
+    protected RouteConfigurationDefinition createRouteConfiguration(String id) {
+        RouteConfigurationDefinition config = new RouteConfigurationDefinition();
+        if (id != null) {
+            config.setId(id);
+        }
+        return config;
     }
 
 }

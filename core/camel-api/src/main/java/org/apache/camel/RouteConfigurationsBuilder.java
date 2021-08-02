@@ -17,32 +17,16 @@
 package org.apache.camel;
 
 /**
- * An interface to represent an object which wishes to be injected with the {@link CamelContext}
+ * A route configurations builder is capable of building route configurations using the builder and model classes.
  */
-public interface CamelContextAware {
+public interface RouteConfigurationsBuilder {
 
     /**
-     * Set the {@link CamelContext} context if the object is an instance of {@link CamelContextAware}.
-     */
-    static <T> T trySetCamelContext(T object, CamelContext camelContext) {
-        if (camelContext != null && object instanceof CamelContextAware) {
-            ((CamelContextAware) object).setCamelContext(camelContext);
-        }
-
-        return object;
-    }
-
-    /**
-     * Get the {@link CamelContext}
+     * Adds the route configurations from this builder to the CamelContext.
      *
-     * @return camelContext the Camel context
+     * @param  context   the Camel context
+     * @throws Exception is thrown if initialization of route configurations failed
      */
-    CamelContext getCamelContext();
+    void addRouteConfigurationsToCamelContext(CamelContext context) throws Exception;
 
-    /**
-     * Injects the {@link CamelContext}
-     *
-     * @param camelContext the Camel context
-     */
-    void setCamelContext(CamelContext camelContext);
 }

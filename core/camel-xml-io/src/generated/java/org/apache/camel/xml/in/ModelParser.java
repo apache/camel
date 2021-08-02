@@ -936,6 +936,53 @@ public class ModelParser extends BaseParser {
             return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
+    protected RouteConfigurationDefinition doParseRouteConfigurationDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteConfigurationDefinition(),
+            optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+            switch (key) {
+                case "interceptFrom": doAdd(doParseInterceptFromDefinition(), def.getIntercepts(), def::setIntercepts); break;
+                case "interceptSendToEndpoint": doAdd(doParseInterceptSendToEndpointDefinition(), def.getInterceptSendTos(), def::setInterceptSendTos); break;
+                case "intercept": doAdd(doParseInterceptDefinition(), def.getIntercepts(), def::setIntercepts); break;
+                case "onCompletion": doAdd(doParseOnCompletionDefinition(), def.getOnCompletions(), def::setOnCompletions); break;
+                case "onException": doAdd(doParseOnExceptionDefinition(), def.getOnExceptions(), def::setOnExceptions); break;
+                default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+            }
+            return true;
+        }, noValueHandler());
+    }
+    public Optional<RouteConfigurationsDefinition> parseRouteConfigurationsDefinition()
+            throws IOException, XmlPullParserException {
+        String tag = getNextTag("routeConfigurations", "routeConfiguration");
+        if (tag != null) {
+            switch (tag) {
+                case "routeConfigurations" : return Optional.of(doParseRouteConfigurationsDefinition());
+                case "routeConfiguration" : return parseSingleRouteConfigurationsDefinition();
+            }
+        }
+        return Optional.empty();
+    }
+    private Optional<RouteConfigurationsDefinition> parseSingleRouteConfigurationsDefinition()
+            throws IOException, XmlPullParserException {
+        Optional<RouteConfigurationDefinition> single = Optional.of(doParseRouteConfigurationDefinition());
+        if (single.isPresent()) {
+            List<RouteConfigurationDefinition> list = new ArrayList<>();
+            list.add(single.get());
+            RouteConfigurationsDefinition def = new RouteConfigurationsDefinition();
+            def.setRouteConfigurations(list);
+            return Optional.of(def);
+        }
+        return Optional.empty();
+    }
+    protected RouteConfigurationsDefinition doParseRouteConfigurationsDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteConfigurationsDefinition(),
+            noAttributeHandler(), (def, key) -> {
+            if ("routeConfiguration".equals(key)) {
+                doAdd(doParseRouteConfigurationDefinition(), def.getRouteConfigurations(), def::setRouteConfigurations);
+                return true;
+            }
+            return false;
+        }, noValueHandler());
+    }
     protected RouteContextRefDefinition doParseRouteContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteContextRefDefinition(), (def, key, val) -> {
             if ("ref".equals(key)) {

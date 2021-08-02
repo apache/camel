@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.support;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupStep;
@@ -57,6 +58,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     @Override
     public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
         final RouteBuilder builder = doLoadRouteBuilder(resource);
+        CamelContextAware.trySetCamelContext(builder, getCamelContext());
 
         if (recorder != null) {
             StartupStep step = recorder.beginStep(
