@@ -2041,6 +2041,9 @@
         }, {
           "type" : "object",
           "properties" : {
+            "id" : {
+              "type" : "string"
+            },
             "intercept" : {
               "type" : "array",
               "items" : {
