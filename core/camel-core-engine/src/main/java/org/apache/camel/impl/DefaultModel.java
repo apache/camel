@@ -120,7 +120,11 @@ public class DefaultModel implements Model {
         if (routesConfiguration == null) {
             return;
         }
-        this.routesConfigurations.add(routesConfiguration);
+        // only add if not already exists (route-loader may let Java DSL add route configuration twice
+        // because it extends RouteBuilder as base class)
+        if (!this.routesConfigurations.contains(routesConfiguration)) {
+            this.routesConfigurations.add(routesConfiguration);
+        }
     }
 
     @Override
@@ -128,7 +132,11 @@ public class DefaultModel implements Model {
         if (routesConfigurations == null || routesConfigurations.isEmpty()) {
             return;
         }
-        this.routesConfigurations.addAll(routesConfigurations);
+        // only add if not already exists (route-loader may let Java DSL add route configuration twice
+        // because it extends RouteBuilder as base class)
+        for (RouteConfigurationDefinition rc : routesConfigurations) {
+            addRouteConfiguration(rc);
+        }
     }
 
     @Override
