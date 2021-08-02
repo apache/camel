@@ -2095,6 +2095,9 @@
           "id" : {
             "type" : "string"
           },
+          "route-configuration" : {
+            "type" : "string"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
