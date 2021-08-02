@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.support.OrderedComparator;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSupport {
 
@@ -38,18 +41,18 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
     public void testRoutesConfigurationOnException() throws Exception {
         List<RoutesBuilder> routes = new ArrayList<>();
 
-        //        routes.add(new RouteBuilder() {
-        //            @Override
-        //            public void configure() throws Exception {
-        //                from("direct:start")
-        //                        .throwException(new IllegalArgumentException("Foo"));
-        //            }
-        //        });
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .throwException(new IllegalArgumentException("Foo"));
+            }
+        });
         routes.add(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start2")
-                        .routeConfiguration("handle*")
+                        .routeConfiguration("handleError")
                         .throwException(new IllegalArgumentException("Foo2"));
             }
         });
@@ -79,14 +82,138 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
 
         getMockEndpoint("mock:error").expectedBodiesReceived("Bye World");
 
-        //        try {
-        //            template.sendBody("direct:start", "Hello World");
-        //            fail("Should throw exception");
-        //        } catch (Exception e) {
-        // expected
-        //        }
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should throw exception");
+        } catch (Exception e) {
+            // expected
+        }
         template.sendBody("direct:start2", "Bye World");
 
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRoutesConfigurationOnExceptionPattern() throws Exception {
+        List<RoutesBuilder> routes = new ArrayList<>();
+
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .routeConfiguration("general*")
+                        .throwException(new IllegalArgumentException("Foo"));
+            }
+        });
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start2")
+                        .routeConfiguration("io*")
+                        .throwException(new IOException("Foo2"));
+            }
+        });
+        routes.add(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() throws Exception {
+                // named routes configuration
+                routeConfiguration("generalError").onException(Exception.class).handled(true).to("mock:error");
+                routeConfiguration("ioError").onException(IOException.class).maximumRedeliveries(3).redeliveryDelay(0).handled(true).to("mock:io");
+            }
+        });
+        context.start();
+
+        // sort routes according to ordered
+        routes.sort(OrderedComparator.get());
+
+        // first add the routes configurations as they are globally for all routes
+        for (RoutesBuilder builder : routes) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+                context.addRoutesConfigurations(rcb);
+            }
+        }
+        // then add the routes
+        for (RoutesBuilder builder : routes) {
+            context.addRoutes(builder);
+        }
+
+        getMockEndpoint("mock:error").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:io").expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start2", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRoutesConfigurationOnExceptionDefault() throws Exception {
+        List<RoutesBuilder> routes = new ArrayList<>();
+
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").routeId("foo")
+                        .throwException(new IllegalArgumentException("Foo"));
+            }
+        });
+        routes.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start2").routeId("foo2")
+                        .throwException(new IOException("Foo2"));
+            }
+        });
+        routes.add(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() throws Exception {
+                // has no name so its the default
+                routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
+                // special for io, but only if included
+                routeConfiguration("ioError").onException(IOException.class).maximumRedeliveries(3).redeliveryDelay(0).handled(true).to("mock:io");
+            }
+        });
+        context.start();
+
+        // sort routes according to ordered
+        routes.sort(OrderedComparator.get());
+
+        // first add the routes configurations as they are globally for all routes
+        for (RoutesBuilder builder : routes) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+                context.addRoutesConfigurations(rcb);
+            }
+        }
+        // then add the routes
+        for (RoutesBuilder builder : routes) {
+            context.addRoutes(builder);
+        }
+
+        getMockEndpoint("mock:error").expectedBodiesReceived("Hello World", "Bye World");
+        getMockEndpoint("mock:io").expectedMessageCount(0);
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start2", "Bye World");
+        assertMockEndpointsSatisfied();
+
+        context.removeRoute("foo2");
+
+        // now re-configure route2 to use ioError route configuration
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start2").routeId("foo2")
+                        .routeConfiguration("ioError")
+                        .throwException(new IOException("Foo2"));
+            }
+        });
+        // try again
+        resetMocks();
+        getMockEndpoint("mock:error").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:io").expectedBodiesReceived("Bye World");
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start2", "Bye World");
         assertMockEndpointsSatisfied();
     }
 
