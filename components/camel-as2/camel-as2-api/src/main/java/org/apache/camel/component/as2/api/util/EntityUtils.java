@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIConsentEntity;
@@ -32,6 +33,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIX12Entity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
@@ -81,12 +83,12 @@ public final class EntityUtils {
         return headerString + "; " + parameterName + "=" + parameterValue;
     }
 
-    public static String encode(String data, Charset charset, String encoding) throws Exception {
+    public static String encode(String data, Charset charset, String encoding) throws CamelException {
         byte[] encoded = encode(data.getBytes(charset), encoding);
         return new String(encoded, charset);
     }
 
-    public static byte[] encode(byte[] data, String encoding) throws Exception {
+    public static byte[] encode(byte[] data, String encoding) throws CamelException {
         Args.notNull(data, "Data");
 
         if (encoding == null) {
@@ -106,11 +108,11 @@ public final class EntityUtils {
                 // Identity encoding
                 return data;
             default:
-                throw new Exception("Unknown encoding: " + encoding);
+                throw new CamelException("Unknown encoding: " + encoding);
         }
     }
 
-    public static OutputStream encode(OutputStream os, String encoding) throws Exception {
+    public static OutputStream encode(OutputStream os, String encoding) throws CamelException {
         Args.notNull(os, "Output Stream");
 
         if (encoding == null) {
@@ -129,16 +131,16 @@ public final class EntityUtils {
                 // Identity encoding
                 return os;
             default:
-                throw new Exception("Unknown encoding: " + encoding);
+                throw new CamelException("Unknown encoding: " + encoding);
         }
     }
 
-    public static String decode(String data, Charset charset, String encoding) throws Exception {
+    public static String decode(String data, Charset charset, String encoding) throws CamelException, DecoderException {
         byte[] decoded = decode(data.getBytes(charset), encoding);
         return new String(decoded, charset);
     }
 
-    public static byte[] decode(byte[] data, String encoding) throws Exception {
+    public static byte[] decode(byte[] data, String encoding) throws CamelException, DecoderException {
         Args.notNull(data, "Data");
 
         if (encoding == null) {
@@ -156,11 +158,11 @@ public final class EntityUtils {
                 // Identity encoding
                 return data;
             default:
-                throw new Exception("Unknown encoding: " + encoding);
+                throw new CamelException("Unknown encoding: " + encoding);
         }
     }
 
-    public static InputStream decode(InputStream is, String encoding) throws Exception {
+    public static InputStream decode(InputStream is, String encoding) throws CamelException {
         Args.notNull(is, "Input Stream");
 
         if (encoding == null) {
@@ -179,13 +181,13 @@ public final class EntityUtils {
                 // Identity encoding
                 return is;
             default:
-                throw new Exception("Unknown encoding: " + encoding);
+                throw new CamelException("Unknown encoding: " + encoding);
         }
     }
 
     public static ApplicationEDIEntity createEDIEntity(
             String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody)
-            throws Exception {
+            throws CamelException {
         Args.notNull(ediMessage, "EDI Message");
         Args.notNull(ediMessageContentType, "EDI Message Content Type");
         String charset = null;
@@ -200,7 +202,7 @@ public final class EntityUtils {
             case AS2MediaType.APPLICATION_EDI_CONSENT:
                 return new ApplicationEDIConsentEntity(ediMessage, charset, contentTransferEncoding, isMainBody);
             default:
-                throw new Exception("Invalid EDI entity mime type: " + ediMessageContentType.getMimeType());
+                throw new CamelException("Invalid EDI entity mime type: " + ediMessageContentType.getMimeType());
         }
 
     }
@@ -260,7 +262,7 @@ public final class EntityUtils {
             String bodyPartContent,
             ContentType contentType,
             String bodyPartTransferEncoding)
-            throws Exception {
+            throws CamelException, DecoderException {
         Args.notNull(bodyPartContent, "bodyPartContent");
         Charset contentCharset = contentType.getCharset();
         if (contentCharset == null) {
