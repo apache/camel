@@ -40,7 +40,7 @@ public class ZooKeeperServiceDiscoveryFactoryConfigurer extends org.apache.camel
         case "namespace":
         case "Namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "nodes":
-        case "Nodes": target.setNodes(property(camelContext, java.lang.String.class, value)); return true;
+        case "Nodes": target.setNodes(property(camelContext, java.util.List.class, value)); return true;
         case "reconnectbasesleeptime":
         case "ReconnectBaseSleepTime": target.setReconnectBaseSleepTime(property(camelContext, long.class, value)); return true;
         case "reconnectbasesleeptimeunit":
@@ -83,7 +83,7 @@ public class ZooKeeperServiceDiscoveryFactoryConfigurer extends org.apache.camel
         case "namespace":
         case "Namespace": return java.lang.String.class;
         case "nodes":
-        case "Nodes": return java.lang.String.class;
+        case "Nodes": return java.util.List.class;
         case "reconnectbasesleeptime":
         case "ReconnectBaseSleepTime": return long.class;
         case "reconnectbasesleeptimeunit":
@@ -153,6 +153,8 @@ public class ZooKeeperServiceDiscoveryFactoryConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authinfolist":
         case "AuthInfoList": return org.apache.curator.framework.AuthInfo.class;
+        case "nodes":
+        case "Nodes": return java.lang.String.class;
         default: return null;
         }
     }
