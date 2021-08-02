@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<RouteConfigurationDefinition> {
 
-    // TODO: Model for ErrorHandler
+    // TODO: Model for ErrorHandler (requires to move error handler model from spring-xml, blueprint to core)
 
     @XmlElementRef
     private List<OnExceptionDefinition> onExceptions = new ArrayList<>();
