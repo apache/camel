@@ -1001,6 +1001,7 @@ public class ModelParser extends BaseParser {
                 case "group": def.setGroup(val); break;
                 case "logMask": def.setLogMask(val); break;
                 case "messageHistory": def.setMessageHistory(val); break;
+                case "routeConfiguration": def.setRouteConfiguration(val); break;
                 case "routePolicyRef": def.setRoutePolicyRef(val); break;
                 case "shutdownRoute": def.setShutdownRoute(val); break;
                 case "shutdownRunningTask": def.setShutdownRunningTask(val); break;

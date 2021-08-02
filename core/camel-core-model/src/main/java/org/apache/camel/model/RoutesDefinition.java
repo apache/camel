@@ -32,6 +32,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * A series of Camel routes
@@ -203,6 +204,14 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         if (handler != null) {
             route.setErrorHandlerFactoryIfNull(handler);
         }
+        getRoutes().add(route);
+        return route;
+    }
+
+    public void prepareRoute(RouteDefinition route) {
+        if (route.isPrepared()) {
+            return;
+        }
 
         // merge global and route scoped together
         List<OnExceptionDefinition> oe = new ArrayList<>(onExceptions);
@@ -214,23 +223,26 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
             List<RouteConfigurationDefinition> globalConfigurations
                     = getCamelContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
             if (globalConfigurations != null) {
-                globalConfigurations.forEach(g -> {
-                    oe.addAll(g.getOnExceptions());
-                    icp.addAll(g.getIntercepts());
-                    ifrom.addAll(g.getInterceptFroms());
-                    ito.addAll(g.getInterceptSendTos());
-                    oc.addAll(g.getOnCompletions());
-                });
+                globalConfigurations.stream()
+                        // global configurations have no id assigned or is a wildcard
+                        // if the route has a route configuration assigned then use pattern matching
+                        .filter(g -> (g.getId() == null || g.getId().equals("*"))
+                                || (PatternHelper.matchPattern(g.getId(), route.getRouteConfiguration())))
+                        .forEach(g -> {
+                            oe.addAll(g.getOnExceptions());
+                            icp.addAll(g.getIntercepts());
+                            ifrom.addAll(g.getInterceptFroms());
+                            ito.addAll(g.getInterceptSendTos());
+                            oc.addAll(g.getOnCompletions());
+                        });
             }
         }
 
         // must prepare the route before we can add it to the routes list
         RouteDefinitionHelper.prepareRoute(getCamelContext(), route, oe, icp, ifrom, ito, oc);
 
-        getRoutes().add(route);
         // mark this route as prepared
         route.markPrepared();
-        return route;
     }
 
     /**

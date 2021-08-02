@@ -478,6 +478,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         populateTransformers();
         populateValidators();
         populateRouteTemplates();
+
+        // ensure routes are prepared before being populated
+        for (RouteDefinition route : routeCollection.getRoutes()) {
+            routeCollection.prepareRoute(route);
+        }
         populateRoutes();
 
         if (this instanceof OnCamelContextEvent) {
@@ -549,10 +554,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             }
 
             configure();
-            // mark all route definitions as custom prepared because
-            // a route builder prepares the route definitions correctly already
+
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
-                route.markPrepared();
+                // ensure the route is prepared after configure method is complete
+                getRouteCollection().prepareRoute(route);
             }
 
             for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
