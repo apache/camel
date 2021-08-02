@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>23</version>
+        <version>24</version>
     </parent>
 
     <groupId>org.apache.camel</groupId>
@@ -112,6 +112,9 @@
         <jdk.version>1.8</jdk.version>
         <compiler.fork>false</compiler.fork>
 
+        <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
+        <project.build.outputTimestamp>1</project.build.outputTimestamp>
+
         <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-surefire-plugin-version>3.0.0-M5</maven-surefire-plugin-version>
@@ -121,7 +124,7 @@
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <formatter-maven-plugin.version>2.13.0</formatter-maven-plugin.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
-        <maven-bundle-plugin-version>4.2.1</maven-bundle-plugin-version>
+        <maven-bundle-plugin-version>5.1.2</maven-bundle-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
         <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
