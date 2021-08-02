@@ -24,7 +24,7 @@ import org.apache.camel.util.function.ThrowingConsumer;
  *
  * <pre>
  * RouteBuilder.addRoutes(context, rb ->
- *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
+ *     rb.from("direct:inbound").bean(MyBean.class)));
  * </pre>
  *
  * @see RouteBuilder#addRoutes(CamelContext, LambdaRouteBuilder)

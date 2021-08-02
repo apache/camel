@@ -86,7 +86,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      *
      * <pre>
      * RouteBuilder.addRoutes(context, rb ->
-     *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
+     *     rb.from("direct:inbound").bean(MyBean.class)));
      * </pre>
      *
      * @param  context   the camel context to add routes

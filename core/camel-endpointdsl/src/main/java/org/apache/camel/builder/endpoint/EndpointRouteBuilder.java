@@ -42,7 +42,7 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
      *
      * <pre>
      * RouteBuilder.addRoutes(context, rb -&gt;
-     *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
+     *     rb.from(direct("inbound")).bean(MyBean.class)));
      * </pre>
      *
      * @param  context   the camel context to add routes
