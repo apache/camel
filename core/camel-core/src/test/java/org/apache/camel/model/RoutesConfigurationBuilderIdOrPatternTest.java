@@ -118,7 +118,8 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
             public void configuration() throws Exception {
                 // named routes configuration
                 routeConfiguration("generalError").onException(Exception.class).handled(true).to("mock:error");
-                routeConfiguration("ioError").onException(IOException.class).maximumRedeliveries(3).redeliveryDelay(0).handled(true).to("mock:io");
+                routeConfiguration("ioError").onException(IOException.class).maximumRedeliveries(3).redeliveryDelay(0)
+                        .handled(true).to("mock:io");
             }
         });
         context.start();
@@ -171,7 +172,8 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
                 // has no name so its the default
                 routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
                 // special for io, but only if included
-                routeConfiguration("ioError").onException(IOException.class).maximumRedeliveries(3).redeliveryDelay(0).handled(true).to("mock:io");
+                routeConfiguration("ioError").onException(IOException.class).maximumRedeliveries(3).redeliveryDelay(0)
+                        .handled(true).to("mock:io");
             }
         });
         context.start();
