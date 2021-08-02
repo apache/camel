@@ -20,6 +20,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.net.ftp.FTPSClient;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -41,6 +42,7 @@ public class FileToFtpsWithFtpClientConfigRefIT extends FtpsServerExplicitSSLWit
                + "&disableSecureDataChannelDefaults=true&delete=true";
     }
 
+    @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")
     @Test
     public void testFromFileToFtp() throws Exception {
 
