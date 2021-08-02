@@ -36,8 +36,8 @@ The component supports 10 options, which are listed below.
 
 [TIP]
 **Resolving property from Java code** +
-You can use the method `resolvePropertyPlaceholders` on the
-`CamelContext` to resolve a property from any Java code.
+You can use the method `resolveProperty` on the `PropertiesComponent` to resolve a property from Java code.
+Or use the method `resolvePropertyPlaceholders` on the `CamelContext` to resolve property placeholders in a string.
 
 == Using PropertyPlaceholder
 
