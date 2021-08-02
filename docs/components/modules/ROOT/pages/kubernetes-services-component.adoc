@@ -120,7 +120,7 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of servoces from your cluster
+This operation return a List of services from your cluster
 
 - listServicesByLabels:  this operation list the deployments by labels on a kubernetes cluster
 
