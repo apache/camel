@@ -43,7 +43,6 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         implements RouteContainer, CamelContextAware {
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<>();
-    // TODO: Use RoutesConfigurationDefinition instead
     @XmlTransient
     private List<InterceptDefinition> intercepts = new ArrayList<>();
     @XmlTransient
