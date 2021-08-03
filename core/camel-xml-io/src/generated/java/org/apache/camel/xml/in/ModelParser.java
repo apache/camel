@@ -940,7 +940,7 @@ public class ModelParser extends BaseParser {
         return doParse(new RouteConfigurationDefinition(),
             optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
             switch (key) {
-                case "interceptFrom": doAdd(doParseInterceptFromDefinition(), def.getIntercepts(), def::setIntercepts); break;
+                case "interceptFrom": doAdd(doParseInterceptFromDefinition(), def.getInterceptFroms(), def::setInterceptFroms); break;
                 case "interceptSendToEndpoint": doAdd(doParseInterceptSendToEndpointDefinition(), def.getInterceptSendTos(), def::setInterceptSendTos); break;
                 case "intercept": doAdd(doParseInterceptDefinition(), def.getIntercepts(), def::setIntercepts); break;
                 case "onCompletion": doAdd(doParseOnCompletionDefinition(), def.getOnCompletions(), def::setOnCompletions); break;

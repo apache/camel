@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
@@ -37,15 +37,15 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
 
     // TODO: Model for ErrorHandler (requires to move error handler model from spring-xml, blueprint to core)
 
-    @XmlElementRef
+    @XmlElement(name = "onException")
     private List<OnExceptionDefinition> onExceptions = new ArrayList<>();
-    @XmlElementRef
+    @XmlElement(name = "onCompletion")
     private List<OnCompletionDefinition> onCompletions = new ArrayList<>();
-    @XmlElementRef
+    @XmlElement(name = "intercept")
     private List<InterceptDefinition> intercepts = new ArrayList<>();
-    @XmlElementRef
+    @XmlElement(name = "interceptFrom")
     private List<InterceptFromDefinition> interceptFroms = new ArrayList<>();
-    @XmlElementRef
+    @XmlElement(name = "interceptSendToEndpoint")
     private List<InterceptSendToEndpointDefinition> interceptSendTos = new ArrayList<>();
 
     public RouteConfigurationDefinition() {
