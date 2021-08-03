@@ -453,10 +453,8 @@ public abstract class CamelTestSupport extends TestSupport {
                 }
             }
             for (RoutesBuilder builder : builders) {
-                if (!(builder instanceof RouteConfigurationsBuilder)) {
-                    log.debug("Using created route builder: {}", builder);
-                    context.addRoutes(builder);
-                }
+                log.debug("Using created route builder: {}", builder);
+                context.addRoutes(builder);
             }
             replaceFromEndpoints();
             boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
