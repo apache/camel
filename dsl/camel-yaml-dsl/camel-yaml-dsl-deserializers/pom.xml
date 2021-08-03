@@ -134,6 +134,8 @@
                                 <bannedDefinition>org.apache.camel.model.RouteTemplateBeanDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.RoutesDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.RestsDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.RouteConfigurationDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.RouteConfigurationsDefinition</bannedDefinition>
                             </bannedDefinitions>
                             <additionalDefinitions>
                                 <!-- saga -->

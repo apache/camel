@@ -37,6 +37,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           properties = {
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "group", type = "string"),
+                  @YamlProperty(name = "route-configuration-id", type = "string"),
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true),
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
           })
@@ -69,6 +70,9 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "group":
                     target.setGroup(asText(val));
+                    break;
+                case "route-configuration-id":
+                    target.setRouteConfigurationId(asText(val));
                     break;
                 case "from":
                     target.setInput(asType(val, FromDefinition.class));

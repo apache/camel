@@ -64,6 +64,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
+import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
@@ -1143,11 +1144,25 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public void addRoutes(final RoutesBuilder builder) throws Exception {
+    public void addRoutes(RoutesBuilder builder) throws Exception {
+        // in case the builder is also a route configuration builder
+        // then we need to add the configuration first
+        if (builder instanceof RouteConfigurationsBuilder) {
+            addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+        }
         try (LifecycleHelper helper = new LifecycleHelper()) {
             build();
             LOG.debug("Adding routes from builder: {}", builder);
             builder.addRoutesToCamelContext(AbstractCamelContext.this);
+        }
+    }
+
+    @Override
+    public void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception {
+        try (LifecycleHelper helper = new LifecycleHelper()) {
+            build();
+            LOG.debug("Adding route configurations from builder: {}", builder);
+            builder.addRouteConfigurationsToCamelContext(AbstractCamelContext.this);
         }
     }
 
@@ -2857,7 +2872,7 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        // ant duplicate components in use?
+        // duplicate components in use?
         logDuplicateComponents();
 
         // log startup summary
@@ -2950,6 +2965,7 @@ public abstract class AbstractCamelContext extends BaseService
             int total = 0;
             int disabled = 0;
             List<String> lines = new ArrayList<>();
+            List<String> configs = new ArrayList<>();
             routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder));
             for (RouteStartupOrder order : routeStartupOrder) {
                 total++;
@@ -2962,6 +2978,11 @@ public abstract class AbstractCamelContext extends BaseService
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
                 lines.add(String.format("    %s %s (%s)", status, id, uri));
+
+                String cid = order.getRoute().getConfigurationId();
+                if (cid != null) {
+                    configs.add(String.format("    %s (%s)", id, cid));
+                }
             }
             for (Route route : routes) {
                 if (!route.isAutoStartup()) {
@@ -2976,6 +2997,11 @@ public abstract class AbstractCamelContext extends BaseService
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
                     lines.add(String.format("    %s %s (%s)", status, id, uri));
+
+                    String cid = route.getConfigurationId();
+                    if (cid != null) {
+                        configs.add(String.format("    %s (%s)", id, cid));
+                    }
                 }
             }
             if (disabled > 0) {
@@ -2987,6 +3013,12 @@ public abstract class AbstractCamelContext extends BaseService
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
                 for (String line : lines) {
                     LOG.info(line);
+                }
+                if (startupSummaryLevel == StartupSummaryLevel.Verbose) {
+                    LOG.info("Routes configuration summary");
+                    for (String line : configs) {
+                        LOG.info(line);
+                    }
                 }
             }
         }
@@ -3006,8 +3038,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected void doStartCamel() throws Exception {
         if (!adapt(ExtendedCamelContext.class).getBeanPostProcessor().isEnabled()) {
-            LOG.info(
-                    "BeanPostProcessor is disabled. This means features such as dependency injection of Camel annotations in beans is not supported.");
+            LOG.info("BeanPostProcessor is disabled. Dependency injection of Camel annotations in beans is not supported.");
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(

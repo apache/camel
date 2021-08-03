@@ -573,6 +573,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void addRoutes(RoutesBuilder builder) throws Exception;
 
     /**
+     * Adds the routes configurations (global configuration for all routes) from the routes builder.
+     *
+     * @param  builder   the builder which has routes configurations
+     * @throws Exception if the routes configurations could not be created for whatever reason
+     */
+    void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception;
+
+    /**
      * Removes the given route (the route <b>must</b> be stopped before it can be removed).
      * <p/>
      * A route which is removed will be unregistered from JMX, have its services stopped/shutdown and the route

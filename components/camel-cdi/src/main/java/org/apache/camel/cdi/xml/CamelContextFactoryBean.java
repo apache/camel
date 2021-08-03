@@ -59,6 +59,7 @@ import org.apache.camel.model.PackageScanDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateContextRefDefinition;
@@ -296,6 +297,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @XmlElement(name = "rest")
     private List<RestDefinition> rests = new ArrayList<>();
 
+    @XmlElement(name = "routeConfiguration")
+    private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
+
     @XmlElement(name = "routeTemplate")
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
 
@@ -489,6 +493,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @Override
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
+    }
+
+    @Override
+    public List<RouteConfigurationDefinition> getRouteConfigurations() {
+        return routeConfigurations;
+    }
+
+    @Override
+    public void setRouteConfigurations(List<RouteConfigurationDefinition> routeConfigurations) {
+        this.routeConfigurations = routeConfigurations;
     }
 
     @Override

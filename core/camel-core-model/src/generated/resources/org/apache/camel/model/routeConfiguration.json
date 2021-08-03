@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "routeConfiguration",
+    "title": "Route Configuration",
+    "description": "Reusable configuration for Camel route(s).",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.RouteConfigurationDefinition",
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "intercept": { "kind": "element", "displayName": "Intercept", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.InterceptDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds a route for an interceptor that intercepts every processing step." },
+    "interceptFrom": { "kind": "element", "displayName": "Intercept From", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.InterceptFromDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds a route for an interceptor that intercepts incoming messages on the given endpoint." },
+    "interceptSendToEndpoint": { "kind": "element", "displayName": "Intercept Send To Endpoint", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.InterceptSendToEndpointDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Applies a route for an interceptor if an exchange is send to the given endpoint" },
+    "onException": { "kind": "element", "displayName": "On Exception", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.OnExceptionDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Exception clause for catching certain exceptions and handling them." },
+    "onCompletion": { "kind": "element", "displayName": "On Completion", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.OnCompletionDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "On completion callback for doing custom routing when the org.apache.camel.Exchange is complete." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

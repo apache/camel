@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
 
@@ -36,7 +37,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "routeTemplates")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition>
-        implements RouteTemplateContainer {
+        implements RouteTemplateContainer, CamelContextAware {
     @XmlElementRef
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
     @XmlTransient

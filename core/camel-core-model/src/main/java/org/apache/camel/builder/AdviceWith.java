@@ -229,6 +229,10 @@ public final class AdviceWith {
         // mixed in correctly as well
         RouteDefinition merged = routes.route(definition);
 
+        // must re-prepare the merged route before it can be used
+        merged.markUnprepared();
+        routes.prepareRoute(merged);
+
         // add the new merged route
         model.getRouteDefinitions().add(0, merged);
 

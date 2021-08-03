@@ -481,6 +481,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         int restarting = 0;
         int exhausted = 0;
         List<String> lines = new ArrayList<>();
+        List<String> configs = new ArrayList<>();
         for (RouteHolder route : routes) {
             String id = route.getId();
             String status = getRouteStatus(id).name();
@@ -491,7 +492,11 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = route.get().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("\t%s %s (%s)", status, id, uri));
+                lines.add(String.format("    %s %s (%s)", status, id, uri));
+                String cid = route.get().getConfigurationId();
+                if (cid != null) {
+                    configs.add(String.format("    %s (%s)", id, cid));
+                }
             }
         }
         for (RouteHolder route : routeManager.routes.keySet()) {
@@ -503,7 +508,11 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             String uri = route.get().getEndpoint().getEndpointBaseUri();
             uri = URISupport.sanitizeUri(uri);
             BackOff backOff = getBackOff(id);
-            lines.add(String.format("\t%s %s (%s) with %s", status, id, uri, backOff));
+            lines.add(String.format("    %s %s (%s) with %s", status, id, uri, backOff));
+            String cid = route.get().getConfigurationId();
+            if (cid != null) {
+                configs.add(String.format("    %s (%s)", id, cid));
+            }
         }
         for (RouteHolder route : routeManager.exhausted.keySet()) {
             total++;
@@ -513,7 +522,11 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             // use basic endpoint uri to not log verbose details or potential sensitive data
             String uri = route.get().getEndpoint().getEndpointBaseUri();
             uri = URISupport.sanitizeUri(uri);
-            lines.add(String.format("\t%s %s (%s)", status, id, uri));
+            lines.add(String.format("    %s %s (%s)", status, id, uri));
+            String cid = route.get().getConfigurationId();
+            if (cid != null) {
+                configs.add(String.format("    %s (%s)", id, cid));
+            }
         }
 
         if (restarting == 0 && exhausted == 0) {
@@ -526,6 +539,12 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                 || getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Verbose) {
             for (String line : lines) {
                 LOG.info(line);
+            }
+            if (getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Verbose) {
+                LOG.info("Routes configuration summary");
+                for (String line : configs) {
+                    LOG.info(line);
+                }
             }
         }
     }

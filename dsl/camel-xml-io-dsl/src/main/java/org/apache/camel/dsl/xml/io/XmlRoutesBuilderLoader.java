@@ -18,11 +18,15 @@ package org.apache.camel.dsl.xml.io;
 
 import java.io.InputStream;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
@@ -40,7 +44,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
     @Override
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
-        return new RouteBuilder() {
+        return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
                 // we use configure to load the routes (with namespace and without namespace)
@@ -76,14 +80,30 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 }
             }
 
-            private void addRoutes(RoutesDefinition routes) {
-                // xml routes must be marked as un-prepared as camel-core
-                // must do special handling for XML DSL
-                for (RouteDefinition route : routes.getRoutes()) {
-                    RouteDefinitionHelper.prepareRoute(getCamelContext(), route);
-                    route.markPrepared();
+            @Override
+            public void configuration() throws Exception {
+                try (InputStream is = resource.getInputStream()) {
+                    new ModelParser(is)
+                            .parseRouteConfigurationsDefinition()
+                            .ifPresent(this::addConfigurations);
                 }
-                setRouteCollection(routes);
+            }
+
+            private void addRoutes(RoutesDefinition routes) {
+                CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
+
+                // xml routes must be prepared in the same way java-dsl (via RoutesDefinition)
+                // so create a copy and use the fluent builder to add the route
+                for (RouteDefinition route : routes.getRoutes()) {
+                    getRouteCollection().route(route);
+                }
+            }
+
+            private void addConfigurations(RouteConfigurationsDefinition configurations) {
+                CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
+                for (RouteConfigurationDefinition config : configurations.getRouteConfigurations()) {
+                    getCamelContext().adapt(ModelCamelContext.class).addRouteConfiguration(config);
+                }
             }
         };
     }

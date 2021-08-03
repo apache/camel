@@ -40,6 +40,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
@@ -506,6 +507,13 @@ public abstract class CamelTestSupport
 
         if (isUseRouteBuilder()) {
             RoutesBuilder[] builders = createRouteBuilders();
+            // add configuration before routes
+            for (RoutesBuilder builder : builders) {
+                if (builder instanceof RouteConfigurationsBuilder) {
+                    LOG.debug("Using created route configuration: {}", builder);
+                    context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+                }
+            }
             for (RoutesBuilder builder : builders) {
                 LOG.debug("Using created route builder: {}", builder);
                 context.addRoutes(builder);

@@ -71,6 +71,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     protected final Route route;
     protected final String description;
+    protected final String configurationId;
     protected final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
     private final String jmxDomain;
@@ -79,6 +80,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.route = route;
         this.context = context;
         this.description = route.getDescription();
+        this.configurationId = route.getConfigurationId();
         this.jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
     }
 
@@ -143,6 +145,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
+    public String getRouteConfigurationId() {
+        return configurationId;
+    }
+
+    @Override
     public String getEndpointUri() {
         if (route.getEndpoint() != null) {
             return route.getEndpoint().getEndpointUri();
@@ -169,10 +176,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public long getUptimeMillis() {
         return route.getUptimeMillis();
-    }
-
-    public Integer getInflightExchanges() {
-        return (int) super.getExchangesInflight();
     }
 
     @Override
@@ -644,6 +647,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 }
             };
         }
+    }
+
+    private Integer getInflightExchanges() {
+        return (int) super.getExchangesInflight();
     }
 
     /**

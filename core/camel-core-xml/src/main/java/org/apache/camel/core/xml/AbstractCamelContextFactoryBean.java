@@ -72,6 +72,8 @@ import org.apache.camel.model.PackageScanDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
+import org.apache.camel.model.RouteConfigurationContainer;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -132,6 +134,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
@@ -143,7 +146,7 @@ import org.slf4j.LoggerFactory;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType
-        implements RouteTemplateContainer, RouteContainer, RestContainer {
+        implements RouteTemplateContainer, RouteConfigurationContainer, RouteContainer, RestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
@@ -444,6 +447,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // mark that we are setting up routes
             getContext().adapt(ExtendedCamelContext.class).setupRoutes(false);
 
+            // add route configurations
+            getContext().addRouteConfigurations(getRouteConfigurations());
+
             // init route templates
             initRouteTemplateRefs();
 
@@ -546,9 +552,37 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // sanity check first as the route is created using XML
             RouteDefinitionHelper.sanityCheckRoute(route);
 
-            // leverage logic from route definition helper to prepare the route
-            RouteDefinitionHelper.prepareRoute(getContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
-                    getInterceptSendToEndpoints(), getOnCompletions());
+            // merge global and route scoped together
+            List<OnExceptionDefinition> oe = new ArrayList<>(getOnExceptions());
+            List<InterceptDefinition> icp = new ArrayList<>(getIntercepts());
+            List<InterceptFromDefinition> ifrom = new ArrayList<>(getInterceptFroms());
+            List<InterceptSendToEndpointDefinition> ito = new ArrayList<>(getInterceptSendToEndpoints());
+            List<OnCompletionDefinition> oc = new ArrayList<>(getOnCompletions());
+            if (getContext() != null) {
+                List<RouteConfigurationDefinition> globalConfigurations
+                        = getContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
+                if (globalConfigurations != null) {
+                    globalConfigurations.stream()
+                            // global configurations have no id assigned or is a wildcard
+                            // if the route has a route configuration assigned then use pattern matching
+                            .filter(g -> (g.getId() == null || g.getId().equals("*"))
+                                    || (PatternHelper.matchPattern(g.getId(), route.getRouteConfigurationId())))
+                            .forEach(g -> {
+                                oe.addAll(g.getOnExceptions());
+                                icp.addAll(g.getIntercepts());
+                                ifrom.addAll(g.getInterceptFroms());
+                                ito.addAll(g.getInterceptSendTos());
+                                oc.addAll(g.getOnCompletions());
+                            });
+                }
+            }
+
+            // must prepare the route before we can add it to the routes list
+            RouteDefinitionHelper.prepareRoute(getContext(), route, oe, icp, ifrom, ito, oc);
+
+            if (LOG.isDebugEnabled() && route.getRouteConfigurationId() != null) {
+                LOG.debug("Route: {} is using routeConfigurationsId: {}", route.getId(), route.getRouteConfigurationId());
+            }
 
             // mark the route as prepared now
             route.markPrepared();
@@ -855,6 +889,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     @Override
     public abstract List<RouteTemplateDefinition> getRouteTemplates();
+
+    @Override
+    public abstract List<RouteConfigurationDefinition> getRouteConfigurations();
 
     @Override
     public abstract List<RouteDefinition> getRoutes();

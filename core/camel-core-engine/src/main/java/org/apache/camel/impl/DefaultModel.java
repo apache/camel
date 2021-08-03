@@ -46,6 +46,7 @@ import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
@@ -79,6 +80,7 @@ public class DefaultModel implements Model {
 
     private ModelReifierFactory modelReifierFactory = new DefaultModelReifierFactory();
     private final List<ModelLifecycleStrategy> modelLifecycleStrategies = new ArrayList<>();
+    private final List<RouteConfigurationDefinition> routesConfigurations = new ArrayList<>();
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
     private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<>();
@@ -111,6 +113,44 @@ public class DefaultModel implements Model {
     @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
         return modelLifecycleStrategies;
+    }
+
+    @Override
+    public void addRouteConfiguration(RouteConfigurationDefinition routesConfiguration) {
+        if (routesConfiguration == null) {
+            return;
+        }
+        // only add if not already exists (route-loader may let Java DSL add route configuration twice
+        // because it extends RouteBuilder as base class)
+        if (!this.routesConfigurations.contains(routesConfiguration)) {
+            // check that there is no id clash
+            if (routesConfiguration.getId() != null) {
+                boolean clash = this.routesConfigurations.stream()
+                        .anyMatch(r -> ObjectHelper.equal(r.getId(), routesConfiguration.getId()));
+                if (clash) {
+                    throw new IllegalArgumentException(
+                            "Route configuration already exists with id: " + routesConfiguration.getId());
+                }
+            }
+            this.routesConfigurations.add(routesConfiguration);
+        }
+    }
+
+    @Override
+    public void addRouteConfigurations(List<RouteConfigurationDefinition> routesConfigurations) {
+        if (routesConfigurations == null || routesConfigurations.isEmpty()) {
+            return;
+        }
+        // only add if not already exists (route-loader may let Java DSL add route configuration twice
+        // because it extends RouteBuilder as base class)
+        for (RouteConfigurationDefinition rc : routesConfigurations) {
+            addRouteConfiguration(rc);
+        }
+    }
+
+    @Override
+    public List<RouteConfigurationDefinition> getRouteConfigurationDefinitions() {
+        return routesConfigurations;
     }
 
     @Override

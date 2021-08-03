@@ -41,6 +41,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
+import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
@@ -61,6 +62,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
@@ -549,6 +551,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void addRoutes(RoutesBuilder builder) throws Exception {
         delegate.addRoutes(builder);
+    }
+
+    @Override
+    public void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception {
+        delegate.addRoutesConfigurations(builder);
     }
 
     @Override
@@ -1684,6 +1691,21 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
         return getModelCamelContext().getModelLifecycleStrategies();
+    }
+
+    @Override
+    public void addRouteConfiguration(RouteConfigurationDefinition routesConfiguration) {
+        getModelCamelContext().addRouteConfiguration(routesConfiguration);
+    }
+
+    @Override
+    public void addRouteConfigurations(List<RouteConfigurationDefinition> routesConfigurations) {
+        getModelCamelContext().addRouteConfigurations(routesConfigurations);
+    }
+
+    @Override
+    public List<RouteConfigurationDefinition> getRouteConfigurationDefinitions() {
+        return getModelCamelContext().getRouteConfigurationDefinitions();
     }
 
     @Override

@@ -1265,6 +1265,22 @@ To refer to a Java org.apache.camel.builder.RouteBuilder instance to use.
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="routeConfiguration" type="tns:routeConfigurationDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Reusable configuration for Camel route(s).
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="routeConfigurations" type="tns:routeConfigurationsDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A series of route configurations
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="routeContext" type="tns:camelRouteContextFactoryBean">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -10611,6 +10627,26 @@ Reference to the route builder instance.
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="routeConfigurationDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:intercept"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptFrom"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptSendToEndpoint"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onException"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onCompletion"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="routeConfigurationsDefinition">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfiguration"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="routeContextRefDefinition">
     <xs:sequence/>
     <xs:attribute name="ref" type="xs:string" use="required">
@@ -10743,6 +10779,7 @@ Whether message history is enabled on this route. Default value: true
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="rest" type="xs:boolean"/>
+        <xs:attribute name="routeConfigurationId" type="xs:string"/>
         <xs:attribute name="routePolicyRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -15066,6 +15103,7 @@ MicroProfile Circuit Breaker EIP configurations.
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptSendToEndpoint"/>
           <xs:element minOccurs="0" ref="tns:restConfiguration"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:rest"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfiguration"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplate"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:route"/>
         </xs:sequence>

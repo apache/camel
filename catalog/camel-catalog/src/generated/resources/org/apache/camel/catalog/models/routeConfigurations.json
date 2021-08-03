@@ -1,0 +1,16 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "routeConfigurations",
+    "title": "Route Configurations",
+    "description": "A series of route configurations",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.RouteConfigurationsDefinition",
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    
+  }
+}
