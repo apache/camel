@@ -69,12 +69,12 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
         LOG.debug("Stopping Kubernetes ConfigMap Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                if (configMapWatcher != null) {
+                if (configMapWatcher != null && configMapWatcher.getWatch() != null) {
                     configMapWatcher.getWatch().close();
                 }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
-                if (configMapWatcher != null) {
+                if (configMapWatcher != null && configMapWatcher.getWatch() != null) {
                     configMapWatcher.getWatch().close();
                 }
                 executor.shutdownNow();
