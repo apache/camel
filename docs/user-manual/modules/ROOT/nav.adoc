@@ -82,6 +82,7 @@
 ** xref:lambda-route-builder.adoc[LambdaRouteBuilder]
 ** xref:route-controller.adoc[RouteController]
 ** xref:route-policy.adoc[RoutePolicy]
+** xref:route-configuration.adoc[RouteConfiguration]
 ** xref:route-template.adoc[RouteTemplate]
 ** xref:routes.adoc[Routes]
 ** xref:stream-caching.adoc[Stream caching]
