@@ -52,7 +52,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 from("direct:start2")
-                        .routeConfiguration("handleError")
+                        .routeConfigurationId("handleError")
                         .throwException(new IllegalArgumentException("Foo2"));
             }
         });
@@ -101,7 +101,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .routeConfiguration("general*")
+                        .routeConfigurationId("general*")
                         .throwException(new IllegalArgumentException("Foo"));
             }
         });
@@ -109,7 +109,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 from("direct:start2")
-                        .routeConfiguration("io*")
+                        .routeConfigurationId("io*")
                         .throwException(new IOException("Foo2"));
             }
         });
@@ -206,7 +206,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 from("direct:start2").routeId("foo2")
-                        .routeConfiguration("ioError")
+                        .routeConfigurationId("ioError")
                         .throwException(new IOException("Foo2"));
             }
         });

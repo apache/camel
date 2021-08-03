@@ -57,7 +57,7 @@ import org.apache.camel.spi.RoutePolicy;
 public class RouteDefinition extends OutputDefinition<RouteDefinition> implements NamedRoute {
     private final AtomicBoolean prepared = new AtomicBoolean();
     private FromDefinition input;
-    private String routeConfiguration;
+    private String routeConfigurationId;
     private String group;
     private String streamCache;
     private String trace;
@@ -207,11 +207,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * The route configuration id or pattern this route should use for configuration. Multiple id/pattern can be
      * separated by comma.
      *
-     * @param  routeConfiguration id or pattern
-     * @return                    the builder
+     * @param  routeConfigurationId id or pattern
+     * @return                      the builder
      */
-    public RouteDefinition routeConfiguration(String routeConfiguration) {
-        setRouteConfiguration(routeConfiguration);
+    public RouteDefinition routeConfigurationId(String routeConfigurationId) {
+        setRouteConfigurationId(routeConfigurationId);
         return this;
     }
 
@@ -734,8 +734,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * The route configuration id or pattern this route should use for configuration. Multiple id/pattern can be
      * separated by comma.
      */
-    public String getRouteConfiguration() {
-        return routeConfiguration;
+    public String getRouteConfigurationId() {
+        return routeConfigurationId;
     }
 
     /**
@@ -743,8 +743,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * separated by comma.
      */
     @XmlAttribute
-    public void setRouteConfiguration(String routeConfiguration) {
-        this.routeConfiguration = routeConfiguration;
+    public void setRouteConfigurationId(String routeConfigurationId) {
+        this.routeConfigurationId = routeConfigurationId;
     }
 
     /**

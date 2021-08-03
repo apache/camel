@@ -227,7 +227,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
                         // global configurations have no id assigned or is a wildcard
                         // if the route has a route configuration assigned then use pattern matching
                         .filter(g -> (g.getId() == null || g.getId().equals("*"))
-                                || (PatternHelper.matchPattern(g.getId(), route.getRouteConfiguration())))
+                                || (PatternHelper.matchPattern(g.getId(), route.getRouteConfigurationId())))
                         .forEach(g -> {
                             oe.addAll(g.getOnExceptions());
                             icp.addAll(g.getIntercepts());
