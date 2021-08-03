@@ -88,12 +88,12 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     public static void stopGrpcServer() throws IOException {
         if (grpcServerWithTLS != null) {
             grpcServerWithTLS.shutdown();
-            LOG.info("gRPC server with TLS stoped");
+            LOG.info("gRPC server with TLS stopped");
         }
 
         if (grpcServerWithJWT != null) {
             grpcServerWithJWT.shutdown();
-            LOG.info("gRPC server with JWT stoped");
+            LOG.info("gRPC server with JWT stopped");
         }
     }
 

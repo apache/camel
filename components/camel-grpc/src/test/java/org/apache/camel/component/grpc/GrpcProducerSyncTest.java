@@ -61,7 +61,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     public static void stopGrpcServer() throws IOException {
         if (grpcServer != null) {
             grpcServer.shutdown();
-            LOG.info("gRPC server stoped");
+            LOG.info("gRPC server stopped");
         }
     }
 

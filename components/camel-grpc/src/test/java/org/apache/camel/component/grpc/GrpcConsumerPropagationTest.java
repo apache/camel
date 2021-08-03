@@ -68,7 +68,7 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
 
     @Test
     public void testOnNextPropagation() throws Exception {
-        LOG.info("gRPC pingAsyncSync method aync test start");
+        LOG.info("gRPC pingAsyncSync method async test start");
 
         final CountDownLatch latch = new CountDownLatch(1);
         PingRequest pingRequest
@@ -94,7 +94,7 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
 
     @Test
     public void testOnCompletedPropagation() throws Exception {
-        LOG.info("gRPC pingAsyncAsync method aync test start");
+        LOG.info("gRPC pingAsyncAsync method async test start");
         final CountDownLatch latch = new CountDownLatch(1);
         PingRequest pingRequest
                 = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
