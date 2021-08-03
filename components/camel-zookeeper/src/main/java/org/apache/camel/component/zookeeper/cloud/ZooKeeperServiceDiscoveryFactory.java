@@ -24,6 +24,7 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.AuthInfo;
@@ -67,6 +68,7 @@ public class ZooKeeperServiceDiscoveryFactory implements ServiceDiscoveryFactory
         return configuration.getNodes();
     }
 
+    @Metadata(skip = true)
     public void setNodes(String nodes) {
         configuration.setNodes(nodes);
     }
