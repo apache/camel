@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.consumer;
+package org.apache.camel.component.kubernetes.consumer.integration;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import io.fabric8.kubernetes.api.model.Namespace;
 import org.apache.camel.EndpointInject;
@@ -30,31 +31,38 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Requires a running Kubernetes Cluster")
-public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+})
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class KubernetesNamespacesConsumerIT extends KubernetesTestSupport {
+    private static final String TEST_NAME_SPACE = "test" + ThreadLocalRandom.current().nextInt(1, 100);
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void createAndDeletePod() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-
+    @Order(1)
+    public void createPod() throws Exception {
         mockResultEndpoint.expectedMessageCount(5);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
                 "MODIFIED", "MODIFIED", "MODIFIED", "DELETED");
 
         Exchange ex = template.request("direct:createNamespace", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, TEST_NAME_SPACE);
             Map<String, String> labels = new HashMap<>();
             labels.put("this", "rocks");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
@@ -62,9 +70,14 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
 
         Namespace ns = ex.getMessage().getBody(Namespace.class);
 
-        assertEquals("test", ns.getMetadata().getName());
+        assertNotNull(ns);
+        assertEquals(TEST_NAME_SPACE, ns.getMetadata().getName());
+    }
 
-        ex = template.request("direct:listByLabels", exchange -> {
+    @Test
+    @Order(2)
+    public void listByLabels() throws Exception {
+        Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
             labels.put("this", "rocks");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
@@ -72,28 +85,34 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
 
         List<Namespace> result = ex.getMessage().getBody(List.class);
 
-        boolean testExists = false;
+        boolean testNamespaceExists = false;
 
         Iterator<Namespace> it = result.iterator();
         while (it.hasNext()) {
             Namespace namespace = it.next();
-            if ("test".equalsIgnoreCase(namespace.getMetadata().getName())) {
-                testExists = true;
+            if (TEST_NAME_SPACE.equalsIgnoreCase(namespace.getMetadata().getName())) {
+                testNamespaceExists = true;
             }
         }
 
-        assertTrue(testExists);
+        assertTrue(testNamespaceExists);
+    }
 
-        ex = template.request("direct:deleteNamespace",
-                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+    @Test
+    @Order(3)
+    public void deletePod() throws Exception {
+        Exchange ex = template.request("direct:deleteNamespace",
+                exchange -> exchange.getIn()
+                        .setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, TEST_NAME_SPACE));
+
+        Object body = ex.getMessage().getBody();
+        assertNotNull(body);
 
         boolean nsDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(nsDeleted);
 
-        Thread.sleep(3000);
-
-        mockResultEndpoint.assertIsSatisfied();
+        mockResultEndpoint.assertIsSatisfied(5100);
     }
 
     @Override

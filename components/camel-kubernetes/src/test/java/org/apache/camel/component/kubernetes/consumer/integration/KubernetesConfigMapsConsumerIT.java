@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.consumer;
+package org.apache.camel.component.kubernetes.consumer.integration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,27 +28,46 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Requires a running Kubernetes Cluster")
-public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+})
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
-    @Test
-    public void createAndDeleteConfigMap() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-
+    public void configureMock() {
         mockResultEndpoint.expectedMessageCount(3);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
                 "MODIFIED", "MODIFIED");
+    }
+
+    @BeforeEach
+    public void waitForSettle() throws InterruptedException {
+        Thread.sleep(1000);
+    }
+
+    @Test
+    @Order(1)
+    public void createConfigMapWithProperties() throws Exception {
+        configureMock();
+
         Exchange ex = template.request("direct:createConfigmap", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
@@ -60,7 +79,18 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, configMapData);
         });
 
-        ex = template.request("direct:createConfigmap", exchange -> {
+        Message message = ex.getMessage();
+
+        assertNotNull(message);
+        assertNotNull(message.getBody());
+    }
+
+    @Test
+    @Order(2)
+    public void createConfigMap() throws Exception {
+        configureMock();
+
+        Exchange ex = template.request("direct:createConfigmap", exchange -> {
             exchange.getIn().removeHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
@@ -69,23 +99,29 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, configMapData);
         });
 
-        ex = template.request("direct:deleteConfigmap", exchange -> {
+        Message message = ex.getMessage();
+
+        assertNotNull(message);
+        assertNotNull(message.getBody());
+    }
+
+    @ParameterizedTest
+    @Order(3)
+    @ValueSource(strings = { "test", "test1" })
+    public void deleteConfigMaps(String configMapName) throws Exception {
+        Exchange ex = template.request("direct:deleteConfigmap", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, configMapName);
         });
 
-        ex = template.request("direct:deleteConfigmap", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
-        });
+        Message message = ex.getMessage();
 
-        boolean cmDeleted = ex.getMessage().getBody(Boolean.class);
+        assertNotNull(message);
 
+        // To avoid a NPE if unable to convert for any reason
+        assertNotNull(message.getBody());
+        boolean cmDeleted = message.getBody(Boolean.class);
         assertTrue(cmDeleted);
-
-        Thread.sleep(3000);
-
-        mockResultEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -93,11 +129,15 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:createConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=createConfigMap", host,
-                        authToken);
-                from("direct:deleteConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=deleteConfigMap", host,
-                        authToken);
-                fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken)
+                from("direct:createConfigmap")
+                        .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=createConfigMap", host,
+                                authToken);
+
+                from("direct:deleteConfigmap")
+                        .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=deleteConfigMap", host,
+                                authToken);
+
+                fromF("kubernetes-config-maps://%s?oauthToken=%s&operation=listConfigMaps", host, authToken)
                         .process(new KubernetesProcessor()).to(mockResultEndpoint);
             }
         };
@@ -108,6 +148,7 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             ConfigMap cm = exchange.getIn().getBody(ConfigMap.class);
+
             log.info("Got event with configmap name: " + cm.getMetadata().getName() + " and action "
                      + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }

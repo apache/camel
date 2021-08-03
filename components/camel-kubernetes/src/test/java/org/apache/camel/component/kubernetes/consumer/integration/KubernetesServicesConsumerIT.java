@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.consumer;
+package org.apache.camel.component.kubernetes.consumer.integration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,28 +33,33 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Requires a running Kubernetes Cluster")
-public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+})
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void createAndDeleteService() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+    @Order(1)
+    public void createService() throws Exception {
+        mockResultEndpoint.expectedMessageCount(1);
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED");
 
-        mockResultEndpoint.expectedMessageCount(2);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-                "DELETED");
         Exchange ex = template.request("direct:createService", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
@@ -79,7 +84,15 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
 
         assertEquals("test", serv.getMetadata().getName());
 
-        ex = template.request("direct:deleteService", exchange -> {
+        mockResultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    @Order(2)
+    public void deleteService() throws Exception {
+        mockResultEndpoint.expectedMessageCount(2);
+
+        Exchange ex = template.request("direct:deleteService", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
         });
@@ -87,8 +100,6 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
         boolean servDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(servDeleted);
-
-        Thread.sleep(3000);
 
         mockResultEndpoint.assertIsSatisfied();
     }
