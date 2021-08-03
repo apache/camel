@@ -35,6 +35,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route Description")
     String getDescription();
 
+    @ManagedAttribute(description = "Route Configuration ID")
+    String getRouteConfigurationId();
+
     @ManagedAttribute(description = "Route Endpoint URI", mask = true)
     String getEndpointUri();
 

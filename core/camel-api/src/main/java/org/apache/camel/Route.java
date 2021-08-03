@@ -44,6 +44,7 @@ public interface Route extends RuntimeConfiguration {
     String REST_PROPERTY = "rest";
     String TEMPLATE_PROPERTY = "template";
     String DESCRIPTION_PROPERTY = "description";
+    String CONFIGURATION_ID_PROPERTY = "configurationId";
 
     /**
      * Gets the route id
@@ -114,6 +115,16 @@ public interface Route extends RuntimeConfiguration {
      * @return the description, or <tt>null</tt> if no description has been configured.
      */
     String getDescription();
+
+    /**
+     * Gets the route configuration id(s) (if any has been configured).
+     * <p/>
+     * The configuration ids is configured using the {@link #CONFIGURATION_ID_PROPERTY} as key in the
+     * {@link #getProperties()}.
+     *
+     * @return the configuration, or <tt>null</tt> if no configuration has been configured.
+     */
+    String getConfigurationId();
 
     /**
      * Gets the camel context

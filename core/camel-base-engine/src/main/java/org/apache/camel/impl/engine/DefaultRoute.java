@@ -157,6 +157,12 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
+    public String getConfigurationId() {
+        Object value = properties.get(Route.CONFIGURATION_ID_PROPERTY);
+        return value != null ? (String) value : null;
+    }
+
+    @Override
     public void initializeServices() throws Exception {
         // gather all the services for this route
         gatherServices(services);
