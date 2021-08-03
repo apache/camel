@@ -94,7 +94,7 @@
 
             <!-- generate source code from grammar for the stored procedure component -->
             <plugin>
-                <groupId>org.javacc.plugin</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>javacc-maven-plugin</artifactId>
                 <version>${javacc-maven-plugin-version}</version>
                 <executions>
