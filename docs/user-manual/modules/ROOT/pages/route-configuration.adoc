@@ -248,6 +248,18 @@ And in the YAML routes you can assign which configurations to use:
 
 In this example the route is assigned the _yamlError_ route configuration by the exact ID.
 
+== Mixing DSLs
+
+Routes and route configuration is not requires to use the same language. For example you can code
+route configurations in Java, and then use XML DSL for the routes, and they would work together.
+
+== Packaging route configurations in reusable JARs
+
+You can package common route configurations into JARs which you can then use together with
+your Camel applications, by adding the JARs as dependencies to the classpath (such as in Maven pom.xml file).
+
+This allows for example to use a _common practice_ among your Camel applications.
+
 == Logging Summary
 
 If you set `startup-summary-level=verbose` then Camel will log on for each route which route configurations they have been assigned.
