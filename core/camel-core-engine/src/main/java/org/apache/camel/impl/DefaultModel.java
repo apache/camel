@@ -123,6 +123,15 @@ public class DefaultModel implements Model {
         // only add if not already exists (route-loader may let Java DSL add route configuration twice
         // because it extends RouteBuilder as base class)
         if (!this.routesConfigurations.contains(routesConfiguration)) {
+            // check that there is no id clash
+            if (routesConfiguration.getId() != null) {
+                boolean clash = this.routesConfigurations.stream()
+                        .anyMatch(r -> ObjectHelper.equal(r.getId(), routesConfiguration.getId()));
+                if (clash) {
+                    throw new IllegalArgumentException(
+                            "Route configuration already exists with id: " + routesConfiguration.getId());
+                }
+            }
             this.routesConfigurations.add(routesConfiguration);
         }
     }

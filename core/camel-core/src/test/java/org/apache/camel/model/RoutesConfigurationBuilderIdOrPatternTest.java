@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.support.OrderedComparator;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSupport {
@@ -217,6 +219,25 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start2", "Bye World");
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRoutesConfigurationIdClash() throws Exception {
+        RouteConfigurationBuilder rcb = new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() throws Exception {
+                routeConfiguration().onException(Exception.class).handled(true).to("mock:foo");
+                routeConfiguration("foo").onException(IOException.class).handled(true).to("mock:foo");
+                routeConfiguration("bar").onException(FileNotFoundException.class).handled(true).to("mock:bar");
+                routeConfiguration("foo").onException(IllegalArgumentException.class).handled(true).to("mock:foo");
+            }
+        };
+        try {
+            context.addRoutesConfigurations(rcb);
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Route configuration already exists with id: foo", e.getMessage());
+        }
     }
 
 }

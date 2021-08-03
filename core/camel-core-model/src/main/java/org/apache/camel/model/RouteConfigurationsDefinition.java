@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeConfigurations")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteConfigurationsDefinition {
+public class RouteConfigurationsDefinition implements RouteConfigurationContainer {
 
     @XmlElementRef
     private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();

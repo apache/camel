@@ -57,6 +57,7 @@ import org.apache.camel.model.PackageScanDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateContextRefDefinition;
@@ -263,6 +264,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private RestConfigurationDefinition restConfiguration;
     @XmlElement(name = "rest")
     private List<RestDefinition> rests = new ArrayList<>();
+    @XmlElement(name = "routeConfiguration")
+    private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
     @XmlElement(name = "routeTemplate")
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
     @XmlElement(name = "route")
@@ -557,6 +560,20 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.routes = routes;
     }
 
+    @Override
+    public List<RouteConfigurationDefinition> getRouteConfigurations() {
+        return routeConfigurations;
+    }
+
+    /**
+     * Contains the Camel route configurations
+     */
+    @Override
+    public void setRouteConfigurations(List<RouteConfigurationDefinition> routeConfigurations) {
+        this.routeConfigurations = routeConfigurations;
+    }
+
+    @Override
     public List<RouteTemplateDefinition> getRouteTemplates() {
         return routeTemplates;
     }
@@ -564,6 +581,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     /**
      * Contains the Camel route templates
      */
+    @Override
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
     }

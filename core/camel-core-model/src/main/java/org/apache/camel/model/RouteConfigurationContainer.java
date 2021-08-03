@@ -21,22 +21,22 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElementRef;
 
 /**
- * Container to hold {@link RouteTemplateDefinition route templates}.
+ * Container to hold {@link RouteConfigurationDefinition route configurations}.
  */
-public interface RouteTemplateContainer {
+public interface RouteConfigurationContainer {
 
     /**
-     * Returns the route templates
+     * Returns the route configurations
      *
-     * @return the route templates
+     * @return the route configurations
      */
     @XmlElementRef
-    List<RouteTemplateDefinition> getRouteTemplates();
+    List<RouteConfigurationDefinition> getRouteConfigurations();
 
     /**
-     * Sets the route templates to use
+     * Sets the route configurations to use
      *
-     * @param routes the route templates
+     * @param routes the route configurations
      */
-    void setRouteTemplates(List<RouteTemplateDefinition> routes);
+    void setRouteConfigurations(List<RouteConfigurationDefinition> routes);
 }
