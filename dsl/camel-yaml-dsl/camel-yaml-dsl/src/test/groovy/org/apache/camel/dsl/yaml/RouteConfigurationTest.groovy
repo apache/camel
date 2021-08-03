@@ -16,16 +16,18 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.Exchange
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyException
 import org.apache.camel.dsl.yaml.support.model.MyFailingProcessor
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 
 class RouteConfigurationTest extends YamlTestSupport {
     def "route-configuration"() {
         setup:
-            loadRoutes """
+        loadRoutes """
                 - beans:
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
@@ -46,18 +48,18 @@ class RouteConfigurationTest extends YamlTestSupport {
                           ref: "myFailingProcessor"            
             """
 
-            withMock('mock:on-exception') {
-                expectedBodiesReceived 'Sorry'
-            }
+        withMock('mock:on-exception') {
+            expectedBodiesReceived 'Sorry'
+        }
 
         when:
-            context.start()
+        context.start()
 
-            withTemplate {
-                to('direct:start').withBody('hello').send()
-            }
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
         then:
-            MockEndpoint.assertIsSatisfied(context)
+        MockEndpoint.assertIsSatisfied(context)
     }
 
     def "route-configuration-separate"() {
@@ -107,8 +109,6 @@ class RouteConfigurationTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context)
     }
 
-    // TODO: fix me
-    /*
     def "route-configuration-id"() {
         setup:
         // global configurations
@@ -130,13 +130,16 @@ class RouteConfigurationTest extends YamlTestSupport {
             """
         // routes
         loadRoutes """
-                - from:
-                    uri: "direct:start"
+                - route:
+                    route-configuration-id: handleError 
+                    from:
+                        uri: "direct:start"
                     steps:
                       - process: 
                           ref: "myFailingProcessor"            
-                - from:
-                    uri: "direct:start2"
+                - route:
+                    from:
+                        uri: "direct:start2"
                     steps:
                       - process: 
                           ref: "myFailingProcessor"            
@@ -149,12 +152,18 @@ class RouteConfigurationTest extends YamlTestSupport {
         when:
         context.start()
 
+        Exchange out1
+        Exchange out2
         withTemplate {
-            to('direct:start').withBody('hello').send()
-            to('direct:start2').withBody('hello2').send()
+            out1 = to('direct:start').withBody('hello').send()
+            out2 = to('direct:start2').withBody('hello2').send()
         }
+
         then:
         MockEndpoint.assertIsSatisfied(context)
-    }*/
+
+        Assertions.assertFalse(out1.isFailed())
+        Assertions.assertTrue(out2.isFailed())
+    }
 
 }
