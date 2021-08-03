@@ -37,6 +37,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.util.ReflectionHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -441,6 +442,11 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         } else if ("setHostNameResolver".equals(setter.getName())) {
             // we only want the string setter
             return setter.getParameterTypes()[0] == String.class;
+        }
+
+        Metadata meta = setter.getAnnotation(Metadata.class);
+        if (meta != null && meta.skip()) {
+            return false;
         }
 
         return true;
