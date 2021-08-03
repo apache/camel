@@ -534,7 +534,7 @@ public class KafkaConsumer extends DefaultConsumer {
                     }
                 }
             } finally {
-                // only close if not retry or re-connecting
+                // only close if not retry
                 if (!retry.get()) {
                     LOG.debug("Closing consumer {}", threadId);
                     IOHelper.close(consumer);
