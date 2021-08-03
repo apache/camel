@@ -2965,6 +2965,7 @@ public abstract class AbstractCamelContext extends BaseService
             int total = 0;
             int disabled = 0;
             List<String> lines = new ArrayList<>();
+            List<String> configs = new ArrayList<>();
             routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder));
             for (RouteStartupOrder order : routeStartupOrder) {
                 total++;
@@ -2977,6 +2978,11 @@ public abstract class AbstractCamelContext extends BaseService
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
                 lines.add(String.format("    %s %s (%s)", status, id, uri));
+
+                String cid = order.getRoute().getConfigurationId();
+                if (cid != null) {
+                    configs.add(String.format("    %s (%s)", id, cid));
+                }
             }
             for (Route route : routes) {
                 if (!route.isAutoStartup()) {
@@ -2991,6 +2997,11 @@ public abstract class AbstractCamelContext extends BaseService
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
                     lines.add(String.format("    %s %s (%s)", status, id, uri));
+
+                    String cid = route.getConfigurationId();
+                    if (cid != null) {
+                        configs.add(String.format("    %s (%s)", id, cid));
+                    }
                 }
             }
             if (disabled > 0) {
@@ -3002,6 +3013,12 @@ public abstract class AbstractCamelContext extends BaseService
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
                 for (String line : lines) {
                     LOG.info(line);
+                }
+                if (startupSummaryLevel == StartupSummaryLevel.Verbose) {
+                    LOG.info("Routes configuration summary");
+                    for (String line : configs) {
+                        LOG.info(line);
+                    }
                 }
             }
         }

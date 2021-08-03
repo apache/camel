@@ -33,6 +33,8 @@ import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.PatternHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A series of Camel routes
@@ -42,6 +44,9 @@ import org.apache.camel.support.PatternHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition>
         implements RouteContainer, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RoutesDefinition.class);
+
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<>();
     @XmlTransient
@@ -240,6 +245,10 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
         // must prepare the route before we can add it to the routes list
         RouteDefinitionHelper.prepareRoute(getCamelContext(), route, oe, icp, ifrom, ito, oc);
+
+        if (LOG.isDebugEnabled() && route.getRouteConfigurationId() != null) {
+            LOG.debug("Route: {} is using routeConfigurationsId: {}", route.getId(), route.getRouteConfigurationId());
+        }
 
         // mark this route as prepared
         route.markPrepared();
