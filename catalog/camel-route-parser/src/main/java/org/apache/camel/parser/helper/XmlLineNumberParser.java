@@ -40,6 +40,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.apache.camel.RuntimeCamelException;
+
 /**
  * An XML parser that uses SAX to include line and column number for each XML element in the parsed Document.
  * <p/>
@@ -71,48 +73,61 @@ public final class XmlLineNumberParser {
      * @return           the DOM model
      * @throws Exception is thrown if error parsing
      */
-    public static Document parseXml(final InputStream is) throws Exception {
+    public static Document parseXml(final InputStream is) {
         return parseXml(is, null, null);
     }
 
     /**
      * Parses the XML.
      *
-     * @param  is             the XML content as an input stream
-     * @param  rootNames      one or more root names that is used as baseline for beginning the parsing, for example
-     *                        camelContext to start parsing when Camel is discovered. Multiple names can be defined
-     *                        separated by comma
-     * @param  forceNamespace an optional namespace to force assign to each node. This may be needed for JAXB
-     *                        unmarshalling from XML -> POJO.
-     * @return                the DOM model
-     * @throws Exception      is thrown if error parsing
+     * @param  is                    the XML content as an input stream
+     * @param  rootNames             one or more root names that is used as baseline for beginning the parsing, for
+     *                               example camelContext to start parsing when Camel is discovered. Multiple names can
+     *                               be defined separated by comma
+     * @param  forceNamespace        an optional namespace to force assign to each node. This may be needed for JAXB
+     *                               unmarshalling from XML -> POJO.
+     * @return                       the DOM model
+     * @throws RuntimeCamelException is thrown if error parsing (wraps the underlying exception)
      */
-    public static Document parseXml(final InputStream is, final String rootNames, final String forceNamespace)
-            throws Exception {
+    public static Document parseXml(final InputStream is, final String rootNames, final String forceNamespace) {
         final Document doc;
+
         SAXParser parser;
         final SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        parser = factory.newSAXParser();
-        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        // turn off validator and loading external dtd
-        dbf.setValidating(false);
-        dbf.setNamespaceAware(true);
-        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        dbf.setFeature("http://xml.org/sax/features/namespaces", false);
-        dbf.setFeature("http://xml.org/sax/features/validation", false);
-        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        dbf.setXIncludeAware(false);
-        dbf.setExpandEntityReferences(false);
-        final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-        doc = docBuilder.newDocument();
+        try {
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
-        final Stack<Element> elementStack = new Stack<>();
-        final StringBuilder textBuffer = new StringBuilder();
-        final DefaultHandler handler = new DefaultHandler() {
+            parser = factory.newSAXParser();
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            // turn off validator and loading external dtd
+            dbf.setValidating(false);
+            dbf.setNamespaceAware(true);
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setFeature("http://xml.org/sax/features/namespaces", false);
+            dbf.setFeature("http://xml.org/sax/features/validation", false);
+            dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+            dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+            final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+            doc = docBuilder.newDocument();
+
+            final Stack<Element> elementStack = new Stack<>();
+            final StringBuilder textBuffer = new StringBuilder();
+            final DefaultHandler handler = getDefaultHandler(rootNames, forceNamespace, doc, elementStack, textBuffer);
+            parser.parse(is, handler);
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Unable to parse the document", e);
+        }
+
+        return doc;
+    }
+
+    private static DefaultHandler getDefaultHandler(
+            String rootNames, String forceNamespace, Document doc, Stack<Element> elementStack, StringBuilder textBuffer) {
+        return new DefaultHandler() {
             private Locator locator;
             private boolean found;
             private final Map<String, String> localNs = new HashMap<>();
@@ -247,9 +262,6 @@ public final class XmlLineNumberParser {
                 }
             }
         };
-        parser.parse(is, handler);
-
-        return doc;
     }
 
 }
