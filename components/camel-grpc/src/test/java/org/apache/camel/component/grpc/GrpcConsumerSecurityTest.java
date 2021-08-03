@@ -103,7 +103,7 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
     @Test
     public void testWithEnableTLS() throws Exception {
-        LOG.info("gRPC pingAsyncSync method aync test with TLS enable start");
+        LOG.info("gRPC pingAsyncSync method async test with TLS enable start");
 
         final CountDownLatch latch = new CountDownLatch(1);
         PingRequest pingRequest
@@ -129,7 +129,7 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
     @Test
     public void testWithCorrectJWT() throws Exception {
-        LOG.info("gRPC pingAsyncSync method aync test with correct JWT start");
+        LOG.info("gRPC pingAsyncSync method async test with correct JWT start");
 
         final CountDownLatch latch = new CountDownLatch(1);
         PingRequest pingRequest
@@ -155,7 +155,7 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
     @Test
     public void testWithIncorrectJWT() throws Exception {
-        LOG.info("gRPC pingAsyncSync method aync test with correct JWT start");
+        LOG.info("gRPC pingAsyncSync method async test with correct JWT start");
 
         final CountDownLatch latch = new CountDownLatch(1);
         PingRequest pingRequest
