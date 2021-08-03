@@ -299,7 +299,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         final Session session = jsch.getSession(configuration.getUsername(), configuration.getHost(), configuration.getPort());
 
         if (isNotEmpty(sftpConfig.getStrictHostKeyChecking())) {
-            LOG.debug("Using StrickHostKeyChecking: {}", sftpConfig.getStrictHostKeyChecking());
+            LOG.debug("Using StrictHostKeyChecking: {}", sftpConfig.getStrictHostKeyChecking());
             session.setConfig("StrictHostKeyChecking", sftpConfig.getStrictHostKeyChecking());
         }
 
