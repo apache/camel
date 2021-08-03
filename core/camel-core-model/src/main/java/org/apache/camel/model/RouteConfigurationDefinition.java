@@ -37,16 +37,16 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
 
     // TODO: Model for ErrorHandler (requires to move error handler model from spring-xml, blueprint to core)
 
-    @XmlElement(name = "onException")
-    private List<OnExceptionDefinition> onExceptions = new ArrayList<>();
-    @XmlElement(name = "onCompletion")
-    private List<OnCompletionDefinition> onCompletions = new ArrayList<>();
     @XmlElement(name = "intercept")
     private List<InterceptDefinition> intercepts = new ArrayList<>();
     @XmlElement(name = "interceptFrom")
     private List<InterceptFromDefinition> interceptFroms = new ArrayList<>();
     @XmlElement(name = "interceptSendToEndpoint")
     private List<InterceptSendToEndpointDefinition> interceptSendTos = new ArrayList<>();
+    @XmlElement(name = "onException")
+    private List<OnExceptionDefinition> onExceptions = new ArrayList<>();
+    @XmlElement(name = "onCompletion")
+    private List<OnCompletionDefinition> onCompletions = new ArrayList<>();
 
     public RouteConfigurationDefinition() {
     }

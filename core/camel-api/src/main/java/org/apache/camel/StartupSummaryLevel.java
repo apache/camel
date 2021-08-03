@@ -26,7 +26,6 @@ public enum StartupSummaryLevel {
 
     @Deprecated
     Classic,
-
     Verbose,
     Default,
     Brief,
