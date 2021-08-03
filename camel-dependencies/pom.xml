@@ -80,7 +80,7 @@
     <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.5</c3p0-version>
     <caffeine-version>2.9.2</caffeine-version>
-    <californium-version>2.6.3</californium-version>
+    <californium-version>2.6.4</californium-version>
     <camel.osgi.activator></camel.osgi.activator>
     <camel.osgi.dynamic></camel.osgi.dynamic>
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
