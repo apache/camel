@@ -26,7 +26,6 @@ import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.auth.jwt.JwtCallCredentials;
@@ -165,7 +164,6 @@ public class GrpcProducer extends DefaultAsyncProducer {
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
 
             SslContextBuilder sslContextBuilder = GrpcSslContexts.forClient()
-                    .sslProvider(SslProvider.OPENSSL)
                     .keyManager(
                             ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
                                     configuration.getKeyCertChainResource()),
@@ -179,7 +177,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
                                 configuration.getTrustCertCollectionResource()));
             }
 
-            channelBuilder = channelBuilder.sslContext(sslContextBuilder.build());
+            channelBuilder = channelBuilder.sslContext(GrpcSslContexts.configure(sslContextBuilder).build());
         }
 
         channel = channelBuilder.negotiationType(configuration.getNegotiationType())
