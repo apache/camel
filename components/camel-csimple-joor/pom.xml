@@ -36,6 +36,7 @@
     <properties>
         <firstVersion>3.7.0</firstVersion>
         <title>CSimple jOOR</title>
+        <label>dlanguage,java</label>
     </properties>
 
     <dependencies>

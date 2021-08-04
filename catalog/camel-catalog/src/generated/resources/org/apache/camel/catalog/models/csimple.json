@@ -6,7 +6,7 @@
     "description": "Evaluate a compile simple expression language.",
     "deprecated": false,
     "firstVersion": "3.7.0",
-    "label": "language",
+    "label": "language,java",
     "javaType": "org.apache.camel.model.language.CSimpleExpression",
     "input": false,
     "output": false

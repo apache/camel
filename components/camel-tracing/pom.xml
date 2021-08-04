@@ -30,6 +30,7 @@
 
   <properties>
     <firstVersion>3.5.0</firstVersion>
+    <label>monitoring,microservice</label>
   </properties>
 
   <artifactId>camel-tracing</artifactId>

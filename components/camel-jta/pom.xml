@@ -35,6 +35,7 @@
     <properties>
         <firstVersion>3.4.0</firstVersion>
         <title>JTA</title>
+        <label>database</label>
     </properties>
 
     <dependencies>

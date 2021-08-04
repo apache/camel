@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluate a compile simple expression language.
  */
-@Metadata(firstVersion = "3.7.0", label = "language", title = "CSimple")
+@Metadata(firstVersion = "3.7.0", label = "language,java", title = "CSimple")
 @XmlRootElement(name = "csimple")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CSimpleExpression extends ExpressionDefinition {
