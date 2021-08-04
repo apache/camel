@@ -19,6 +19,7 @@ package org.apache.camel.core.xml;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -558,6 +559,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             List<InterceptFromDefinition> ifrom = new ArrayList<>(getInterceptFroms());
             List<InterceptSendToEndpointDefinition> ito = new ArrayList<>(getInterceptSendToEndpoints());
             List<OnCompletionDefinition> oc = new ArrayList<>(getOnCompletions());
+            Set<String> matchedIds = new LinkedHashSet<>();
             if (getContext() != null) {
                 List<RouteConfigurationDefinition> globalConfigurations
                         = getContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
@@ -568,6 +570,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                             .filter(g -> (g.getId() == null || g.getId().equals("*"))
                                     || (PatternHelper.matchPattern(g.getId(), route.getRouteConfigurationId())))
                             .forEach(g -> {
+                                if (g.getId() != null && !g.getId().equals("*")) {
+                                    // remember the id that was used
+                                    matchedIds.add(g.getId());
+                                }
                                 oe.addAll(g.getOnExceptions());
                                 icp.addAll(g.getIntercepts());
                                 ifrom.addAll(g.getInterceptFroms());
@@ -581,7 +587,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             RouteDefinitionHelper.prepareRoute(getContext(), route, oe, icp, ifrom, ito, oc);
 
             if (LOG.isDebugEnabled() && route.getRouteConfigurationId() != null) {
-                LOG.debug("Route: {} is using routeConfigurationsId: {}", route.getId(), route.getRouteConfigurationId());
+                LOG.debug("Route: {} is using route configurations ids: {}", route.getId(), matchedIds);
             }
 
             // mark the route as prepared now
