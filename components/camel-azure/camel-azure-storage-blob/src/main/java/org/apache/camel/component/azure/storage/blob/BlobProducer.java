@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import com.azure.storage.blob.changefeed.BlobChangefeedClient;
+import com.azure.storage.blob.changefeed.BlobChangefeedClientBuilder;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
+import org.apache.camel.component.azure.storage.blob.operations.BlobChangeFeedOperations;
 import org.apache.camel.component.azure.storage.blob.operations.BlobContainerOperations;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperations;
@@ -117,6 +120,9 @@ public class BlobProducer extends DefaultProducer {
             case getPageBlobRanges:
                 setResponse(exchange, getBlobOperations(exchange).getPageBlobRanges(exchange));
                 break;
+            case getChangeFeed:
+                setResponse(exchange, getBlobChangeFeedOperations().getEvents(exchange));
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -147,6 +153,13 @@ public class BlobProducer extends DefaultProducer {
                         .getBlobClientWrapper(determineBlobName(exchange));
 
         return new BlobOperations(configuration, clientWrapper);
+    }
+
+    private BlobChangeFeedOperations getBlobChangeFeedOperations() {
+        final BlobChangefeedClient changefeedClient
+                = new BlobChangefeedClientBuilder(getEndpoint().getBlobServiceClient()).buildClient();
+
+        return new BlobChangeFeedOperations(changefeedClient, configurationProxy);
     }
 
     private String determineContainerName(final Exchange exchange) {

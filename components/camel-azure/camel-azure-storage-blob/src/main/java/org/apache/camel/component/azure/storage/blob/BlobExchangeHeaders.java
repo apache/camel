@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
+import com.azure.core.util.Context;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.AppendBlobItem;
 import com.azure.storage.blob.models.ArchiveStatus;
@@ -246,6 +247,18 @@ public class BlobExchangeHeaders {
 
     public static BlobOperationsDefinition getBlobOperationsDefinitionFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_OPERATION, BlobOperationsDefinition.class);
+    }
+
+    public static OffsetDateTime getChangeFeedStartTimeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.CHANGE_FEED_START_TIME, OffsetDateTime.class);
+    }
+
+    public static OffsetDateTime getChangeFeedEndTimeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.CHANGE_FEED_END_TIME, OffsetDateTime.class);
+    }
+
+    public static Context getChangeFeedContextFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.CHANGE_FEED_CONTEXT, Context.class);
     }
 
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {

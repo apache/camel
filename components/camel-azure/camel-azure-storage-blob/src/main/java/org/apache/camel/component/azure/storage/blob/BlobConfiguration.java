@@ -17,7 +17,9 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.time.Duration;
+import java.time.OffsetDateTime;
 
+import com.azure.core.util.Context;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -85,6 +87,12 @@ public class BlobConfiguration implements Cloneable {
     private Long pageBlobSize = BlobConstants.PAGE_BLOB_DEFAULT_SIZE;
     @UriParam(label = "producer", defaultValue = "COMMITTED")
     private BlockListType blockListType = BlockListType.COMMITTED;
+    @UriParam(label = "producer")
+    private OffsetDateTime changeFeedStartTime;
+    @UriParam(label = "producer")
+    private OffsetDateTime changeFeedEndTime;
+    @UriParam(label = "producer")
+    private Context changeFeedContext;
     @UriParam(label = "common")
     private String regex;
 
@@ -363,6 +371,39 @@ public class BlobConfiguration implements Cloneable {
 
     public void setBlockListType(BlockListType blockListType) {
         this.blockListType = blockListType;
+    }
+
+    /**
+     * h
+     */
+    public OffsetDateTime getChangeFeedStartTime() {
+        return changeFeedStartTime;
+    }
+
+    public void setChangeFeedStartTime(OffsetDateTime changeFeedStartTime) {
+        this.changeFeedStartTime = changeFeedStartTime;
+    }
+
+    /**
+     * h
+     */
+    public OffsetDateTime getChangeFeedEndTime() {
+        return changeFeedEndTime;
+    }
+
+    public void setChangeFeedEndTime(OffsetDateTime changeFeedEndTime) {
+        this.changeFeedEndTime = changeFeedEndTime;
+    }
+
+    /**
+     * h
+     */
+    public Context getChangeFeedContext() {
+        return changeFeedContext;
+    }
+
+    public void setChangeFeedContext(Context changeFeedContext) {
+        this.changeFeedContext = changeFeedContext;
     }
 
     /**

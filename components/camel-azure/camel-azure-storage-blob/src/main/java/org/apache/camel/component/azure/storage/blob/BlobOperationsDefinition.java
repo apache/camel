@@ -119,4 +119,9 @@ public enum BlobOperationsDefinition {
      * Returns the list of valid page ranges for a page blob or snapshot of a page blob.
      */
     getPageBlobRanges,
+    /**
+     * Returns transaction logs of all the changes that occur to the blobs and the blob metadata in your storage
+     * account. The change feed provides ordered, guaranteed, durable, immutable, read-only log of these changes.
+     */
+    getChangeFeed
 }

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 
 import com.azure.storage.blob.BlobServiceClient;
@@ -125,6 +129,31 @@ class BlobComponentTest extends CamelTestSupport {
         BlobEndpoint endpoint = (BlobEndpoint) context
                 .getEndpoint("azure-storage-blob://camelazure/container?blobName=blob/sub&credentials=#creds");
         assertEquals("blob/sub", endpoint.getConfiguration().getBlobName());
+    }
+
+    @Test
+    void testCreateEndpointWithChangeFeedConfig() {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
+        context.getRegistry().bind("metadata", Collections.emptyMap());
+        context.getRegistry().bind("starttime",
+                OffsetDateTime.of(LocalDate.of(2021, 8, 4), LocalTime.of(11, 5), ZoneOffset.ofHours(0)));
+        context.getRegistry().bind("endtime",
+                OffsetDateTime.of(LocalDate.of(2021, 12, 4), LocalTime.of(11, 5), ZoneOffset.ofHours(0)));
+
+        final String uri = "azure-storage-blob://camelazure"
+                           + "?credentials=#creds"
+                           + "&operation=getChangeFeed"
+                           + "&changeFeedStartTime=#starttime"
+                           + "&changeFeedEndTime=#endtime";
+        final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint(uri);
+
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertNull(endpoint.getConfiguration().getServiceClient());
+        assertNotNull(endpoint.getConfiguration().getCredentials());
+
+        assertEquals(BlobOperationsDefinition.getChangeFeed, endpoint.getConfiguration().getOperation());
+        assertEquals(OffsetDateTime.parse("2021-08-04T11:05Z"), endpoint.getConfiguration().getChangeFeedStartTime());
+        assertEquals(OffsetDateTime.parse("2021-12-04T11:05Z"), endpoint.getConfiguration().getChangeFeedEndTime());
     }
 
     private StorageSharedKeyCredential storageSharedKeyCredential() {
