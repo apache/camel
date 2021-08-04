@@ -35,3 +35,8 @@ The `camel-yaml` data format has renamed the option `unmarshalTypeName` to `unma
 === camel-spark
 
 The `camel-spark` component has been upgraded from Spark 2.x to 3.x.
+
+=== camel-kamelet / route templates
+
+Kamelet parameters that are named such as `host`, `port` are now always used with their configured value.
+Before the value in use may be from an ENV variable with the same name.
