@@ -517,7 +517,7 @@ class InitKamelet extends AbstractInitKamelet implements Callable<Integer> {
 
 @Command(name = "CamelJBang", mixinStandardHelpOptions = true, version = "CamelJBang ${camel.jbang.version}",
          description = "A JBang-based Camel app for running Kamelets")
-class CamelJBang implements Callable<Integer> {
+public class CamelJBang implements Callable<Integer> {
     private static CommandLine commandLine;
 
     static {
