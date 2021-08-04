@@ -131,7 +131,10 @@ This operation return a List of ConfigMaps from your cluster, using a label sele
 
 [source,java]
 --------------------------------------------------------------------------------
-fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
+fromF("kubernetes-config-maps://%s?oauthToken=%s", host, authToken)
+    .setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, constant("default"))
+    .setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, constant("test"))
+    .process(new KubernertesProcessor()).to("mock:result");
 
     public class KubernertesProcessor implements Processor {
         @Override
