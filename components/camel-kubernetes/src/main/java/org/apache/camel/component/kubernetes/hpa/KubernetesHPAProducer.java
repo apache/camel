@@ -106,7 +106,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         exchange.getOut().setBody(hpaList.getItems());
     }
 
-    protected void doGetHPA(Exchange exchange) throws Exception {
+    protected void doGetHPA(Exchange exchange) {
         HorizontalPodAutoscaler hpa = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -125,7 +125,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         exchange.getOut().setBody(hpa);
     }
 
-    protected void doCreateHPA(Exchange exchange) throws Exception {
+    protected void doCreateHPA(Exchange exchange) {
         HorizontalPodAutoscaler hpa = null;
         String hpaName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -153,7 +153,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         exchange.getOut().setBody(hpa);
     }
 
-    protected void doDeleteHPA(Exchange exchange) throws Exception {
+    protected void doDeleteHPA(Exchange exchange) {
         String hpaName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(hpaName)) {

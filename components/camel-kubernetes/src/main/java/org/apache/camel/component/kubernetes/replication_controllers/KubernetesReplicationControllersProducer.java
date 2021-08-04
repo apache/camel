@@ -126,7 +126,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
 
     }
 
-    protected void doGetReplicationController(Exchange exchange, String operation) throws Exception {
+    protected void doGetReplicationController(Exchange exchange, String operation) {
         ReplicationController rc = null;
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -145,7 +145,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         exchange.getOut().setBody(rc);
     }
 
-    protected void doCreateReplicationController(Exchange exchange, String operation) throws Exception {
+    protected void doCreateReplicationController(Exchange exchange, String operation) {
         ReplicationController rc = null;
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -175,7 +175,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         exchange.getOut().setBody(rc);
     }
 
-    protected void doDeleteReplicationController(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteReplicationController(Exchange exchange, String operation) {
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(rcName)) {
@@ -194,7 +194,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         exchange.getOut().setBody(rcDeleted);
     }
 
-    protected void doScaleReplicationController(Exchange exchange, String operation) throws Exception {
+    protected void doScaleReplicationController(Exchange exchange, String operation) {
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Integer replicasNumber

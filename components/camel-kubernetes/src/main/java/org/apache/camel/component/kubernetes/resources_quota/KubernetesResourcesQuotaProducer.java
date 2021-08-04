@@ -112,7 +112,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         exchange.getOut().setBody(resList.getItems());
     }
 
-    protected void doGetResourceQuota(Exchange exchange) throws Exception {
+    protected void doGetResourceQuota(Exchange exchange) {
         ResourceQuota rq = null;
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -130,7 +130,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         exchange.getOut().setBody(rq);
     }
 
-    protected void doCreateResourceQuota(Exchange exchange) throws Exception {
+    protected void doCreateResourceQuota(Exchange exchange) {
         ResourceQuota rq = null;
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -158,7 +158,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         exchange.getOut().setBody(rq);
     }
 
-    protected void doDeleteResourceQuota(Exchange exchange) throws Exception {
+    protected void doDeleteResourceQuota(Exchange exchange) {
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(rqName)) {

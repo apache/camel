@@ -115,7 +115,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         exchange.getOut().setBody(servicesList.getItems());
     }
 
-    protected void doGetService(Exchange exchange) throws Exception {
+    protected void doGetService(Exchange exchange) {
         Service service = null;
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -132,7 +132,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         exchange.getOut().setBody(service);
     }
 
-    protected void doCreateService(Exchange exchange) throws Exception {
+    protected void doCreateService(Exchange exchange) {
         Service service = null;
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -157,7 +157,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         exchange.getOut().setBody(service);
     }
 
-    protected void doDeleteService(Exchange exchange) throws Exception {
+    protected void doDeleteService(Exchange exchange) {
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(serviceName)) {

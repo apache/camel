@@ -30,6 +30,7 @@ import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,7 +141,7 @@ public class KubernetesLeadershipController implements Service {
                 refreshStatusLeadershipLost();
                 break;
             default:
-                throw new RuntimeException("Unsupported state " + currentState);
+                throw new RuntimeCamelException("Unsupported state " + currentState);
         }
     }
 

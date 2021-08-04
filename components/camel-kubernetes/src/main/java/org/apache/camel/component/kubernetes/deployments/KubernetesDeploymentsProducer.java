@@ -104,7 +104,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         exchange.getOut().setBody(deploymentList.getItems());
     }
 
-    protected void doGetDeployment(Exchange exchange) throws Exception {
+    protected void doGetDeployment(Exchange exchange) {
         Deployment deployment = null;
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
@@ -136,7 +136,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         exchange.getOut().setBody(deployment);
     }
 
-    protected void doCreateDeployment(Exchange exchange) throws Exception {
+    protected void doCreateDeployment(Exchange exchange) {
         Deployment deployment = null;
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -164,7 +164,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         exchange.getOut().setBody(deployment);
     }
 
-    protected void doScaleDeployment(Exchange exchange) throws Exception {
+    protected void doScaleDeployment(Exchange exchange) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Integer replicasNumber = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_REPLICAS, Integer.class);

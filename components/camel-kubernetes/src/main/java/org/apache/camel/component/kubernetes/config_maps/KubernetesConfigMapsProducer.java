@@ -99,7 +99,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         exchange.getOut().setBody(configMapsList.getItems());
     }
 
-    protected void doGetConfigMap(Exchange exchange) throws Exception {
+    protected void doGetConfigMap(Exchange exchange) {
         ConfigMap configMap = null;
         String cfMapName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -117,7 +117,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         exchange.getOut().setBody(configMap);
     }
 
-    protected void doCreateConfigMap(Exchange exchange) throws Exception {
+    protected void doCreateConfigMap(Exchange exchange) {
         ConfigMap configMap = null;
         String cfMapName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -144,7 +144,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         exchange.getOut().setBody(configMap);
     }
 
-    protected void doDeleteConfigMap(Exchange exchange) throws Exception {
+    protected void doDeleteConfigMap(Exchange exchange) {
         String configMapName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(configMapName)) {

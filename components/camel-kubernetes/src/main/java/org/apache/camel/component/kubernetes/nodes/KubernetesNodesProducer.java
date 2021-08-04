@@ -79,7 +79,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange) throws Exception {
+    protected void doList(Exchange exchange) {
         NodeList nodeList = getEndpoint().getKubernetesClient().nodes().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
@@ -99,7 +99,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         exchange.getOut().setBody(nodeList.getItems());
     }
 
-    protected void doGetNode(Exchange exchange) throws Exception {
+    protected void doGetNode(Exchange exchange) {
         Node node = null;
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
@@ -112,7 +112,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         exchange.getOut().setBody(node);
     }
 
-    protected void doCreateNode(Exchange exchange) throws Exception {
+    protected void doCreateNode(Exchange exchange) {
         Node node = null;
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         NodeSpec nodeSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_SPEC, NodeSpec.class);
@@ -133,7 +133,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         exchange.getOut().setBody(node);
     }
 
-    protected void doDeleteNode(Exchange exchange) throws Exception {
+    protected void doDeleteNode(Exchange exchange) {
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(nodeName)) {
             LOG.error("Deleting a specific Node require specify a Node name");

@@ -107,7 +107,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         exchange.getOut().setBody(podList.getItems());
     }
 
-    protected void doGetPod(Exchange exchange) throws Exception {
+    protected void doGetPod(Exchange exchange) {
         Pod pod = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -125,7 +125,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         exchange.getOut().setBody(pod);
     }
 
-    protected void doCreatePod(Exchange exchange) throws Exception {
+    protected void doCreatePod(Exchange exchange) {
         Pod pod = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -151,7 +151,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         exchange.getOut().setBody(pod);
     }
 
-    protected void doDeletePod(Exchange exchange) throws Exception {
+    protected void doDeletePod(Exchange exchange) {
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(podName)) {

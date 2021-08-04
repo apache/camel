@@ -108,7 +108,7 @@ public class KubernetesJobProducer extends DefaultProducer {
         exchange.getOut().setBody(jobList.getItems());
     }
 
-    protected void doGetJob(Exchange exchange) throws Exception {
+    protected void doGetJob(Exchange exchange) {
         Job job = null;
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -126,7 +126,7 @@ public class KubernetesJobProducer extends DefaultProducer {
         exchange.getOut().setBody(job);
     }
 
-    protected void doCreateJob(Exchange exchange) throws Exception {
+    protected void doCreateJob(Exchange exchange) {
         Job job = null;
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -152,7 +152,7 @@ public class KubernetesJobProducer extends DefaultProducer {
         exchange.getOut().setBody(job);
     }
 
-    protected void doDeleteJob(Exchange exchange) throws Exception {
+    protected void doDeleteJob(Exchange exchange) {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(jobName)) {

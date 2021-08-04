@@ -102,7 +102,7 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
         exchange.getOut().setBody(buildConfigsList.getItems());
     }
 
-    protected void doGetBuildConfig(Exchange exchange) throws Exception {
+    protected void doGetBuildConfig(Exchange exchange) {
         BuildConfig buildConfig = null;
         String buildConfigName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIG_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
