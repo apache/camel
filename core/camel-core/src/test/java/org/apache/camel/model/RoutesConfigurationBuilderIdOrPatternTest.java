@@ -30,6 +30,7 @@ import org.apache.camel.support.OrderedComparator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSupport {
@@ -46,14 +47,14 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         routes.add(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("foo")
                         .throwException(new IllegalArgumentException("Foo"));
             }
         });
         routes.add(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start2")
+                from("direct:start2").routeId("foo2")
                         .routeConfigurationId("handleError")
                         .throwException(new IllegalArgumentException("Foo2"));
             }
@@ -93,6 +94,9 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         template.sendBody("direct:start2", "Bye World");
 
         assertMockEndpointsSatisfied();
+
+        assertNull(context.getRoute("foo").getConfigurationId());
+        assertEquals("handleError", context.getRoute("foo2").getConfigurationId());
     }
 
     @Test
@@ -102,7 +106,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         routes.add(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("foo")
                         .routeConfigurationId("general*")
                         .throwException(new IllegalArgumentException("Foo"));
             }
@@ -110,7 +114,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         routes.add(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start2")
+                from("direct:start2").routeId("foo2")
                         .routeConfigurationId("io*")
                         .throwException(new IOException("Foo2"));
             }
@@ -148,6 +152,9 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         template.sendBody("direct:start2", "Bye World");
 
         assertMockEndpointsSatisfied();
+
+        assertEquals("generalError", context.getRoute("foo").getConfigurationId());
+        assertEquals("ioError", context.getRoute("foo2").getConfigurationId());
     }
 
     @Test
@@ -201,6 +208,9 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         template.sendBody("direct:start2", "Bye World");
         assertMockEndpointsSatisfied();
 
+        assertEquals("<default>", context.getRoute("foo").getConfigurationId());
+        assertEquals("<default>", context.getRoute("foo2").getConfigurationId());
+
         context.removeRoute("foo2");
 
         // now re-configure route2 to use ioError route configuration
@@ -219,6 +229,9 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start2", "Bye World");
         assertMockEndpointsSatisfied();
+
+        assertEquals("<default>", context.getRoute("foo").getConfigurationId());
+        assertEquals("ioError", context.getRoute("foo2").getConfigurationId());
     }
 
     @Test

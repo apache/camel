@@ -138,6 +138,13 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
         prepared.set(false);
     }
 
+    /**
+     * Reset internal state before preparing route
+     */
+    public void resetPrepare() {
+        appliedRouteConfigurationIds = null;
+    }
+
     @Override
     public String toString() {
         if (getId() != null) {

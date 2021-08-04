@@ -218,6 +218,9 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
             return;
         }
 
+        // reset before preparing route
+        route.resetPrepare();
+
         // merge global and route scoped together
         List<OnExceptionDefinition> oe = new ArrayList<>(onExceptions);
         List<InterceptDefinition> icp = new ArrayList<>(intercepts);
@@ -231,13 +234,17 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
                 globalConfigurations.stream()
                         // global configurations have no id assigned or is a wildcard
                         // if the route has a route configuration assigned then use pattern matching
-                        .filter(g -> (g.getId() == null || g.getId().equals("*"))
-                                || (PatternHelper.matchPattern(g.getId(), route.getRouteConfigurationId())))
-                        .forEach(g -> {
-                            if (g.getId() != null && !g.getId().equals("*")) {
-                                // remember the id that was used on the route
-                                route.addAppliedRouteConfigurationId(g.getId());
+                        .filter(g -> {
+                            if (route.getRouteConfigurationId() != null) {
+                                return PatternHelper.matchPattern(g.getId(), route.getRouteConfigurationId());
+                            } else {
+                                return g.getId() == null || g.getId().equals("*");
                             }
+                        })
+                        .forEach(g -> {
+                            String id = g.getId() == null ? "<default>" : g.getId();
+                            // remember the id that was used on the route
+                            route.addAppliedRouteConfigurationId(id);
                             oe.addAll(g.getOnExceptions());
                             icp.addAll(g.getIntercepts());
                             ifrom.addAll(g.getInterceptFroms());
