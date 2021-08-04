@@ -17,6 +17,7 @@
 package org.apache.camel.component.properties;
 
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.spi.PropertiesFunction;
@@ -308,6 +309,15 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
             String value = null;
 
+            // favour local properties if
+            Properties local = propertiesComponent.getLocalProperties();
+            if (local != null) {
+                value = local.getProperty(key);
+                if (value != null) {
+                    log.debug("Found local property: {} with value: {} to be used.", key, value);
+                }
+            }
+
             // override is the default mode for ENV
             int envMode = propertiesComponent != null
                     ? propertiesComponent.getEnvironmentVariableMode()
@@ -316,7 +326,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
             int sysMode = propertiesComponent != null
                     ? propertiesComponent.getSystemPropertiesMode() : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
 
-            if (envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
+            if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
                     log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);

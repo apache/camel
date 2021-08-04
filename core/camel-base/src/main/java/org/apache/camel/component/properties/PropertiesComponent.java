@@ -516,7 +516,7 @@ public class PropertiesComponent extends ServiceSupport
      *
      * The default mode (override) is to use system properties if present, and override any existing properties.
      *
-     * OS environment variable mode is checked before JVM system property mode
+     * OS environment variable mode is checked before JVM system property mode.
      *
      * @see #SYSTEM_PROPERTIES_MODE_NEVER
      * @see #SYSTEM_PROPERTIES_MODE_FALLBACK
@@ -536,7 +536,7 @@ public class PropertiesComponent extends ServiceSupport
      *
      * The default mode (override) is to use OS environment variables if present, and override any existing properties.
      *
-     * OS environment variable mode is checked before JVM system property mode
+     * OS environment variable mode is checked before JVM system property mode.
      *
      * @see #ENVIRONMENT_VARIABLES_MODE_NEVER
      * @see #ENVIRONMENT_VARIABLES_MODE_FALLBACK
