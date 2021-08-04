@@ -31,3 +31,31 @@ public class MyConfiguration {
     }
 }
 ----
+
+== LambdaEndpointRouteBuilder
+
+The xref:Endpoint-dsl.adoc[Endpoint DSL] can also be used as a lambda route builder with the
+`org.apache.camel.builder.endpoint.LambdaEndpointRouteBuilder` class from the `camel-endpointdsl` JAR.
+
+[source,java]
+----
+public class MyConfiguration {
+    @BindToRegistry
+    public LambdaEndpointRouteBuilder myRoute() {
+        return rb -> rb.from(rb.kafka("cheese")).to(rb.jms("queue:foo"));
+    }
+}
+----
+
+The `LambdaEndpointRouteBuilder` has _type safe_ endpoint but requires to prefix with the instance name (`rb`)
+when choosing an endpoint name. Notice above how to select the kafka endpoint
+
+----
+rb.from(rb.kafka("cheese"))
+----
+
+And with the regular `LambdaRouteBuilder` its just a String so the `rb` prefix is not needed:
+
+----
+rb.from("kafka:cheese")
+----
