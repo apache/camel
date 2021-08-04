@@ -68,11 +68,11 @@ public class ZooKeeperServiceDiscoveryFactory implements ServiceDiscoveryFactory
         return configuration.getNodes();
     }
 
-    @Metadata(skip = true)
     public void setNodes(String nodes) {
         configuration.setNodes(nodes);
     }
 
+    @Metadata(skip = true)
     public void setNodes(List<String> nodes) {
         configuration.setNodes(nodes);
     }
