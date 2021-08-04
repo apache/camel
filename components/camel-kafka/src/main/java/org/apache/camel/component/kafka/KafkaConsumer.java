@@ -240,6 +240,8 @@ public class KafkaConsumer extends DefaultConsumer {
                 first = false;
 
                 if (!isRunAllowed() || isStoppingOrStopped() || isSuspendingOrSuspended()) {
+                    LOG.debug("Closing consumer {}", threadId);
+                    IOHelper.close(consumer);
                     return;
                 }
 
@@ -277,6 +279,8 @@ public class KafkaConsumer extends DefaultConsumer {
                 doReconnectRun();
                 // set reconnect to false as its done now
                 reconnect.set(false);
+                // set retry to true to continue polling
+                retry.set(true);
             }
             // polling
             doPollRun(retry, reconnect);
@@ -502,6 +506,7 @@ public class KafkaConsumer extends DefaultConsumer {
                         }
                         // re-connect so the consumer can try the same message again
                         reconnect.set(true);
+                        retry.set(false); // to close the current consumer
                     } else if (PollOnError.ERROR_HANDLER == onError) {
                         // use bridge error handler to route with exception
                         bridge.handleException(e);
