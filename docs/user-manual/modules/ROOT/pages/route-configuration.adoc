@@ -13,9 +13,9 @@ The route configuration is supported by all DSL's, so useable by: Java, XML, Gro
 
 In the route configuration you can setup common strategies for:
 
-- error handling via `onException`
-- interceptors via `intercept`, `interceptFrom`, `interceptSendTo`
-- on completions via `onCompletion`
+- xref:exception-clause.adoc[OnException]
+- xref:oncompletion.adoc[OnCompletion]
+- xref:eips:intercept.adoc[Intercept]
 
 
 == Route Configuration Builder in Java DSL
