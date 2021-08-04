@@ -32,6 +32,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,26 +232,32 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
             List<RouteConfigurationDefinition> globalConfigurations
                     = getCamelContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
             if (globalConfigurations != null) {
-                globalConfigurations.stream()
-                        // global configurations have no id assigned or is a wildcard
-                        // if the route has a route configuration assigned then use pattern matching
-                        .filter(g -> {
-                            if (route.getRouteConfigurationId() != null) {
-                                return PatternHelper.matchPattern(g.getId(), route.getRouteConfigurationId());
-                            } else {
-                                return g.getId() == null || g.getId().equals("*");
-                            }
-                        })
-                        .forEach(g -> {
-                            String id = g.getId() == null ? "<default>" : g.getId();
-                            // remember the id that was used on the route
-                            route.addAppliedRouteConfigurationId(id);
-                            oe.addAll(g.getOnExceptions());
-                            icp.addAll(g.getIntercepts());
-                            ifrom.addAll(g.getInterceptFroms());
-                            ito.addAll(g.getInterceptSendTos());
-                            oc.addAll(g.getOnCompletions());
-                        });
+                // if there are multiple ids configured then we should apply in that same order
+                String[] ids = route.getRouteConfigurationId() != null
+                        ? route.getRouteConfigurationId().split(",") : new String[] { "*" };
+                for (String id : ids) {
+                    // sort according to ordered
+                    globalConfigurations.stream().sorted(OrderedComparator.get())
+                            .filter(g -> {
+                                if (route.getRouteConfigurationId() != null) {
+                                    // if the route has a route configuration assigned then use pattern matching
+                                    return PatternHelper.matchPattern(g.getId(), id);
+                                } else {
+                                    // global configurations have no id assigned or is a wildcard
+                                    return g.getId() == null || g.getId().equals(id);
+                                }
+                            })
+                            .forEach(g -> {
+                                String aid = g.getId() == null ? "<default>" : g.getId();
+                                // remember the id that was used on the route
+                                route.addAppliedRouteConfigurationId(aid);
+                                oe.addAll(g.getOnExceptions());
+                                icp.addAll(g.getIntercepts());
+                                ifrom.addAll(g.getInterceptFroms());
+                                ito.addAll(g.getInterceptSendTos());
+                                oc.addAll(g.getOnCompletions());
+                            });
+                }
             }
         }
 
