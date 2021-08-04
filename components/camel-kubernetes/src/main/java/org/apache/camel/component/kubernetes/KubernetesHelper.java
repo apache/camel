@@ -23,6 +23,7 @@ import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.Watch;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,6 +109,22 @@ public final class KubernetesHelper {
                 watch.close();
             }
         }
+    }
+
+    public static String extractOperation(AbstractKubernetesEndpoint endpoint, Exchange exchange) {
+        String operation;
+
+        if (ObjectHelper.isEmpty(endpoint.getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        } else {
+            operation = endpoint.getKubernetesConfiguration().getOperation();
+        }
+
+        if (ObjectHelper.isEmpty(operation)) {
+            throw new IllegalArgumentException("The kubernetes producer for this component requires a operation to proceed");
+        }
+
+        return operation;
     }
 
 }
