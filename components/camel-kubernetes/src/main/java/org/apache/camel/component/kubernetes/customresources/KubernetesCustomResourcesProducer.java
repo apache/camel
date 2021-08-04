@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.customresources;
 
+import java.io.IOException;
 import java.util.Map;
 
 import io.fabric8.kubernetes.client.KubernetesClientException;
@@ -121,8 +122,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourcesListItems);
     }
 
-    protected void doGet(Exchange exchange, String namespaceName)
-            throws Exception {
+    protected void doGet(Exchange exchange, String namespaceName) {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
             throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
@@ -144,8 +144,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         exchange.getOut().setBody(customResourceJSON);
     }
 
-    protected void doDelete(Exchange exchange, String namespaceName)
-            throws Exception {
+    protected void doDelete(Exchange exchange, String namespaceName) throws IOException {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
             LOG.error("Delete a specific deployment require specify a deployment name");
@@ -166,8 +165,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         }
     }
 
-    protected void doCreate(Exchange exchange, String namespaceName)
-            throws Exception {
+    protected void doCreate(Exchange exchange, String namespaceName) throws IOException {
         String customResourceInstance = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, String.class);
         JsonObject gitHubSourceJSON = new JsonObject();
         try {

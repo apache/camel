@@ -109,7 +109,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         exchange.getOut().setBody(saList.getItems());
     }
 
-    protected void doGetServiceAccount(Exchange exchange) throws Exception {
+    protected void doGetServiceAccount(Exchange exchange) {
         ServiceAccount sa = null;
         String saName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -127,7 +127,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         exchange.getOut().setBody(sa);
     }
 
-    protected void doCreateServiceAccount(Exchange exchange) throws Exception {
+    protected void doCreateServiceAccount(Exchange exchange) {
         ServiceAccount sa = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         ServiceAccount saToCreate
@@ -146,7 +146,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         exchange.getOut().setBody(sa);
     }
 
-    protected void doDeleteServiceAccount(Exchange exchange) throws Exception {
+    protected void doDeleteServiceAccount(Exchange exchange) {
         String saName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(saName)) {

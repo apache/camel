@@ -114,7 +114,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         exchange.getOut().setBody(pvcList.getItems());
     }
 
-    protected void doGetPersistentVolumeClaim(Exchange exchange) throws Exception {
+    protected void doGetPersistentVolumeClaim(Exchange exchange) {
         PersistentVolumeClaim pvc = null;
         String pvcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -133,7 +133,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         exchange.getOut().setBody(pvc);
     }
 
-    protected void doCreatePersistentVolumeClaim(Exchange exchange) throws Exception {
+    protected void doCreatePersistentVolumeClaim(Exchange exchange) {
         PersistentVolumeClaim pvc = null;
         String pvcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -163,7 +163,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         exchange.getOut().setBody(pvc);
     }
 
-    protected void doDeletePersistentVolumeClaim(Exchange exchange) throws Exception {
+    protected void doDeletePersistentVolumeClaim(Exchange exchange) {
         String pvcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(pvcName)) {

@@ -91,7 +91,7 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         exchange.getOut().setBody(pvList.getItems());
     }
 
-    protected void doGetPersistentVolume(Exchange exchange, String operation) throws Exception {
+    protected void doGetPersistentVolume(Exchange exchange, String operation) {
         PersistentVolume pv = null;
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
