@@ -373,8 +373,9 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         routeProperties.put(Route.REST_PROPERTY, rest);
         String template = Boolean.toString(definition.isTemplate() != null && definition.isTemplate());
         routeProperties.put(Route.TEMPLATE_PROPERTY, template);
-        if (definition.getRouteConfigurationId() != null) {
-            routeProperties.put(Route.CONFIGURATION_ID_PROPERTY, definition.getRouteConfigurationId());
+        if (definition.getAppliedRouteConfigurationIds() != null) {
+            routeProperties.put(Route.CONFIGURATION_ID_PROPERTY,
+                    String.join(",", definition.getAppliedRouteConfigurationIds()));
         }
 
         List<PropertyDefinition> properties = definition.getRouteProperties();

@@ -17,9 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -226,7 +224,6 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         List<InterceptFromDefinition> ifrom = new ArrayList<>(interceptFroms);
         List<InterceptSendToEndpointDefinition> ito = new ArrayList<>(interceptSendTos);
         List<OnCompletionDefinition> oc = new ArrayList<>(onCompletions);
-        Set<String> matchedIds = new LinkedHashSet<>();
         if (getCamelContext() != null) {
             List<RouteConfigurationDefinition> globalConfigurations
                     = getCamelContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
@@ -238,8 +235,8 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
                                 || (PatternHelper.matchPattern(g.getId(), route.getRouteConfigurationId())))
                         .forEach(g -> {
                             if (g.getId() != null && !g.getId().equals("*")) {
-                                // remember the id that was used
-                                matchedIds.add(g.getId());
+                                // remember the id that was used on the route
+                                route.addAppliedRouteConfigurationId(g.getId());
                             }
                             oe.addAll(g.getOnExceptions());
                             icp.addAll(g.getIntercepts());
@@ -253,8 +250,9 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         // must prepare the route before we can add it to the routes list
         RouteDefinitionHelper.prepareRoute(getCamelContext(), route, oe, icp, ifrom, ito, oc);
 
-        if (LOG.isDebugEnabled() && route.getRouteConfigurationId() != null) {
-            LOG.debug("Route: {} is using route configurations ids: {}", route.getId(), matchedIds);
+        if (LOG.isDebugEnabled() && route.getAppliedRouteConfigurationIds() != null) {
+            LOG.debug("Route: {} is using route configurations ids: {}", route.getId(),
+                    route.getAppliedRouteConfigurationIds());
         }
 
         // mark this route as prepared

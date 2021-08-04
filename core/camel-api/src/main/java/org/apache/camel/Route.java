@@ -117,7 +117,7 @@ public interface Route extends RuntimeConfiguration {
     String getDescription();
 
     /**
-     * Gets the route configuration id(s) (if any has been configured).
+     * Gets the route configuration id(s) the route has been applied with. Multiple ids is separated by comma.
      * <p/>
      * The configuration ids is configured using the {@link #CONFIGURATION_ID_PROPERTY} as key in the
      * {@link #getProperties()}.

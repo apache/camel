@@ -18,8 +18,10 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -58,6 +60,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     private final AtomicBoolean prepared = new AtomicBoolean();
     private FromDefinition input;
     private String routeConfigurationId;
+    private transient Set<String> appliedRouteConfigurationIds;
     private String group;
     private String streamCache;
     private String trace;
@@ -130,9 +133,6 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
 
     /**
      * Marks the route definition as un-prepared.
-     * <p/>
-     * This is needed if routes have been created by components such as <tt>camel-scala</tt>. To unset the prepare so
-     * the routes can be prepared at a later stage when scala has build the routes completely.
      */
     public void markUnprepared() {
         prepared.set(false);
@@ -745,6 +745,29 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     @XmlAttribute
     public void setRouteConfigurationId(String routeConfigurationId) {
         this.routeConfigurationId = routeConfigurationId;
+    }
+
+    /**
+     * This is used internally by Camel to keep track which route configurations is applied when creating a route from
+     * this model.
+     *
+     * This method is not intended for Camel end users.
+     */
+    public void addAppliedRouteConfigurationId(String routeConfigurationId) {
+        if (appliedRouteConfigurationIds == null) {
+            appliedRouteConfigurationIds = new LinkedHashSet<>();
+        }
+        appliedRouteConfigurationIds.add(routeConfigurationId);
+    }
+
+    /**
+     * This is used internally by Camel to keep track which route configurations is applied when creating a route from
+     * this model.
+     *
+     * This method is not intended for Camel end users.
+     */
+    public Set<String> getAppliedRouteConfigurationIds() {
+        return appliedRouteConfigurationIds;
     }
 
     /**
