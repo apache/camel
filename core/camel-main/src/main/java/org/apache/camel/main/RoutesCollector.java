@@ -40,7 +40,7 @@ public interface RoutesCollector {
             CamelContext camelContext, String excludePattern, String includePattern);
 
     /**
-     * Collects all RoutesBuilder from the given directory.
+     * Collects all {@link RoutesBuilder} from the given directory.
      *
      * @param  camelContext   the Camel Context
      * @param  excludePattern exclude pattern (see routesExcludePattern option)
