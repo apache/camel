@@ -15,7 +15,7 @@ In the route configuration you can setup common strategies for:
 
 - xref:exception-clause.adoc[OnException]
 - xref:oncompletion.adoc[OnCompletion]
-- xref:eips:intercept.adoc[Intercept]
+- xref:{eip-vc}:eips:intercept.adoc[Intercept]
 
 
 == Route Configuration Builder in Java DSL
