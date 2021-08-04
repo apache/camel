@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.consumer.common.DeploymentEvent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
@@ -68,15 +69,11 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
 
         LOG.debug("Stopping Kubernetes Deployments Consumer");
         if (executor != null) {
+            KubernetesHelper.close(deploymentsWatcher, deploymentsWatcher::getWatch);
+
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                if (deploymentsWatcher != null) {
-                    deploymentsWatcher.getWatch().close();
-                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
-                if (deploymentsWatcher != null) {
-                    deploymentsWatcher.getWatch().close();
-                }
                 executor.shutdownNow();
             }
         }
