@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.consumer;
+package org.apache.camel.component.kubernetes.consumer.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,14 +24,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Requires a running Kubernetes Cluster")
-public class KubernetesCustomResourcesConsumerTest extends KubernetesTestSupport {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
@@ -61,11 +65,8 @@ public class KubernetesCustomResourcesConsumerTest extends KubernetesTestSupport
                                         "}";
 
     @Test
-    public void createAndDeleteCustomResource() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-
+    @Order(1)
+    public void createCustomResource() throws Exception {
         mockResultEndpoint.expectedMessageCount(2);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
                 "MODIFIED");
@@ -80,7 +81,18 @@ public class KubernetesCustomResourcesConsumerTest extends KubernetesTestSupport
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, gitHubSourceString);
         });
 
-        ex = template.request("direct:deleteCustomResource", exchange -> {
+        // Maybe knative is not available
+        assertNotNull(ex.getMessage());
+        assertNotNull(ex.getMessage().getBody());
+    }
+
+    @Test
+    @Order(2)
+    public void deleteCustomResource() throws Exception {
+        mockResultEndpoint.expectedMessageCount(2);
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
+                "MODIFIED");
+        Exchange ex = template.request("direct:deleteCustomResource", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "createtest");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
@@ -90,13 +102,13 @@ public class KubernetesCustomResourcesConsumerTest extends KubernetesTestSupport
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
         });
 
-        boolean cmDeleted = ex.getMessage().getBody(Boolean.class);
+        Message message = ex.getMessage();
 
+        assertNotNull(message);
+        assertNotNull(message.getBody());
+
+        boolean cmDeleted = message.getBody(Boolean.class);
         assertTrue(cmDeleted);
-
-        Thread.sleep(3000);
-
-        mockResultEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -109,7 +121,7 @@ public class KubernetesCustomResourcesConsumerTest extends KubernetesTestSupport
                 from("direct:deleteCustomResource")
                         .toF("kubernetes-custom-resources://%s/?oauthToken=%s&operation=deleteCustomResource", host, authToken);
                 fromF("kubernetes-custom-resources://%s/?oauthToken=%s&namespace=test" +
-                      "&crdName=githubsources.sources.knative.dev&crdGroup=sources.knative.dev&crdScope=Namespaced&crdVersion=v1alpha1&crdPlural=githubsources",
+                      "&crdName=githubsources.sources.knative.dev&crdGroup=sources.knative.dev&crdScope=Namespaced&crdVersion=v1alpha1&crdPlural=githubsources&namespace=test",
                         host, authToken)
                                 .process(new KubernetesProcessor()).to(mockResultEndpoint);
             }
