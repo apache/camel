@@ -32,7 +32,6 @@ for this component:
 
 == URI format
 
-[source,java]
 -----------------------------
 ldap:ldapServerBean[?options]
 -----------------------------
@@ -43,63 +42,11 @@ bean in the registry. The LDAP component only supports producer
 endpoints, which means that an `ldap` URI cannot appear in the `from` at
 the start of a route.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
 
 // component options: START
-The LDAP component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
-
-
-
 // endpoint options: START
-The LDAP endpoint is configured using URI syntax:
-
-----
-ldap:dirContextName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *dirContextName* | *Required* Name of either a javax.naming.directory.DirContext, or java.util.Hashtable, or Map bean to lookup in the registry. If the bean is either a Hashtable or Map then a new javax.naming.directory.DirContext instance is created for each use. If the bean is a javax.naming.directory.DirContext then the bean is used as given. The latter may not be possible in all situations where the javax.naming.directory.DirContext must not be shared, and in those situations it can be better to use java.util.Hashtable or Map instead. |  | String
-|===
-
-
-=== Query Parameters (5 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *base* (producer) | The base DN for searches. | ou=system | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *pageSize* (producer) | When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query). To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown) |  | Integer
-| *returnedAttributes* (producer) | Comma-separated list of attributes that should be set in each entry of the result |  | String
-| *scope* (producer) | Specifies how deeply to search the tree of entries, starting at the base DN. There are 3 enums and the value can be one of: object, onelevel, subtree | subtree | String
-|===
 // endpoint options: END
-
-
-
 
 == Result
 
@@ -171,7 +118,6 @@ If no specific filter is required - for example, you just need to look
 up a single entry - specify a wildcard filter expression. For example,
 if the LDAP entry has a Common Name, use a filter expression like:
 
-[source,java]
 ------
 (cn=*)
 ------
@@ -293,13 +239,10 @@ public class CustomSocketFactory extends SSLSocketFactory {
      * Called by the getDefault() method.
      */
     public CustomSocketFactory() {
-
     }
 
     /**
      * Called by Blueprint DI to initialise an instance of SocketFactory
-     *
-     * @param sslContextParameters
      */
     public CustomSocketFactory(SSLContextParameters sslContextParameters) {
         try {
@@ -359,8 +302,6 @@ public class CustomSocketFactory extends SSLSocketFactory {
     }
 }
 -----------------------------------------------------------------------------------------------------
-
- 
 
 
 include::{page-component-version}@camel-spring-boot::page$ldap-starter.adoc[]
