@@ -188,10 +188,11 @@ public class SalesforceSession extends ServiceSupport {
 
     String generateJwtAssertion() {
         final long utcPlusWindow = Clock.systemUTC().millis() / 1000 + JWT_CLAIM_WINDOW;
+        final String audience = config.getJwtAudience() != null ? config.getJwtAudience() : config.getLoginUrl();
 
         final StringBuilder claim = new StringBuilder().append("{\"iss\":\"").append(config.getClientId())
                 .append("\",\"sub\":\"").append(config.getUserName())
-                .append("\",\"aud\":\"").append(config.getLoginUrl()).append("\",\"exp\":\"").append(utcPlusWindow)
+                .append("\",\"aud\":\"").append(audience).append("\",\"exp\":\"").append(utcPlusWindow)
                 .append("\"}");
 
         final StringBuilder token = new StringBuilder(JWT_HEADER).append('.')

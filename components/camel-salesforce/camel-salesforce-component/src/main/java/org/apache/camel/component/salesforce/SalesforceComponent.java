@@ -146,6 +146,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
               label = "common,security", secret = true)
     private KeyStoreParameters keystore;
 
+    @Metadata(description = "Value to use for the Audience claim (aud) when using OAuth JWT flow. If not set, the login URL will be used, which is"
+                            + " appropriate in most cases.",
+              label = "common,security")
+    private String jwtAudience;
+
     @Metadata(description = "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT."
                             + " Salesforce component can auto-determine the authentication method to use from the properties set, set this "
                             + " property to eliminate any ambiguity.",
@@ -362,6 +367,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             loginConfig.setClientId(clientId);
             loginConfig.setClientSecret(clientSecret);
             loginConfig.setKeystore(keystore);
+            loginConfig.setJwtAudience(jwtAudience);
             loginConfig.setLazyLogin(lazyLogin);
             loginConfig.setLoginUrl(loginUrl);
             loginConfig.setPassword(password);
@@ -520,6 +526,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public KeyStoreParameters getKeystore() {
         return keystore;
+    }
+
+    public String getJwtAudience() {
+        return jwtAudience;
+    }
+
+    public void setJwtAudience(String jwtAudience) {
+        this.jwtAudience = jwtAudience;
     }
 
     public String getRefreshToken() {

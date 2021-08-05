@@ -1268,6 +1268,23 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Value to use for the Audience claim (aud) when using OAuth JWT flow.
+         * If not set, the login URL will be used, which is appropriate in most
+         * cases.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param jwtAudience the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder jwtAudience(
+                java.lang.String jwtAudience) {
+            doSetProperty("jwtAudience", jwtAudience);
+            return this;
+        }
+        /**
          * KeyStore parameters to use in OAuth JWT flow. The KeyStore should
          * contain only one entry with private key and certificate. Salesforce
          * does not verify the certificate chain, so this can easily be a
@@ -1525,6 +1542,7 @@ public interface SalesforceComponentBuilderFactory {
             case "httpProxyUseDigestAuth": ((SalesforceComponent) component).setHttpProxyUseDigestAuth((boolean) value); return true;
             case "httpProxyUsername": ((SalesforceComponent) component).setHttpProxyUsername((java.lang.String) value); return true;
             case "instanceUrl": ((SalesforceComponent) component).setInstanceUrl((java.lang.String) value); return true;
+            case "jwtAudience": ((SalesforceComponent) component).setJwtAudience((java.lang.String) value); return true;
             case "keystore": ((SalesforceComponent) component).setKeystore((org.apache.camel.support.jsse.KeyStoreParameters) value); return true;
             case "lazyLogin": ((SalesforceComponent) component).setLazyLogin((boolean) value); return true;
             case "loginConfig": ((SalesforceComponent) component).setLoginConfig((org.apache.camel.component.salesforce.SalesforceLoginConfig) value); return true;

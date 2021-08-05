@@ -104,6 +104,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "instanceUrl": target.setInstanceUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "jobid":
         case "jobId": getOrCreateConfig(target).setJobId(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtaudience":
+        case "jwtAudience": target.setJwtAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "keystore": target.setKeystore(property(camelContext, org.apache.camel.support.jsse.KeyStoreParameters.class, value)); return true;
         case "lazylogin":
         case "lazyLogin": target.setLazyLogin(property(camelContext, boolean.class, value)); return true;
@@ -273,6 +275,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "instanceUrl": return java.lang.String.class;
         case "jobid":
         case "jobId": return java.lang.String.class;
+        case "jwtaudience":
+        case "jwtAudience": return java.lang.String.class;
         case "keystore": return org.apache.camel.support.jsse.KeyStoreParameters.class;
         case "lazylogin":
         case "lazyLogin": return boolean.class;
@@ -443,6 +447,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "instanceUrl": return target.getInstanceUrl();
         case "jobid":
         case "jobId": return getOrCreateConfig(target).getJobId();
+        case "jwtaudience":
+        case "jwtAudience": return target.getJwtAudience();
         case "keystore": return target.getKeystore();
         case "lazylogin":
         case "lazyLogin": return target.isLazyLogin();
