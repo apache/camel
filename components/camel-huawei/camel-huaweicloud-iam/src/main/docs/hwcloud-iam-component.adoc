@@ -30,64 +30,13 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 
 == URI Format
 
-[source,text]
 ----
 hwcloud-iam:operation[?options]
 ----
 
-== URI Options
-
 // component options: START
-The Huawei Identity and Access Management (IAM) component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
 // endpoint options: START
-The Huawei Identity and Access Management (IAM) endpoint is configured using URI syntax:
-
-----
-hwcloud-iam:operation
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *operation* | *Required* Operation to be performed |  | String
-|===
-
-
-=== Query Parameters (12 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *authenticationKey* (producer) | *Required* Authentication key for the cloud user |  | String
-| *groupId* (producer) | Group ID to perform operation with |  | String
-| *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *proxyHost* (producer) | Proxy server ip/hostname |  | String
-| *proxyPassword* (producer) | Proxy authentication password |  | String
-| *proxyPort* (producer) | Proxy server port |  | int
-| *proxyUser* (producer) | Proxy authentication user |  | String
-| *region* (producer) | *Required* IAM service region |  | String
-| *secretKey* (producer) | *Required* Secret key for the cloud user |  | String
-| *serviceKeys* (producer) | Configuration object for cloud service authentication |  | ServiceKeys
-| *userId* (producer) | User ID to perform operation with |  | String
-|===
 // endpoint options: END
 
 

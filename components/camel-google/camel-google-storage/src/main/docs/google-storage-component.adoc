@@ -28,7 +28,6 @@ for this component:
     <!-- use the same version as your Camel core version -->
     <version>x.x.x</version>
 </dependency>
-
 ------------------------------------------------------
 
 [[GoogleStorage-AuthenticationConfiguration]]
@@ -40,7 +39,8 @@ For more information please refer to https://cloud.google.com/storage/docs/refer
 
 When you have the **service account key** you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
-[source,text]
+
+[source,java]
 --------------------------------------------------------
 String endpoint = "google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json";
 --------------------------------------------------------
@@ -49,7 +49,6 @@ Or by providing the path to the GCP credentials file location:
 
 Provide authentication credentials to your application code by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
 
-[source,text]
 --------------------------------------------------------
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 --------------------------------------------------------
@@ -57,7 +56,6 @@ export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 
 == URI Format
 
-[source,text]
 --------------------------------------------------------
 google-storage://bucketNameOrArn?[options]
 --------------------------------------------------------
@@ -75,93 +73,9 @@ from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-k
 --------------------------------------------------------------------------------
 
 
-== URI Options
-
 // component options: START
-The Google Storage component supports 16 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *autoCreateBucket* (common) | Setting the autocreation of the bucket bucketName. | true | boolean
-| *configuration* (common) | The component configuration |  | GoogleCloudStorageConfiguration
-| *serviceAccountKey* (common) | The Service account key that can be used as credentials for the Storage client. It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
-| *storageClass* (common) | The Cloud Storage class to use when creating the new buckets | STANDARD | StorageClass
-| *storageClient* (common) | *Autowired* The storage client |  | Storage
-| *storageLocation* (common) | The Cloud Storage location to use when creating the new buckets | US-EAST1 | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *deleteAfterRead* (consumer) | Delete objects from the bucket after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. | true | boolean
-| *destinationBucket* (consumer) | Define the destination bucket where an object must be moved when moveAfterRead is set to true. |  | String
-| *includeBody* (consumer) | If it is true, the Object exchange will be consumed and put into the body. If false the Object stream will be put raw into the body and the headers will be set with the object metadata. | true | boolean
-| *includeFolders* (consumer) | If it is true, the folders/directories will be consumed. If it is false, they will be ignored, and Exchanges will not be created for those | true | boolean
-| *moveAfterRead* (consumer) | Move objects from the origin bucket to a different bucket after they have been retrieved. To accomplish the operation the destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object is not moved. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *objectName* (producer) | The Object name inside the bucket |  | String
-| *operation* (producer) | Set the operation for the producer. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, createDownloadLink |  | GoogleCloudStorageOperations
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
 // endpoint options: START
-The Google Storage endpoint is configured using URI syntax:
-
-----
-google-storage:bucketName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bucketName* | *Required* Bucket name or ARN |  | String
-|===
-
-
-=== Query Parameters (32 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *autoCreateBucket* (common) | Setting the autocreation of the bucket bucketName. | true | boolean
-| *serviceAccountKey* (common) | The Service account key that can be used as credentials for the Storage client. It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
-| *storageClass* (common) | The Cloud Storage class to use when creating the new buckets | STANDARD | StorageClass
-| *storageClient* (common) | *Autowired* The storage client |  | Storage
-| *storageLocation* (common) | The Cloud Storage location to use when creating the new buckets | US-EAST1 | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *deleteAfterRead* (consumer) | Delete objects from the bucket after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. | true | boolean
-| *destinationBucket* (consumer) | Define the destination bucket where an object must be moved when moveAfterRead is set to true. |  | String
-| *includeBody* (consumer) | If it is true, the Object exchange will be consumed and put into the body. If false the Object stream will be put raw into the body and the headers will be set with the object metadata. | true | boolean
-| *includeFolders* (consumer) | If it is true, the folders/directories will be consumed. If it is false, they will be ignored, and Exchanges will not be created for those | true | boolean
-| *moveAfterRead* (consumer) | Move objects from the origin bucket to a different bucket after they have been retrieved. To accomplish the operation the destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object is not moved. | false | boolean
-| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *objectName* (producer) | The Object name inside the bucket |  | String
-| *operation* (producer) | Set the operation for the producer. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, createDownloadLink |  | GoogleCloudStorageOperations
-| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
-| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
-| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
-| *delay* (scheduler) | Milliseconds before the next poll. | 500 | long
-| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
-| *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
-| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
-| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler | none | Object
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
-| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
-| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
-| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-|===
 // endpoint options: END
 
 
@@ -184,7 +98,6 @@ with the following path and query parameters:
 |`CamelGoogleCloudStorageContentLength` |`Long` |The content length of this object.
 
 |`CamelGoogleCloudStorageContentType` |`String` |The content type of this object.
-
 
 |`CamelGoogleCloudStorageContentDisposition` |`String` |The content disposition of this object.
 

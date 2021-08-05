@@ -91,7 +91,6 @@ As mentioned above camel provides produers endpoints for HBase. This
 allows you to store, delete, retrieve or query data from HBase using
 your camel routes.
 
-[source,java]
 -----------------------
 hbase://table[?options]
 -----------------------
@@ -105,77 +104,11 @@ The supported operations are:
 * Delete
 * Scan
 
-=== Supported URI options
-
-
-
 
 // component options: START
-The HBase component supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *poolMaxSize* (common) | Maximum number of references to keep for each table in the HTable pool. The default value is 10. | 10 | int
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *configuration* (advanced) | To use the shared configuration |  | Configuration
-|===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
-The HBase endpoint is configured using URI syntax:
-
-----
-hbase:tableName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *tableName* | *Required* The name of the table |  | String
-|===
-
-
-=== Query Parameters (16 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *cellMappingStrategyFactory* (common) | To use a custom CellMappingStrategyFactory that is responsible for mapping cells. |  | CellMappingStrategyFactory
-| *filters* (common) | A list of filters to use. |  | List
-| *mappingStrategyClassName* (common) | The class name of a custom mapping strategy implementation. |  | String
-| *mappingStrategyName* (common) | The strategy to use for mapping Camel messages to HBase columns. Supported values: header, or body. There are 2 enums and the value can be one of: header, body |  | String
-| *rowMapping* (common) | To map the key/values from the Map to a HBaseRow. The following keys is supported: rowId - The id of the row. This has limited use as the row usually changes per Exchange. rowType - The type to covert row id to. Supported operations: CamelHBaseScan. family - The column family. Supports a number suffix for referring to more than one columns. qualifier - The column qualifier. Supports a number suffix for referring to more than one columns. value - The value. Supports a number suffix for referring to more than one columns valueType - The value type. Supports a number suffix for referring to more than one columns. Supported operations: CamelHBaseGet, and CamelHBaseScan. |  | Map
-| *rowModel* (common) | An instance of org.apache.camel.component.hbase.model.HBaseRow which describes how each row should be modeled |  | HBaseRow
-| *userGroupInformation* (common) | Defines privileges to communicate with HBase such as using kerberos. |  | UserGroupInformation
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited, but use 0 or negative number to disable it as unlimited. |  | int
-| *operation* (consumer) | The HBase operation to perform. There are 4 enums and the value can be one of: CamelHBasePut, CamelHBaseGet, CamelHBaseScan, CamelHBaseDelete |  | String
-| *remove* (consumer) | If the option is true, Camel HBase Consumer will remove the rows which it processes. | true | boolean
-| *removeHandler* (consumer) | To use a custom HBaseRemoveHandler that is executed when a row is to be removed. |  | HBaseRemoveHandler
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *maxResults* (producer) | The maximum number of rows to scan. | 100 | int
-|===
 // endpoint options: END
-
-
 
 
 === Put Operations.
@@ -191,18 +124,18 @@ would be to store part of the message body to specified HBase column.
 
 [source,xml]
 -----------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <!-- Set the HBase Row -->
-            <setHeader name="CamelHBaseRowId">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <!-- Set the HBase Value -->
-            <setHeader name="CamelHBaseValue">
-                <el>${in.body.value}</el>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <!-- Set the HBase Row -->
+    <setHeader name="CamelHBaseRowId">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <!-- Set the HBase Value -->
+    <setHeader name="CamelHBaseValue">
+        <el>${in.body.value}</el>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier"/>
+</route>
 -----------------------------------------------------------------------------------------------------------
 
 The route above assumes that the message body contains an object that
@@ -215,26 +148,26 @@ does not have the number 1.
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <!-- Set the HBase Row 1st column -->
-            <setHeader name="CamelHBaseRowId">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <!-- Set the HBase Row 2nd column -->
-            <setHeader name="CamelHBaseRowId2">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <!-- Set the HBase Value for 1st column -->
-            <setHeader name="CamelHBaseValue">
-                <el>${in.body.value}</el>
-            </setHeader>
-            <!-- Set the HBase Value for 2nd column -->
-            <setHeader name="CamelHBaseValue2">
-                <el>${in.body.othervalue}</el>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier&amp;family2=myfamily&amp;qualifier2=myqualifier2"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <!-- Set the HBase Row 1st column -->
+    <setHeader name="CamelHBaseRowId">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <!-- Set the HBase Row 2nd column -->
+    <setHeader name="CamelHBaseRowId2">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <!-- Set the HBase Value for 1st column -->
+    <setHeader name="CamelHBaseValue">
+        <el>${in.body.value}</el>
+    </setHeader>
+    <!-- Set the HBase Value for 2nd column -->
+    <setHeader name="CamelHBaseValue2">
+        <el>${in.body.othervalue}</el>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier&amp;family2=myfamily&amp;qualifier2=myqualifier2"/>
+</route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 It is important to remember that you can use uri options, message
@@ -251,15 +184,15 @@ message headers.
 
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <!-- Set the HBase Row of the Get -->
-            <setHeader name="CamelHBaseRowId">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBaseGet&amp;family=myfamily&amp;qualifier=myqualifier&amp;valueType=java.lang.Long"/>
-            <to uri="log:out"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <!-- Set the HBase Row of the Get -->
+    <setHeader name="CamelHBaseRowId">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBaseGet&amp;family=myfamily&amp;qualifier=myqualifier&amp;valueType=java.lang.Long"/>
+    <to uri="log:out"/>
+</route>
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 In the example above the result of the get operation will be stored as a
@@ -273,14 +206,14 @@ specified is one or more rows as part of the message headers.
 
 [source,xml]
 ----------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <!-- Set the HBase Row of the Get -->
-            <setHeader name="CamelHBaseRowId">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBaseDelete"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <!-- Set the HBase Row of the Get -->
+    <setHeader name="CamelHBaseRowId">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBaseDelete"/>
+</route>
 ----------------------------------------------------------------
 
 === Scan Operations.
@@ -292,11 +225,11 @@ to objects you can use either uri options or headers.
 
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <to uri="hbase:mytable?operation=CamelHBaseScan&amp;family=myfamily&amp;qualifier=myqualifier&amp;valueType=java.lang.Long&amp;rowType=java.lang.String"/>
-            <to uri="log:out"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <to uri="hbase:mytable?operation=CamelHBaseScan&amp;family=myfamily&amp;qualifier=myqualifier&amp;valueType=java.lang.Long&amp;rowType=java.lang.String"/>
+    <to uri="log:out"/>
+</route>
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 In this case its probable that you also also need to specify a list of
@@ -316,44 +249,44 @@ can make use of the ModelAwareColumnMatchingFilter as shown below.
 
 [source,xml]
 -----------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:scan"/>
-            <!-- Set the Criteria -->
-            <setHeader name="CamelHBaseFamily">
-                <constant>name</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseQualifier">
-                <constant>first</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseValue">
-                <el>in.body.firstName</el>
-            </setHeader>
-            <setHeader name="CamelHBaseFamily2">
-                <constant>name</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseQualifier2">
-                <constant>last</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseValue2">
-                <el>in.body.lastName</el>
-            </setHeader>
-            <!-- Set additional fields that you want to be return by skipping value -->
-            <setHeader name="CamelHBaseFamily3">
-                <constant>address</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseQualifier3">
-                <constant>country</constant>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBaseScan&amp;filters=#myFilterList"/>
-        </route>
+<route>
+    <from uri="direct:scan"/>
+    <!-- Set the Criteria -->
+    <setHeader name="CamelHBaseFamily">
+        <constant>name</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseQualifier">
+        <constant>first</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseValue">
+        <el>in.body.firstName</el>
+    </setHeader>
+    <setHeader name="CamelHBaseFamily2">
+        <constant>name</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseQualifier2">
+        <constant>last</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseValue2">
+        <el>in.body.lastName</el>
+    </setHeader>
+    <!-- Set additional fields that you want to be return by skipping value -->
+    <setHeader name="CamelHBaseFamily3">
+        <constant>address</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseQualifier3">
+        <constant>country</constant>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBaseScan&amp;filters=#myFilterList"/>
+</route>
 
-        <bean id="myFilters" class="java.util.ArrayList">
-            <constructor-arg>
-                <list>
-                    <bean class="org.apache.camel.component.hbase.filters.ModelAwareColumnMatchingFilter"/>
-                </list>
-            </constructor-arg>
-        </bean>
+<bean id="myFilters" class="java.util.ArrayList">
+    <constructor-arg>
+        <list>
+            <bean class="org.apache.camel.component.hbase.filters.ModelAwareColumnMatchingFilter"/>
+        </list>
+    </constructor-arg>
+</bean>
 -----------------------------------------------------------------------------------------------------------
 
 The route above assumes that a pojo is with properties firstName and
@@ -372,7 +305,6 @@ can either specify header mapping (default) or body mapping. The later
 will just add the org.apache.camel.component.hbase.model.HBaseData as
 part of the message body.
 
-[source,java]
 -----------------------
 hbase://table[?options]
 -----------------------
@@ -380,7 +312,6 @@ hbase://table[?options]
 You can specify the columns that you want to be return and their types
 as part of the uri options:
 
-[source,java]
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 hbase:mutable?family=name&qualifer=first&valueType=java.lang.String&family=address&qualifer=number&valueType2=java.lang.Integer&rowType=java.lang.Long
 ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -482,7 +413,6 @@ of the endpoint uri, as you will see below.
 In order to use the body mapping strategy you will have to specify the
 option mappingStrategy as part of the uri, for example:
 
-[source,java]
 ----------------------------------
 hbase:mytable?mappingStrategyName=body
 ----------------------------------

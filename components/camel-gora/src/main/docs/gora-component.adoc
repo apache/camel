@@ -49,7 +49,6 @@ as http://hsqldb.org/[hsqldb], http://www.mysql.com/[MySQL] and more.
 
 == URI format
 
-[source,text]
 ---------------------------
 gora:instanceName[?options]
 ---------------------------
@@ -81,77 +80,12 @@ Extensive information for this configuration can be found in the apache
 http://gora.apache.org/current/index.html[gora documentation] and the
 http://gora.apache.org/current/gora-conf.html[gora-conf] page.
 
-== Options
 
 
 // component options: START
-The Gora component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
-
-
-
-
 // endpoint options: START
-The Gora endpoint is configured using URI syntax:
-
-----
-gora:name
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *name* | *Required* Instance name |  | String
-|===
-
-
-=== Query Parameters (21 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *dataStoreClass* (common) | The type of the dataStore |  | String
-| *keyClass* (common) | The type class of the key |  | String
-| *valueClass* (common) | The type of the value |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *concurrentConsumers* (consumer) | Number of concurrent consumers | 1 | int
-| *endKey* (consumer) | The End Key |  | Object
-| *endTime* (consumer) | The End Time |  | long
-| *fields* (consumer) | The Fields |  | Strings
-| *keyRangeFrom* (consumer) | The Key Range From |  | Object
-| *keyRangeTo* (consumer) | The Key Range To |  | Object
-| *limit* (consumer) | The Limit |  | long
-| *startKey* (consumer) | The Start Key |  | Object
-| *startTime* (consumer) | The Start Time |  | long
-| *timeRangeFrom* (consumer) | The Time Range From |  | long
-| *timeRangeTo* (consumer) | The Time Range To |  | long
-| *timestamp* (consumer) | The Timestamp |  | long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *flushOnEveryOperation* (producer) | Flush on every operation | true | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *hadoopConfiguration* (advanced) | Hadoop Configuration |  | Configuration
-|===
 // endpoint options: END
-
-
 
 
 
