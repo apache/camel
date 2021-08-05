@@ -34,6 +34,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
+
 public class KubernetesJobProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesJobProducer.class);
@@ -85,10 +87,9 @@ public class KubernetesJobProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        JobList jobList = getEndpoint().getKubernetesClient().batch().jobs().list();
+        JobList jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(jobList.getItems());
+        prepareOutboundMessage(exchange, jobList.getItems());
     }
 
     protected void doListJobByLabel(Exchange exchange) {
@@ -98,14 +99,13 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get Job by labels require specify a labels set");
         }
 
-        MixedOperation<Job, JobList, ScalableResource<Job>> jobs = getEndpoint().getKubernetesClient().batch().jobs();
+        MixedOperation<Job, JobList, ScalableResource<Job>> jobs = getEndpoint().getKubernetesClient().batch().v1().jobs();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             jobs.withLabel(entry.getKey(), entry.getValue());
         }
         JobList jobList = jobs.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(jobList.getItems());
+        prepareOutboundMessage(exchange, jobList.getItems());
     }
 
     protected void doGetJob(Exchange exchange) {
@@ -120,10 +120,9 @@ public class KubernetesJobProducer extends DefaultProducer {
             LOG.error("Get a specific job require specify a namespace name");
             throw new IllegalArgumentException("Get a specific job require specify a namespace name");
         }
-        job = getEndpoint().getKubernetesClient().batch().jobs().inNamespace(namespaceName).withName(jobName).get();
+        job = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).withName(jobName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(job);
+        prepareOutboundMessage(exchange, job);
     }
 
     protected void doCreateJob(Exchange exchange) {
@@ -146,10 +145,9 @@ public class KubernetesJobProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
         Job jobCreating = new JobBuilder().withNewMetadata().withName(jobName).withLabels(labels).endMetadata()
                 .withSpec(jobSpec).build();
-        job = getEndpoint().getKubernetesClient().batch().jobs().inNamespace(namespaceName).create(jobCreating);
+        job = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).create(jobCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(job);
+        prepareOutboundMessage(exchange, job);
     }
 
     protected void doDeleteJob(Exchange exchange) {
@@ -164,8 +162,8 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific job require specify a namespace name");
         }
 
-        getEndpoint().getKubernetesClient().batch().jobs().inNamespace(namespaceName).withName(jobName).delete();
+        getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).withName(jobName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getMessage(), true);
     }
 }

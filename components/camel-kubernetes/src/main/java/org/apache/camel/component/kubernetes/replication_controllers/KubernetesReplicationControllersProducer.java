@@ -31,10 +31,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesReplicationControllersProducer extends DefaultProducer {
 
@@ -56,27 +57,27 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_REPLICATION_CONTROLLERS_OPERATION:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_REPLICATION_CONTROLLERS_BY_LABELS_OPERATION:
-                doListReplicationControllersByLabels(exchange, operation);
+                doListReplicationControllersByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_REPLICATION_CONTROLLER_OPERATION:
-                doGetReplicationController(exchange, operation);
+                doGetReplicationController(exchange);
                 break;
 
             case KubernetesOperations.CREATE_REPLICATION_CONTROLLER_OPERATION:
-                doCreateReplicationController(exchange, operation);
+                doCreateReplicationController(exchange);
                 break;
 
             case KubernetesOperations.DELETE_REPLICATION_CONTROLLER_OPERATION:
-                doDeleteReplicationController(exchange, operation);
+                doDeleteReplicationController(exchange);
                 break;
 
             case KubernetesOperations.SCALE_REPLICATION_CONTROLLER_OPERATION:
-                doScaleReplicationController(exchange, operation);
+                doScaleReplicationController(exchange);
                 break;
 
             default:
@@ -84,7 +85,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) {
+    protected void doList(Exchange exchange) {
         ReplicationControllerList rcList = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
@@ -93,11 +94,10 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             rcList = getEndpoint().getKubernetesClient().replicationControllers().inAnyNamespace().list();
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(rcList.getItems());
+        prepareOutboundMessage(exchange, rcList.getItems());
     }
 
-    protected void doListReplicationControllersByLabels(Exchange exchange, String operation) {
+    protected void doListReplicationControllersByLabels(Exchange exchange) {
         ReplicationControllerList rcList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, Map.class);
@@ -121,12 +121,11 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             rcList = replicationControllers.list();
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(rcList.getItems());
+        prepareOutboundMessage(exchange, rcList.getItems());
 
     }
 
-    protected void doGetReplicationController(Exchange exchange, String operation) {
+    protected void doGetReplicationController(Exchange exchange) {
         ReplicationController rc = null;
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -141,11 +140,10 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         }
         rc = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName).withName(rcName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(rc);
+        prepareOutboundMessage(exchange, rc);
     }
 
-    protected void doCreateReplicationController(Exchange exchange, String operation) {
+    protected void doCreateReplicationController(Exchange exchange) {
         ReplicationController rc = null;
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -171,11 +169,10 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
                 .withLabels(labels).endMetadata().withSpec(rcSpec).build();
         rc = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName).create(rcCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(rc);
+        prepareOutboundMessage(exchange, rc);
     }
 
-    protected void doDeleteReplicationController(Exchange exchange, String operation) {
+    protected void doDeleteReplicationController(Exchange exchange) {
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(rcName)) {
@@ -190,11 +187,10 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         boolean rcDeleted = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName)
                 .withName(rcName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(rcDeleted);
+        prepareOutboundMessage(exchange, rcDeleted);
     }
 
-    protected void doScaleReplicationController(Exchange exchange, String operation) {
+    protected void doScaleReplicationController(Exchange exchange) {
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Integer replicasNumber
@@ -215,7 +211,6 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         ReplicationController rcScaled = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName)
                 .withName(rcName).scale(replicasNumber, false);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(rcScaled.getStatus().getReplicas());
+        prepareOutboundMessage(exchange, rcScaled.getStatus().getReplicas());
     }
 }

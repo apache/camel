@@ -29,12 +29,13 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesCustomResourcesProducer extends DefaultProducer {
 
@@ -104,8 +105,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
             customResourcesListItems = new JsonArray();
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(customResourcesListItems);
+        prepareOutboundMessage(exchange, customResourcesListItems);
     }
 
     protected void doListByLabels(Exchange exchange, String namespaceName) {
@@ -118,8 +118,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         }
         JsonArray customResourcesListItems = new JsonArray(customResourcesListJSON.getCollection("items"));
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(customResourcesListItems);
+        prepareOutboundMessage(exchange, customResourcesListItems);
     }
 
     protected void doGet(Exchange exchange, String namespaceName) {
@@ -140,8 +139,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
             }
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(customResourceJSON);
+        prepareOutboundMessage(exchange, customResourceJSON);
     }
 
     protected void doDelete(Exchange exchange, String namespaceName) throws IOException {
@@ -179,8 +177,8 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
                 throw e;
             }
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(gitHubSourceJSON);
+
+        prepareOutboundMessage(exchange, gitHubSourceJSON);
     }
 
     private CustomResourceDefinitionContext getCRDContext(Message message) {
@@ -221,13 +219,12 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
             throw new IllegalArgumentException("one of more of the custom resource definition argument(s) are missing.");
         }
 
-        CustomResourceDefinitionContext cRDContext = new CustomResourceDefinitionContext.Builder()
+        return new CustomResourceDefinitionContext.Builder()
                 .withName(message.getHeader(KubernetesConstants.KUBERNETES_CRD_NAME, String.class))       // example: "githubsources.sources.knative.dev"
                 .withGroup(message.getHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, String.class))     // example: "sources.knative.dev"
                 .withScope(message.getHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, String.class))     // example: "Namespaced"
                 .withVersion(message.getHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, String.class)) // example: "v1alpha1"
                 .withPlural(message.getHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, String.class))   // example: "githubsources"
                 .build();
-        return cRDContext;
     }
 }

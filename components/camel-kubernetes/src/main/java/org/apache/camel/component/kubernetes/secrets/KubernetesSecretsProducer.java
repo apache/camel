@@ -29,10 +29,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesSecretsProducer extends DefaultProducer {
 
@@ -80,8 +81,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange) {
         SecretList secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace().list();
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(secretsList.getItems());
+        prepareOutboundMessage(exchange, secretsList.getItems());
     }
 
     protected void doListSecretsByLabels(Exchange exchange) {
@@ -104,8 +104,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             secretsList = secrets.list();
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(secretsList.getItems());
+        prepareOutboundMessage(exchange, secretsList.getItems());
     }
 
     protected void doGetSecret(Exchange exchange) {
@@ -122,8 +121,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         }
         secret = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(secret);
+        prepareOutboundMessage(exchange, secret);
     }
 
     protected void doCreateSecret(Exchange exchange) {
@@ -140,8 +138,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         }
         secret = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).create(secretToCreate);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(secret);
+        prepareOutboundMessage(exchange, secret);
     }
 
     protected void doDeleteSecret(Exchange exchange) {
@@ -158,7 +155,6 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         boolean secretDeleted
                 = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(secretDeleted);
+        prepareOutboundMessage(exchange, secretDeleted);
     }
 }

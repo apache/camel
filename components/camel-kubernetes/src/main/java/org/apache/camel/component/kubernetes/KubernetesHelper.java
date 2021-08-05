@@ -24,6 +24,7 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.Watch;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,6 +126,11 @@ public final class KubernetesHelper {
         }
 
         return operation;
+    }
+
+    public static void prepareOutboundMessage(Exchange exchange, Object body) {
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getMessage(), true);
+        exchange.getMessage().setBody(body);
     }
 
 }

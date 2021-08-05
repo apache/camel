@@ -29,10 +29,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesNamespacesProducer extends DefaultProducer {
 
@@ -81,8 +82,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
     protected void doList(Exchange exchange) {
         NamespaceList namespacesList = getEndpoint().getKubernetesClient().namespaces().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(namespacesList.getItems());
+        prepareOutboundMessage(exchange, namespacesList.getItems());
     }
 
     protected void doListNamespaceByLabel(Exchange exchange) {
@@ -98,8 +98,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         }
         NamespaceList namespace = namespaces.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(namespace.getItems());
+        prepareOutboundMessage(exchange, namespace.getItems());
     }
 
     protected void doGetNamespace(Exchange exchange) {
@@ -110,8 +109,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         }
         Namespace namespace = getEndpoint().getKubernetesClient().namespaces().withName(namespaceName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(namespace);
+        prepareOutboundMessage(exchange, namespace);
     }
 
     protected void doCreateNamespace(Exchange exchange) {
@@ -125,8 +123,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
                 = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels).endMetadata().build();
         Namespace namespace = getEndpoint().getKubernetesClient().namespaces().create(ns);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(namespace);
+        prepareOutboundMessage(exchange, namespace);
     }
 
     protected void doDeleteNamespace(Exchange exchange) {
@@ -137,7 +134,6 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         }
         Boolean namespace = getEndpoint().getKubernetesClient().namespaces().withName(namespaceName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(namespace);
+        prepareOutboundMessage(exchange, namespace);
     }
 }

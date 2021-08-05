@@ -36,6 +36,6 @@ public abstract class AbstractKubernetesComponent extends DefaultComponent {
         return endpoint;
     }
 
-    protected abstract AbstractKubernetesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config)
-            throws Exception;
+    protected abstract AbstractKubernetesEndpoint doCreateEndpoint(
+            String uri, String remaining, KubernetesConfiguration config);
 }

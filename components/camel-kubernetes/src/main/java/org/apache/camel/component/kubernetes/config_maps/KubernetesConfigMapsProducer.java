@@ -29,10 +29,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesConfigMapsProducer extends DefaultProducer {
 
@@ -81,8 +82,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
     protected void doList(Exchange exchange) {
         ConfigMapList configMapsList = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(configMapsList.getItems());
+        prepareOutboundMessage(exchange, configMapsList.getItems());
     }
 
     protected void doListConfigMapsByLabels(Exchange exchange) {
@@ -95,8 +95,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         }
         configMapsList = configMaps.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(configMapsList.getItems());
+        prepareOutboundMessage(exchange, configMapsList.getItems());
     }
 
     protected void doGetConfigMap(Exchange exchange) {
@@ -113,8 +112,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
             configMap = getEndpoint().getKubernetesClient().configMaps().withName(cfMapName).get();
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(configMap);
+        prepareOutboundMessage(exchange, configMap);
     }
 
     protected void doCreateConfigMap(Exchange exchange) {
@@ -140,8 +138,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
                 .withData(configMapData).build();
         configMap = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).create(cfMapCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(configMap);
+        prepareOutboundMessage(exchange, configMap);
     }
 
     protected void doDeleteConfigMap(Exchange exchange) {
@@ -158,7 +155,6 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         boolean cfMapDeleted
                 = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).withName(configMapName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(cfMapDeleted);
+        prepareOutboundMessage(exchange, cfMapDeleted);
     }
 }
