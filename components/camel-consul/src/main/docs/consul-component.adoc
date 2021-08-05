@@ -28,124 +28,14 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------------
-    consul://domain?[options]
+consul://domain?[options]
 ---------------------------------------
-
-You can append query options to the URI in the following format:
-
----------------------------------------
-    ?option=value&option=value&...
----------------------------------------
-
-== Options
-
-
-
 
 // component options: START
-The Consul component supports 29 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *connectTimeout* (common) | Connect timeout for OkHttpClient |  | Duration
-| *connectTimeoutMillis* (common) | *Deprecated* Connect timeout for OkHttpClient. Deprecation note: Use connectTimeout instead. Deprecation note: Use connectTimeout instead |  | Long
-| *consulClient* (common) | Reference to a com.orbitz.consul.Consul in the registry. |  | Consul
-| *key* (common) | The default key. Can be overridden by CamelConsulKey |  | String
-| *pingInstance* (common) | Configure if the AgentClient should attempt a ping before returning the Consul instance | true | boolean
-| *readTimeout* (common) | Read timeout for OkHttpClient |  | Duration
-| *readTimeoutMillis* (common) | *Deprecated* Read timeout for OkHttpClient. Deprecation note: Use readTimeout instead. Deprecation note: Use readTimeout instead |  | Long
-| *tags* (common) | Set tags. You can separate multiple tags by comma. |  | String
-| *url* (common) | The Consul agent URL |  | String
-| *writeTimeout* (common) | Write timeout for OkHttpClient |  | Duration
-| *writeTimeoutMillis* (common) | *Deprecated* Write timeout for OkHttpClient. Deprecation note: Use writeTimeout instead. Deprecation note: Use writeTimeout instead |  | Long
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *action* (producer) | The default action. Can be overridden by CamelConsulAction |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *valueAsString* (producer) | Default to transform values retrieved from Consul i.e. on KV endpoint to string. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *configuration* (advanced) | Consul configuration |  | ConsulConfiguration
-| *consistencyMode* (advanced) | The consistencyMode used for queries, default ConsistencyMode.DEFAULT. There are 3 enums and the value can be one of: DEFAULT, STALE, CONSISTENT | DEFAULT | ConsistencyMode
-| *datacenter* (advanced) | The data center |  | String
-| *nearNode* (advanced) | The near node to use for queries. |  | String
-| *nodeMeta* (advanced) | The note meta-data to use for queries. |  | List
-| *aclToken* (security) | Sets the ACL token to be used with Consul |  | String
-| *password* (security) | Sets the password to be used for basic authentication |  | String
-| *sslContextParameters* (security) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
-| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *userName* (security) | Sets the username to be used for basic authentication |  | String
-| *blockSeconds* (watch) | The second to wait for a watch event, default 10 seconds | 10 | Integer
-| *firstIndex* (watch) | The first index for watch for, default 0 | 0 | BigInteger
-| *recursive* (watch) | Recursively watch, default false | false | boolean
-|===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
-The Consul endpoint is configured using URI syntax:
-
-----
-consul:apiEndpoint
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *apiEndpoint* | *Required* The API endpoint |  | String
-|===
-
-
-=== Query Parameters (28 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *connectTimeout* (common) | Connect timeout for OkHttpClient |  | Duration
-| *connectTimeoutMillis* (common) | *Deprecated* Connect timeout for OkHttpClient. Deprecation note: Use connectTimeout instead. Deprecation note: Use connectTimeout instead |  | Long
-| *consulClient* (common) | Reference to a com.orbitz.consul.Consul in the registry. |  | Consul
-| *key* (common) | The default key. Can be overridden by CamelConsulKey |  | String
-| *pingInstance* (common) | Configure if the AgentClient should attempt a ping before returning the Consul instance | true | boolean
-| *readTimeout* (common) | Read timeout for OkHttpClient |  | Duration
-| *readTimeoutMillis* (common) | *Deprecated* Read timeout for OkHttpClient. Deprecation note: Use readTimeout instead. Deprecation note: Use readTimeout instead |  | Long
-| *tags* (common) | Set tags. You can separate multiple tags by comma. |  | String
-| *url* (common) | The Consul agent URL |  | String
-| *writeTimeout* (common) | Write timeout for OkHttpClient |  | Duration
-| *writeTimeoutMillis* (common) | *Deprecated* Write timeout for OkHttpClient. Deprecation note: Use writeTimeout instead. Deprecation note: Use writeTimeout instead |  | Long
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *action* (producer) | The default action. Can be overridden by CamelConsulAction |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *valueAsString* (producer) | Default to transform values retrieved from Consul i.e. on KV endpoint to string. | false | boolean
-| *consistencyMode* (advanced) | The consistencyMode used for queries, default ConsistencyMode.DEFAULT. There are 3 enums and the value can be one of: DEFAULT, STALE, CONSISTENT | DEFAULT | ConsistencyMode
-| *datacenter* (advanced) | The data center |  | String
-| *nearNode* (advanced) | The near node to use for queries. |  | String
-| *nodeMeta* (advanced) | The note meta-data to use for queries. |  | List
-| *aclToken* (security) | Sets the ACL token to be used with Consul |  | String
-| *password* (security) | Sets the password to be used for basic authentication |  | String
-| *sslContextParameters* (security) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
-| *userName* (security) | Sets the username to be used for basic authentication |  | String
-| *blockSeconds* (watch) | The second to wait for a watch event, default 10 seconds | 10 | Integer
-| *firstIndex* (watch) | The first index for watch for, default 0 | 0 | BigInteger
-| *recursive* (watch) | Recursively watch, default false | false | boolean
-|===
 // endpoint options: END
-
-
 
 
 

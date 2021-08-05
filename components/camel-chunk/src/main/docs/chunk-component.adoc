@@ -17,21 +17,9 @@ http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
 This can be ideal when using Templating to
 generate responses for requests.
 
-Maven users will need to add the following dependency to
-their `pom.xml` for this component:
-
-[source,xml]
----------------------------------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-chunk</artifactId>
-    <version>x.x.x</version> <!-- use the same version as your Camel core version -->
-</dependency>
----------------------------------------------------------------------------------
 
 == URI format
 
-[source,java]
 ----------------------------
 chunk:templateName[?options]
 ----------------------------
@@ -42,63 +30,11 @@ invoke.
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-== Options
-
 
 // component options: START
-The Chunk component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
-| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
-
-
 // endpoint options: START
-The Chunk endpoint is configured using URI syntax:
-
-----
-chunk:resourceUri
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
-|===
-
-
-=== Query Parameters (9 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
-| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
-| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
-| *encoding* (producer) | Define the encoding of the body |  | String
-| *extension* (producer) | Define the file extension of the template |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *themeFolder* (producer) | Define the themes folder to scan |  | String
-| *themeLayer* (producer) | Define the theme layer to elaborate |  | String
-| *themeSubfolder* (producer) | Define the themes subfolder to scan |  | String
-|===
 // endpoint options: END
-
 
 
 Chunk component will look for a specific template in _themes_ folder
@@ -197,9 +133,8 @@ _file_example.chunk_ in the folder _template/subfolder._
 In this sample we want to use Chunk templating for an order confirmation
 email. The email template is laid out in Chunk as:
 
-[source,java]
+[source,text]
 ----------------------------------------------
- 
 Dear {$headers.lastName}, {$headers.firstName}
 
 Thanks for the order of {$headers.item}.

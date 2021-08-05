@@ -30,14 +30,12 @@ for this component:
 
 == URI format
 
-[source,java]
 -----------------------
 cxfrs://address?options
 -----------------------
 
 Where *address* represents the CXF endpoint's address
 
-[source,java]
 ---------------------
 cxfrs:bean:rsEndpoint
 ---------------------
@@ -47,92 +45,14 @@ CXFRS client or server
 
 For either style above, you can append options to the URI as follows:
 
-[source,java]
 ------------------------------------------------------------------
 cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
 ------------------------------------------------------------------
 
-== Options
-
-
 
 // component options: START
-The CXF-RS component supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-|===
 // component options: END
-
-
-
-
 // endpoint options: START
-The CXF-RS endpoint is configured using URI syntax:
-
-----
-cxfrs:beanId:address
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *beanId* | To lookup an existing configured CxfRsEndpoint. Must used bean: as prefix. |  | String
-| *address* | The service publish address. |  | String
-|===
-
-
-=== Query Parameters (31 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *features* (common) | Set the feature list to the CxfRs endpoint. |  | List
-| *loggingFeatureEnabled* (common) | This option enables CXF Logging Feature which writes inbound and outbound REST messages to log. | false | boolean
-| *loggingSizeLimit* (common) | To limit the total size of number of bytes the logger will output when logging feature has been enabled. |  | int
-| *modelRef* (common) | This option is used to specify the model file which is useful for the resource class without annotation. When using this option, then the service class can be omitted, to emulate document-only endpoints |  | String
-| *providers* (common) | Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can specify a string with a list of providers to lookup in the registy separated by comma. |  | String
-| *resourceClasses* (common) | The resource classes which you want to export as REST service. Multiple classes can be separated by comma. |  | List
-| *schemaLocations* (common) | Sets the locations of the schema(s) which can be used to validate the incoming XML or JAXB-driven JSON. |  | List
-| *skipFaultLogging* (common) | This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches. | false | boolean
-| *bindingStyle* (consumer) | Sets how requests and responses will be mapped to/from Camel. Two values are possible: SimpleConsumer: This binding style processes request parameters, multiparts, etc. and maps them to IN headers, IN attachments and to the message body. It aims to eliminate low-level processing of org.apache.cxf.message.MessageContentsList. It also also adds more flexibility and simplicity to the response mapping. Only available for consumers. Default: The default style. For consumers this passes on a MessageContentsList to the route, requiring low-level processing in the route. This is the traditional binding style, which simply dumps the org.apache.cxf.message.MessageContentsList coming in from the CXF stack onto the IN message body. The user is then responsible for processing it according to the contract defined by the JAX-RS method signature. Custom: allows you to specify a custom binding through the binding option. There are 3 enums and the value can be one of: SimpleConsumer, Default, Custom | Default | BindingStyle
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *publishedEndpointUrl* (consumer) | This option can override the endpointUrl that published from the WADL which can be accessed with resource address url plus _wadl |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *serviceBeans* (consumer) | The service beans (the bean ids to lookup in the registry) which you want to export as REST service. Multiple beans can be separated by comma |  | String
-| *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
-| *hostnameVerifier* (producer) | The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
-| *throwExceptionOnFailure* (producer) | This option tells the CxfRsProducer to inspect return codes and will generate an Exception if the return code is larger than 207. | true | boolean
-| *httpClientAPI* (producer) | If it is true, the CxfRsProducer will use the HttpClientAPI to invoke the service. If it is false, the CxfRsProducer will use the ProxyClientAPI to invoke the service | true | boolean
-| *ignoreDeleteMethodMessageBody* (producer) | This option is used to tell CxfRsProducer to ignore the message body of the DELETE method when using HTTP API. | false | boolean
-| *maxClientCacheSize* (producer) | This option allows you to configure the maximum size of the cache. The implementation caches CXF clients or ClientFactoryBean in CxfProvider and CxfRsProvider. | 10 | int
-| *synchronous* (producer) | Sets whether synchronous processing should be strictly used | false | boolean
-| *binding* (advanced) | To use a custom CxfBinding to control the binding between Camel Message and CXF Message. |  | CxfRsBinding
-| *bus* (advanced) | To use a custom configured CXF Bus. |  | Bus
-| *continuationTimeout* (advanced) | This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the CXF server is using Jetty or Servlet transport. | 30000 | long
-| *cxfRsConfigurer* (advanced) | This option could apply the implementation of org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer which supports to configure the CXF endpoint in programmatic way. User can configure the CXF server and client by implementing configure{Server/Client} method of CxfEndpointConfigurer. |  | CxfRsConfigurer
-| *defaultBus* (advanced) | Will set the default bus when CXF endpoint create a bus by itself | false | boolean
-| *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *performInvocation* (advanced) | When the option is true, Camel will perform the invocation of the resource class instance and put the response object into the exchange for further processing. | false | boolean
-| *propagateContexts* (advanced) | When the option is true, JAXRS UriInfo, HttpHeaders, Request and SecurityContext contexts will be available to custom CXFRS processors as typed Camel exchange properties. These contexts can be used to analyze the current requests using JAX-RS API. | false | boolean
-|===
 // endpoint options: END
 
 
@@ -271,7 +191,6 @@ from("direct:newCustomer")
 The following HTTP request with XML payload (given that the Customer DTO
 is JAXB-annotated):
 
-[source,xml]
 -------------------------------------
 POST /customers/gold?active=true
 
@@ -285,7 +204,6 @@ Payload:
 
 Will print the message:
 
-[source,xml]
 ----------------------------------------------------------------------------------
 Request: type=gold, active=true, customerData=<Customer.toString() representation>
 ----------------------------------------------------------------------------------

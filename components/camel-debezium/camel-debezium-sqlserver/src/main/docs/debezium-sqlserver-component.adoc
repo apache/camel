@@ -37,198 +37,13 @@ for this component.
 
 == URI format
 
-[source,text]
 ---------------------------
 debezium-sqlserver:name[?options]
 ---------------------------
 
-== Options
-
-
 // component options: START
-The Debezium SQL Server Connector component supports 73 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *additionalProperties* (common) | Additional properties for debezium components in case they can't be set directly on the camel configurations (e.g: setting Kafka Connect properties needed by Debezium engine, for example setting KafkaOffsetBackingStore), the properties have to be prefixed with additionalProperties.. E.g: additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=\http://localhost:8811/avro |  | Map
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *configuration* (consumer) | Allow pre-configured Configurations to be set. |  | SqlServerConnectorEmbeddedDebeziumConfiguration
-| *internalKeyConverter* (consumer) | The Converter class that should be used to serialize and deserialize key data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
-| *internalValueConverter* (consumer) | The Converter class that should be used to serialize and deserialize value data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
-| *offsetCommitPolicy* (consumer) | The name of the Java class of the commit policy. It defines when offsets commit has to be triggered based on the number of events processed and the time elapsed since the last commit. This class must implement the interface 'OffsetCommitPolicy'. The default is a periodic commit policy based upon time intervals. | io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy | String
-| *offsetCommitTimeoutMs* (consumer) | Maximum number of milliseconds to wait for records to flush and partition offset data to be committed to offset storage before cancelling the process and restoring the offset data to be committed in a future attempt. The default is 5 seconds. | 5s | long
-| *offsetFlushIntervalMs* (consumer) | Interval at which to try committing offsets. The default is 1 minute. | 60s | long
-| *offsetStorage* (consumer) | The name of the Java class that is responsible for persistence of connector offsets. | org.apache.kafka.connect.storage.FileOffsetBackingStore | String
-| *offsetStorageFileName* (consumer) | Path to file where offsets are to be stored. Required when offset.storage is set to the FileOffsetBackingStore. |  | String
-| *offsetStoragePartitions* (consumer) | The number of partitions used when creating the offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'. |  | int
-| *offsetStorageReplicationFactor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
-| *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *binaryHandlingMode* (sqlserver) | Specify how binary (blob, binary, etc.) columns should be represented in change events, including:'bytes' represents binary data as byte array (default)'base64' represents binary data as base64-encoded string'hex' represents binary data as hex-encoded (base16) string | bytes | String
-| *columnBlacklist* (sqlserver) | Regular expressions matching columns to exclude from change events (deprecated, use column.exclude.list instead) |  | String
-| *columnExcludeList* (sqlserver) | Regular expressions matching columns to exclude from change events |  | String
-| *columnIncludeList* (sqlserver) | Regular expressions matching columns to include in change events |  | String
-| *columnPropagateSourceType* (sqlserver) | A comma-separated list of regular expressions matching fully-qualified names of columns that adds the columns original type and original length as parameters to the corresponding field schemas in the emitted change records. |  | String
-| *columnWhitelist* (sqlserver) | Regular expressions matching columns to include in change events (deprecated, use column.include.list instead) |  | String
-| *converters* (sqlserver) | Optional list of custom converters that would be used instead of default ones. The converters are defined using '.type' config option and configured using options '.' |  | String
-| *databaseDbname* (sqlserver) | The name of the database the connector should be monitoring |  | String
-| *databaseHistory* (sqlserver) | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
-| *databaseHistoryFileFilename* (sqlserver) | The path to the file that will be used to record the database history |  | String
-| *databaseHistoryKafkaBootstrap{zwsp}Servers* (sqlserver) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
-| *databaseHistoryKafkaRecovery{zwsp}Attempts* (sqlserver) | The number of attempts in a row that no data are returned from Kafka before recover completes. The maximum amount of time to wait after receiving no data is (recovery.attempts) x (recovery.poll.interval.ms). | 100 | int
-| *databaseHistoryKafkaRecovery{zwsp}PollIntervalMs* (sqlserver) | The number of milliseconds to wait while polling for persisted data during recovery. | 100ms | int
-| *databaseHistoryKafkaTopic* (sqlserver) | The name of the topic for the database schema history |  | String
-| *databaseHistorySkipUnparseable{zwsp}Ddl* (sqlserver) | Controls the action Debezium will take when it meets a DDL statement in binlog, that it cannot parse.By default the connector will stop operating but by changing the setting it can ignore the statements which it cannot parse. If skipping is enabled then Debezium can miss metadata changes. | false | boolean
-| *databaseHistoryStoreOnly{zwsp}CapturedTablesDdl* (sqlserver) | Controls what DDL will Debezium store in database history. By default (false) Debezium will store all incoming DDL statements. If set to true, then only DDL that manipulates a captured table will be stored. | false | boolean
-| *databaseHistoryStoreOnly{zwsp}MonitoredTablesDdl* (sqlserver) | Controls what DDL will Debezium store in database history. By default (false) Debezium will store all incoming DDL statements. If set to true, then only DDL that manipulates a monitored table will be stored (deprecated, use database.history.store.only.captured.tables.ddl instead) | false | boolean
-| *databaseHostname* (sqlserver) | Resolvable hostname or IP address of the database server. |  | String
-| *databaseInstance* (sqlserver) | The SQL Server instance name |  | String
-| *databasePassword* (sqlserver) | *Required* Password of the database user to be used when connecting to the database. |  | String
-| *databasePort* (sqlserver) | Port of the database server. | 1433 | int
-| *databaseServerName* (sqlserver) | *Required* Unique name that identifies the database server and all recorded offsets, and that is used as a prefix for all schemas and topics. Each distinct installation should have a separate namespace and be monitored by at most one Debezium connector. |  | String
-| *databaseServerTimezone* (sqlserver) | The timezone of the server used to correctly shift the commit transaction timestamp on the client sideOptions include: Any valid Java ZoneId |  | String
-| *databaseUser* (sqlserver) | Name of the database user to be used when connecting to the database. |  | String
-| *datatypePropagateSourceType* (sqlserver) | A comma-separated list of regular expressions matching the database-specific data type names that adds the data type's original type and original length as parameters to the corresponding field schemas in the emitted change records. |  | String
-| *decimalHandlingMode* (sqlserver) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
-| *eventProcessingFailureHandling{zwsp}Mode* (sqlserver) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
-| *heartbeatIntervalMs* (sqlserver) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0ms | int
-| *heartbeatTopicsPrefix* (sqlserver) | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
-| *includeSchemaChanges* (sqlserver) | Whether the connector should publish changes in the database schema to a Kafka topic with the same name as the database server ID. Each schema change will be recorded using a key that contains the database name and whose value include logical description of the new schema and optionally the DDL statement(s).The default is 'true'. This is independent of how the connector internally records database history. | true | boolean
-| *maxBatchSize* (sqlserver) | Maximum size of each batch of source records. Defaults to 2048. | 2048 | int
-| *maxIterationTransactions* (sqlserver) | This property can be used to reduce the connector memory usage footprint when changes are streamed from multiple tables per database. | 0 | int
-| *maxQueueSize* (sqlserver) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
-| *maxQueueSizeInBytes* (sqlserver) | Maximum size of the queue in bytes for change events read from the database log but not yet recorded or forwarded. Defaults to 0. Mean the feature is not enabled | 0 | long
-| *messageKeyColumns* (sqlserver) | A semicolon-separated list of expressions that match fully-qualified tables and column(s) to be used as message key. Each expression must match the pattern ':',where the table names could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the key columns are a comma-separated list of columns representing the custom key. For any table without an explicit key configuration the table's primary key column(s) will be used as message key.Example: dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id |  | String
-| *pollIntervalMs* (sqlserver) | Time to wait for new change events to appear after receiving no events, given in milliseconds. Defaults to 500 ms. | 500ms | long
-| *provideTransactionMetadata* (sqlserver) | Enables transaction metadata extraction together with event counting | false | boolean
-| *queryFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
-| *retriableRestartConnectorWait{zwsp}Ms* (sqlserver) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
-| *sanitizeFieldNames* (sqlserver) | Whether field names will be sanitized to Avro naming conventions | false | boolean
-| *signalDataCollection* (sqlserver) | The name of the data collection that is used to send signals/commands to Debezium. Signaling is disabled when not set. |  | String
-| *skippedOperations* (sqlserver) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
-| *snapshotDelayMs* (sqlserver) | A delay period before a snapshot will begin, given in milliseconds. Defaults to 0 ms. | 0ms | long
-| *snapshotFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
-| *snapshotIncludeCollectionList* (sqlserver) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String
-| *snapshotIsolationMode* (sqlserver) | Controls which transaction isolation level is used and how long the connector locks the monitored tables. The default is 'repeatable_read', which means that repeatable read isolation level is used. In addition, exclusive locks are taken only during schema snapshot. Using a value of 'exclusive' ensures that the connector holds the exclusive lock (and thus prevents any reads and updates) for all monitored tables during the entire snapshot duration. When 'snapshot' is specified, connector runs the initial snapshot in SNAPSHOT isolation level, which guarantees snapshot consistency. In addition, neither table nor row-level locks are held. When 'read_committed' is specified, connector runs the initial snapshot in READ COMMITTED isolation level. No long-running locks are taken, so that initial snapshot does not prevent other transactions from updating table rows. Snapshot consistency is not guaranteed.In 'read_uncommitted' mode neither table nor row-level locks are acquired, but connector does not guarantee snapshot consistency. | repeatable_read | String
-| *snapshotLockTimeoutMs* (sqlserver) | The maximum number of millis to wait for table locks at the beginning of a snapshot. If locks cannot be acquired in this time frame, the snapshot will be aborted. Defaults to 10 seconds | 10s | long
-| *snapshotMaxThreads* (sqlserver) | The maximum number of threads used to perform the snapshot. Defaults to 1. | 1 | int
-| *snapshotMode* (sqlserver) | The criteria for running a snapshot upon startup of the connector. Options include: 'initial' (the default) to specify the connector should run a snapshot only when no offsets are available for the logical server name; 'schema_only' to specify the connector should run a snapshot of the schema when no offsets are available for the logical server name. | initial | String
-| *snapshotSelectStatement{zwsp}Overrides* (sqlserver) | This property contains a comma-separated list of fully-qualified tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on thespecific connectors. Select statements for the individual tables are specified in further configuration properties, one for each table, identified by the id 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME', respectively. The value of those properties is the select statement to use when retrieving data from the specific table during snapshotting. A possible use case for large append-only tables is setting a specific point where to start (resume) snapshotting, in case a previous snapshotting was interrupted. |  | String
-| *sourceStructVersion* (sqlserver) | A version of the format of the publicly visible source part in the message | v2 | String
-| *sourceTimestampMode* (sqlserver) | Configures the criteria of the attached timestamp within the source record (ts_ms).Options include:'commit', (default) the source timestamp is set to the instant where the record was committed in the database'processing', (deprecated) the source timestamp is set to the instant where the record was processed by Debezium. | commit | String
-| *tableBlacklist* (sqlserver) | A comma-separated list of regular expressions that match the fully-qualified names of tables to be excluded from monitoring (deprecated, use table.exclude.list instead) |  | String
-| *tableExcludeList* (sqlserver) | A comma-separated list of regular expressions that match the fully-qualified names of tables to be excluded from monitoring |  | String
-| *tableIgnoreBuiltin* (sqlserver) | Flag specifying whether built-in tables should be ignored. | true | boolean
-| *tableIncludeList* (sqlserver) | The tables for which changes are to be captured |  | String
-| *tableWhitelist* (sqlserver) | The tables for which changes are to be captured (deprecated, use table.include.list instead) |  | String
-| *timePrecisionMode* (sqlserver) | Time, date, and timestamps can be represented with different kinds of precisions, including:'adaptive' (the default) bases the precision of time, date, and timestamp values on the database column's precision; 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always use microseconds precision;'connect' always represents time, date, and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision . | adaptive | String
-| *tombstonesOnDelete* (sqlserver) | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | boolean
-|===
 // component options: END
-
-
 // endpoint options: START
-The Debezium SQL Server Connector endpoint is configured using URI syntax:
-
-----
-debezium-sqlserver:name
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *name* | *Required* Unique name for the connector. Attempting to register again with the same name will fail. |  | String
-|===
-
-
-=== Query Parameters (73 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *additionalProperties* (common) | Additional properties for debezium components in case they can't be set directly on the camel configurations (e.g: setting Kafka Connect properties needed by Debezium engine, for example setting KafkaOffsetBackingStore), the properties have to be prefixed with additionalProperties.. E.g: additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=\http://localhost:8811/avro |  | Map
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *internalKeyConverter* (consumer) | The Converter class that should be used to serialize and deserialize key data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
-| *internalValueConverter* (consumer) | The Converter class that should be used to serialize and deserialize value data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
-| *offsetCommitPolicy* (consumer) | The name of the Java class of the commit policy. It defines when offsets commit has to be triggered based on the number of events processed and the time elapsed since the last commit. This class must implement the interface 'OffsetCommitPolicy'. The default is a periodic commit policy based upon time intervals. | io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy | String
-| *offsetCommitTimeoutMs* (consumer) | Maximum number of milliseconds to wait for records to flush and partition offset data to be committed to offset storage before cancelling the process and restoring the offset data to be committed in a future attempt. The default is 5 seconds. | 5s | long
-| *offsetFlushIntervalMs* (consumer) | Interval at which to try committing offsets. The default is 1 minute. | 60s | long
-| *offsetStorage* (consumer) | The name of the Java class that is responsible for persistence of connector offsets. | org.apache.kafka.connect.storage.FileOffsetBackingStore | String
-| *offsetStorageFileName* (consumer) | Path to file where offsets are to be stored. Required when offset.storage is set to the FileOffsetBackingStore. |  | String
-| *offsetStoragePartitions* (consumer) | The number of partitions used when creating the offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'. |  | int
-| *offsetStorageReplicationFactor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
-| *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *binaryHandlingMode* (sqlserver) | Specify how binary (blob, binary, etc.) columns should be represented in change events, including:'bytes' represents binary data as byte array (default)'base64' represents binary data as base64-encoded string'hex' represents binary data as hex-encoded (base16) string | bytes | String
-| *columnBlacklist* (sqlserver) | Regular expressions matching columns to exclude from change events (deprecated, use column.exclude.list instead) |  | String
-| *columnExcludeList* (sqlserver) | Regular expressions matching columns to exclude from change events |  | String
-| *columnIncludeList* (sqlserver) | Regular expressions matching columns to include in change events |  | String
-| *columnPropagateSourceType* (sqlserver) | A comma-separated list of regular expressions matching fully-qualified names of columns that adds the columns original type and original length as parameters to the corresponding field schemas in the emitted change records. |  | String
-| *columnWhitelist* (sqlserver) | Regular expressions matching columns to include in change events (deprecated, use column.include.list instead) |  | String
-| *converters* (sqlserver) | Optional list of custom converters that would be used instead of default ones. The converters are defined using '.type' config option and configured using options '.' |  | String
-| *databaseDbname* (sqlserver) | The name of the database the connector should be monitoring |  | String
-| *databaseHistory* (sqlserver) | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
-| *databaseHistoryFileFilename* (sqlserver) | The path to the file that will be used to record the database history |  | String
-| *databaseHistoryKafkaBootstrap{zwsp}Servers* (sqlserver) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
-| *databaseHistoryKafkaRecovery{zwsp}Attempts* (sqlserver) | The number of attempts in a row that no data are returned from Kafka before recover completes. The maximum amount of time to wait after receiving no data is (recovery.attempts) x (recovery.poll.interval.ms). | 100 | int
-| *databaseHistoryKafkaRecovery{zwsp}PollIntervalMs* (sqlserver) | The number of milliseconds to wait while polling for persisted data during recovery. | 100ms | int
-| *databaseHistoryKafkaTopic* (sqlserver) | The name of the topic for the database schema history |  | String
-| *databaseHistorySkipUnparseable{zwsp}Ddl* (sqlserver) | Controls the action Debezium will take when it meets a DDL statement in binlog, that it cannot parse.By default the connector will stop operating but by changing the setting it can ignore the statements which it cannot parse. If skipping is enabled then Debezium can miss metadata changes. | false | boolean
-| *databaseHistoryStoreOnly{zwsp}CapturedTablesDdl* (sqlserver) | Controls what DDL will Debezium store in database history. By default (false) Debezium will store all incoming DDL statements. If set to true, then only DDL that manipulates a captured table will be stored. | false | boolean
-| *databaseHistoryStoreOnly{zwsp}MonitoredTablesDdl* (sqlserver) | Controls what DDL will Debezium store in database history. By default (false) Debezium will store all incoming DDL statements. If set to true, then only DDL that manipulates a monitored table will be stored (deprecated, use database.history.store.only.captured.tables.ddl instead) | false | boolean
-| *databaseHostname* (sqlserver) | Resolvable hostname or IP address of the database server. |  | String
-| *databaseInstance* (sqlserver) | The SQL Server instance name |  | String
-| *databasePassword* (sqlserver) | *Required* Password of the database user to be used when connecting to the database. |  | String
-| *databasePort* (sqlserver) | Port of the database server. | 1433 | int
-| *databaseServerName* (sqlserver) | *Required* Unique name that identifies the database server and all recorded offsets, and that is used as a prefix for all schemas and topics. Each distinct installation should have a separate namespace and be monitored by at most one Debezium connector. |  | String
-| *databaseServerTimezone* (sqlserver) | The timezone of the server used to correctly shift the commit transaction timestamp on the client sideOptions include: Any valid Java ZoneId |  | String
-| *databaseUser* (sqlserver) | Name of the database user to be used when connecting to the database. |  | String
-| *datatypePropagateSourceType* (sqlserver) | A comma-separated list of regular expressions matching the database-specific data type names that adds the data type's original type and original length as parameters to the corresponding field schemas in the emitted change records. |  | String
-| *decimalHandlingMode* (sqlserver) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
-| *eventProcessingFailureHandling{zwsp}Mode* (sqlserver) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
-| *heartbeatIntervalMs* (sqlserver) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0ms | int
-| *heartbeatTopicsPrefix* (sqlserver) | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
-| *includeSchemaChanges* (sqlserver) | Whether the connector should publish changes in the database schema to a Kafka topic with the same name as the database server ID. Each schema change will be recorded using a key that contains the database name and whose value include logical description of the new schema and optionally the DDL statement(s).The default is 'true'. This is independent of how the connector internally records database history. | true | boolean
-| *maxBatchSize* (sqlserver) | Maximum size of each batch of source records. Defaults to 2048. | 2048 | int
-| *maxIterationTransactions* (sqlserver) | This property can be used to reduce the connector memory usage footprint when changes are streamed from multiple tables per database. | 0 | int
-| *maxQueueSize* (sqlserver) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
-| *maxQueueSizeInBytes* (sqlserver) | Maximum size of the queue in bytes for change events read from the database log but not yet recorded or forwarded. Defaults to 0. Mean the feature is not enabled | 0 | long
-| *messageKeyColumns* (sqlserver) | A semicolon-separated list of expressions that match fully-qualified tables and column(s) to be used as message key. Each expression must match the pattern ':',where the table names could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the key columns are a comma-separated list of columns representing the custom key. For any table without an explicit key configuration the table's primary key column(s) will be used as message key.Example: dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id |  | String
-| *pollIntervalMs* (sqlserver) | Time to wait for new change events to appear after receiving no events, given in milliseconds. Defaults to 500 ms. | 500ms | long
-| *provideTransactionMetadata* (sqlserver) | Enables transaction metadata extraction together with event counting | false | boolean
-| *queryFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
-| *retriableRestartConnectorWait{zwsp}Ms* (sqlserver) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
-| *sanitizeFieldNames* (sqlserver) | Whether field names will be sanitized to Avro naming conventions | false | boolean
-| *signalDataCollection* (sqlserver) | The name of the data collection that is used to send signals/commands to Debezium. Signaling is disabled when not set. |  | String
-| *skippedOperations* (sqlserver) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
-| *snapshotDelayMs* (sqlserver) | A delay period before a snapshot will begin, given in milliseconds. Defaults to 0 ms. | 0ms | long
-| *snapshotFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
-| *snapshotIncludeCollectionList* (sqlserver) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String
-| *snapshotIsolationMode* (sqlserver) | Controls which transaction isolation level is used and how long the connector locks the monitored tables. The default is 'repeatable_read', which means that repeatable read isolation level is used. In addition, exclusive locks are taken only during schema snapshot. Using a value of 'exclusive' ensures that the connector holds the exclusive lock (and thus prevents any reads and updates) for all monitored tables during the entire snapshot duration. When 'snapshot' is specified, connector runs the initial snapshot in SNAPSHOT isolation level, which guarantees snapshot consistency. In addition, neither table nor row-level locks are held. When 'read_committed' is specified, connector runs the initial snapshot in READ COMMITTED isolation level. No long-running locks are taken, so that initial snapshot does not prevent other transactions from updating table rows. Snapshot consistency is not guaranteed.In 'read_uncommitted' mode neither table nor row-level locks are acquired, but connector does not guarantee snapshot consistency. | repeatable_read | String
-| *snapshotLockTimeoutMs* (sqlserver) | The maximum number of millis to wait for table locks at the beginning of a snapshot. If locks cannot be acquired in this time frame, the snapshot will be aborted. Defaults to 10 seconds | 10s | long
-| *snapshotMaxThreads* (sqlserver) | The maximum number of threads used to perform the snapshot. Defaults to 1. | 1 | int
-| *snapshotMode* (sqlserver) | The criteria for running a snapshot upon startup of the connector. Options include: 'initial' (the default) to specify the connector should run a snapshot only when no offsets are available for the logical server name; 'schema_only' to specify the connector should run a snapshot of the schema when no offsets are available for the logical server name. | initial | String
-| *snapshotSelectStatement{zwsp}Overrides* (sqlserver) | This property contains a comma-separated list of fully-qualified tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on thespecific connectors. Select statements for the individual tables are specified in further configuration properties, one for each table, identified by the id 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME', respectively. The value of those properties is the select statement to use when retrieving data from the specific table during snapshotting. A possible use case for large append-only tables is setting a specific point where to start (resume) snapshotting, in case a previous snapshotting was interrupted. |  | String
-| *sourceStructVersion* (sqlserver) | A version of the format of the publicly visible source part in the message | v2 | String
-| *sourceTimestampMode* (sqlserver) | Configures the criteria of the attached timestamp within the source record (ts_ms).Options include:'commit', (default) the source timestamp is set to the instant where the record was committed in the database'processing', (deprecated) the source timestamp is set to the instant where the record was processed by Debezium. | commit | String
-| *tableBlacklist* (sqlserver) | A comma-separated list of regular expressions that match the fully-qualified names of tables to be excluded from monitoring (deprecated, use table.exclude.list instead) |  | String
-| *tableExcludeList* (sqlserver) | A comma-separated list of regular expressions that match the fully-qualified names of tables to be excluded from monitoring |  | String
-| *tableIgnoreBuiltin* (sqlserver) | Flag specifying whether built-in tables should be ignored. | true | boolean
-| *tableIncludeList* (sqlserver) | The tables for which changes are to be captured |  | String
-| *tableWhitelist* (sqlserver) | The tables for which changes are to be captured (deprecated, use table.include.list instead) |  | String
-| *timePrecisionMode* (sqlserver) | Time, date, and timestamps can be represented with different kinds of precisions, including:'adaptive' (the default) bases the precision of time, date, and timestamp values on the database column's precision; 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always use microseconds precision;'connect' always represents time, date, and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision . | adaptive | String
-| *tombstonesOnDelete* (sqlserver) | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | boolean
-|===
 // endpoint options: END
 
 For more information about configuration:
@@ -259,6 +74,7 @@ The message body if is not `null` (in case of tombstones), it contains the state
 === Consuming events
 
 Here is a very simple route that you can use in order to listen to Debezium events from SQL Server connector.
+
 [source,java]
 ----
 from("debezium-sqlserver:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&databaseHostName=localhost&databaseUser=debezium&databasePassword=dbz&databaseServerName=my-app-connector&databaseHistoryFileName=/usr/history-file-1.dat")
@@ -278,6 +94,7 @@ To use it, you can either add `Map.class` type when you access the message e.g: 
 
 We mentioned above about the schema, which can be used in case you need to perform advance data transformation and the schema is needed for that. If you choose not to convert your body to `Map`,
 you can obtain the schema information as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Schema.html[`Schema`] type from `Struct` like this:
+
 [source,java]
 ----
 from("debezium-sqlserver:[name]?[options]])

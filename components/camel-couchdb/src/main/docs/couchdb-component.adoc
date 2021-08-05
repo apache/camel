@@ -28,7 +28,7 @@ or all (default).
 * Headers set for sequenceId, document revision, document id, and HTTP
 method type.
 
-*Caveat: CouchDB 3.x is not supported.*
+NOTE: CouchDB 3.x is not supported.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -45,7 +45,6 @@ for this component:
 
 == URI format
 
-[source,java]
 -------------------------------------------------
 couchdb:http://hostname[:port]/database?[options]
 -------------------------------------------------
@@ -53,63 +52,10 @@ couchdb:http://hostname[:port]/database?[options]
 Where *hostname* is the hostname of the running couchdb instance. Port
 is optional and if not specified then defaults to 5984.
 
-== Options
 
 // component options: START
-The CouchDB component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
 // endpoint options: START
-The CouchDB endpoint is configured using URI syntax:
-
-----
-couchdb:protocol:hostname:port/database
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (4 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *protocol* | *Required* The protocol to use for communicating with the database. There are 2 enums and the value can be one of: http, https |  | String
-| *hostname* | *Required* Hostname of the running couchdb instance |  | String
-| *port* | Port number for the running couchdb instance | 5984 | int
-| *database* | *Required* Name of the database to use |  | String
-|===
-
-
-=== Query Parameters (12 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *createDatabase* (common) | Creates the database if it does not already exist | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *deletes* (consumer) | Document deletes are published as events | true | boolean
-| *heartbeat* (consumer) | How often to send an empty message to keep socket alive in millis | 30000 | long
-| *since* (consumer) | Start tracking changes immediately after the given update sequence. The default, null, will start monitoring from the latest sequence. |  | String
-| *style* (consumer) | Specifies how many revisions are returned in the changes array. The default, main_only, will only return the current winning revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts.). There are 2 enums and the value can be one of: all_docs, main_only | main_only | String
-| *updates* (consumer) | Document inserts/updates are published as events | true | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *password* (security) | Password for authenticated databases |  | String
-| *username* (security) | Username in case of authenticated databases |  | String
-|===
 // endpoint options: END
 
 
