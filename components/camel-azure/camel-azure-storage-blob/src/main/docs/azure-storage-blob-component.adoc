@@ -65,7 +65,7 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 27 options, which are listed below.
+The Azure Storage Blob Service component supports 30 options, which are listed below.
 
 
 
@@ -89,6 +89,9 @@ The Azure Storage Blob Service component supports 27 options, which are listed b
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *blobSequenceNumber* (producer) | A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 263 - 1.The default value is 0. | 0 | Long
 | *blockListType* (producer) | Specifies which type of blocks to return. There are 3 enums and the value can be one of: committed, uncommitted, all | COMMITTED | BlockListType
+| *changeFeedContext* (producer) | When using getChangeFeed producer operation, this gives additional context that is passed through the Http pipeline during the service call. |  | Context
+| *changeFeedEndTime* (producer) | When using getChangeFeed producer operation, this filters the results to return events approximately before the end time. Note: A few events belonging to the next hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the end time up by an hour. |  | OffsetDateTime
+| *changeFeedStartTime* (producer) | When using getChangeFeed producer operation, this filters the results to return events approximately after the start time. Note: A few events belonging to the previous hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the start time down by an hour. |  | OffsetDateTime
 | *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
 | *commitBlockListLater* (producer) | When is set to true, the staged blocks will not be committed directly. | true | boolean
 | *createAppendBlob* (producer) | When is set to true, the append blocks will be created when committing append blocks. | true | boolean
@@ -122,7 +125,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (44 parameters):
+=== Query Parameters (47 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -149,6 +152,9 @@ with the following path and query parameters:
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *blobSequenceNumber* (producer) | A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 263 - 1.The default value is 0. | 0 | Long
 | *blockListType* (producer) | Specifies which type of blocks to return. There are 3 enums and the value can be one of: committed, uncommitted, all | COMMITTED | BlockListType
+| *changeFeedContext* (producer) | When using getChangeFeed producer operation, this gives additional context that is passed through the Http pipeline during the service call. |  | Context
+| *changeFeedEndTime* (producer) | When using getChangeFeed producer operation, this filters the results to return events approximately before the end time. Note: A few events belonging to the next hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the end time up by an hour. |  | OffsetDateTime
+| *changeFeedStartTime* (producer) | When using getChangeFeed producer operation, this filters the results to return events approximately after the start time. Note: A few events belonging to the previous hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the start time down by an hour. |  | OffsetDateTime
 | *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
 | *commitBlockListLater* (producer) | When is set to true, the staged blocks will not be committed directly. | true | boolean
 | *createAppendBlob* (producer) | When is set to true, the append blocks will be created when committing append blocks. | true | boolean
@@ -231,6 +237,9 @@ aggregate this number of messages.
 |`CamelAzureStorageBlobContainerName`|`BlobConstants.BLOB_CONTAINER_NAME`|`String`|Operations related to container and blob|Override/set the container name on the exchange headers.
 |`CamelAzureStorageBlobOperation`|`BlobConstants.BLOB_OPERATION`|`BlobOperationsDefinition`|All|Specify the producer operation to execute, please see the doc on this page related to producer operation.
 |`CamelAzureStorageBlobRegex`|`BlobConstants.REGEX`|`String`|`listBlobs`,`getBlob`|Filters the results to return only blobs whose names match the specified regular expression. May be null to return all. If both prefix and regex are set, regex takes the priority and prefix is ignored.
+|`CamelAzureStorageBlobChangeFeedStartTime`|`BlobConstants.CHANGE_FEED_START_TIME`|`OffsetDateTime`|`getChangeFeed`| It filters the results to return events approximately after the start time. Note: A few events belonging to the previous hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the start time down by an hour.
+|`CamelAzureStorageBlobChangeFeedEndTime`|`BlobConstants.CHANGE_FEED_END_TIME`|`OffsetDateTime`|`getChangeFeed`| It filters  the results to return events approximately before the end time. Note: A few events belonging to the next hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the end time up by an hour.
+|`CamelAzureStorageBlobChangeFeedContext`|`BlobConstants.CHANGE_FEED_CONTEXT`|`Context`|`getChangeFeed`| This gives additional context that is passed through the Http pipeline during the service call.
 |=======================================================================
 
 === Message headers set by either component producer or consumer
@@ -316,6 +325,7 @@ For these operations, `accountName` is *required*.
 |===
 |Operation |Description
 |`listBlobContainers`  |Get the content of the blob. You can restrict the output of this operation to a blob range.
+|`getChangeFeed` | Returns transaction logs of all the changes that occur to the blobs and the blob metadata in your storage account. The change feed provides ordered, guaranteed, durable, immutable, read-only log of these changes.
 |===
 
 *Operations on the container level*

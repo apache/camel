@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -1670,6 +1671,122 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * When using getChangeFeed producer operation, this gives additional
+         * context that is passed through the Http pipeline during the service
+         * call.
+         * 
+         * The option is a: &lt;code&gt;com.azure.core.util.Context&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param changeFeedContext the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder changeFeedContext(
+                Object changeFeedContext) {
+            doSetProperty("changeFeedContext", changeFeedContext);
+            return this;
+        }
+        /**
+         * When using getChangeFeed producer operation, this gives additional
+         * context that is passed through the Http pipeline during the service
+         * call.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.util.Context&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param changeFeedContext the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder changeFeedContext(
+                String changeFeedContext) {
+            doSetProperty("changeFeedContext", changeFeedContext);
+            return this;
+        }
+        /**
+         * When using getChangeFeed producer operation, this filters the results
+         * to return events approximately before the end time. Note: A few
+         * events belonging to the next hour can also be returned. A few events
+         * belonging to this hour can be missing; to ensure all events from the
+         * hour are returned, round the end time up by an hour.
+         * 
+         * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param changeFeedEndTime the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder changeFeedEndTime(
+                OffsetDateTime changeFeedEndTime) {
+            doSetProperty("changeFeedEndTime", changeFeedEndTime);
+            return this;
+        }
+        /**
+         * When using getChangeFeed producer operation, this filters the results
+         * to return events approximately before the end time. Note: A few
+         * events belonging to the next hour can also be returned. A few events
+         * belonging to this hour can be missing; to ensure all events from the
+         * hour are returned, round the end time up by an hour.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param changeFeedEndTime the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder changeFeedEndTime(
+                String changeFeedEndTime) {
+            doSetProperty("changeFeedEndTime", changeFeedEndTime);
+            return this;
+        }
+        /**
+         * When using getChangeFeed producer operation, this filters the results
+         * to return events approximately after the start time. Note: A few
+         * events belonging to the previous hour can also be returned. A few
+         * events belonging to this hour can be missing; to ensure all events
+         * from the hour are returned, round the start time down by an hour.
+         * 
+         * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param changeFeedStartTime the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder changeFeedStartTime(
+                OffsetDateTime changeFeedStartTime) {
+            doSetProperty("changeFeedStartTime", changeFeedStartTime);
+            return this;
+        }
+        /**
+         * When using getChangeFeed producer operation, this filters the results
+         * to return events approximately after the start time. Note: A few
+         * events belonging to the previous hour can also be returned. A few
+         * events belonging to this hour can be missing; to ensure all events
+         * from the hour are returned, round the start time down by an hour.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param changeFeedStartTime the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder changeFeedStartTime(
+                String changeFeedStartTime) {
+            doSetProperty("changeFeedStartTime", changeFeedStartTime);
+            return this;
+        }
+        /**
          * Close the stream after write or keep it open, default is true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2484,7 +2601,8 @@ public interface BlobEndpointBuilderFactory {
         uploadPageBlob,
         resizePageBlob,
         clearPageBlob,
-        getPageBlobRanges;
+        getPageBlobRanges,
+        getChangeFeed;
     }
 
     public interface BlobBuilders {

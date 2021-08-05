@@ -348,6 +348,64 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * When using getChangeFeed producer operation, this gives additional
+         * context that is passed through the Http pipeline during the service
+         * call.
+         * 
+         * The option is a: &lt;code&gt;com.azure.core.util.Context&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param changeFeedContext the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder changeFeedContext(
+                com.azure.core.util.Context changeFeedContext) {
+            doSetProperty("changeFeedContext", changeFeedContext);
+            return this;
+        }
+        /**
+         * When using getChangeFeed producer operation, this filters the results
+         * to return events approximately before the end time. Note: A few
+         * events belonging to the next hour can also be returned. A few events
+         * belonging to this hour can be missing; to ensure all events from the
+         * hour are returned, round the end time up by an hour.
+         * 
+         * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param changeFeedEndTime the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder changeFeedEndTime(
+                java.time.OffsetDateTime changeFeedEndTime) {
+            doSetProperty("changeFeedEndTime", changeFeedEndTime);
+            return this;
+        }
+        /**
+         * When using getChangeFeed producer operation, this filters the results
+         * to return events approximately after the start time. Note: A few
+         * events belonging to the previous hour can also be returned. A few
+         * events belonging to this hour can be missing; to ensure all events
+         * from the hour are returned, round the start time down by an hour.
+         * 
+         * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param changeFeedStartTime the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder changeFeedStartTime(
+                java.time.OffsetDateTime changeFeedStartTime) {
+            doSetProperty("changeFeedStartTime", changeFeedStartTime);
+            return this;
+        }
+        /**
          * Close the stream after write or keep it open, default is true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -566,6 +624,9 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "blobSequenceNumber": getOrCreateConfiguration((BlobComponent) component).setBlobSequenceNumber((java.lang.Long) value); return true;
             case "blockListType": getOrCreateConfiguration((BlobComponent) component).setBlockListType((com.azure.storage.blob.models.BlockListType) value); return true;
+            case "changeFeedContext": getOrCreateConfiguration((BlobComponent) component).setChangeFeedContext((com.azure.core.util.Context) value); return true;
+            case "changeFeedEndTime": getOrCreateConfiguration((BlobComponent) component).setChangeFeedEndTime((java.time.OffsetDateTime) value); return true;
+            case "changeFeedStartTime": getOrCreateConfiguration((BlobComponent) component).setChangeFeedStartTime((java.time.OffsetDateTime) value); return true;
             case "closeStreamAfterWrite": getOrCreateConfiguration((BlobComponent) component).setCloseStreamAfterWrite((boolean) value); return true;
             case "commitBlockListLater": getOrCreateConfiguration((BlobComponent) component).setCommitBlockListLater((boolean) value); return true;
             case "createAppendBlob": getOrCreateConfiguration((BlobComponent) component).setCreateAppendBlob((boolean) value); return true;

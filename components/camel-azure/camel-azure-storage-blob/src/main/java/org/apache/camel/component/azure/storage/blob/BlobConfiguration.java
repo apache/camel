@@ -17,7 +17,9 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.time.Duration;
+import java.time.OffsetDateTime;
 
+import com.azure.core.util.Context;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -85,6 +87,12 @@ public class BlobConfiguration implements Cloneable {
     private Long pageBlobSize = BlobConstants.PAGE_BLOB_DEFAULT_SIZE;
     @UriParam(label = "producer", defaultValue = "COMMITTED")
     private BlockListType blockListType = BlockListType.COMMITTED;
+    @UriParam(label = "producer")
+    private OffsetDateTime changeFeedStartTime;
+    @UriParam(label = "producer")
+    private OffsetDateTime changeFeedEndTime;
+    @UriParam(label = "producer")
+    private Context changeFeedContext;
     @UriParam(label = "common")
     private String regex;
 
@@ -363,6 +371,44 @@ public class BlobConfiguration implements Cloneable {
 
     public void setBlockListType(BlockListType blockListType) {
         this.blockListType = blockListType;
+    }
+
+    /**
+     * When using `getChangeFeed` producer operation, this filters the results to return events approximately after the
+     * start time. Note: A few events belonging to the previous hour can also be returned. A few events belonging to
+     * this hour can be missing; to ensure all events from the hour are returned, round the start time down by an hour.
+     */
+    public OffsetDateTime getChangeFeedStartTime() {
+        return changeFeedStartTime;
+    }
+
+    public void setChangeFeedStartTime(OffsetDateTime changeFeedStartTime) {
+        this.changeFeedStartTime = changeFeedStartTime;
+    }
+
+    /**
+     * When using `getChangeFeed` producer operation, this filters the results to return events approximately before the
+     * end time. Note: A few events belonging to the next hour can also be returned. A few events belonging to this hour
+     * can be missing; to ensure all events from the hour are returned, round the end time up by an hour.
+     */
+    public OffsetDateTime getChangeFeedEndTime() {
+        return changeFeedEndTime;
+    }
+
+    public void setChangeFeedEndTime(OffsetDateTime changeFeedEndTime) {
+        this.changeFeedEndTime = changeFeedEndTime;
+    }
+
+    /**
+     * When using `getChangeFeed` producer operation, this gives additional context that is passed through the Http
+     * pipeline during the service call.
+     */
+    public Context getChangeFeedContext() {
+        return changeFeedContext;
+    }
+
+    public void setChangeFeedContext(Context changeFeedContext) {
+        this.changeFeedContext = changeFeedContext;
     }
 
     /**

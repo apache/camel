@@ -17,10 +17,12 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.azure.core.util.Context;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.BlobHttpHeaders;
 import com.azure.storage.blob.models.BlobListDetails;
@@ -201,6 +203,19 @@ public class BlobConfigurationOptionsProxy {
 
     public int getMaxRetryRequests() {
         return configuration.getMaxRetryRequests();
+    }
+
+    public OffsetDateTime getChangeFeedStartTime(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getChangeFeedStartTimeFromHeaders, configuration::getChangeFeedStartTime,
+                exchange);
+    }
+
+    public OffsetDateTime getChangeFeedEndTime(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getChangeFeedEndTimeFromHeaders, configuration::getChangeFeedEndTime, exchange);
+    }
+
+    public Context getChangeFeedContext(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getChangeFeedContextFromHeaders, configuration::getChangeFeedContext, exchange);
     }
 
     public BlobConfiguration getConfiguration() {

@@ -46,6 +46,12 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-blob-changefeed</artifactId>
+            <!-- Currently is not added to Azure BOM, once it has been added, we can remove the version from here -->
+            <version>${azure-storage-blob-changedfeed-version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

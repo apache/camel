@@ -44,6 +44,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blockListType": getOrCreateConfiguration(target).setBlockListType(property(camelContext, com.azure.storage.blob.models.BlockListType.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "changefeedcontext":
+        case "changeFeedContext": getOrCreateConfiguration(target).setChangeFeedContext(property(camelContext, com.azure.core.util.Context.class, value)); return true;
+        case "changefeedendtime":
+        case "changeFeedEndTime": getOrCreateConfiguration(target).setChangeFeedEndTime(property(camelContext, java.time.OffsetDateTime.class, value)); return true;
+        case "changefeedstarttime":
+        case "changeFeedStartTime": getOrCreateConfiguration(target).setChangeFeedStartTime(property(camelContext, java.time.OffsetDateTime.class, value)); return true;
         case "closestreamafterread":
         case "closeStreamAfterRead": getOrCreateConfiguration(target).setCloseStreamAfterRead(property(camelContext, boolean.class, value)); return true;
         case "closestreamafterwrite":
@@ -104,6 +110,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blockListType": return com.azure.storage.blob.models.BlockListType.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "changefeedcontext":
+        case "changeFeedContext": return com.azure.core.util.Context.class;
+        case "changefeedendtime":
+        case "changeFeedEndTime": return java.time.OffsetDateTime.class;
+        case "changefeedstarttime":
+        case "changeFeedStartTime": return java.time.OffsetDateTime.class;
         case "closestreamafterread":
         case "closeStreamAfterRead": return boolean.class;
         case "closestreamafterwrite":
@@ -160,6 +172,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blockListType": return getOrCreateConfiguration(target).getBlockListType();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "changefeedcontext":
+        case "changeFeedContext": return getOrCreateConfiguration(target).getChangeFeedContext();
+        case "changefeedendtime":
+        case "changeFeedEndTime": return getOrCreateConfiguration(target).getChangeFeedEndTime();
+        case "changefeedstarttime":
+        case "changeFeedStartTime": return getOrCreateConfiguration(target).getChangeFeedStartTime();
         case "closestreamafterread":
         case "closeStreamAfterRead": return getOrCreateConfiguration(target).isCloseStreamAfterRead();
         case "closestreamafterwrite":
