@@ -27,14 +27,8 @@ https://aws.amazon.com/lambda/[AWS Lambda].
 
 When creating a Lambda function, you need to specify a IAM role which has at least the AWSLambdaBasicExecuteRole policy attached.
 
-[NOTE]
-====
-The AWS2 Lambda component is not supported in OSGI
-====
-
 == URI Format
 
-[source,java]
 -------------------------
 aws2-lambda://functionName[?options]
 -------------------------
@@ -42,10 +36,11 @@ aws2-lambda://functionName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== URI Options
-
 
 // component options: START
+== Component Options
+
+
 The AWS Lambda component supports 16 options, which are listed below.
 
 
@@ -71,11 +66,9 @@ The AWS Lambda component supports 16 options, which are listed below.
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS Lambda endpoint is configured using URI syntax:
 
 ----
@@ -116,8 +109,6 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
-
-
 
 
 Required Lambda component options
@@ -242,6 +233,7 @@ To have a full understanding of how the component works, you may have a look at 
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
 In AWS Lambda there are multiple operations you can submit, as an example for Get Function request, you can do something like:
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:getFunction")
      .setBody(GetFunctionRequest.builder().functionName("test").build())

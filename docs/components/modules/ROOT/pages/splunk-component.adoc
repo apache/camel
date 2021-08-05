@@ -24,80 +24,25 @@ for this component:
 
 [source,xml]
 ---------------------------------------------
- <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-splunk</artifactId>
-        <version>${camel-version}</version>
-    </dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-splunk</artifactId>
+    <version>${camel-version}</version>
+</dependency>
 ---------------------------------------------
 
 == URI format
 
-[source,java]
 -------------------------------
-  splunk://[endpoint]?[options]
+splunk://[endpoint]?[options]
 -------------------------------
-
-== Producer Endpoints:
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Endpoint |Description
-
-|stream |Streams data to a named index or the default if not specified.
-When using stream mode be aware of that Splunk has some internal buffer
-(about 1MB or so) before events gets to the index. 
-If you need realtime, better use submit or tcp mode.
-
-|submit |submit mode. Uses Splunk rest api to publish events to a named index or
-the default if not specified.
-
-|tcp |tcp mode. Streams data to a tcp port, and requires a open receiver port
-in Splunk.
-|=======================================================================
-
-When publishing events the message body should contain a
-SplunkEvent.  See comment under message body.
-
-*Example*
-
-[source,java]
-----------------------------------------------------------------------------------------------------------------------
-      from("direct:start").convertBodyTo(SplunkEvent.class)
-          .to("splunk://submit?username=user&password=123&index=myindex&sourceType=someSourceType&source=mySource")...
-----------------------------------------------------------------------------------------------------------------------
-
-In this example a converter is required to convert to a SplunkEvent
-class.
-
-== Consumer Endpoints:
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Endpoint |Description
-
-|normal |Performs normal search and requires a search query in the search option.
-
-|savedsearch |Performs search based on a search query saved in splunk and requires the
-name of the query in the savedSearch option.
-|=======================================================================
-
-*Example*
-
-[source,java]
----------------------------------------------------------------------------------------------------------------------------------------------
-      from("splunk://normal?delay=5000&username=user&password=123&initEarliestTime=-10s&search=search index=myindex sourcetype=someSourcetype")
-          .to("direct:search-result");
----------------------------------------------------------------------------------------------------------------------------------------------
-
-camel-splunk creates a route exchange per search result with a
-SplunkEvent in the body.
-
-== URI Options
 
 
 
 // component options: START
+== Component Options
+
+
 The Splunk component supports 4 options, which are listed below.
 
 
@@ -111,11 +56,9 @@ The Splunk component supports 4 options, which are listed below.
 | *splunkConfigurationFactory* (advanced) | To use the SplunkConfigurationFactory |  | SplunkConfigurationFactory
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Splunk endpoint is configured using URI syntax:
 
 ----
@@ -187,6 +130,62 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
+
+== Producer Endpoints:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Endpoint |Description
+
+|stream |Streams data to a named index or the default if not specified.
+When using stream mode be aware of that Splunk has some internal buffer
+(about 1MB or so) before events gets to the index. 
+If you need realtime, better use submit or tcp mode.
+
+|submit |submit mode. Uses Splunk rest api to publish events to a named index or
+the default if not specified.
+
+|tcp |tcp mode. Streams data to a tcp port, and requires a open receiver port
+in Splunk.
+|=======================================================================
+
+When publishing events the message body should contain a
+SplunkEvent.  See comment under message body.
+
+*Example*
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------
+      from("direct:start").convertBodyTo(SplunkEvent.class)
+          .to("splunk://submit?username=user&password=123&index=myindex&sourceType=someSourceType&source=mySource")...
+----------------------------------------------------------------------------------------------------------------------
+
+In this example a converter is required to convert to a SplunkEvent
+class.
+
+== Consumer Endpoints:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Endpoint |Description
+
+|normal |Performs normal search and requires a search query in the search option.
+
+|savedsearch |Performs search based on a search query saved in splunk and requires the
+name of the query in the savedSearch option.
+|=======================================================================
+
+*Example*
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------------
+      from("splunk://normal?delay=5000&username=user&password=123&initEarliestTime=-10s&search=search index=myindex sourcetype=someSourcetype")
+          .to("direct:search-result");
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+camel-splunk creates a route exchange per search result with a
+SplunkEvent in the body.
 
 
 == Message body

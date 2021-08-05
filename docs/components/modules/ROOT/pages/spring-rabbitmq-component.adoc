@@ -33,7 +33,6 @@ for this component:
 
 == URI format
 
-[source,text]
 ----
 spring-rabbitmq:exchangeName?[options]
 ----
@@ -42,9 +41,12 @@ The exchange name determines the exchange to which the produced
 messages will be sent to. In the case of consumers, the exchange name 
 determines the exchange the queue will be bound to.
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The Spring RabbitMQ component supports 29 options, which are listed below.
 
 
@@ -83,9 +85,9 @@ The Spring RabbitMQ component supports 29 options, which are listed below.
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Spring RabbitMQ endpoint is configured using URI syntax:
 
 ----
@@ -146,6 +148,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used | false | boolean
 |===
 // endpoint options: END
+
 
 == Using a connection factory
 

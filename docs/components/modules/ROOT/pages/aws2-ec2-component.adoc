@@ -25,14 +25,9 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon EC2. More information is available at
 https://aws.amazon.com/ec2/[Amazon EC2].
 
-[NOTE]
-====
-The AWS2 EC2 component is not supported in OSGI
-====
 
 == URI Format
 
-[source,java]
 -------------------------
 aws2-ec2://label[?options]
 -------------------------
@@ -40,10 +35,11 @@ aws2-ec2://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== URI Options
-
 
 // component options: START
+== Component Options
+
+
 The AWS Elastic Compute Cloud (EC2) component supports 16 options, which are listed below.
 
 
@@ -69,11 +65,9 @@ The AWS Elastic Compute Cloud (EC2) component supports 16 options, which are lis
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS Elastic Compute Cloud (EC2) endpoint is configured using URI syntax:
 
 ----
@@ -114,9 +108,6 @@ with the following path and query parameters:
 | *useDefaultCredentialsProvider* (producer) | Set whether the EC2 client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 |===
 // endpoint options: END
-
-
-
 
 
 Required EC2 component options
@@ -249,6 +240,7 @@ from("direct:stop")
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
 In AWS EC2 there are multiple operations you can submit, as an example for Create and run an instance, you can do something like:
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setBody(RunInstancesRequest.builder().imageId("test-1").instanceType(InstanceType.T2_MICRO).build())

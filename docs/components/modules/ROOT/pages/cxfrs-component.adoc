@@ -32,14 +32,12 @@ for this component:
 
 == URI format
 
-[source,java]
 -----------------------
 cxfrs://address?options
 -----------------------
 
 Where *address* represents the CXF endpoint's address
 
-[source,java]
 ---------------------
 cxfrs:bean:rsEndpoint
 ---------------------
@@ -49,16 +47,15 @@ CXFRS client or server
 
 For either style above, you can append options to the URI as follows:
 
-[source,java]
 ------------------------------------------------------------------
 cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
 ------------------------------------------------------------------
 
-== Options
-
-
 
 // component options: START
+== Component Options
+
+
 The CXF-RS component supports 5 options, which are listed below.
 
 
@@ -73,11 +70,9 @@ The CXF-RS component supports 5 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The CXF-RS endpoint is configured using URI syntax:
 
 ----
@@ -273,7 +268,6 @@ from("direct:newCustomer")
 The following HTTP request with XML payload (given that the Customer DTO
 is JAXB-annotated):
 
-[source,xml]
 -------------------------------------
 POST /customers/gold?active=true
 
@@ -287,7 +281,6 @@ Payload:
 
 Will print the message:
 
-[source,xml]
 ----------------------------------------------------------------------------------
 Request: type=gold, active=true, customerData=<Customer.toString() representation>
 ----------------------------------------------------------------------------------

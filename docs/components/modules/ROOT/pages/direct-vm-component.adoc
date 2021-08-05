@@ -41,18 +41,17 @@ image::camel-direct-vm.png[image]
 
 == URI format
 
-[source]
 ----
 direct-vm:someName
 ----
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-== Options
-
-
 
 // component options: START
+== Component Options
+
+
 The Direct VM component supports 7 options, which are listed below.
 
 
@@ -69,11 +68,9 @@ The Direct VM component supports 7 options, which are listed below.
 | *propagateProperties* (advanced) | Whether to propagate or not properties from the producer side to the consumer side, and vice versa. Default value: true. | true | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Direct VM endpoint is configured using URI syntax:
 
 ----
@@ -132,7 +129,7 @@ from("direct-vm:processOrder")
     .to("activemq:queue:order.out");
 ----
 
-And the sample using spring DSL:
+And the sample using XML DSL:
 
 [source,xml]
 ----

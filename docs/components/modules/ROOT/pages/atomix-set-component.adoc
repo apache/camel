@@ -19,7 +19,7 @@ The camel Atomix-Set component allows you to work with http://atomix.io[Atomix's
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 
-[source,java]
+[source,xml]
 ----
     <dependency>
         <groupId>org.apache.camel</groupId>
@@ -30,12 +30,14 @@ for this component:
 
 == URI format
 
-[source,java]
 ----
-    atomix-set:setName
+atomix-set:setName
 ----
 
 // component options: START
+== Component Options
+
+
 The Atomix Set component supports 17 options, which are listed below.
 
 
@@ -62,8 +64,9 @@ The Atomix Set component supports 17 options, which are listed below.
 | *resourceOptions* (advanced) | Local resources configurations |  | Map
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Atomix Set endpoint is configured using URI syntax:
 
 ----

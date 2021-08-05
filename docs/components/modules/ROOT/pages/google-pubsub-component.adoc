@@ -23,6 +23,7 @@ the https://github.com/googleapis/java-pubsub[Google Cloud Java Client for Googl
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 
+[source,xml]
 ------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
@@ -30,7 +31,6 @@ for this component:
     <!-- use the same version as your Camel core version -->
     <version>x.x.x</version>
 </dependency>
-
 ------------------------------------------------------
 
 == URI Format
@@ -43,9 +43,11 @@ google-pubsub://project-id:destinationName?[options]
 
 Destination Name can be either a topic or a subscription name.
 
-== Options
 
 // component options: START
+== Component Options
+
+
 The Google Pubsub component supports 8 options, which are listed below.
 
 
@@ -63,8 +65,9 @@ The Google Pubsub component supports 8 options, which are listed below.
 | *publisherTerminationTimeout* (advanced) | How many milliseconds should a producer be allowed to terminate. |  | int
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Google Pubsub endpoint is configured using URI syntax:
 
 ----
@@ -105,34 +108,6 @@ with the following path and query parameters:
 | *serializer* (producer) | *Autowired* A custom GooglePubsubSerializer to use for serializing message payloads in the producer |  | GooglePubsubSerializer
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-google-pubsub-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 8 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.google-pubsub.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.google-pubsub.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.google-pubsub.enabled* | Whether to enable auto configuration of the google-pubsub component. This is enabled by default. |  | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 == Producer Endpoints
@@ -173,6 +148,7 @@ If the header is removed or tampered with, the ack will fail and the message wil
 again after the ack deadline.
 
 == Message Headers
+
 Headers set by the consumer endpoints:
 
 * GooglePubsubConstants.MESSAGE_ID

@@ -21,7 +21,6 @@ repositories.
 
 == URI Format
 
-[source,java]
 ------------------------------
 cmis://cmisServerUrl[?options]
 ------------------------------
@@ -29,10 +28,11 @@ cmis://cmisServerUrl[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== CMIS Options
-
 
 // component options: START
+== Component Options
+
+
 The CMIS component supports 4 options, which are listed below.
 
 
@@ -46,10 +46,9 @@ The CMIS component supports 4 options, which are listed below.
 | *sessionFacadeFactory* (advanced) | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances |  | CMISSessionFacadeFactory
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The CMIS endpoint is configured using URI syntax:
 
 ----
@@ -89,7 +88,6 @@ with the following path and query parameters:
 | *username* (security) | Username for the cmis repository |  | String
 |===
 // endpoint options: END
-
 
 
 == Usage
@@ -148,8 +146,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
-(2.11 or higher).
+where `${camel-version`} must be replaced by the actual version of Camel.
 
 
 include::{page-component-version}@camel-spring-boot::page$cmis-starter.adoc[]

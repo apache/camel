@@ -23,14 +23,14 @@ The rest component can also be used as a client (producer) to call REST services
 
 == URI format
 
-[source]
 ----
 rest://method:path[:uriTemplate]?[options]
 ----
 
-== URI Options
-
 // component options: START
+== Component Options
+
+
 The REST component supports 8 options, which are listed below.
 
 
@@ -48,8 +48,9 @@ The REST component supports 8 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The REST endpoint is configured using URI syntax:
 
 ----
@@ -110,6 +111,7 @@ The following components support rest producer:
 * camel-http
 * camel-netty-http
 * camel-undertow
+* camel-vertx-http
 
 == Path and uriTemplate syntax
 
@@ -125,7 +127,7 @@ practice with REST.
 ====
 
 
-The following is a Camel route using a a path only
+The following is a Camel route using a path only
 
 [source,java]
 ----

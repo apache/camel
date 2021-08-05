@@ -39,7 +39,6 @@ for this component:
 
 The SQL component uses the following endpoint URI notation:
 
-[source,text]
 ----
 sql:elSqlName:resourceUri[?options]
 ----
@@ -60,9 +59,10 @@ expression.
 
 If a named parameter cannot be resolved, then an exception is thrown.
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The ElSQL component supports 7 options, which are listed below.
 
 
@@ -79,8 +79,9 @@ The ElSQL component supports 7 options, which are listed below.
 | *elSqlConfig* (advanced) | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. |  | ElSqlConfig
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The ElSQL endpoint is configured using URI syntax:
 
 ----
@@ -242,8 +243,6 @@ assumes to have `getLicense` and `getMinimum` methods:
 ----
 
 === Using expression parameters in consumers
-
-*Since Camel 2.23*
 
 When using the ElSql component as consumer, you can now also use expression parameters (simple language)
 to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.

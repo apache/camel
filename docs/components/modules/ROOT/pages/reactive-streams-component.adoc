@@ -44,7 +44,6 @@ for this component:
 
 == URI format
 
-[source,java]
 -------------------------------------------------
 reactive-streams://stream?[options]
 -------------------------------------------------
@@ -52,10 +51,10 @@ reactive-streams://stream?[options]
 Where *stream* is a logical stream name used to bind Camel routes to the
 external stream processing systems.
 
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The Reactive Streams component supports 9 options, which are listed below.
 
 
@@ -74,12 +73,9 @@ The Reactive Streams component supports 9 options, which are listed below.
 | *serviceType* (advanced) | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService |  | String
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Reactive Streams endpoint is configured using URI syntax:
 
 ----
@@ -116,8 +112,6 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 |===
 // endpoint options: END
-
-
 
 
 == Usage
@@ -408,24 +402,6 @@ is always lower than `10`. Messages are processed by a single thread in the Came
 The number of concurrent consumers (threads) can also be set as endpoint option (`concurrentConsumers`).
 When using 1 consumer (the default), the order of items in the source stream is maintained.
 When this value is increased, items will be processed concurrently by multiple threads (so not preserving the order).
-
-
-== Camel Reactive Streams Starter
-
-A starter module is available to spring-boot users. When using the starter,
-the `CamelReactiveStreamsService` can be directly injected into Spring components.
-
-To use the starter, add the following to your spring boot pom.xml file:
-
-[source,xml]
-------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel.springboot</groupId>
-    <artifactId>camel-reactive-streams-starter</artifactId>
-    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
-</dependency>
-------------------------------------------------------
-
 
 
 include::{page-component-version}@camel-spring-boot::page$reactive-streams-starter.adoc[]

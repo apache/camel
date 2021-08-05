@@ -27,7 +27,6 @@ https://aws.amazon.com/s3[Amazon S3].
 
 == URI Format
 
-[source,java]
 ------------------------------
 aws2-s3://bucketNameOrArn[?options]
 ------------------------------
@@ -36,19 +35,11 @@ The bucket will be created if it don't already exists. +
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-For example in order to read file `hello.txt` from bucket `helloBucket`, use the following snippet:
-
-[source,java]
---------------------------------------------------------------------------------
-from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
-  .to("file:/var/downloaded");
---------------------------------------------------------------------------------
-
-
-== URI Options
-
 
 // component options: START
+== Component Options
+
+
 The AWS S3 Storage Service component supports 50 options, which are listed below.
 
 
@@ -108,18 +99,9 @@ The AWS S3 Storage Service component supports 50 options, which are listed below
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
-
-
-
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS S3 Storage Service endpoint is configured using URI syntax:
 
 ----
@@ -216,14 +198,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-
-
-
-
-
-
 Required S3 component options
 
 You have to provide the amazonS3Client in the
@@ -239,6 +213,14 @@ batch and for instance let the Aggregator
 aggregate this number of messages.
 
 == Usage
+
+For example in order to read file `hello.txt` from bucket `helloBucket`, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
+  .to("file:/var/downloaded");
+--------------------------------------------------------------------------------
 
 === Message headers evaluated by the S3 producer
 
@@ -675,6 +657,7 @@ from("direct:putObject")
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
 In AWS S3 there are multiple operations you can submit, as an example for List brokers request, you can do something like:
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:aws2-s3")
      .setBody(ListObjectsRequest.builder().bucket(bucketName).build())

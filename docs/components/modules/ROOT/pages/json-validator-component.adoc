@@ -34,19 +34,19 @@ for this component:
 
 == URI format
 
-[source]
 ----
 json-validator:resourceUri[?options]
 ----
 
-
-Where *resourceUri* is some URL to a local resource on the classpath or a 
+Where *resourceUri* is some URL to a local resource on the classpath or a
 full URL to a remote resource or resource on the file system which contains 
 the JSON Schema to validate against.
  
-== URI Options
 
 // component options: START
+== Component Options
+
+
 The JSON Schema Validator component supports 2 options, which are listed below.
 
 
@@ -58,10 +58,9 @@ The JSON Schema Validator component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JSON Schema Validator endpoint is configured using URI syntax:
 
 ----
@@ -98,7 +97,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Example
 
 Assuming we have the following JSON Schema
@@ -108,7 +106,7 @@ Assuming we have the following JSON Schema
 [source,json]
 ----
 {
-  "$schema": "http://json-schema.org/draft-04/schema#", 
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {}, 
   "id": "my-schema",
   "properties": {

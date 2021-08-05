@@ -49,10 +49,10 @@ for this component:
 olingo4://endpoint/<resource-path>?[options]
 ----
 
-== Olingo4 Options
-
-
 // component options: START
+== Component Options
+
+
 The Olingo4 component supports 16 options, which are listed below.
 
 
@@ -78,13 +78,9 @@ The Olingo4 component supports 16 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Olingo4 endpoint is configured using URI syntax:
 
 ----
@@ -279,6 +275,7 @@ The message header name must be of the format `CamelOlingo4.parameter`.
 The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
 would override a `CamelOlingo4.myParameterNameHere` header.
 // endpoint options: END
+
 
 == Endpoint HTTP Headers
 

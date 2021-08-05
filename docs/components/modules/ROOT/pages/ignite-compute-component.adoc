@@ -18,15 +18,14 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-com
 
 The Ignite Compute endpoint is one of camel-ignite endpoints which allows you to run https://apacheignite.readme.io/docs/compute-grid[compute operations] on the cluster by passing in an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their parameters if necessary.
 
-This endpoint only supports producers.
-
 The host part of the endpoint URI is a symbolic endpoint ID, it is not used for any purposes.
 
 The endpoint tries to run the object passed in the body of the IN message as the compute job. It expects different payload types depending on the execution type.
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The Ignite Compute component supports 5 options, which are listed below.
 
 
@@ -41,8 +40,9 @@ The Ignite Compute component supports 5 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Ignite Compute endpoint is configured using URI syntax:
 
 ----
@@ -79,8 +79,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-=== Expected payload types
+== Expected payload types
 
 Each operation expects the indicated types:
 [width="100%",cols="1,4",options="header"]

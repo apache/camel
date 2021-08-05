@@ -17,8 +17,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/infinispan
 This component allows you to interact with http://infinispan.org/[Infinispan] distributed data grid / cache using the Hot Rod procol.
 Infinispan is an extremely scalable, highly available key/value data store and data grid platform written in Java.
 
-Infinispan requires at least Java 8.
-
 If you use Maven, you must add the following dependency to your `pom.xml`:
 
 [source,xml]
@@ -33,17 +31,17 @@ If you use Maven, you must add the following dependency to your `pom.xml`:
 
 == URI format
 
-[source,java]
 -------------------------------
 infinispan://cacheName?[options]
 -------------------------------
 
-== URI Options
-
-The producer allows sending messages to a remote cache using the HotRod protocol. 
+The producer allows sending messages to a remote cache using the HotRod protocol.
 The consumer allows listening for events from a remote cache using the HotRod protocol.
 
 // component options: START
+== Component Options
+
+
 The Infinispan component supports 26 options, which are listed below.
 
 
@@ -79,11 +77,9 @@ The Infinispan component supports 26 options, which are listed below.
 | *resultHeader* (advanced) | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Infinispan endpoint is configured using URI syntax:
 
 ----
@@ -490,8 +486,6 @@ context.addRoutes(new RouteBuilder() {
 With the release of Infinispan 11, it is required to set the encoding configuration on any cache created. This is critical for consuming events too.
 For more information have a look at https://infinispan.org/docs/stable/titles/developing/developing.html#data_encoding[Data Encoding and MediaTypes] in the official Infinispan documentation.
 ====
-
-
 
 
 include::{page-component-version}@camel-spring-boot::page$infinispan-starter.adoc[]

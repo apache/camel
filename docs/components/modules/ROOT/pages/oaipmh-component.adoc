@@ -31,17 +31,15 @@ for this component:
 
 == URI format
 
-[source,text]
 ----------------------------------------------------
 oaipmh:url[?options]
 ----------------------------------------------------
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
 
 // component options: START
+== Component Options
+
+
 The OAI-PMH component supports 3 options, which are listed below.
 
 
@@ -54,10 +52,9 @@ The OAI-PMH component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The OAI-PMH endpoint is configured using URI syntax:
 
 ----
@@ -117,7 +114,6 @@ with the following path and query parameters:
 
 
 
-
 == Message Headers
 
 [width="100%",cols="20%,80%",options="header",]
@@ -142,10 +138,7 @@ in Java DSL
 from("direct:start").to("oaipmh:baseUrlRepository/oai/request");
 ---------------------------------------------------------
 
-
 The result is a set of pages in XML format with all the records of the consulted repository.
-
-
 
 == Consumer Example
 
@@ -157,5 +150,7 @@ In Java DSL
 from("oaipmh:baseUrlRepository/oai/request")
 .to(mock:result)
 ---------------------------------------------------------
+
+== More Information
 
 For more details about OAI-PMH see the documentation: http://www.openarchives.org/pmh/

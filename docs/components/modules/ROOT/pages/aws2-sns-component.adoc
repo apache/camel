@@ -27,14 +27,8 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SNS. More information is available at
 https://aws.amazon.com/sns[Amazon SNS].
 
-[NOTE]
-====
-The AWS2 SNS component is not supported in OSGI
-====
-
 == URI Format
 
-[source,java]
 -----------------------------
 aws2-sns://topicNameOrArn[?options]
 -----------------------------
@@ -45,8 +39,10 @@ The topic will be created if they don't already exists. +
 
 == URI Options
 
-
 // component options: START
+== Component Options
+
+
 The AWS Simple Notification System (SNS) component supports 24 options, which are listed below.
 
 
@@ -80,12 +76,9 @@ The AWS Simple Notification System (SNS) component supports 24 options, which ar
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS Simple Notification System (SNS) endpoint is configured using URI syntax:
 
 ----
@@ -201,8 +194,7 @@ from("direct:start")
 .to("aws2-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&subscribeSNStoSQS=true&queueUrl=https://sqs.eu-central-1.amazonaws.com/780410022472/test-camel");
 -------------------------------------------------
 
-The `#amazonSNSClient` refers to a `SnsClient` in the
-Registry.
+The `#amazonSNSClient` refers to a `SnsClient` in the Registry.
 By specifying `subscribeSNStoSQS` to true and a `queueUrl` of an existing SQS Queue,
 you'll be able to subscribe your SQS Queue to your SNS Topic.
 
@@ -229,7 +221,7 @@ Suppose you created an SNS FIFO Topic called Order.fifo and an SQS Queue called 
 
 In the access Policy of the QueueSub.fifo you should submit something like this
 
-[source,bash]
+[source,json]
 -------------------------------------------------
 {
   "Version": "2008-10-17",

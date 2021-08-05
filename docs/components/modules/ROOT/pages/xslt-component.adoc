@@ -21,15 +21,14 @@ Templating to generate response for requests.
 
 == URI format
 
-[source]
 ----
 xslt:templateName[?options]
 ----
+
 The URI format contains *templateName*, which can be one of the following:
 
 * the classpath-local URI of the template to invoke
-
-* the complete URL of the remote template. 
+* the complete URL of the remote template.
 
 You can append query options to the URI in the following format:
 
@@ -44,9 +43,12 @@ You can append query options to the URI in the following format:
 |xslt:http://acme.com/cheese/foo.xsl|Refers to the remote http resource
 |=================================================================
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The XSLT component supports 7 options, which are listed below.
 
 
@@ -63,9 +65,9 @@ The XSLT component supports 7 options, which are listed below.
 | *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The XSLT endpoint is configured using URI syntax:
 
 ----
@@ -105,6 +107,7 @@ with the following path and query parameters:
 | *uriResolver* (advanced) | To use a custom javax.xml.transform.URIResolver |  | URIResolver
 |===
 // endpoint options: END
+
 
 
 == Using XSLT endpoints

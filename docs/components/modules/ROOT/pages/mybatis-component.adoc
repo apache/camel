@@ -32,7 +32,6 @@ for this component:
 
 == URI format
 
-[source,text]
 ----
 mybatis:statementName[?options]
 ----
@@ -50,9 +49,11 @@ the root of the classpath with the expected name of
  If the file is located in another location, you will need to configure
 the `configurationUri` option on the `MyBatisComponent` component.
 
-== Options
 
 // component options: START
+== Component Options
+
+
 The MyBatis component supports 5 options, which are listed below.
 
 
@@ -67,9 +68,9 @@ The MyBatis component supports 5 options, which are listed below.
 | *sqlSessionFactory* (advanced) | To use the SqlSessionFactory |  | SqlSessionFactory
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The MyBatis endpoint is configured using URI syntax:
 
 ----
@@ -126,7 +127,6 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
-
 
 
 
@@ -206,8 +206,6 @@ IN body to MyBatis:
 
 === Using InsertList StatementType
 
-*Since Camel 2.10*
-
 MyBatis allows you to insert multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
 file. For example as shown below:
@@ -217,8 +215,6 @@ Then you can insert multiple rows, by sending a Camel message to the
 below:
 
 === Using UpdateList StatementType
-
-*Since Camel 2.11*
 
 MyBatis allows you to update multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
@@ -249,8 +245,6 @@ from("direct:start")
 ----
 
 === Using DeleteList StatementType
-
-*Since Camel 2.11*
 
 MyBatis allows you to delete multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML

@@ -17,10 +17,10 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rest-api.a
 
 The REST API component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
 
-== URI Options
-
-
 // component options: START
+== Component Options
+
+
 The REST API component supports 2 options, which are listed below.
 
 
@@ -32,10 +32,9 @@ The REST API component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The REST API endpoint is configured using URI syntax:
 
 ----
@@ -70,5 +69,3 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-include::{page-component-version}@camel-spring-boot::page$rest-starter.adoc[]

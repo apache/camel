@@ -35,14 +35,12 @@ for this component:
 
 == URI format
 
-[source,java]
 --------------------------
 stax:content-handler-class
 --------------------------
 
 example:
 
-[source,java]
 -----------------------------------
 stax:org.superbiz.FooContentHandler
 -----------------------------------
@@ -50,15 +48,16 @@ stax:org.superbiz.FooContentHandler
 You can lookup a `org.xml.sax.ContentHandler` bean from the Registry
 using the # syntax as shown:
 
-[source,java]
 ---------------
 stax:#myHandler
 ---------------
 
-== Options
 
 
 // component options: START
+== Component Options
+
+
 The StAX component supports 2 options, which are listed below.
 
 
@@ -70,10 +69,9 @@ The StAX component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The StAX endpoint is configured using URI syntax:
 
 ----

@@ -24,24 +24,17 @@ You must have a valid DigitalOcean account and a valid OAuth token. You can gene
 
 The **DigitalOcean Component** uses the following URI format:
 
-```
+----
 digitalocean://endpoint?[options]
-```
+----
+
 where `endpoint` is a DigitalOcean resource type.
-
-Example : to list your droplets:
-
-```
-digitalocean://droplets?operation=list&oAuthToken=XXXXXX&page=1&perPage=10
-```
-
-The DigitalOcean component only supports producer endpoints so you cannot use this component at the beginning of a route to listen to messages in a channel.
-
-
-== Options
 
 
 // component options: START
+== Component Options
+
+
 The DigitalOcean component supports 2 options, which are listed below.
 
 
@@ -53,8 +46,9 @@ The DigitalOcean component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The DigitalOcean endpoint is configured using URI syntax:
 
 ----
@@ -91,8 +85,6 @@ with the following path and query parameters:
 | *oAuthToken* (security) | DigitalOcean OAuth Token |  | String
 |===
 // endpoint options: END
-
-
 
 You have to provide an **operation** value for each endpoint, with the `operation` URI option or the `CamelDigitalOceanOperation` message header.
 
@@ -432,15 +424,17 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 
 Get your account info
 
-```
+[source,java]
+----
 from("direct:getAccountInfo")
     .setHeader(DigitalOceanConstants.OPERATION, constant(DigitalOceanOperations.get))
     .to("digitalocean:account?oAuthToken=XXXXXX")
-```
+----
 
 Create a droplet
 
-```
+[source,java]
+----
 from("direct:createDroplet")
     .setHeader(DigitalOceanConstants.OPERATION, constant("create"))
     .setHeader(DigitalOceanHeaders.NAME, constant("myDroplet"))
@@ -448,31 +442,34 @@ from("direct:createDroplet")
     .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
     .setHeader(DigitalOceanHeaders.DROPLET_SIZE, constant("512mb"))
     .to("digitalocean:droplet?oAuthToken=XXXXXX")
-```
+----
 
 List all your droplets
 
-```
+[source,java]
+----
 from("direct:getDroplets")
     .setHeader(DigitalOceanConstants.OPERATION, constant("list"))
     .to("digitalocean:droplets?oAuthToken=XXXXXX")
-```
+----
 
 Retrieve information for the Droplet (dropletId = 34772987)
 
-```
+[source,java]
+----
 from("direct:getDroplet")
     .setHeader(DigitalOceanConstants.OPERATION, constant("get"))
     .setHeader(DigitalOceanConstants.ID, 34772987)
     .to("digitalocean:droplet?oAuthToken=XXXXXX")
-```
+----
 
 Shutdown  information for the Droplet (dropletId = 34772987)
 
-```
+[source,java]
+----
 from("direct:shutdown")
     .setHeader(DigitalOceanConstants.ID, 34772987)
     .to("digitalocean:droplet?operation=shutdown&oAuthToken=XXXXXX")
-```
+----
 
 include::{page-component-version}@camel-spring-boot::page$digitalocean-starter.adoc[]

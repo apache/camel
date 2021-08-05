@@ -34,14 +34,16 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------
 xchange://exchange?options
 ---------------------------------
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The XChange component supports 2 options, which are listed below.
 
 
@@ -53,8 +55,9 @@ The XChange component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The XChange endpoint is configured using URI syntax:
 
 ----
@@ -88,6 +91,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
+
 == Authentication
 
 This component communicates with supported crypto currency exchanges via REST API. Some API requests use simple unauthenticated GET request. 
@@ -107,10 +111,6 @@ For Binance for example this would be: `~/.ssh/binance-secret.keys`
 apiKey = GuRW0*********
 secretKey = nKLki************
 ----
-
-== Message Headers
-
-[TODO]
 
 == Samples
 

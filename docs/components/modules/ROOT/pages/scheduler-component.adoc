@@ -25,7 +25,6 @@ You can only consume events from this endpoint.
 
 == URI format
 
-[source]
 ----
 scheduler:name[?options]
 ----
@@ -35,15 +34,15 @@ across endpoints. So if you use the same name for all your scheduler
 endpoints, only one scheduler thread pool and thread will be used - but
 you can configure the thread pool to allow more concurrent threads.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
 *Note:* The IN body of the generated exchange is `null`. So
 `exchange.getIn().getBody()` returns `null`.
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The Scheduler component supports 3 options, which are listed below.
 
 
@@ -56,9 +55,9 @@ The Scheduler component supports 3 options, which are listed below.
 | *poolSize* (scheduler) | Number of core threads in the thread pool used by the scheduling thread pool. Is by default using a single thread | 1 | int
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Scheduler endpoint is configured using URI syntax:
 
 ----

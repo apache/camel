@@ -28,7 +28,6 @@ The Git component allows you to work with a generic Git repository.
 
 *URI Format*
 
-[source,java]
 -----------------------------------
 git://localRepositoryPath[?options]
 -----------------------------------
@@ -41,6 +40,9 @@ repository.
 
 
 // component options: START
+== Component Options
+
+
 The Git component supports 3 options, which are listed below.
 
 
@@ -53,11 +55,9 @@ The Git component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Git endpoint is configured using URI syntax:
 
 ----
@@ -99,9 +99,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-
 == Message Headers
 
 [width="100%",cols="10%,10%,10%,20%,50%",options="header",]
@@ -133,13 +130,13 @@ then push it to remote repository.
 [source,java]
 --------------------------------------------------------------------------------------------------------------------
 from("direct:start")
-        .setHeader(GitConstants.GIT_FILE_NAME, constant("test.java"))
-        .to("git:///tmp/testRepo?operation=add")
-        .setHeader(GitConstants.GIT_COMMIT_MESSAGE, constant("first commit"))
-        .to("git:///tmp/testRepo?operation=commit")
-        .to("git:///tmp/testRepo?operation=push&remotePath=https://foo.com/test/test.git&username=xxx&password=xxx")
-        .to("git:///tmp/testRepo?operation=createTag&tagName=myTag")
-        .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin")
+    .setHeader(GitConstants.GIT_FILE_NAME, constant("test.java"))
+    .to("git:///tmp/testRepo?operation=add")
+    .setHeader(GitConstants.GIT_COMMIT_MESSAGE, constant("first commit"))
+    .to("git:///tmp/testRepo?operation=commit")
+    .to("git:///tmp/testRepo?operation=push&remotePath=https://foo.com/test/test.git&username=xxx&password=xxx")
+    .to("git:///tmp/testRepo?operation=createTag&tagName=myTag")
+    .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin")
 --------------------------------------------------------------------------------------------------------------------
 
 == Consumer Example
@@ -149,7 +146,7 @@ Below is an example route of a consumer that consumes commit:
 [source,java]
 ---------------------------------------
 from("git:///tmp/testRepo?type=commit")
-                        .to(....)
+    .to(....)
 ---------------------------------------
 
 include::{page-component-version}@camel-spring-boot::page$git-starter.adoc[]

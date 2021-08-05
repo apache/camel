@@ -33,28 +33,25 @@ SSL, OAuth2.0, etc. as required by the target OData service.
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 
-[source,java]
+[source,xml]
 ----------------------------------------------
-    <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-olingo2</artifactId>
-        <version>${camel-version}</version>
-    </dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-olingo2</artifactId>
+    <version>${camel-version}</version>
+</dependency>
 ----------------------------------------------
 
 == URI format
 
-[source,java]
 ------------------------------------------------
-    olingo2://endpoint/<resource-path>?[options]
+olingo2://endpoint/<resource-path>?[options]
 ------------------------------------------------
-
-== Olingo2 Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The Olingo2 component supports 18 options, which are listed below.
 
 
@@ -82,13 +79,9 @@ The Olingo2 component supports 18 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Olingo2 endpoint is configured using URI syntax:
 
 ----
@@ -278,6 +271,7 @@ The `inBody` parameter overrides message header, i.e. the endpoint parameter `in
 would override a `CamelOlingo2.myParameterNameHere` header.
 // endpoint options: END
 
+
 == Endpoint HTTP Headers
 
 The component level configuration property **httpHeaders** supplies static HTTP header information.
@@ -359,7 +353,6 @@ add an updated *!deltatoken* property with the value returned in the
 *ODataDeltaFeed* result. Since the initial delta token is not known, the
 consumer endpoint will produce an *ODataFeed* value the first time, and
 *ODataDeltaFeed* on subsequent polls. 
-
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------

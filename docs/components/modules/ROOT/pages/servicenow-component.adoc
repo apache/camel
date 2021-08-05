@@ -18,30 +18,30 @@ The ServiceNow component provides access to ServiceNow platform through their RE
 
 The component supports multiple version of ServiceNow platform with default to Helsinki. Supported version are <<ServiceNow-Fuji>> and <<ServiceNow-Helsinki>>
 
-
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 
-[source,java]
+[source,xml]
 -------------------------------------------------
-    <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-servicenow</artifactId>
-        <version>${camel-version}</version>
-    </dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-servicenow</artifactId>
+    <version>${camel-version}</version>
+</dependency>
 -------------------------------------------------
 
 == URI format
 
-[source,java]
 ---------------------------------------
-    servicenow://instanceName?[options]
+servicenow://instanceName?[options]
 ---------------------------------------
 
-== Options
 
 
 // component options: START
+== Component Options
+
+
 The ServiceNow component supports 48 options, which are listed below.
 
 
@@ -99,9 +99,9 @@ The ServiceNow component supports 48 options, which are listed below.
 | *userName* (security) | *Required* ServiceNow user account name, MUST be provided |  | String
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The ServiceNow endpoint is configured using URI syntax:
 
 ----
@@ -172,7 +172,6 @@ with the following path and query parameters:
 | *userName* (security) | *Required* ServiceNow user account name, MUST be provided |  | String
 |===
 // endpoint options: END
-
 
 
 == Headers

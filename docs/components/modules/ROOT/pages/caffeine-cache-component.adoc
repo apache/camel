@@ -30,9 +30,6 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
-
-[source,java]
 -----------------------------
 caffeine-cache://cacheName[?options]
 -----------------------------
@@ -40,10 +37,10 @@ caffeine-cache://cacheName[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=#beanRef&...`
 
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The Caffeine Cache component supports 17 options, which are listed below.
 
 
@@ -70,10 +67,9 @@ The Caffeine Cache component supports 17 options, which are listed below.
 | *valueType* (advanced) | The cache value type, default java.lang.Object |  | String
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Caffeine Cache endpoint is configured using URI syntax:
 
 ----

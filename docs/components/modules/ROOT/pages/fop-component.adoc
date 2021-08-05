@@ -32,7 +32,6 @@ for this component:
 
 == URI format
 
-[source,text]
 ----------------------------
 fop://outputFormat?[options]
 ----------------------------
@@ -70,9 +69,11 @@ supported:
 
 The complete list of valid output formats can be found in the `MimeConstants.java` source file.
 
-== Endpoint Options
 
 // component options: START
+== Component Options
+
+
 The FOP component supports 2 options, which are listed below.
 
 
@@ -84,10 +85,9 @@ The FOP component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The FOP endpoint is configured using URI syntax:
 
 ----
@@ -119,6 +119,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
+== Configuration file
 
 The location of a configuration file with the following
 http://xmlgraphics.apache.org/fop/1.0/configuration.html[structure].

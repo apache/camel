@@ -42,9 +42,10 @@ paho:topic[?options]
 Where *topic* is the name of the topic.
 
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The Paho component supports 31 options, which are listed below.
 
 
@@ -85,9 +86,9 @@ The Paho component supports 31 options, which are listed below.
 | *userName* (security) | Username to be used for authentication against the MQTT broker |  | String
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Paho endpoint is configured using URI syntax:
 
 ----
@@ -145,7 +146,6 @@ with the following path and query parameters:
 | *userName* (security) | Username to be used for authentication against the MQTT broker |  | String
 |===
 // endpoint options: END
-
 
 
 == Headers
@@ -214,7 +214,7 @@ from("direct:test")
 
 For example this is how to read messages from the remote MQTT broker: 
 
-[source]
+[source,java]
 ----
 from("paho:some/queue?brokerUrl=tcp://iot.eclipse.org:1883")
     .to("mock:test");

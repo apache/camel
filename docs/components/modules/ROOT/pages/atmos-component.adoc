@@ -18,15 +18,11 @@ Camel-Atmos is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with ViPR object data services using the
 https://github.com/emcvipr/dataservices-sdk-java[Atmos Client].
 
-[source,java]
--------------------------------
-from("atmos:foo/get?remotePath=/path").to("mock:test");
--------------------------------
-
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The Atmos component supports 7 options, which are listed below.
 
 
@@ -43,10 +39,9 @@ The Atmos component supports 7 options, which are listed below.
 | *sslValidation* (security) | Whether the Atmos client should perform SSL validation | false | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Atmos endpoint is configured using URI syntax:
 
 ----
@@ -155,7 +150,7 @@ on headers of camel exchange.
 Regarding the operations, the following headers are set on camel
 exhange
 
-[source,java]
+[source,text]
 -------------------------------
 DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH;
 -------------------------------

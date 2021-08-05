@@ -14,9 +14,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spark.adoc
 
 *{component-header}*
 
-*Since Camel 2.17*
-
-
 This documentation page covers the http://spark.apache.org/[Apache
 Spark] component for the Apache Camel. The main purpose of the Spark
 integration with Camel is to provide a bridge between Camel connectors
@@ -56,16 +53,16 @@ or Hive SQL job.
 
 *Spark URI format*
 
-[source,java]
 --------------------------
 spark:{rdd|dataframe|hive}
 --------------------------
 
-=== Spark options
-
 
 
 // component options: START
+== Component Options
+
+
 The Spark component supports 4 options, which are listed below.
 
 
@@ -79,11 +76,9 @@ The Spark component supports 4 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Spark endpoint is configured using URI syntax:
 
 ----
@@ -118,14 +113,12 @@ with the following path and query parameters:
 // endpoint options: END
 
 
- 
-== RDD jobs 
+== RDD jobs
 
 To invoke an RDD job, use the following URI:
 
 *Spark RDD producer*
 
-[source,java]
 ------------------------------------------------------
 spark:rdd?rdd=#testFileRdd&rddCallback=#transformation
 ------------------------------------------------------
@@ -296,7 +289,6 @@ public class MyTransformation {
 long result = producerTemplate.requestBody("spark:rdd?rdd=#rdd&rddCallback=#rddCallback" Arrays.asList(10, "10"), long.class);
 ------------------------------------------------------------------------------------------------------------------------------
 
- 
 
 == DataFrame jobs
 
@@ -307,12 +299,11 @@ To invoke an DataFrame job, use the following URI:
 
 *Spark RDD producer*
 
-[source,java]
 --------------------------------------------------------------------------
 spark:dataframe?dataFrame=#testDataFrame&dataFrameCallback=#transformation
 --------------------------------------------------------------------------
 
- Where `dataFrame` option refers to the name of an DataFrame instance
+Where `dataFrame` option refers to the name of an DataFrame instance
 (`instances of org.apache.spark.sql.Dataset and org.apache.spark.sql.Row`) from a Camel registry,
 while `dataFrameCallback` refers to the implementation
 of `org.apache.camel.component.spark.DataFrameCallback` interface (also
@@ -375,13 +366,12 @@ Dataset<Row> cars(HiveContext hiveContext) {
 
 == Hive jobs
 
- Instead of working with RDDs or DataFrame Spark component can also
+Instead of working with RDDs or DataFrame Spark component can also
 receive Hive SQL queries as payloads. To send Hive query to Spark
 component, use the following URI:
 
 *Spark RDD producer*
 
-[source,java]
 ----------
 spark:hive
 ----------

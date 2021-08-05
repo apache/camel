@@ -31,16 +31,16 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------
 vertx-websocket://hostname[:port][/resourceUri][?options]
 ---------------------------
 
-== Options
-
 
 
 // component options: START
+== Component Options
+
+
 The Vert.x WebSocket component supports 7 options, which are listed below.
 
 
@@ -57,11 +57,9 @@ The Vert.x WebSocket component supports 7 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Vert.x WebSocket endpoint is configured using URI syntax:
 
 ----
@@ -103,7 +101,8 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Message Headers
+
+== Message Headers
 
 The WebSocket component uses 2 headers to indicate to either send
 messages back to a single/current client, or to all clients.
@@ -117,7 +116,7 @@ use the `sendToAll` option on the endpoint instead of using this header.
 use a comma separated list of keys to send a message to multiple clients
 |=======================================================================
 
-=== Usage
+== Usage
 The following example shows how to expose a WebSocket on http://localhost:8080/echo and returns an 'echo' response back to the same channel:
 
 [source,java]
@@ -127,7 +126,7 @@ from("vertx-websocket:localhost:8080/echo")
     .to("vertx-websocket:localhost:8080/echo");
 ----
 
-==== SSL
+== SSL
 
 By default the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
 via the `sslContextParameters` URI parameter and the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility]

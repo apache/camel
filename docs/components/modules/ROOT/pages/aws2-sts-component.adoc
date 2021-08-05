@@ -27,12 +27,11 @@ https://aws.amazon.com/sts/[Amazon STS].
 
 [NOTE]
 ====
-The AWS2 STS component is not supported in OSGI
+The AWS2 STS component works on the aws-global region and it has aws-global as default region
 ====
 
 == URI Format
 
-[source,java]
 -------------------------
 aws2-sts://label[?options]
 -------------------------
@@ -40,10 +39,11 @@ aws2-sts://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== URI Options
-
 
 // component options: START
+== Component Options
+
+
 The AWS Security Token Service (STS) component supports 16 options, which are listed below.
 
 
@@ -69,11 +69,9 @@ The AWS Security Token Service (STS) component supports 16 options, which are li
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS Security Token Service (STS) endpoint is configured using URI syntax:
 
 ----
@@ -116,7 +114,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 Required STS component options
 
 You have to provide the amazonSTSClient in the
@@ -124,11 +121,6 @@ Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/sts/[Amazon STS] service.
 
 == Usage
-
-[NOTE]
-====
-The AWS2 STS component works on the aws-global region and it has aws-global as default region
-====
 
 === Static credentials vs Default Credential Provider
 
@@ -183,6 +175,7 @@ from("direct:getFederationToken")
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
 In AWS STS, as example for Assume Role request, you can do something like:
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:createUser")
      .setBody(AssumeRoleRequest.builder().roleArn("arn:123").roleSessionName("groot").build())

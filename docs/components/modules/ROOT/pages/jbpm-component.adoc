@@ -31,122 +31,17 @@ for this component:
 </dependency>
 ------------------------------------------------------------------------------------
 
-== Consumer
-
-jBPM Consumer allows to attach routes to 
-
-* ProcessEventListeners
-* TaskEventListners
-* CaseEventListeners
 
 == URI format
 
-[source,java]
 ---------------------------------------------
 jbpm::events:type:[classifier][?options]
 ---------------------------------------------
 
-=== Path Parameters (3 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *events* | Classifier for the consumer to know which type of data it should attach to |  | URL
-| *type* | Type of event listener - supports: process, task, case |  | String
-| *classifier* | Used to distinguish routes for same event type|  | String
-|===
-
-Each route would then receive events when they are being produced by jBPM engine.
-
-Routes can be defined either in global way - on application level or deployed 
-together with business assets projects also knows as KJARs.
-
-Consumers are configured via KieServerExtension that is a pluggable interface to enhance
-jBPM with additional capabilities. It reacts to different life cycle phases of the KIE Server
-and by that is able to configure individual endpoints properly.
-
-== KJAR routes
-
-Create file named `camel-routes.xml` in the root folder of your KJAR (src/main/resources) so it will be automatically 
-discovered and Camel Context for given KJAR will be created.
-
-== Global routes
-
-Create file name `global-camel-routes` in the root of the class path of KIE Server. It will be automatically found and registered
-on every KJAR deployed to KIE Server.
-
-
-Example camel-routes.xml file that can be placed in the KJAR
-
-[source, xml]
-----
-<routes xmlns="http://camel.apache.org/schema/spring">
-    
-    <route id="processes">
-        <from uri="jbpm:events:process:test"/>
-        <filter>
-          <simple>${in.header.EventType} == 'beforeProcessStarted'</simple>
-          <to uri="log:kjar.processes?level=INFO&amp;showBody=true&amp;showHeaders=true"/>
-        </filter>
-    </route>
-    
-    <route id="tasks">
-        <from uri="jbpm:events:task:test"/>
-        <filter>
-          <simple>${in.header.EventType} starts with 'before'</simple>
-          <to uri="log:kjar.tasks?level=INFO&amp;showBody=true&amp;showHeaders=true"/>
-        </filter>
-    </route>
-</routes>
-----
-
-
-== Use of jBPM Component in KIE Server
-
-To make use of camel-jbpm component in a KIE Server it is as simple as just adding two jars into KIE Server application
-
-* camel-core
-* camel-jbpm
-
-then start KIE Server and you will see once booted following information in logs
-
-[source, plain]
-----
-Camel KIE Server extension has been successfully registered as server extension
-....
-
-Route: tasks started and consuming from: jbpm://events:task:test?deploymentId=form-rendering_1.0.0
-Total 2 routes, of which 2 are started
-Apache Camel 2.23.0-SNAPSHOT (CamelContext: KIE Server Camel context for container evaluation_1.0.0) started in 0.378 seconds
-o.k.server.services.impl.KieServerImpl   : Container evaluation_1.0.0 (for release id evaluation:evaluation:1.0.0) successfully started
-----
-
-To make use of jBPM Consumer jBPM deployment descriptor must also define camel specific event listeners of following types
-
-* `new org.apache.camel.component.jbpm.listeners.CamelProcessEventListener()`
-* `new org.apache.camel.component.jbpm.listeners.CamelTaskEventListener()`
-* `new org.apache.camel.component.jbpm.listeners.CamelCaseEventListener()`
-
-These must be set in either server level of kjar deployment descriptor (use MVEL as resolver type) - see jbpm docs for more details about
-deployment descriptors.
-
-== Producer
-
-Producer is dedicated to interact with jBPM via kie-server-client that uses exposed REST api of 
-jBPM (KIE Server).
-
-== URI format
-
-[source,java]
----------------------------------------------
-jbpm::hostName[:port][/resourceUri][?options]
----------------------------------------------
-
-== URI Options
-
-
 // component options: START
+== Component Options
+
+
 The JBPM component supports 3 options, which are listed below.
 
 
@@ -159,12 +54,9 @@ The JBPM component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JBPM endpoint is configured using URI syntax:
 
 ----
@@ -224,9 +116,106 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Consumer
+
+jBPM Consumer allows to attach routes to
+
+* ProcessEventListeners
+* TaskEventListners
+* CaseEventListeners
+
+=== Path Parameters (3 parameters):
 
 
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *events* | Classifier for the consumer to know which type of data it should attach to |  | URL
+| *type* | Type of event listener - supports: process, task, case |  | String
+| *classifier* | Used to distinguish routes for same event type|  | String
+|===
 
+Each route would then receive events when they are being produced by jBPM engine.
+
+Routes can be defined either in global way - on application level or deployed 
+together with business assets projects also knows as KJARs.
+
+Consumers are configured via KieServerExtension that is a pluggable interface to enhance
+jBPM with additional capabilities. It reacts to different life cycle phases of the KIE Server
+and by that is able to configure individual endpoints properly.
+
+== KJAR routes
+
+Create file named `camel-routes.xml` in the root folder of your KJAR (src/main/resources) so it will be automatically 
+discovered and Camel Context for given KJAR will be created.
+
+== Global routes
+
+Create file name `global-camel-routes` in the root of the class path of KIE Server. It will be automatically found and registered
+on every KJAR deployed to KIE Server.
+
+Example `camel-routes.xml` file that can be placed in the KJAR
+
+[source,xml]
+----
+<routes xmlns="http://camel.apache.org/schema/spring">
+    
+    <route id="processes">
+        <from uri="jbpm:events:process:test"/>
+        <filter>
+          <simple>${in.header.EventType} == 'beforeProcessStarted'</simple>
+          <to uri="log:kjar.processes?level=INFO&amp;showBody=true&amp;showHeaders=true"/>
+        </filter>
+    </route>
+    
+    <route id="tasks">
+        <from uri="jbpm:events:task:test"/>
+        <filter>
+          <simple>${in.header.EventType} starts with 'before'</simple>
+          <to uri="log:kjar.tasks?level=INFO&amp;showBody=true&amp;showHeaders=true"/>
+        </filter>
+    </route>
+</routes>
+----
+
+
+== Use of jBPM Component in KIE Server
+
+To make use of camel-jbpm component in a KIE Server it is as simple as just adding two jars into KIE Server application
+
+* camel-core
+* camel-jbpm
+
+then start KIE Server and you will see once booted following information in logs
+
+----
+Camel KIE Server extension has been successfully registered as server extension
+....
+Route: tasks started and consuming from: jbpm://events:task:test?deploymentId=form-rendering_1.0.0
+Total 2 routes, of which 2 are started
+Apache Camel 2.23.0-SNAPSHOT (CamelContext: KIE Server Camel context for container evaluation_1.0.0) started in 0.378 seconds
+o.k.server.services.impl.KieServerImpl   : Container evaluation_1.0.0 (for release id evaluation:evaluation:1.0.0) successfully started
+----
+
+To make use of jBPM Consumer jBPM deployment descriptor must also define camel specific event listeners of following types
+
+* `new org.apache.camel.component.jbpm.listeners.CamelProcessEventListener()`
+* `new org.apache.camel.component.jbpm.listeners.CamelTaskEventListener()`
+* `new org.apache.camel.component.jbpm.listeners.CamelCaseEventListener()`
+
+These must be set in either server level of kjar deployment descriptor (use MVEL as resolver type) - see jbpm docs for more details about
+deployment descriptors.
+
+== Producer
+
+Producer is dedicated to interact with jBPM via kie-server-client that uses exposed REST api of 
+jBPM (KIE Server).
+
+== URI format
+
+---------------------------------------------
+jbpm::hostName[:port][/resourceUri][?options]
+---------------------------------------------
 
 == Message Headers
 

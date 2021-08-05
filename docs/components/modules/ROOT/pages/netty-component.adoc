@@ -46,7 +46,6 @@ for this component:
 
 The URI scheme for a netty component is as follows
 
-[source,text]
 ----
 netty:tcp://0.0.0.0:99999[?options]
 netty:udp://remotehost:99999/[?options]
@@ -55,12 +54,10 @@ netty:udp://remotehost:99999/[?options]
 This component supports producer and consumer endpoints for both TCP and
 UDP.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
 // component options: START
+== Component Options
+
+
 The Netty component supports 73 options, which are listed below.
 
 
@@ -143,9 +140,9 @@ The Netty component supports 73 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Netty endpoint is configured using URI syntax:
 
 ----

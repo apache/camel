@@ -18,12 +18,12 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes
 
 The Kubernetes Job component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes Job operations and a consumer to consume events related to Job objects.
- 
 
-
-== Component Options
 
 // component options: START
+== Component Options
+
+
 The Kubernetes Job component supports 3 options, which are listed below.
 
 
@@ -36,11 +36,9 @@ The Kubernetes Job component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
+// endpoint options: START
 == Endpoint Options
 
-// endpoint options: START
 The Kubernetes Job endpoint is configured using URI syntax:
 
 ----
@@ -101,6 +99,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
 == Supported producer operation
 
 - listJob
@@ -127,7 +126,6 @@ This operation return a List of Job from your cluster
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
-
             @Override
             public void process(Exchange exchange) throws Exception {
                 Map<String, String> labels = new HashMap<>();
@@ -168,9 +166,6 @@ import io.fabric8.kubernetes.api.model.PodSpec;
 import io.fabric8.kubernetes.api.model.PodTemplateSpec;
 import io.fabric8.kubernetes.api.model.batch.JobSpec;
 
-/**
- * 
- */
 public class KubernetesCreateJob extends RouteBuilder {
 
     @Inject
@@ -207,10 +202,6 @@ public class KubernetesCreateJob extends RouteBuilder {
             .to(resultEndpoint);
     }
 
-    /**
-     * Create a new JobSpec
-     * @return
-     */
 	private JobSpec generateJobSpec() {
 		JobSpec js = new JobSpec();
 		
@@ -249,7 +240,6 @@ public class KubernetesCreateJob extends RouteBuilder {
 		containers.add(container);
 		return containers;
 	}
-
 }
 --------------------------------------------------------------------------------
 

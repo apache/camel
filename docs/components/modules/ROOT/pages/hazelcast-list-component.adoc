@@ -21,6 +21,9 @@ The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcas
 == Options
 
 // component options: START
+== Component Options
+
+
 The Hazelcast List component supports 5 options, which are listed below.
 
 
@@ -36,6 +39,8 @@ The Hazelcast List component supports 5 options, which are listed below.
 |===
 // component options: END
 // endpoint options: START
+== Endpoint Options
+
 The Hazelcast List endpoint is configured using URI syntax:
 
 ----
@@ -69,7 +74,6 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 |===
 // endpoint options: END
-
 
 
 == List producer – to(“hazelcast-list:foo”)

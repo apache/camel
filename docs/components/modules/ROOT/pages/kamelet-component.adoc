@@ -24,11 +24,11 @@ The Kamelet Component provides support for interacting with the xref:manual::rou
 kamelet:templateId/routeId[?options]
 ----
 
-== Options
-
-
 
 // component options: START
+== Component Options
+
+
 The Kamelet component supports 9 options, which are listed below.
 
 
@@ -47,11 +47,9 @@ The Kamelet component supports 9 options, which are listed below.
 | *routeTemplateLoaderListener* (advanced) | *Autowired* To plugin a custom listener for when the Kamelet component is loading Kamelets from external resources. |  | RouteTemplateLoaderListener
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Kamelet endpoint is configured using URI syntax:
 
 ----
@@ -150,4 +148,4 @@ from("direct:template")
 ----
 
 
-//include::{page-component-version}@camel-spring-boot::page$kamelet-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$kamelet-starter.adoc[]

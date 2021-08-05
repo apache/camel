@@ -36,7 +36,17 @@ Messages sent to the endpoint from Camel will be available from the OPC UA serve
 Value write requests from OPC UA Client will trigger messages which are sent into Apache Camel.
 
 
+== URI format
+
+------------------------
+milo-server:itemId[?options]
+------------------------
+
+
 // component options: START
+== Component Options
+
+
 The OPC UA Server component supports 20 options, which are listed below.
 
 
@@ -66,27 +76,9 @@ The OPC UA Server component supports 20 options, which are listed below.
 | *usernameSecurityPolicyUri* (security) | Set the UserTokenPolicy used when. There are 6 enums and the value can be one of: None, Basic128Rsa15, Basic256, Basic256Sha256, Aes128_Sha256_RsaOaep, Aes256_Sha256_RsaPss |  | SecurityPolicy
 |===
 // component options: END
-
-
-
-
-
-
-
-
-
-== URI format
-
-[source,java]
-------------------------
-milo-server:itemId[?options]
-------------------------
-
-== URI options
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The OPC UA Server endpoint is configured using URI syntax:
 
 ----

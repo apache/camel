@@ -27,7 +27,6 @@ logging via, among others:
 
 == URI format
 
-[source]
 ----
 log:loggingCategory[?options]
 ----
@@ -52,7 +51,6 @@ using *loggingCategory*.
 For example, a log endpoint typically specifies the logging level using
 the `level` option, as follows:
 
-[source]
 ----
 log:org.apache.camel.example?level=DEBUG
 ----
@@ -70,11 +68,11 @@ purpose. Its meant for lightweight and human logs. See more details at
 LogEIP.
 ====
 
-== Options
-
-
 
 // component options: START
+== Component Options
+
+
 The Log component supports 3 options, which are listed below.
 
 
@@ -87,11 +85,9 @@ The Log component supports 3 options, which are listed below.
 | *exchangeFormatter* (advanced) | *Autowired* Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter. |  | ExchangeFormatter
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Log endpoint is configured using URI syntax:
 
 ----
@@ -204,13 +200,11 @@ from("activemq:orders").
 
 The following will be logged:
 
-[source]
 ----
 "Received: 1000 new messages, with total 2000 so far. Last group took: 10000 millis which is: 100 messages per second. average: 100"
 ----
 
 == Masking sensitive information like password
-*Since Camel 2.19*
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
 Note that this option also affects Log EIP.
@@ -236,6 +230,7 @@ from("direct:start").to("log:foo?logMask=true");
 ----
 
 And in XML:
+
 [source,xml]
 ----
 <route>
@@ -250,13 +245,10 @@ Note that the masking formatter must implement `org.apache.camel.spi.MaskingForm
 
 == Full customization of the logging output
 
-*Since Camel 2.11*
-
 With the options outlined in the xref:log-component.adoc[#Formatting] section, you
 can control much of the output of the logger. However, log lines will
 always follow this structure:
 
-[source]
 ----
 Exchange[Id:ID-machine-local-50656-1234567901234-1-2, ExchangePattern:InOut, 
 Properties:{CamelToEndpoint=log://org.apache.camel.component.log.TEST?showAll=true, 
@@ -287,7 +279,7 @@ in either of two ways:
 
 *Explicitly instantiating the LogComponent in your Registry:*
 
-[source,java]
+[source,xml]
 ----
 <bean name="log" class="org.apache.camel.component.log.LogComponent">
    <property name="exchangeFormatter" ref="myCustomFormatter" />
@@ -333,22 +325,6 @@ options:
 
 <to uri="log:bar?param1=bar&amp;param2=200"/>
 ---------------------------------------------
-
-== Using Log component in OSGi
-
-*Improvement as of Camel 2.12.4/2.13.1*
-
-When using Log component inside OSGi (e.g., in Karaf), the underlying
-logging mechanisms are provided by PAX logging. It searches for a bundle
-which invokes `org.slf4j.LoggerFactory.getLogger()` method and
-associates the bundle with the logger instance. Without specifying
-custom `org.slf4j.Logger` instance, the logger created by Log component
-is associated with `camel-core` bundle.
-
-In some scenarios it is required that the bundle associated with logger
-should be the bundle which contains route definition. To do this, either
-register single instance of `org.slf4j.Logger` in the Registry or
-reference it using `logger` URI parameter.
 
 
 include::{page-component-version}@camel-spring-boot::page$log-starter.adoc[]

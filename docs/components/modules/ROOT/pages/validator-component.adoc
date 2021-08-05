@@ -32,7 +32,6 @@ http://relaxng.org/[RelaxNG XML Syntax].
 
 == URI format
 
-[source]
 ----
 validator:someLocalOrRemoteResource
 ----
@@ -48,9 +47,12 @@ system which contains the XSD to validate against. For example:
 
 The Validation component is provided directly in the camel-core.
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The Validator component supports 3 options, which are listed below.
 
 
@@ -63,9 +65,9 @@ The Validator component supports 3 options, which are listed below.
 | *resourceResolverFactory* (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResourceResolverFactory
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Validator endpoint is configured using URI syntax:
 
 ----

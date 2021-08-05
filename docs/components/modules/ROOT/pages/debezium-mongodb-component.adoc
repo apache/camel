@@ -42,15 +42,15 @@ for this component.
 
 == URI format
 
-[source,text]
 ---------------------------
 debezium-mongodb:name[?options]
 ---------------------------
 
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The Debezium MongoDB Connector component supports 58 options, which are listed below.
 
 
@@ -118,9 +118,9 @@ The Debezium MongoDB Connector component supports 58 options, which are listed b
 | *tombstonesOnDelete* (mongodb) | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Debezium MongoDB Connector endpoint is configured using URI syntax:
 
 ----
@@ -235,6 +235,7 @@ The message body if is not `null` (in case of tombstones), it contains the state
 === Consuming events
 
 Here is a very simple route that you can use in order to listen to Debezium events from MongoDB connector.
+
 [source,java]
 ----
 from("debezium-mongodb:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&mongodbHosts=rs0/localhost:27017&mongodbUser=debezium&mongodbPassword=dbz&mongodbName=dbserver1&databaseHistoryFileName=/usr/history-file-1.dat")

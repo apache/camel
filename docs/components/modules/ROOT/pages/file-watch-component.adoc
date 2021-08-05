@@ -12,8 +12,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/file-watch
 
 *Since Camel {since}*
 
-*Since Camel 3.0*
-
 
 *{component-header}*
 
@@ -22,6 +20,9 @@ This component can be used to watch file modification events in folder. It is ba
 == URI Options
 
 // component options: START
+== Component Options
+
+
 The File Watch component supports 7 options, which are listed below.
 
 
@@ -38,9 +39,9 @@ The File Watch component supports 7 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The File Watch endpoint is configured using URI syntax:
 
 ----
@@ -84,6 +85,7 @@ with the following path and query parameters:
 == Examples:
 
 === Recursive watch all events (file creation, file deletion, file modification):
+
 [source,java]
 ----
 from("file-watch://some-directory")
@@ -91,6 +93,7 @@ from("file-watch://some-directory")
 ----
 
 === Recursive watch for creation and deletion of txt files:
+
 [source,java]
 ----
 from("file-watch://some-directory?events=DELETE,CREATE&antInclude=**/*.txt")
@@ -98,6 +101,7 @@ from("file-watch://some-directory?events=DELETE,CREATE&antInclude=**/*.txt")
 ----
 
 === Create snapshot of file when modified:
+
 [source,java]
 ----
 from("file-watch://some-directory?events=MODIFY&recursive=false")

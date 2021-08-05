@@ -31,17 +31,16 @@ their `pom.xml` for this component.
 
 == URI format
 
-[source,java]
 ----------------------
 nsq:topic[?options]
 ----------------------
 
 Where *topic* is the topic name
 
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The NSQ component supports 5 options, which are listed below.
 
 
@@ -56,12 +55,9 @@ The NSQ component supports 5 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The NSQ endpoint is configured using URI syntax:
 
 ----
@@ -105,6 +101,7 @@ with the following path and query parameters:
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
+
 
 == Examples
 

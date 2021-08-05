@@ -21,9 +21,10 @@ Configuration]. For example you could use XQuery to create an
 Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a Recipient List.
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The XQuery component supports 6 options, which are listed below.
 
 
@@ -39,11 +40,9 @@ The XQuery component supports 6 options, which are listed below.
 | *moduleURIResolver* (advanced) | To use the custom ModuleURIResolver |  | ModuleURIResolver
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The XQuery endpoint is configured using URI syntax:
 
 ----
@@ -102,6 +101,7 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
+
 
 == Examples
 

@@ -41,11 +41,11 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-== Atmosphere-Websocket Options
-
-
 
 // component options: START
+== Component Options
+
+
 The Atmosphere Websocket component supports 11 options, which are listed below.
 
 
@@ -66,11 +66,9 @@ The Atmosphere Websocket component supports 11 options, which are listed below.
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Atmosphere Websocket endpoint is configured using URI syntax:
 
 ----
@@ -124,14 +122,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
-
-== URI Format
-
-[source,java]
------------------------------------------------
-atmosphere-websocket:///relative path[?options]
------------------------------------------------
 
 == Reading and Writing Data over Websocket
 

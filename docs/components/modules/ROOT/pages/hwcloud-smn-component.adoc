@@ -35,15 +35,15 @@ for this component:
 
 To send a notification.
 
-[source,java]
 ------------------------
 hwcloud-smn:service[?options]
 ------------------------
 
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The Huawei Simple Message Notification (SMN) component supports 2 options, which are listed below.
 
 
@@ -55,8 +55,9 @@ The Huawei Simple Message Notification (SMN) component supports 2 options, which
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Huawei Simple Message Notification (SMN) endpoint is configured using URI syntax:
 
 ----
@@ -97,6 +98,7 @@ with the following path and query parameters:
 | *serviceKeys* (producer) | Configuration object for cloud service authentication |  | ServiceKeys
 |===
 // endpoint options: END
+
 
 == Usage
 
@@ -155,8 +157,6 @@ from("direct:triggerRoute")
 .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&authKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 --------------------------------------------------------------------------------
 
-
-
 XML DSL
 [source,xml]
 --------------------------------------------------------------------------------
@@ -191,6 +191,7 @@ from("direct:triggerRoute")
 --------------------------------------------------------------------------------
 
 == Using ServiceKey configuration Bean
+
 Authentication key and secret keys are required to authenticate against cloud smn service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class ```org.apache.camel.component.huaweicloud.smn.models.ServiceKeys```.
 Add it to the registry and let camel look it up by referring the object via endpoint query parameter ```serviceKeys```.

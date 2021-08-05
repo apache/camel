@@ -19,7 +19,6 @@ The Bean component binds beans to Camel message exchanges.
 
 == URI format
 
-[source]
 ----
 bean:beanName[?options]
 ----
@@ -27,10 +26,10 @@ bean:beanName[?options]
 Where *beanID* can be any string which is used to look up the bean in
 the Registry
 
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The Bean component supports 4 options, which are listed below.
 
 
@@ -44,10 +43,9 @@ The Bean component supports 4 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Bean endpoint is configured using URI syntax:
 
 ----
@@ -81,10 +79,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
 == Using
 
 The object instance that is used to consume messages must be explicitly
@@ -106,12 +100,12 @@ https://www.javadoc.io/doc/org.apache.camel/camel-bean/current/org/apache/camel/
 to create a proxy that will generate exchanges and send them to any
 endpoint:
 
-And the same route using Spring DSL:
+And the same route using XML DSL:
 
 [source,xml]
 ----------------------------
 <route>
-   <from uri="direct:hello">
+   <from uri="direct:hello"/>
    <to uri="bean:bye"/>
 </route>
 ----------------------------

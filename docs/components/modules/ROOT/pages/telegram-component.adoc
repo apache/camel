@@ -47,17 +47,16 @@ for this component:
 
 == URI format
 
-[source,text]
 ----------------------------------------------------
 telegram:type[?options]
 ----------------------------------------------------
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
-== Options
 
 // component options: START
+== Component Options
+
+
 The Telegram component supports 7 options, which are listed below.
 
 
@@ -74,10 +73,9 @@ The Telegram component supports 7 options, which are listed below.
 | *authorizationToken* (security) | The default Telegram authorization token to be used when the information is not provided in the endpoints. |  | String
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Telegram endpoint is configured using URI syntax:
 
 ----
@@ -134,9 +132,6 @@ with the following path and query parameters:
 | *authorizationToken* (security) | *Required* The authorization token for using the bot (ask the BotFather) |  | String
 |===
 // endpoint options: END
-
-
-
 
 
 == Message Headers

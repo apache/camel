@@ -25,14 +25,9 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon EKS. More information is available at
 https://aws.amazon.com/eks/[Amazon EKS].
 
-[NOTE]
-====
-The AWS2 EKS component is not supported in OSGI
-====
 
 == URI Format
 
-[source,java]
 -------------------------
 aws2-eks://label[?options]
 -------------------------
@@ -40,10 +35,11 @@ aws2-eks://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== URI Options
-
 
 // component options: START
+== Component Options
+
+
 The AWS Elastic Kubernetes Service (EKS) component supports 16 options, which are listed below.
 
 
@@ -69,11 +65,9 @@ The AWS Elastic Kubernetes Service (EKS) component supports 16 options, which ar
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS Elastic Kubernetes Service (EKS) endpoint is configured using URI syntax:
 
 ----
@@ -114,9 +108,6 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
-
-
-
 
 
 Required EKS component options
@@ -183,6 +174,7 @@ from("direct:listClusters")
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
 In AWS EKS there are multiple operations you can submit, as an example for List cluster request, you can do something like:
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setBody(ListClustersRequest.builder().maxResults(12).build())

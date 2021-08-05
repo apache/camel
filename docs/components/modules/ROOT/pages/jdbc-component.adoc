@@ -41,19 +41,15 @@ means that you cannot use the JDBC component in a `from()` statement.
 
 == URI format
 
-[source,text]
 ----
 jdbc:dataSourceName[?options]
 ----
 
-This component only supports producer endpoints.
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
 
 // component options: START
+== Component Options
+
+
 The JDBC component supports 4 options, which are listed below.
 
 
@@ -67,13 +63,9 @@ The JDBC component supports 4 options, which are listed below.
 | *connectionStrategy* (advanced) | To use a custom strategy for working with connections. Do not use a custom strategy when using the spring-jdbc component because a special Spring ConnectionStrategy is used by default to support Spring Transactions. |  | ConnectionStrategy
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JDBC endpoint is configured using URI syntax:
 
 ----
@@ -153,8 +145,6 @@ type.
 
 == Generated keys
 
-*Since Camel 2.10*
-
 If you insert data using SQL INSERT, then the RDBMS may support auto
 generated keys. You can instruct the xref:jdbc-component.adoc[JDBC] producer to
 return the generated keys in headers. +
@@ -165,8 +155,6 @@ table above.
 Using generated keys does not work with together with named parameters.
 
 == Using named parameters
-
-*Since Camel 2.12*
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :?lic and
@@ -270,7 +258,8 @@ With spring xml:
         <simple>insert into test '${body[value]}'</simple>
       </setBody>
       <to uri="jdbc:DataStore"/>
-    </route>                                         
+    </route>
+</camelContext>
 ----
 
 We create an endpoint, add the SQL query to the body of the IN message,

@@ -32,7 +32,6 @@ for this component:
 
 == URI format
 
-[source,java]
 ------------------------------
 nagios://host[:port][?Options]
 ------------------------------
@@ -43,13 +42,11 @@ its endpoint. +
  Camel also provides a EventNotifer which allows
 you to send notifications to Nagios.
 
-== Options
-
-
-
-
 
 // component options: START
+== Component Options
+
+
 The Nagios component supports 7 options, which are listed below.
 
 
@@ -66,14 +63,9 @@ The Nagios component supports 7 options, which are listed below.
 | *password* (security) | Password to be authenticated when sending checks to Nagios. |  | String
 |===
 // component options: END
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Nagios endpoint is configured using URI syntax:
 
 ----
@@ -107,8 +99,6 @@ with the following path and query parameters:
 | *password* (security) | Password to be authenticated when sending checks to Nagios. |  | String
 |===
 // endpoint options: END
-
-
 
 
 == Sending message examples

@@ -31,13 +31,79 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+// component options: START
+== Component Options
+
+
+The Avro RPC component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *protocol* (common) | Avro protocol to use |  | Protocol
+| *protocolClassName* (common) | Avro protocol to use defined by the FQN class name |  | String
+| *protocolLocation* (common) | Avro protocol location |  | String
+| *reflectionProtocol* (common) | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected | false | boolean
+| *singleParameter* (common) | If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | boolean
+| *uriAuthority* (common) | Authority to use (username and password) |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *configuration* (advanced) | To use a shared AvroConfiguration to configure options once |  | AvroConfiguration
+|===
+// component options: END
+// endpoint options: START
+== Endpoint Options
+
+The Avro RPC endpoint is configured using URI syntax:
+
+----
+avro:transport:host:port/messageName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *transport* | *Required* Transport to use, can be either http or netty. There are 2 enums and the value can be one of: http, netty |  | AvroTransport
+| *port* | *Required* Port number to use |  | int
+| *host* | *Required* Hostname to use |  | String
+| *messageName* | The name of the message to send. |  | String
+|===
+
+
+=== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *protocol* (common) | Avro protocol to use |  | Protocol
+| *protocolClassName* (common) | Avro protocol to use defined by the FQN class name |  | String
+| *protocolLocation* (common) | Avro protocol location |  | String
+| *reflectionProtocol* (common) | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected | false | boolean
+| *singleParameter* (common) | If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | boolean
+| *uriAuthority* (common) | Authority to use (username and password) |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+|===
+// endpoint options: END
+
 == Apache Avro Overview
 
 Avro allows you to define message types and a protocol using a json like
 format and then generate java code for the specified types and messages.
 An example of how a schema looks like is below.
 
-[source,xml]
+[source,json]
 ------------------------------------------------------------------------------------------
 {"namespace": "org.apache.camel.avro.generated",
  "protocol": "KeyValueProtocol",
@@ -104,7 +170,6 @@ As mentioned above Avro also provides RPC support over multiple
 transports such as http and netty. Camel provides consumers and
 producers for these two transports.
 
-[source,java]
 ----------------------------------------
 avro:[transport]:[host]:[port][?options]
 ----------------------------------------
@@ -113,7 +178,6 @@ The supported transport values are currently http or netty.
 
 *Since 2.12* you can specify message name right in the URI:
 
-[source,java]
 ------------------------------------------------------
 avro:[transport]:[host]:[port][/messageName][?options]
 ------------------------------------------------------
@@ -137,69 +201,6 @@ got only one parameter, *since 2.12* you can use `singleParameter` URI
 option to receive it direcly in the "in" message body without array
 wrapping.
 
-== Avro RPC URI Options
-
-// component options: START
-The Avro RPC component supports 10 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *protocol* (common) | Avro protocol to use |  | Protocol
-| *protocolClassName* (common) | Avro protocol to use defined by the FQN class name |  | String
-| *protocolLocation* (common) | Avro protocol location |  | String
-| *reflectionProtocol* (common) | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected | false | boolean
-| *singleParameter* (common) | If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | boolean
-| *uriAuthority* (common) | Authority to use (username and password) |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *configuration* (advanced) | To use a shared AvroConfiguration to configure options once |  | AvroConfiguration
-|===
-// component options: END
-
-// endpoint options: START
-The Avro RPC endpoint is configured using URI syntax:
-
-----
-avro:transport:host:port/messageName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (4 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *transport* | *Required* Transport to use, can be either http or netty. There are 2 enums and the value can be one of: http, netty |  | AvroTransport
-| *port* | *Required* Port number to use |  | int
-| *host* | *Required* Hostname to use |  | String
-| *messageName* | The name of the message to send. |  | String
-|===
-
-
-=== Query Parameters (10 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *protocol* (common) | Avro protocol to use |  | Protocol
-| *protocolClassName* (common) | Avro protocol to use defined by the FQN class name |  | String
-| *protocolLocation* (common) | Avro protocol location |  | String
-| *reflectionProtocol* (common) | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected | false | boolean
-| *singleParameter* (common) | If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | boolean
-| *uriAuthority* (common) | Authority to use (username and password) |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-|===
-// endpoint options: END
 
 == Avro RPC Headers
 
@@ -275,9 +276,6 @@ is used and `getProcessor` will receive Value class directly in body,
 while `putProcessor` will receive an array of size 2 with String key and
 Value value filled as array contents.
 
-== Karaf support
-
-This component is not supported in Karaf.
 
 == Avro via HTTP SPI
 

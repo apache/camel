@@ -25,14 +25,8 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon DynamoDB Streams. More information are available
 at https://aws.amazon.com/dynamodb/[AWS DynamoDB]
 
-[NOTE]
-====
-The AWS2 DynamoDB Streams component is not supported in OSGI
-====
-
 == URI Format
 
-[source,java]
 ------------------------------------
 aws2-ddbstream://table-name[?options]
 ------------------------------------
@@ -41,10 +35,11 @@ The stream needs to be created prior to it being used. +
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== URI Options
-
 
 // component options: START
+== Component Options
+
+
 The AWS DynamoDB Streams component supports 17 options, which are listed below.
 
 
@@ -71,13 +66,9 @@ The AWS DynamoDB Streams component supports 17 options, which are listed below.
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS DynamoDB Streams endpoint is configured using URI syntax:
 
 ----
@@ -137,8 +128,6 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-// spring-boot-auto-configure options: END
 
 
 Required DynamoDBStream component options
@@ -197,7 +186,7 @@ missed change events no matter what mitigations are in place.
 
 === Message Body
 
-The Message body is istance of "software.amazon.awssdk.services.dynamodb.model.Record", for more information about it, have a look at the https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/dynamodb/model/Record.html[related javadoc]
+The Message body is instance of "software.amazon.awssdk.services.dynamodb.model.Record", for more information about it, have a look at the https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/dynamodb/model/Record.html[related javadoc]
 
 == Dependencies
 

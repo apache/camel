@@ -23,9 +23,10 @@ The cache value is always the body of the message, whereas the cache key is alwa
 
 Even if you configure a fixed operation in the endpoint URI, you can vary it per-exchange by setting the `IgniteConstants.IGNITE_CACHE_OPERATION` message header.
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The Ignite Cache component supports 6 options, which are listed below.
 
 
@@ -41,8 +42,9 @@ The Ignite Cache component supports 6 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Ignite Cache endpoint is configured using URI syntax:
 
 ----
@@ -88,7 +90,7 @@ with the following path and query parameters:
 
 
 
-=== Headers used
+== Headers used
 
 This endpoint uses the following headers:
 [width="100%",cols="1,1,1,4",options="header"]

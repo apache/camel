@@ -30,7 +30,6 @@ VM is an extension to the xref:seda-component.adoc[Seda] component.
 
 == URI format
 
-[source]
 ----
 vm:queueName[?options]
 ----
@@ -38,9 +37,6 @@ vm:queueName[?options]
 Where *`queueName`* can be any string to uniquely identify the endpoint
 within the JVM (or at least within the classloader that loaded
 camel-core.jar)
-
-You can append query options to the URI in the following format:
-`?option=value&option=value&...`
 
 It is sufficient to list all the options for a consumer endpoint only.
 
@@ -51,9 +47,12 @@ from("direct:foo").to("vm:bar");
 from("vm:bar?concurrentConsumers=5").to("file://output");
 ----
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The VM component supports 9 options, which are listed below.
 
 
@@ -72,9 +71,9 @@ The VM component supports 9 options, which are listed below.
 | *queueSize* (advanced) | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | int
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The VM endpoint is configured using URI syntax:
 
 ----
@@ -119,6 +118,7 @@ with the following path and query parameters:
 | *queue* (advanced) | Define the queue instance which will be used by the endpoint |  | BlockingQueue
 |===
 // endpoint options: END
+
 
 
 See the xref:seda-component.adoc[Seda] component for options and other important

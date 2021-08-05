@@ -40,7 +40,6 @@ for this component:
 
 == URI format
 
-[source,text]
 ----
 undertow:http://hostname[:port][/resourceUri][?options]
 undertow:https://hostname[:port][/resourceUri][?options]
@@ -48,12 +47,12 @@ undertow:ws://hostname[:port][/resourceUri][?options]
 undertow:wss://hostname[:port][/resourceUri][?options]
 ----
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
-== Options
 
 // component options: START
+== Component Options
+
+
 The Undertow component supports 11 options, which are listed below.
 
 
@@ -74,9 +73,9 @@ The Undertow component supports 11 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Undertow endpoint is configured using URI syntax:
 
 ----
@@ -134,8 +133,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == Message Headers
 
 Camel uses the same message headers as the xref:http-component.adoc[HTTP]
@@ -167,7 +164,7 @@ or in XML
 <route>
     <from uri="direct:start"/>
     <to uri="undertow:http://www.google.com"/>
-<route>
+</route>
 ----
 
 == HTTP Consumer Example

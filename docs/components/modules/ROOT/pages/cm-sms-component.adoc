@@ -21,28 +21,11 @@ It allows to integrate https://dashboard.onlinesmsgateway.com/docs[CM SMS API] i
 
 You must have a valid account.  More information is available at https://www.cmtelecom.com/support[CM Telecom].
 
-[source,text]
-----
-cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=DefaultSender&defaultMaxNumberOfParts=8&productToken=xxxxx
-----
-
-Maven users will need to add the following dependency to their pom.xml
-for this component:
-
-[source,xml]
-----
-<dependency>
- <groupId>org.apache.camel</groupId>
- <artifactId>camel-cm-sms</artifactId>
- <version>x.x.x</version>
- <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The CM SMS Gateway component supports 2 options, which are listed below.
 
 
@@ -54,10 +37,9 @@ The CM SMS Gateway component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The CM SMS Gateway endpoint is configured using URI syntax:
 
 ----
@@ -91,9 +73,12 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Sample
 
-You can try https://github.com/oalles/camel-cm-sample[this project] to see how camel-cm-sms can be integrated in a camel route. 
+----
+cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=DefaultSender&defaultMaxNumberOfParts=8&productToken=xxxxx
+----
+
+You can try https://github.com/oalles/camel-cm-sample[this project] to see how camel-cm-sms can be integrated in a camel route.
 
 include::{page-component-version}@camel-spring-boot::page$cm-sms-starter.adoc[]

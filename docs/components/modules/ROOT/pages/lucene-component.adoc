@@ -30,8 +30,6 @@ lucene component does the following
 Lucene Endpoint
 * facilitates performing of indexed searches in Camel
 
-This component only supports producer endpoints.
-
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -47,22 +45,15 @@ for this component:
 
 == URI format
 
-[source,java]
 ------------------------------------
 lucene:searcherName:insert[?options]
 lucene:searcherName:query[?options]
 ------------------------------------
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Insert Options
-
-
-
-
-
 // component options: START
+== Component Options
+
+
 The Lucene component supports 7 options, which are listed below.
 
 
@@ -79,14 +70,9 @@ The Lucene component supports 7 options, which are listed below.
 | *config* (advanced) | To use a shared lucene configuration |  | LuceneConfiguration
 |===
 // component options: END
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Lucene endpoint is configured using URI syntax:
 
 ----
@@ -119,8 +105,6 @@ with the following path and query parameters:
 | *srcDir* (producer) | An optional directory containing files to be used to be analyzed and added to the index at producer startup. |  | File
 |===
 // endpoint options: END
-
-
 
 
 == Sending/Receiving Messages to/from the cache

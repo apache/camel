@@ -18,9 +18,12 @@ Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpres
 
 Currently only the **Posts** and **Users** operations are supported.
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The Wordpress component supports 12 options, which are listed below.
 
 
@@ -42,8 +45,9 @@ The Wordpress component supports 12 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Wordpress endpoint is configured using URI syntax:
 
 ----
@@ -85,14 +89,13 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 Most of parameters needed when performing a read operation mirrors from the official https://developer.wordpress.org/rest-api/reference/[API]. When performing searches operations, the `criteria.` suffix is needed. Take the following `Consumer` as example:
 
 ----
 wordpress:post?criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json
 ----
 
-=== Configuring Wordpress component
+== Configuring Wordpress component
 
 The `WordpressConfiguration` class can be used to set initial properties configuration to the component instead of passing it as query parameter. The following listing shows how to set the component to be used in your routes.
 
@@ -111,14 +114,14 @@ public void configure() {
 }
 ----
 
-=== Consumer Example
+== Consumer Example
 
 Consumer polls from the API from time to time domain objects from Wordpress. Following, an example using the `Post` operation:
 
 - `wordpress:post` retrieves posts (defaults to 10 posts)    
 - `wordpress:post?id=1` search for a specific post
 
-=== Producer Example
+== Producer Example
 
 Producer performs write operations on Wordpress like adding a new user or update a post. To be able to write, you must have an authorized user credentials (see Authentication). 
 

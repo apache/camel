@@ -19,10 +19,13 @@ compliant content repository (for example,
 http://jackrabbit.apache.org/[Apache Jackrabbit]) with its producer, or
 register an EventListener with the consumer.
 
+You can use consumer as an EventListener in
+JCR or a producer to read a node by identifier.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
@@ -34,25 +37,18 @@ for this component:
 
 == URI format
 
-[source,java]
 -------------------------------------------
 jcr://user:password@repository/path/to/node
 -------------------------------------------
 
-*Consumer added*
-
-You can use consumer as an EventListener in
-JCR or a producer to read a node by identifier.
-
-== Usage
-
 The `repository` element of the URI is used to look up the JCR
 `Repository` object in the Camel context registry.
 
-=== JCR Options
-
 
 // component options: START
+== Component Options
+
+
 The JCR component supports 3 options, which are listed below.
 
 
@@ -65,11 +61,9 @@ The JCR component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JCR endpoint is configured using URI syntax:
 
 ----
@@ -125,8 +119,6 @@ from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
     .setHeader("my.contents.property", body())
     .to("jcr://user:pass@repository/home/test");
 ------------------------------------------------------------------------
-
- 
 
 The following code will register an EventListener under the path
 import-application/inbox for Event.NODE_ADDED and Event.NODE_REMOVED

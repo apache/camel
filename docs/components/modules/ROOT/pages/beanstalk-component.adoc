@@ -38,7 +38,6 @@ where `${camel-version`} must be replaced by the actual version of Camel.
 
 == URI format
 
-[source,xml]
 ------------------------------------------
 beanstalk://[host[:port]][/tube][?options]
 ------------------------------------------
@@ -50,7 +49,6 @@ Beanstalk component will use the tube with name “default”.
 When listening, you may probably want to watch for jobs from several
 tubes. Just separate them with plus sign, e.g.
 
-[source,java]
 ---------------------------------------
 beanstalk://localhost:11300/tube1+tube2
 ---------------------------------------
@@ -63,11 +61,10 @@ details here].
 By the way, you cannot specify several tubes when you are writing jobs
 into Beanstalk.
 
-== Beanstalk options
-
-
-
 // component options: START
+== Component Options
+
+
 The Beanstalk component supports 4 options, which are listed below.
 
 
@@ -81,11 +78,9 @@ The Beanstalk component supports 4 options, which are listed below.
 | *connectionSettingsFactory* (advanced) | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings) |  | ConnectionSettingsFactory
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Beanstalk endpoint is configured using URI syntax:
 
 ----
@@ -238,7 +233,6 @@ manually.
 So the second route periodically requests Beanstalk to _kick_ 10 jobs
 out of buried and/or delayed state to the normal queue.
 
- 
 
 
 include::{page-component-version}@camel-spring-boot::page$beanstalk-starter.adoc[]

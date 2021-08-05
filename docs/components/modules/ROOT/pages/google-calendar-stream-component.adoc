@@ -52,10 +52,11 @@ The Google Calendar Component uses the following URI format:
 google-calendar-stream://index?[options]
 ----
 
-== Component options
-
 
 // component options: START
+== Component Options
+
+
 The Google Calendar Stream component supports 19 options, which are listed below.
 
 
@@ -84,11 +85,9 @@ The Google Calendar Stream component supports 19 options, which are listed below
 | *user* (security) | The email address of the user the application is trying to impersonate in the service account flow. |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Google Calendar Stream endpoint is configured using URI syntax:
 
 ----
@@ -652,5 +651,6 @@ The message header name must be of the format `CamelGoogleCalendarStream.paramet
 The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
 would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 // endpoint options: END
+
 
 include::{page-component-version}@camel-spring-boot::page$google-calendar-starter.adoc[]

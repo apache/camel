@@ -40,7 +40,6 @@ For example, by sending a message to an Endpoint
 you can control the lifecycle of routes, or gather performance
 statistics.
 
-[source]
 ----
 controlbus:command[?options]
 ----
@@ -61,10 +60,11 @@ evaluating the message body. If there is any result from the evaluation,
 then the result is put in the message body.
 |===
 
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The Control Bus component supports 2 options, which are listed below.
 
 
@@ -76,10 +76,9 @@ The Control Bus component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Control Bus endpoint is configured using URI syntax:
 
 ----
@@ -115,11 +114,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-
-
 == Using route command
 
 The route command allows you to do common tasks on a given route very
@@ -140,8 +134,6 @@ String status = template.requestBody("controlbus:route?routeId=foo&action=status
 
 [[ControlBus-Gettingperformancestatistics]]
 == Getting performance statistics
-
-*Since Camel 2.11.1*
 
 This requires JMX to be enabled (is by default) then you can get the
 performance statics per route, or for the

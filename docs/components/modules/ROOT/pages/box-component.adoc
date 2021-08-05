@@ -56,9 +56,10 @@ The Box component supports three different types of authenticated connections.
 
 *App User Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as an *App User* for a *Box Application*. This type of authentication enables app users to access, edit, and save their Box content in its *Box Application* through the Box component.
 
-== Box Options
-
 // component options: START
+== Component Options
+
+
 The Box component supports 19 options, which are listed below.
 
 
@@ -87,8 +88,9 @@ The Box component supports 19 options, which are listed below.
 | *userPassword* (security) | Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call |  | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Box endpoint is configured using URI syntax:
 
 ----

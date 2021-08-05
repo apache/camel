@@ -64,7 +64,6 @@ http://en.wikipedia.org/wiki/Digital_signature[Digital_signatures]
 As mentioned Camel provides a pair of crypto endpoints to create and
 verify signatures
 
-[source,java]
 ----------------------------
 crypto:sign:name[?options]
 crypto:verify:name[?options]
@@ -89,9 +88,11 @@ complimentary `crypto:verify` in another, though for simplicity in the
 examples they appear one after the other. It goes without saying that
 both signing and verifying should be configured identically.
 
-== Options
 
 // component options: START
+== Component Options
+
+
 The Crypto (JCE) component supports 21 options, which are listed below.
 
 
@@ -122,8 +123,9 @@ The Crypto (JCE) component supports 21 options, which are listed below.
 | *password* (security) | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Crypto (JCE) endpoint is configured using URI syntax:
 
 ----
@@ -170,8 +172,6 @@ with the following path and query parameters:
 | *password* (security) | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | String
 |===
 // endpoint options: END
-
-
 
 
 == Using

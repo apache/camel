@@ -85,7 +85,6 @@ problems you should set the maximumResults to sensible value.
 
 == URI format
 
-[source,java]
 -----------------------------
 jpa:entityClassName[?options]
 -----------------------------
@@ -96,15 +95,11 @@ ensure the body is of the correct type.
 
 For consuming, the _entityClassName_ is mandatory.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The JPA component supports 7 options, which are listed below.
 
 
@@ -121,15 +116,9 @@ The JPA component supports 7 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JPA endpoint is configured using URI syntax:
 
 ----
@@ -200,10 +189,6 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
-
-
-
-
 
 
 == Message Headers
@@ -412,7 +397,6 @@ https://svn.apache.org/repos/asf/camel/trunk/components/camel-jpa/src/test[tests
 of this component] directly inside your IDE, and not through
 Maven, then you could see exceptions like these:
 
-[source,java]
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction; nested exception is
 <openjpa-2.2.1-r422266:1396819 nonfatal user error> org.apache.openjpa.persistence.ArgumentException: This configuration disallows runtime optimization,
@@ -436,7 +420,6 @@ OpenJPA version being used in Camel is 2.2.1, to run the
 tests inside your IDE you would need to pass the following
 argument to the JVM:
 
-[source,java]
 -------------------------------------------------------------------------------------------
 -javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
 -------------------------------------------------------------------------------------------

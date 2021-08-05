@@ -21,16 +21,6 @@ https://github.com/LMAX-Exchange/disruptor[Disruptor] instead of a
 http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
 utilized by the standard xref:seda-component.adoc[SEDA]. Alternatively, a
 
-*disruptor-vm:* endpoint is supported by this component, providing an
-alternative to the standard xref:vm-component.adoc[VM]. As with the SEDA
-component, buffers of the *disruptor:* endpoints are only visible within
-a *single* CamelContext and no support is
-provided for persistence or recovery. The buffers of the
-**disruptor-vm:** endpoints also provides support for communication
-across CamelContexts instances so you can use this mechanism to
-communicate across web applications (provided that *camel-disruptor.jar*
-is on the *system/boot* classpath).
-
 The main advantage of choosing to use the Disruptor Component over the
 SEDA or the VM Component is performance in use cases where there is high
 contention between producer(s) and/or multicasted or concurrent
@@ -63,7 +53,7 @@ thread interrupts.
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
@@ -75,37 +65,19 @@ for this component:
 
 == URI format
 
-[source,java]
 -----------------------------
  disruptor:someName[?options]
 -----------------------------
 
-or
-
-[source,java]
---------------------------------
- disruptor-vm:someName[?options]
---------------------------------
-
 Where **someName** can be any string that uniquely identifies the
-endpoint within the current CamelContext (or
-across contexts in case of +
- **disruptor-vm:**). +
- You can append query options to the URI in the following format:
-
-[source,java]
-------------------------------
-  ?option=value&option=value&…
-------------------------------
+endpoint within the current CamelContext.
 
 == Options
 
-All the following options are valid for both the **disruptor:** and
-**disruptor-vm:** components.
-
-
-
 // component options: START
+== Component Options
+
+
 The Disruptor component supports 9 options, which are listed below.
 
 
@@ -124,11 +96,9 @@ The Disruptor component supports 9 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Disruptor endpoint is configured using URI syntax:
 
 ----
@@ -288,7 +258,7 @@ unit test.
 In this example we have defined two consumers and registered them as
 spring beans.
 
-[source,java]
+[source,xml]
 -------------------------------------------------------------------------------------------
 <!-- define the consumers as spring beans -->
 <bean id="consumer1" class="org.apache.camel.spring.example.FooEventConsumer"/>

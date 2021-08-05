@@ -35,16 +35,15 @@ for this component:
 
 == URI format
 
-[source,java]
 --------------------------------------------
 geocoder:address:name[?options]
 geocoder:latlng:latitude,longitude[?options]
 --------------------------------------------
 
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The Geocoder component supports 3 options, which are listed below.
 
 
@@ -57,11 +56,9 @@ The Geocoder component supports 3 options, which are listed below.
 | *geoApiContext* (advanced) | Configuration for Google maps API |  | GeoApiContext
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Geocoder endpoint is configured using URI syntax:
 
 ----
@@ -104,8 +101,6 @@ with the following path and query parameters:
 | *clientKey* (security) | Client Key to access Google GeoCoding server. |  | String
 |===
 // endpoint options: END
-
-
 
 
 == Exchange data format
@@ -164,7 +159,7 @@ In the example below we get the latitude and longitude for Paris, France
 
 [source,java]
 -----------------------------------------
-  from("direct:start")
+from("direct:start")
     .to("geocoder:address:Paris, France?type=NOMINATIM&serverUrl=https://nominatim.openstreetmap.org")
 -----------------------------------------
 
@@ -181,14 +176,13 @@ To get the address for a latitude and longitude we can do:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------------
-  from("direct:start")
+from("direct:start")
     .to("geocoder:latlng:40.714224,-73.961452")
     .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} and in country ${header.CamelGeoCoderCountryShort}")
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 Which will log
 
-[source,java]
 --------------------------------------------------------------------------------------------------------------
 Location 285 Bedford Avenue, Brooklyn, NY 11211, USA is at lat/lng: 40.71412890,-73.96140740 and in country US
 --------------------------------------------------------------------------------------------------------------
@@ -198,7 +192,7 @@ you can use "current" as the address as shown:
 
 [source,java]
 -----------------------------------
-  from("direct:start")
+from("direct:start")
     .to("geocoder:address:current")
 -----------------------------------
 

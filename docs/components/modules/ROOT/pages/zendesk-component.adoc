@@ -30,9 +30,11 @@ for this component:
 </dependency>
 ----
 
-== Zendesk Options
 
 // component options: START
+== Component Options
+
+
 The Zendesk component supports 10 options, which are listed below.
 
 
@@ -52,8 +54,9 @@ The Zendesk component supports 10 options, which are listed below.
 | *username* (security) | The user name. |  | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Zendesk endpoint is configured using URI syntax:
 
 ----
@@ -1379,7 +1382,6 @@ The message header name must be of the format `CamelZendesk.parameter`.
 The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
 would override a `CamelZendesk.myParameterNameHere` header.
 // endpoint options: END
-
 
 
 include::{page-component-version}@camel-spring-boot::page$zendesk-starter.adoc[]

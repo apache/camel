@@ -22,6 +22,9 @@ The http://www.hazelcast.com/[Hazelcast] Multimap component is one of Camel Haze
 == Options
 
 // component options: START
+== Component Options
+
+
 The Hazelcast Multimap component supports 5 options, which are listed below.
 
 
@@ -36,8 +39,9 @@ The Hazelcast Multimap component supports 5 options, which are listed below.
 | *hazelcastMode* (advanced) | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Hazelcast Multimap endpoint is configured using URI syntax:
 
 ----
@@ -73,8 +77,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == multimap cache producer - to("hazelcast-multimap:foo")
 
 A multimap is a cache where you can store n values to one key. The
@@ -104,7 +106,7 @@ from("direct:put")
 
 Spring DSL:
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:put" />
@@ -129,7 +131,7 @@ from("direct:removevalue")
 
 Spring DSL:
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:removevalue" />
@@ -160,7 +162,7 @@ from("direct:get")
 
 Spring DSL:
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:get" />
@@ -186,7 +188,7 @@ from("direct:delete")
 
 Spring DSL:
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:delete" />

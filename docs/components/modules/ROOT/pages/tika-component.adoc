@@ -34,12 +34,12 @@ following dependency to their `pom.xml`:
 </dependency>
 ----
 
-The TIKA component only supports producer endpoints.
 
-
-== Options
 
 // component options: START
+== Component Options
+
+
 The Tika component supports 2 options, which are listed below.
 
 
@@ -51,10 +51,9 @@ The Tika component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Tika endpoint is configured using URI syntax:
 
 ----
@@ -86,8 +85,6 @@ with the following path and query parameters:
 | *tikaParseOutputFormat* (producer) | Tika Output Format. Supported output formats. xml: Returns Parsed Content as XML. html: Returns Parsed Content as HTML. text: Returns Parsed Content as Text. textMain: Uses the boilerpipe library to automatically extract the main content from a web page. There are 4 enums and the value can be one of: xml, html, text, textMain | xml | TikaParseOutputFormat
 |===
 // endpoint options: END
-
-
 
 
 == To Detect a file's MIME Type

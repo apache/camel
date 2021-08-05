@@ -21,10 +21,10 @@ provides a producer to execute Kubernetes Replication controller operations and 
 consume events related to Replication Controller objects.
 
 
-
+// component options: START
 == Component Options
 
-// component options: START
+
 The Kubernetes Replication Controller component supports 3 options, which are listed below.
 
 
@@ -37,11 +37,9 @@ The Kubernetes Replication Controller component supports 3 options, which are li
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
+// endpoint options: START
 == Endpoint Options
 
-// endpoint options: START
 The Kubernetes Replication Controller endpoint is configured using URI syntax:
 
 ----
@@ -102,6 +100,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
 == Supported producer operation
 
 - listReplicationControllers
@@ -129,7 +128,6 @@ This operation return a List of RCs from your cluster
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
-
             @Override
             public void process(Exchange exchange) throws Exception {
                 Map<String, String> labels = new HashMap<>();
@@ -149,7 +147,6 @@ This operation return a List of RCs from your cluster, using a label selector (w
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-replication-controllers://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
-
     public class KubernertesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {

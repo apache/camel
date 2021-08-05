@@ -74,7 +74,6 @@ endpoints keep in memory.
 
 == URI format
 
-[source]
 ----
 mock:someName[?options]
 ----
@@ -82,15 +81,10 @@ mock:someName[?options]
 Where `someName` can be any string that uniquely identifies the
 endpoint.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
-
-
-
 // component options: START
+== Component Options
+
+
 The Mock component supports 4 options, which are listed below.
 
 
@@ -104,13 +98,9 @@ The Mock component supports 4 options, which are listed below.
 | *exchangeFormatter* (advanced) | *Autowired* Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter. |  | ExchangeFormatter
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Mock endpoint is configured using URI syntax:
 
 ----
@@ -149,6 +139,7 @@ with the following path and query parameters:
 | *copyOnExchange* (producer) | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true. | true | boolean
 |===
 // endpoint options: END
+
 
 
 == Simple Example
@@ -295,7 +286,6 @@ Notice that the mock endpoints is given the URI `mock:<endpoint>`, for
 example `mock:direct:foo`. Camel logs at `INFO` level the endpoints
 being mocked:
 
-[source]
 ----
 INFO  Adviced endpoint [direct://foo] with mock endpoint [mock:direct:foo]
 ----
@@ -497,7 +487,6 @@ mock.allMessages().arrives().noLaterThan(1).seconds().beforeNext();
 In the example above we use `seconds` as the time unit, but Camel offers
 `milliseconds`, and `minutes` as well.
 ====
-
 
 
 include::{page-component-version}@camel-spring-boot::page$mock-starter.adoc[]

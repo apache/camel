@@ -165,8 +165,6 @@ Camel consume the message
 * Hyphen is replaced by `_HYPHEN_` and the replacement is reversed when
 Camel consumes the message
 
-== Options
-
 You can configure many different properties on the JMS endpoint, which
 map to properties on the `JMSConfiguration` object. 
 
@@ -179,16 +177,11 @@ uses for sending and receiving messages. So you can get more information
 about these properties by consulting the relevant Spring documentation.
 ====
 
-=== Component options
-
-
-
-
-
-
-
 
 // component options: START
+== Component Options
+
+
 The JMS component supports 98 options, which are listed below.
 
 
@@ -296,25 +289,9 @@ The JMS component supports 98 options, which are listed below.
 | *transactionTimeout* (transaction) | The timeout value of the transaction (in seconds), if using transacted mode. | -1 | int
 |===
 // component options: END
-
-
-
-
-
-
-
-
-=== Endpoint options
-
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JMS endpoint is configured using URI syntax:
 
 ----
@@ -439,8 +416,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == Samples
 
 JMS is used in many examples for other components as well. But we
@@ -563,11 +538,6 @@ Here we only store the original cause error message in the transform.
 You can, however, use any Expression to send
 whatever you like. For example, you can invoke a method on a Bean or use
 a custom processor.
-
-
-
-
-
 
 
 == Message Mapping between JMS and Camel
@@ -1079,8 +1049,6 @@ broker more frequent, and thus require more network traffic. +
 
 === Request-reply over JMS and using an exclusive fixed reply queue
 
-*Since Camel 2.9*
-
 In the previous example, Camel would anticipate the fixed reply queue
 named "bar" was shared, and thus it uses a `JMSSelector` to only consume
 reply messages which it expects. However there is a drawback doing this
@@ -1230,8 +1198,6 @@ messaging:
 The `transacted` property applies *only* to the InOnly message
 Exchange Pattern (MEP).
 
-*Since Camel 2.10*
-
 You can leverage the
 http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/jms/listener/AbstractPollingMessageListenerContainer.html#setSessionTransacted(boolean)[DMLC
 transacted session API] using the following properties on
@@ -1338,7 +1304,6 @@ like so:
 Some versions of WMQ won't accept this option on the destination name
 and you will get an exception like:
 
-[source]
 ----------------------------------------------------------------------------------------------------------------------------------
 com.ibm.msg.client.jms.DetailedJMSException: JMSCC0005: The specified
 value 'MY_QUEUE?targetClient=1' is not allowed for

@@ -27,14 +27,8 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon CloudWatch. More information is available at
 https://aws.amazon.com/cloudwatch/[Amazon CloudWatch].
 
-[NOTE]
-====
-The AWS2 CW component is not supported in OSGI
-====
-
 == URI Format
 
-[source,java]
 ----------------------------
 aws2-cw://namespace[?options]
 ----------------------------
@@ -43,10 +37,11 @@ The metrics will be created if they don't already exists. +
  You can append query options to the URI in the following format,
 `?options=value&option2=value&...`
 
-== URI Options
-
 
 // component options: START
+== Component Options
+
+
 The AWS CloudWatch component supports 18 options, which are listed below.
 
 
@@ -74,11 +69,9 @@ The AWS CloudWatch component supports 18 options, which are listed below.
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS CloudWatch endpoint is configured using URI syntax:
 
 ----

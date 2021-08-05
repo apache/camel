@@ -30,9 +30,10 @@ for this component:
 ----
 
 
-== Twilio Options
-
 // component options: START
+== Component Options
+
+
 The Twilio component supports 8 options, which are listed below.
 
 
@@ -50,8 +51,9 @@ The Twilio component supports 8 options, which are listed below.
 | *username* (security) | The account to use. |  | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Twilio endpoint is configured using URI syntax:
 
 ----
@@ -3857,6 +3859,7 @@ The message header name must be of the format `CamelTwilio.parameter`.
 The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
 would override a `CamelTwilio.myParameterNameHere` header.
 // endpoint options: END
+
 
 == Producer Endpoints:
 

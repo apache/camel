@@ -26,9 +26,11 @@ monitor Camel using JMX.
 If you run Camel standalone with just `camel-core` as a dependency, and you want JMX enabled out of the box, then you need to add `camel-management` as a dependency.
 ====
 
-== Options
 
 // component options: START
+== Component Options
+
+
 The JMX component supports 2 options, which are listed below.
 
 
@@ -40,8 +42,9 @@ The JMX component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The JMX endpoint is configured using URI syntax:
 
 ----

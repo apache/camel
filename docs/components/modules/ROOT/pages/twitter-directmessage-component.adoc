@@ -23,9 +23,11 @@ The Twitter Direct Message Component consumes/produces a user's direct messages.
 When using the Direct Message consumer, it will consider only the last 30 days direct messages
 ====
 
-== Component Options
 
 // component options: START
+== Component Options
+
+
 The Twitter Direct Message component supports 11 options, which are listed below.
 
 
@@ -46,11 +48,9 @@ The Twitter Direct Message component supports 11 options, which are listed below
 | *consumerSecret* (security) | The consumer secret |  | String
 |===
 // component options: END
-
-
+// endpoint options: START
 == Endpoint Options
 
-// endpoint options: START
 The Twitter Direct Message endpoint is configured using URI syntax:
 
 ----
@@ -119,6 +119,7 @@ with the following path and query parameters:
 | *sortById* (sort) | Sorts by id, so the oldest are first, and newest last. | true | boolean
 |===
 // endpoint options: END
+
 
 
 include::{page-component-version}@camel-spring-boot::page$twitter-starter.adoc[]

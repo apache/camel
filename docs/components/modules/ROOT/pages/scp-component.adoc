@@ -35,24 +35,19 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------------
 scp://host[:port]/destination[?options]
 ---------------------------------------
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
 The file name can be specified either in the <path> part of the URI or
 as a "CamelFileName" header on the message (`Exchange.FILE_NAME` if used
 in code).
 
-== Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The SCP component supports 3 options, which are listed below.
 
 
@@ -65,16 +60,9 @@ The SCP component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SCP endpoint is configured using URI syntax:
 
 ----
@@ -126,9 +114,6 @@ with the following path and query parameters:
 | *ciphers* (security) | Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used. |  | String
 |===
 // endpoint options: END
-
-
-
 
 
 == Limitations

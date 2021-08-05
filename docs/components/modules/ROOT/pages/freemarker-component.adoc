@@ -33,7 +33,6 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------
 freemarker:templateName[?options]
 ---------------------------------
@@ -42,15 +41,11 @@ Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
 `\file://folder/myfile.ftl`).
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The Freemarker component supports 6 options, which are listed below.
 
 
@@ -66,12 +61,9 @@ The Freemarker component supports 6 options, which are listed below.
 | *configuration* (advanced) | To use an existing freemarker.template.Configuration instance as the configuration. |  | Configuration
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Freemarker endpoint is configured using URI syntax:
 
 ----
@@ -107,8 +99,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == Headers
 
 Headers set during the FreeMarker evaluation are returned to the message
@@ -117,7 +107,6 @@ component to return values to the Message.
 
 An example: Set the header value of `fruit` in the FreeMarker template:
 
-[source,java]
 --------------------------------------
 ${request.setHeader('fruit', 'Apple')}
 --------------------------------------
@@ -243,7 +232,6 @@ from("direct:in").
 In this sample we want to use FreeMarker templating for an order
 confirmation email. The email template is laid out in FreeMarker as:
 
-[source,java]
 ----------------------------------------------
 Dear ${headers.lastName}, ${headers.firstName}
 
@@ -252,8 +240,6 @@ Thanks for the order of ${headers.item}.
 Regards Camel Riders Bookstore
 ${body}
 ----------------------------------------------
-
-And the java code:
 
 
 include::{page-component-version}@camel-spring-boot::page$freemarker-starter.adoc[]

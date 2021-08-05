@@ -30,13 +30,11 @@ for this component:
 </dependency>
 -----------------------------------------------------------------------
 
-For more information you can look at xref:ftp-component.adoc[FTP component]
-
-== URI Options
-
-The options below are exclusive for the FTPS component.
 
 // component options: START
+== Component Options
+
+
 The FTPS component supports 4 options, which are listed below.
 
 
@@ -50,9 +48,9 @@ The FTPS component supports 4 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The FTPS endpoint is configured using URI syntax:
 
 ----
@@ -201,5 +199,8 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== More Information
+
+For more information you can look at xref:ftp-component.adoc[FTP component]
 
 include::{page-component-version}@camel-spring-boot::page$ftp-starter.adoc[]

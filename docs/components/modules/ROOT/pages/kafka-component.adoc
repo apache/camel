@@ -33,16 +33,15 @@ for this component.
 
 == URI format
 
-[source,java]
 ---------------------------
 kafka:topic[?options]
 ---------------------------
 
 
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The Kafka component supports 103 options, which are listed below.
 
 
@@ -155,10 +154,9 @@ The Kafka component supports 103 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Kafka endpoint is configured using URI syntax:
 
 ----
@@ -493,14 +491,10 @@ camelContext.addRoutes(new RouteBuilder() {
 ----
 
 == Using the Kafka idempotent repository
-*Available from Camel 2.19*
 
 The `camel-kafka` library provides a Kafka topic-based idempotent repository. This repository stores broadcasts all changes to idempotent state (add/remove) in a Kafka topic, and populates a local in-memory cache for each repository's process instance through event sourcing.
-
 The topic used must be unique per idempotent repository instance. The mechanism does not have any requirements about the number of topic partitions; as the repository consumes from all partitions at the same time. It also does not have any requirements about the replication factor of the topic.
-
 Each repository instance that uses the topic (e.g. typically on different machines running in parallel) controls its own consumer group, so in a cluster of 10 Camel processes using the same topic each will control its own offset.
-
 On startup, the instance subscribes to the topic and rewinds the offset to the beginning, rebuilding the cache to the latest state. The cache will not be considered warmed up until one poll of `pollDurationMs` in length returns 0 records. Startup will not be completed until either the cache has warmed up, or 30 seconds go by; if the latter happens the idempotent repository may be in an inconsistent state until its consumer catches up to the end of the topic.
 
 A `KafkaIdempotentRepository` has the following properties:
@@ -517,7 +511,6 @@ If setting this value explicitly, be aware that there is a tradeoff between the 
 |===
 
 The repository can be instantiated by defining the `topic` and `bootstrapServers`, or the `producerConfig` and `consumerConfig` property sets can be explicitly defined to enable features such as SSL/SASL.
-
 To use, this repository must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
 
 Sample usage is as follows:
@@ -567,7 +560,6 @@ In XML:
 ----
 
 == Using manual commit with Kafka consumer
-*Since Camel 2.21*
 
 By default the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
 
@@ -599,7 +591,6 @@ If you want to use a custom implementation of `KafkaManualCommit` then you can c
 on the `KafkaComponent` that creates instances of your custom implementation.
 
 == Kafka Headers propagation
-*Since Camel 2.22*
 
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.
 Producing flow backed by same behaviour - camel headers of particular exchange will be propagated to kafka message headers.
@@ -609,20 +600,24 @@ otherwise header will be skipped.
 Following header value types are supported: `String`, `Integer`, `Long`, `Double`, `Boolean`, `byte[]`.
 Note: all headers propagated *from* kafka *to* camel exchange will contain `byte[]` value by default.
 In order to override default functionality uri parameters can be set: `headerDeserializer` for `from` route and `headerSerializer` for `to` route. Example:
-```
+
+[source,java]
+----
 from("kafka:my_topic?headerDeserializer=#myDeserializer")
 ...
 .to("kafka:my_topic?headerSerializer=#mySerializer")
-```
+----
 
 By default all headers are being filtered by `KafkaHeaderFilterStrategy`.
 Strategy filters out headers which start with `Camel` or `org.apache.camel` prefixes.
 Default strategy can be overridden by using `headerFilterStrategy` uri parameter in both `to` and `from` routes:
-```
+
+[source,java]
+----
 from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 ...
 .to("kafka:my_topic?headerFilterStrategy=#myStrategy")
-```
+----
 
 `myStrategy` object should be subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
 

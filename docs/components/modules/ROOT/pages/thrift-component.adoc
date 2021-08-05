@@ -32,14 +32,16 @@ for this component:
 
 == URI format
 
-[source,java]
 -------------------------------------
 thrift://service[?options]
 -------------------------------------
 
-== Endpoint Options
+
 
 // component options: START
+== Component Options
+
+
 The Thrift component supports 4 options, which are listed below.
 
 
@@ -53,8 +55,9 @@ The Thrift component supports 4 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Determine if the thrift component is using global SSL context parameters | false | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Thrift endpoint is configured using URI syntax:
 
 ----

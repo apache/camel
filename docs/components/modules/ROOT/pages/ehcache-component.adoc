@@ -17,8 +17,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ehcache.ad
 The Ehcache component enables you to perform caching operations using
 Ehcache 3 as the Cache Implementation.
 
-This component supports producer and event based consumer endpoints.
-
 The Cache consumer is an event based consumer and can be used to listen
 and respond to specific cache activities. 
 
@@ -37,18 +35,14 @@ their `pom.xml` for this component:
 
 == URI format
 
-[source,java]
 -----------------------------
 ehcache://cacheName[?options]
 -----------------------------
 
-You can append query options to the URI in the following
-format, `?option=value&option=#beanRef&...`
-
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The Ehcache component supports 16 options, which are listed below.
 
 
@@ -74,10 +68,9 @@ The Ehcache component supports 16 options, which are listed below.
 | *valueType* (advanced) | The cache value type, default java.lang.Object |  | String
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Ehcache endpoint is configured using URI syntax:
 
 ----

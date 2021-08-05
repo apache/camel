@@ -38,14 +38,14 @@ following dependency to their `pom.xml`:
 
 The PDF component only supports producer endpoints.
 
-[source,java]
 -----------------------
 pdf:operation[?options]
 -----------------------
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The PDF component supports 2 options, which are listed below.
 
 
@@ -57,10 +57,9 @@ The PDF component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The PDF endpoint is configured using URI syntax:
 
 ----
@@ -96,7 +95,6 @@ with the following path and query parameters:
 | *textProcessingFactory* (producer) | Text processing to use. autoFormatting: Text is getting sliced by words, then max amount of words that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line. lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol and then it will be written regardless it fits in the line or not. There are 2 enums and the value can be one of: autoFormatting, lineTermination | lineTermination | TextProcessingFactory
 |===
 // endpoint options: END
-
 
 
 == Headers

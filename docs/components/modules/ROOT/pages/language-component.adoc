@@ -31,7 +31,6 @@ xref:languages:groovy-language.adoc[Groovy] or xref:languages:groovy-language.ad
 
 == URI format
 
-[source]
 ----
 language://languageName[:script][?options]
 ----
@@ -40,15 +39,14 @@ You can refer to an external resource for
 the script using same notation as supported by the other
 xref:language-component.adoc[Language]s in Camel
 
-[source]
 ----
 language://languageName:resource:scheme:location][?options]
 ----
 
-== URI Options
-
-
 // component options: START
+== Component Options
+
+
 The Language component supports 2 options, which are listed below.
 
 
@@ -60,10 +58,9 @@ The Language component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Language endpoint is configured using URI syntax:
 
 ----
@@ -136,19 +133,13 @@ assertEquals("Hello World", out);
 
 == Loading scripts from resources
 
-*Since Camel 2.9*
-
 You can specify a resource uri for a script to load in either the
-endpoint uri, or in the `Exchange.LANGUAGE_SCRIPT` header. +
- The uri must start with one of the following schemes: file:,
-classpath:, or http:
-
-For example to load a script from the classpath:
+endpoint uri, or in the `Exchange.LANGUAGE_SCRIPT` header.
+The uri must start with one of the following schemes: file:, classpath:, or http:
 
 By default the script is loaded once and cached. However you can disable
 the `contentCache` option and have the script loaded on each
-evaluation. +
- For example if the file myscript.txt is changed on disk, then the
+evaluation. For example if the file myscript.txt is changed on disk, then the
 updated script is used:
 
 You can refer to the resource similar to the

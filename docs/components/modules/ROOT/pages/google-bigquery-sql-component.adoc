@@ -53,16 +53,15 @@ https://developers.google.com/identity/protocols/application-default-credentials
 
 == URI Format
 
-[source,text]
 --------------------------------------------------------
-        google-bigquery-sql://project-id:query?[options]
+google-bigquery-sql://project-id:query?[options]
 --------------------------------------------------------
 
 Examples:
-[source,text]
 --------------------------------------------------------
-        google-bigquery-sql://project-17248459:delete * from test.table where id=@myId
-        google-bigquery-sql://project-17248459:delete * from ${datasetId}.${tableId} where id=@myId
+google-bigquery-sql://project-17248459:delete * from test.table where id=@myId
+
+google-bigquery-sql://project-17248459:delete * from ${datasetId}.${tableId} where id=@myId
 --------------------------------------------------------
 where
 
@@ -70,16 +69,16 @@ where
  * parameters in form @name are extracted from body or message headers and sent to Google Bigquery
 
 You can externalize your SQL queries to files in the classpath or file system as shown:
-[source,text]
+
 --------------------------------------------------------
-        google-bigquery-sql://project-17248459::classpath:delete.sql
+google-bigquery-sql://project-17248459::classpath:delete.sql
 --------------------------------------------------------
 
-
-
-== Options
 
 // component options: START
+== Component Options
+
+
 The Google BigQuery Standard SQL component supports 4 options, which are listed below.
 
 
@@ -93,8 +92,9 @@ The Google BigQuery Standard SQL component supports 4 options, which are listed 
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Google BigQuery Standard SQL endpoint is configured using URI syntax:
 
 ----

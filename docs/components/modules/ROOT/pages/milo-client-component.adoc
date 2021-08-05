@@ -17,7 +17,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-clien
 The Milo Client component provides access to OPC UA servers using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
 
-*Java 9+*: This component requires Java 9+ at runtime.
+*Java 11+*: This component requires Java 11+ at runtime.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -33,8 +33,35 @@ for this component:
 ------------------------------------------------------------
 
 
+== URI format
+
+The URI syntax of the endpoint is:
+
+------------------------
+milo-client:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
+------------------------
+
+If the server does not use a path, then it is possible to simply omit it:
+
+------------------------
+milo-client:opc.tcp://[user:password@]host:port?node=RAW(nsu=urn:foo:bar;s=item-1)
+------------------------
+
+If no user credentials are provided the client will switch to anonymous mode.
+
+All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
+will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
+made, the options of the +client+ group are applied. All further instances will be ignored.
+
+If you need alternate options for the same endpoint URI it is possible though to set the +clientId+ option
+which will by added internally to the endpoint URI in order to select a different shared connection instance.
+In other words, shared connections located by the combination of endpoint URI and client id.
+
 
 // component options: START
+== Component Options
+
+
 The OPC UA Client component supports 25 options, which are listed below.
 
 
@@ -69,48 +96,9 @@ The OPC UA Client component supports 25 options, which are listed below.
 | *sessionTimeout* (client) | Session timeout in milliseconds |  | Long
 |===
 // component options: END
-
-
-
-== URI format
-
-The URI syntax of the endpoint is: 
-
-[source]
-------------------------
-milo-client:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
-------------------------
-
-If the server does not use a path, then it is possible to simply omit it:
-
-------------------------
-milo-client:opc.tcp://[user:password@]host:port?node=RAW(nsu=urn:foo:bar;s=item-1)
-------------------------
-
-If no user credentials are provided the client will switch to anonymous mode.
-
-== URI options
-
-All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
-will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
-made, the options of the +client+ group are applied. All further instances will be ignored.
-
-If you need alternate options for the same endpoint URI it is possible though to set the +clientId+ option
-which will by added internally to the endpoint URI in order to select a different shared connection instance.
-In other words, shared connections located by the combination of endpoint URI and client id.
-
-
-
-
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The OPC UA Client endpoint is configured using URI syntax:
 
 ----
@@ -171,9 +159,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-
 === Discovery
 
 If the server uses a dedicated discovery endpoint (e.g. `/discovery`), which may support different (less secure) security policies,
@@ -190,7 +175,6 @@ but override the host information with the value of the original URI.
 
 [[nodeid]]
 === Node ID
-
 
 In order to define a target node a namespace and node id is required. In previous versions this was possible by
 specifying `nodeId` and either `namespaceUri` or `namespaceIndex`. However this only allowed for using
@@ -237,7 +221,9 @@ Input parameters are taken from the body:
 The component provide a producer to read values from multiple opc-ua nodes. The Node-IDs will be defined in the header `CamelMiloNodeIds` as list of strings. (see <<nodeid, Node-ID>> for the ID format).
 
 Example:
-```java
+
+[source,java]
+----
 from("direct:start")
     .setHeader("CamelMiloNodeIds", constant(Arrays.asList("nsu=urn:org:apache:camel;s=myitem1")))
     .setHeader("await", constant(true)) // await: parameter "defaultAwaitWrites"
@@ -248,7 +234,7 @@ from("direct:start")
                 return newExchange;
             }
         }).to("mock:test1");
-```
+----
 
 === Security policies
 
@@ -257,7 +243,6 @@ or to use the Milo enum literals (e.g. `None`). Specifying an unknown security p
 
 The known security policy URIs and enum literals are can be seen here: https://github.com/eclipse/milo/blob/master/opc-ua-stack/stack-core/src/main/java/org/eclipse/milo/opcua/stack/core/security/SecurityPolicy.java[SecurityPolicy.java] 
 
-**Note:** In any case security policies are considered case sensitive.
-
+NOTE: In any case security policies are considered case sensitive.
 
 include::{page-component-version}@camel-spring-boot::page$milo-starter.adoc[]

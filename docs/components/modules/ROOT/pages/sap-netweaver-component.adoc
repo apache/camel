@@ -37,13 +37,9 @@ for this component:
 
 The URI scheme for a sap netweaver gateway component is as follows
 
-[source,java]
 -----------------------------------------------------------------
 sap-netweaver:https://host:8080/path?username=foo&password=secret
 -----------------------------------------------------------------
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
 == Prerequisites
 
@@ -55,10 +51,10 @@ requires for an account.
 This component uses the basic authentication scheme for logging into SAP
 NetWeaver.
 
-== SAPNetWeaver options
-
-
 // component options: START
+== Component Options
+
+
 The SAP NetWeaver component supports 2 options, which are listed below.
 
 
@@ -70,10 +66,9 @@ The SAP NetWeaver component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SAP NetWeaver endpoint is configured using URI syntax:
 
 ----
@@ -108,7 +103,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Message Headers
 
 The following headers can be used by the producer.
@@ -131,7 +125,6 @@ http://scn.sap.com/docs/DOC-31221[here].
 In the route below we request the SAP NetWeaver demo server using the
 following url
 
-[source,java]
 ----------------------------------------------------------------------
 https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/
 ----------------------------------------------------------------------
@@ -194,7 +187,6 @@ HTML page
 
 When running the application you get sample output:
 
-[source,java]
 -------------------------------
 Flight information:
 Airline ID: AA

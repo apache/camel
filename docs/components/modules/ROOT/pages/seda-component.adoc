@@ -41,7 +41,6 @@ of any consumers when a producer sends a message exchange.
 
 == URI format
 
-[source]
 ----
 seda:someName[?options]
 ----
@@ -49,12 +48,11 @@ seda:someName[?options]
 Where *someName* can be any string that uniquely identifies the endpoint
 within the current CamelContext.
 
-You can append query options to the URI in the following format:
-`?option=value&option=value&…`
-
-== Options
 
 // component options: START
+== Component Options
+
+
 The SEDA component supports 9 options, which are listed below.
 
 
@@ -73,9 +71,9 @@ The SEDA component supports 9 options, which are listed below.
 | *queueSize* (advanced) | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | int
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SEDA endpoint is configured using URI syntax:
 
 ----
@@ -122,9 +120,8 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-== Choosing BlockingQueue implementation
 
-*Since Camel 2.12*
+== Choosing BlockingQueue implementation
 
 By default, the SEDA component always intantiates LinkedBlockingQueue,
 but you can use different implementation, you can reference your own
@@ -264,8 +261,6 @@ it will be sent to a `mock` endpoint where we can do assertions in the
 unit test.
 
 == Using multipleConsumers
-
-*Since Camel 2.2*
 
 In this example we have defined two consumers.
 

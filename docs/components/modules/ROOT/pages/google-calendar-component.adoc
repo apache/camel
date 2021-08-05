@@ -44,9 +44,10 @@ for this component:
 </dependency>
 ----
 
-== Component options
-
 // component options: START
+== Component Options
+
+
 The Google Calendar component supports 14 options, which are listed below.
 
 
@@ -70,9 +71,9 @@ The Google Calendar component supports 14 options, which are listed below.
 | *user* (security) | The email address of the user the application is trying to impersonate in the service account flow |  | String
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Google Calendar endpoint is configured using URI syntax:
 
 ----

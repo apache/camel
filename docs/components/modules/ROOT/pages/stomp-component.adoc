@@ -37,18 +37,18 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------
 stomp:queue:destination[?options]
 ---------------------------------
 
 Where *destination* is the name of the queue.
 
-== Options
-
 
 
 // component options: START
+== Component Options
+
+
 The Stomp component supports 13 options, which are listed below.
 
 
@@ -71,12 +71,9 @@ The Stomp component supports 13 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Stomp endpoint is configured using URI syntax:
 
 ----
@@ -117,10 +114,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
 == Samples
 

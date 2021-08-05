@@ -20,9 +20,10 @@ The http://www.hazelcast.com/[Hazelcast] instance component is one of Camel Haze
 A replicated map is a weakly consistent, distributed key-value data structure with no data partition.
  
  
-== Options
- 
 // component options: START
+== Component Options
+
+
 The Hazelcast Replicated Map component supports 5 options, which are listed below.
 
 
@@ -38,6 +39,8 @@ The Hazelcast Replicated Map component supports 5 options, which are listed belo
 |===
 // component options: END
 // endpoint options: START
+== Endpoint Options
+
 The Hazelcast Replicated Map endpoint is configured using URI syntax:
 
 ----
@@ -73,8 +76,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == replicatedmap cache producer
 
 The replicatedmap producer provides 4 operations:
@@ -107,7 +108,7 @@ from("direct:put")
 
 Spring DSL:
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:put" />
@@ -133,7 +134,7 @@ from("direct:get")
 
 Spring DSL:
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:get" />
@@ -159,7 +160,7 @@ from("direct:delete")
 
 Spring DSL:
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:delete" />

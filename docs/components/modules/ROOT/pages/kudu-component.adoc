@@ -14,9 +14,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kudu.adoc[
 
 *{component-header}*
 
-*Since Camel 3.0*
-
-
 The Kudu component supports storing and retrieving data from/to https://kudu.apache.org/[Apache Kudu], a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 
 == Prerequisites
@@ -25,6 +22,9 @@ You must have a valid Kudu instance running. More information are available at h
 
 
 // component options: START
+== Component Options
+
+
 The Kudu component supports 2 options, which are listed below.
 
 
@@ -36,8 +36,9 @@ The Kudu component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Kudu endpoint is configured using URI syntax:
 
 ----
@@ -69,6 +70,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
 == Input Body formats
 
 === Insert
@@ -99,36 +101,5 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `$\{camel-version}` must be replaced by the actual version of Camel (3.0 or higher).
 
-
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-kudu-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-
-== Camel Kudu Starter
-
-A starter module is available to spring-boot users.
-
-To use this feature, add the following dependencies to your spring boot pom.xml file:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel.springboot</groupId>
-    <artifactId>camel-kudu-starter</artifactId>
-    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
-</dependency>
-----
 
 include::{page-component-version}@camel-spring-boot::page$kudu-starter.adoc[]

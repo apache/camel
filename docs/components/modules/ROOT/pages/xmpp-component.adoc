@@ -31,7 +31,6 @@ for this component:
 
 == URI format
 
-[source,text]
 ------------------------------------------------------
 xmpp://[login@]hostname[:port][/participant][?Options]
 ------------------------------------------------------
@@ -42,13 +41,12 @@ conversations. +
 from XMPP or send messages to XMPP). Consumer mode supports rooms
 starting.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
 
 
 // component options: START
+== Component Options
+
+
 The XMPP component supports 3 options, which are listed below.
 
 
@@ -61,10 +59,9 @@ The XMPP component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The XMPP endpoint is configured using URI syntax:
 
 ----
@@ -115,6 +112,7 @@ with the following path and query parameters:
 
 
 
+
 == Headers and setting Subject or Language
 
 Camel sets the message IN headers as properties on the XMPP message. You
@@ -128,14 +126,12 @@ are provided as IN headers.
 User `superman` to join room `krypton` at `jabber` server with password,
 `secret`:
 
-[source,text]
 ------------------------------------------------------------------------------
 xmpp://superman@jabber.org/?room=krypton@conference.jabber.org&password=secret
 ------------------------------------------------------------------------------
 
 User `superman` to send messages to `joker`:
 
-[source,text]
 -----------------------------------------------------------
 xmpp://superman@jabber.org/joker@jabber.org?password=secret
 -----------------------------------------------------------

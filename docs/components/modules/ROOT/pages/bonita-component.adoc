@@ -18,16 +18,16 @@ Used for communicating with a remote Bonita BPM process engine.
 
 == URI format
 
-[source,java]
 ------------------------------
 bonita://[operation]?[options]
 ------------------------------
 
 Where *operation* is the specific action to perform on Bonita.
 
-== General Options
-
 // component options: START
+== Component Options
+
+
 The Bonita component supports 2 options, which are listed below.
 
 
@@ -39,9 +39,9 @@ The Bonita component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Bonita endpoint is configured using URI syntax:
 
 ----

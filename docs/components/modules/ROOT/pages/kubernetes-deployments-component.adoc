@@ -19,11 +19,10 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes
 The Kubernetes Deployments component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
 provides a producer to execute Kubernetes Deployments operations and a consumer to consume events related to Deployments objects.
 
-
-
+// component options: START
 == Component Options
 
-// component options: START
+
 The Kubernetes Deployments component supports 3 options, which are listed below.
 
 
@@ -36,11 +35,9 @@ The Kubernetes Deployments component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
+// endpoint options: START
 == Endpoint Options
 
-// endpoint options: START
 The Kubernetes Deployments endpoint is configured using URI syntax:
 
 ----
@@ -101,6 +98,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
 == Supported producer operation
 
 - listDeployments
@@ -128,7 +126,6 @@ This operation return a List of Deployment from your cluster
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
-
             @Override
             public void process(Exchange exchange) throws Exception {
                 Map<String, String> labels = new HashMap<>();
@@ -148,7 +145,6 @@ This operation return a List of Deployments from your cluster, using a label sel
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-deployments://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
-
     public class KubernertesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {

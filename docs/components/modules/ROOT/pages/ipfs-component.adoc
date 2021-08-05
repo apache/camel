@@ -31,14 +31,14 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------
 ipfs://cmd?options
 ---------------------------------
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The IPFS component supports 4 options, which are listed below.
 
 
@@ -52,8 +52,9 @@ The IPFS component supports 4 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The IPFS endpoint is configured using URI syntax:
 
 ----
@@ -82,14 +83,6 @@ with the following path and query parameters:
 | *outdir* (producer) | The ipfs output directory |  | String
 |===
 // endpoint options: END
-
-== Karaf support
-
-Actually this component is not supported in Karaf
-
-== Message Headers
-
-[TODO]
 
 == Samples
 

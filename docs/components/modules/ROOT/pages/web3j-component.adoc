@@ -33,15 +33,16 @@ for this component:
 
 == URI Format
 
-[source,text]
 ----
 web3j://<local/remote host:port or local IPC path>[?options]
 ----
 
-== Web3j Options
 
 
 // component options: START
+== Component Options
+
+
 The Web3j Ethereum Blockchain component supports 38 options, which are listed below.
 
 
@@ -89,9 +90,9 @@ The Web3j Ethereum Blockchain component supports 38 options, which are listed be
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Web3j Ethereum Blockchain endpoint is configured using URI syntax:
 
 ----
@@ -158,11 +159,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-You can append query options to the URI in the following format,
-?options=value&option2=value&...
-
-
 == Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
@@ -172,8 +168,6 @@ You can append query options to the URI in the following format,
 |`All URI options` |All URI options can also be set as exchange headers.
 
 |=======================================================================
-
-
 
 == Samples
 

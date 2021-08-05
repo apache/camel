@@ -89,6 +89,7 @@
 ** xref:direct-component.adoc[Direct]
 ** xref:direct-vm-component.adoc[Direct VM]
 ** xref:disruptor-component.adoc[Disruptor]
+** xref:disruptor-vm-component.adoc[Disruptor VM]
 ** xref:dns-component.adoc[DNS]
 ** xref:docker-component.adoc[Docker]
 ** xref:dozer-component.adoc[Dozer]

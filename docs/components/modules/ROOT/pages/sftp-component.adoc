@@ -30,13 +30,10 @@ for this component:
 </dependency>
 -----------------------------------------------------------------------
 
-For more information you can look at xref:ftp-component.adoc[FTP component]
-
-== URI Options
-
-The options below are exclusive for the FTPS component.
-
 // component options: START
+== Component Options
+
+
 The SFTP component supports 3 options, which are listed below.
 
 
@@ -49,9 +46,9 @@ The SFTP component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SFTP endpoint is configured using URI syntax:
 
 ----
@@ -203,5 +200,9 @@ with the following path and query parameters:
 | *sorter* (sort) | Pluggable sorter as a java.util.Comparator class. |  | Comparator
 |===
 // endpoint options: END
+
+== More Information
+
+For more information you can look at xref:ftp-component.adoc[FTP component]
 
 include::{page-component-version}@camel-spring-boot::page$ftp-starter.adoc[]

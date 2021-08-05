@@ -47,17 +47,15 @@ a `String` which is safe to be read multiple times.
 
 == URI format
 
-[source,java]
 ---------------------------------
 servlet://relative_path[?options]
 ---------------------------------
 
-You can append query options to the URI in the following format:
-`?option=value&option=value&...`
-
-== Options
 
 // component options: START
+== Component Options
+
+
 The Servlet component supports 10 options, which are listed below.
 
 
@@ -77,8 +75,9 @@ The Servlet component supports 10 options, which are listed below.
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Servlet endpoint is configured using URI syntax:
 
 ----
@@ -127,6 +126,7 @@ with the following path and query parameters:
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
 |===
 // endpoint options: END
+
 
 
 == Message Headers
@@ -233,7 +233,6 @@ Sample async configuration:
     </init-param>
   </servlet>
 -----------------------------------------------------------------------------------------------
-
 
 
 == Sample
@@ -481,19 +480,6 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
 
 }
 -------------------------------------------------------------------------
-
-=== Usage with Spring-Boot
-The _camel-servlet-starter_ library binds automatically all the rest endpoints under the `/camel/*` context path.
-The following table summarizes the additional configuration properties available in the _camel-servlet-starter_ library.
-The automatic mapping of the Camel servlet can also be disabled.
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Spring-Boot Property | Default | Description
-| camel.servlet.mapping.enabled | true | Enables the automatic mapping of the servlet component into the Spring web context
-| camel.servlet.mapping.context-path | /camel/* | Context path used by the servlet component for automatic mapping
-| camel.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
-|=======================================================================
 
 
 include::{page-component-version}@camel-spring-boot::page$servlet-starter.adoc[]

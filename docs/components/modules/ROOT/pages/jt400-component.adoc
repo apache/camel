@@ -35,31 +35,27 @@ for this component:
 
 To send or receive data from a data queue
 
-[source,java]
 ----------------------------------------------------------------------
 jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ[?options]
 ----------------------------------------------------------------------
 
 To send or receive messages from a message queue
 
-[source,java]
 ----------------------------------------------------------------------
 jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/QUEUE.MSGQ[?options]
 ----------------------------------------------------------------------
 
 To call remote program
 
-[source,java]
 -----------------------------------------------------------------------
 jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/program.PGM[?options]
 -----------------------------------------------------------------------
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== JT400 options
 
 // component options: START
+== Component Options
+
+
 The JT400 component supports 4 options, which are listed below.
 
 
@@ -73,9 +69,9 @@ The JT400 component supports 4 options, which are listed below.
 | *connectionPool* (advanced) | Default connection pool used by the component. Note that this pool is lazily initialized. This is because in a scenario where the user always provides a pool, it would be wasteful for Camel to initialize and keep an idle pool. |  | AS400ConnectionPool
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JT400 endpoint is configured using URI syntax:
 
 ----
@@ -141,7 +137,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Usage
 
 When configured as a data queue consumer endpoint, the endpoint will poll a data
@@ -167,12 +162,10 @@ Inquiry messages or messages requiring a message ID are not supported.
 
 == Connection pool
 
-*Since Camel 2.10*
-
 You can explicit configure a connection pool on the Jt400Component, or as an uri option
 on the endpoint.
 
-=== Remote program call (*Camel 2.7*)
+=== Remote program call
 
 This endpoint expects the input to be either a String array or byte[]
 array (depending on format) and handles all the CCSID handling through

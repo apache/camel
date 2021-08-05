@@ -49,9 +49,12 @@ The *transformDirection* option is mandatory and must be either XML2JSON or JSON
 
 The *templateName* parameter allows to use _identify transforma_ by specifying the name `identity`.
 
-== Component options
+
 
 // component options: START
+== Component Options
+
+
 The XJ component supports 10 options, which are listed below.
 
 
@@ -71,8 +74,9 @@ The XJ component supports 10 options, which are listed below.
 | *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The XJ endpoint is configured using URI syntax:
 
 ----
@@ -116,6 +120,7 @@ with the following path and query parameters:
 | *uriResolver* (advanced) | To use a custom javax.xml.transform.URIResolver |  | URIResolver
 |===
 // endpoint options: END
+
 
 
 == Using XJ endpoints

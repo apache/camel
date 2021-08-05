@@ -34,20 +34,6 @@ for this component:
 
 == URI format
 
-The old syntax is *deprecated*:
-[source,text]
-----
-rabbitmq://hostname[:port]/exchangeName?[options]
-----
-Where *hostname* is the hostname of the running rabbitmq instance or
-cluster. Port is optional and if not specified then defaults to the
-RabbitMQ client default (5672).
-
-Instead the hostname and port is configured on the component level, or
-can be provided as uri query parameters instead.
-
-The new syntax is:
-[source,text]
 ----
 rabbitmq:exchangeName?[options]
 ----
@@ -56,9 +42,10 @@ The exchange name determines the exchange to which the produced
 messages will be sent to. In the case of consumers, the exchange name 
 determines the exchange the queue will be bound to.
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The RabbitMQ component supports 56 options, which are listed below.
 
 
@@ -124,9 +111,9 @@ The RabbitMQ component supports 56 options, which are listed below.
 | *username* (security) | Username in case of authenticated access | guest | String
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The RabbitMQ endpoint is configured using URI syntax:
 
 ----
@@ -221,10 +208,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-See
-https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/ConnectionFactory.html[https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/ConnectionFactory.html]
-and the AMQP specification for more information on connection options.
 
 == Using a connection factory
 

@@ -15,10 +15,12 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twitter-ti
 *{component-header}*
 
 The Twitter Timeline component consumes twitter timeline or update the status of specific user.
-
-== Component Options
+The timelineType can be one of: public, home, user, mentions or retweetsofme.
 
 // component options: START
+== Component Options
+
+
 The Twitter Timeline component supports 11 options, which are listed below.
 
 
@@ -39,11 +41,9 @@ The Twitter Timeline component supports 11 options, which are listed below.
 | *consumerSecret* (security) | The consumer secret |  | String
 |===
 // component options: END
-
-
+// endpoint options: START
 == Endpoint Options
 
-// endpoint options: START
 The Twitter Timeline endpoint is configured using URI syntax:
 
 ----
@@ -114,9 +114,6 @@ with the following path and query parameters:
 | *sortById* (sort) | Sorts by id, so the oldest are first, and newest last. | true | boolean
 |===
 // endpoint options: END
-
-The timelineType can be one of: public, home, user, mentions or retweetsofme.
-
 
 
 include::{page-component-version}@camel-spring-boot::page$twitter-starter.adoc[]

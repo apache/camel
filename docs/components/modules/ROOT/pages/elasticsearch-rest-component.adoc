@@ -14,10 +14,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/elasticsea
 
 *{component-header}*
 
-*Since Camel 2.21*
-
-
-
 The ElasticSearch component allows you to interface with an
 https://www.elastic.co/products/elasticsearch[ElasticSearch] 6.x API using the REST Client library.
 
@@ -36,15 +32,15 @@ for this component:
 
 == URI format
 
-[source]
 ----
 elasticsearch-rest://clusterName[?options]
 ----
 
 
-== Endpoint Options
-
 // component options: START
+== Component Options
+
+
 The Elasticsearch Rest component supports 13 options, which are listed below.
 
 
@@ -67,9 +63,9 @@ The Elasticsearch Rest component supports 13 options, which are listed below.
 | *user* (security) | Basic authenticate user |  | String
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Elasticsearch Rest endpoint is configured using URI syntax:
 
 ----
@@ -197,8 +193,8 @@ from("direct:index")
 [source,xml]
 ----
 <route>
-    <from uri="direct:index" />
-    <to uri="elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter"/>
+    <from uri="direct:index"/>
+    <to uri="elasticsearch-rest://elasticsearch?operation=Index&amp;indexName=twitter"/>
 </route>
 ----
 
@@ -228,8 +224,8 @@ from("direct:search")
 [source,xml]
 ----
 <route>
-    <from uri="direct:search" />
-    <to uri="elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter"/>
+    <from uri="direct:search"/>
+    <to uri="elasticsearch-rest://elasticsearch?operation=Search&amp;indexName=twitter"/>
 </route>
 ----
 
@@ -267,8 +263,8 @@ from("direct:search")
 [source,xml]
 ----
 <route>
-    <from uri="direct:search" />
-    <to uri="elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&useScroll=true&scrollKeepAliveMs=30000"/>
+    <from uri="direct:search"/>
+    <to uri="elasticsearch-rest://elasticsearch?operation=Search&amp;indexName=twitter&amp;useScroll=true&amp;scrollKeepAliveMs=30000"/>
 </route>
 ----
 
@@ -307,7 +303,7 @@ from("direct:multiSearch")
 [source,xml]
 ----
 <route>
-    <from uri="direct:multiSearch" />
+    <from uri="direct:multiSearch"/>
     <to uri="elasticsearch-rest://elasticsearch?operation=MultiSearch"/>
 </route>
 ----

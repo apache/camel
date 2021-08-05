@@ -39,7 +39,6 @@ for this component:
 
 The SQL component uses the following endpoint URI notation:
 
-[source,text]
 ----
 sql-stored:template[?options]
 ----
@@ -50,7 +49,6 @@ name of the stored procedure and the IN, INOUT, and OUT arguments.
 You can also refer to the template in a external file on the file system
 or classpath such as:
 
-[source,text]
 ----
 sql-stored:classpath:sql/myprocedure.sql[?options]
 ----
@@ -58,7 +56,7 @@ sql-stored:classpath:sql/myprocedure.sql[?options]
 Where sql/myprocedure.sql is a plain text file in the classpath with the
 template, as show:
 
-[source,text]
+[source,sql]
 ----
 SUBNUMBERS(
   INTEGER ${headers.num1},
@@ -68,14 +66,12 @@ SUBNUMBERS(
 )
 ----
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
 
 
 // component options: START
+== Component Options
+
+
 The SQL Stored Procedure component supports 3 options, which are listed below.
 
 
@@ -88,11 +84,9 @@ The SQL Stored Procedure component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SQL Stored Procedure endpoint is configured using URI syntax:
 
 ----
@@ -127,7 +121,6 @@ with the following path and query parameters:
 | *templateOptions* (advanced) | Configures the Spring JdbcTemplate with the key/values from the Map |  | Map
 |===
 // endpoint options: END
-
 
 
 == Declaring the stored procedure template
@@ -183,7 +176,7 @@ URI means that the stored procedure will be called with parameter name "param1",
 it's SQL type is read from field INTEGER of class `org.example.Types` and scale will be set to 10.
 Input value for the parameter is passed from the header "srcValue".
 
-[source,java]
+[source,xml]
 ----------------------------------------------------------------------------------------------------------
 <to uri="sql-stored:MYFUNC('param1' 100 'mytypename' ${header.srcValue})"/>
 ----------------------------------------------------------------------------------------------------------
@@ -247,7 +240,7 @@ This will be overridden by the remaining transaction timeout when executing with
 A starter module is available to spring-boot users. When using the starter,
 the `DataSource` can be directly configured using spring-boot properties.
 
-[source,text]
+[source,properties]
 ----
 # Example for a mysql datasource
 spring.datasource.url=jdbc:mysql://localhost/test

@@ -27,7 +27,6 @@ https://aws.amazon.com/ses[Amazon SES].
 
 == URI Format
 
-[source,java]
 ------------------------
 aws2-ses://from[?options]
 ------------------------
@@ -35,10 +34,10 @@ aws2-ses://from[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== URI Options
-
-
 // component options: START
+== Component Options
+
+
 The AWS Simple Email Service (SES) component supports 18 options, which are listed below.
 
 
@@ -66,11 +65,9 @@ The AWS Simple Email Service (SES) component supports 18 options, which are list
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS Simple Email Service (SES) endpoint is configured using URI syntax:
 
 ----
@@ -113,9 +110,6 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
-
-
-
 
 Required SES component options
 
@@ -178,8 +172,7 @@ from("direct:start")
 .to("aws2-ses://example@example.com?amazonSESClient=#client");
 -------------------------------------------------------------
 
-The `#client` refers to a `SesClient` in the
-Registry.
+The `#client` refers to a `SesClient` in the Registry.
 
 == Producer Examples
 

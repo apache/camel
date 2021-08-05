@@ -20,10 +20,10 @@ The Kubernetes Namespaces component is one of xref:kubernetes-summary.adoc[Kuber
 provides a producer to execute Kubernetes Namespace operations and a consumer to consume events related to Namespace events.
 
 
-
+// component options: START
 == Component Options
 
-// component options: START
+
 The Kubernetes Namespaces component supports 3 options, which are listed below.
 
 
@@ -36,11 +36,9 @@ The Kubernetes Namespaces component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
+// endpoint options: START
 == Endpoint Options
 
-// endpoint options: START
 The Kubernetes Namespaces endpoint is configured using URI syntax:
 
 ----
@@ -101,6 +99,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
 == Supported producer operation
 
 - listNamespaces
@@ -127,7 +126,6 @@ This operation return a List of namespaces from your cluster
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
-
             @Override
             public void process(Exchange exchange) throws Exception {
                 Map<String, String> labels = new HashMap<>();
@@ -147,7 +145,6 @@ This operation return a List of Namespaces from your cluster, using a label sele
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-namespaces://%s?oauthToken=%s&namespace=default", host, authToken).process(new KubernertesProcessor()).to("mock:result");
-
     public class KubernertesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -159,7 +156,5 @@ fromF("kubernetes-namespaces://%s?oauthToken=%s&namespace=default", host, authTo
 --------------------------------------------------------------------------------
 
 This consumer will return a list of events on the namespace default.
-
-
 
 include::{page-component-version}@camel-spring-boot::page$kubernetes-starter.adoc[]

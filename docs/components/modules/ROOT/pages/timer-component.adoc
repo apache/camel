@@ -20,7 +20,6 @@ timer fires You can only consume events from this endpoint.
 
 == URI format
 
-[source]
 ----
 timer:name[?options]
 ----
@@ -28,9 +27,6 @@ timer:name[?options]
 Where `name` is the name of the `Timer` object, which is created and
 shared across endpoints. So if you use the same name for all your timer
 endpoints, only one `Timer` object and thread will be used.
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
 *Note:* The IN body of the generated exchange is `null`. So
 `exchange.getIn().getBody()` returns `null`.
@@ -44,9 +40,11 @@ advanced scheduling.
 ====
 
 
-== Options
 
 // component options: START
+== Component Options
+
+
 The Timer component supports 2 options, which are listed below.
 
 
@@ -58,9 +56,9 @@ The Timer component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Timer endpoint is configured using URI syntax:
 
 ----
@@ -170,8 +168,6 @@ If you don't specify a repeatCount then the timer will continue firing
 messages until the route will be stopped. 
 
 == Firing only once
-
-*Since Camel 2.8*
 
 You may want to fire a message in a Camel route only once, such as when
 starting the route. To do that you use the repeatCount option as shown:

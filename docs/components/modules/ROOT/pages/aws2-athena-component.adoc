@@ -26,7 +26,6 @@ https://aws.amazon.com/athena/[AWS Athena].
 
 == URI Format
 
-[source,java]
 ------------------------------
 aws2-athena://label[?options]
 ------------------------------
@@ -34,34 +33,11 @@ aws2-athena://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-For example, to run a simple query, wait up to 60 seconds for completion, and log the results:
-
-[source,java]
---------------------------------------------------------------------------------
-from("direct:start")
-    .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?waitTimeout=60000&outputLocation=s3://bucket/path/")
-    .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
-    .split(body()).streaming()
-    .to("log:out")
-    .to("mock:result");
---------------------------------------------------------------------------------
-
-Similarly, running the query and returning a path to the results in S3:
-
-[source,java]
---------------------------------------------------------------------------------
-from("direct:start")
-    .setBody(constant("SELECT 1"))
-    .to("aws2-athena://label?waitTimeout=60000&outputLocation=s3://bucket/path/")
-    .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer")
-    .to("mock:result");
---------------------------------------------------------------------------------
-
-== URI Options
-
 
 // component options: START
+== Component Options
+
+
 The AWS Athena component supports 30 options, which are listed below.
 
 
@@ -101,18 +77,9 @@ The AWS Athena component supports 30 options, which are listed below.
 | *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String
 |===
 // component options: END
-
-
-
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS Athena endpoint is configured using URI syntax:
 
 ----
@@ -168,15 +135,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
-
-
-
-
-
-
-
-
 Required Athena component options
 
 You have to provide the amazonAthenaClient in the
@@ -184,6 +142,30 @@ Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/athena/[AWS Athena] service.
 
 == Usage
+
+For example, to run a simple query, wait up to 60 seconds for completion, and log the results:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
+    .split(body()).streaming()
+    .to("log:out")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+Similarly, running the query and returning a path to the results in S3:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer")
+    .to("mock:result");
+--------------------------------------------------------------------------------
 
 === Message headers evaluated by the Athena producer
 

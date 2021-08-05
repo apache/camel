@@ -30,23 +30,14 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------------
-    consul://domain?[options]
+consul://domain?[options]
 ---------------------------------------
-
-You can append query options to the URI in the following format:
-
----------------------------------------
-    ?option=value&option=value&...
----------------------------------------
-
-== Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The Consul component supports 29 options, which are listed below.
 
 
@@ -85,13 +76,9 @@ The Consul component supports 29 options, which are listed below.
 | *recursive* (watch) | Recursively watch, default false | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Consul endpoint is configured using URI syntax:
 
 ----
@@ -146,8 +133,6 @@ with the following path and query parameters:
 | *recursive* (watch) | Recursively watch, default false | false | boolean
 |===
 // endpoint options: END
-
-
 
 
 

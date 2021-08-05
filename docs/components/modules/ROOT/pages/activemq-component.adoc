@@ -51,10 +51,10 @@ connect to the queue, `foo` use:
 activemq:foo
 -----------
 
-
-== Component options
-
 // component options: START
+== Component Options
+
+
 The ActiveMQ component supports 102 options, which are listed below.
 
 
@@ -166,11 +166,9 @@ The ActiveMQ component supports 102 options, which are listed below.
 | *transactionTimeout* (transaction) | The timeout value of the transaction (in seconds), if using transacted mode. | -1 | int
 |===
 // component options: END
-
-== Endpoint options
-
-
 // endpoint options: START
+== Endpoint Options
+
 The ActiveMQ endpoint is configured using URI syntax:
 
 ----

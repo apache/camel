@@ -41,7 +41,6 @@ directly in the camel-core.
 
 == URI format
 
-[source]
 ----
 dataset-test:expectedMessagesEndpointUri
 ----
@@ -50,9 +49,11 @@ Where *expectedMessagesEndpointUri* refers to some other
 Component URI that the expected message bodies are
 pulled from before starting the test.
 
-== URI Options
 
 // component options: START
+== Component Options
+
+
 The DataSet Test component supports 4 options, which are listed below.
 
 
@@ -66,9 +67,9 @@ The DataSet Test component supports 4 options, which are listed below.
 | *exchangeFormatter* (advanced) | *Autowired* Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter. |  | ExchangeFormatter
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The DataSet Test endpoint is configured using URI syntax:
 
 ----

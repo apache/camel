@@ -41,16 +41,16 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------
 vertx:channelName[?options]
 ---------------------------
 
-== Options
-
 
 
 // component options: START
+== Component Options
+
+
 The Vert.x component supports 9 options, which are listed below.
 
 
@@ -69,11 +69,9 @@ The Vert.x component supports 9 options, which are listed below.
 | *vertxFactory* (advanced) | To use a custom VertxFactory implementation |  | VertxBuilder
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Vert.x endpoint is configured using URI syntax:
 
 ----
@@ -106,12 +104,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
-
-You can append query options to the URI in the following format:
-----
-?option=value&option=value&...
-----
 
 == Connecting to the existing Vert.x instance
 

@@ -17,12 +17,13 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openshift-
 *{component-header}*
 
 The OpenShift Build Config component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute Openshift Build Configs operations. 
+provides a producer to execute Openshift Build Configs operations.
 
-
-== Component Options
 
 // component options: START
+== Component Options
+
+
 The Openshift Build Config component supports 2 options, which are listed below.
 
 
@@ -34,11 +35,9 @@ The Openshift Build Config component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
+// endpoint options: START
 == Endpoint Options
 
-// endpoint options: START
 The Openshift Build Config endpoint is configured using URI syntax:
 
 ----
@@ -111,7 +110,6 @@ This operation return a List of Builds from your Openshift cluster
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
-
             @Override
             public void process(Exchange exchange) throws Exception {
                 Map<String, String> labels = new HashMap<>();

@@ -37,23 +37,22 @@ for this component:
 
 To send a message to a channel.
 
-[source,java]
 ------------------------
 slack:#channel[?options]
 ------------------------
 
 To send a direct message to a slackuser.
 
-[source,java]
 -------------------------
 slack:@userID[?options]
 -------------------------
 
-== Options
-
 
 
 // component options: START
+== Component Options
+
+
 The Slack component supports 5 options, which are listed below.
 
 
@@ -68,11 +67,9 @@ The Slack component supports 5 options, which are listed below.
 | *webhookUrl* (webhook) | The incoming webhook URL |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Slack endpoint is configured using URI syntax:
 
 ----
@@ -130,8 +127,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-== SlackComponent
+== Configuring in Sprint XML
 
 The SlackComponent with XML must be configured as a Spring or Blueprint
 bean that contains the incoming webhook url or the app token for the integration as a

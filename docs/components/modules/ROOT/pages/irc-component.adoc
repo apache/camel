@@ -31,10 +31,10 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The IRC component supports 4 options, which are listed below.
 
 
@@ -48,14 +48,9 @@ The IRC component supports 4 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The IRC endpoint is configured using URI syntax:
 
 ----
@@ -110,12 +105,6 @@ with the following path and query parameters:
 | *username* (security) | The IRC server user name. |  | String
 |===
 // endpoint options: END
-
-
-
-
-
-
 
 == SSL Support
 
@@ -190,8 +179,6 @@ ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTr
 ----------------------------------------------------------------------------------------------
 
 == Using keys
-
-*Since Camel 2.2*
 
 Some irc rooms requires you to provide a key to be able to join that
 channel. The key is just a secret word.

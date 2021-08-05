@@ -39,7 +39,6 @@ for this component:
 
 == URI format
 
-[source]
 ----
 zookeeper://zookeeper-server[:port][/path][?options]
 ----
@@ -47,9 +46,12 @@ zookeeper://zookeeper-server[:port][/path][?options]
 The path from the URI specifies the node in the ZooKeeper server (a.k.a.
 _znode_) that will be the target of the endpoint:
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The ZooKeeper component supports 11 options, which are listed below.
 
 
@@ -70,8 +72,9 @@ The ZooKeeper component supports 11 options, which are listed below.
 | *configuration* (advanced) | To use a shared ZooKeeperConfiguration |  | ZooKeeperConfiguration
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The ZooKeeper endpoint is configured using URI syntax:
 
 ----

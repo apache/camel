@@ -42,7 +42,6 @@ for this component:
 
 == URI format
 
-[source]
 ----
 micrometer:[ counter | summary | timer ]:metricname[?options]
 ----
@@ -50,6 +49,9 @@ micrometer:[ counter | summary | timer ]:metricname[?options]
 == Options
 
 // component options: START
+== Component Options
+
+
 The Micrometer component supports 3 options, which are listed below.
 
 
@@ -62,9 +64,9 @@ The Micrometer component supports 3 options, which are listed below.
 | *metricsRegistry* (advanced) | To use a custom configured MetricRegistry. |  | MeterRegistry
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Micrometer endpoint is configured using URI syntax:
 
 ----
@@ -98,8 +100,6 @@ with the following path and query parameters:
 | *value* (producer) | Value expression when using histogram type |  | String
 |===
 // endpoint options: END
-
-
 
 
 [[MicrometerComponent-registry]]
@@ -140,6 +140,7 @@ public static class MyConfig extends SingleRouteCamelConfiguration {
 ----
 
 Or using CDI:
+
 [source,java]
 ----
 class MyBean extends RouteBuilder {
@@ -204,7 +205,6 @@ Micrometer endpoint will catch all exceptions and write log entry using level `w
 [[MicrometerComponent-counter]]
 == Counter
 
-[source]
 ----
 micrometer:counter:name[?options]
 ----
@@ -283,7 +283,6 @@ from("direct:in")
 [[MicrometerComponent-summary]]
 == Distribution Summary
 
-[source]
 ----
 micrometer:summary:metricname[?options]
 ----
@@ -352,7 +351,6 @@ from("direct:in")
 [[MicrometerComponent-timer]]
 == Timer
 
-[source]
 ----
 micrometer:timer:metricname[?options]
 ----

@@ -40,15 +40,15 @@ for this component.
 
 == URI format
 
-[source,text]
 ---------------------------
 debezium-postgres:name[?options]
 ---------------------------
 
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The Debezium PostgresSQL Connector component supports 89 options, which are listed below.
 
 
@@ -147,9 +147,9 @@ The Debezium PostgresSQL Connector component supports 89 options, which are list
 | *xminFetchIntervalMs* (postgres) | Specify how often (in ms) the xmin will be fetched from the replication slot. This xmin value is exposed by the slot which gives a lower bound of where a new replication slot could start from. The lower the value, the more likely this value is to be the current 'true' value, but the bigger the performance cost. The bigger the value, the less likely this value is to be the current 'true' value, but the lower the performance penalty. The default is set to 0 ms, which disables tracking xmin. | 0ms | long
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Debezium PostgresSQL Connector endpoint is configured using URI syntax:
 
 ----
@@ -294,6 +294,7 @@ The message body if is not `null` (in case of tombstones), it contains the state
 === Consuming events
 
 Here is a very simple route that you can use in order to listen to Debezium events from PostgresSQL connector.
+
 [source,java]
 ----
 from("debezium-postgres:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&databaseHostName=localhost&databaseUser=debezium&databasePassword=dbz&databaseServerName=my-app-connector&databaseHistoryFileName=/usr/history-file-1.dat")
@@ -313,6 +314,7 @@ To use it, you can either add `Map.class` type when you access the message e.g: 
 
 We mentioned above about the schema, which can be used in case you need to perform advance data transformation and the schema is needed for that. If you choose not to convert your body to `Map`,
 you can obtain the schema information as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Schema.html[`Schema`] type from `Struct` like this:
+
 [source,java]
 ----
 from("debezium-postgres:[name]?[options]])

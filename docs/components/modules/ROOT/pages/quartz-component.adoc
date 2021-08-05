@@ -47,14 +47,10 @@ cron expression is provided, the component uses a simple trigger. If no
 `groupName` is provided, the quartz component uses the `Camel` group
 name.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
-
-
 // component options: START
+== Component Options
+
+
 The Quartz component supports 13 options, which are listed below.
 
 
@@ -77,11 +73,9 @@ The Quartz component supports 13 options, which are listed below.
 | *startDelayedSeconds* (scheduler) | Seconds to wait before starting the quartz scheduler. |  | int
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Quartz endpoint is configured using URI syntax:
 
 ----
@@ -128,33 +122,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
-
-For example, the following routing rule will fire two timer events to
-the `mock:results` endpoint:
-
-[source,java]
-----
-from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
-    .to("mock:result");
-----
-
-When using `stateful=true`, the
-http://quartz-scheduler.org/api/2.0.0/org/quartz/JobDataMap.html[JobDataMap]
-is re-persisted after every execution of the job, thus preserving state
-for the next execution.
-
-[NOTE]
-====
-*Running in OSGi and having multiple bundles with quartz routes*
-
-If you run in OSGi such as Apache ServiceMix, or Apache Karaf, and have
-multiple bundles with Camel routes that start from
-xref:quartz-component.adoc[Quartz] endpoints, then make sure if you assign an `id`
-to the `<camelContext>` that this id is unique, as this is
-required by the `QuartzScheduler` in the OSGi container. If you do not
-set any `id` on `<camelContext>` then a unique id is auto assigned, and there is no problem.
-====
 
 == Configuring quartz.properties file
 

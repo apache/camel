@@ -31,16 +31,18 @@ route temporarily.
 
 == URI format
 
-[source]
 ----
 stub:someUri
 ----
 
 Where *`someUri`* can be any URI with any query parameters.
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The Stub component supports 9 options, which are listed below.
 
 
@@ -59,9 +61,9 @@ The Stub component supports 9 options, which are listed below.
 | *queueSize* (advanced) | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | int
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Stub endpoint is configured using URI syntax:
 
 ----
@@ -112,7 +114,6 @@ with the following path and query parameters:
 
 Here are a few samples of stubbing endpoint uris
 
-[source]
 ----
 stub:smtp://somehost.foo.com?user=whatnot&something=else
 stub:http://somehost.bar.com/something

@@ -39,6 +39,190 @@ to look at the https://github.com/apache/camel/tree/main/components/camel-salesf
 setup your environment for running integration tests.
 ====
 
+
+// component options: START
+== Component Options
+
+
+The Salesforce component supports 84 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apexMethod* (common) | APEX method name |  | String
+| *apexQueryParams* (common) | Query params for APEX method |  | Map
+| *apiVersion* (common) | Salesforce API version. | 50.0 | String
+| *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
+| *batchId* (common) | Bulk API Batch ID |  | String
+| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
+| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
+| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
+| *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
+| *httpClientConnectionTimeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
+| *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
+| *httpMaxContentLength* (common) | Max content length of an HTTP response. |  | Integer
+| *httpRequestBufferSize* (common) | HTTP request buffer size. May need to be increased for large SOQL queries. | 8192 | Integer
+| *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
+| *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
+| *instanceId* (common) | Salesforce1 Analytics report execution instance ID |  | String
+| *jobId* (common) | Bulk API Job ID |  | String
+| *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
+| *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 30000 | long
+| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: EXCEPTION, NULL | EXCEPTION | NotFoundBehaviour
+| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
+| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
+| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
+| *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
+| *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. This must be set if using the XML format. Also, set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. Multiple packages can be separated by comma. |  | String
+| *pkChunking* (common) | Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API performs PK chunking automatically, if necessary. |  | Boolean
+| *pkChunkingChunkSize* (common) | Chunk size for use with PK Chunking. If unspecified, salesforce default is 100,000. Maximum size is 250,000. |  | Integer
+| *pkChunkingParent* (common) | Specifies the parent object when you're enabling PK chunking for queries on sharing objects. The chunks are based on the parent object's records rather than the sharing object's records. For example, when querying on AccountShare, specify Account as the parent object. PK chunking is supported for sharing objects as long as the parent object is supported. |  | String
+| *pkChunkingStartRow* (common) | Specifies the 15-character or 18-character record ID to be used as the lower boundary for the first chunk. Use this parameter to specify a starting ID when restarting a job that failed between batches. |  | String
+| *queryLocator* (common) | Query Locator provided by salesforce for use when a query results in more records than can be retrieved in a single call. Use this value in a subsequent call to retrieve additional records. |  | String
+| *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
+| *reportId* (common) | Salesforce1 Analytics report Id |  | String
+| *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
+| *resultId* (common) | Bulk API Result ID |  | String
+| *sObjectBlobFieldName* (common) | SObject blob field name |  | String
+| *sObjectClass* (common) | Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin |  | String
+| *sObjectFields* (common) | SObject fields to retrieve |  | String
+| *sObjectId* (common) | SObject ID if required by API |  | String
+| *sObjectIdName* (common) | SObject external ID field name |  | String
+| *sObjectIdValue* (common) | SObject external ID field value |  | String
+| *sObjectName* (common) | SObject name if required or supported by API |  | String
+| *sObjectQuery* (common) | Salesforce SOQL query string |  | String
+| *sObjectSearch* (common) | Salesforce SOSL search string |  | String
+| *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | boolean
+| *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpointConfig
+| *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
+| *longPollingTransportProperties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *allOrNone* (producer) | Composite API option to indicate to rollback all records if any are not successful. | false | boolean
+| *apexUrl* (producer) | APEX method URL |  | String
+| *compositeMethod* (producer) | Composite (raw) method. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *rawHttpHeaders* (producer) | Comma separated list of message headers to include as HTTP parameters for Raw operation. |  | String
+| *rawMethod* (producer) | HTTP method to use for the Raw operation |  | String
+| *rawPath* (producer) | The portion of the endpoint URL after the domain name. E.g., '/services/data/v52.0/sobjects/Account/' |  | String
+| *rawQueryParameters* (producer) | Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *httpProxyExcludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
+| *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
+| *httpProxyIncludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
+| *httpProxyPort* (proxy) | Port number of the HTTP proxy server to use. |  | Integer
+| *httpProxySocks4* (proxy) | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | boolean
+| *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. There are 3 enums and the value can be one of: USERNAME_PASSWORD, REFRESH_TOKEN, JWT |  | AuthenticationType
+| *clientId* (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
+| *clientSecret* (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
+| *httpProxyAuthUri* (security) | Used in authentication against the HTTP proxy server, needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
+| *httpProxyPassword* (security) | Password to use to authenticate against the HTTP proxy server. |  | String
+| *httpProxyRealm* (security) | Realm of the proxy server, used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
+| *httpProxySecure* (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
+| *httpProxyUseDigestAuth* (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxy, otherwise Basic authorization method will be used | false | boolean
+| *httpProxyUsername* (security) | Username to use to authenticate against the HTTP proxy server. |  | String
+| *instanceUrl* (security) | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
+| *keystore* (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
+| *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
+| *loginConfig* (security) | All authentication configuration in one nested bean, all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
+| *loginUrl* (security) | *Required* URL of the Salesforce instance used for authentication, by default set to \https://login.salesforce.com | https://login.salesforce.com | String
+| *password* (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
+| *refreshToken* (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token, or configure using the builtin callback at \https://login.salesforce.com/services/oauth2/success or \https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
+| *sslContextParameters* (security) | SSL parameters to use, see SSLContextParameters class for all available options. |  | SSLContextParameters
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
+| *userName* (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String
+|===
+// component options: END
+// endpoint options: START
+== Endpoint Options
+
+The Salesforce endpoint is configured using URI syntax:
+
+----
+salesforce:operationName:topicName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *operationName* | The operation to use. There are 65 enums and the value can be one of: getVersions, getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject, createSObject, updateSObject, deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore, queryAll, search, apexCall, recent, createJob, getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults, createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports, getReportDescription, executeSyncReport, executeAsyncReport, getReportInstances, getReportResults, limits, approval, approvals, composite-tree, composite-batch, composite, compositeRetrieveSObjectCollections, compositeCreateSObjectCollections, compositeUpdateSObjectCollections, compositeUpsertSObjectCollections, compositeDeleteSObjectCollections, bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob, bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults, bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob, bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob, bulk2DeleteQueryJob, raw |  | OperationName
+| *topicName* | The name of the topic/channel to use |  | String
+|===
+
+
+=== Query Parameters (54 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apexMethod* (common) | APEX method name |  | String
+| *apexQueryParams* (common) | Query params for APEX method |  | Map
+| *apiVersion* (common) | Salesforce API version. | 50.0 | String
+| *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
+| *batchId* (common) | Bulk API Batch ID |  | String
+| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
+| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
+| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
+| *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
+| *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
+| *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
+| *instanceId* (common) | Salesforce1 Analytics report execution instance ID |  | String
+| *jobId* (common) | Bulk API Job ID |  | String
+| *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
+| *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 30000 | long
+| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: EXCEPTION, NULL | EXCEPTION | NotFoundBehaviour
+| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
+| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
+| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
+| *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
+| *pkChunking* (common) | Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API performs PK chunking automatically, if necessary. |  | Boolean
+| *pkChunkingChunkSize* (common) | Chunk size for use with PK Chunking. If unspecified, salesforce default is 100,000. Maximum size is 250,000. |  | Integer
+| *pkChunkingParent* (common) | Specifies the parent object when you're enabling PK chunking for queries on sharing objects. The chunks are based on the parent object's records rather than the sharing object's records. For example, when querying on AccountShare, specify Account as the parent object. PK chunking is supported for sharing objects as long as the parent object is supported. |  | String
+| *pkChunkingStartRow* (common) | Specifies the 15-character or 18-character record ID to be used as the lower boundary for the first chunk. Use this parameter to specify a starting ID when restarting a job that failed between batches. |  | String
+| *queryLocator* (common) | Query Locator provided by salesforce for use when a query results in more records than can be retrieved in a single call. Use this value in a subsequent call to retrieve additional records. |  | String
+| *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
+| *reportId* (common) | Salesforce1 Analytics report Id |  | String
+| *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
+| *resultId* (common) | Bulk API Result ID |  | String
+| *sObjectBlobFieldName* (common) | SObject blob field name |  | String
+| *sObjectClass* (common) | Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin |  | String
+| *sObjectFields* (common) | SObject fields to retrieve |  | String
+| *sObjectId* (common) | SObject ID if required by API |  | String
+| *sObjectIdName* (common) | SObject external ID field name |  | String
+| *sObjectIdValue* (common) | SObject external ID field value |  | String
+| *sObjectName* (common) | SObject name if required or supported by API |  | String
+| *sObjectQuery* (common) | Salesforce SOQL query string |  | String
+| *sObjectSearch* (common) | Salesforce SOSL search string |  | String
+| *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *replayId* (consumer) | The replayId value to use when subscribing |  | Long
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *allOrNone* (producer) | Composite API option to indicate to rollback all records if any are not successful. | false | boolean
+| *apexUrl* (producer) | APEX method URL |  | String
+| *compositeMethod* (producer) | Composite (raw) method. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *rawHttpHeaders* (producer) | Comma separated list of message headers to include as HTTP parameters for Raw operation. |  | String
+| *rawMethod* (producer) | HTTP method to use for the Raw operation |  | String
+| *rawPath* (producer) | The portion of the endpoint URL after the domain name. E.g., '/services/data/v52.0/sobjects/Account/' |  | String
+| *rawQueryParameters* (producer) | Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
+|===
+// endpoint options: END
+
+
 == Authenticating to Salesforce
 
 The component supports three OAuth authentication flows:
@@ -52,7 +236,6 @@ For each of the flow different set of properties needs to be set:
 .Properties to set for each authentication flow
 |===
 | Property     | Where to find it on Salesforce     | Flow
-
 | clientId     | Connected App, Consumer Key        | All flows
 | clientSecret | Connected App, Consumer Secret     | Username-Password, Refresh Token
 | userName     | Salesforce user username           | Username-Password, JWT Bearer Token
@@ -80,7 +263,6 @@ must contain only single certificate-private key entry.
 
 When used as a consumer, receiving streaming events, the URI scheme is:
 
-[source,java]
 ----
 salesforce:topic?options
 ----
@@ -88,13 +270,9 @@ salesforce:topic?options
 When used as a producer, invoking the Salesforce REST APIs, the URI
 scheme is:
 
-[source,java]
 ----
 salesforce:operationName?options
 ----
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
 == Passing in Salesforce headers and fetching Salesforce response headers
 
@@ -823,193 +1001,4 @@ Please refer to
 https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
 for details on how to generate the DTO.
 
-== Options
 
-// component options: START
-The Salesforce component supports 84 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *apexMethod* (common) | APEX method name |  | String
-| *apexQueryParams* (common) | Query params for APEX method |  | Map
-| *apiVersion* (common) | Salesforce API version. | 50.0 | String
-| *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
-| *batchId* (common) | Bulk API Batch ID |  | String
-| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
-| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
-| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
-| *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
-| *httpClientConnectionTimeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
-| *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
-| *httpMaxContentLength* (common) | Max content length of an HTTP response. |  | Integer
-| *httpRequestBufferSize* (common) | HTTP request buffer size. May need to be increased for large SOQL queries. | 8192 | Integer
-| *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
-| *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
-| *instanceId* (common) | Salesforce1 Analytics report execution instance ID |  | String
-| *jobId* (common) | Bulk API Job ID |  | String
-| *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
-| *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 30000 | long
-| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: EXCEPTION, NULL | EXCEPTION | NotFoundBehaviour
-| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
-| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
-| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
-| *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
-| *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. This must be set if using the XML format. Also, set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. Multiple packages can be separated by comma. |  | String
-| *pkChunking* (common) | Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API performs PK chunking automatically, if necessary. |  | Boolean
-| *pkChunkingChunkSize* (common) | Chunk size for use with PK Chunking. If unspecified, salesforce default is 100,000. Maximum size is 250,000. |  | Integer
-| *pkChunkingParent* (common) | Specifies the parent object when you're enabling PK chunking for queries on sharing objects. The chunks are based on the parent object's records rather than the sharing object's records. For example, when querying on AccountShare, specify Account as the parent object. PK chunking is supported for sharing objects as long as the parent object is supported. |  | String
-| *pkChunkingStartRow* (common) | Specifies the 15-character or 18-character record ID to be used as the lower boundary for the first chunk. Use this parameter to specify a starting ID when restarting a job that failed between batches. |  | String
-| *queryLocator* (common) | Query Locator provided by salesforce for use when a query results in more records than can be retrieved in a single call. Use this value in a subsequent call to retrieve additional records. |  | String
-| *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
-| *reportId* (common) | Salesforce1 Analytics report Id |  | String
-| *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
-| *resultId* (common) | Bulk API Result ID |  | String
-| *sObjectBlobFieldName* (common) | SObject blob field name |  | String
-| *sObjectClass* (common) | Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin |  | String
-| *sObjectFields* (common) | SObject fields to retrieve |  | String
-| *sObjectId* (common) | SObject ID if required by API |  | String
-| *sObjectIdName* (common) | SObject external ID field name |  | String
-| *sObjectIdValue* (common) | SObject external ID field value |  | String
-| *sObjectName* (common) | SObject name if required or supported by API |  | String
-| *sObjectQuery* (common) | Salesforce SOQL query string |  | String
-| *sObjectSearch* (common) | Salesforce SOSL search string |  | String
-| *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | boolean
-| *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpointConfig
-| *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
-| *longPollingTransportProperties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *allOrNone* (producer) | Composite API option to indicate to rollback all records if any are not successful. | false | boolean
-| *apexUrl* (producer) | APEX method URL |  | String
-| *compositeMethod* (producer) | Composite (raw) method. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *rawHttpHeaders* (producer) | Comma separated list of message headers to include as HTTP parameters for Raw operation. |  | String
-| *rawMethod* (producer) | HTTP method to use for the Raw operation |  | String
-| *rawPath* (producer) | The portion of the endpoint URL after the domain name. E.g., '/services/data/v52.0/sobjects/Account/' |  | String
-| *rawQueryParameters* (producer) | Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *httpProxyExcludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
-| *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
-| *httpProxyIncludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
-| *httpProxyPort* (proxy) | Port number of the HTTP proxy server to use. |  | Integer
-| *httpProxySocks4* (proxy) | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | boolean
-| *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. There are 3 enums and the value can be one of: USERNAME_PASSWORD, REFRESH_TOKEN, JWT |  | AuthenticationType
-| *clientId* (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
-| *clientSecret* (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
-| *httpProxyAuthUri* (security) | Used in authentication against the HTTP proxy server, needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
-| *httpProxyPassword* (security) | Password to use to authenticate against the HTTP proxy server. |  | String
-| *httpProxyRealm* (security) | Realm of the proxy server, used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
-| *httpProxySecure* (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
-| *httpProxyUseDigestAuth* (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxy, otherwise Basic authorization method will be used | false | boolean
-| *httpProxyUsername* (security) | Username to use to authenticate against the HTTP proxy server. |  | String
-| *instanceUrl* (security) | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
-| *keystore* (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
-| *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
-| *loginConfig* (security) | All authentication configuration in one nested bean, all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
-| *loginUrl* (security) | *Required* URL of the Salesforce instance used for authentication, by default set to \https://login.salesforce.com | https://login.salesforce.com | String
-| *password* (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
-| *refreshToken* (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token, or configure using the builtin callback at \https://login.salesforce.com/services/oauth2/success or \https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
-| *sslContextParameters* (security) | SSL parameters to use, see SSLContextParameters class for all available options. |  | SSLContextParameters
-| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
-| *userName* (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String
-|===
-// component options: END
-
-
-
-
-
-
-
-
-
-
-// endpoint options: START
-The Salesforce endpoint is configured using URI syntax:
-
-----
-salesforce:operationName:topicName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *operationName* | The operation to use. There are 65 enums and the value can be one of: getVersions, getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject, createSObject, updateSObject, deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore, queryAll, search, apexCall, recent, createJob, getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults, createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports, getReportDescription, executeSyncReport, executeAsyncReport, getReportInstances, getReportResults, limits, approval, approvals, composite-tree, composite-batch, composite, compositeRetrieveSObjectCollections, compositeCreateSObjectCollections, compositeUpdateSObjectCollections, compositeUpsertSObjectCollections, compositeDeleteSObjectCollections, bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob, bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults, bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob, bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob, bulk2DeleteQueryJob, raw |  | OperationName
-| *topicName* | The name of the topic/channel to use |  | String
-|===
-
-
-=== Query Parameters (54 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *apexMethod* (common) | APEX method name |  | String
-| *apexQueryParams* (common) | Query params for APEX method |  | Map
-| *apiVersion* (common) | Salesforce API version. | 50.0 | String
-| *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
-| *batchId* (common) | Bulk API Batch ID |  | String
-| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
-| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
-| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
-| *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
-| *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
-| *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
-| *instanceId* (common) | Salesforce1 Analytics report execution instance ID |  | String
-| *jobId* (common) | Bulk API Job ID |  | String
-| *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
-| *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 30000 | long
-| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: EXCEPTION, NULL | EXCEPTION | NotFoundBehaviour
-| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
-| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
-| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
-| *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
-| *pkChunking* (common) | Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API performs PK chunking automatically, if necessary. |  | Boolean
-| *pkChunkingChunkSize* (common) | Chunk size for use with PK Chunking. If unspecified, salesforce default is 100,000. Maximum size is 250,000. |  | Integer
-| *pkChunkingParent* (common) | Specifies the parent object when you're enabling PK chunking for queries on sharing objects. The chunks are based on the parent object's records rather than the sharing object's records. For example, when querying on AccountShare, specify Account as the parent object. PK chunking is supported for sharing objects as long as the parent object is supported. |  | String
-| *pkChunkingStartRow* (common) | Specifies the 15-character or 18-character record ID to be used as the lower boundary for the first chunk. Use this parameter to specify a starting ID when restarting a job that failed between batches. |  | String
-| *queryLocator* (common) | Query Locator provided by salesforce for use when a query results in more records than can be retrieved in a single call. Use this value in a subsequent call to retrieve additional records. |  | String
-| *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
-| *reportId* (common) | Salesforce1 Analytics report Id |  | String
-| *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
-| *resultId* (common) | Bulk API Result ID |  | String
-| *sObjectBlobFieldName* (common) | SObject blob field name |  | String
-| *sObjectClass* (common) | Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin |  | String
-| *sObjectFields* (common) | SObject fields to retrieve |  | String
-| *sObjectId* (common) | SObject ID if required by API |  | String
-| *sObjectIdName* (common) | SObject external ID field name |  | String
-| *sObjectIdValue* (common) | SObject external ID field value |  | String
-| *sObjectName* (common) | SObject name if required or supported by API |  | String
-| *sObjectQuery* (common) | Salesforce SOQL query string |  | String
-| *sObjectSearch* (common) | Salesforce SOSL search string |  | String
-| *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *replayId* (consumer) | The replayId value to use when subscribing |  | Long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *allOrNone* (producer) | Composite API option to indicate to rollback all records if any are not successful. | false | boolean
-| *apexUrl* (producer) | APEX method URL |  | String
-| *compositeMethod* (producer) | Composite (raw) method. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *rawHttpHeaders* (producer) | Comma separated list of message headers to include as HTTP parameters for Raw operation. |  | String
-| *rawMethod* (producer) | HTTP method to use for the Raw operation |  | String
-| *rawPath* (producer) | The portion of the endpoint URL after the domain name. E.g., '/services/data/v52.0/sobjects/Account/' |  | String
-| *rawQueryParameters* (producer) | Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode values as this will be done automatically. |  | String
-|===
-// endpoint options: END
-
-include::{page-component-version}@camel-spring-boot::page$salesforce-starter.adoc[]

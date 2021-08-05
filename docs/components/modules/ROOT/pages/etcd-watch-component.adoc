@@ -14,14 +14,10 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/etcd-watch
 
 *{component-header}*
 
-*Since Camel 2.18*
-
-
 The camel Etcd component allows you to work with Etcd, a distributed reliable key-value store.
 
 == URI Format
 
-[source,java]
 ----------------------------
 etcd-watch:path[?options]
 ----------------------------
@@ -29,6 +25,9 @@ etcd-watch:path[?options]
 == URI Options
 
 // component options: START
+== Component Options
+
+
 The Etcd Watch component supports 13 options, which are listed below.
 
 
@@ -51,8 +50,9 @@ The Etcd Watch component supports 13 options, which are listed below.
 | *userName* (security) | The user name to use for basic authentication. |  | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Etcd Watch endpoint is configured using URI syntax:
 
 ----
@@ -91,4 +91,5 @@ with the following path and query parameters:
 | *userName* (security) | The user name to use for basic authentication. |  | String
 |===
 // endpoint options: END
+
 include::{page-component-version}@camel-spring-boot::page$etcd-starter.adoc[]

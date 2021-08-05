@@ -14,11 +14,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mongodb.ad
 
 *{component-header}*
 
-[NOTE]
-====
-The MongoDB Camel component uses Mongo Java Driver 4.x.
-====
-
 According to Wikipedia: "NoSQL is a movement promoting a loosely defined
 class of non-relational data stores that break with a long history of
 relational databases and ACID guarantees." NoSQL solutions have grown in
@@ -44,6 +39,11 @@ documents, but rather hierarchical data defined in JSON/BSON) and
 collections. This component page will assume you are familiar with them.
 Otherwise, visit http://www.mongodb.org/[http://www.mongodb.org/].
 
+[NOTE]
+====
+The MongoDB Camel component uses Mongo Java Driver 4.x.
+====
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -59,15 +59,14 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------------------------------------------------------------------------------------
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
-== MongoDB options
-
-
 // component options: START
+== Component Options
+
+
 The MongoDB component supports 4 options, which are listed below.
 
 
@@ -81,13 +80,9 @@ The MongoDB component supports 4 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The MongoDB endpoint is configured using URI syntax:
 
 ----
@@ -141,6 +136,7 @@ with the following path and query parameters:
 | *tailTrackIncreasingField* (tail) | Correlation field in the incoming record which is of increasing nature and will be used to position the tailing cursor every time it is generated. The cursor will be (re)created with a query of type: tailTrackIncreasingField greater than lastValue (possibly recovered from persistent tail tracking). Can be of type Integer, Date, String, etc. NOTE: No support for dot notation at the current time, so the field should be at the top level of the document. |  | String
 |===
 // endpoint options: END
+
 
 
 [[MongoDB-ConfigurationofdatabaseinSpringXML]]
@@ -641,8 +637,6 @@ containing the number of records deleted (copied from
 
 ==== bulkWrite
 
-*Since Camel 2.21*
-
 Performs write operations in bulk with controls for order of execution.
 Requires a `List<WriteModel<Document>>` as the IN message body containing commands for insert, update, and delete operations.
 
@@ -680,7 +674,6 @@ Unordered operations are executed in parallel and this behavior is not guarantee
 Perform a aggregation with the given pipeline contained in the
 body.
 *Aggregations could be long and heavy operations. Use with care.*
-
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -733,7 +726,6 @@ Equivalent of running the `db.stats()` command in the MongoDB shell,
 which displays useful statistic figures about the database. +
  For example:
 
-[source,java]
 -------------------------------------
 > db.stats();
 {
@@ -770,7 +762,6 @@ Equivalent of running the `db.collection.stats()` command in the MongoDB
 shell, which displays useful statistic figures about the collection. +
  For example:
 
-[source,java]
 -----------------------------
 > db.camelTest.stats();
 {

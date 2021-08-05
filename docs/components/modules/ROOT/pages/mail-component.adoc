@@ -30,24 +30,6 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[WARNING]
-====
-*Geronimo mail .jar*
-
-We have discovered that the geronimo mail `.jar` (v1.6) has a bug when
-polling mails with attachments. It cannot correctly identify the
-`Content-Type`. So, if you attach a `.jpeg` file to a mail and you poll
-it, the `Content-Type` is resolved as `text/plain` and not as
-`image/jpeg`. For that reason, we have added an
-`org.apache.camel.component.ContentTypeResolver` SPI interface which
-enables you to provide your own implementation and fix this bug by
-returning the correct Mime type based on the file name. So if the file
-name ends with `jpeg/jpg`, you can return `image/jpeg`.
-====
-
-You can set your custom resolver on the `MailComponent` instance or on
-the `MailEndpoint` instance.
-
 
 [TIP]
 ====
@@ -74,7 +56,6 @@ will kick in and avoid sending the mails.
 Mail endpoints can have one of the following URI formats (for the
 protocols, SMTP, POP3, or IMAP, respectively):
 
-[source,java]
 ---------------------------------------
 smtp://[username@]host[:port][?options]
 pop3://[username@]host[:port][?options]
@@ -85,21 +66,17 @@ The mail component also supports secure variants of these protocols
 (layered over SSL). You can enable the secure protocols by adding `s` to
 the scheme:
 
-[source,java]
 ----------------------------------------
 smtps://[username@]host[:port][?options]
 pop3s://[username@]host[:port][?options]
 imaps://[username@]host[:port][?options]
 ----------------------------------------
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-
-== Component options
-
 
 // component options: START
+== Component Options
+
+
 The Mail component supports 43 options, which are listed below.
 
 
@@ -152,13 +129,9 @@ The Mail component supports 43 options, which are listed below.
 | *username* (security) | The username for login. See also setAuthenticator(MailAuthenticator). |  | String
 |===
 // component options: END
-
-
-
-== Endpoint options
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Mail endpoint is configured using URI syntax:
 
 ----
@@ -259,7 +232,6 @@ with the following path and query parameters:
 Typically, you specify a URI with login credentials as follows (taking
 SMTP as an example):
 
-[source,java]
 ------------------------------------------------
 smtp://[username@]host[:port][?password=somepwd]
 ------------------------------------------------
@@ -267,19 +239,17 @@ smtp://[username@]host[:port][?password=somepwd]
 Alternatively, it is possible to specify both the user name and the
 password as query options:
 
-[source,java]
 -----------------------------------------------------
 smtp://host[:port]?password=somepwd&username=someuser
 -----------------------------------------------------
 
 For example:
 
-[source,java]
 ------------------------------------------------------------
 smtp://mycompany.mailserver:30?password=tiger&username=scott
 ------------------------------------------------------------
 
-== Components
+=== Component alias names
 
 - IMAP
 - IMAPs
@@ -604,8 +574,6 @@ the Splitter as shown below
 </split>
 ---------------------------------------------------------------------------------
 
- 
-
 You can also split the attachments as byte[] to
 be stored as the message body. This is done by creating the expression
 with boolean true
@@ -706,16 +674,12 @@ SearchTerm term = builder.build();
 
 == Polling Optimization
 
-*Since Camel 3.1*
-
 The parameter maxMessagePerPoll and fetchSize allow you to restrict the number message that should be processed for each poll.
 These parameters should help to prevent bad performance when working with folders that contain a lot of messages.
 In previous versions these parameters have been evaluated too late, so that big mailboxes could still cause performance problems.
 With Camel 3.1 these parameters are evaluated earlier during the poll to avoid these problems.
 
 == Using headers with additional Java Mail Sender properties
-
-*Since Camel 3.2*
 
 When sending mails, then you can provide dynamic java mail properties for the `JavaMailSender` from
 the Exchange as message headers with keys starting with `java.smtp.`.

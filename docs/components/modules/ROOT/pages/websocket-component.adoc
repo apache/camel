@@ -36,22 +36,15 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------------------------
 websocket://hostname[:port][/resourceUri][?options]
 ---------------------------------------------------
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Websocket Options
-
-
-
-
-
 
 // component options: START
+== Component Options
+
+
 The Jetty Websocket component supports 16 options, which are listed below.
 
 
@@ -77,17 +70,9 @@ The Jetty Websocket component supports 16 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Jetty Websocket endpoint is configured using URI syntax:
 
 ----
@@ -137,9 +122,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
- 
 
 == Message Headers
 

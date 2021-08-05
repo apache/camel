@@ -61,7 +61,6 @@ for this component:
 
 The URI scheme for a sip endpoint is as follows:
 
-[source,java]
 -----------------------------------------
 sip://johndoe@localhost:99999[?options]
 sips://johndoe@localhost:99999/[?options]
@@ -70,17 +69,15 @@ sips://johndoe@localhost:99999/[?options]
 This component supports producer and consumer endpoints for both TCP and
 UDP.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
 The SIP Component offers an extensive set of configuration options &
 capability to create custom stateful headers needed to propagate state
 via the SIP protocol.
 
 
 // component options: START
+== Component Options
+
+
 The SIP component supports 3 options, which are listed below.
 
 
@@ -93,10 +90,9 @@ The SIP component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SIP endpoint is configured using URI syntax:
 
 ----
@@ -167,6 +163,7 @@ with the following path and query parameters:
 | *useRouterForAllUris* (proxy) | This setting is used when requests are sent to the Presence Agent via a proxy. | false | boolean
 |===
 // endpoint options: END
+
 
 
 == Sending Messages to/from a SIP endpoint

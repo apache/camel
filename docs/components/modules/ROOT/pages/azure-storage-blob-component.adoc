@@ -52,21 +52,11 @@ of operation being requested in blob level, e.g: getBlob, accountName, container
 The blob will be created if it does not already exist.
 You can append query options to the URI in the following format, ?options=value&option2=value&...
 
-For example in order to download a blob content from the block blob `hello.txt`
-located on the `container1` in the `camelazure` storage account, use the following snippet:
-
-[source,java]
---------------------------------------------------------------------------------
-from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accessKey=yourAccessKey").
-to("file://blobdirectory");
---------------------------------------------------------------------------------
-
-
-
-== URI Options
-
 
 // component options: START
+== Component Options
+
+
 The Azure Storage Blob Service component supports 30 options, which are listed below.
 
 
@@ -106,8 +96,9 @@ The Azure Storage Blob Service component supports 30 options, which are listed b
 | *accessKey* (security) | Access key for the associated azure account name to be used for authentication with azure blob services |  | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Azure Storage Blob Service endpoint is configured using URI syntax:
 
 ----
@@ -196,16 +187,17 @@ provided into `blobServiceClient`. Note: You don't need to create a specific cli
 can be used to retrieve lower level clients.
 
 
-== Batch Consumer
-
-This component implements the Batch Consumer.
-
-This allows you for instance to know how many messages exists in this
-batch and for instance let the Aggregator
-aggregate this number of messages.
-
 
 == Usage
+
+For example in order to download a blob content from the block blob `hello.txt`
+located on the `container1` in the `camelazure` storage account, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accessKey=yourAccessKey").
+to("file://blobdirectory");
+--------------------------------------------------------------------------------
 
 === Message headers evaluated by the component producer
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
@@ -286,9 +278,11 @@ aggregate this number of messages.
 |=======================================================================
 
 === Advanced Azure Storage Blob configuration
+
 If your Camel Application is running behind a firewall or if you need to
 have more control over the `BlobServiceClient` instance configuration, you can
 create your own instance:
+
 [source,java]
 -----------------------------------------------------------------------
 StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
@@ -370,6 +364,7 @@ For these operations, `accountName`, `containerName` and `blobName` are *require
 Refer to the example section in this page to learn how to use these operations into your camel application.
 
 === Consumer Examples
+
 To consume a blob into a file using file component, this can be done like this:
 [source,java]
 --------------------------------------------------------------------------------
@@ -378,6 +373,7 @@ to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
 However, you can also write to file directly without using the file component, you will need to specify `fileDir` folder path in order to save your blob in your machine.
+
 [source,java]
 --------------------------------------------------------------------------------
 from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
@@ -386,12 +382,12 @@ to("mock:results");
 
 Also, the component supports batch consumer, hence you can consume multiple blobs with only specifying the container name, the consumer will
 return multiple exchanges depending on the number of the blobs in the container. Example:
+
 [source,java]
 --------------------------------------------------------------------------------
 from("azure-storage-blob://camelazure/container1?accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
 to("mock:results");
 --------------------------------------------------------------------------------
-
 
 
 === Producer Operations Examples
@@ -709,14 +705,18 @@ from("direct:start")
 
 
 === Development Notes (Important)
+
 All integration tests use [Testcontainers](https://www.testcontainers.org/) and run by default.
 Obtaining of Azure accessKey and accountName is needed to be able to run all integration tests using Azure services.
 In addition to the mocked unit tests you *will need to run the integration tests
 with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
 To run the integration tests, on this component directory, run the following maven command:
+
+[source,bash]
 ----
 mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey
 ----
+
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
 
 

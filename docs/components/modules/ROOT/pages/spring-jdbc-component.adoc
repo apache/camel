@@ -32,9 +32,12 @@ for this component:
 </dependency>
 ----
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The Spring JDBC component supports 4 options, which are listed below.
 
 
@@ -48,9 +51,9 @@ The Spring JDBC component supports 4 options, which are listed below.
 | *connectionStrategy* (advanced) | To use a custom strategy for working with connections. Do not use a custom strategy when using the spring-jdbc component because a special Spring ConnectionStrategy is used by default to support Spring Transactions. |  | ConnectionStrategy
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Spring JDBC endpoint is configured using URI syntax:
 
 ----

@@ -34,7 +34,6 @@ for this component:
 
 == URI format
 
-[source,java]
 --------------------------------------
 string-template:templateName[?options]
 --------------------------------------
@@ -42,13 +41,12 @@ string-template:templateName[?options]
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
 
 
 // component options: START
+== Component Options
+
+
 The String Template component supports 4 options, which are listed below.
 
 
@@ -62,10 +60,9 @@ The String Template component supports 4 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The String Template endpoint is configured using URI syntax:
 
 ----
@@ -164,7 +161,6 @@ In this sample we want to use a string template to send an order
 confirmation email. The email template is laid out in `StringTemplate`
 as:
 
-[source,java]
 --------------------------------------------
 Dear <headers.lastName>, <headers.firstName>
 

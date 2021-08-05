@@ -15,20 +15,17 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/service.ad
 *{component-header}*
 
 
-== Using the service endpoint
-
-
 == URI format
 
-[source]
 ----
 service:serviceName:endpoint[?options]
 ----
 
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The Service component supports 4 options, which are listed below.
 
 
@@ -42,8 +39,9 @@ The Service component supports 4 options, which are listed below.
 | *serviceSelector* (advanced) | Inject the service selector used to lookup the ServiceRegistry to use. |  | Selector
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Service endpoint is configured using URI syntax:
 
 ----
@@ -75,10 +73,9 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Implementations
 
-Camel provide the following ServiceRegistry implementations:
+Camel provides the following ServiceRegistry implementations:
 
 - camel-consul
 - camel-zookeeper

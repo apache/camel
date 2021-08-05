@@ -14,15 +14,15 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cxf.adoc[o
 
 *{component-header}*
 
+The CXF component provides integration with
+http://cxf.apache.org[Apache CXF] for connecting to http://cxf.apache.org/docs/jax-ws.html[JAX-WS] services
+hosted in CXF.
+
 [TIP]
 ====
 When using CXF in streaming modes (see DataFormat option), then also
 read about Stream caching.
 ====
-
-The CXF component provides integration with
-http://cxf.apache.org[Apache CXF] for connecting to http://cxf.apache.org/docs/jax-ws.html[JAX-WS] services
-hosted in CXF.
 
 Maven users must add the following dependency to their `pom.xml`
 for this component:
@@ -39,9 +39,9 @@ for this component:
 
 
 == URI format
+
 There are two URI formats for this endpoint: *cxfEndpoint* and *someAddress*.
 
-[source,java]
 ------------------------------
 cxf:bean:cxfEndpoint[?options]
 ------------------------------
@@ -50,7 +50,6 @@ Where *cxfEndpoint* represents a bean ID that references a bean in the
 Spring bean registry. With this URI format, most of the endpoint details
 are specified in the bean definition.
 
-[source,java]
 ---------------------------
 cxf://someAddress[?options]
 ---------------------------
@@ -60,16 +59,15 @@ format, most of the endpoint details are specified using options.
 
 For either style above, you can append options to the URI as follows:
 
-[source,java]
 ---------------------------------------------------------------------
 cxf:bean:cxfEndpoint?wsdlURL=wsdl/hello_world.wsdl&dataFormat=PAYLOAD
 ---------------------------------------------------------------------
 
-== Options
-
-
 
 // component options: START
+== Component Options
+
+
 The CXF component supports 6 options, which are listed below.
 
 
@@ -85,12 +83,9 @@ The CXF component supports 6 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The CXF endpoint is configured using URI syntax:
 
 ----
@@ -162,6 +157,7 @@ sure to prefix them with their \{namespace} as shown in the examples
 above.
 
 === Descriptions of the dataformats
+
 In Apache Camel, the Camel CXF component is the key to integrating routes with Web services. You can use the Camel CXF component to create a CXF endpoint, which can be used in either of the following ways:
 
 * *Consumer* — (at the start of a route) represents a Web service instance, which integrates with the route. The type of payload injected into the route depends on the value of the endpoint's dataFormat option.
@@ -508,9 +504,7 @@ Example
 ------------------------------------------------------------------------------------------------------------------------------------
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
            xmlns:camel-cxf="http://camel.apache.org/schema/blueprint/cxf"
-       xmlns:cxfcore="http://cxf.apache.org/blueprint/core"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
       <camel-cxf:cxfEndpoint id="routerEndpoint"
@@ -586,7 +580,6 @@ If you are using some SOAP client such as PHP, you will get this kind of
 error, because CXF doesn't add the XML processing instruction
 `<?xml version="1.0" encoding="utf-8"?>`:
 
-[source,java]
 ---------------------------------------------------------------------------------------
 Error:sendSms: SoapFault exception: [Client] looks like we got no XML document in [...]
 ---------------------------------------------------------------------------------------
@@ -642,7 +635,7 @@ Consider the https://github.com/apache/camel/blob/main/components/camel-cxf/src/
 
 [source,java]
 ----
-ppublic class PersonProcessor implements Processor {
+public class PersonProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(PersonProcessor.class);
 
@@ -1020,6 +1013,7 @@ To enable MTOM, set the CXF endpoint property "mtom-enabled" to _true_.
          <!--  set the camel-cxf endpoint data fromat to PAYLOAD mode -->
          <entry key="dataFormat" value="PAYLOAD"/>
      </cxf:properties>
+</cxf:cxfEndpoint>
 ----
 
 You can produce a Camel message with attachment to send to a CXF

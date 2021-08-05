@@ -41,7 +41,6 @@ for this component:
 
 == URI format
 
-[source,java]
 -------------------------------------
 mina:tcp://hostname[:port][?options]
 mina:udp://hostname[:port][?options]
@@ -68,16 +67,11 @@ content—message headers and exchange properties are not sent. +
  However, the option, *transferExchange*, does allow you to transfer the
 exchange itself over the wire. See options below.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
-
-
-
 
 // component options: START
+== Component Options
+
+
 The Mina component supports 28 options, which are listed below.
 
 
@@ -115,15 +109,9 @@ The Mina component supports 28 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Mina endpoint is configured using URI syntax:
 
 ----
@@ -179,9 +167,6 @@ with the following path and query parameters:
 | *sslContextParameters* (security) | To configure SSL security. |  | SSLContextParameters
 |===
 // endpoint options: END
-
-
-
 
 
 == Using a custom codec

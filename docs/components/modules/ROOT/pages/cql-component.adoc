@@ -22,50 +22,16 @@ availability. Like Google's BigTable, Cassandra data is structured using
 column families which can be accessed through the Thrift RPC API or a
 SQL-like API called CQL.
 
-This component aims at integrating Cassandra 2.0+ using the CQL3 API
+NOTE: This component aims at integrating Cassandra 2.0+ using the CQL3 API
 (not the Thrift API). It's based on
 https://github.com/datastax/java-driver[Cassandra Java Driver] provided
 by DataStax.
 
-Maven users will need to add the following dependency to their
-`pom.xml`:
-
-*pom.xml*
-
-[source,xml]
-------------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-cassandraql</artifactId>
-    <version>x.y.z</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-------------------------------------------------------------
-
-== URI format
-
-The endpoint can initiate the Cassandra connection or use an existing
-one.
-
-[cols="<,<",options="header",]
-|======================================================================
-|URI |Description
-|`cql:localhost/keyspace` |Single host, default port, usual for testing
-|`cql:host1,host2/keyspace` |Multi host, default port
-|`cql:host1,host2:9042/keyspace` |Multi host, custom port
-|`cql:host1,host2` |Default port and keyspace
-|`cql:bean:sessionRef` |Provided Session reference
-|`cql:bean:clusterRef/keyspace` |Provided Cluster reference
-|======================================================================
-
-To fine tune the Cassandra connection (SSL options, pooling options,
-load balancing policy, retry policy, reconnection policy...), create
-your own Cluster instance and give it to the Camel endpoint.
-
-== Cassandra Options
-
 
 // component options: START
+== Component Options
+
+
 The Cassandra CQL component supports 3 options, which are listed below.
 
 
@@ -78,10 +44,9 @@ The Cassandra CQL component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Cassandra CQL endpoint is configured using URI syntax:
 
 ----
@@ -142,6 +107,26 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Endpoint Connection Syntax
+
+The endpoint can initiate the Cassandra connection or use an existing
+one.
+
+[cols="<,<",options="header",]
+|======================================================================
+|URI |Description
+|`cql:localhost/keyspace` |Single host, default port, usual for testing
+|`cql:host1,host2/keyspace` |Multi host, default port
+|`cql:host1,host2:9042/keyspace` |Multi host, custom port
+|`cql:host1,host2` |Default port and keyspace
+|`cql:bean:sessionRef` |Provided Session reference
+|`cql:bean:clusterRef/keyspace` |Provided Cluster reference
+|======================================================================
+
+To fine tune the Cassandra connection (SSL options, pooling options,
+load balancing policy, retry policy, reconnection policy...), create
+your own Cluster instance and give it to the Camel endpoint.
+
 == Messages
 
 === Incoming Message
@@ -160,8 +145,6 @@ either as a plain String or built using the `QueryBuilder`.
 
 The Camel Cassandra endpoint produces one or many a Cassandra Row
 objects depending on the `resultSetConversionStrategy`:
-
- 
 
 * `List<Row>` if `resultSetConversionStrategy` is `ALL` or
 `LIMIT_[0-9]+`
@@ -286,7 +269,6 @@ Arrays.asList("davsclaus", "Claus", "Ibsen")
 ---------------------------------------------------------
 
 The same approach can be used for updating or querying the table.
-
 
 
 include::{page-component-version}@camel-spring-boot::page$cassandraql-starter.adoc[]

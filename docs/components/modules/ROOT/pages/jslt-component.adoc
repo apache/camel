@@ -31,11 +31,9 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
- 
 
 == URI format
 
-[source,java]
 -----------------------
 jslt:specName[?options]
 -----------------------
@@ -44,15 +42,11 @@ Where *specName* is the classpath-local URI of the specification to
 invoke; or the complete URL of the remote specification
 (eg: \file://folder/myfile.vm).
 
-You can append query options to the URI in the following
-format, `?option=value&option=value&...`
-
-== Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The JSLT component supports 5 options, which are listed below.
 
 
@@ -67,13 +61,9 @@ The JSLT component supports 5 options, which are listed below.
 | *objectFilter* (advanced) | JSLT can be extended by plugging in a custom jslt object filter |  | JsonFilter
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JSLT endpoint is configured using URI syntax:
 
 ----
@@ -107,6 +97,7 @@ with the following path and query parameters:
 | *prettyPrint* (common) | If true, JSON in output message is pretty printed. | false | boolean
 |===
 // endpoint options: END
+
 
 == Passing values to JSLT
 

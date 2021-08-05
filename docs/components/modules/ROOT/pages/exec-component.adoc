@@ -33,7 +33,6 @@ where `${camel-version`} must be replaced by the actual version of Camel.
 
 == URI format
 
-[source,xml]
 ---------------------------
 exec://executable[?options]
 ---------------------------
@@ -42,9 +41,10 @@ where `executable` is the name, or file path, of the system command that
 will be executed. If executable name is used (e.g. `exec:java`), the
 executable must in the system path.
 
-== URI options
-
 // component options: START
+== Component Options
+
+
 The Exec component supports 2 options, which are listed below.
 
 
@@ -56,8 +56,9 @@ The Exec component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Exec endpoint is configured using URI syntax:
 
 ----

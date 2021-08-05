@@ -40,7 +40,6 @@ for this component:
 
 == URI format
 
-[source,java]
 ----
 ftp://[username@]hostname[:port]/directoryname[?options]
 sftp://[username@]hostname[:port]/directoryname[?options]
@@ -68,16 +67,16 @@ This component uses two different libraries for the actual FTP work. FTP
 and FTPS uses http://commons.apache.org/net/[Apache Commons Net] while
 SFTP uses http://www.jcraft.com/jsch/[JCraft JSCH].
 
- FTPS (also known as FTP Secure) is an extension to FTP that adds
+FTPS (also known as FTP Secure) is an extension to FTP that adds
 support for the Transport Layer Security (TLS) and the Secure Sockets
 Layer (SSL) cryptographic protocols.
 
-== URI Options
-
-The options below are exclusive for the FTP component.
 
 
 // component options: START
+== Component Options
+
+
 The FTP component supports 3 options, which are listed below.
 
 
@@ -90,10 +89,9 @@ The FTP component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The FTP endpoint is configured using URI syntax:
 
 ----
@@ -235,8 +233,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == FTPS component default trust store
 
 When using the `ftpClient.` properties related to SSL with the FTPS
@@ -295,9 +291,6 @@ url.
 ----
 from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:foo");
 ----
-
-// REVISIT - Empty sections are bad!
-//=== More URI options
 
 
 == Examples
@@ -471,7 +464,6 @@ The difference between the two of them is best illustrated with an
 example. Suppose we have the following directory structure on the remote
 FTP server we need to traverse and download files:
 
-[source,java]
 ----
 /
 /one
@@ -485,7 +477,6 @@ folder.
 
 == Using stepwise=true (default mode)
 
-[source,java]
 ----
 TYPE A
 200 Type set to A
@@ -575,7 +566,6 @@ structure using CD xxx.
 
 == Using stepwise=false
 
-[source,java]
 ----
 230 Logged on
 TYPE A
@@ -626,7 +616,7 @@ In the sample below we set up Camel to download all the reports from the
 FTP server once every hour (60 min) as BINARY content and store it as
 files on the local file system.
 
-And the route using Spring DSL:
+And the route using XML DSL:
 
 [source,xml]
 ----

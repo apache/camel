@@ -13,7 +13,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/platform-h
 *Since Camel {since}*
 
 *{component-header}*
-*Since Camel 3.0*
 
 
 The Platform HTTP is used to allow Camel to use the existing HTTP server from the runtime.
@@ -32,9 +31,10 @@ for this component:
 </dependency>
 ----
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The Platform HTTP component supports 3 options, which are listed below.
 
 
@@ -47,9 +47,9 @@ The Platform HTTP component supports 3 options, which are listed below.
 | *engine* (advanced) | An HTTP Server engine implementation to serve the requests |  | PlatformHttpEngine
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Platform HTTP endpoint is configured using URI syntax:
 
 ----
@@ -88,4 +88,3 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$platform-http-starter.adoc[]

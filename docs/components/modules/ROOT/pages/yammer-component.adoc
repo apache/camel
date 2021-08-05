@@ -37,19 +37,16 @@ Maven users will need to add the following dependency to their pom.xml for this 
 
 == URI format
 
-[source]
 ----
 yammer:[function]?[options]
 ----
 
-== Component options
-
-The Yammer component can be configured with the Yammer account settings which are mandatory to configure before using.
-
-
 
 
 // component options: START
+== Component Options
+
+
 The Yammer component supports 15 options, which are listed below.
 
 
@@ -74,17 +71,9 @@ The Yammer component supports 15 options, which are listed below.
 | *consumerSecret* (security) | *Required* The consumer secret |  | String
 |===
 // component options: END
-
-
-
-
-You can also configure these options directly in the endpoint.
-
-== Endpoint options
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Yammer endpoint is configured using URI syntax:
 
 ----
@@ -141,9 +130,6 @@ with the following path and query parameters:
 | *consumerSecret* (security) | *Required* The consumer secret |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-// spring-boot-auto-configure options: END
-
 
 
 == Consuming messages
@@ -287,7 +273,6 @@ option to your URI.
 
 To create a new message in the account of the current user, you can use the following URI:
 
-[source]
 ----
 yammer:messages?[options]
 ----
@@ -337,6 +322,7 @@ The Yammer component provides several endpoints for retrieving users:
 |View data about the current user.
 |=====================================================
 
+
 == Using an enricher
 
 It is helpful sometimes (or maybe always in the case of users to use an enricher pattern rather than a route initiated with one of the polling consumers in camel-yammer.
@@ -354,4 +340,6 @@ from("direct:start")
 ----
 
 This will go out and fetch the current user's `User` object and set it as the Camel message body.
+
+
 include::{page-component-version}@camel-spring-boot::page$yammer-starter.adoc[]

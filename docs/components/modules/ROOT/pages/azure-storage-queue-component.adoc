@@ -52,18 +52,11 @@ of operation being requested on the queue level, e.g: createQueue, sendMessage..
 The queue will be created if it does not already exist.
 You can append query options to the URI in the following format, ?options=value&option2=value&...
 
-For example in order to get a message content from the queue `messageQueue`
-in the `storageAccount` storage account and, use the following snippet:
-[source,java]
---------------------------------------------------------------------------------
-from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey").
-to("file://queuedirectory");
---------------------------------------------------------------------------------
-
-
-== URI Options
 
 // component options: START
+== Component Options
+
+
 The Azure Storage Queue Service component supports 15 options, which are listed below.
 
 
@@ -88,8 +81,9 @@ The Azure Storage Queue Service component supports 15 options, which are listed 
 | *credentials* (security) | StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication information |  | StorageSharedKeyCredential
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Azure Storage Queue Service endpoint is configured using URI syntax:
 
 ----
@@ -161,15 +155,17 @@ provided into `credentials` option.
 provided into `serviceClient`. Note: You don't need to create a specific client, e.g: QueueClient, the QueueServiceClient represents the upper level which
 can be used to retrieve lower level clients.
 
-== Batch Consumer
-
-This component implements the Batch Consumer.
-
-This allows you for instance to know how many messages exists in this
-batch and for instance let the Aggregator
-aggregate this number of messages.
 
 == Usage
+
+For example in order to get a message content from the queue `messageQueue`
+in the `storageAccount` storage account and, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey").
+to("file://queuedirectory");
+--------------------------------------------------------------------------------
 
 === Message headers evaluated by the component producer
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
@@ -207,6 +203,7 @@ aggregate this number of messages.
 If your Camel Application is running behind a firewall or if you need to
 have more control over the `QueueServiceClient` instance configuration, you can
 create your own instance:
+
 [source,java]
 -----------------------------------------------------------------------
 StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
@@ -269,6 +266,7 @@ Refer to the example section in this page to learn how to use these operations i
 
 === Consumer Examples
 To consume a queue into a file component with maximum 5 messages in one batch, this can be done like this:
+
 [source,java]
 -----------------------------------------------------------------------
 from("azure-storage-queue://cameldev/queue1?serviceClient=#client&maxMessages=5")
@@ -416,12 +414,16 @@ from("direct:start")
 
 
 === Development Notes (Important)
+
 When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests
 you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
 To run the integration tests, on this component directory, run the following maven command:
+
+[source,bash]
 ----
 mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey
 ----
+
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
 
 

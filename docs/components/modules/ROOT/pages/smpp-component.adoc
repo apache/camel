@@ -146,7 +146,6 @@ throttling messages in the SMPP route before handing them to the SMSC.
 
 == URI format
 
-[source,java]
 --------------------------------------------
 smpp://[username@]hostname[:port][?options]
 smpps://[username@]hostname[:port][?options]
@@ -159,15 +158,11 @@ value `2775`. +
 If the protocol name is "smpps", camel-smpp with try to
 use SSLSocket to init a connection to the server.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== URI Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The SMPP component supports 41 options, which are listed below.
 
 
@@ -218,13 +213,9 @@ The SMPP component supports 41 options, which are listed below.
 | *usingSSL* (security) | Whether using SSL with the smpps protocol | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SMPP endpoint is configured using URI syntax:
 
 ----
@@ -295,14 +286,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-You can have as many of these options as you like.
-
-[source,java]
-------------------------------------------------------------------------------------------------------------------
-smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer
-------------------------------------------------------------------------------------------------------------------
 
 == Producer Message Headers
 
@@ -657,7 +640,7 @@ This component has log level *DEBUG*, which can be helpful in debugging
 problems. If you use log4j, you can add the following line to your
 configuration:
 
-[source,java]
+[source,properties]
 --------------------------------------------------
 log4j.logger.org.apache.camel.component.smpp=DEBUG
 --------------------------------------------------

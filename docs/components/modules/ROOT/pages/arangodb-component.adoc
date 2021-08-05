@@ -37,10 +37,10 @@ for this component:
 arangodb:database[?options]
 ---------------------------
 
-== ArangoDB options
-
-
 // component options: START
+== Component Options
+
+
 The ArangoDb component supports 12 options, which are listed below.
 
 
@@ -62,8 +62,9 @@ The ArangoDb component supports 12 options, which are listed below.
 | *user* (security) | ArangoDB user. If user and password are default, this field is Optional. |  | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The ArangoDb endpoint is configured using URI syntax:
 
 ----

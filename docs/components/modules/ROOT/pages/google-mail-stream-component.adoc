@@ -52,10 +52,11 @@ The GoogleMail Component uses the following URI format:
 google-mail-stream://index?[options]
 ----
 
-== Component options
-
 
 // component options: START
+== Component Options
+
+
 The Google Mail Stream component supports 13 options, which are listed below.
 
 
@@ -78,11 +79,9 @@ The Google Mail Stream component supports 13 options, which are listed below.
 | *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Google Mail Stream endpoint is configured using URI syntax:
 
 ----
@@ -666,5 +665,6 @@ The message header name must be of the format `CamelGoogleMailStream.parameter`.
 The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
 would override a `CamelGoogleMailStream.myParameterNameHere` header.
 // endpoint options: END
+
 
 include::{page-component-version}@camel-spring-boot::page$google-mail-starter.adoc[]

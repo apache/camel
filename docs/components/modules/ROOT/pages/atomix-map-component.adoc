@@ -18,7 +18,7 @@ The camel Atomix-Map component allows you to work with http://atomix.io[Atomix's
 
 Maven users will need to add the following dependency to their pom.xml for this component:
 
-[source,java]
+[source,xml]
 ----
     <dependency>
         <groupId>org.apache.camel</groupId>
@@ -29,14 +29,14 @@ Maven users will need to add the following dependency to their pom.xml for this 
 
 == URI format
 
-[source,java]
 ----
-    atomix-map:mapName
+atomix-map:mapName
 ----
-
-== Options
 
 // component options: START
+== Component Options
+
+
 The Atomix Map component supports 18 options, which are listed below.
 
 
@@ -64,8 +64,9 @@ The Atomix Map component supports 18 options, which are listed below.
 | *resourceOptions* (advanced) | Local resources configurations |  | Map
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Atomix Map endpoint is configured using URI syntax:
 
 ----
@@ -177,8 +178,9 @@ The nodes of the Atomix cluster you want to join can be se at Endpoint or compon
 ----
 <beans xmlns="...">
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <from uri="direct:start"/>
-            <to uri="atomix-map:myMap?nodes=node-1.atomix.cluster:8700,node-2.atomix.cluster:8700"/>
+        <route>
+          <from uri="direct:start"/>
+          <to uri="atomix-map:myMap?nodes=node-1.atomix.cluster:8700,node-2.atomix.cluster:8700"/>
         </route>
     </camelContext>
 </beans>
@@ -194,7 +196,8 @@ The nodes of the Atomix cluster you want to join can be se at Endpoint or compon
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <from uri="direct:start"/>
+        <route>
+            <from uri="direct:start"/>
             <to uri="atomix-map:myMap"/>
         </route>
     </camelContext>

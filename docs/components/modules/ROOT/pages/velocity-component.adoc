@@ -34,7 +34,6 @@ for this component:
 
 == URI format
 
-[source,java]
 -------------------------------
 velocity:templateName[?options]
 -------------------------------
@@ -43,14 +42,13 @@ Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
 \file://folder/myfile.vm).
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
 
 
 
 // component options: START
+== Component Options
+
+
 The Velocity component supports 5 options, which are listed below.
 
 
@@ -65,11 +63,9 @@ The Velocity component supports 5 options, which are listed below.
 | *velocityEngine* (advanced) | To use the VelocityEngine otherwise a new engine is created |  | VelocityEngine
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Velocity endpoint is configured using URI syntax:
 
 ----
@@ -105,7 +101,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Message Headers
 
 You can use the following headers on the message:
@@ -130,7 +125,6 @@ Velocity to the Message.
 For example, to set the header value of `fruit` in the Velocity template
 `.tm`:
 
-[source,java]
 -------------------------------
 $in.setHeader("fruit", "Apple")
 -------------------------------
@@ -170,11 +164,9 @@ setting the message header *CamelVelocityContext *just like this
 
 [source,java]
 -----------------------------------------------------------------------
-   VelocityContext velocityContext = new VelocityContext(variableMap);
-   exchange.getIn().setHeader("CamelVelocityContext", velocityContext);
+VelocityContext velocityContext = new VelocityContext(variableMap);
+exchange.getIn().setHeader("CamelVelocityContext", velocityContext);
 -----------------------------------------------------------------------
-
- 
 
 == Hot reloading
 
@@ -269,7 +261,6 @@ from("direct:in").
 In this sample we want to use Velocity templating for an order
 confirmation email. The email template is laid out in Velocity as:
 
-[source,java]
 ----------------------------------------------
 Dear ${headers.lastName}, ${headers.firstName}
 

@@ -44,6 +44,9 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
+== Component Options
+
+
 The AWS Kinesis Firehose component supports 16 options, which are listed below.
 
 
@@ -77,6 +80,8 @@ The AWS Kinesis Firehose component supports 16 options, which are listed below.
 
 
 // endpoint options: START
+== Endpoint Options
+
 The AWS Kinesis Firehose endpoint is configured using URI syntax:
 
 ----

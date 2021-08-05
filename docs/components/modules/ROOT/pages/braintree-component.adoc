@@ -29,7 +29,6 @@ account.
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 
-
 [source,xml]
 --------------------------------------------
 <dependency>
@@ -39,14 +38,11 @@ for this component:
 </dependency>
 --------------------------------------------
 
- 
-
-== Braintree Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The Braintree component supports 3 options, which are listed below.
 
 
@@ -59,12 +55,9 @@ The Braintree component supports 3 options, which are listed below.
 | *configuration* (advanced) | Component configuration |  | BraintreeConfiguration
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Braintree endpoint is configured using URI syntax:
 
 ----
@@ -1079,7 +1072,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 == Examples
 
-*Blueprint*
+*OSGi Blueprint*
 
 [source,xml]
 ----

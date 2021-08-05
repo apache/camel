@@ -96,7 +96,6 @@ each endpoint is specified by passing the provider inside the URI.
 
 == Jclouds Options
 
-[source,java]
 -----------------------------------------
 jclouds:blobstore:[provider id][?options]
 jclouds:compute:[provider id][?options]
@@ -108,12 +107,11 @@ target service (_e.g. aws-s3 or aws_ec2_).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Blobstore URI Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The JClouds component supports 5 options, which are listed below.
 
 
@@ -128,13 +126,9 @@ The JClouds component supports 5 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JClouds endpoint is configured using URI syntax:
 
 ----
@@ -178,7 +172,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
+== Usage
 
 You can have as many of these options as you like.
 
@@ -189,9 +183,6 @@ jclouds:blobstore:aws-s3?operation=CamelJcloudsGet&container=mycontainer&blobNam
 
 For producer endpoint you can override all of the above URI options by
 passing the appropriate headers to the message.
-
-
-
 
 === Message Headers for blobstore
 

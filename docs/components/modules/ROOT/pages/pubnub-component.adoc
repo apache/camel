@@ -26,8 +26,6 @@ Use cases include:
 ** Multiplayer games
 ** Interactive media: audience-participating voting system
 
-
-
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -43,17 +41,16 @@ for this component:
 
 == URI format
 
-[source,java]
 ------------------------
 pubnub:channel[?options]
 ------------------------
 
 Where *channel* is the PubNub channel to publish or subscribe to.
 
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The PubNub component supports 13 options, which are listed below.
 
 
@@ -76,10 +73,9 @@ The PubNub component supports 13 options, which are listed below.
 | *subscribeKey* (security) | The subscribe key obtained from your PubNub account. Required when subscribing to channels or listening for presence events |  | String
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The PubNub endpoint is configured using URI syntax:
 
 ----
@@ -221,13 +217,11 @@ from("direct:control")
     .to("pubnub:myChannel?publishKey=mypublishKey&subscribeKey=mySubscribeKey&operation=gethistory");
 ----
 
-
 There is a couple of examples in test directory that shows some of the PubNub features. 
 They require a PubNub account, from where you can obtain a publish- and subscribe key.
  
 The example PubNubSensorExample already contains a subscribe key provided by PubNub, so this is ready to run without a account. 
 The example illustrates the PubNub component subscribing to a infinite stream of sensor data.
-
 
 
 include::{page-component-version}@camel-spring-boot::page$pubnub-starter.adoc[]

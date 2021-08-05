@@ -37,26 +37,20 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 == Uri Format
 
 [source,text]
---
+----
 azure-storage-datalake:accountName[/fileSystemName][?options]
---
+----
 
 In case of a consumer, both accountName and fileSystemName are required. In case of the producer, it depends on the operation
 being requested.
 
 You can append query options to the URI in the following format, ?option1=value&option2=value&...
 
-For example, in order to download content from file `test.txt` located on the `filesystem` in `camelTesting` storage account, use the following snippet:
-
-[source,java]
---
-from("azure-storage-datalake:camelTesting/filesystem?fileName=test.txt&accountKey=key").
-to("file://fileDirectory");
---
-
-== Uri Options
 
 // component options: START
+== Component Options
+
+
 The Azure storage datalake service component supports 33 options, which are listed below.
 
 
@@ -99,8 +93,9 @@ The Azure storage datalake service component supports 33 options, which are list
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Azure storage datalake service endpoint is configured using URI syntax:
 
 ----
@@ -179,6 +174,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
 === Methods of authentication
 In order to use this component, you will have to provide at least one of the below given points for authentication purposes.
 
@@ -188,13 +184,16 @@ In order to use this component, you will have to provide at least one of the bel
 - Provide `accountName`, `clientId`, `clientSecret` and `tenantId` for authentication with Azure Active Directory.
 - Provide a DataLakeServiceClient instance which can be provided into `serviceClient` option.
 
-=== Batch Consumer
-
-This component implements the Batch Consumer.
-
-This allows you to know how many messages exists in this batch and let the Aggregator aggregate this number of messages.
 
 == Usage
+
+For example, in order to download content from file `test.txt` located on the `filesystem` in `camelTesting` storage account, use the following snippet:
+
+[source,java]
+----
+from("azure-storage-datalake:camelTesting/filesystem?fileName=test.txt&accountKey=key").
+to("file://fileDirectory");
+----
 
 === Message Headers specified by user
 
@@ -334,33 +333,36 @@ Refer the examples section below for more details on how to use these operations
 
 === Consumer Examples
 To consume a file from the storage datalake into a file using the file component, this can be done like this:
+
 [source,java]
---
+----
 from("azure-storage-datalake":cameltesting/filesystem?fileName=test.txt&accountKey=yourAccountKey").
 to("file:/filelocation");
---
+----
 
 You can also directly write to a file without using the file component. For this, you will need to specify the path in `fileDir` option, to save it to your machine.
+
 [source,java]
---
+----
 from("azure-storage-datalake":cameltesting/filesystem?fileName=test.txt&accountKey=yourAccountKey&fileDir=/test/directory").
 to("mock:results");
---
+----
 
 This component also supports batch consumer. So, you can consume multiple files from a file system by specifying the path
 from where you want to consume the files.
+
 [source,java]
---
+----
 from("azure-storage-datalake":cameltesting/filesystem?accountKey=yourAccountKey&fileDir=/test/directory&path=abc/test").
 to("mock:results");
---
+----
 
 
 === Producer Examples
 -  `listFileSystem`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         //required headers can be added here
@@ -368,49 +370,50 @@ from("direct:start")
     })
     .to("azure-storage-datalake:cameltesting?operation=listFileSystem&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `createFileSystem`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.FILESYSTEM_NAME, "test1");
     })
     .to("azure-storage-datalake:cameltesting?operation=createFileSystem&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `deleteFileSystem`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.FILESYSTEM_NAME, "test1");
     })
     .to("azure-storage-datalake:cameltesting?operation=deleteFileSystem&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `listPaths`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.LIST_PATH_OPTIONS, new ListPathsOptions().setPath("/main"));
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=listPaths&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `getFile`
 
 This can be done in two ways, We can either set an outputstream in the exchange body
+
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         // set an outputstream where the file data can should be written
@@ -418,13 +421,13 @@ from("direct:start")
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=getFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 Or if body is not set, the operation will give an inputstream, given that you have already registered for query acceleration
 in azure portal.
 
 [source,java]
---
+----
 from("direct:start")
     .to("azure-storage-datalake:cameltesting/filesystem?operation=getFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .process(exchange -> {
@@ -432,30 +435,30 @@ from("direct:start")
         System.out.Println(IOUtils.toString(inputStream, StandardCharcets.UTF_8.name()));
     })
     .to("mock:results");
---
+----
 
 -  `deleteFile`
 
 [source,java]
---
+----
 from("direct:start")
     .to("azure-storage-datalake:cameltesting/filesystem?operation=deleteFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 - `downloadToFile`
 
 [source,java]
---
+----
 from("direct:start")
     .to("azure-storage-datalake:cameltesting/filesystem?operation=downloadToFile&fileName=test.txt&fileDir=/test/mydir&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `downloadLink`
 
 [source,java]
---
+----
 from("direct:start")
     .to("azure-storage-datalake:cameltesting/filesystem?operation=downloadLink&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .process(exchange -> {
@@ -463,12 +466,12 @@ from("direct:start")
         System.out.println(link);
     })
     .to("mock:results");
---
+----
 
 -  `appendToFile`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         final String data = "test data";
@@ -477,38 +480,38 @@ from("direct:start")
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=appendToFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `flushToFile`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.POSITION, 0);
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=flushToFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `openQueryInputStream`
 
 For this operation, you should have already registered for query acceleration on the azure portal
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.QUERY_OPTIONS, new FileQueryOptions("SELECT * from BlobStorage"));
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=openQueryInputStream&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `upload`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         final String data = "test data";
@@ -517,55 +520,58 @@ from("direct:start")
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=upload&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `uploadFromFile`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.PATH, "test/file.txt");
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=uploadFromFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `createFile`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.DIRECTORY_NAME, "test/file/");
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=createFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 -  `deleteDirectory`
 
 [source,java]
---
+----
 from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.DIRECTORY_NAME, "test/file/");
     })
     .to("azure-storage-datalake:cameltesting/filesystem?operation=deleteDirectory&dataLakeServiceClient=#serviceClient")
     .to("mock:results");
---
+----
 
 === Testing
+
 Please run all the unit tests and integration test while making changes to the component as changes or version upgrades can break things.
 For running all the test in the component, you will need to obtain azure accountName and accessKey. After obtaining the same, you
 can run the full test, on this component directory, by running the following maven command
 
+[source,bash]
 ----
 mvn verify -PfullTests -Dazure.storage.account.name=<accountName> -Dazure.storage.account.key=<accessKey>
 ----
 
 You can also skip the integration test, and run only basic unit test by using the command
 
+[source,bash]
 ----
 mvn test
 ----

@@ -32,17 +32,18 @@ for this component:
 
 == URI format
 
-[source,java]
 --------------------------------------
 solr://host[:port]/solr?[options]
 solrs://host[:port]/solr?[options]
 solrCloud://host[:port]/solr?[options]
 --------------------------------------
 
-== Solr Options
 
 
 // component options: START
+== Component Options
+
+
 The Solr component supports 2 options, which are listed below.
 
 
@@ -54,10 +55,9 @@ The Solr component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Solr endpoint is configured using URI syntax:
 
 ----
@@ -103,8 +103,6 @@ with the following path and query parameters:
 | *username* (security) | Sets username for basic auth plugin enabled servers |  | String
 |===
 // endpoint options: END
-
-
 
 == Message Operations
 

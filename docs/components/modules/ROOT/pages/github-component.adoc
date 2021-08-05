@@ -46,13 +46,15 @@ for this component:
 
 == URI format
 
-[source,text]
 ---------------------------
 github://endpoint[?options]
 ---------------------------
 
 
 // component options: START
+== Component Options
+
+
 The GitHub component supports 4 options, which are listed below.
 
 
@@ -66,10 +68,9 @@ The GitHub component supports 4 options, which are listed below.
 | *oauthToken* (security) | GitHub OAuth token. Must be configured on either component or endpoint. |  | String
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The GitHub endpoint is configured using URI syntax:
 
 ----

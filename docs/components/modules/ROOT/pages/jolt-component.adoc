@@ -31,11 +31,9 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
- 
 
 == URI format
 
-[source,java]
 -----------------------
 jolt:specName[?options]
 -----------------------
@@ -44,15 +42,11 @@ Where *specName* is the classpath-local URI of the specification to
 invoke; or the complete URL of the remote specification
 (eg: \file://folder/myfile.vm).
 
-You can append query options to the URI in the following
-format, `?option=value&option=value&...`
-
-== Options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The JOLT component supports 4 options, which are listed below.
 
 
@@ -66,13 +60,9 @@ The JOLT component supports 4 options, which are listed below.
 | *transform* (advanced) | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created |  | Transform
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JOLT endpoint is configured using URI syntax:
 
 ----
@@ -108,8 +98,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == Samples
 
 For example you could use something like
@@ -138,8 +126,6 @@ from("direct:in").
   setHeader("CamelJoltResourceUri").constant("path/to/my/spec.json").
   to("jolt:dummy?allowTemplateFromHeader=true");
 ---------------------------------------------------------------------
-
- 
 
 
 include::{page-component-version}@camel-spring-boot::page$jolt-starter.adoc[]

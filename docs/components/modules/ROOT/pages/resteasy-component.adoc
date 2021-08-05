@@ -33,17 +33,14 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------
 resteasy://relative_path[?options]
 ---------------------------------
 
-You can append query options to the URI in the following format:
-`?option=value&option=value&...`
-
-=== Options
-
 // component options: START
+== Component Options
+
+
 The Resteasy component supports 17 options, which are listed below.
 
 
@@ -70,9 +67,9 @@ The Resteasy component supports 17 options, which are listed below.
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Resteasy endpoint is configured using URI syntax:
 
 ----
@@ -142,6 +139,7 @@ with the following path and query parameters:
 | *username* (security) | Sets the username |  | String
 |===
 // endpoint options: END
+
 
 === Usage
 

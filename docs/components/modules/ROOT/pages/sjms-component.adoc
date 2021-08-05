@@ -46,7 +46,6 @@ for this component:
 
 == URI format
 
-[source,text]
 ----
 sjms:[queue:|topic:]destinationName[?options]
 ----
@@ -55,14 +54,12 @@ Where `destinationName` is a JMS queue or topic name. By default, the
 `destinationName` is interpreted as a queue name. For example, to
 connect to the queue, `FOO.BAR` use:
 
-[source,text]
 ----
 sjms:FOO.BAR
 ----
 
 You can include the optional `queue:` prefix, if you prefer:
 
-[source,text]
 ----
 sjms:queue:FOO.BAR
 ----
@@ -70,17 +67,16 @@ sjms:queue:FOO.BAR
 To connect to a topic, you _must_ include the `topic:` prefix. For
 example, to connect to the topic, `Stocks.Prices`, use:
 
-[source,text]
 ----
 sjms:topic:Stocks.Prices
 ----
 
-You append query options to the URI using the following format,
-`?option=value&option=value&...`
 
-== Component Options and Configurations
 
 // component options: START
+== Component Options
+
+
 The Simple JMS component supports 11 options, which are listed below.
 
 
@@ -101,9 +97,9 @@ The Simple JMS component supports 11 options, which are listed below.
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Simple JMS endpoint is configured using URI syntax:
 
 ----
@@ -176,9 +172,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
-Below is an example of how to configure the `SjmsComponent` with its
-required `ConnectionFactory` provider.
 
 
 == Reuse endpoint and send to different destinations computed at runtime

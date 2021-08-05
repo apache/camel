@@ -19,8 +19,6 @@ http://infinispan.org/[Infinispan] distributed data grid / cache.
 Infinispan is an extremely scalable, highly available key/value data
 store and data grid platform written in Java.
 
-Infinispan requires at least Java 8.
-
 The `camel-infinispan-embedded` component includes the following features:
 
 * *Local Camel Consumer* - Receives cache change notifications and sends them to be processed.
@@ -46,12 +44,9 @@ If you use Maven, you must add the following dependency to your `pom.xml`:
 
 == URI format
 
-[source,java]
 -------------------------------
 infinispan-embedded://cacheName?[options]
 -------------------------------
-
-== URI Options
 
 The producer allows sending messages to a local infinispan cache.
 The consumer allows listening for events from local infinispan cache.
@@ -59,6 +54,9 @@ The consumer allows listening for events from local infinispan cache.
 If no cache configuration is provided, embedded cacheContainer is created directly in the component.
 
 // component options: START
+== Component Options
+
+
 The Infinispan Embedded component supports 20 options, which are listed below.
 
 
@@ -88,11 +86,9 @@ The Infinispan Embedded component supports 20 options, which are listed below.
 | *resultHeader* (advanced) | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Infinispan Embedded endpoint is configured using URI syntax:
 
 ----

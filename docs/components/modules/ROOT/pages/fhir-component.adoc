@@ -35,7 +35,6 @@ for this component:
 
 The FHIR Component uses the following URI format:
 
-[source,text]
 ----
 fhir://endpoint-prefix/endpoint?[options]
 ----
@@ -58,6 +57,9 @@ Endpoint prefix can be one of:
 
 
 // component options: START
+== Component Options
+
+
 The FHIR component supports 27 options, which are listed below.
 
 
@@ -94,9 +96,9 @@ The FHIR component supports 27 options, which are listed below.
 | *username* (security) | Username to use for basic authentication |  | String
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The FHIR endpoint is configured using URI syntax:
 
 ----

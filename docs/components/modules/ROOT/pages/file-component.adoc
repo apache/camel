@@ -21,22 +21,11 @@ messages from other components to be saved to disk.
 
 == URI format
 
-[source]
 ----
 file:directoryName[?options]
 ----
 
-or
-
-[source]
-----
-file://directoryName[?options]
-----
-
 Where *directoryName* represents the underlying file directory.
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
 *Only directories*
 
@@ -62,9 +51,11 @@ options and `doneFileName` option that you can use. See also the section
 <<File2-Consumingfilesfromfolderswhereothersdropfilesdirectly, Consuming files from folders where others drop files directly>>.
 ====
 
-== URI Options
 
 // component options: START
+== Component Options
+
+
 The File component supports 3 options, which are listed below.
 
 
@@ -77,9 +68,9 @@ The File component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The File endpoint is configured using URI syntax:
 
 ----
@@ -232,7 +223,6 @@ The *move* and the *preMove* options are considered as a directory name
 (though if you use an expression such as xref:languages:file-language.adoc[File Language], or xref:languages:simple-language.adoc[Simple] then the result of the expression
 evaluation is the file name to be used - eg if you set
 
-[source]
 ----
 move=../backup/copy-of-${file:name}
 ----
@@ -288,7 +278,6 @@ you have the full power.
 So if we want to move the file into a backup folder with today's date as
 the pattern, we can do:
 
-[source]
 ----
 move=backup/${date:now:yyyyMMdd}/${file:name}
 ----
@@ -296,7 +285,7 @@ move=backup/${date:now:yyyyMMdd}/${file:name}
 == About moveFailed
 
 The `moveFailed` option allows you to move files that *could not* be
-processed succesfully to another location such as a error folder of your
+processed successfully to another location such as an error folder of your
 choice. For example to move the files in an error folder with a
 timestamp you can use
 `moveFailed=/error/${``file:name.noext``}-${date:now:yyyyMMddHHmmssSSS}.${``file:ext`}.
@@ -393,8 +382,7 @@ this number of files.
 
 == Using charset
 
-*Since Camel 2.9.3* +
- The charset option allows for configuring an encoding of the files on
+The charset option allows for configuring an encoding of the files on
 both the consumer and producer endpoints. For example if you read utf-8
 files, and want to convert the files to iso-8859-1, you can do:
 
@@ -473,7 +461,6 @@ from("file:inbox?charset=utf-8")
 
 And the logs:
 
-[source]
 ----------------------------------------------------------------------------------------------------------------------------------------------
 DEBUG GenericFileConverter           - Read file /Users/davsclaus/workspace/camel/camel-core/target/charset/input/input.txt with charset utf-8
 DEBUG FileOperations                 - Using Reader to write file: target/charset/output.txt with charset: iso-8859-1
@@ -592,8 +579,6 @@ from("file:bar?doneFileName=ready-${file:name}");
 
 == Writing done files
 
-*Since Camel 2.6*
-
 After you have written a file you may want to write an additional _done_
 _file_ as a kind of marker, to indicate to others that the file is
 finished and has been written. To do that you can use the `doneFileName`
@@ -678,7 +663,6 @@ inputdir/sub/bar.txt
 
 Will result in the following output layout:
 
-[source]
 ----
 outputdir/foo.txt
 outputdir/sub/bar.txt
@@ -699,7 +683,6 @@ from("file://inputdir/?recursive=true&delete=true").to("file://outputdir?flatten
 
 Will result in the following output layout:
 
-[source]
 ----
 outputdir/foo.txt
 outputdir/bar.txt
@@ -718,7 +701,6 @@ from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
 Affects the layout as follows: +
  *before*
 
-[source]
 ----
 inputdir/foo.txt
 inputdir/sub/bar.txt
@@ -726,7 +708,6 @@ inputdir/sub/bar.txt
 
 *after*
 
-[source]
 ----
 inputdir/.camel/foo.txt
 inputdir/sub/.camel/bar.txt
@@ -771,7 +752,6 @@ subdirectories. If you have a route setup as such:
 You can have `myBean` set the header `Exchange.FILE_NAME` to values such
 as:
 
-[source]
 ----
 Exchange.FILE_NAME = hello.txt => /rootDirectory/hello.txt
 Exchange.FILE_NAME = foo/bye.txt => /rootDirectory/foo/bye.txt
@@ -1018,7 +998,6 @@ sortBy=group 1;group 2;group 3;...
 Where each group is separated with semi colon. In the simple situations
 you just use one group, so a simple example could be:
 
-[source]
 ----
 sortBy=file:name
 ----
@@ -1026,7 +1005,6 @@ sortBy=file:name
 This will sort by file name, you can reverse the order by prefixing
 `reverse:` to the group, so the sorting is now Z..A:
 
-[source]
 ----
 sortBy=reverse:file:name
 ----
@@ -1035,7 +1013,6 @@ As we have the full power of xref:languages:file-language.adoc[File Language] we
 can use some of the other parameters, so if we want to sort by file size
 we do:
 
-[source]
 ----
 sortBy=file:length
 ----
@@ -1044,7 +1021,6 @@ You can configure to ignore the case, using `ignoreCase:` for string
 comparison, so if you want to use file name sorting but to ignore the
 case then we do:
 
-[source]
 ----
 sortBy=ignoreCase:file:name
 ----
@@ -1052,14 +1028,12 @@ sortBy=ignoreCase:file:name
 You can combine ignore case and reverse, however reverse must be
 specified first:
 
-[source]
 ----
 sortBy=reverse:ignoreCase:file:name
 ----
 
 In the sample below we want to sort by last modified file, so we do:
 
-[source]
 ----
 sortBy=file:modified
 ----
@@ -1067,7 +1041,6 @@ sortBy=file:modified
 And then we want to group by name as a 2nd option so files with same
 modifcation is sorted by name:
 
-[source]
 ----
 sortBy=file:modified;file:name
 ----
@@ -1078,7 +1051,6 @@ want to sort by date only and then subgroup by name? +
  Well as we have the true power of xref:languages:file-language.adoc[File Language] we can use its date command that supports patterns. So this
 can be solved as:
 
-[source]
 ----
 sortBy=date:file:yyyyMMdd;file:name
 ----
@@ -1086,7 +1058,6 @@ sortBy=date:file:yyyyMMdd;file:name
 Yeah, that is pretty powerful, oh by the way you can also use reverse
 per group, so we could reverse the file names:
 
-[source]
 ----
 sortBy=date:file:yyyyMMdd;reverse:file:name
 ----

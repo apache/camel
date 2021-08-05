@@ -14,9 +14,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/flink.adoc
 
 *{component-header}*
 
-*Since Camel 2.18*
-
-
 This documentation page covers the https://flink.apache.org[Apache Flink]
 component for the Apache Camel. The *camel-flink* component provides a
 bridge between Camel components and Flink tasks. +
@@ -42,18 +39,33 @@ their `pom.xml` for this component:
 
 Currently, the Flink Component supports only Producers. One can create DataSet, DataStream jobs.
 
-[source,java]
 -------------------------------------------------
 flink:dataset?dataset=#myDataSet&dataSetCallback=#dataSetCallback
 flink:datastream?datastream=#myDataStream&dataStreamCallback=#dataStreamCallback
 -------------------------------------------------
 
-[[Flink-FlinkEndpointOptions]]
-FlinkEndpoint Options
+
+// component options: START
+== Component Options
+
+
+The Flink component supports 5 options, which are listed below.
 
 
 
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *dataSetCallback* (producer) | Function performing action against a DataSet. |  | DataSetCallback
+| *dataStream* (producer) | DataStream to compute against. |  | DataStream
+| *dataStreamCallback* (producer) | Function performing action against a DataStream. |  | DataStreamCallback
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+|===
+// component options: END
 // endpoint options: START
+== Endpoint Options
+
 The Flink endpoint is configured using URI syntax:
 
 ----
@@ -86,33 +98,6 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 |===
 // endpoint options: END
-
-
-
-
-== FlinkComponent Options
-
-
-
-
-// component options: START
-The Flink component supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *dataSetCallback* (producer) | Function performing action against a DataSet. |  | DataSetCallback
-| *dataStream* (producer) | DataStream to compute against. |  | DataStream
-| *dataStreamCallback* (producer) | Function performing action against a DataStream. |  | DataStreamCallback
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
-// component options: END
-
-
-
 
 
 == Flink DataSet Callback

@@ -38,15 +38,10 @@ for this component:
 amqp:[queue:|topic:]destinationName[?options]
 ----
 
-== AMQP Options
-
-You can specify all of the various configuration options of the
-xref:jms-component.adoc[JMS] component after the destination name.
-
-
-
-
 // component options: START
+== Component Options
+
+
 The AMQP component supports 99 options, which are listed below.
 
 
@@ -155,14 +150,9 @@ The AMQP component supports 99 options, which are listed below.
 | *transactionTimeout* (transaction) | The timeout value of the transaction (in seconds), if using transacted mode. | -1 | int
 |===
 // component options: END
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AMQP endpoint is configured using URI syntax:
 
 ----
@@ -288,8 +278,6 @@ with the following path and query parameters:
 
 
 
-
-
 == Usage
 
 As AMQP component is inherited from JMS component, the usage of the
@@ -389,7 +377,7 @@ For reference take a look at the https://qpid.apache.org/releases/qpid-jms-0.51.
 To have using topics working with `camel-amqp` you need to configure the
 component to use `topic://` as topic prefix, as shown below:
 
-[source,java]
+[source,xml]
 ----
  <bean id="amqp" class="org.apache.camel.component.amqp.AmqpComponent">
    <property name="connectionFactory">

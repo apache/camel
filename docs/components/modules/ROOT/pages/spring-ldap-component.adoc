@@ -34,7 +34,6 @@ for this component:
 
 == URI format
 
-[source,java]
 ----------------------------------------
 spring-ldap:springLdapTemplate[?options]
 ----------------------------------------
@@ -44,10 +43,12 @@ http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap
 LDAP Template bean]. In this bean, you configure the URL and the
 credentials for your LDAP access.
 
-== Options
 
 
 // component options: START
+== Component Options
+
+
 The Spring LDAP component supports 2 options, which are listed below.
 
 
@@ -59,10 +60,9 @@ The Spring LDAP component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Spring LDAP endpoint is configured using URI syntax:
 
 ----
@@ -92,7 +92,6 @@ with the following path and query parameters:
 | *scope* (producer) | The scope of the search operation. There are 3 enums and the value can be one of: object, onelevel, subtree | subtree | String
 |===
 // endpoint options: END
-
 
 
 == Usage

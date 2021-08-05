@@ -31,15 +31,15 @@ Java Templates object representing the rules.
 
 == URI format
 
-[source,java]
 ---------------------------
 schematron://path?[options]
 ---------------------------
 
-== URI options
-
 
 // component options: START
+== Component Options
+
+
 The Schematron component supports 2 options, which are listed below.
 
 
@@ -51,12 +51,9 @@ The Schematron component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Schematron endpoint is configured using URI syntax:
 
 ----
@@ -89,9 +86,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-
 == Headers
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
@@ -112,8 +106,6 @@ Java DSL. The schematron rules file is sourced from the class path:
 ----------------------------------------------------------------------------
 from("direct:start").to("schematron://sch/schematron.sch").to("mock:result")
 ----------------------------------------------------------------------------
-
- 
 
 The following example shows how to invoke the schematron processor in
 XML DSL. The schematrion rules file is sourced from the file system:

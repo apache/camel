@@ -22,22 +22,25 @@ for this component:
 
 [source,xml]
 ---------------------------------------------
- <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-splunk-hec</artifactId>
-        <version>${camel-version}</version>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-splunk-hec</artifactId>
+    <version>${camel-version}</version>
 </dependency>
 ---------------------------------------------
 
 == URI format
 
-[source,java]
 -------------------------------
-  splunk-hec:[endpoint]/[token]?[options]
+splunk-hec:[endpoint]/[token]?[options]
 -------------------------------
+
 
 
 // component options: START
+== Component Options
+
+
 The Splunk HEC component supports 2 options, which are listed below.
 
 
@@ -49,10 +52,9 @@ The Splunk HEC component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Splunk HEC endpoint is configured using URI syntax:
 
 ----
@@ -90,6 +92,8 @@ with the following path and query parameters:
 | *skipTlsVerify* (security) | Splunk HEC TLS verification. | false | boolean
 |===
 // endpoint options: END
+
+
 
 == Message Headers
 

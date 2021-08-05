@@ -19,12 +19,10 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-
 The http://www.hazelcast.com/[Hazelcast] instance component is one of Camel Hazelcast Components which allows you to consume join/leave events of the cache instance in the cluster.
 Hazelcast makes sense in one single "server node", but it's extremly powerful in a clustered environment.
 
-*This endpoint provides no producer!*
-
-
-== Options
-
 // component options: START
+== Component Options
+
+
 The Hazelcast Instance component supports 4 options, which are listed below.
 
 
@@ -39,6 +37,8 @@ The Hazelcast Instance component supports 4 options, which are listed below.
 |===
 // component options: END
 // endpoint options: START
+== Endpoint Options
+
 The Hazelcast Instance endpoint is configured using URI syntax:
 
 ----
@@ -73,11 +73,9 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == instance consumer - from("hazelcast-instance:foo")
 
- The instance consumer fires if a new cache instance will join or leave the cluster.
+The instance consumer fires if a new cache instance will join or leave the cluster.
  
 Here's a sample:
 

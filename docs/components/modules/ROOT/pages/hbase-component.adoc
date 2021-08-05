@@ -93,7 +93,6 @@ As mentioned above camel provides produers endpoints for HBase. This
 allows you to store, delete, retrieve or query data from HBase using
 your camel routes.
 
-[source,java]
 -----------------------
 hbase://table[?options]
 -----------------------
@@ -107,12 +106,11 @@ The supported operations are:
 * Delete
 * Scan
 
-=== Supported URI options
-
-
-
 
 // component options: START
+== Component Options
+
+
 The HBase component supports 5 options, which are listed below.
 
 
@@ -127,13 +125,9 @@ The HBase component supports 5 options, which are listed below.
 | *configuration* (advanced) | To use the shared configuration |  | Configuration
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The HBase endpoint is configured using URI syntax:
 
 ----
@@ -178,8 +172,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 === Put Operations.
 
 HBase is a column based store, which allows you to store data into a
@@ -193,18 +185,18 @@ would be to store part of the message body to specified HBase column.
 
 [source,xml]
 -----------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <!-- Set the HBase Row -->
-            <setHeader name="CamelHBaseRowId">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <!-- Set the HBase Value -->
-            <setHeader name="CamelHBaseValue">
-                <el>${in.body.value}</el>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <!-- Set the HBase Row -->
+    <setHeader name="CamelHBaseRowId">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <!-- Set the HBase Value -->
+    <setHeader name="CamelHBaseValue">
+        <el>${in.body.value}</el>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier"/>
+</route>
 -----------------------------------------------------------------------------------------------------------
 
 The route above assumes that the message body contains an object that
@@ -217,26 +209,26 @@ does not have the number 1.
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <!-- Set the HBase Row 1st column -->
-            <setHeader name="CamelHBaseRowId">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <!-- Set the HBase Row 2nd column -->
-            <setHeader name="CamelHBaseRowId2">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <!-- Set the HBase Value for 1st column -->
-            <setHeader name="CamelHBaseValue">
-                <el>${in.body.value}</el>
-            </setHeader>
-            <!-- Set the HBase Value for 2nd column -->
-            <setHeader name="CamelHBaseValue2">
-                <el>${in.body.othervalue}</el>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier&amp;family2=myfamily&amp;qualifier2=myqualifier2"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <!-- Set the HBase Row 1st column -->
+    <setHeader name="CamelHBaseRowId">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <!-- Set the HBase Row 2nd column -->
+    <setHeader name="CamelHBaseRowId2">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <!-- Set the HBase Value for 1st column -->
+    <setHeader name="CamelHBaseValue">
+        <el>${in.body.value}</el>
+    </setHeader>
+    <!-- Set the HBase Value for 2nd column -->
+    <setHeader name="CamelHBaseValue2">
+        <el>${in.body.othervalue}</el>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier&amp;family2=myfamily&amp;qualifier2=myqualifier2"/>
+</route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 It is important to remember that you can use uri options, message
@@ -253,15 +245,15 @@ message headers.
 
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <!-- Set the HBase Row of the Get -->
-            <setHeader name="CamelHBaseRowId">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBaseGet&amp;family=myfamily&amp;qualifier=myqualifier&amp;valueType=java.lang.Long"/>
-            <to uri="log:out"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <!-- Set the HBase Row of the Get -->
+    <setHeader name="CamelHBaseRowId">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBaseGet&amp;family=myfamily&amp;qualifier=myqualifier&amp;valueType=java.lang.Long"/>
+    <to uri="log:out"/>
+</route>
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 In the example above the result of the get operation will be stored as a
@@ -275,14 +267,14 @@ specified is one or more rows as part of the message headers.
 
 [source,xml]
 ----------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <!-- Set the HBase Row of the Get -->
-            <setHeader name="CamelHBaseRowId">
-                <el>${in.body.id}</el>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBaseDelete"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <!-- Set the HBase Row of the Get -->
+    <setHeader name="CamelHBaseRowId">
+        <el>${in.body.id}</el>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBaseDelete"/>
+</route>
 ----------------------------------------------------------------
 
 === Scan Operations.
@@ -294,11 +286,11 @@ to objects you can use either uri options or headers.
 
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:in"/>
-            <to uri="hbase:mytable?operation=CamelHBaseScan&amp;family=myfamily&amp;qualifier=myqualifier&amp;valueType=java.lang.Long&amp;rowType=java.lang.String"/>
-            <to uri="log:out"/>
-        </route>
+<route>
+    <from uri="direct:in"/>
+    <to uri="hbase:mytable?operation=CamelHBaseScan&amp;family=myfamily&amp;qualifier=myqualifier&amp;valueType=java.lang.Long&amp;rowType=java.lang.String"/>
+    <to uri="log:out"/>
+</route>
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 In this case its probable that you also also need to specify a list of
@@ -318,44 +310,44 @@ can make use of the ModelAwareColumnMatchingFilter as shown below.
 
 [source,xml]
 -----------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:scan"/>
-            <!-- Set the Criteria -->
-            <setHeader name="CamelHBaseFamily">
-                <constant>name</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseQualifier">
-                <constant>first</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseValue">
-                <el>in.body.firstName</el>
-            </setHeader>
-            <setHeader name="CamelHBaseFamily2">
-                <constant>name</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseQualifier2">
-                <constant>last</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseValue2">
-                <el>in.body.lastName</el>
-            </setHeader>
-            <!-- Set additional fields that you want to be return by skipping value -->
-            <setHeader name="CamelHBaseFamily3">
-                <constant>address</constant>
-            </setHeader>
-            <setHeader name="CamelHBaseQualifier3">
-                <constant>country</constant>
-            </setHeader>
-            <to uri="hbase:mytable?operation=CamelHBaseScan&amp;filters=#myFilterList"/>
-        </route>
+<route>
+    <from uri="direct:scan"/>
+    <!-- Set the Criteria -->
+    <setHeader name="CamelHBaseFamily">
+        <constant>name</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseQualifier">
+        <constant>first</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseValue">
+        <el>in.body.firstName</el>
+    </setHeader>
+    <setHeader name="CamelHBaseFamily2">
+        <constant>name</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseQualifier2">
+        <constant>last</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseValue2">
+        <el>in.body.lastName</el>
+    </setHeader>
+    <!-- Set additional fields that you want to be return by skipping value -->
+    <setHeader name="CamelHBaseFamily3">
+        <constant>address</constant>
+    </setHeader>
+    <setHeader name="CamelHBaseQualifier3">
+        <constant>country</constant>
+    </setHeader>
+    <to uri="hbase:mytable?operation=CamelHBaseScan&amp;filters=#myFilterList"/>
+</route>
 
-        <bean id="myFilters" class="java.util.ArrayList">
-            <constructor-arg>
-                <list>
-                    <bean class="org.apache.camel.component.hbase.filters.ModelAwareColumnMatchingFilter"/>
-                </list>
-            </constructor-arg>
-        </bean>
+<bean id="myFilters" class="java.util.ArrayList">
+    <constructor-arg>
+        <list>
+            <bean class="org.apache.camel.component.hbase.filters.ModelAwareColumnMatchingFilter"/>
+        </list>
+    </constructor-arg>
+</bean>
 -----------------------------------------------------------------------------------------------------------
 
 The route above assumes that a pojo is with properties firstName and
@@ -374,7 +366,6 @@ can either specify header mapping (default) or body mapping. The later
 will just add the org.apache.camel.component.hbase.model.HBaseData as
 part of the message body.
 
-[source,java]
 -----------------------
 hbase://table[?options]
 -----------------------
@@ -382,7 +373,6 @@ hbase://table[?options]
 You can specify the columns that you want to be return and their types
 as part of the uri options:
 
-[source,java]
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 hbase:mutable?family=name&qualifer=first&valueType=java.lang.String&family=address&qualifer=number&valueType2=java.lang.Integer&rowType=java.lang.Long
 ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -484,7 +474,6 @@ of the endpoint uri, as you will see below.
 In order to use the body mapping strategy you will have to specify the
 option mappingStrategy as part of the uri, for example:
 
-[source,java]
 ----------------------------------
 hbase:mytable?mappingStrategyName=body
 ----------------------------------

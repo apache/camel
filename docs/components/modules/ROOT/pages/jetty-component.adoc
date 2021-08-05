@@ -45,21 +45,14 @@ for this component:
 
 == URI format
 
-[source,text]
 ----
 jetty:http://hostname[:port][/resourceUri][?options]
 ----
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
-
-
-
-
 // component options: START
+== Component Options
+
+
 The Jetty component supports 32 options, which are listed below.
 
 
@@ -101,16 +94,9 @@ The Jetty component supports 32 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Jetty endpoint is configured using URI syntax:
 
 ----
@@ -169,8 +155,6 @@ with the following path and query parameters:
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
-
-
 
 
 == Message Headers
@@ -653,7 +637,6 @@ Blueprint based definition of basic authentication (based on Jetty 9):
 
 The roles.properties files contains
 
-[source,text]
 ----
 username1=password1,rolename1
 username2=password2,rolename1
@@ -661,7 +644,6 @@ username2=password2,rolename1
 
 This file is located in the etc folder and will be reloaded when changed. The endpoint
 
-[source,text]
 ----
 http://0.0.0.0/path
 ----

@@ -30,7 +30,6 @@ for this component:
     <!-- use the same version as your Camel core version -->
     <version>x.x.x</version>
 </dependency>
-
 ------------------------------------------------------
 
 [[GoogleStorage-AuthenticationConfiguration]]
@@ -42,7 +41,8 @@ For more information please refer to https://cloud.google.com/storage/docs/refer
 
 When you have the **service account key** you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
-[source,text]
+
+[source,java]
 --------------------------------------------------------
 String endpoint = "google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json";
 --------------------------------------------------------
@@ -51,7 +51,6 @@ Or by providing the path to the GCP credentials file location:
 
 Provide authentication credentials to your application code by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
 
-[source,text]
 --------------------------------------------------------
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 --------------------------------------------------------
@@ -59,7 +58,6 @@ export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 
 == URI Format
 
-[source,text]
 --------------------------------------------------------
 google-storage://bucketNameOrArn?[options]
 --------------------------------------------------------
@@ -77,9 +75,10 @@ from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-k
 --------------------------------------------------------------------------------
 
 
-== URI Options
-
 // component options: START
+== Component Options
+
+
 The Google Storage component supports 16 options, which are listed below.
 
 
@@ -105,8 +104,9 @@ The Google Storage component supports 16 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Google Storage endpoint is configured using URI syntax:
 
 ----
@@ -186,7 +186,6 @@ with the following path and query parameters:
 |`CamelGoogleCloudStorageContentLength` |`Long` |The content length of this object.
 
 |`CamelGoogleCloudStorageContentType` |`String` |The content type of this object.
-
 
 |`CamelGoogleCloudStorageContentDisposition` |`String` |The content disposition of this object.
 

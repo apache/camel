@@ -34,15 +34,14 @@ for this component:
 
 == URI Format
 
-[source,text]
 ----
 corda://<host:port>[?options]
 ----
 
-== Corda Options
-
-
 // component options: START
+== Component Options
+
+
 The Corda component supports 14 options, which are listed below.
 
 
@@ -66,9 +65,9 @@ The Corda component supports 14 options, which are listed below.
 | *username* (security) | Username for login |  | String
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Corda endpoint is configured using URI syntax:
 
 ----
@@ -111,11 +110,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-You can append query options to the URI in the following format,
-?options=value&option2=value&...
-
-
 == Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
@@ -125,7 +119,6 @@ You can append query options to the URI in the following format,
 |`All URI options` |All URI options can also be set as exchange headers.
 
 |=======================================================================
-
 
 
 == Samples

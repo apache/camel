@@ -34,20 +34,16 @@ for this component:
 
 == URI format
 
-[source,java]
 ----------
 rss:rssUri
 ----------
 
 Where `rssUri` is the URI to the RSS feed to poll.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The RSS component supports 2 options, which are listed below.
 
 
@@ -59,10 +55,9 @@ The RSS component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The RSS endpoint is configured using URI syntax:
 
 ----
@@ -118,7 +113,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Exchange data types
 
 Camel initializes the In body on the Exchange with a ROME `SyndFeed`.
@@ -143,36 +137,9 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 |`CamelRssFeed` |The entire `SyncFeed` object.
 |=======================================================================
 
-== RSS Dataformat
 
-The RSS component ships with an RSS dataformat that can be used to
-convert between String (as XML) and ROME RSS model objects.
+== Example
 
-* marshal = from ROME `SyndFeed` to XML `String`
-* unmarshal = from XML `String` to ROME `SyndFeed`
-
-A route using the RSS dataformat will look like this:
-
-[source,java]
-----
-from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1000")
-  .marshal().rss()
-  .to("mock:marshal");
-----
-
-The purpose of this feature is to make it possible to use Camel's built-in expressions for manipulating RSS messages. As shown below, an
-XPath expression can be used to filter the RSS message. In the following example, on ly entries with Camel in the title will get through the filter.
-
-[source,java]
-----
-from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
-  .marshal().rss()
-  .filter().xpath("//item/title[contains(.,'Camel')]")
-    .to("mock:result");
-----
-
-[TIP]
-====
 If the URL for the RSS feed uses query parameters, this component will
 resolve them. For example if the feed uses `alt=rss`, then the following example will be resolved:
 
@@ -181,7 +148,6 @@ resolve them. For example if the feed uses `alt=rss`, then the following example
 from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&delay=1000")
     .to("bean:rss");
 ----
-====
 
 == Filtering entries
 

@@ -19,11 +19,8 @@ https://influxdata.com/time-series-platform/influxdb/ a time series database. Th
 Point (the native influxdb class), but it can also accept Map<String, Object> as message body and it will get converted
 to Point.class, please note that the map must contain an element with InfluxDbConstants.MEASUREMENT_NAME as key.
 
-Aditionally of course you may register your own Converters to your data type to Point, or use the
+Additionally of course you may register your own Converters to your data type to Point, or use the
 (un)marshalling tools provided by camel.
-
-
-Influxdb component requires at least Java 8.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -40,19 +37,16 @@ for this component:
 
 == URI format
 
-[source,java]
 -------------------------------
 influxdb://beanName?[options]
 -------------------------------
 
-== URI Options
-
-The producer allows sending messages to a influxdb
-configured in the registry, using the native java driver.
-
-
+The producer allows sending messages to a influxdb configured in the registry, using the native java driver.
 
 // component options: START
+== Component Options
+
+
 The InfluxDB component supports 3 options, which are listed below.
 
 
@@ -65,11 +59,9 @@ The InfluxDB component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The InfluxDB endpoint is configured using URI syntax:
 
 ----
@@ -121,8 +113,6 @@ from("direct:start")
 from("direct:start")
         .to("influxdb://connectionBean?databaseName=myTimeSeriesDB");
 ------------------------------------------------------------------------------------
-
-For more information, see these resources...
 
 
 include::{page-component-version}@camel-spring-boot::page$influxdb-starter.adoc[]

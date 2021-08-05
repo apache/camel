@@ -25,14 +25,9 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon IAM. More information is available at
 https://aws.amazon.com/iam/[Amazon IAM].
 
-[NOTE]
-====
-The AWS2 IAM component is not supported in OSGI
-====
 
 == URI Format
 
-[source,java]
 -------------------------
 aws2-iam://label[?options]
 -------------------------
@@ -40,10 +35,16 @@ aws2-iam://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== URI Options
+[NOTE]
+====
+The AWS2 IAM component works on the aws-global region and it has aws-global as default region
+====
 
 
 // component options: START
+== Component Options
+
+
 The AWS Identity and Access Management (IAM) component supports 16 options, which are listed below.
 
 
@@ -69,11 +70,9 @@ The AWS Identity and Access Management (IAM) component supports 16 options, whic
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AWS Identity and Access Management (IAM) endpoint is configured using URI syntax:
 
 ----
@@ -116,8 +115,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 Required IAM component options
 
 You have to provide the amazonKmsClient in the
@@ -144,11 +141,6 @@ the https://aws.amazon.com/iam/[Amazon IAM] service.
 
 |`CamelAwsIAMGroupPath` |`String` |The path of an AWS IAM Group
 |=======================================================================
-
-[NOTE]
-====
-The AWS2 IAM component works on the aws-global region and it has aws-global as default region
-====
 
 
 === Static credentials vs Default Credential Provider
@@ -241,6 +233,7 @@ from("direct:listUsers")
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
 In AWS IAM there are multiple operations you can submit, as an example for Create User request, you can do something like:
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:createUser")
      .setBody(CreateUserRequest.builder().userName("camel").build())

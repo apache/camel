@@ -38,27 +38,16 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------
 weather://<unused name>[?options]
 ---------------------------------
 
-== REMARK
-
-Since 9 October 2015, an Api Key is required to access the
-openweather service. This key is passed as parameter to the URI
-definition of the weather endpoint using the appid param !
-
-== Geolocation provider
-
-Since July 2018 FreegeoIP is no longer available. The camel-weather component was using this API.
-We switch to https://github.com/apilayer/freegeoip#readme[IPstack] so you'll need to specify and Access Key and the IP 
-from where you're using the API now on.
-
-== Options
 
 
 // component options: START
+== Component Options
+
+
 The Weather component supports 3 options, which are listed below.
 
 
@@ -71,10 +60,9 @@ The Weather component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Weather endpoint is configured using URI syntax:
 
 ----
@@ -143,10 +131,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
 == Exchange data format
 
 Camel will deliver the body as a json formatted java.lang.String (see
@@ -194,14 +178,14 @@ location as shown:
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------
-  String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "Paris,France&appid=APIKEY", String.class);
+String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "Paris,France&appid=APIKEY", String.class);
 -------------------------------------------------------------------------------------------------------------------------------------
 
 And to get the weather at the current location, then:
 
 [source,java]
 --------------------------------------------------------------------------------------------------------------------------------
-  String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "current&appid=APIKEY", String.class);
+String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "current&appid=APIKEY", String.class);
 --------------------------------------------------------------------------------------------------------------------------------
 
 include::{page-component-version}@camel-spring-boot::page$weather-starter.adoc[]

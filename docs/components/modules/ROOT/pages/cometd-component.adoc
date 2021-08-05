@@ -37,15 +37,12 @@ for this component:
 
 == URI format
 
-[source,java]
 ----------------------------------------
 cometd://host:port/channelName[?options]
 ----------------------------------------
 
 The *channelName* represents a topic that can be subscribed to by the
 Camel endpoints.
-
-== Examples
 
 ------------------------------------------
 cometd://localhost:8080/service/mychannel
@@ -54,12 +51,12 @@ cometds://localhost:8443/service/mychannel
 
 where `cometds:` represents an SSL configured endpoint.
 
-== Options
-
-
 
 
 // component options: START
+== Component Options
+
+
 The CometD component supports 10 options, which are listed below.
 
 
@@ -79,13 +76,9 @@ The CometD component supports 10 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The CometD endpoint is configured using URI syntax:
 
 ----
@@ -133,9 +126,7 @@ with the following path and query parameters:
 
 
 
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
+== Sample
 
 Here is some examples on How to pass the parameters
 
@@ -146,8 +137,6 @@ the webapp folder -->
 cometd://localhost:8080?resourceBase=classpath:webapp
 
 == Authentication
-
-*Since Camel 2.8*
 
 You can configure custom `SecurityPolicy` and `Extension`'s to the
 `CometdComponent` which allows you to use authentication as
@@ -194,7 +183,6 @@ Spring DSL based configuration of endpoint
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-...
   <camel:sslContextParameters
       id="sslContextParameters">
     <camel:keyManagers
@@ -208,12 +196,12 @@ Spring DSL based configuration of endpoint
           resource="/users/home/server/keystore.jks"
           password="keystorePassword"/>
     </camel:keyManagers>
-  </camel:sslContextParameters>...
+  </camel:sslContextParameters>
  
   <bean id="cometd" class="org.apache.camel.component.cometd.CometdComponent">
     <property name="sslContextParameters" ref="sslContextParameters"/>
   </bean>
-...
+
   <to uri="cometds://127.0.0.1:443/service/test?baseResource=file:./target/test-classes/webapp&timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2"/>...
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

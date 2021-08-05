@@ -18,11 +18,10 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-mes
 
 The Ignite Messaging endpoint is one of camel-ignite endpoints which allows you to send and consume messages from an https://apacheignite.readme.io/docs/messaging[Ignite topic].
 
-This endpoint supports producers (to send messages) and consumers (to receive messages).
-
-== Options
-
 // component options: START
+== Component Options
+
+
 The Ignite Messaging component supports 6 options, which are listed below.
 
 
@@ -38,8 +37,9 @@ The Ignite Messaging component supports 6 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Ignite Messaging endpoint is configured using URI syntax:
 
 ----
@@ -77,8 +77,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-=== Headers used
+== Headers used
 
 This endpoint uses the following headers:
 [width="100%",cols="1,1,1,4",options="header"]

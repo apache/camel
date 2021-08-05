@@ -35,7 +35,6 @@ dataset's.
 
 == URI format
 
-[source]
 ----
 dataset:name[?options]
 ----
@@ -53,10 +52,11 @@ some implementations that can be used for testing:
 and `org.apache.camel.component.dataset.FileDataSet`, all of which
 extend `DataSetSupport`.
 
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The Dataset component supports 5 options, which are listed below.
 
 
@@ -71,10 +71,9 @@ The Dataset component supports 5 options, which are listed below.
 | *exchangeFormatter* (advanced) | *Autowired* Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter. |  | ExchangeFormatter
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Dataset endpoint is configured using URI syntax:
 
 ----
@@ -123,8 +122,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
 == Configuring DataSet
 

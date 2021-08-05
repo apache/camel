@@ -44,13 +44,16 @@ from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?q
 See examples below.
 
 == Consuming from endpoint
+
 Consuming messages from a JOOQ consumer endpoint removes (or updates) entity beans in the database.
 This allows you to use a database table as a logical queue: consumers take messages from the queue and then delete/update them to logically remove them from the queue.
 If you do not wish to delete the entity bean when it has been processed, you can specify consumeDelete=false on the URI.
 
-== Options
 
 // component options: START
+== Component Options
+
+
 The JOOQ component supports 8 options, which are listed below.
 
 
@@ -68,9 +71,9 @@ The JOOQ component supports 8 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JOOQ endpoint is configured using URI syntax:
 
 ----

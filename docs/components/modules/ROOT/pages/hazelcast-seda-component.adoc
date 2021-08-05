@@ -20,9 +20,10 @@ The http://www.hazelcast.com/[Hazelcast] SEDA component is one of Camel Hazelcas
 SEDA component differs from the rest components provided. It implements a work-queue in order to support asynchronous SEDA architectures, similar to the core "SEDA" component.
 
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The Hazelcast SEDA component supports 5 options, which are listed below.
 
 
@@ -38,6 +39,8 @@ The Hazelcast SEDA component supports 5 options, which are listed below.
 |===
 // component options: END
 // endpoint options: START
+== Endpoint Options
+
 The Hazelcast SEDA endpoint is configured using URI syntax:
 
 ----
@@ -78,7 +81,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == SEDA producer – to(“hazelcast-seda:foo”)
 
 The SEDA producer provides no operations. You only send data to the
@@ -94,7 +96,7 @@ from("direct:foo")
 
 Spring DSL :
 
-[source,java]
+[source,xml]
 ----------------------------------
 <route>
    <from uri="direct:start" />
@@ -117,7 +119,7 @@ from("hazelcast-seda:foo")
 
 Spring DSL:
 
-[source,java]
+[source,xml]
 -----------------------------------
 <route>
   <from uri="hazelcast-seda:foo" />

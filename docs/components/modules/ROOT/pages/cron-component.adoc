@@ -43,10 +43,11 @@ for this component:
 
 Additional libraries may be needed in order to plug a specific implementation.
 
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The Cron component supports 3 options, which are listed below.
 
 
@@ -59,12 +60,9 @@ The Cron component supports 3 options, which are listed below.
 | *cronService* (advanced) | The id of the CamelCronService to use when multiple implementations are provided |  | String
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Cron endpoint is configured using URI syntax:
 
 ----

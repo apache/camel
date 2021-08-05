@@ -14,7 +14,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/robotframe
 
 *{component-header}*
 
-
 The *robotframework:* component allows for processing camel exchanges
 in acceptence test suites which are already implemented with its own DSL. 
 The depending keyword libraries that can be used inside test suites 
@@ -39,7 +38,6 @@ data into the test cases implemented.
 
 == URI format
 
-[source,text]
 ----
 robotframework:templateName[?options]
 ----
@@ -48,12 +46,10 @@ Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
 \file://folder/myfile.robot).
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-=== Options
-
 // component options: START
+== Component Options
+
+
 The Robot Framework component supports 51 options, which are listed below.
 
 
@@ -114,9 +110,9 @@ The Robot Framework component supports 51 options, which are listed below.
 | *configuration* (advanced) | The configuration |  | RobotFrameworkCamelConfiguration
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Robot Framework endpoint is configured using URI syntax:
 
 ----
@@ -212,8 +208,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
-=== Samples
+== Samples
 
 For example you could use something like:
 

@@ -33,14 +33,14 @@ for this component:
 
 == URI format
 
-[source,java]
--------------------------------------------------------------------------------------------------------------------------
+----
 asterisk:name[?options]
--------------------------------------------------------------------------------------------------------------------------
-
-== Options
+----
 
 // component options: START
+== Component Options
+
+
 The Asterisk component supports 3 options, which are listed below.
 
 
@@ -53,8 +53,9 @@ The Asterisk component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Asterisk endpoint is configured using URI syntax:
 
 ----
@@ -92,10 +93,11 @@ with the following path and query parameters:
 
 
 == Action
+
 Supported actions are:
 
-* QUEUE_STATUS, Queue Status
-* SIP_PEERS, List SIP Peers
-* EXTENSION_STATE, Check Extension Status
+* QUEUE_STATUS: Queue status
+* SIP_PEERS: List SIP peers
+* EXTENSION_STATE: Check extension status
 
 include::{page-component-version}@camel-spring-boot::page$asterisk-starter.adoc[]

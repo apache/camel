@@ -33,10 +33,10 @@ for this component:
 mongodb-gridfs:connectionBean?database=databaseName&bucket=bucketName[&moreOptions...]
 ------------------------------------------------------------------------------
 
-== MongoDB GridFS options
-
-
 // component options: START
+== Component Options
+
+
 The MongoDB GridFS component supports 3 options, which are listed below.
 
 
@@ -49,11 +49,9 @@ The MongoDB GridFS component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The MongoDB GridFS endpoint is configured using URI syntax:
 
 ----
@@ -98,8 +96,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == Configuration of database in Spring XML
 
 The following Spring XML creates a bean defining the connection to a
@@ -133,8 +129,6 @@ xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
   <to uri="direct:result" />
 </route>
 ----------------------------------------------------------------------------------
-
- 
 
 == GridFS operations - producer endpoint
 
@@ -173,9 +167,7 @@ filename1.txt   1252314321
 filename2.txt   2897651254
 ----------------------------------------------------------------------------------
 
- 
-
-=== *findOne*
+=== findOne
 
 Finds a file in the GridFS system and sets the body to an InputStream of
 the content. Also provides the metadata has headers. It uses
@@ -188,8 +180,6 @@ Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 InputStream result = template.requestBodyAndHeaders("direct:findOne", "irrelevantBody", headers);
 -------------------------------------------------------------------------------------------------
-
- 
 
 === create
 

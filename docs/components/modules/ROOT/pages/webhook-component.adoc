@@ -34,19 +34,20 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-Typically other components that support webhook will bring this dependency transitively.
+Typically, other components that support webhook will bring this dependency transitively.
 
 == URI Format
 
-[source,text]
 ----
 webhook:endpoint[?options]
 ----
 
-== Webhook Options
 
 
 // component options: START
+== Component Options
+
+
 The Webhook component supports 8 options, which are listed below.
 
 
@@ -64,9 +65,9 @@ The Webhook component supports 8 options, which are listed below.
 | *configuration* (advanced) | Set the default configuration for the webhook meta-component. |  | WebhookConfiguration
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Webhook endpoint is configured using URI syntax:
 
 ----
@@ -101,11 +102,6 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 |===
 // endpoint options: END
-
-
-You can append query options to the URI in the following format,
-?options=value&option2=value&...
-
 
 
 

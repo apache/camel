@@ -39,14 +39,14 @@ for this component:
 
 == URI format
 
-[source]
 ----
 metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ----
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The Metrics component supports 3 options, which are listed below.
 
 
@@ -59,9 +59,9 @@ The Metrics component supports 3 options, which are listed below.
 | *metricRegistry* (advanced) | To use a custom configured MetricRegistry. |  | MetricRegistry
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Metrics endpoint is configured using URI syntax:
 
 ----
@@ -96,8 +96,6 @@ with the following path and query parameters:
 | *value* (producer) | Value value when using histogram type |  | Long
 |===
 // endpoint options: END
-
-
 
 
 [[MetricsComponent-registry]]
@@ -136,6 +134,7 @@ public static class MyConfig extends SingleRouteCamelConfiguration {
 ----
 
 Or using CDI:
+
 [source,java]
 ----
 class MyBean extends RouteBuilder {
@@ -191,7 +190,6 @@ level `warn`.
 [[MetricsComponent-counter]]
 == Metrics type counter
 
-[source]
 ----
 metrics:counter:metricname[?options]
 ----
@@ -267,7 +265,6 @@ from("direct:in")
 [[MetricsComponent-histogram]]
 == Metric type histogram
 
-[source]
 ----
 metrics:histogram:metricname[?options]
 ----
@@ -324,7 +321,6 @@ from("direct:in")
 [[MetricsComponent-meter]]
 == Metric type meter
 
-[source]
 ----
 metrics:meter:metricname[?options]
 ----
@@ -378,7 +374,6 @@ from("direct:in")
 [[MetricsComponent-timer]]
 == Metrics type timer
 
-[source]
 ----
 metrics:timer:metricname[?options]
 ----
@@ -432,7 +427,6 @@ from("direct:in")
 [[MetricsComponent-gauge]]
 == Metric type gauge
 
-[source]
 ----
 metrics:gauge:metricname[?options]
 ----
@@ -559,8 +553,6 @@ if (registryService != null) {
 
 == MetricsMessageHistoryFactory
 
-*Since Camel 2.17*
-
 This factory allows to use metrics to
 capture Message History performance
 statistics while routing messages. It works by using a metrics Timer for
@@ -634,8 +626,6 @@ And the JMX API the MBean is registered in the `type=services` tree
 with `name=MetricsMessageHistoryService`.
 
 == InstrumentedThreadPoolFactory
-
-*Since Camel 2.18*
 
 This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
 which collects information from inside of Camel.

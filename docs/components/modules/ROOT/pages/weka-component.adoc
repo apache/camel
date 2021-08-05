@@ -33,14 +33,16 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------
 weka://cmd
 ---------------------------------
 
-== Options
+
 
 // component options: START
+== Component Options
+
+
 The Weka component supports 2 options, which are listed below.
 
 
@@ -52,8 +54,9 @@ The Weka component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Weka endpoint is configured using URI syntax:
 
 ----
@@ -90,12 +93,6 @@ with the following path and query parameters:
 | *path* (write) | An in/out path for the read/write commands |  | String
 |===
 // endpoint options: END
-
-== Karaf support
-
-This component is not supported in Karaf
-
-== Message Headers
 
 
 == Samples

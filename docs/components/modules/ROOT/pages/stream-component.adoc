@@ -32,7 +32,6 @@ for this component:
 
 == URI format
 
-[source,text]
 -----------------------
 stream:in[?options]
 stream:out[?options]
@@ -45,13 +44,11 @@ If the `stream:header` URI is specified, the `stream` header is used to
 find the stream to write to. This option is available only for stream
 producers (that is, it cannot appear in `from()`).
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The Stream component supports 3 options, which are listed below.
 
 
@@ -64,10 +61,9 @@ The Stream component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Stream endpoint is configured using URI syntax:
 
 ----
@@ -113,7 +109,6 @@ with the following path and query parameters:
 | *readTimeout* (advanced) | Sets the read timeout to a specified timeout, in milliseconds. A non-zero value specifies the timeout when reading from Input stream when a connection is established to a resource. If the timeout expires before there is data available for read, a java.net.SocketTimeoutException is raised. A timeout of zero is interpreted as an infinite timeout. |  | int
 |===
 // endpoint options: END
-
 
 
 == Message content

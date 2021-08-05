@@ -36,7 +36,6 @@ for this component:
 
 == URI format
 
-[source,java]
 -----------------------------------------------
 spring-integration:defaultChannelName[?options]
 -----------------------------------------------
@@ -49,10 +48,12 @@ used by the Spring Integration Spring context. It will equal to the
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Options
 
 
 // component options: START
+== Component Options
+
+
 The Spring Integration component supports 3 options, which are listed below.
 
 
@@ -65,10 +66,9 @@ The Spring Integration component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Spring Integration endpoint is configured using URI syntax:
 
 ----
@@ -102,7 +102,6 @@ with the following path and query parameters:
 | *outputChannel* (producer) | The Spring integration output channel name that is used to send messages to Spring integration. |  | String
 |===
 // endpoint options: END
-
 
 
 == Usage

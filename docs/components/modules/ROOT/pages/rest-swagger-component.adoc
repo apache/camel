@@ -38,7 +38,6 @@ Maven users will need to add the following dependency to their
 
 == URI format
 
-[source,java]
 -------------------------------------------------------
 rest-swagger:[specificationPath#]operationId
 -------------------------------------------------------
@@ -92,9 +91,10 @@ invocations so it makes sense to use this feature only for parameters
 that are indeed constant for all invocations -- for example API version
 in path such as `/api/\{version}/users/\{id}`.
 
-== Options
-
 // component options: START
+== Component Options
+
+
 The REST Swagger component supports 10 options, which are listed below.
 
 
@@ -114,8 +114,9 @@ The REST Swagger component supports 10 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The REST Swagger endpoint is configured using URI syntax:
 
 ----

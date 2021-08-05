@@ -51,7 +51,6 @@ as http://hsqldb.org/[hsqldb], http://www.mysql.com/[MySQL] and more.
 
 == URI format
 
-[source,text]
 ---------------------------
 gora:instanceName[?options]
 ---------------------------
@@ -83,10 +82,12 @@ Extensive information for this configuration can be found in the apache
 http://gora.apache.org/current/index.html[gora documentation] and the
 http://gora.apache.org/current/gora-conf.html[gora-conf] page.
 
-== Options
 
 
 // component options: START
+== Component Options
+
+
 The Gora component supports 3 options, which are listed below.
 
 
@@ -99,12 +100,9 @@ The Gora component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Gora endpoint is configured using URI syntax:
 
 ----
@@ -152,8 +150,6 @@ with the following path and query parameters:
 | *hadoopConfiguration* (advanced) | Hadoop Configuration |  | Configuration
 |===
 // endpoint options: END
-
-
 
 
 

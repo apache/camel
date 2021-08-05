@@ -24,6 +24,9 @@ without the restart of the router.
 == Grape options
 
 // component options: START
+== Component Options
+
+
 The Grape component supports 3 options, which are listed below.
 
 
@@ -36,9 +39,9 @@ The Grape component supports 3 options, which are listed below.
 | *patchesRepository* (advanced) | Implementation of org.apache.camel.component.grape.PatchesRepository, by default: FilePatchesRepository |  | PatchesRepository
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Grape endpoint is configured using URI syntax:
 
 ----
@@ -68,7 +71,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Setting up class loader
 
 Grape requires using Groovy class loader with the `CamelContext`. You
@@ -89,15 +91,6 @@ yourself:
 ------------------------------------------------------------------------------------
 camelContext.setApplicationContextClassLoader(new GroovyClassLoader(myClassLoader));
 ------------------------------------------------------------------------------------
-
-== URI format
-
-Grape component supports only producer endpoints.
-
-[source,java]
------------------------------
-grape:defaultMavenCoordinates
------------------------------
 
 For example the following snippet loads Camel FTP component:
 
@@ -145,8 +138,6 @@ But of course Camel build-in xref:manual::type-converter.adoc[type conversion
 API] can perform the automatic data type transformations for you. In the
 example below Camel automatically converts binary payload into the
 String:
-
- 
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------
@@ -200,7 +191,6 @@ installed. In order to load again the installed jars on the context
 startup, use the `GrapeEndpoint.loadPatches()` method in your route: 
 
  
-
 [source,java]
 -------------------------------------------------------------------------
 import static org.apache.camel.component.grape.GrapeEndpoint.loadPatches;
@@ -218,7 +208,6 @@ camelContext.addRoutes(
   });
 -------------------------------------------------------------------------
 
- 
 
 == Managing the installed jars
 
@@ -228,15 +217,15 @@ the `CamelGrapeCommand` header set to `GrapeCommand.listPatches`:
 
 [source,java]
 ----------------------------------------------------------------------------------------
-      from("netty-http:http://0.0.0.0:80/patches").
-        setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.listPatches)).
-        to("grape:list"); 
+from("netty-http:http://0.0.0.0:80/patches").
+    setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.listPatches)).
+    to("grape:list");
 ----------------------------------------------------------------------------------------
 
 Connecting the to the route defined above using the HTTP client returns
 the list of the jars installed by Grape component:
 
-[source,java]
+[source,bash]
 ---------------------------------------
 $ curl http://my-router.com/patches
 grape:org.apache.camel/camel-ftp/2.15.2
@@ -249,7 +238,7 @@ command:
 
 [source,java]
 -----------------------------------------------------------------------------------------
-      from("netty-http:http://0.0.0.0:80/patches").
-        setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.clearPatches)).
-        setBody().constant("Installed patches have been deleted."); 
+from("netty-http:http://0.0.0.0:80/patches").
+    setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.clearPatches)).
+    setBody().constant("Installed patches have been deleted.");
 -----------------------------------------------------------------------------------------

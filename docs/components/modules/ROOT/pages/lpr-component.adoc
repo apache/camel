@@ -20,8 +20,6 @@ in order for the component to appropriately print it. The objective is
 to be able to direct specific payloads as jobs to a line printer in a
 camel flow.
 
-This component only supports a camel producer endpoint.
-
 The functionality allows for the payload to be printed on a default
 printer, named local, remote or wireless linked printer using the
 javax printing API under the covers.
@@ -45,19 +43,15 @@ Since the URI scheme for a printer has not been standardized (the
 nearest thing to a standard being the IETF print standard) and therefore
 not uniformly applied by vendors, we have chosen *"lpr"* as the scheme.
 
-[source,java]
 -----------------------------------------------
 lpr://localhost/default[?options]
 lpr://remotehost:port/path/to/printer[?options]
 -----------------------------------------------
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The Printer component supports 2 options, which are listed below.
 
 
@@ -69,10 +63,9 @@ The Printer component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Printer endpoint is configured using URI syntax:
 
 ----
@@ -112,6 +105,7 @@ with the following path and query parameters:
 | *sides* (producer) | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API. There are 5 enums and the value can be one of: one-sided, duplex, tumble, two-sided-short-edge, two-sided-long-edge | one-sided | String
 |===
 // endpoint options: END
+
 
 == Sending Messages to a Printer
 

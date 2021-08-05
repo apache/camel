@@ -42,14 +42,14 @@ For more information please refer to https://github.com/googleapis/google-cloud-
 
 When you have the **service account key** you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
-[source,text]
+
+[source,java]
 --------------------------------------------------------
 String endpoint = "google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json";
 --------------------------------------------------------
 
 Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
 
-[source,text]
 --------------------------------------------------------
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 --------------------------------------------------------
@@ -57,7 +57,6 @@ export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 
 == URI Format
 
-[source,text]
 --------------------------------------------------------
 google-functions://functionName[?options]
 --------------------------------------------------------
@@ -74,9 +73,11 @@ from("google-functions://myCamelFunction?project=myProject&location=us-central1&
 --------------------------------------------------------------------------------
 
 
-== URI Options
 
 // component options: START
+== Component Options
+
+
 The Google Cloud Functions component supports 2 options, which are listed below.
 
 
@@ -88,8 +89,9 @@ The Google Cloud Functions component supports 2 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Google Cloud Functions endpoint is configured using URI syntax:
 
 ----
@@ -169,7 +171,7 @@ If you need to have more control over the `client` instance configuration, you c
 [source,java]
 --------------------------------------------------------------------------------
 from("google-functions://myCamelFunction?client=#myClient")
-.to("mock:result");
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 === Google Functions Producer Operation examples
@@ -178,12 +180,10 @@ from("google-functions://myCamelFunction?client=#myClient")
 
 [source,java]
 --------------------------------------------------------------------------------
-
 //list functions
 from("direct:start")
-.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=listFunctions")
-.log("body:${body}")
-
+    .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=listFunctions")
+    .log("body:${body}")
 --------------------------------------------------------------------------------
 
 This operation will get the list of cloud functions for the project `myProject` and location `us-central1`.
@@ -194,9 +194,9 @@ This operation will get the list of cloud functions for the project `myProject` 
 --------------------------------------------------------------------------------
 //get function
 from("direct:start")
-.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=getFunction")
-.log("body:${body}")
-.to("mock:result");
+    .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=getFunction")
+    .log("body:${body}")
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 This operation will get the `CloudFunction` object for the project `myProject`, location `us-central1` and functionName `myCamelFunction`.
@@ -207,12 +207,12 @@ This operation will get the `CloudFunction` object for the project `myProject`, 
 --------------------------------------------------------------------------------
 //call function
 from("direct:start")
-.process(exchange -> {
-  exchange.getIn().setBody("just a message");
-})
-.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=callFunction")
-.log("body:${body}")
-.to("mock:result");
+    .process(exchange -> {
+      exchange.getIn().setBody("just a message");
+    })
+    .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=callFunction")
+    .log("body:${body}")
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 - GenerateDownloadUrl: this operation generate the signed URL for downloading deployed function source code.
@@ -230,8 +230,8 @@ from("direct:start").to("google-functions://myCamelFunction?serviceAccountKey=/h
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start").to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=generateUploadUrl")
-.log("body:${body}")
-.to("mock:result");
+    .log("body:${body}")
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 - createFunction: this operation creates a new function.
@@ -240,13 +240,13 @@ from("direct:start").to("google-functions://myCamelFunction?serviceAccountKey=/h
 --------------------------------------------------------------------------------
 
 from("direct:start")
-.process(exchange -> {
-  exchange.getIn().setHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, "com.example.Example");
-  exchange.getIn().setHeader(GoogleCloudFunctionsConstants.RUNTIME, "java11");
-  exchange.getIn().setHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL, "gs://myBucket/source.zip");
-}).to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=createFunction")
-.log("body:${body}")
-.to("mock:result");
+    .process(exchange -> {
+      exchange.getIn().setHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, "com.example.Example");
+      exchange.getIn().setHeader(GoogleCloudFunctionsConstants.RUNTIME, "java11");
+      exchange.getIn().setHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL, "gs://myBucket/source.zip");
+    }).to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=createFunction")
+    .log("body:${body}")
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 - updateFunction: this operation updates existing function.

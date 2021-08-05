@@ -14,21 +14,18 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/etcd-keys.
 
 *{component-header}*
 
-*Since Camel 2.18*
-
-
 The camel Etcd component allows you to work with Etcd, a distributed reliable key-value store.
 
 == URI Format
 
-[source,java]
 ----------------------------
 etcd-keys:path[?options]
 ----------------------------
 
-== URI Options
-
 // component options: START
+== Component Options
+
+
 The Etcd Keys component supports 12 options, which are listed below.
 
 
@@ -50,8 +47,9 @@ The Etcd Keys component supports 12 options, which are listed below.
 | *userName* (security) | The user name to use for basic authentication. |  | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Etcd Keys endpoint is configured using URI syntax:
 
 ----
@@ -87,4 +85,5 @@ with the following path and query parameters:
 | *userName* (security) | The user name to use for basic authentication. |  | String
 |===
 // endpoint options: END
+
 include::{page-component-version}@camel-spring-boot::page$etcd-starter.adoc[]

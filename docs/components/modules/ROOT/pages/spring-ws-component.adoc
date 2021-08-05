@@ -35,25 +35,10 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[NOTE]
-====
-*Dependencies*
-
-This component ships with Spring-WS 2.0.x which (like
-the rest of Camel) requires Spring 3.0.x. In order to run earlier versions of
-`camel-spring-ws` on Spring 2.5.x you need to add the `spring-webmvc`
-module from Spring 2.5.x. In order to run Spring-WS 1.5.9 on Spring
-3.0.x you need to exclude the OXM module from Spring 3.0.x as this
-module is also included in Spring-WS 1.5.9 (see
-http://stackoverflow.com/questions/3313314/can-spring-ws-1-5-be-used-with-spring-3[this
-post]).
-====
-
 == URI format
 
 The URI scheme for this component is as follows
 
-[source,java]
 ------------------------------------------
 spring-ws:[mapping-type:]address[?options]
 ------------------------------------------
@@ -90,13 +75,11 @@ specified mapping-type (e.g. a SOAP action, XPath expression). As a
 producer the address should be set to the URI of the web service your
 calling upon.
 
-You can append query *options* to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The Spring WebService component supports 4 options, which are listed below.
 
 
@@ -110,10 +93,9 @@ The Spring WebService component supports 4 options, which are listed below.
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Spring WebService endpoint is configured using URI syntax:
 
 ----
@@ -166,38 +148,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-=== Message headers
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`CamelSpringWebserviceEndpointUri` |String |URI of the web service your accessing as a client, overrides _address_
-part of the endpoint URI
-
-|`CamelSpringWebserviceSoapAction` |String |Header to specify the SOAP action of the message, overrides `soapAction`
-option if present
-
-|CamelSpringWebserviceSoapHeader |Source |Use this header to specify/access the SOAP headers of
-the message.
-
-|`CamelSpringWebserviceAddressingAction` |URI |Use this header to specify the WS-Addressing action of the message,
-overrides `wsAddressingAction` option if present
-
-|CamelSpringWebserviceAddressingFaultTo |URI |Use this header to specify the  WS-Addressing FaultTo , overrides
-faultTo option if present
-
-|CamelSpringWebserviceAddressingReplyTo |URI |Use this header to specify the  WS-Addressing ReplyTo , overrides
-replyTo option if present
-
-|CamelSpringWebserviceAddressingOutputAction |URI |Use this header to specify the WS-Addressing Action , overrides
-outputAction option if present
-
-|CamelSpringWebserviceAddressingFaultAction |URI |Use this header to specify the WS-Addressing Fault Action , overrides
-faultAction option if present
-|=======================================================================
-
 == Accessing web services
 
 To call a web service at `\http://foo.com/bar` simply define a route:
@@ -238,8 +188,6 @@ SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "http://baz.com");
 --------------------------------------------------------------------
 
 == Using SOAP headers
-
-*Since Camel 2.11.1*
 
 You can provide the SOAP header(s) as a Camel Message header when
 sending a message to a spring-ws endpoint, for example given the
@@ -292,11 +240,12 @@ a QName class directly and put into any key into header.
 ====
 
 == How to transform the soap header using a stylesheet
+
 The header transformation filter (HeaderTransformationMessageFilter.java)
 can be used to transform the soap header for a soap request. If you want to use 
 the header transformation filter, see the below example:
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------------
 <bean id="headerTransformationFilter" class="org.apache.camel.component.spring.ws.filter.impl.HeaderTransformationMessageFilter">
     <constructor-arg index="0" value="org/apache/camel/component/spring/ws/soap-header-transform.xslt"/>
@@ -304,7 +253,7 @@ the header transformation filter, see the below example:
 ------------------------------------------------------------------
 Use the bead defined above in the camel endpoint
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------------
 <route>
     <from uri="direct:stockQuoteWebserviceHeaderTransformation"/>
@@ -321,7 +270,7 @@ Spring WS within Apache Axiom, here is an example:
 - Simply define the messageFactory as is bellow and Spring-WS will use
 MTOM strategy to populate your SOAP message with optimized attachments.
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------------
 <bean id="axiomMessageFactory"
 class="org.springframework.ws.soap.axiom.AxiomSoapMessageFactory">
@@ -333,7 +282,7 @@ class="org.springframework.ws.soap.axiom.AxiomSoapMessageFactory">
 
 - Add into your pom.xml the following dependencies
 
-[source,java]
+[source,xml]
 ----------------------------------------------
 <dependency>
 <groupId>org.apache.ws.commons.axiom</groupId>
@@ -384,9 +333,8 @@ follows:
  a) the global custom filter that provides the global configuration for
 all Spring-WS endpoints
 
-[source,java]
+[source,xml]
 --------------------------------------------------------------------------------
- 
 <bean id="messageFilter" class="your.domain.myMessageFiler" scope="singleton" />
 --------------------------------------------------------------------------------
 
@@ -442,7 +390,7 @@ Spring configuration:
 <!-- force use of Sun SAAJ implementation, http://static.springsource.org/spring-ws/sites/1.5/faq.html#saaj-jboss -->
 <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
     <property name="messageFactory">
-        <bean class="com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl"></bean>
+        <bean class="com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl"/>
     </property>
 </bean>
 ---------------------------------------------------------------------------------------------------------------------
@@ -572,7 +520,7 @@ of annotations.
 
 An example of a route using `beanname`:
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------------------------------------------------------------------
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>

@@ -35,23 +35,20 @@ https://developers.facebook.com/docs/facebook-login/access-tokens/[https://devel
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 
-[source,java]
+[source,xml]
 -----------------------------------------------
-    <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-facebook</artifactId>
-        <version>${camel-version}</version>
-    </dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-facebook</artifactId>
+    <version>${camel-version}</version>
+</dependency>
 -----------------------------------------------
 
 == URI format
 
-[source,java]
 ---------------------------------
-  facebook://[endpoint]?[options]
+facebook://[endpoint]?[options]
 ---------------------------------
-
-== FacebookComponent
 
 The facebook component can be configured with the Facebook account
 settings below, which are mandatory. The values can be provided to the
@@ -61,9 +58,10 @@ component using the bean property *configuration* of type
 to application APIs.
 
 
-
-
 // component options: START
+== Component Options
+
+
 The Facebook component supports 31 options, which are listed below.
 
 
@@ -104,12 +102,9 @@ The Facebook component supports 31 options, which are listed below.
 | *oAuthPermissions* (security) | Default OAuth permissions. Comma separated permission names. See \https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
 |===
 // component options: END
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Facebook endpoint is configured using URI syntax:
 
 ----
@@ -257,7 +252,7 @@ value in the incoming message body.
 
 [source,java]
 --------------------------------------------------------------------
-    from("direct:test").to("facebook://activities?inBody=userId")...
+from("direct:test").to("facebook://activities?inBody=userId")...
 --------------------------------------------------------------------
 
 Any of the endpoint options can be provided in either the endpoint URI,
@@ -325,8 +320,8 @@ facebook4j.PostUpdate body.
 
 [source,java]
 ----------------------------------------------------
-    from("direct:foo")
-        .to("facebook://postFeed/inBody=postUpdate);
+from("direct:foo")
+    .to("facebook://postFeed/inBody=postUpdate);
 ----------------------------------------------------
 
 To poll, every 5 sec (You can set the xref:{eip-vc}:eips:polling-consumer.adoc[polling
@@ -335,8 +330,8 @@ your home feed:
 
 [source,java]
 -----------------------------------------------
-    from("facebook://home?delay=5000")
-        .to("bean:blah");
+from("facebook://home?delay=5000")
+    .to("bean:blah");
 -----------------------------------------------
 
 Searching using a producer with dynamic options from header.
@@ -347,9 +342,9 @@ CamelFacebook.query header.
 
 [source,java]
 --------------------------------------------------------
-    from("direct:foo")
-        .setHeader("CamelFacebook.query", header("bar"))
-        .to("facebook://posts");
+from("direct:foo")
+    .setHeader("CamelFacebook.query", header("bar"))
+    .to("facebook://posts");
 --------------------------------------------------------
 
 include::{page-component-version}@camel-spring-boot::page$facebook-starter.adoc[]

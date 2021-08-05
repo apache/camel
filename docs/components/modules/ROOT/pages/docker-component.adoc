@@ -24,16 +24,16 @@ API].
 
 == URI format
 
-[source,java]
 ------------------------------
 docker://[operation]?[options]
 ------------------------------
 
 Where *operation* is the specific action to perform on Docker.
 
-== General Options
-
 // component options: START
+== Component Options
+
+
 The Docker component supports 21 options, which are listed below.
 
 
@@ -64,9 +64,9 @@ The Docker component supports 21 options, which are listed below.
 | *username* (security) | User name to authenticate with |  | String
 |===
 // component options: END
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Docker endpoint is configured using URI syntax:
 
 ----
@@ -157,7 +157,7 @@ If you use Maven you can just add the following to your pom.xml,
 substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
-[source,java]
+[source,xml]
 -------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>

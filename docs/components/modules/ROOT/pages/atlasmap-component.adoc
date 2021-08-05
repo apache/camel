@@ -42,10 +42,10 @@ Where *mappingName* is the classpath-local URI of the AtlasMap
 mapping definition, either ADM archive file or mapping definition JSON file
  to process.
 
-== Options
-
-
 // component options: START
+== Component Options
+
+
 The AtlasMap component supports 4 options, which are listed below.
 
 
@@ -59,11 +59,9 @@ The AtlasMap component supports 4 options, which are listed below.
 | *propertiesFile* (advanced) | The URI of the properties file which is used for AtlasContextFactory initialization. |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The AtlasMap endpoint is configured using URI syntax:
 
 ----
@@ -96,8 +94,6 @@ with the following path and query parameters:
 | *targetMapName* (producer) | The Exchange property name for a target document map which hold java.util.Map&lt;String, Object&gt; where the key is AtlasMap Document ID. AtlasMap populates multiple target documents into this map. |  | String
 |===
 // endpoint options: END
-
-
 
 
 == Samples

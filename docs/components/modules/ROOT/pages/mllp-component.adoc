@@ -47,11 +47,11 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-== MLLP Options
-
-
 
 // component options: START
+== Component Options
+
+
 The MLLP component supports 6 options, which are listed below.
 
 
@@ -67,15 +67,9 @@ The MLLP component supports 6 options, which are listed below.
 | *logPhiMaxBytes* (advanced) | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
 |===
 // component options: END
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The MLLP endpoint is configured using URI syntax:
 
 ----
@@ -130,12 +124,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-
-
-
-
 == MLLP Consumer
 
 The MLLP Consumer supports receiving MLLP-framed messages and sending
@@ -148,7 +136,7 @@ the CamelMllpAcknowledgementType exchange property. The MLLP Consumer
 can read messages without sending any HL7 Acknowledgement if the
 automatic acknowledgement is disabled and exchange pattern is InOnly.
 
-== *Message Headers*
+=== Message Headers
 
 The MLLP Consumer adds these headers on the Camel message:
 
@@ -175,7 +163,7 @@ The MLLP Consumer adds these headers on the Camel message:
 All headers are String types. If a header value is missing, its value
 is null.
 
-== *Exchange Properties*
+=== Exchange Properties
 
 The type of acknowledgment the MLLP Consumer generates and state of the TCP Socket can be controlled
 by these properties on the Camel exchange:
@@ -195,9 +183,6 @@ by these properties on the Camel exchange:
 |CamelMllpResetConnectionAfterSend | Boolean | If true, the Socket will be reset immediately after sending any data
 |====================================
 
-// REVISIT - Empty section is bad for AsciiDoc build
-//=== Consumer Configuration
-
 == MLLP Producer
 
 The MLLP Producer supports sending MLLP-framed messages and receiving
@@ -207,7 +192,7 @@ received.  The received acknowledgement is interrogated and an exception
 is raised in the event of a negative acknowledgement. The MLLP Producer
 can ignore acknowledgements when configured with InOnly exchange pattern.
 
-== *Message Headers*
+=== Message Headers
 
 The MLLP Producer adds these headers on the Camel message:
 
@@ -221,7 +206,7 @@ The MLLP Producer adds these headers on the Camel message:
 |CamelMllpAcknowledgementType | The HL7 acknowledgement type (AA, AE, AR, etc)
 |===================================
 
-== *Exchange Properties*
+=== Exchange Properties
 
 The state of the TCP Socket can be controlled by these properties on the Camel exchange:
 

@@ -32,14 +32,15 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 
 == URI Format
 
-[source,text]
 ----
 hwcloud-obs:operation[?options]
 ----
 
-== URI Options
 
 // component options: START
+== Component Options
+
+
 The Huawei Object Storage Service (OBS) component supports 3 options, which are listed below.
 
 
@@ -52,8 +53,9 @@ The Huawei Object Storage Service (OBS) component supports 3 options, which are 
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Huawei Object Storage Service (OBS) endpoint is configured using URI syntax:
 
 ----

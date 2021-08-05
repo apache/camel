@@ -39,21 +39,17 @@ snmp://hostname[:port][?Options]
 The component supports polling OID values from an SNMP enabled device
 and receiving traps.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Snmp Producer 
-
-*Available from 2.18 release*
+== Snmp Producer
 
 It can also be used to request information using GET method.
 
 The response body type is org.apache.camel.component.snmp.SnmpMessage
 
-== Options
-
 
 // component options: START
+== Component Options
+
+
 The SNMP component supports 3 options, which are listed below.
 
 
@@ -66,10 +62,9 @@ The SNMP component supports 3 options, which are listed below.
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SNMP endpoint is configured using URI syntax:
 
 ----
@@ -140,7 +135,6 @@ with the following path and query parameters:
 Given the situation, that I poll for the following OIDs:
 
 *OIDs*
-
 -------------------------
 1.3.6.1.2.1.1.3.0
 1.3.6.1.2.1.25.3.2.1.5.1

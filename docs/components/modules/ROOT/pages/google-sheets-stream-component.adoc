@@ -37,10 +37,10 @@ for this component:
 [source,xml]
 ----
 <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-google-sheets</artifactId>
-        <!-- use the same version as your Camel core version -->
-        <version>x.x.x</version>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-sheets</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
 </dependency>
 ----
 
@@ -52,9 +52,11 @@ The Google Sheets Component uses the following URI format:
 google-sheets-stream://apiName?[options]
 ----
 
-=== Component options
 
 // component options: START
+== Component Options
+
+
 The Google Sheets Stream component supports 17 options, which are listed below.
 
 
@@ -81,11 +83,9 @@ The Google Sheets Stream component supports 17 options, which are listed below.
 | *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
 // component options: END
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Google Sheets Stream endpoint is configured using URI syntax:
 
 ----

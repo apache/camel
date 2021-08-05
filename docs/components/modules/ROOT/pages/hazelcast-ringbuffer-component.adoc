@@ -19,9 +19,11 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-
 The http://www.hazelcast.com/[Hazelcast] ringbuffer component is one of Camel Hazelcast Components which allows you to access Hazelcast ringbuffer.
 Ringbuffer is a distributed data structure where the data is stored in a ring-like structure. You can think of it as a circular array with a certain capacity. 
 
-== Options
 
 // component options: START
+== Component Options
+
+
 The Hazelcast Ringbuffer component supports 4 options, which are listed below.
 
 
@@ -35,8 +37,9 @@ The Hazelcast Ringbuffer component supports 4 options, which are listed below.
 | *hazelcastMode* (advanced) | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The Hazelcast Ringbuffer endpoint is configured using URI syntax:
 
 ----
@@ -67,8 +70,6 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 |===
 // endpoint options: END
-
-
 
 
 == ringbuffer cache producer 
@@ -104,7 +105,7 @@ from("direct:put")
 
 Spring DSL:
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:put" />

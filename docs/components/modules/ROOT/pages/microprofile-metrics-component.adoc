@@ -33,13 +33,15 @@ It is expected that the component is running in a MicroProfile environment that 
 
 == URI format
 
-[source]
 ----
 microprofile-metrics:[ concurrent gauge | counter | gauge | histogram | meter | timer ]:metricname[?options]
 ----
 
 == Options
 // component options: START
+== Component Options
+
+
 The MicroProfile Metrics component supports 3 options, which are listed below.
 
 
@@ -52,8 +54,9 @@ The MicroProfile Metrics component supports 3 options, which are listed below.
 | *metricRegistry* (advanced) | Use a custom MetricRegistry. |  | MetricRegistry
 |===
 // component options: END
-
 // endpoint options: START
+== Endpoint Options
+
 The MicroProfile Metrics endpoint is configured using URI syntax:
 
 ----
@@ -109,7 +112,6 @@ Or by binding it to the Camel registry using the binding name 'metricRegistry' (
 
 == [[MicroProfileMetrics-counter]]Counter
 
-[source]
 ----
 microprofile-metrics:counter:name[?options]
 ----
@@ -162,7 +164,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-concurrentGauge]]Concurrent Gauge
 
-[source]
 ----
 microprofile-metrics:concurrent gauge:name[?options]
 ----
@@ -213,9 +214,7 @@ from("direct:in")
     .setHeader(MicroProfileMetricsConstants.HEADER_GAUGE_INCREMENT, constant(true))
     .to("microprofile-metrics:concurrent gauge:simple.gauge")
     .to("direct:out");
-----
 
-----
 // Decrement concurrent gauge simple.gauge by 1
 from("direct:in")
     .setHeader(MicroProfileMetricsConstants.HEADER_GAUGE_DECREMENT, constant(true))
@@ -225,7 +224,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-Gauge]]Gauge
 
-[source]
 ----
 microprofile-metrics:gauge:name[?options]
 ----
@@ -270,7 +268,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-histogram]]Histogram
 
-[source]
 ----
 microprofile-metrics:histogram:name[?options]
 ----
@@ -315,7 +312,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-meter]]Meter
 
-[source]
 ----
 microprofile-metrics:meter:name[?options]
 ----
@@ -368,7 +364,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-Timer]]Timer
 
-[source]
 ----
 microprofile-metrics:timer:name[?options]
 ----
