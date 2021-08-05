@@ -57,70 +57,12 @@ attachments if provided in the message  (`SoroushMessage.file`, `SoroushMessage.
 and store the urls in the message (`SoroushMessage.fileUrl`, `SoroushMessage.thumbnailUrl`).
 |===
 
-== Options
+
 
 // component options: START
-The Soroush component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *authorizationToken* (global) | The default Soroush authorization token to be used when the information is not provided in the endpoints. |  | String
-|===
 // component options: END
 // endpoint options: START
-The Soroush endpoint is configured using URI syntax:
-
-----
-soroush:action
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *action* | *Required* The action to do. There are 4 enums and the value can be one of: sendMessage, getMessage, uploadFile, downloadFile |  | SoroushAction
-|===
-
-
-=== Query Parameters (20 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *connectionTimeout* (common) | Connection timeout in ms when connecting to soroush API | 30000 | int
-| *maxConnectionRetry* (common) | Maximum connection retry when fail to connect to soroush API, if the quota is reached, MaximumConnectionRetryReachedException is thrown for that message. | 4 | int
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *concurrentConsumers* (consumer) | Number of Thread created by consumer in the route. if you use this method for parallelism, it is guaranteed that messages from same user always execute in the same thread and therefore messages from the same user are processed sequentially. Default value notice: using SoroushBotSingleThreadConsumer | 1 | int
-| *queueCapacityPerThread* (consumer) | Maximum capacity of each queue when concurrentConsumers is greater than 1. if a queue become full, every message that should go to that queue will be dropped. If bridgeErrorHandler is set to true, an exchange with CongestionException is directed to ErrorHandler. You can then processed the error using onException(CongestionException.class) route. Default value notice: infinite capacity | 0 | int
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *autoDownload* (producer) | Automatically download SoroushMessage.fileUrl and SoroushMessage.thumbnailUrl if exists for the message and store them in SoroushMessage.file and SoroushMessage.thumbnail field | false | boolean
-| *autoUploadFile* (producer) | Automatically upload attachments when a message goes to the sendMessage endpoint and the SoroushMessage.file (SoroushMessage.thumbnail) has been set and SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null | true | boolean
-| *downloadThumbnail* (producer) | If true, when downloading an attached file, thumbnail will be downloaded if provided in the message. Otherwise, only the file will be downloaded | true | boolean
-| *forceDownload* (producer) | Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail) was not null in that message | false | boolean
-| *forceUpload* (producer) | Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if exists, even if the SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in the message | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *backOffStrategy* (scheduling) | The strategy to backoff in case of connection failure. Currently 3 strategies are supported: 1. Exponential (default): It multiply retryWaitingTime by retryExponentialCoefficient after each connection failure. 2. Linear: It increase retryWaitingTime by retryLinearIncrement after each connection failure. 3. Fixed: Always use retryWaitingTime as the time between retries. | Exponential | String
-| *maxRetryWaitingTime* (scheduling) | Maximum amount of time (in millisecond) a thread wait before retrying failed request. | 3600000 | long
-| *reconnectIdleConnectionTimeout* (scheduling) | The timeout in millisecond to reconnect the existing getMessage connection to ensure that the connection is always live and does not dead without notifying the bot. this value should not be changed. | 300000 | long
-| *retryExponentialCoefficient* (scheduling) | Coefficient to compute back off time when using Exponential Back Off strategy | 2 | long
-| *retryLinearIncrement* (scheduling) | The amount of time (in millisecond) which adds to waiting time when using Linear back off strategy | 10000 | long
-| *retryWaitingTime* (scheduling) | Waiting time before retry failed request (Millisecond). If backOffStrategy is not Fixed this is the based value for computing back off waiting time. the first retry is always happen immediately after failure and retryWaitingTime do not apply to the first retry. | 1000 | long
-| *authorizationToken* (security) | The authorization token for using the bot. if uri path does not contain authorization token, this token will be used. |  | String
-|===
 // endpoint options: END
-
 
 
 == Usage
@@ -259,7 +201,5 @@ One way to handle these exceptions is by using `onException` route definition:
 -------------
 onException(CongestionException.class).log("Failed to processing ${id}")
 -------------
-
-_Donated by https://www.mohaymen.ir[Mohaymen ICT] to ASF_
 
 include::{page-component-version}@camel-spring-boot::page$soroush-starter.adoc[]

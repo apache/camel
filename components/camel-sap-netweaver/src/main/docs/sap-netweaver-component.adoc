@@ -35,13 +35,9 @@ for this component:
 
 The URI scheme for a sap netweaver gateway component is as follows
 
-[source,java]
 -----------------------------------------------------------------
 sap-netweaver:https://host:8080/path?username=foo&password=secret
 -----------------------------------------------------------------
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
 == Prerequisites
 
@@ -53,58 +49,10 @@ requires for an account.
 This component uses the basic authentication scheme for logging into SAP
 NetWeaver.
 
-== SAPNetWeaver options
-
-
 // component options: START
-The SAP NetWeaver component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
-
-
 // endpoint options: START
-The SAP NetWeaver endpoint is configured using URI syntax:
-
-----
-sap-netweaver:url
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *url* | *Required* Url to the SAP net-weaver gateway server. |  | String
-|===
-
-
-=== Query Parameters (6 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *flatternMap* (producer) | If the JSON Map contains only a single entry, then flattern by storing that single entry value as the message body. | true | boolean
-| *json* (producer) | Whether to return data in JSON format. If this option is false, then XML is returned in Atom format. | true | boolean
-| *jsonAsMap* (producer) | To transform the JSON from a String to a Map in the message body. | true | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *password* (producer) | *Required* Password for account. |  | String
-| *username* (producer) | *Required* Username for account. |  | String
-|===
 // endpoint options: END
-
 
 
 == Message Headers
@@ -129,7 +77,6 @@ http://scn.sap.com/docs/DOC-31221[here].
 In the route below we request the SAP NetWeaver demo server using the
 following url
 
-[source,java]
 ----------------------------------------------------------------------
 https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/
 ----------------------------------------------------------------------
@@ -192,7 +139,6 @@ HTML page
 
 When running the application you get sample output:
 
-[source,java]
 -------------------------------
 Flight information:
 Airline ID: AA

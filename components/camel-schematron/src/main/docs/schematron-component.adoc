@@ -29,65 +29,15 @@ Java Templates object representing the rules.
 
 == URI format
 
-[source,java]
 ---------------------------
 schematron://path?[options]
 ---------------------------
 
-== URI options
-
 
 // component options: START
-The Schematron component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
-
-
-
-
 // endpoint options: START
-The Schematron endpoint is configured using URI syntax:
-
-----
-schematron:path
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *path* | *Required* The path to the schematron rules file. Can either be in class path or location in the file system. |  | String
-|===
-
-
-=== Query Parameters (4 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *abort* (producer) | Flag to abort the route and throw a schematron validation exception. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *rules* (producer) | To use the given schematron rules instead of loading from the path |  | Templates
-| *uriResolver* (advanced) | Set the URIResolver to be used for resolving schematron includes in the rules file. |  | URIResolver
-|===
 // endpoint options: END
-
-
-
 
 
 == Headers
@@ -110,8 +60,6 @@ Java DSL. The schematron rules file is sourced from the class path:
 ----------------------------------------------------------------------------
 from("direct:start").to("schematron://sch/schematron.sch").to("mock:result")
 ----------------------------------------------------------------------------
-
- 
 
 The following example shows how to invoke the schematron processor in
 XML DSL. The schematrion rules file is sourced from the file system:

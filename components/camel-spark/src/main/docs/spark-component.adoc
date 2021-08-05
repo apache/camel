@@ -12,9 +12,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spark.adoc
 
 *{component-header}*
 
-*Since Camel 2.17*
-
-
 This documentation page covers the http://spark.apache.org/[Apache
 Spark] component for the Apache Camel. The main purpose of the Spark
 integration with Camel is to provide a bridge between Camel connectors
@@ -54,76 +51,24 @@ or Hive SQL job.
 
 *Spark URI format*
 
-[source,java]
 --------------------------
 spark:{rdd|dataframe|hive}
 --------------------------
 
-=== Spark options
-
 
 
 // component options: START
-The Spark component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *rdd* (producer) | RDD to compute against. |  | JavaRDDLike
-| *rddCallback* (producer) | Function performing action against an RDD. |  | RddCallback
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
-
-
-
 // endpoint options: START
-The Spark endpoint is configured using URI syntax:
-
-----
-spark:endpointType
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *endpointType* | *Required* Type of the endpoint (rdd, dataframe, hive). There are 3 enums and the value can be one of: rdd, dataframe, hive |  | EndpointType
-|===
-
-
-=== Query Parameters (6 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *collect* (producer) | Indicates if results should be collected or counted. | true | boolean
-| *dataFrame* (producer) | DataFrame to compute against. |  | Dataset
-| *dataFrameCallback* (producer) | Function performing action against an DataFrame. |  | DataFrameCallback
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *rdd* (producer) | RDD to compute against. |  | JavaRDDLike
-| *rddCallback* (producer) | Function performing action against an RDD. |  | RddCallback
-|===
 // endpoint options: END
 
 
- 
-== RDD jobs 
+== RDD jobs
 
 To invoke an RDD job, use the following URI:
 
 *Spark RDD producer*
 
-[source,java]
 ------------------------------------------------------
 spark:rdd?rdd=#testFileRdd&rddCallback=#transformation
 ------------------------------------------------------
@@ -294,7 +239,6 @@ public class MyTransformation {
 long result = producerTemplate.requestBody("spark:rdd?rdd=#rdd&rddCallback=#rddCallback" Arrays.asList(10, "10"), long.class);
 ------------------------------------------------------------------------------------------------------------------------------
 
- 
 
 == DataFrame jobs
 
@@ -305,12 +249,11 @@ To invoke an DataFrame job, use the following URI:
 
 *Spark RDD producer*
 
-[source,java]
 --------------------------------------------------------------------------
 spark:dataframe?dataFrame=#testDataFrame&dataFrameCallback=#transformation
 --------------------------------------------------------------------------
 
- Where `dataFrame` option refers to the name of an DataFrame instance
+Where `dataFrame` option refers to the name of an DataFrame instance
 (`instances of org.apache.spark.sql.Dataset and org.apache.spark.sql.Row`) from a Camel registry,
 while `dataFrameCallback` refers to the implementation
 of `org.apache.camel.component.spark.DataFrameCallback` interface (also
@@ -373,13 +316,12 @@ Dataset<Row> cars(HiveContext hiveContext) {
 
 == Hive jobs
 
- Instead of working with RDDs or DataFrame Spark component can also
+Instead of working with RDDs or DataFrame Spark component can also
 receive Hive SQL queries as payloads. To send Hive query to Spark
 component, use the following URI:
 
 *Spark RDD producer*
 
-[source,java]
 ----------
 spark:hive
 ----------

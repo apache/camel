@@ -20,74 +20,27 @@ for this component:
 
 [source,xml]
 ---------------------------------------------
- <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-splunk-hec</artifactId>
-        <version>${camel-version}</version>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-splunk-hec</artifactId>
+    <version>${camel-version}</version>
 </dependency>
 ---------------------------------------------
 
 == URI format
 
-[source,java]
 -------------------------------
-  splunk-hec:[endpoint]/[token]?[options]
+splunk-hec:[endpoint]/[token]?[options]
 -------------------------------
+
 
 
 // component options: START
-The Splunk HEC component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
-
-
 // endpoint options: START
-The Splunk HEC endpoint is configured using URI syntax:
-
-----
-splunk-hec:splunkURL/token
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *splunkURL* | *Required* Splunk Host URL |  | String
-| *token* | *Required* Splunk authorization token |  | String
-|===
-
-
-=== Query Parameters (10 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bodyOnly* (producer) | Send only the message body | false | boolean
-| *headersOnly* (producer) | Send only message headers | false | boolean
-| *host* (producer) | Splunk host. |  | String
-| *index* (producer) | Splunk index to write to | camel | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *source* (producer) | Splunk source argument | camel | String
-| *sourceType* (producer) | Splunk sourcetype argument | camel | String
-| *time* (producer) | Time this even occurred. By default, the time will be when this event hits the splunk server. |  | Long
-| *https* (security) | Contact HEC over https. | true | boolean
-| *skipTlsVerify* (security) | Splunk HEC TLS verification. | false | boolean
-|===
 // endpoint options: END
+
+
 
 == Message Headers
 

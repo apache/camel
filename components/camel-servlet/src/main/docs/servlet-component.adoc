@@ -45,86 +45,16 @@ a `String` which is safe to be read multiple times.
 
 == URI format
 
-[source,java]
 ---------------------------------
 servlet://relative_path[?options]
 ---------------------------------
 
-You can append query options to the URI in the following format:
-`?option=value&option=value&...`
-
-== Options
 
 // component options: START
-The Servlet component supports 10 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *servletName* (consumer) | Default name of servlet to use. The default name is CamelServlet. | CamelServlet | String
-| *attachmentMultipartBinding* (consumer) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
-| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
-| *httpRegistry* (consumer) | To use a custom org.apache.camel.component.servlet.HttpRegistry. |  | HttpRegistry
-| *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *httpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
-| *httpConfiguration* (advanced) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
-| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-|===
 // component options: END
-
 // endpoint options: START
-The Servlet endpoint is configured using URI syntax:
-
-----
-servlet:contextPath
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *contextPath* | *Required* The context-path to use |  | String
-|===
-
-
-=== Query Parameters (22 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *chunked* (consumer) | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response | true | boolean
-| *disableStreamCache* (common) | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file, Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance, in case you do not need to read the message payload multiple times. The http producer will by default cache the response body stream. If setting this option to true, then the producers will not cache the response body stream but use the response stream as-is as the message body. | false | boolean
-| *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *httpBinding* (common) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
-| *async* (consumer) | Configure the consumer to work in async mode | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
-| *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
-| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | boolean
-| *responseBufferSize* (consumer) | To use a custom buffer size on the javax.servlet.ServletResponse. |  | Integer
-| *servletName* (consumer) | Name of the servlet to use | CamelServlet | String
-| *transferException* (consumer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
-| *attachmentMultipartBinding* (consumer) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
-| *eagerCheckContentAvailable* (consumer) | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
-| *mapHttpMessageBody* (consumer) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
-| *mapHttpMessageFormUrlEncoded{zwsp}Body* (consumer) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
-| *mapHttpMessageHeaders* (consumer) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
-| *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
-| *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
-|===
 // endpoint options: END
+
 
 
 == Message Headers
@@ -231,7 +161,6 @@ Sample async configuration:
     </init-param>
   </servlet>
 -----------------------------------------------------------------------------------------------
-
 
 
 == Sample
@@ -479,19 +408,6 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
 
 }
 -------------------------------------------------------------------------
-
-=== Usage with Spring-Boot
-The _camel-servlet-starter_ library binds automatically all the rest endpoints under the `/camel/*` context path.
-The following table summarizes the additional configuration properties available in the _camel-servlet-starter_ library.
-The automatic mapping of the Camel servlet can also be disabled.
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Spring-Boot Property | Default | Description
-| camel.servlet.mapping.enabled | true | Enables the automatic mapping of the servlet component into the Spring web context
-| camel.servlet.mapping.context-path | /camel/* | Context path used by the servlet component for automatic mapping
-| camel.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
-|=======================================================================
 
 
 include::{page-component-version}@camel-spring-boot::page$servlet-starter.adoc[]
