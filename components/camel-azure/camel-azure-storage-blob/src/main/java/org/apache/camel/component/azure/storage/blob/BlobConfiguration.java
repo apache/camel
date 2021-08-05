@@ -374,7 +374,9 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * h
+     * When using `getChangeFeed` producer operation, this filters the results to return events approximately after the
+     * start time. Note: A few events belonging to the previous hour can also be returned. A few events belonging to
+     * this hour can be missing; to ensure all events from the hour are returned, round the start time down by an hour.
      */
     public OffsetDateTime getChangeFeedStartTime() {
         return changeFeedStartTime;
@@ -385,7 +387,9 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * h
+     * When using `getChangeFeed` producer operation, this filters the results to return events approximately before the
+     * end time. Note: A few events belonging to the next hour can also be returned. A few events belonging to this hour
+     * can be missing; to ensure all events from the hour are returned, round the end time up by an hour.
      */
     public OffsetDateTime getChangeFeedEndTime() {
         return changeFeedEndTime;
@@ -396,7 +400,8 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * h
+     * When using `getChangeFeed` producer operation, this gives additional context that is passed through the Http
+     * pipeline during the service call.
      */
     public Context getChangeFeedContext() {
         return changeFeedContext;
