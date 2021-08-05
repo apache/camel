@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.consumer.common.ConfigMapEvent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
@@ -68,15 +69,11 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
 
         LOG.debug("Stopping Kubernetes ConfigMap Consumer");
         if (executor != null) {
+            KubernetesHelper.close(configMapWatcher, configMapWatcher::getWatch);
+
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                if (configMapWatcher != null && configMapWatcher.getWatch() != null) {
-                    configMapWatcher.getWatch().close();
-                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
-                if (configMapWatcher != null && configMapWatcher.getWatch() != null) {
-                    configMapWatcher.getWatch().close();
-                }
                 executor.shutdownNow();
             }
         }

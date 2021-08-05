@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.consumer.common.NamespaceEvent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
@@ -68,15 +69,11 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
 
         LOG.debug("Stopping Kubernetes Namespace Consumer");
         if (executor != null) {
+            KubernetesHelper.close(nsWatcher, nsWatcher::getWatch);
+
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                if (nsWatcher != null) {
-                    nsWatcher.getWatch().close();
-                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
-                if (nsWatcher != null) {
-                    nsWatcher.getWatch().close();
-                }
                 executor.shutdownNow();
             }
         }

@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.kubernetes;
 
+import java.util.function.Supplier;
+
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.Watch;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper moethods for Kubernetes resources.
+ * Helper methods for Kubernetes resources.
  */
 public final class KubernetesHelper {
 
@@ -96,6 +99,15 @@ public final class KubernetesHelper {
         }
         Config conf = builder.build();
         return new DefaultKubernetesClient(conf);
+    }
+
+    public static void close(Runnable runnable, Supplier<Watch> watchGetter) {
+        if (runnable != null) {
+            final Watch watch = watchGetter.get();
+            if (watch != null) {
+                watch.close();
+            }
+        }
     }
 
 }
