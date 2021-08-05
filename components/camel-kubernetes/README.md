@@ -21,12 +21,12 @@ export KUBE_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annota
 4. Get the host:
 
 ```
-export KIND_PORT=$(docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}}{{(index $conf 0).HostPort}} {{end}}'  kind-control-plane)
+export KIND_PORT=$(docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}}{{(index $conf 0).HostPort}}{{end}}'  kind-control-plane)
 export KUBE_HOST=https://localhost:$KIND_PORT
 ```
 
 5. Run the test:
 ```
-mvn -Dtest=KubernetesConfigMapsConsumerTest -Dkubernetes.test.auth="$KUBE_TOKEN" -Dkubernetes.test.host=$KUBE_HOST -Dkubernetes.test.host.k8s=true clean verify
+mvn -Dkubernetes.test.auth="$KUBE_TOKEN" -Dkubernetes.test.host=$KUBE_HOST -Dkubernetes.test.host.k8s=true clean verify
 ```
 
