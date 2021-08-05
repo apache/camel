@@ -15,7 +15,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-clien
 The Milo Client component provides access to OPC UA servers using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
 
-*Java 9+*: This component requires Java 9+ at runtime.
+*Java 11+*: This component requires Java 11+ at runtime.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -31,50 +31,10 @@ for this component:
 ------------------------------------------------------------
 
 
-
-// component options: START
-The OPC UA Client component supports 25 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *clientId* (common) | A virtual client id to force the creation of a new connection instance |  | String
-| *configuration* (common) | All default options for client configurations |  | MiloClientConfiguration
-| *discoveryEndpointSuffix* (common) | A suffix for endpoint URI when discovering |  | String
-| *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *allowedSecurityPolicies* (client) | A set of allowed security policy URIs. Default is to accept all and use the highest. |  | String
-| *applicationName* (client) | The application name | Apache Camel adapter for Eclipse Milo | String
-| *applicationUri* (client) | The application URI | http://camel.apache.org/EclipseMilo/Client | String
-| *channelLifetime* (client) | Channel lifetime in milliseconds |  | Long
-| *keyAlias* (client) | The name of the key in the keystore file |  | String
-| *keyPassword* (client) | The key password |  | String
-| *keyStorePassword* (client) | The keystore password |  | String
-| *keyStoreType* (client) | The key store type |  | String
-| *keyStoreUrl* (client) | The URL where the key should be loaded from |  | String
-| *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
-| *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
-| *miloClientConnectionManager* (client) | *Autowired* Instance for managing client connections |  | MiloClientConnectionManager
-| *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
-| *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
-| *requestedPublishingInterval* (client) | The requested publishing interval in milliseconds | 1_000.0 | Double
-| *requestTimeout* (client) | Request timeout in milliseconds |  | Long
-| *sessionName* (client) | Session name |  | String
-| *sessionTimeout* (client) | Session timeout in milliseconds |  | Long
-|===
-// component options: END
-
-
-
 == URI format
 
-The URI syntax of the endpoint is: 
+The URI syntax of the endpoint is:
 
-[source]
 ------------------------
 milo-client:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
 ------------------------
@@ -87,8 +47,6 @@ milo-client:opc.tcp://[user:password@]host:port?node=RAW(nsu=urn:foo:bar;s=item-
 
 If no user credentials are provided the client will switch to anonymous mode.
 
-== URI options
-
 All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
 will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
 made, the options of the +client+ group are applied. All further instances will be ignored.
@@ -98,78 +56,10 @@ which will by added internally to the endpoint URI in order to select a differen
 In other words, shared connections located by the combination of endpoint URI and client id.
 
 
-
-
-
-
-
-
-
-
-
-
+// component options: START
+// component options: END
 // endpoint options: START
-The OPC UA Client endpoint is configured using URI syntax:
-
-----
-milo-client:endpointUri
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *endpointUri* | *Required* The OPC UA server endpoint |  | String
-|===
-
-
-=== Query Parameters (32 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *clientId* (common) | A virtual client id to force the creation of a new connection instance |  | String
-| *dataChangeFilterDeadbandType* (common) | Deadband type for MonitorFilterType DataChangeFilter. | 0 | UInteger
-| *dataChangeFilterDeadbandValue* (common) | Deadband value for MonitorFilterType DataChangeFilter. | 0.0 | Double
-| *dataChangeFilterTrigger* (common) | Daata change trigger for data change monitor filter type. There are 3 enums and the value can be one of: Status, StatusValue, StatusValueTimestamp |  | DataChangeTrigger
-| *defaultAwaitWrites* (common) | Default await setting for writes | false | boolean
-| *discoveryEndpointSuffix* (common) | A suffix for endpoint URI when discovering |  | String
-| *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
-| *method* (common) | The method definition (see Method ID) |  | String
-| *monitorFilterType* (common) | Monitor Filter Type for MonitoredItems. There are 1 enums and the value can be one of: dataChangeFilter |  | MonitorFilterType
-| *node* (common) | The node definition (see Node ID) |  | String
-| *samplingInterval* (common) | The sampling interval in milliseconds | 0.0 | Double
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *allowedSecurityPolicies* (client) | A set of allowed security policy URIs. Default is to accept all and use the highest. |  | String
-| *applicationName* (client) | The application name | Apache Camel adapter for Eclipse Milo | String
-| *applicationUri* (client) | The application URI | http://camel.apache.org/EclipseMilo/Client | String
-| *channelLifetime* (client) | Channel lifetime in milliseconds |  | Long
-| *keyAlias* (client) | The name of the key in the keystore file |  | String
-| *keyPassword* (client) | The key password |  | String
-| *keyStorePassword* (client) | The keystore password |  | String
-| *keyStoreType* (client) | The key store type |  | String
-| *keyStoreUrl* (client) | The URL where the key should be loaded from |  | String
-| *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
-| *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
-| *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
-| *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
-| *requestedPublishingInterval* (client) | The requested publishing interval in milliseconds | 1_000.0 | Double
-| *requestTimeout* (client) | Request timeout in milliseconds |  | Long
-| *sessionName* (client) | Session name |  | String
-| *sessionTimeout* (client) | Session timeout in milliseconds |  | Long
-|===
 // endpoint options: END
-
-
-
 
 
 === Discovery
@@ -188,7 +78,6 @@ but override the host information with the value of the original URI.
 
 [[nodeid]]
 === Node ID
-
 
 In order to define a target node a namespace and node id is required. In previous versions this was possible by
 specifying `nodeId` and either `namespaceUri` or `namespaceIndex`. However this only allowed for using
@@ -235,7 +124,9 @@ Input parameters are taken from the body:
 The component provide a producer to read values from multiple opc-ua nodes. The Node-IDs will be defined in the header `CamelMiloNodeIds` as list of strings. (see <<nodeid, Node-ID>> for the ID format).
 
 Example:
-```java
+
+[source,java]
+----
 from("direct:start")
     .setHeader("CamelMiloNodeIds", constant(Arrays.asList("nsu=urn:org:apache:camel;s=myitem1")))
     .setHeader("await", constant(true)) // await: parameter "defaultAwaitWrites"
@@ -246,7 +137,7 @@ from("direct:start")
                 return newExchange;
             }
         }).to("mock:test1");
-```
+----
 
 === Security policies
 
@@ -255,7 +146,6 @@ or to use the Milo enum literals (e.g. `None`). Specifying an unknown security p
 
 The known security policy URIs and enum literals are can be seen here: https://github.com/eclipse/milo/blob/master/opc-ua-stack/stack-core/src/main/java/org/eclipse/milo/opcua/stack/core/security/SecurityPolicy.java[SecurityPolicy.java] 
 
-**Note:** In any case security policies are considered case sensitive.
-
+NOTE: In any case security policies are considered case sensitive.
 
 include::{page-component-version}@camel-spring-boot::page$milo-starter.adoc[]

@@ -40,7 +40,6 @@ for this component:
 
 == URI format
 
-[source]
 ----
 micrometer:[ counter | summary | timer ]:metricname[?options]
 ----
@@ -48,56 +47,9 @@ micrometer:[ counter | summary | timer ]:metricname[?options]
 == Options
 
 // component options: START
-The Micrometer component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *metricsRegistry* (advanced) | To use a custom configured MetricRegistry. |  | MeterRegistry
-|===
 // component options: END
-
-
 // endpoint options: START
-The Micrometer endpoint is configured using URI syntax:
-
-----
-micrometer:metricsType:metricsName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (3 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *metricsType* | *Required* Type of metrics. There are 6 enums and the value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER |  | Type
-| *metricsName* | *Required* Name of metrics |  | String
-| *tags* | Tags of metrics |  | Iterable
-|===
-
-
-=== Query Parameters (5 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *action* (producer) | Action expression when using timer type |  | String
-| *decrement* (producer) | Decrement value expression when using counter type |  | String
-| *increment* (producer) | Increment value expression when using counter type |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *value* (producer) | Value expression when using histogram type |  | String
-|===
 // endpoint options: END
-
-
 
 
 [[MicrometerComponent-registry]]
@@ -138,6 +90,7 @@ public static class MyConfig extends SingleRouteCamelConfiguration {
 ----
 
 Or using CDI:
+
 [source,java]
 ----
 class MyBean extends RouteBuilder {
@@ -202,7 +155,6 @@ Micrometer endpoint will catch all exceptions and write log entry using level `w
 [[MicrometerComponent-counter]]
 == Counter
 
-[source]
 ----
 micrometer:counter:name[?options]
 ----
@@ -281,7 +233,6 @@ from("direct:in")
 [[MicrometerComponent-summary]]
 == Distribution Summary
 
-[source]
 ----
 micrometer:summary:metricname[?options]
 ----
@@ -350,7 +301,6 @@ from("direct:in")
 [[MicrometerComponent-timer]]
 == Timer
 
-[source]
 ----
 micrometer:timer:metricname[?options]
 ----

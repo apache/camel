@@ -31,65 +31,14 @@ It is expected that the component is running in a MicroProfile environment that 
 
 == URI format
 
-[source]
 ----
 microprofile-metrics:[ concurrent gauge | counter | gauge | histogram | meter | timer ]:metricname[?options]
 ----
 
 == Options
 // component options: START
-The MicroProfile Metrics component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *metricRegistry* (advanced) | Use a custom MetricRegistry. |  | MetricRegistry
-|===
 // component options: END
-
 // endpoint options: START
-The MicroProfile Metrics endpoint is configured using URI syntax:
-
-----
-microprofile-metrics:metricType:metricName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *metricType* | *Required* Metric type. There are 8 enums and the value can be one of: concurrent gauge, counter, gauge, meter, histogram, timer, simple timer, invalid |  | MetricType
-| *metricName* | *Required* Metric name |  | String
-|===
-
-
-=== Query Parameters (12 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *action* (producer) | Action to use when using the timer type |  | String
-| *counterIncrement* (producer) | Increment value when using the counter type |  | Long
-| *description* (producer) | Metric description |  | String
-| *displayName* (producer) | Metric display name |  | String
-| *gaugeDecrement* (producer) | Decrement metric value when using concurrent gauge type |  | Boolean
-| *gaugeIncrement* (producer) | Increment metric value when using the concurrent gauge type |  | Boolean
-| *gaugeValue* (producer) | Decrement metric value when using concurrent gauge type |  | Number
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *mark* (producer) | Mark value to set when using the meter type |  | Long
-| *metricUnit* (producer) | Metric unit. See org.eclipse.microprofile.metrics.MetricUnits |  | String
-| *tags* (producer) | Comma delimited list of tags associated with the metric in the format tagName=tagValue |  | String
-| *value* (producer) | Value to set when using the histogram type |  | Long
-|===
 // endpoint options: END
 
 == MetricRegistry Configuration
@@ -107,7 +56,6 @@ Or by binding it to the Camel registry using the binding name 'metricRegistry' (
 
 == [[MicroProfileMetrics-counter]]Counter
 
-[source]
 ----
 microprofile-metrics:counter:name[?options]
 ----
@@ -160,7 +108,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-concurrentGauge]]Concurrent Gauge
 
-[source]
 ----
 microprofile-metrics:concurrent gauge:name[?options]
 ----
@@ -211,9 +158,7 @@ from("direct:in")
     .setHeader(MicroProfileMetricsConstants.HEADER_GAUGE_INCREMENT, constant(true))
     .to("microprofile-metrics:concurrent gauge:simple.gauge")
     .to("direct:out");
-----
 
-----
 // Decrement concurrent gauge simple.gauge by 1
 from("direct:in")
     .setHeader(MicroProfileMetricsConstants.HEADER_GAUGE_DECREMENT, constant(true))
@@ -223,7 +168,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-Gauge]]Gauge
 
-[source]
 ----
 microprofile-metrics:gauge:name[?options]
 ----
@@ -268,7 +212,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-histogram]]Histogram
 
-[source]
 ----
 microprofile-metrics:histogram:name[?options]
 ----
@@ -313,7 +256,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-meter]]Meter
 
-[source]
 ----
 microprofile-metrics:meter:name[?options]
 ----
@@ -366,7 +308,6 @@ from("direct:in")
 
 == [[MicroProfileMetrics-Timer]]Timer
 
-[source]
 ----
 microprofile-metrics:timer:name[?options]
 ----
