@@ -34,80 +34,18 @@ for this component:
 
 == URI format
 
-[source,java]
 ------------------------------
 bean-validator:label[?options]
 ------------------------------
-
-or
-
-[source,java]
---------------------------------
-bean-validator://label[?options]
---------------------------------
 
 Where *label* is an arbitrary text value describing the endpoint. +
  You can append query options to the URI in the following format,
 ?option=value&option=value&...
 
-== URI Options
-
 
 // component options: START
-The Bean Validator component supports 8 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *ignoreXmlConfiguration* (producer) | Whether to ignore data from the META-INF/validation.xml file. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *constraintValidatorFactory* (advanced) | To use a custom ConstraintValidatorFactory |  | ConstraintValidatorFactory
-| *messageInterpolator* (advanced) | To use a custom MessageInterpolator |  | MessageInterpolator
-| *traversableResolver* (advanced) | To use a custom TraversableResolver |  | TraversableResolver
-| *validationProviderResolver* (advanced) | To use a a custom ValidationProviderResolver |  | ValidationProviderResolver
-| *validatorFactory* (advanced) | *Autowired* To use a custom ValidatorFactory |  | ValidatorFactory
-|===
 // component options: END
-
-
-
 // endpoint options: START
-The Bean Validator endpoint is configured using URI syntax:
-
-----
-bean-validator:label
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *label* | *Required* Where label is an arbitrary text value describing the endpoint |  | String
-|===
-
-
-=== Query Parameters (8 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *group* (producer) | To use a custom validation group | javax.validation.groups.Default | String
-| *ignoreXmlConfiguration* (producer) | Whether to ignore data from the META-INF/validation.xml file. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *constraintValidatorFactory* (advanced) | To use a custom ConstraintValidatorFactory |  | ConstraintValidatorFactory
-| *messageInterpolator* (advanced) | To use a custom MessageInterpolator |  | MessageInterpolator
-| *traversableResolver* (advanced) | To use a custom TraversableResolver |  | TraversableResolver
-| *validationProviderResolver* (advanced) | To use a a custom ValidationProviderResolver |  | ValidationProviderResolver
-| *validatorFactory* (advanced) | To use a custom ValidatorFactory |  | ValidatorFactory
-|===
 // endpoint options: END
 
 
@@ -126,10 +64,10 @@ use `HibernateValidationProviderResolver`.
 --------------------------------------------------------------------------------------------------------------------------------
 from("direct:test").
   to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
-
-...
-
-<bean id="myValidationProviderResolver" class="org.apache.camel.component.bean.validator.HibernateValidationProviderResolver"/> 
+--------------------------------------------------------------------------------------------------------------------------------
+[source,xml]
+--------------------------------------------------------------------------------------------------------------------------------
+<bean id="myValidationProviderResolver" class="org.apache.camel.component.bean.validator.HibernateValidationProviderResolver"/>
 --------------------------------------------------------------------------------------------------------------------------------
 
 If no custom `ValidationProviderResolver` is defined and the validator
@@ -213,12 +151,15 @@ And if you have to provide your own message interpolator, traversable
 resolver and constraint validator factory, you have to write a route
 like this
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------------------------------------------------
 <bean id="myMessageInterpolator" class="my.ConstraintValidatorFactory" />
 <bean id="myTraversableResolver" class="my.TraversableResolver" />
 <bean id="myConstraintValidatorFactory" class="my.ConstraintValidatorFactory" />
+------------------------------------------------------------------------------------------------------
 
+[source,java]
+------------------------------------------------------------------------------------------------------
 from("direct:start")
 .to("bean-validator://x?group=AllChecks&messageInterpolator=#myMessageInterpolator
 &traversableResolver=#myTraversableResolver&constraintValidatorFactory=#myConstraintValidatorFactory")
@@ -231,19 +172,19 @@ annotations. In this case, you have to provide the file
 
 *validation.xml*
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------------------------------------------------------------------------
-<?xml version="1.0" encoding="UTF-8"?>
 <validation-config
     xmlns="http://jboss.org/xml/ns/javax/validation/configuration"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/configuration">
+
     <default-provider>org.hibernate.validator.HibernateValidator</default-provider>
     <message-interpolator>org.hibernate.validator.engine.ResourceBundleMessageInterpolator</message-interpolator>
     <traversable-resolver>org.hibernate.validator.engine.resolver.DefaultTraversableResolver</traversable-resolver>
     <constraint-validator-factory>org.hibernate.validator.engine.ConstraintValidatorFactoryImpl</constraint-validator-factory>
-    
     <constraint-mapping>/constraints-car.xml</constraint-mapping>
+
 </validation-config>
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -251,12 +192,12 @@ and the `constraints-car.xml` file
 
 *constraints-car.xml*
 
-[source,java]
+[source,xml]
 ----------------------------------------------------------------------------------------------------
-<?xml version="1.0" encoding="UTF-8"?>
 <constraint-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping validation-mapping-1.0.xsd"
     xmlns="http://jboss.org/xml/ns/javax/validation/mapping">
+
     <default-package>org.apache.camel.component.bean.validator</default-package>
     
     <bean class="CarWithoutAnnotations" ignore-annotations="true">
@@ -283,9 +224,8 @@ Here is the XML syntax for the example route definition where **OrderedChecks** 
 
 Note that the body should include an instance of a class to validate.
 
-[source,java]
+[source,xml]
 ----------------------------------------------------------------------------------------------------
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
@@ -300,8 +240,5 @@ Note that the body should include an instance of a class to validate.
     </camelContext>
 </beans>
 ----------------------------------------------------------------------------------------------------
-
-
-
 
 include::{page-component-version}@camel-spring-boot::page$bean-validator-starter.adoc[]
