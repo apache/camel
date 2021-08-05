@@ -31,7 +31,6 @@ where `${camel-version`} must be replaced by the actual version of Camel.
 
 == URI format
 
-[source,xml]
 ---------------------------
 exec://executable[?options]
 ---------------------------
@@ -40,56 +39,9 @@ where `executable` is the name, or file path, of the system command that
 will be executed. If executable name is used (e.g. `exec:java`), the
 executable must in the system path.
 
-== URI options
-
 // component options: START
-The Exec component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
 // endpoint options: START
-The Exec endpoint is configured using URI syntax:
-
-----
-exec:executable
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *executable* | *Required* Sets the executable to be executed. The executable must not be empty or null. |  | String
-|===
-
-
-=== Query Parameters (9 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *args* (producer) | The arguments may be one or many whitespace-separated tokens. |  | String
-| *binding* (producer) | A reference to a org.apache.commons.exec.ExecBinding in the Registry. |  | ExecBinding
-| *commandExecutor* (producer) | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library, which adds a shutdown hook for every executed command. |  | ExecCommandExecutor
-| *commandLogLevel* (producer) | Logging level to be used for commands during execution. The default value is DEBUG. Possible values are TRACE, DEBUG, INFO, WARN, ERROR or OFF. (Values of ExecCommandLogLevelType enum). There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | DEBUG | LoggingLevel
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *outFile* (producer) | The name of a file, created by the executable, that should be considered as its output. If no outFile is set, the standard output (stdout) of the executable will be used instead. |  | String
-| *timeout* (producer) | The timeout, in milliseconds, after which the executable should be terminated. If execution has not completed within the timeout, the component will send a termination request. |  | long
-| *useStderrOnEmptyStdout* (producer) | A boolean indicating that when stdout is empty, this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default. | false | boolean
-| *workingDir* (producer) | The directory in which the command should be executed. If null, the working directory of the current process will be used. |  | String
-|===
 // endpoint options: END
 
 
