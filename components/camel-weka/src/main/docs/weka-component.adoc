@@ -31,69 +31,16 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------
 weka://cmd
 ---------------------------------
 
-== Options
+
 
 // component options: START
-The Weka component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
 // endpoint options: START
-The Weka endpoint is configured using URI syntax:
-
-----
-weka:command
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *command* | *Required* The command to use. There are 7 enums and the value can be one of: filter, model, read, write, push, pop, version |  | Command
-|===
-
-
-=== Query Parameters (10 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *apply* (filter) | The filter spec (i.e. Name Options) |  | String
-| *build* (model) | The classifier spec (i.e. Name Options) |  | String
-| *dsname* (model) | The named dataset to train the classifier with |  | String
-| *folds* (model) | Number of folds to use for cross-validation | 10 | int
-| *loadFrom* (model) | Path to load the model from |  | String
-| *saveTo* (model) | Path to save the model to |  | String
-| *seed* (model) | An optional seed for the randomizer | 1 | int
-| *xval* (model) | Flag on whether to use cross-validation with the current dataset | false | boolean
-| *path* (write) | An in/out path for the read/write commands |  | String
-|===
 // endpoint options: END
-
-== Karaf support
-
-This component is not supported in Karaf
-
-== Message Headers
 
 
 == Samples
