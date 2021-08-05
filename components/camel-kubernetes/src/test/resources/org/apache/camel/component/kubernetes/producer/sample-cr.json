@@ -1,0 +1,30 @@
+{
+  "apiVersion": "sources.knative.dev/v1alpha1",
+  "kind": "GitHubSource",
+  "metadata": {
+    "name": "samplecr"
+  },
+  "spec": {
+    "ownerAndRepository": "akihikokuroda/sample",
+    "accessToken": {
+      "secretKeyRef": {
+        "name": "githubsecret",
+        "key": "accessToken"
+      }
+    },
+    "secretToken": {
+      "secretKeyRef": {
+        "name": "githubsecret",
+        "key": "secretToken"
+      }
+    }
+  },
+  "githubAPIURL": "https://api.github.com/",
+  "sink": {
+    "ref": {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Channel",
+      "name": "github"
+    }
+  }
+}

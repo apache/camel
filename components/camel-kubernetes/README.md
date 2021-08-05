@@ -4,12 +4,12 @@
 
 This component contains unit and integration tests. Some of them - like the consumer ones - require a Kubernetes environment. 
 
-It is possible to run the tests using Kind. To do so, follow these steps:
+It is possible to run the integration tests using Kind. To do so, follow these steps:
 
 1. Create a cluster:
 
 ```
-kind cluster create
+kind create cluster
 ```
 
 2. Get the auth token:

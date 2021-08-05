@@ -92,8 +92,11 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange, String namespaceName) {
-        JsonObject customResourcesListJSON = new JsonObject(
-                getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName));
+        CustomResourceDefinitionContext context = getCRDContext(exchange.getIn());
+
+        Map<String, Object> labels = getEndpoint().getKubernetesClient().customResource(context).list(namespaceName);
+
+        JsonObject customResourcesListJSON = new JsonObject(labels);
         if (LOG.isDebugEnabled()) {
             LOG.debug(customResourcesListJSON.toString());
         }
@@ -145,14 +148,15 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
     protected void doDelete(Exchange exchange, String namespaceName) throws IOException {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
-            LOG.error("Delete a specific deployment require specify a deployment name");
-            throw new IllegalArgumentException("Delete a specific deployment require specify a deployment name");
+            LOG.error("Deleting a specific deployment require specify a deployment name");
+            throw new IllegalArgumentException("Deleting a specific deployment require specify a deployment name");
         }
 
         try {
             RawCustomResourceOperationsImpl raw
                     = getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn()));
-            boolean deleted = raw.delete(namespaceName, customResourceName);
+            boolean deleted = raw.inNamespace(namespaceName).withName(customResourceName).delete();
+
             exchange.getMessage().setHeader(KubernetesConstants.KUBERNETES_DELETE_RESULT, deleted);
         } catch (KubernetesClientException e) {
             if (e.getCode() == 404) {
@@ -167,9 +171,13 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         String customResourceInstance = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, String.class);
         JsonObject gitHubSourceJSON = new JsonObject();
         try {
-            gitHubSourceJSON = new JsonObject(
-                    getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).create(namespaceName,
-                            customResourceInstance));
+
+            Map<String, Object> customResource = getEndpoint().getKubernetesClient()
+                    .customResource(getCRDContext(exchange.getIn()))
+                    .inNamespace(namespaceName)
+                    .create(customResourceInstance);
+
+            gitHubSourceJSON = new JsonObject(customResource);
         } catch (KubernetesClientException e) {
             if (e.getCode() == 409) {
                 LOG.info("Custom resource instance already exists", e);

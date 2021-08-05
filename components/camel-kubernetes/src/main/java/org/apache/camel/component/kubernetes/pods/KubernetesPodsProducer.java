@@ -98,10 +98,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
 
         FilterWatchListMultiDeletable<Pod, PodList> pods = getEndpoint().getKubernetesClient().pods().inAnyNamespace();
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
-            pods.withLabel(entry.getKey(), entry.getValue());
-        }
-        PodList podList = pods.list();
+
+        PodList podList = pods.withLabels(labels).list();
 
         prepareOutboundMessage(exchange, podList.getItems());
     }

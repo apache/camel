@@ -91,14 +91,12 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     }
 
     protected void doListDeploymentsByLabels(Exchange exchange) {
-        DeploymentList deploymentList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
+        Map<String, String> labels
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
         MixedOperation<Deployment, DeploymentList, RollableScalableResource<Deployment>> deployments = getEndpoint()
                 .getKubernetesClient().apps().deployments();
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
-            deployments.withLabel(entry.getKey(), entry.getValue());
-        }
-        deploymentList = deployments.list();
+
+        DeploymentList deploymentList = deployments.withLabels(labels).list();
 
         prepareOutboundMessage(exchange, deploymentList.getItems());
     }

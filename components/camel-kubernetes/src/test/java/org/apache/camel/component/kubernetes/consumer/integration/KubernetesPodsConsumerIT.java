@@ -91,7 +91,7 @@ public class KubernetesPodsConsumerIT extends KubernetesTestSupport {
     public void createPod() throws Exception {
         mockResultEndpoint.expectedMessageCount(2);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-                "MODIFIED");
+                "ADDED", "ADDED");
         Exchange ex = template.request("direct:createPod", this::setupPod);
 
         assertNotNull(ex);
@@ -105,7 +105,8 @@ public class KubernetesPodsConsumerIT extends KubernetesTestSupport {
     @Order(2)
     public void deletePod() throws Exception {
         mockResultEndpoint.expectedMessageCount(1);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED");
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION,
+                "ADDED", "ADDED", "ADDED");
         Exchange ex = template.request("direct:deletePod", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, TEST_POD_NAME);
