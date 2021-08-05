@@ -16,73 +16,10 @@ Camel-Atmos is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with ViPR object data services using the
 https://github.com/emcvipr/dataservices-sdk-java[Atmos Client].
 
-[source,java]
--------------------------------
-from("atmos:foo/get?remotePath=/path").to("mock:test");
--------------------------------
-
-== Options
-
 
 // component options: START
-The Atmos component supports 7 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *uri* (advanced) | The URI of the server for the Atmos client to connect to |  | String
-| *fullTokenId* (security) | The token id to pass to the Atmos client |  | String
-| *secretKey* (security) | The secret key to pass to the Atmos client (should be base64 encoded) |  | String
-| *sslValidation* (security) | Whether the Atmos client should perform SSL validation | false | boolean
-|===
 // component options: END
-
-
-
 // endpoint options: START
-The Atmos endpoint is configured using URI syntax:
-
-----
-atmos:name/operation
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *name* | Atmos name |  | String
-| *operation* | *Required* Operation to perform. There are 5 enums and the value can be one of: put, del, search, get, move |  | AtmosOperation
-|===
-
-
-=== Query Parameters (12 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *localPath* (common) | Local path to put files |  | String
-| *newRemotePath* (common) | New path on Atmos when moving files |  | String
-| *query* (common) | Search query on Atmos |  | String
-| *remotePath* (common) | Where to put files on Atmos |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *uri* (advanced) | Atomos server uri |  | String
-| *fullTokenId* (security) | Atmos client fullTokenId |  | String
-| *secretKey* (security) | The secret key to pass to the Atmos client (should be base64 encoded) |  | String
-| *sslValidation* (security) | Atmos SSL validation | false | boolean
-|===
 // endpoint options: END
 
 
@@ -153,7 +90,7 @@ on headers of camel exchange.
 Regarding the operations, the following headers are set on camel
 exhange
 
-[source,java]
+[source,text]
 -------------------------------
 DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH;
 -------------------------------

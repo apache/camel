@@ -33,92 +33,12 @@ https://docs.microsoft.com/azure/[Azure Documentation Portal].
 </dependency>
 ------------------------------------------------------------
 
-== URI Options
+
+// component options: START
+// component options: END
 // endpoint options: START
-The Azure ServiceBus endpoint is configured using URI syntax:
-
-----
-azure-servicebus:queueNameOrTopicName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *topicOrQueueName* | Selected topic name or the queue name, that is depending on serviceBusType config. For example if serviceBusType=queue, then this will be the queue name and if serviceBusType=topic, this will be the topic name. |  | String
-|===
-
-
-=== Query Parameters (23 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *amqpRetryOptions* (common) | Sets the retry options for Service Bus clients. If not specified, the default retry options are used. |  | AmqpRetryOptions
-| *amqpTransportType* (common) | Sets the transport type by which all the communication with Azure Service Bus occurs. Default value is AmqpTransportType#AMQP. There are 2 enums and the value can be one of: Amqp, AmqpWebSockets | AMQP | AmqpTransportType
-| *clientOptions* (common) | Sets the ClientOptions to be sent from the client built from this builder, enabling customization of certain properties, as well as support the addition of custom header information. Refer to the ClientOptions documentation for more information. |  | ClientOptions
-| *proxyOptions* (common) | Sets the proxy configuration to use for ServiceBusSenderAsyncClient. When a proxy is configured, AmqpTransportType#AMQP_WEB_SOCKETS must be used for the transport type. |  | ProxyOptions
-| *serviceBusType* (common) | *Required* The service bus type of connection to execute. Queue is for typical queue option and topic for subscription based model. There are 2 enums and the value can be one of: queue, topic | queue | ServiceBusType
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *consumerOperation* (consumer) | Sets the desired operation to be used in the consumer. There are 2 enums and the value can be one of: receiveMessages, peekMessages | receiveMessages | ServiceBusConsumerOperationDefinition
-| *disableAutoComplete* (consumer) | Disables auto-complete and auto-abandon of received messages. By default, a successfully processed message is {link ServiceBusReceiverAsyncClient#complete(ServiceBusReceivedMessage) completed}. If an error happens when the message is processed, it is {link ServiceBusReceiverAsyncClient#abandon(ServiceBusReceivedMessage) abandoned}. | false | boolean
-| *maxAutoLockRenewDuration* (consumer) | Sets the amount of time to continue auto-renewing the lock. Setting Duration#ZERO or null disables auto-renewal. For {link ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} mode, auto-renewal is disabled. | 5min | Duration
-| *peekNumMaxMessages* (consumer) | Set the max number of messages to be peeked during the peek operation. |  | Integer
-| *prefetchCount* (consumer) | Sets the prefetch count of the receiver. For both {link ServiceBusReceiveMode#PEEK_LOCK PEEK_LOCK} and {link ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} modes the default value is 1. Prefetch speeds up the message flow by aiming to have a message readily available for local retrieval when and before the application asks for one using ServiceBusReceiverAsyncClient#receiveMessages(). Setting a non-zero value will prefetch that number of messages. Setting the value to zero turns prefetch off. | 0 | int
-| *receiverAsyncClient* (consumer) | *Autowired* Sets the receiverAsyncClient in order to consume messages in the Consumer |  | ServiceBusReceiverAsyncClient
-| *serviceBusReceiveMode* (consumer) | Sets the receive mode for the receiver. There are 2 enums and the value can be one of: PEEK_LOCK, RECEIVE_AND_DELETE | PEEK_LOCK | ServiceBusReceiveMode
-| *subQueue* (consumer) | Sets the type of the SubQueue to connect to. There are 3 enums and the value can be one of: NONE, DEAD_LETTER_QUEUE, TRANSFER_DEAD_LETTER_QUEUE |  | SubQueue
-| *subscriptionName* (consumer) | Sets the name of the subscription in the topic to listen to. topicOrQueueName and serviceBusType=topic must also be set. |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *producerOperation* (producer) | Sets the desired operation to be used in the producer. There are 2 enums and the value can be one of: sendMessages, scheduleMessages | sendMessages | ServiceBusProducerOperationDefinition
-| *scheduledEnqueueTime* (producer) | Sets OffsetDateTime at which the message should appear in the Service Bus queue or topic. |  | OffsetDateTime
-| *senderAsyncClient* (producer) | *Autowired* Sets SenderAsyncClient to be used in the producer. |  | ServiceBusSenderAsyncClient
-| *serviceBusTransactionContext* (producer) | Represents transaction in service. This object just contains transaction id. |  | ServiceBusTransactionContext
-| *connectionString* (security) | *Required* Sets the connection string for a Service Bus namespace or a specific Service Bus resource. |  | String
-|===
 // endpoint options: END
 
-== Component Options
-// component options: START
-The Azure ServiceBus component supports 23 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *amqpRetryOptions* (common) | Sets the retry options for Service Bus clients. If not specified, the default retry options are used. |  | AmqpRetryOptions
-| *amqpTransportType* (common) | Sets the transport type by which all the communication with Azure Service Bus occurs. Default value is AmqpTransportType#AMQP. There are 2 enums and the value can be one of: Amqp, AmqpWebSockets | AMQP | AmqpTransportType
-| *clientOptions* (common) | Sets the ClientOptions to be sent from the client built from this builder, enabling customization of certain properties, as well as support the addition of custom header information. Refer to the ClientOptions documentation for more information. |  | ClientOptions
-| *configuration* (common) | The component configurations |  | ServiceBusConfiguration
-| *proxyOptions* (common) | Sets the proxy configuration to use for ServiceBusSenderAsyncClient. When a proxy is configured, AmqpTransportType#AMQP_WEB_SOCKETS must be used for the transport type. |  | ProxyOptions
-| *serviceBusType* (common) | *Required* The service bus type of connection to execute. Queue is for typical queue option and topic for subscription based model. There are 2 enums and the value can be one of: queue, topic | queue | ServiceBusType
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *consumerOperation* (consumer) | Sets the desired operation to be used in the consumer. There are 2 enums and the value can be one of: receiveMessages, peekMessages | receiveMessages | ServiceBusConsumerOperationDefinition
-| *disableAutoComplete* (consumer) | Disables auto-complete and auto-abandon of received messages. By default, a successfully processed message is {link ServiceBusReceiverAsyncClient#complete(ServiceBusReceivedMessage) completed}. If an error happens when the message is processed, it is {link ServiceBusReceiverAsyncClient#abandon(ServiceBusReceivedMessage) abandoned}. | false | boolean
-| *maxAutoLockRenewDuration* (consumer) | Sets the amount of time to continue auto-renewing the lock. Setting Duration#ZERO or null disables auto-renewal. For {link ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} mode, auto-renewal is disabled. | 5min | Duration
-| *peekNumMaxMessages* (consumer) | Set the max number of messages to be peeked during the peek operation. |  | Integer
-| *prefetchCount* (consumer) | Sets the prefetch count of the receiver. For both {link ServiceBusReceiveMode#PEEK_LOCK PEEK_LOCK} and {link ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} modes the default value is 1. Prefetch speeds up the message flow by aiming to have a message readily available for local retrieval when and before the application asks for one using ServiceBusReceiverAsyncClient#receiveMessages(). Setting a non-zero value will prefetch that number of messages. Setting the value to zero turns prefetch off. | 0 | int
-| *receiverAsyncClient* (consumer) | *Autowired* Sets the receiverAsyncClient in order to consume messages in the Consumer |  | ServiceBusReceiverAsyncClient
-| *serviceBusReceiveMode* (consumer) | Sets the receive mode for the receiver. There are 2 enums and the value can be one of: PEEK_LOCK, RECEIVE_AND_DELETE | PEEK_LOCK | ServiceBusReceiveMode
-| *subQueue* (consumer) | Sets the type of the SubQueue to connect to. There are 3 enums and the value can be one of: NONE, DEAD_LETTER_QUEUE, TRANSFER_DEAD_LETTER_QUEUE |  | SubQueue
-| *subscriptionName* (consumer) | Sets the name of the subscription in the topic to listen to. topicOrQueueName and serviceBusType=topic must also be set. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *producerOperation* (producer) | Sets the desired operation to be used in the producer. There are 2 enums and the value can be one of: sendMessages, scheduleMessages | sendMessages | ServiceBusProducerOperationDefinition
-| *scheduledEnqueueTime* (producer) | Sets OffsetDateTime at which the message should appear in the Service Bus queue or topic. |  | OffsetDateTime
-| *senderAsyncClient* (producer) | *Autowired* Sets SenderAsyncClient to be used in the producer. |  | ServiceBusSenderAsyncClient
-| *serviceBusTransactionContext* (producer) | Represents transaction in service. This object just contains transaction id. |  | ServiceBusTransactionContext
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *connectionString* (security) | *Required* Sets the connection string for a Service Bus namespace or a specific Service Bus resource. |  | String
-|===
-// component options: END
 
 == Async Consumer and Producer
 
@@ -127,6 +47,7 @@ This component implements the async Consumer and producer.
 This allows camel route to consume and produce events asynchronously without blocking any threads.
 
 == Usage
+
 === Message headers evaluated by the component producer
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -249,7 +170,6 @@ from("azure-servicebus:test//?connectionString=test&consumerOperation=peekMessag
   .log("${body}")
   .to("mock:result");
 --------------------------------------------------------------------------------
-
 
 
 include::{page-component-version}@camel-spring-boot::page$azure-servicebus-starter.adoc[]

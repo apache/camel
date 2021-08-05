@@ -25,14 +25,8 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon CloudWatch. More information is available at
 https://aws.amazon.com/cloudwatch/[Amazon CloudWatch].
 
-[NOTE]
-====
-The AWS2 CW component is not supported in OSGI
-====
-
 == URI Format
 
-[source,java]
 ----------------------------
 aws2-cw://namespace[?options]
 ----------------------------
@@ -41,83 +35,10 @@ The metrics will be created if they don't already exists. +
  You can append query options to the URI in the following format,
 `?options=value&option2=value&...`
 
-== URI Options
-
 
 // component options: START
-The AWS CloudWatch component supports 18 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *amazonCwClient* (producer) | *Autowired* To use the AmazonCloudWatch as the client |  | CloudWatchClient
-| *configuration* (producer) | The component configuration |  | Cw2Configuration
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *name* (producer) | The metric name |  | String
-| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
-| *proxyHost* (producer) | To define a proxy host when instantiating the CW client |  | String
-| *proxyPort* (producer) | To define a proxy port when instantiating the CW client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the CW client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
-| *region* (producer) | The region in which CW client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
-| *timestamp* (producer) | The metric timestamp |  | Instant
-| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *unit* (producer) | The metric unit |  | String
-| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
-| *useDefaultCredentialsProvider* (producer) | Set whether the S3 client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
-| *value* (producer) | The metric value |  | Double
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *accessKey* (security) | Amazon AWS Access Key |  | String
-| *secretKey* (security) | Amazon AWS Secret Key |  | String
-|===
 // component options: END
-
-
-
-
 // endpoint options: START
-The AWS CloudWatch endpoint is configured using URI syntax:
-
-----
-aws2-cw:namespace
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *namespace* | *Required* The metric namespace |  | String
-|===
-
-
-=== Query Parameters (16 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *amazonCwClient* (producer) | *Autowired* To use the AmazonCloudWatch as the client |  | CloudWatchClient
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *name* (producer) | The metric name |  | String
-| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
-| *proxyHost* (producer) | To define a proxy host when instantiating the CW client |  | String
-| *proxyPort* (producer) | To define a proxy port when instantiating the CW client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the CW client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
-| *region* (producer) | The region in which CW client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
-| *timestamp* (producer) | The metric timestamp |  | Instant
-| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *unit* (producer) | The metric unit |  | String
-| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
-| *useDefaultCredentialsProvider* (producer) | Set whether the S3 client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
-| *value* (producer) | The metric value |  | Double
-| *accessKey* (security) | Amazon AWS Access Key |  | String
-| *secretKey* (security) | Amazon AWS Secret Key |  | String
-|===
 // endpoint options: END
 
 Required CW component options

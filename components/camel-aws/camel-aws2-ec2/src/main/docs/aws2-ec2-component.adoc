@@ -23,14 +23,9 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon EC2. More information is available at
 https://aws.amazon.com/ec2/[Amazon EC2].
 
-[NOTE]
-====
-The AWS2 EC2 component is not supported in OSGI
-====
 
 == URI Format
 
-[source,java]
 -------------------------
 aws2-ec2://label[?options]
 -------------------------
@@ -38,83 +33,11 @@ aws2-ec2://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== URI Options
-
 
 // component options: START
-The AWS Elastic Compute Cloud (EC2) component supports 16 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *accessKey* (producer) | Amazon AWS Access Key |  | String
-| *amazonEc2Client* (producer) | *Autowired* To use a existing configured AmazonEC2Client as client |  | Ec2Client
-| *configuration* (producer) | The component configuration |  | AWS2EC2Configuration
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. There are 11 enums and the value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | AWS2EC2Operations
-| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
-| *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
-| *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
-| *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EC2 client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
-| *region* (producer) | The region in which EC2 client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
-| *secretKey* (producer) | Amazon AWS Secret Key |  | String
-| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
-| *useDefaultCredentialsProvider* (producer) | Set whether the EC2 client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
-
-
-
 // endpoint options: START
-The AWS Elastic Compute Cloud (EC2) endpoint is configured using URI syntax:
-
-----
-aws2-ec2:label
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *label* | *Required* Logical name |  | String
-|===
-
-
-=== Query Parameters (14 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *accessKey* (producer) | Amazon AWS Access Key |  | String
-| *amazonEc2Client* (producer) | *Autowired* To use a existing configured AmazonEC2Client as client |  | Ec2Client
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. There are 11 enums and the value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | AWS2EC2Operations
-| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
-| *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
-| *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
-| *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EC2 client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
-| *region* (producer) | The region in which EC2 client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
-| *secretKey* (producer) | Amazon AWS Secret Key |  | String
-| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
-| *useDefaultCredentialsProvider* (producer) | Set whether the EC2 client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
-|===
 // endpoint options: END
-
-
-
 
 
 Required EC2 component options
@@ -247,6 +170,7 @@ from("direct:stop")
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
 In AWS EC2 there are multiple operations you can submit, as an example for Create and run an instance, you can do something like:
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setBody(RunInstancesRequest.builder().imageId("test-1").instanceType(InstanceType.T2_MICRO).build())
