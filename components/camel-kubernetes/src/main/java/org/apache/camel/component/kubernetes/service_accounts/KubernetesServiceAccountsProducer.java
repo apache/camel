@@ -29,10 +29,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
@@ -80,8 +81,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange) {
         ServiceAccountList saList = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace().list();
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(saList.getItems());
+        prepareOutboundMessage(exchange, saList.getItems());
     }
 
     protected void doListServiceAccountsByLabels(Exchange exchange) {
@@ -105,8 +105,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             saList = serviceAccounts.list();
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(saList.getItems());
+        prepareOutboundMessage(exchange, saList.getItems());
     }
 
     protected void doGetServiceAccount(Exchange exchange) {
@@ -123,8 +122,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         }
         sa = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(sa);
+        prepareOutboundMessage(exchange, sa);
     }
 
     protected void doCreateServiceAccount(Exchange exchange) {
@@ -142,8 +140,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         }
         sa = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).create(saToCreate);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(sa);
+        prepareOutboundMessage(exchange, sa);
     }
 
     protected void doDeleteServiceAccount(Exchange exchange) {
@@ -160,7 +157,6 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         boolean saDeleted
                 = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(saDeleted);
+        prepareOutboundMessage(exchange, saDeleted);
     }
 }

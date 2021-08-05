@@ -24,9 +24,8 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesPersistentVolumesComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesPersistentVolumesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config)
-            throws Exception {
-        KubernetesPersistentVolumesEndpoint endpoint = new KubernetesPersistentVolumesEndpoint(uri, this, config);
-        return endpoint;
+    protected KubernetesPersistentVolumesEndpoint doCreateEndpoint(
+            String uri, String remaining, KubernetesConfiguration config) {
+        return new KubernetesPersistentVolumesEndpoint(uri, this, config);
     }
 }

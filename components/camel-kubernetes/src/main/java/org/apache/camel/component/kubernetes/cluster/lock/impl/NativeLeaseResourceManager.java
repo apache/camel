@@ -83,7 +83,7 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
                 .addToLabels("provider", "camel")
                 .endMetadata()
                 .withNewSpec()
-                .withNewHolderIdentity(leaderInfo.getLeader())
+                .withHolderIdentity(leaderInfo.getLeader())
                 .withAcquireTime(now)
                 .withLeaseDurationSeconds(leaderInfo.getLeaseDurationSeconds())
                 .withRenewTime(now)
@@ -103,7 +103,7 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
         ZonedDateTime now = ZonedDateTime.now();
         return new LeaseBuilder(lease)
                 .editOrNewSpec()
-                .withNewHolderIdentity(leaderInfo.getLeader())
+                .withHolderIdentity(leaderInfo.getLeader())
                 .withAcquireTime(now)
                 .withLeaseDurationSeconds(leaderInfo.getLeaseDurationSeconds())
                 .withRenewTime(now)

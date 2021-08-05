@@ -62,21 +62,25 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
                 if (subset.getPorts().size() == 1) {
                     addServers(name, result, subset.getPorts().get(0), subset);
                 } else {
-                    final List<EndpointPort> ports = subset.getPorts();
-                    final int portSize = ports.size();
-
-                    EndpointPort port;
-                    for (int p = 0; p < portSize; p++) {
-                        port = ports.get(p);
-                        if (ObjectHelper.isEmpty(this.portName) || this.portName.endsWith(port.getName())) {
-                            addServers(name, result, port, subset);
-                        }
-                    }
+                    addPortSet(name, result, subset);
                 }
             }
         }
 
         return result;
+    }
+
+    private void addPortSet(String name, List<ServiceDefinition> result, EndpointSubset subset) {
+        final List<EndpointPort> ports = subset.getPorts();
+        final int portSize = ports.size();
+
+        EndpointPort port;
+        for (int p = 0; p < portSize; p++) {
+            port = ports.get(p);
+            if (ObjectHelper.isEmpty(this.portName) || this.portName.endsWith(port.getName())) {
+                addServers(name, result, port, subset);
+            }
+        }
     }
 
     protected void addServers(String name, List<ServiceDefinition> servers, EndpointPort port, EndpointSubset subset) {

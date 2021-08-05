@@ -30,10 +30,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesDeploymentsProducer extends DefaultProducer {
 
@@ -86,8 +87,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     protected void doList(Exchange exchange) {
         DeploymentList deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deploymentsList.getItems());
+        prepareOutboundMessage(exchange, deploymentsList.getItems());
     }
 
     protected void doListDeploymentsByLabels(Exchange exchange) {
@@ -100,8 +100,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         }
         deploymentList = deployments.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deploymentList.getItems());
+        prepareOutboundMessage(exchange, deploymentList.getItems());
     }
 
     protected void doGetDeployment(Exchange exchange) {
@@ -113,8 +112,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         }
         deployment = getEndpoint().getKubernetesClient().apps().deployments().withName(deploymentName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deployment);
+        prepareOutboundMessage(exchange, deployment);
     }
 
     protected void doDeleteDeployment(Exchange exchange) {
@@ -132,8 +130,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         Boolean deployment = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
                 .withName(deploymentName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deployment);
+        prepareOutboundMessage(exchange, deployment);
     }
 
     protected void doCreateDeployment(Exchange exchange) {
@@ -160,8 +157,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         deployment = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
                 .create(deploymentCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deployment);
+        prepareOutboundMessage(exchange, deployment);
     }
 
     protected void doScaleDeployment(Exchange exchange) {
@@ -183,7 +179,6 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         Deployment deploymentScaled = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
                 .withName(deploymentName).scale(replicasNumber, false);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deploymentScaled.getStatus().getReplicas());
+        prepareOutboundMessage(exchange, deploymentScaled.getStatus().getReplicas());
     }
 }

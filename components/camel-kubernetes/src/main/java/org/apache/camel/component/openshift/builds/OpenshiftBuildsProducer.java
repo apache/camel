@@ -31,10 +31,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class OpenshiftBuildsProducer extends DefaultProducer {
 
@@ -74,7 +75,7 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange) {
         BuildList buildList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inAnyNamespace().list();
-        exchange.getOut().setBody(buildList.getItems());
+        exchange.getMessage().setBody(buildList.getItems());
     }
 
     protected void doListBuildByLabels(Exchange exchange) {
@@ -97,8 +98,8 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
             }
             buildList = builds.list();
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(buildList.getItems());
+
+        prepareOutboundMessage(exchange, buildList.getItems());
     }
 
     protected void doGetBuild(Exchange exchange) {
@@ -116,7 +117,6 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName)
                 .withName(buildName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(build);
+        prepareOutboundMessage(exchange, build);
     }
 }

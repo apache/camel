@@ -17,6 +17,7 @@
 package org.apache.camel.component.kubernetes.cluster.lock;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -206,7 +207,7 @@ public class KubernetesLeadershipController implements Service {
         // old version of the pod to shut down
         long delay = this.lockConfiguration.getLeaseDurationMillis();
         LOG.info("{} Current pod owns the leadership, but it will be effective in {} seconds...", logPrefix(),
-                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, BigDecimal.ROUND_HALF_UP));
+                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP));
 
         try {
             Thread.sleep(delay);
@@ -227,7 +228,7 @@ public class KubernetesLeadershipController implements Service {
         // Wait always the same amount of time before giving up the leadership
         long delay = this.lockConfiguration.getLeaseDurationMillis();
         LOG.info("{} Current pod owns the leadership, but it will be lost in {} seconds...", logPrefix(),
-                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, BigDecimal.ROUND_HALF_UP));
+                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP));
 
         try {
             Thread.sleep(delay);

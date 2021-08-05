@@ -30,10 +30,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesHPAProducer extends DefaultProducer {
 
@@ -83,8 +84,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         HorizontalPodAutoscalerList hpaList
                 = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(hpaList.getItems());
+        prepareOutboundMessage(exchange, hpaList.getItems());
     }
 
     protected void doListHPAByLabel(Exchange exchange) {
@@ -102,8 +102,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         }
         HorizontalPodAutoscalerList hpaList = hpas.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(hpaList.getItems());
+        prepareOutboundMessage(exchange, hpaList.getItems());
     }
 
     protected void doGetHPA(Exchange exchange) {
@@ -121,8 +120,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         hpa = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName)
                 .withName(podName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(hpa);
+        prepareOutboundMessage(exchange, hpa);
     }
 
     protected void doCreateHPA(Exchange exchange) {
@@ -149,8 +147,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         hpa = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName)
                 .create(hpaCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(hpa);
+        prepareOutboundMessage(exchange, hpa);
     }
 
     protected void doDeleteHPA(Exchange exchange) {
@@ -167,7 +164,6 @@ public class KubernetesHPAProducer extends DefaultProducer {
         boolean hpaDeleted = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers()
                 .inNamespace(namespaceName).withName(hpaName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(hpaDeleted);
+        prepareOutboundMessage(exchange, hpaDeleted);
     }
 }

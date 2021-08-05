@@ -28,10 +28,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
@@ -72,8 +73,7 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
     protected void doList(Exchange exchange) {
         PersistentVolumeList persistentVolumeList = getEndpoint().getKubernetesClient().persistentVolumes().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(persistentVolumeList.getItems());
+        prepareOutboundMessage(exchange, persistentVolumeList.getItems());
     }
 
     protected void doListPersistentVolumesByLabels(Exchange exchange) {
@@ -87,8 +87,7 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         }
         pvList = pvs.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(pvList.getItems());
+        prepareOutboundMessage(exchange, pvList.getItems());
     }
 
     protected void doGetPersistentVolume(Exchange exchange, String operation) {
@@ -100,7 +99,6 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         }
         pv = getEndpoint().getKubernetesClient().persistentVolumes().withName(pvName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(pv);
+        prepareOutboundMessage(exchange, pv);
     }
 }

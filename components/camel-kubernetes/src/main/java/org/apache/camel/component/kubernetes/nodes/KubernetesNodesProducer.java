@@ -30,10 +30,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesNodesProducer extends DefaultProducer {
 
@@ -82,8 +83,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
     protected void doList(Exchange exchange) {
         NodeList nodeList = getEndpoint().getKubernetesClient().nodes().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(nodeList.getItems());
+        prepareOutboundMessage(exchange, nodeList.getItems());
     }
 
     protected void doListNodesByLabels(Exchange exchange) {
@@ -95,8 +95,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         }
         nodeList = nodes.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(nodeList.getItems());
+        prepareOutboundMessage(exchange, nodeList.getItems());
     }
 
     protected void doGetNode(Exchange exchange) {
@@ -108,8 +107,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         }
         node = getEndpoint().getKubernetesClient().nodes().withName(pvName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(node);
+        prepareOutboundMessage(exchange, node);
     }
 
     protected void doCreateNode(Exchange exchange) {
@@ -129,8 +127,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
                 .withSpec(nodeSpec).build();
         node = getEndpoint().getKubernetesClient().nodes().create(nodeCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(node);
+        prepareOutboundMessage(exchange, node);
     }
 
     protected void doDeleteNode(Exchange exchange) {
@@ -141,7 +138,6 @@ public class KubernetesNodesProducer extends DefaultProducer {
         }
         boolean nodeDeleted = getEndpoint().getKubernetesClient().nodes().withName(nodeName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(nodeDeleted);
+        prepareOutboundMessage(exchange, nodeDeleted);
     }
 }

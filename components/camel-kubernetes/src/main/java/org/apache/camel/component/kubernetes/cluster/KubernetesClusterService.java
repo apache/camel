@@ -96,7 +96,7 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
             }
         }
 
-        ObjectHelper.notNull(config.getConfigMapName(), "configMapName");
+        ObjectHelper.notNull(config.getKubernetesResourceName(), "configMapName");
         ObjectHelper.notNull(config.getClusterLabels(), "clusterLabels");
 
         if (config.getJitterFactor() < 1) {

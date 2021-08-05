@@ -29,10 +29,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesPodsProducer extends DefaultProducer {
 
@@ -86,8 +87,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         } else {
             podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().list();
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(podList.getItems());
+        prepareOutboundMessage(exchange, podList.getItems());
     }
 
     protected void doListPodsByLabel(Exchange exchange) {
@@ -103,8 +103,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         PodList podList = pods.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(podList.getItems());
+        prepareOutboundMessage(exchange, podList.getItems());
     }
 
     protected void doGetPod(Exchange exchange) {
@@ -121,8 +120,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(pod);
+        prepareOutboundMessage(exchange, pod);
     }
 
     protected void doCreatePod(Exchange exchange) {
@@ -147,8 +145,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
                 .withSpec(podSpec).build();
         pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).create(podCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(pod);
+        prepareOutboundMessage(exchange, pod);
     }
 
     protected void doDeletePod(Exchange exchange) {
@@ -164,7 +161,6 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         boolean podDeleted = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(podDeleted);
+        prepareOutboundMessage(exchange, podDeleted);
     }
 }

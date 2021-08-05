@@ -31,10 +31,11 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesServicesProducer extends DefaultProducer {
 
@@ -88,8 +89,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         } else {
             servicesList = getEndpoint().getKubernetesClient().services().inAnyNamespace().list();
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(servicesList.getItems());
+        prepareOutboundMessage(exchange, servicesList.getItems());
     }
 
     protected void doListServiceByLabels(Exchange exchange) {
@@ -111,8 +111,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
             }
             servicesList = services.list();
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(servicesList.getItems());
+        prepareOutboundMessage(exchange, servicesList.getItems());
     }
 
     protected void doGetService(Exchange exchange) {
@@ -128,8 +127,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get a specific service require specify a namespace name");
         }
         service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).get();
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(service);
+
+        prepareOutboundMessage(exchange, service);
     }
 
     protected void doCreateService(Exchange exchange) {
@@ -153,8 +152,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
         Service serviceCreating = new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labels).endMetadata()
                 .withSpec(serviceSpec).build();
         service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).create(serviceCreating);
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(service);
+
+        prepareOutboundMessage(exchange, service);
     }
 
     protected void doDeleteService(Exchange exchange) {
@@ -170,7 +169,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         }
         boolean serviceDeleted
                 = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).delete();
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(serviceDeleted);
+
+        prepareOutboundMessage(exchange, serviceDeleted);
     }
 }

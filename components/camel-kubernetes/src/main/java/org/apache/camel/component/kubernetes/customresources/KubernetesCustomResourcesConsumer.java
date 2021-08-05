@@ -138,13 +138,12 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
             throw new IllegalArgumentException("one of more of the custom resource definition argument(s) are missing.");
         }
 
-        CustomResourceDefinitionContext cRDContext = new CustomResourceDefinitionContext.Builder()
+        return new CustomResourceDefinitionContext.Builder()
                 .withName(config.getCrdName())       // example: "githubsources.sources.knative.dev"
                 .withGroup(config.getCrdGroup())     // example: "sources.knative.dev"
                 .withScope(config.getCrdScope())     // example: "Namespaced"
                 .withVersion(config.getCrdVersion()) // example: "v1alpha1"
                 .withPlural(config.getCrdPlural())   // example: "githubsources"
                 .build();
-        return cRDContext;
     }
 }
