@@ -1,3 +1,5 @@
+== Component Options
+
 @if{componentOptions.isEmpty()}
 The @{title} component has no options.
 @else{}
