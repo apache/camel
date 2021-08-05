@@ -45,114 +45,11 @@ cron expression is provided, the component uses a simple trigger. If no
 `groupName` is provided, the quartz component uses the `Camel` group
 name.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
-
-
-
 // component options: START
-The Quartz component supports 13 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *enableJmx* (consumer) | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true | true | boolean
-| *prefixInstanceName* (consumer) | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's. | true | boolean
-| *prefixJobNameWithEndpointId* (consumer) | Whether to prefix the quartz job with the endpoint id. This option is default false. | false | boolean
-| *properties* (consumer) | Properties to configure the Quartz scheduler. |  | Map
-| *propertiesFile* (consumer) | File name of the properties to load from the classpath |  | String
-| *propertiesRef* (consumer) | References to an existing Properties or Map to lookup in the registry to use for configuring quartz. |  | String
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *scheduler* (advanced) | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. |  | Scheduler
-| *schedulerFactory* (advanced) | To use the custom SchedulerFactory which is used to create the Scheduler. |  | SchedulerFactory
-| *autoStartScheduler* (scheduler) | Whether or not the scheduler should be auto started. This options is default true | true | boolean
-| *interruptJobsOnShutdown* (scheduler) | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. When a job is interrupted then Camel will mark the exchange to stop continue routing and set java.util.concurrent.RejectedExecutionException as caused exception. Therefore use this with care, as its often better to allow Camel jobs to complete and shutdown gracefully. | false | boolean
-| *startDelayedSeconds* (scheduler) | Seconds to wait before starting the quartz scheduler. |  | int
-|===
 // component options: END
-
-
-
-
 // endpoint options: START
-The Quartz endpoint is configured using URI syntax:
-
-----
-quartz:groupName/triggerName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *groupName* | The quartz group name to use. The combination of group name and trigger name should be unique. | Camel | String
-| *triggerName* | *Required* The quartz trigger name to use. The combination of group name and trigger name should be unique. |  | String
-|===
-
-
-=== Query Parameters (18 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *cron* (consumer) | Specifies a cron expression to define when to trigger. |  | String
-| *deleteJob* (consumer) | If set to true, then the trigger automatically delete when route stop. Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true. | true | boolean
-| *durableJob* (consumer) | Whether or not the job should remain stored after it is orphaned (no triggers point to it). | false | boolean
-| *pauseJob* (consumer) | If set to true, then the trigger automatically pauses when route stop. Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true. | false | boolean
-| *recoverableJob* (consumer) | Instructs the scheduler whether or not the job should be re-executed if a 'recovery' or 'fail-over' situation is encountered. | false | boolean
-| *stateful* (consumer) | Uses a Quartz PersistJobDataAfterExecution and DisallowConcurrentExecution instead of the default job. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *customCalendar* (advanced) | Specifies a custom calendar to avoid specific range of date |  | Calendar
-| *jobParameters* (advanced) | To configure additional options on the job. |  | Map
-| *prefixJobNameWithEndpointId* (advanced) | Whether the job name should be prefixed with endpoint id | false | boolean
-| *triggerParameters* (advanced) | To configure additional options on the trigger. |  | Map
-| *usingFixedCamelContextName* (advanced) | If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext, if it is false, JobDataMap uses use the CamelContext management name which could be changed during the deploy time. | false | boolean
-| *autoStartScheduler* (scheduler) | Whether or not the scheduler should be auto started. | true | boolean
-| *fireNow* (scheduler) | If it is true will fire the trigger when the route is start when using SimpleTrigger. | false | boolean
-| *startDelayedSeconds* (scheduler) | Seconds to wait before starting the quartz scheduler. |  | int
-| *triggerStartDelay* (scheduler) | In case of scheduler has already started, we want the trigger start slightly after current time to ensure endpoint is fully started before the job kicks in. | 500 | long
-|===
 // endpoint options: END
 
-
-
-For example, the following routing rule will fire two timer events to
-the `mock:results` endpoint:
-
-[source,java]
-----
-from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
-    .to("mock:result");
-----
-
-When using `stateful=true`, the
-http://quartz-scheduler.org/api/2.0.0/org/quartz/JobDataMap.html[JobDataMap]
-is re-persisted after every execution of the job, thus preserving state
-for the next execution.
-
-[NOTE]
-====
-*Running in OSGi and having multiple bundles with quartz routes*
-
-If you run in OSGi such as Apache ServiceMix, or Apache Karaf, and have
-multiple bundles with Camel routes that start from
-xref:quartz-component.adoc[Quartz] endpoints, then make sure if you assign an `id`
-to the `<camelContext>` that this id is unique, as this is
-required by the `QuartzScheduler` in the OSGi container. If you do not
-set any `id` on `<camelContext>` then a unique id is auto assigned, and there is no problem.
-====
 
 == Configuring quartz.properties file
 

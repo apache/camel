@@ -36,69 +36,20 @@ where `${camel-version`} must be replaced by the actual version of Camel.
 
 == URI Format
 
-[source,java]
 ----------------------------
 openstack-cinder://hosturl[?options]
 ----------------------------
 
-You can append query options to the URI in the following format
-`?options=value&option2=value&...`
-
-== URI Options
-
 // component options: START
-The OpenStack Cinder component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
 // endpoint options: START
-The OpenStack Cinder endpoint is configured using URI syntax:
-
-----
-openstack-cinder:host
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *host* | *Required* OpenStack host url |  | String
-|===
-
-
-=== Query Parameters (9 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *apiVersion* (producer) | OpenStack API version. There are 2 enums and the value can be one of: V2, V3 | V3 | String
-| *config* (producer) | OpenStack configuration |  | Config
-| *domain* (producer) | Authentication domain | default | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The operation to do |  | String
-| *password* (producer) | *Required* OpenStack password |  | String
-| *project* (producer) | *Required* The project ID |  | String
-| *subsystem* (producer) | *Required* OpenStack Cinder subsystem. There are 2 enums and the value can be one of: snapshots, volumes |  | String
-| *username* (producer) | *Required* OpenStack username |  | String
-|===
 // endpoint options: END
 
 
 
+
 == Usage
+
 You can use following settings for each subsystem:
 
 == volumes

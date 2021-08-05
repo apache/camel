@@ -33,7 +33,6 @@ for this component:
 
 == URI format
 
-[source]
 ----
 quickfix:configFile[?sessionID=sessionID&lazyCreateEngine=true|false]
 ----
@@ -43,7 +42,6 @@ the FIX engine (located as a resource found in your classpath). The
 optional *sessionID* identifies a specific FIX session. The format of
 the sessionID is:
 
-[source]
 ----
 (BeginString):(SenderCompID)[/(SenderSubID)[/(SenderLocationID)]]->(TargetCompID)[/(TargetSubID)[/(TargetLocationID)]]
 ----
@@ -57,7 +55,6 @@ component's property *lazyCreateEngines* is being used.
 
 Example URIs:
 
-[source]
 ----
 quickfix:config.cfg
 
@@ -82,58 +79,9 @@ include the session-related fields in the FIX message being sent. If a
 session is specified in the URI then the component will automatically
 inject the session-related fields into the FIX message.
 
-== Options
-
 // component options: START
-The QuickFix component supports 7 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyCreateEngines* (common) | If set to true, the engines will be created and started when needed (when first message is send) | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *logFactory* (advanced) | To use the given LogFactory |  | LogFactory
-| *messageFactory* (advanced) | To use the given MessageFactory |  | MessageFactory
-| *messageStoreFactory* (advanced) | To use the given MessageStoreFactory |  | MessageStoreFactory
-|===
 // component options: END
-
 // endpoint options: START
-The QuickFix endpoint is configured using URI syntax:
-
-----
-quickfix:configurationName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *configurationName* | *Required* Path to the quickfix configuration file. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the configuration file using these protocols (classpath is default). ref will lookup the configuration file in the registry. bean will call a method on a bean to be used as the configuration. For bean you can specify the method name after dot, eg bean:myBean.myMethod |  | String
-|===
-
-
-=== Query Parameters (6 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyCreateEngine* (common) | This option allows to create QuickFIX/J engine on demand. Value true means the engine is started when first message is send or there's consumer configured in route definition. When false value is used, the engine is started at the endpoint creation. When this parameter is missing, the value of component's property lazyCreateEngines is being used. | false | boolean
-| *sessionID* (common) | The optional sessionID identifies a specific FIX session. The format of the sessionID is: (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID) |  | SessionID
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-|===
 // endpoint options: END
 
 
@@ -511,87 +459,6 @@ and processes them.
 from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").
     filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.EXECUTION_REPORT)).
     bean(new MyTradeExecutionProcessor());
-----
-
-== QuickFIX/J Component Prior to Camel 2.5
-
-The *quickfix* component is an implementation of the
-http://www.quickfixj.org/[QuickFIX/J] engine for Java . This engine
-allows to connect to a FIX server which is used to exchange financial
-messages according to http://www.fixprotocol.org/[FIX protocol]
-standard.
-
-*Note:* The component can be used to send/receives messages to a FIX
-server.
-
-== URI format
-
-[source]
-----
-quickfix-server:config file
-quickfix-client:config file
-----
-
-Where *config file* is the location (in your classpath) of the quickfix
-configuration file used to configure the engine at the startup.
-
-*Note:* Information about parameters available for quickfix can be found
-on
-http://www.quickfixj.org/quickfixj/usermanual/usage/configuration.html[QuickFIX/J]
-web site.
-
-The quickfix-server endpoint must be used to receive from FIX server FIX
-messages and quickfix-client endpoint in the case that you want to send
-messages to a FIX gateway.
-
-== Exchange data format
-
-The QuickFIX/J engine is like CXF component a messaging bus using MINA
-as protocol layer to create the socket connection with the FIX engine
-gateway.
-
-When QuickFIX/J engine receives a message, then it create a
-QuickFix.Message instance which is next received by the camel endpoint.
-This object is a 'mapping object' created from a FIX message formatted
-initially as a collection of key value pairs data. You can use this
-object or you can use the method 'toString' to retrieve the original FIX
-message.
-
-*Note:* Alternatively, you can use xref:dataformats:bindy-dataformat.adoc[camel bindy dataformat] to transform the FIX message into your own java POJO
-
-When a message must be send to QuickFix, then you must create a
-QuickFix.Message instance.
-
-== Lazy creating engines
-
-You can configure the QuickFixComponent to
-lazy create and start the engines, which then only start these
-on-demand. For example you can use this when you have multiple Camel
-applications in a cluster with master/slaves. And want the slaves to be
-standby.
-
-== Samples
-
-Direction : to FIX gateway
-
-[source,xml]
-----
-<route>
-  <from uri="activemq:queue:fix"/>
-  <bean ref="fixService" method="createFixMessage"/> // bean method in charge to transform message into a QuickFix.Message
-  <to uri="quickfix-client:META-INF/quickfix/client.cfg"/> // Quickfix engine who will send the FIX messages to the gateway
-</route>
-----
-
-Direction : from FIX gateway
-
-[source,xml]
-----
-<route>
-  <from uri="quickfix-server:META-INF/quickfix/server.cfg"/> // QuickFix engine who will receive the message from FIX gateway
-  <bean ref="fixService" method="parseFixMessage"/> // bean method parsing the QuickFix.Message
-  <to uri="uri="activemq:queue:fix"/>"
-</route>
 ----
 
 
