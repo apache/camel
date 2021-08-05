@@ -94,7 +94,6 @@ each endpoint is specified by passing the provider inside the URI.
 
 == Jclouds Options
 
-[source,java]
 -----------------------------------------
 jclouds:blobstore:[provider id][?options]
 jclouds:compute:[provider id][?options]
@@ -106,77 +105,13 @@ target service (_e.g. aws-s3 or aws_ec2_).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Blobstore URI Options
-
-
-
 
 // component options: START
-The JClouds component supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *blobStores* (common) | To use the given BlobStore which must be configured when using blobstore. |  | List
-| *computeServices* (common) | To use the given ComputeService which must be configured when use compute. |  | List
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
 // component options: END
-
-
-
-
-
-
 // endpoint options: START
-The JClouds endpoint is configured using URI syntax:
-
-----
-jclouds:command:providerId
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *command* | *Required* What command to execute such as blobstore or compute. There are 2 enums and the value can be one of: blobstore, compute |  | JcloudsCommand
-| *providerId* | *Required* The name of the cloud provider that provides the target service (e.g. aws-s3 or aws_ec2). |  | String
-|===
-
-
-=== Query Parameters (15 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *blobName* (blobstore) | The name of the blob. |  | String
-| *container* (blobstore) | The name of the blob container. |  | String
-| *directory* (blobstore) | An optional directory name to use |  | String
-| *group* (compute) | The group that will be assigned to the newly created node. Values depend on the actual cloud provider. |  | String
-| *hardwareId* (compute) | The hardware that will be used for creating a node. Values depend on the actual cloud provider. |  | String
-| *imageId* (compute) | The imageId that will be used for creating a node. Values depend on the actual cloud provider. |  | String
-| *locationId* (compute) | The location that will be used for creating a node. Values depend on the actual cloud provider. |  | String
-| *nodeId* (compute) | The id of the node that will run the script or destroyed. |  | String
-| *nodeState* (compute) | To filter by node status to only select running nodes etc. There are 6 enums and the value can be one of: PENDING, TERMINATED, SUSPENDED, RUNNING, ERROR, UNRECOGNIZED |  | String
-| *operation* (compute) | Specifies the type of operation that will be performed to the blobstore. |  | String
-| *user* (compute) | The user on the target node that will run the script. |  | String
-|===
 // endpoint options: END
 
-
+== Usage
 
 You can have as many of these options as you like.
 
@@ -187,9 +122,6 @@ jclouds:blobstore:aws-s3?operation=CamelJcloudsGet&container=mycontainer&blobNam
 
 For producer endpoint you can override all of the above URI options by
 passing the appropriate headers to the message.
-
-
-
 
 === Message Headers for blobstore
 

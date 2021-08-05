@@ -33,111 +33,27 @@ for this component:
 
 To send or receive data from a data queue
 
-[source,java]
 ----------------------------------------------------------------------
 jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ[?options]
 ----------------------------------------------------------------------
 
 To send or receive messages from a message queue
 
-[source,java]
 ----------------------------------------------------------------------
 jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/QUEUE.MSGQ[?options]
 ----------------------------------------------------------------------
 
 To call remote program
 
-[source,java]
 -----------------------------------------------------------------------
 jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/program.PGM[?options]
 -----------------------------------------------------------------------
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== JT400 options
 
 // component options: START
-The JT400 component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *connectionPool* (advanced) | Default connection pool used by the component. Note that this pool is lazily initialized. This is because in a scenario where the user always provides a pool, it would be wasteful for Camel to initialize and keep an idle pool. |  | AS400ConnectionPool
-|===
 // component options: END
-
-
 // endpoint options: START
-The JT400 endpoint is configured using URI syntax:
-
-----
-jt400:userID:password/systemName/objectPath.type
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (5 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *userID* | *Required* Returns the ID of the IBM i user. |  | String
-| *password* | *Required* Returns the password of the IBM i user. |  | String
-| *systemName* | *Required* Returns the name of the IBM i system. |  | String
-| *objectPath* | *Required* Returns the fully qualified integrated file system path name of the target object of this endpoint. |  | String
-| *type* | *Required* Whether to work with data queues or remote program call. There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ |  | Jt400Type
-|===
-
-
-=== Query Parameters (33 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *ccsid* (common) | Sets the CCSID to use for the connection with the IBM i system. |  | int
-| *format* (common) | Sets the data format for sending messages. There are 2 enums and the value can be one of: text, binary | text | Format
-| *guiAvailable* (common) | Sets whether IBM i prompting is enabled in the environment running Camel. | false | boolean
-| *keyed* (common) | Whether to use keyed or non-keyed data queues. | false | boolean
-| *searchKey* (common) | Search key for keyed data queues. |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *messageAction* (consumer) | Action to be taken on messages when read from a message queue. Messages can be marked as old (OLD), removed from the queue (REMOVE), or neither (SAME). There are 3 enums and the value can be one of: OLD, REMOVE, SAME | OLD | MessageAction
-| *readTimeout* (consumer) | Timeout in millis the consumer will wait while trying to read a new message of the data queue. | 30000 | int
-| *searchType* (consumer) | Search type such as EQ for equal etc. There are 6 enums and the value can be one of: EQ, NE, LT, LE, GT, GE | EQ | SearchType
-| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
-| *sendingReply* (consumer) | If true, the consumer endpoint will set the Jt400Constants.MESSAGE_REPLYTO_KEY header of the camel message for any IBM i inquiry messages received. If that message is then routed to a producer endpoint, the action will not be processed as sending a message to the queue, but rather a reply to the specific inquiry message. | true | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *outputFieldsIdxArray* (producer) | Specifies which fields (program parameters) are output parameters. |  | Integer[]
-| *outputFieldsLengthArray* (producer) | Specifies the fields (program parameters) length as in the IBM i program definition. |  | Integer[]
-| *procedureName* (producer) | Procedure name from a service program to call |  | String
-| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
-| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
-| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
-| *delay* (scheduler) | Milliseconds before the next poll. | 500 | long
-| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
-| *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
-| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
-| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler | none | Object
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
-| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
-| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
-| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *secured* (security) | Whether connections to IBM i are secured with SSL. | false | boolean
-|===
 // endpoint options: END
-
 
 
 == Usage
@@ -165,12 +81,10 @@ Inquiry messages or messages requiring a message ID are not supported.
 
 == Connection pool
 
-*Since Camel 2.10*
-
 You can explicit configure a connection pool on the Jt400Component, or as an uri option
 on the endpoint.
 
-=== Remote program call (*Camel 2.7*)
+=== Remote program call
 
 This endpoint expects the input to be either a String array or byte[]
 array (depending on format) and handles all the CCSID handling through

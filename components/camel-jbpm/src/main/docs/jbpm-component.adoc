@@ -29,20 +29,25 @@ for this component:
 </dependency>
 ------------------------------------------------------------------------------------
 
+
+== URI format
+
+---------------------------------------------
+jbpm::events:type:[classifier][?options]
+---------------------------------------------
+
+// component options: START
+// component options: END
+// endpoint options: START
+// endpoint options: END
+
 == Consumer
 
-jBPM Consumer allows to attach routes to 
+jBPM Consumer allows to attach routes to
 
 * ProcessEventListeners
 * TaskEventListners
 * CaseEventListeners
-
-== URI format
-
-[source,java]
----------------------------------------------
-jbpm::events:type:[classifier][?options]
----------------------------------------------
 
 === Path Parameters (3 parameters):
 
@@ -74,10 +79,9 @@ discovered and Camel Context for given KJAR will be created.
 Create file name `global-camel-routes` in the root of the class path of KIE Server. It will be automatically found and registered
 on every KJAR deployed to KIE Server.
 
+Example `camel-routes.xml` file that can be placed in the KJAR
 
-Example camel-routes.xml file that can be placed in the KJAR
-
-[source, xml]
+[source,xml]
 ----
 <routes xmlns="http://camel.apache.org/schema/spring">
     
@@ -109,11 +113,9 @@ To make use of camel-jbpm component in a KIE Server it is as simple as just addi
 
 then start KIE Server and you will see once booted following information in logs
 
-[source, plain]
 ----
 Camel KIE Server extension has been successfully registered as server extension
 ....
-
 Route: tasks started and consuming from: jbpm://events:task:test?deploymentId=form-rendering_1.0.0
 Total 2 routes, of which 2 are started
 Apache Camel 2.23.0-SNAPSHOT (CamelContext: KIE Server Camel context for container evaluation_1.0.0) started in 0.378 seconds
@@ -136,95 +138,9 @@ jBPM (KIE Server).
 
 == URI format
 
-[source,java]
 ---------------------------------------------
 jbpm::hostName[:port][/resourceUri][?options]
 ---------------------------------------------
-
-== URI Options
-
-
-// component options: START
-The JBPM component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
-// component options: END
-
-
-
-
-
-// endpoint options: START
-The JBPM endpoint is configured using URI syntax:
-
-----
-jbpm:connectionURL
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *connectionURL* | *Required* The URL to the jBPM server. |  | URL
-| *eventListenerType* | Sets the event listener type to attach to |  | String
-|===
-
-
-=== Query Parameters (31 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *attachmentId* (common) | attachId to use when retrieving attachments |  | Long
-| *contentId* (common) | contentId to use when retrieving attachments |  | Long
-| *deploymentId* (common) | *Required* The id of the deployment |  | String
-| *emitterSendItems* (common) | Sets if event produced by emitter should be sent as single items or complete collection |  | Boolean
-| *event* (common) | the data associated with this event when signalEvent operation is performed |  | Object
-| *eventType* (common) | the type of event to use when signalEvent operation is performed |  | String
-| *identifier* (common) | identifier the global identifier |  | String
-| *maxNumber* (common) | the maximum number of rules that should be fired |  | Integer
-| *page* (common) | The page to use when retrieving user tasks |  | Integer
-| *pageSize* (common) | The page size to use when retrieving user tasks |  | Integer
-| *processId* (common) | the id of the process that should be acted upon |  | String
-| *processInstanceId* (common) | the id of the process instance |  | Long
-| *targetUserId* (common) | The targetUserId used when delegating a task |  | String
-| *task* (common) | The task instance to use with task operations |  | Task
-| *taskId* (common) | the id of the task |  | Long
-| *timeout* (common) | A timeout value |  | Integer
-| *userId* (common) | userId to use with task operations |  | String
-| *value* (common) | the value to assign to the global identifier |  | Object
-| *workItemId* (common) | the id of the work item |  | Long
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *synchronous* (consumer) | Sets whether synchronous processing should be strictly used | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The operation to perform | startProcess | String
-| *entities* (advanced) | The potentialOwners when nominateTask operation is performed |  | List
-| *extraJaxbClasses* (advanced) | To load additional classes when working with XML |  | Class[]
-| *parameters* (advanced) | the variables that should be set for various operations |  | Map
-| *statuses* (filter) | The list of status to use when filtering tasks |  | List
-| *password* (security) | Password for authentication |  | String
-| *userName* (security) | Username for authentication |  | String
-|===
-// endpoint options: END
-
-
-
-
 
 == Message Headers
 
