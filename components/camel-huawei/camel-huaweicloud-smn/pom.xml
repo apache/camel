@@ -80,6 +80,11 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-huaweicloud-common</artifactId>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

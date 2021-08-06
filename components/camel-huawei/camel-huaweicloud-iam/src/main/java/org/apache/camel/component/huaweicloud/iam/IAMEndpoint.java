@@ -24,7 +24,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.huaweicloud.iam.models.ServiceKeys;
+import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

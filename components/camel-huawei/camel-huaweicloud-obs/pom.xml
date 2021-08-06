@@ -79,5 +79,10 @@
       <version>${mockito-version}</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-huaweicloud-common</artifactId>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 </project>

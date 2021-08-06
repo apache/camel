@@ -14,17 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.smn.models;
+package org.apache.camel.component.huaweicloud.common.models;
 
 public class ServiceKeys {
-    /**
-     * cloud service authentication key (AK)
-     */
     private String authenticationKey;
-
-    /**
-     * cloud service secret key (SK)
-     */
     private String secretKey;
 
     public ServiceKeys() {
@@ -55,5 +48,4 @@ public class ServiceKeys {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-
 }

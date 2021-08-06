@@ -41,6 +41,11 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-huaweicloud-common</artifactId>
+        </dependency>
+
         <!-- HuaweiCloud SDK v3 -->
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
