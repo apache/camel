@@ -40,6 +40,8 @@ where `${camel-version`} must be replaced by the actual version of Camel.
 openstack-swift://hosturl[?options]
 ----------------------------
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

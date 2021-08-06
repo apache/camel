@@ -40,6 +40,8 @@ invoke; or the complete URL of the remote template (eg:
 \file://folder/myfile.mvel).
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

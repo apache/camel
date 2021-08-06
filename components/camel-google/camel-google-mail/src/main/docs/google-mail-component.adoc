@@ -50,6 +50,8 @@ The GoogleMail Component uses the following URI format:
 google-mail://endpoint-prefix/endpoint?[options]
 ----
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

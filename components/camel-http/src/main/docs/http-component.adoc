@@ -38,6 +38,8 @@ http:hostname[:port][/resourceUri][?options]
 Will by default use port 80 for HTTP and 443 for HTTPS.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

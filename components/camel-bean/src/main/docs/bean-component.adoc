@@ -24,6 +24,8 @@ bean:beanName[?options]
 Where *beanID* can be any string which is used to look up the bean in
 the Registry
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

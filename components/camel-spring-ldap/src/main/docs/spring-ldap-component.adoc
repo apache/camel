@@ -43,6 +43,8 @@ credentials for your LDAP access.
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

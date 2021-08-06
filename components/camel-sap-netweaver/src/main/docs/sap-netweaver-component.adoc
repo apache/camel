@@ -49,6 +49,8 @@ requires for an account.
 This component uses the basic authentication scheme for logging into SAP
 NetWeaver.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

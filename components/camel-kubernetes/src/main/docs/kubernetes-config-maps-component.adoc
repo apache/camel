@@ -18,6 +18,8 @@ The Kubernetes ConfigMap component is one of xref:kubernetes-summary.adoc[Kubern
 provides a producer to execute Kubernetes ConfigMap operations and a consumer to consume events related to ConfigMap objects.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

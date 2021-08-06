@@ -31,6 +31,8 @@ their `pom.xml` for this component.
 pulsar:[persistent|non-persistent]://tenant/namespace/topic
 ----------------------
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

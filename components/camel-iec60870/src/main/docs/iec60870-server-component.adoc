@@ -41,6 +41,8 @@ The information object address is encoded in the path in the syntax shows above.
 note that always the full, 5 octet address format is being used. Unused octets have to be filled
 with zero.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

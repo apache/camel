@@ -20,6 +20,8 @@ The camel Etcd component allows you to work with Etcd, a distributed reliable ke
 etcd-keys:path[?options]
 ----------------------------
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -53,6 +53,8 @@ For SSL configuration, refer to the `camel-ldap` component where there is an exa
 of setting up a custom SocketFactory instance.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

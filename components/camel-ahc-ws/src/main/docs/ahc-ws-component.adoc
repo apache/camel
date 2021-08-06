@@ -45,6 +45,8 @@ ahc-wss://hostname[:port][/resourceUri][?options]
 Will by default use port 80 for ahc-ws and 443 for ahc-wss.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

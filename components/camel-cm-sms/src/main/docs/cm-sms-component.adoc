@@ -20,6 +20,8 @@ It allows to integrate https://dashboard.onlinesmsgateway.com/docs[CM SMS API] i
 You must have a valid account.  More information is available at https://www.cmtelecom.com/support[CM Telecom].
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

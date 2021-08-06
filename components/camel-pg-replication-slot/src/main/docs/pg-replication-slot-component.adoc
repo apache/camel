@@ -37,6 +37,8 @@ notation:
 pg-replication-slot://host:port/database/slot:plugin[?parameters]
 -------------------------------------------------
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

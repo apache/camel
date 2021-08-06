@@ -42,6 +42,8 @@ as a "CamelFileName" header on the message (`Exchange.FILE_NAME` if used
 in code).
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

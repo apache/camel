@@ -39,6 +39,8 @@ where `executable` is the name, or file path, of the system command that
 will be executed. If executable name is used (e.g. `exec:java`), the
 executable must in the system path.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

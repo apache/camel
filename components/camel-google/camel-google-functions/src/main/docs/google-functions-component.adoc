@@ -72,6 +72,8 @@ from("google-functions://myCamelFunction?project=myProject&location=us-central1&
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

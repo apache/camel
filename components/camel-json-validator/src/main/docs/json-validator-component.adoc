@@ -41,6 +41,8 @@ full URL to a remote resource or resource on the file system which contains
 the JSON Schema to validate against.
  
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -176,6 +176,8 @@ about these properties by consulting the relevant Spring documentation.
 ====
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

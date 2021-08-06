@@ -46,6 +46,8 @@ The component uses jing as name, and you can use the
 option compactSyntax to turn on either RNG or RNC mode.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

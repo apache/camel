@@ -37,6 +37,8 @@ web3j://<local/remote host:port or local IPC path>[?options]
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

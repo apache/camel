@@ -48,6 +48,8 @@ Component URI that the expected message bodies are
 pulled from before starting the test.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

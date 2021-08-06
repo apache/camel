@@ -19,6 +19,8 @@ The http://www.hazelcast.com/[Hazelcast] Multimap component is one of Camel Haze
 
 == Options
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

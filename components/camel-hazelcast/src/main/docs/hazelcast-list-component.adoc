@@ -18,6 +18,8 @@ The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcas
 
 == Options
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -41,6 +41,8 @@ for this component:
 metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ----
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

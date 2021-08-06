@@ -47,6 +47,8 @@ for this component:
 olingo4://endpoint/<resource-path>?[options]
 ----
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

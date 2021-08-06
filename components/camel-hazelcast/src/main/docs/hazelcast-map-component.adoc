@@ -19,6 +19,8 @@ The http://www.hazelcast.com/[Hazelcast] Map component is one of Camel Hazelcast
 
 == Options
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

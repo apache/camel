@@ -79,6 +79,8 @@ mock:someName[?options]
 Where `someName` can be any string that uniquely identifies the
 endpoint.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

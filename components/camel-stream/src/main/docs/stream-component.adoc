@@ -43,6 +43,8 @@ find the stream to write to. This option is available only for stream
 producers (that is, it cannot appear in `from()`).
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

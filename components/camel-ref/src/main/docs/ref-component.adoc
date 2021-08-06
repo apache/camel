@@ -27,6 +27,8 @@ Registry (usually, but not always, the Spring
 registry). If you are using the Spring registry, `someName` would be the
 bean ID of an endpoint in the Spring registry.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

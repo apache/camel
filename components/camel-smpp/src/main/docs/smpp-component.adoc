@@ -157,6 +157,8 @@ If the protocol name is "smpps", camel-smpp with try to
 use SSLSocket to init a connection to the server.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

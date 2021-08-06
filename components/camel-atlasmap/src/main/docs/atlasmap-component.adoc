@@ -40,6 +40,8 @@ Where *mappingName* is the classpath-local URI of the AtlasMap
 mapping definition, either ADM archive file or mapping definition JSON file
  to process.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

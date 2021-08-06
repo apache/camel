@@ -68,6 +68,8 @@ supported:
 The complete list of valid output formats can be found in the `MimeConstants.java` source file.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

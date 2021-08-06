@@ -17,6 +17,8 @@ This component can be used to watch file modification events in folder. It is ba
 
 == URI Options
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

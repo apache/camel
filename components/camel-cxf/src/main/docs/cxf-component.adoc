@@ -62,6 +62,8 @@ cxf:bean:cxfEndpoint?wsdlURL=wsdl/hello_world.wsdl&dataFormat=PAYLOAD
 ---------------------------------------------------------------------
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

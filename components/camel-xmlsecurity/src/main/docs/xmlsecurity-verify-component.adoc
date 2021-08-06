@@ -74,6 +74,8 @@ between different signer/verifier endpoints within the camel context.
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

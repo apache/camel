@@ -41,6 +41,8 @@ determines the exchange the queue will be bound to.
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

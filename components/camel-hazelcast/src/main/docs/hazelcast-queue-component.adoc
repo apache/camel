@@ -17,6 +17,8 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-
 The http://www.hazelcast.com/[Hazelcast] Queue component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed queue.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

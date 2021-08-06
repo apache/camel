@@ -22,6 +22,8 @@ When using the Direct Message consumer, it will consider only the last 30 days d
 ====
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

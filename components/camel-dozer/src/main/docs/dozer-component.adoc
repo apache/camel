@@ -64,6 +64,8 @@ from("direct:orderInput").
 
 == Options
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

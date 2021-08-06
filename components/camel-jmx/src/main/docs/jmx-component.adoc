@@ -25,6 +25,8 @@ If you run Camel standalone with just `camel-core` as a dependency, and you want
 ====
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

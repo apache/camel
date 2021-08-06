@@ -66,6 +66,8 @@ content—message headers and exchange properties are not sent. +
 exchange itself over the wire. See options below.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -51,6 +51,8 @@ write to a regular file using the file component, then you can use the
 fileMode=Append to append each of the chunks together.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

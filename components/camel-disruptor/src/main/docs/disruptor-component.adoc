@@ -72,6 +72,8 @@ endpoint within the current CamelContext.
 
 == Options
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

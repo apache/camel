@@ -40,6 +40,8 @@ paho:topic[?options]
 Where *topic* is the name of the topic.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

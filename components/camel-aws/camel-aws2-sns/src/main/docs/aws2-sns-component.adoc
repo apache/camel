@@ -37,6 +37,8 @@ The topic will be created if they don't already exists. +
 
 == URI Options
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

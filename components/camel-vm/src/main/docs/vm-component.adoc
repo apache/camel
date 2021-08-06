@@ -47,6 +47,8 @@ from("vm:bar?concurrentConsumers=5").to("file://output");
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

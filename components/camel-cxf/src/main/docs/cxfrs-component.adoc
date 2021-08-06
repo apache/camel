@@ -50,6 +50,8 @@ cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
 ------------------------------------------------------------------
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

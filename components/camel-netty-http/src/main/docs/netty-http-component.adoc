@@ -84,6 +84,8 @@ applicable when using this Netty HTTP component, such as options
 related to UDP transport.
 ====
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -36,6 +36,8 @@ infinispan://cacheName?[options]
 The producer allows sending messages to a remote cache using the HotRod protocol.
 The consumer allows listening for events from a remote cache using the HotRod protocol.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

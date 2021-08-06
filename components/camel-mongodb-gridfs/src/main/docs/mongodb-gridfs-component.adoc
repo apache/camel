@@ -31,6 +31,8 @@ for this component:
 mongodb-gridfs:connectionBean?database=databaseName&bucket=bucketName[&moreOptions...]
 ------------------------------------------------------------------------------
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

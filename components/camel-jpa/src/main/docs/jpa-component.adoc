@@ -94,6 +94,8 @@ ensure the body is of the correct type.
 For consuming, the _entityClassName_ is mandatory.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

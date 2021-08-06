@@ -51,6 +51,8 @@ where `cometds:` represents an SSL configured endpoint.
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

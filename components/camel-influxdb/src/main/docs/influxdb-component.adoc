@@ -41,6 +41,8 @@ influxdb://beanName?[options]
 
 The producer allows sending messages to a influxdb configured in the registry, using the native java driver.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

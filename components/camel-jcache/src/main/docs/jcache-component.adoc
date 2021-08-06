@@ -20,6 +20,8 @@ The JCache component enables you to perform caching operations using JSR107/JCac
 jcache:cacheName[?options]
 ----------------------------
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

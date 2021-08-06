@@ -41,6 +41,8 @@ atom://atomUri[?options]
 Where *atomUri* is the URI to the Atom feed to poll.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

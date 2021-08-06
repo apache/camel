@@ -41,6 +41,8 @@ its endpoint. +
 you to send notifications to Nagios.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

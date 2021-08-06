@@ -72,6 +72,8 @@ capability to create custom stateful headers needed to propagate state
 via the SIP protocol.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

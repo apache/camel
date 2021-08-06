@@ -45,6 +45,8 @@ cron expression is provided, the component uses a simple trigger. If no
 `groupName` is provided, the quartz component uses the `Camel` group
 name.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

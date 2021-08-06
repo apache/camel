@@ -42,6 +42,8 @@ Where endpoint is any Camel endpoint you want to run in master/slave mode.
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

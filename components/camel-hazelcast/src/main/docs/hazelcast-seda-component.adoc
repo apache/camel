@@ -18,6 +18,8 @@ The http://www.hazelcast.com/[Hazelcast] SEDA component is one of Camel Hazelcas
 SEDA component differs from the rest components provided. It implements a work-queue in order to support asynchronous SEDA architectures, similar to the core "SEDA" component.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

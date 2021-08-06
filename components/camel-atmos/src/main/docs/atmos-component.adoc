@@ -17,6 +17,8 @@ allows you to work with ViPR object data services using the
 https://github.com/emcvipr/dataservices-sdk-java[Atmos Client].
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

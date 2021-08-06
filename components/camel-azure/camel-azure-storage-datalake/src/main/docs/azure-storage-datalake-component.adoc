@@ -45,6 +45,8 @@ being requested.
 You can append query options to the URI in the following format, ?option1=value&option2=value&...
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

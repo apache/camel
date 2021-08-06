@@ -59,6 +59,8 @@ and store the urls in the message (`SoroushMessage.fileUrl`, `SoroushMessage.thu
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -38,6 +38,8 @@ the root of the classpath with the expected name of
 the `configurationUri` option on the `MyBatisComponent` component.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

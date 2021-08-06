@@ -57,6 +57,8 @@ The final connection options will be evaluated in the following order:
 * Apply +dataModuleOptions+ if present
 * Apply all explicit connection parameters (e.g. +timeZone+)
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

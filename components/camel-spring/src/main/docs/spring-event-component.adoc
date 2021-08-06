@@ -32,6 +32,8 @@ Note, at the moment there are no options for this component. That can
 easily change in future releases, so please check back.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -56,6 +56,8 @@ which will by added internally to the endpoint URI in order to select a differen
 In other words, shared connections located by the combination of endpoint URI and client id.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -50,6 +50,8 @@ jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/program.PGM[?options]
 -----------------------------------------------------------------------
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

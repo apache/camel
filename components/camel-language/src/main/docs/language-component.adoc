@@ -41,6 +41,8 @@ xref:language-component.adoc[Language]s in Camel
 language://languageName:resource:scheme:location][?options]
 ----
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

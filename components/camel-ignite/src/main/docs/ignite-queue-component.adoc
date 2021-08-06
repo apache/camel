@@ -16,6 +16,8 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-que
 
 The Ignite Queue endpoint is one of camel-ignite endpoints which allows you to interact with https://apacheignite.readme.io/docs/queue-and-set[Ignite Queue data structures].
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -37,6 +37,8 @@ The consumer allows consuming commits, tags and branches on a specific
 repository.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

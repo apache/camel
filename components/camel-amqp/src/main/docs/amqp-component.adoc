@@ -36,6 +36,8 @@ for this component:
 amqp:[queue:|topic:]destinationName[?options]
 ----
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

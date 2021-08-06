@@ -15,6 +15,8 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rest-api.a
 
 The REST API component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

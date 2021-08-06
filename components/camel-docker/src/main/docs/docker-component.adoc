@@ -28,6 +28,8 @@ docker://[operation]?[options]
 
 Where *operation* is the specific action to perform on Docker.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

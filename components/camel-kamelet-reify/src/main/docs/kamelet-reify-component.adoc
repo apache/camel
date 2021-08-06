@@ -22,6 +22,8 @@ which is the recommended practice to use for building Kamelets that are isolated
 Therefore this component is expected to become deprecated in the near future and removed later.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

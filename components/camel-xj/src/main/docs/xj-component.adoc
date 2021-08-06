@@ -49,6 +49,8 @@ The *templateName* parameter allows to use _identify transforma_ by specifying t
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

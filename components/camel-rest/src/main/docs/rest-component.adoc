@@ -25,6 +25,8 @@ The rest component can also be used as a client (producer) to call REST services
 rest://method:path[:uriTemplate]?[options]
 ----
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

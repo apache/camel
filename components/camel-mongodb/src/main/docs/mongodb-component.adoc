@@ -61,6 +61,8 @@ for this component:
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -73,6 +73,8 @@ from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-k
 --------------------------------------------------------------------------------
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

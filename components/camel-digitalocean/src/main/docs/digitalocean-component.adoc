@@ -29,6 +29,8 @@ digitalocean://endpoint?[options]
 where `endpoint` is a DigitalOcean resource type.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

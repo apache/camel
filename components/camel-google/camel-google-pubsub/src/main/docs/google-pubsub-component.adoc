@@ -42,6 +42,8 @@ google-pubsub://project-id:destinationName?[options]
 Destination Name can be either a topic or a subscription name.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -45,6 +45,8 @@ pubnub:channel[?options]
 
 Where *channel* is the PubNub channel to publish or subscribe to.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

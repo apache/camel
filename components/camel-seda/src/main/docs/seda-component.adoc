@@ -47,6 +47,8 @@ Where *someName* can be any string that uniquely identifies the endpoint
 within the current CamelContext.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

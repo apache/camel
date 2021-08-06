@@ -49,6 +49,8 @@ In case you supply the `connectionString`, `namespace` and `eventHubName` are no
 in the `connectionString`
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

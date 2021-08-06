@@ -18,6 +18,8 @@ The Kubernetes Services component is one of xref:kubernetes-summary.adoc[Kuberne
 provides a producer to execute Kubernetes Service operations and a consumer to consume events related to Service objects.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

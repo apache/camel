@@ -35,6 +35,8 @@ caffeine-cache://cacheName[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=#beanRef&...`
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

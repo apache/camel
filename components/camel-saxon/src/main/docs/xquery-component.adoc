@@ -19,6 +19,8 @@ Configuration]. For example you could use XQuery to create an
 Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a Recipient List.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -32,6 +32,8 @@ for this component:
 atomix-set:setName
 ----
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

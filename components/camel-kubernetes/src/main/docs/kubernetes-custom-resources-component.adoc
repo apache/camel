@@ -18,6 +18,8 @@ The Kubernetes Custom Resources component is one of xref:kubernetes-summary.adoc
 provides a producer to execute Kubernetes Custom Resources operations and a consumer to consume events related to Node objects.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

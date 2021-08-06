@@ -43,6 +43,8 @@ Where *destination* is the name of the queue.
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

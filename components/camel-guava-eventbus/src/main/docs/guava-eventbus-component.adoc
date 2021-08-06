@@ -48,6 +48,8 @@ Where *busName* represents the name of the
 registry.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

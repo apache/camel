@@ -19,6 +19,8 @@ The http://www.hazelcast.com/[Hazelcast] Topic component is one of Camel Hazelca
 
 == Options
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

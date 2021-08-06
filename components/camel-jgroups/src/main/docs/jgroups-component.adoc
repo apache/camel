@@ -39,6 +39,8 @@ Where *clusterName* represents the name of the JGroups cluster the
 component should connect to.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

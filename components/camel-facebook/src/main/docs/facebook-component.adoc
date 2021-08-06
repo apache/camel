@@ -56,6 +56,8 @@ component using the bean property *configuration* of type
 to application APIs.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

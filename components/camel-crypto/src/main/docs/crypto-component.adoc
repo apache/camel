@@ -87,6 +87,8 @@ examples they appear one after the other. It goes without saying that
 both signing and verifying should be configured identically.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

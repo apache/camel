@@ -50,6 +50,8 @@ options and `doneFileName` option that you can use. See also the section
 ====
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

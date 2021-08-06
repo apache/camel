@@ -48,6 +48,8 @@ This allows you to use a database table as a logical queue: consumers take messa
 If you do not wish to delete the entity bean when it has been processed, you can specify consumeDelete=false on the URI.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

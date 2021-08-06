@@ -82,6 +82,8 @@ http://gora.apache.org/current/gora-conf.html[gora-conf] page.
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

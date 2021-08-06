@@ -46,6 +46,8 @@ _znode_) that will be the target of the endpoint:
 
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

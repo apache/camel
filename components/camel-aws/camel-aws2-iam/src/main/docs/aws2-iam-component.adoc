@@ -39,6 +39,8 @@ The AWS2 IAM component works on the aws-global region and it has aws-global as d
 ====
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

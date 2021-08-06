@@ -18,6 +18,8 @@ The Kubernetes Persistent Volume component is one of xref:kubernetes-summary.ado
 provides a producer to execute Kubernetes Persistent Volume operations.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -74,6 +74,8 @@ producer the address should be set to the URI of the web service your
 calling upon.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -39,6 +39,8 @@ Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
 \file://folder/myfile.mustache).
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

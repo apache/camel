@@ -53,6 +53,8 @@ Where *hostname* is the hostname of the running couchdb instance. Port
 is optional and if not specified then defaults to 5984.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

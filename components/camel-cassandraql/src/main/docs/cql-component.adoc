@@ -26,6 +26,8 @@ https://github.com/datastax/java-driver[Cassandra Java Driver] provided
 by DataStax.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

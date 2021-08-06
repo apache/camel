@@ -59,6 +59,8 @@ details here].
 By the way, you cannot specify several tubes when you are writing jobs
 into Beanstalk.
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

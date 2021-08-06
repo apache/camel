@@ -43,6 +43,8 @@ Where *label* is an arbitrary text value describing the endpoint. +
 ?option=value&option=value&...
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

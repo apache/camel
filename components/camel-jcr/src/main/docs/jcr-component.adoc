@@ -43,6 +43,8 @@ The `repository` element of the URI is used to look up the JCR
 `Repository` object in the Camel context registry.
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

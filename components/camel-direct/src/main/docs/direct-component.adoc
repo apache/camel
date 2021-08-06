@@ -44,6 +44,8 @@ direct:someName[?options]
 Where *someName* can be any string to uniquely identify the endpoint
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

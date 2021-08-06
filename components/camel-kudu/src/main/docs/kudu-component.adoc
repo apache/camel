@@ -19,6 +19,8 @@ The Kudu component supports storing and retrieving data from/to https://kudu.apa
 You must have a valid Kudu instance running. More information are available at https://kudu.apache.org/[Apache Kudu].
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

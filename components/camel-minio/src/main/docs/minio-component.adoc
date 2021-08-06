@@ -38,6 +38,8 @@ from("minio://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix
   .to("file:/var/downloaded");
 --------------------------------------------------------------------------------
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 

@@ -43,6 +43,8 @@ flink:datastream?datastream=#myDataStream&dataStreamCallback=#dataStreamCallback
 -------------------------------------------------
 
 
+// component-configure options: START
+// component-configure options: END
 // component options: START
 == Component Options
 
