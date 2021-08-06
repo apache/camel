@@ -34,7 +34,6 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------------------------
 ahc:http://hostname[:port][/resourceUri][?options]
 ahc:https://hostname[:port][/resourceUri][?options]
