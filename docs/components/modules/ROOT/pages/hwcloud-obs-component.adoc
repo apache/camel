@@ -1,7 +1,7 @@
 [[hwcloud-obs-component]]
 = Huawei Object Storage Service (OBS) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: componentscamel-huaweicamel-huaweicloud-obssrcmaindocshwcloud-obs-component.adoc
+:page-source: components/camel-huawei/camel-huaweicloud-obs/src/main/docs/hwcloud-obs-component.adoc
 :docTitle: Huawei Object Storage Service (OBS)
 :artifactId: camel-huaweicloud-obs
 :description: To provide stable, secure, efficient, and easy-to-use cloud storage service on Huawei Cloud
