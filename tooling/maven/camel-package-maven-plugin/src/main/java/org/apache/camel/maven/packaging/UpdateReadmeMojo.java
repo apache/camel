@@ -201,7 +201,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                         option.setDescription(desc);
                     });
 
-                    String options = evaluateTemplate("component-options.mvel", model);
+                    String options = evaluateTemplate("component-configure-header.mvel", model);
+                    updated |= updateOptionsIn(file, kind + "-configure", options);
+
+                    options = evaluateTemplate("component-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
 
                     options = evaluateTemplate("endpoint-options.mvel", model);
