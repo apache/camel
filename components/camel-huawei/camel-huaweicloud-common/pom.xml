@@ -32,7 +32,7 @@
     <artifactId>camel-huaweicloud-common</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Huawei Cloud :: Common</name>
-    <description>HuaweiCloud package containing shared classes</description>
+    <description>Common package for HuaweiCloud components</description>
 
     <dependencies>
         <dependency>
