@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.BootstrapCloseable;
 
 public class MainBootstrapCloseable implements BootstrapCloseable {
@@ -28,21 +29,28 @@ public class MainBootstrapCloseable implements BootstrapCloseable {
 
     @Override
     public void close() {
-        // we are now bootstrapped and can clear up memory
-        if (main.initialProperties != null) {
-            main.initialProperties.clear();
-            main.initialProperties = null;
+        // in lightweight mode then clear up memory after bootstrap
+        boolean lightweight = true;
+        if (main.getCamelContext() != null) {
+            lightweight = main.getCamelContext().adapt(ExtendedCamelContext.class).isLightweight();
         }
-        if (main.overrideProperties != null) {
-            main.overrideProperties.clear();
-            main.overrideProperties = null;
-        }
-        main.wildcardProperties.clear();
-        main.wildcardProperties = null;
 
-        // no longer in use
-        main.mainConfigurationProperties.close();
-        main.mainConfigurationProperties = null;
-        main.routesCollector = null;
+        if (lightweight) {
+            if (main.initialProperties != null) {
+                main.initialProperties.clear();
+                main.initialProperties = null;
+            }
+            if (main.overrideProperties != null) {
+                main.overrideProperties.clear();
+                main.overrideProperties = null;
+            }
+            main.wildcardProperties.clear();
+            main.wildcardProperties = null;
+
+            // no longer in use
+            main.mainConfigurationProperties.close();
+            main.mainConfigurationProperties = null;
+            main.routesCollector = null;
+        }
     }
 }
