@@ -41,6 +41,9 @@ setup your environment for running integration tests.
 
 
 // component options: START
+== Component Options
+
+
 The Salesforce component supports 85 options, which are listed below.
 
 
@@ -136,6 +139,8 @@ The Salesforce component supports 85 options, which are listed below.
 |===
 // component options: END
 // endpoint options: START
+== Endpoint Options
+
 The Salesforce endpoint is configured using URI syntax:
 
 ----
