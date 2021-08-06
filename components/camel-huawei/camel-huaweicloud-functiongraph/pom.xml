@@ -44,6 +44,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-huaweicloud-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- HuaweiCloud SDK v3 -->
