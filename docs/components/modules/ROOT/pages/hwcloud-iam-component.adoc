@@ -1,7 +1,7 @@
 [[hwcloud-iam-component]]
 = Huawei Identity and Access Management (IAM) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-huawei/camel-huaweicloud-iam/src/main/docs/hwcloud-iam-component.adoc
+:page-source: componentscamel-huaweicamel-huaweicloud-iamsrcmaindocshwcloud-iam-component.adoc
 :docTitle: Huawei Identity and Access Management (IAM)
 :artifactId: camel-huaweicloud-iam
 :description: To securely manage users on Huawei Cloud
