@@ -57,6 +57,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -79,6 +80,7 @@ The Kamelet component supports 9 options, which are listed below.
 | *routeTemplateLoaderListener* (advanced) | *Autowired* To plugin a custom listener for when the Kamelet component is loading Kamelets from external resources. |  | RouteTemplateLoaderListener
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

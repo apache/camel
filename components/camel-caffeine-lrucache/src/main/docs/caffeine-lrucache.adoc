@@ -31,8 +31,10 @@ their `pom.xml` for this component:
 
 // component-configure options: START
 // component-configure options: END
+
 // component options: START
 // component options: END
+
 
 
 

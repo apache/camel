@@ -84,6 +84,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -126,6 +127,7 @@ The XML Security Sign component supports 29 options, which are listed below.
 | *uriDereferencer* (advanced) | If you want to restrict the remote access via reference URIs, you can set an own dereferencer. Optional parameter. If not set the provider default dereferencer is used which can resolve URI fragments, HTTP, file and XPpointer URIs. Attention: The implementation is provider dependent! |  | URIDereferencer
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 
