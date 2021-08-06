@@ -305,6 +305,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public List<RouteConfigurationDefinition> getRouteConfigurationDefinitions() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getRouteConfigurationDefinitions();
     }
 
