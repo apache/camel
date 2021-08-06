@@ -42,6 +42,38 @@ milo-server:itemId[?options]
 
 
 // component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:component-dsl.adoc[Component DSL], in a configuration file (application.properties|yaml), or
+directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
 // component options: START
 == Component Options
