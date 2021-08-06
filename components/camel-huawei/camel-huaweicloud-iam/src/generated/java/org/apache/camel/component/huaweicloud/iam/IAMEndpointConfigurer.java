@@ -41,7 +41,7 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "servicekeys":
-        case "serviceKeys": target.setServiceKeys(property(camelContext, org.apache.camel.component.huaweicloud.iam.models.ServiceKeys.class, value)); return true;
+        case "serviceKeys": target.setServiceKeys(property(camelContext, org.apache.camel.component.huaweicloud.common.models.ServiceKeys.class, value)); return true;
         case "userid":
         case "userId": target.setUserId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -71,7 +71,7 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "servicekeys":
-        case "serviceKeys": return org.apache.camel.component.huaweicloud.iam.models.ServiceKeys.class;
+        case "serviceKeys": return org.apache.camel.component.huaweicloud.common.models.ServiceKeys.class;
         case "userid":
         case "userId": return java.lang.String.class;
         default: return null;

@@ -87,7 +87,7 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "servicekeys":
-        case "serviceKeys": target.setServiceKeys(property(camelContext, org.apache.camel.component.huaweicloud.obs.models.ServiceKeys.class, value)); return true;
+        case "serviceKeys": target.setServiceKeys(property(camelContext, org.apache.camel.component.huaweicloud.common.models.ServiceKeys.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -167,7 +167,7 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "servicekeys":
-        case "serviceKeys": return org.apache.camel.component.huaweicloud.obs.models.ServiceKeys.class;
+        case "serviceKeys": return org.apache.camel.component.huaweicloud.common.models.ServiceKeys.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "timeunit":
