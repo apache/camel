@@ -29,6 +29,10 @@
         <version>3.12.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <firstVersion>3.12.0</firstVersion>
+    </properties>
+
     <artifactId>camel-huaweicloud-common</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Huawei Cloud :: Common</name>
