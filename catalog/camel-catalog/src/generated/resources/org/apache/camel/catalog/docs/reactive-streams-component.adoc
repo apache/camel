@@ -83,6 +83,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -105,6 +106,7 @@ The Reactive Streams component supports 9 options, which are listed below.
 | *serviceType* (advanced) | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

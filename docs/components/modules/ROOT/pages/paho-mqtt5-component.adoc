@@ -75,6 +75,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -119,6 +120,7 @@ The Paho MQTT 5 component supports 31 options, which are listed below.
 | *userName* (security) | Username to be used for authentication against the MQTT broker |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

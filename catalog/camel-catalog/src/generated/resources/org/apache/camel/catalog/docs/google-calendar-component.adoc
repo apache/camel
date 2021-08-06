@@ -76,6 +76,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -103,6 +104,7 @@ The Google Calendar component supports 14 options, which are listed below.
 | *user* (security) | The email address of the user the application is trying to impersonate in the service account flow |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

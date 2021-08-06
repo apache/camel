@@ -66,6 +66,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -96,6 +97,7 @@ The Atomix MultiMap component supports 17 options, which are listed below.
 | *resourceOptions* (advanced) | Local resources configurations |  | Map
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

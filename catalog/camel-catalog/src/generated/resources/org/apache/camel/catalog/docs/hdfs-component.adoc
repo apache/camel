@@ -85,6 +85,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -103,6 +104,7 @@ The HDFS component supports 5 options, which are listed below.
 | *kerberosConfigFile* (security) | To use kerberos authentication, set the value of the 'java.security.krb5.conf' environment variable to an existing file. If the environment variable is already set, warn if different than the specified parameter |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

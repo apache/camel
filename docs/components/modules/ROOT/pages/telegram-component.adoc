@@ -87,6 +87,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -107,6 +108,7 @@ The Telegram component supports 7 options, which are listed below.
 | *authorizationToken* (security) | The default Telegram authorization token to be used when the information is not provided in the endpoints. |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

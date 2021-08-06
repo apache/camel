@@ -79,6 +79,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -102,6 +103,7 @@ The Async HTTP Client (AHC) Websocket component supports 10 options, which are l
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

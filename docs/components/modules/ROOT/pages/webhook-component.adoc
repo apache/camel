@@ -78,6 +78,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -99,6 +100,7 @@ The Webhook component supports 8 options, which are listed below.
 | *configuration* (advanced) | Set the default configuration for the webhook meta-component. |  | WebhookConfiguration
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

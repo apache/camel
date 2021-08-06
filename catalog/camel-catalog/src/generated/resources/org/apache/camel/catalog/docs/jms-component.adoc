@@ -210,6 +210,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -321,6 +322,7 @@ The JMS component supports 98 options, which are listed below.
 | *transactionTimeout* (transaction) | The timeout value of the transaction (in seconds), if using transacted mode. | -1 | int
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

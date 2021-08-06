@@ -72,6 +72,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -88,6 +89,7 @@ The Geocoder component supports 3 options, which are listed below.
 | *geoApiContext* (advanced) | Configuration for Google maps API |  | GeoApiContext
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

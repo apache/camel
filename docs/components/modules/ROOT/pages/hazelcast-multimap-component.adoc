@@ -55,6 +55,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -73,6 +74,7 @@ The Hazelcast Multimap component supports 5 options, which are listed below.
 | *hazelcastMode* (advanced) | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

@@ -66,6 +66,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -109,6 +110,7 @@ The AWS Athena component supports 30 options, which are listed below.
 | *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

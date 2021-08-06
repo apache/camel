@@ -85,6 +85,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -113,6 +114,7 @@ The Azure Storage Queue Service component supports 15 options, which are listed 
 | *credentials* (security) | StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication information |  | StorageSharedKeyCredential
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

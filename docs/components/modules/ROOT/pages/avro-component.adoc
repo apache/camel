@@ -65,6 +65,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -88,6 +89,7 @@ The Avro RPC component supports 10 options, which are listed below.
 | *configuration* (advanced) | To use a shared AvroConfiguration to configure options once |  | AvroConfiguration
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

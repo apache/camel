@@ -87,6 +87,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -120,6 +121,7 @@ The Infinispan Embedded component supports 20 options, which are listed below.
 | *resultHeader* (advanced) | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

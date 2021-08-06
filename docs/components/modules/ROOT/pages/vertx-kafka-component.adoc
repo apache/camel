@@ -92,6 +92,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -211,6 +212,7 @@ The Vert.x Kafka component supports 106 options, which are listed below.
 | *sslTruststoreType* (security) | The file format of the trust store file. | JKS | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

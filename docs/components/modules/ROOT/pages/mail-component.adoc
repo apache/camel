@@ -107,6 +107,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -163,6 +164,7 @@ The Mail component supports 43 options, which are listed below.
 | *username* (security) | The username for login. See also setAuthenticator(MailAuthenticator). |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

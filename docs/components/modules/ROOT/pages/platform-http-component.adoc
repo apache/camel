@@ -65,6 +65,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -81,6 +82,7 @@ The Platform HTTP component supports 3 options, which are listed below.
 | *engine* (advanced) | An HTTP Server engine implementation to serve the requests |  | PlatformHttpEngine
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

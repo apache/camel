@@ -80,6 +80,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -99,6 +100,7 @@ The MLLP component supports 6 options, which are listed below.
 | *logPhiMaxBytes* (advanced) | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

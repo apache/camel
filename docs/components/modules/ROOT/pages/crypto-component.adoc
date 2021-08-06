@@ -123,6 +123,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -157,6 +158,7 @@ The Crypto (JCE) component supports 21 options, which are listed below.
 | *password* (security) | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 

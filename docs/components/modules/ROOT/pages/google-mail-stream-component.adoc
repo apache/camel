@@ -87,6 +87,7 @@ In other words placeholders allows to externalize the configuration from your co
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
+
 // component options: START
 == Component Options
 
@@ -113,6 +114,7 @@ The Google Mail Stream component supports 13 options, which are listed below.
 | *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
 // component options: END
+
 // endpoint options: START
 == Endpoint Options
 
