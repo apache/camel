@@ -1,47 +1,40 @@
 [[CamelConfigurationUtilities-JSSEUtility]]
 = JSSE Utility
 
-The JSSE Utility, available as of *2.8*, allows you to easily configure
-aspects of the
-http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html[Java
+The JSSE Utility allows you to easily configure aspects of the
+https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html[Java
 Secure Socket Extension] (JSSE) API in order to greatly simplify the use
 of custom transport layer security (TLS) settings on Camel components.
 
 [[CamelConfigurationUtilities-SupportedComponents]]
 == Supported Components
 
-The following Camel components directly support the use of this
-configuration utility:
+A number of Camel components support this such as::
 
 * xref:components::http-component.adoc[HTTP]
 * xref:components::jetty-component.adoc[Jetty]
 * xref:components::ahc-component.adoc[AHC]
 * xref:components::netty-component.adoc[Netty]
 * xref:components::cometd-component.adoc[Cometd]
-* FTP2
 * xref:components::irc-component.adoc[IRC]
 * xref:components::mail-component.adoc[Mail]
-* MINA 2
-
-The following Camel components indirectly support the use of this
-configuration utility:
-
-* xref:components::cxf-component.adoc[CXF]
-* xref:components::http-component.adoc[HTTP]
 
 [[CamelConfigurationUtilities-Configuration]]
 == Configuration
 
 The key component in configuring TLS through the JSSE API is the
-SSLContext.  The
-http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLContext[SSLContext]
+SSLContext.
+
+The http://download.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLContext[SSLContext]
 provides socket factories for both
-http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLSocketFactory[client-side]
+http://download.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLSocketFactory[client-side]
 and
-http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLSocketFactory[server-side]
+http://download.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLSocketFactory[server-side]
 sockets as well as another component called an
-http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLENG[SSLEngine]
-that is used by non-blocking IO to support TLS.  The JSSE configuration
+http://download.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLENG[SSLEngine]
+that is used by non-blocking IO to support TLS.
+
+The JSSE configuration
 utility provides an easy to use builder for configuring these JSSE
 components, among others, in a manner that allows you to provide all
 configuration options up front during the initialization of your
@@ -80,7 +73,7 @@ SSLContextParameters (sslContextParameters) contain the following elements:
 * trustManagers (element)
 * secureRandom (element)
 * clientParameters (element)
-* serverParameters (elment)
+* serverParameters (element)
 
 provider::
 The optional provider identifier for the JSSE implementation to use when
@@ -93,7 +86,7 @@ about standard protocol names.  If omitted, TLS is used by default.
 Note that this property is related to but distinctly different from the
 secureSocketProtocols and secureSocketProtocolsFilter properties.
 certAlias::
-*Camel 2.13:* An optional certificate alias to use. This is useful when
+An optional certificate alias to use. This is useful when
 the keystore has multiple certificates.
 sessionTimeout::
 This optional property defines the timeout period, in seconds, for
@@ -216,7 +209,7 @@ http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefG
 Secure Socket Extension Reference Guide] for information about standard
 algorithm names.
 trustManager::
-*Camel 2.17:* To use a existing configured trust manager instead of using
+To use a existing configured trust manager instead of using
 TrustManagerFactory to get the TrustManager.
 keyStore::
 See <<CamelConfigurationUtilities-KeyStoreParameters>>. This optional property represents the key store that provides key
@@ -290,7 +283,7 @@ excludes takes precedence over the include patterns.
 SecureRandomParameters contain the following elements:
 
 * algorithm (attribute)
-* provider (attribte)
+* provider (attribute)
 algorithm::
 This optional property represents the Random Number Generator (RNG)
 algorithm identifier for the SecureRandom factory method used to create
@@ -370,11 +363,8 @@ See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
 [[CamelConfigurationUtilities-Examples]]
 == Examples
 
-[[CamelConfigurationUtilities-ProgrammaticUsage]]
-=== Programmatic Usage
-
 [[CamelConfigurationUtilities-SettingClientAuthenticationOntheServerSide]]
-Setting Client Authentication On the Server Side
+=== Setting Client Authentication On the Server Side
 
 This configuration sets the server side aspects of the TLS configuration
 to require client authentication during the handshake process.  This
@@ -403,7 +393,7 @@ SSLEngine engine = scp.createSSLEngine();
 -------------------------------------------------------------------
 
 [[CamelConfigurationUtilities-ConfiguringDifferentOptionsontheClientandServerSide]]
-Configuring Different Options on the Client and Server Side
+== Configuring Different Options on the Client and Server Side
 
 In this example, both the client and server sides share the same custom
 key store; however, the client side allows any supported cipher suite
@@ -436,7 +426,7 @@ SSLEngine engine = scp.createSSLEngine();
 -------------------------------------------------------------------
 
 [[CamelConfigurationUtilities-UsingCamelPropertyPlaceholders]]
-Using Camel Property Placeholders
+== Using Camel Property Placeholders
 
 This configuration utility fully supports the use of property
 placeholders (see xref:using-propertyplaceholder.adoc[Using
@@ -483,7 +473,7 @@ format.
 ====
 
 [[CamelConfigurationUtilities-SettingClientAuthenticationOntheServerSide.1]]
-Setting Client Authentication On the Server Side
+=== Setting Client Authentication On the Server Side
 
 This configuration sets the server side aspects of the TLS configuration
 to require client authentication during the handshake process.  This
@@ -519,7 +509,7 @@ SSLContext.
 ---------------------------------------------------------------------------------------------------------------
 
 [[CamelConfigurationUtilities-ConfiguringDifferentOptionsontheClientandServerSide.1]]
-Configuring Different Options on the Client and Server Side
+=== Configuring Different Options on the Client and Server Side
 
 In this example, both the client and server sides share the same custom
 key store; however, the client side allows any supported cipher suite
@@ -554,7 +544,7 @@ exclude any cipher suites that match the patterns .*_NULL_.* and
 --------------------------------------------------------------
 
 [[CamelConfigurationUtilities-UsingCamelPropertyPlaceholders.1]]
-Using Camel Property Placeholders
+=== Using Camel Property Placeholders
 
 This configuration utility fully supports the use of property
 placeholders (see xref:using-propertyplaceholder.adoc[Using
@@ -598,9 +588,9 @@ ID example is used to resolve the property placeholders.
 ---------------------------------------------------------------------------------------------------------------
 
 [[CamelConfigurationUtilities-UsingSpringBoot.1]]
-Using Spring-Boot
+=== Using Spring-Boot
 
-As of *2.19.0*, Camel provides a global SSL configuration that can be customized using the
+Camel provides a global SSL configuration that can be customized using the
 spring-boot _application.properties_ or _application.yml_ file.
 
 Components do not use the global SSL configuration by default, but this behavior can
@@ -610,8 +600,8 @@ included in all components that support the global SSL configuration.
 The following example shows how to configure global SSL parameters (in _application.yml_) and enable their
 usage in the _camel-undertow_ component.
 
-[source,text]
----------------------------------------------------------------------------------------------------------------
+[source,yaml]
+----
 camel:
   # To enable global SSL in undertow
   component:
@@ -630,4 +620,4 @@ camel:
           resource: "/cacerts"
           password: "changeit"
           type: "jks"
----------------------------------------------------------------------------------------------------------------
+----
