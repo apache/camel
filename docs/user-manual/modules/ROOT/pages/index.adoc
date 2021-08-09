@@ -15,12 +15,10 @@ routing rules in your IDE, whether in a Java or XML editor.
 For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel.adoc[Introduction] is provided.
 
 
-
 == Summary
 
 * <<Overview>>
 * <<Documentation>>
-* <<Requirements>>
 * <<Developers>>
 
 == Overview
@@ -137,26 +135,6 @@ camel routes without them knowing
 * xref:using-osgi-blueprint-with-camel.adoc[OSGi Blueprint XML DSL]
 * xref:rest-dsl.adoc[Rest DSL]
 
-
-=== Components, Data Formats, Languages and Enterprise Integration Patterns
-
-Consult the xref:components::index.adoc[components] documentation.
-
-== Requirements
-
-=== Platform Requirements
-
-* Any platform that supports JDK 6 is required.
-
-=== JDK Requirements
-
-- Camel 2.x supports JDK 8
-- Camel 3.0 - 3.4 supports JDK 8 and 11
-- Camel 3.5 or higher supports JDK 8, 11 and 14
-Note: Camel 3.8 (when released), in case of JDK 8's usage, will need at least the JDK 8.0.272 with JFR included
-
 == Developers
 
-* Developer Guide
-* https://github.com/apache/camel/[GitHub]
-* xref:building.adoc[Building]
+* xref:building.adoc[Building Camel from Source]
