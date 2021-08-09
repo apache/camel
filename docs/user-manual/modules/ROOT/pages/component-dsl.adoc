@@ -29,6 +29,7 @@ In order to explain it better, we can break down the above Java statement into 3
 . `.register(camelContext, "kafka")`: Here we register directly the component under name `kafka` into Camel context, of course you can use any component name you like, just like `addComponent` API. 
 
 == The fluent DSL now provides type safety for parameters
+
 Similar to the Endpoint DSL, uses the meta model, which is extracted from the source using an annotation processor and
 written in various JSON files, to generate a fluent DSL for each component. This fluent DSL provides type safety for parameters.
 It further allows leveraging the Java editor code completion to access the list of available parameters for the each component.

@@ -82,7 +82,6 @@ camel routes without them knowing
 * xref:camelcontext.adoc[CamelContext]
 * xref:clustering.adoc[Clustering and loadbalancing]
 * xref:components::index.adoc[Component]
-* xref:componentconfiguration.adoc[ComponentConfiguration]
 * xref:data-format.adoc[Data Format]
 * xref:debugger.adoc[Debugger]
 * xref:delay-interceptor.adoc[Delay Interceptor]
