@@ -1,8 +1,8 @@
 [[BeanInjection-BeanInjection]]
 = Bean Injection
 
-We support the injection of various resources using @EndpointInject or
-@BeanInject. This can be used to inject
+We support the injection of various resources using `@EndpointInject` or
+`@BeanInject`. This can be used to inject
 
 * xref:endpoint.adoc[Endpoint] instances which can be used for testing
 when used with xref:components::mock-component.adoc[Mock] endpoints; see the
@@ -14,7 +14,7 @@ xref:pojo-producing.adoc[POJO Producing]
 [[BeanInjection-Using-BeanInject]]
 == Using @BeanInject
 
-From *Camel 2.13* onwards you can inject beans (obtained from the
+You can inject beans (obtained from the
 xref:registry.adoc[Registry]) into your beans such as `RouteBuilder`
 classes.
 

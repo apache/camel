@@ -5,6 +5,8 @@ Bean Binding in Camel defines both which methods are invoked and also
 how the xref:{eip-vc}:eips:message.adoc[Message] is converted into the parameters of
 the method when it is invoked.
 
+NOTE: This requires to include `camel-bean` as dependency on the classpath.
+
 [[BeanBinding-Choosingthemethodtoinvoke]]
 == Choosing the method to invoke
 
@@ -14,10 +16,10 @@ can occur in different ways, in the following order of importance:
 * if the message contains the header *CamelBeanMethodName* then that
 method is invoked, converting the body to the type of the method's
 argument.
-** From *Camel 2.8* onwards you can qualify parameter types to select
+** You can qualify parameter types to select
 exactly which method to use among overloads with the same name (see
 below for more details).
-** From *Camel 2.9* onwards you can specify parameter values directly in
+** You can specify parameter values directly in
 the method option (see below for more details).
 * you can explicitly specify the method name in the xref:dsl.adoc[DSL]
 or when using xref:pojo-consuming.adoc[POJO Consuming] or
@@ -36,8 +38,7 @@ error is thrown if a single method cannot be chosen unambiguously.
 * you can also use Exchange as the parameter itself, but then the return
 type must be void.
 * if the bean class is private (or package-private), interface methods
-will be preferred (from *Camel 2.9* onwards) since Camel can't invoke
-class methods on such beans
+will be preferred since Camel can't invoke class methods on such beans
 
 In cases where Camel cannot choose a method to invoke, an
 `AmbiguousMethodCallException` is thrown.
@@ -47,9 +48,8 @@ By default the return value is set on the outbound message body.
 [[BeanBinding-Asynchronousprocessing]]
 == Asynchronous processing
 
-From *Camel 2.18* onwards you can return a CompletionStage
-implementation (e.g. a CompletableFuture) to implement asynchronous
-processing.
+You can return a `CompletionStage` implementation (e.g. a `CompletableFuture`)
+to implement asynchronous processing.
 
 Please be sure to properly complete the CompletionStage with the result
 or exception, including any timeout handling. Exchange processing would
@@ -57,9 +57,9 @@ wait for completion and would not impose any timeouts automatically.
 It's extremely useful to
 monitor `org.apache.camel.spi.InflightRepository` for any hanging messages.
 
-Note that completing with "null" won't set outbody message body to null,
+Note that completing with `"null"` won't set outbody message body to null,
 but would keep message intact. This is useful to support methods that
-don't modify exchange and return CompletableFuture<Void>. To set body to
+don't modify exchange and return `CompletableFuture<Void>`. To set body to
 null, just add Exchange method parameter and directly modify exchange
 messages.
 
@@ -67,14 +67,14 @@ Examples:
 
 Simple asynchronous processor, modifying message body.
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public CompletableFuture<String> doSomethingAsync(String body)
 ----
 
 Composite processor that do not modify exchange
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
  public CompletableFuture<Void> doSomethingAsync(String body) {
      return CompletableFuture.allOf(doA(body), doB(body), doC()); 
@@ -113,7 +113,7 @@ Let's review some examples:
 Below is a simple method with a body binding. Camel will bind the IN
 body to the `body` parameter and convert it to a `String`.
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public String doSomething(String body)
 ----
@@ -121,21 +121,21 @@ public String doSomething(String body)
 In the following sample we got one of the automatically-bound types as
 well - for instance, a `Registry` that we can use to lookup beans.
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public String doSomething(String body, Registry registry) 
 ----
 
 We can use xref:exchange.adoc[Exchange] as well:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public String doSomething(String body, Exchange exchange) 
 ----
 
 You can also have multiple types:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public String doSomething(String body, Exchange exchange, TypeConverter converter) 
 ----
@@ -143,7 +143,7 @@ public String doSomething(String body, Exchange exchange, TypeConverter converte
 And imagine you use a xref:components::bean-component.adoc[Pojo] to handle a given custom
 exception `InvalidOrderException` - we can then bind that as well:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public String badOrder(String body, InvalidOrderException invalid) 
 ----
@@ -170,7 +170,7 @@ the xref:{eip-vc}:eips:message.adoc[Message]
 
 For example, a xref:{eip-vc}:eips:bean-eip.adoc[Bean] such as:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public class Bar {
     public String doSomething(String body) {
@@ -183,7 +183,7 @@ Or the Exchange example. Notice that the return type must be *void* when
 there is only a single parameter of the type
 `org.apache.camel.Exchange`:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
  public class Bar {
      public void doSomething(Exchange exchange) {
@@ -195,14 +195,14 @@ there is only a single parameter of the type
 [[BeanBinding-Handler]]
 === @Handler
 
-You can mark a method in your bean with the @Handler annotation to
+You can mark a method in your bean with the `@Handler` annotation to
 indicate that this method should be used for xref:bean-binding.adoc[Bean
 Binding].
 This has an advantage as you need not specify a method name in the Camel
 route, and therefore do not run into problems after renaming the method
 in an IDE that can't find all its references.
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public class Bar {
     @Handler 
@@ -216,8 +216,6 @@ public class Bar {
 [[BeanBinding-Parameterbindingusingmethodoption]]
 == Parameter binding using method option
 
-*Since Camel 2.9*
-
 Camel uses the following rules to determine if it's a parameter value in
 the method option
 
@@ -230,13 +228,13 @@ means you can use, e.g., body, header.foo and other
 xref:components:languages:simple-language.adoc[Simple] tokens. Notice the tokens must be enclosed with
 ${ }.
 
-Any other value is consider to be a type declaration instead - see the
+Any other value is considered to be a type declaration instead - see the
 next section about specifying types for overloaded methods.
 
 When invoking a xref:{eip-vc}:eips:bean-eip.adoc[Bean] you can instruct Camel to invoke a
 specific method by providing the method name:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .bean(OrderService.class, "doSomething")
 ----
@@ -245,39 +243,39 @@ Here we tell Camel to invoke the doSomething method - Camel handles the
 parameters' binding. Now suppose the method has 2 parameters, and the
 2nd parameter is a boolean where we want to pass in a true value:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public void doSomething(String payload, boolean highPriority) {
     ... 
 }
 ----
 
-This is now possible in *Camel 2.9* onwards:
+This can be done as follows:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .bean(OrderService.class, "doSomething(*, true)") 
 ----
 
 In the example above, we defined the first parameter using the wild card
-symbol *, which tells Camel to bind this parameter to any type, and let
+symbol `*`, which tells Camel to bind this parameter to any type, and let
 Camel figure this out. The 2nd parameter has a fixed value of `true`.
 Instead of the wildcard symbol we can instruct Camel to use the message
 body as shown:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .bean(OrderService.class, "doSomething(${body}, true)") 
 ----
 
 The syntax of the parameters is using the xref:components:languages:simple-language.adoc[Simple]
-expression language so we have to use ${ } placeholders in the body to
+language so we have to use `${ }` placeholders in the body to
 refer to the message body.
 
 If you want to pass in a `null` value, then you can explicit define this
 in the method option as shown below:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .to("bean:orderService?method=doSomething(null, true)")
 ----
@@ -288,7 +286,7 @@ a `null` value.
 Besides the message body, you can pass in the message headers as a
 `java.util.Map`:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .bean(OrderService.class, "doSomethingWithHeaders(${body}, ${headers})") 
 ----
@@ -296,20 +294,19 @@ Besides the message body, you can pass in the message headers as a
 You can also pass in other fixed values besides booleans. For example,
 you can pass in a String and an integer:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .bean(MyBean.class, "echo('World', 5)") 
 ----
 
 In the example above, we invoke the echo method with two parameters. The
 first has the content 'World' (without quotes), and the 2nd has the
-value of 5.
-Camel will automatically convert these values to the parameters' types.
+value of 5. Camel will automatically convert these values to the parameters' types.
 
 Having the power of the xref:components:languages:simple-language.adoc[Simple] language allows us to
 bind to message headers and other values such as:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .bean(OrderService.class, "doSomething(${body}, ${header.high})") 
 ----
@@ -319,7 +316,7 @@ expression language. Now suppose the message body is an object which has
 a method named `asXml`. To invoke the `asXml` method we can do as
 follows:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .bean(OrderService.class, "doSomething(${body.asXml}, ${header.high})") 
 ----
@@ -327,7 +324,7 @@ follows:
 Instead of using `.bean` as shown in the examples above, you may want to
 use `.to` instead as shown:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .to("bean:orderService?method=doSomething(${body.asXml}, ${header.high})") 
 ----
@@ -335,15 +332,13 @@ use `.to` instead as shown:
 [[BeanBinding-Usingtypequalifierstoselectamongoverloadedmethods]]
 == Using type qualifiers to select among overloaded methods
 
-*Since Camel 2.8*
-
 If you have a xref:{eip-vc}:eips:bean-eip.adoc[Bean] with overloaded methods, you can now
 specify parameter types in the method name so Camel can match the method
 you intend to use.
 
 Given the following bean:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
  from("direct:start")
     .bean(MyBean.class, "hello(String)")
@@ -354,7 +349,7 @@ Then the `MyBean` has 2 overloaded methods with the names `hello` and
 `times`. So if we want to use the method which has 2 parameters we can
 do as follows in the Camel route:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 from("direct:start")
     .bean(MyBean.class, "hello(String,String)")
@@ -364,7 +359,7 @@ from("direct:start")
 We can also use a `*` as wildcard so we can just say we want to execute
 the method with 2 parameters we do
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
  from("direct:start")
     .bean(MyBean.class, "hello(*,*)")
@@ -377,7 +372,7 @@ match using the FQN, then specify the FQN type and Camel will leverage
 that. So if you have a `com.foo.MyOrder` and you want to match against
 the FQN, and *not* the simple name "MyOrder", then follow this example:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 .bean(OrderService.class, "doSomething(com.foo.MyOrder)")
 ----
@@ -386,9 +381,9 @@ Camel currently only supports either specifying parameter binding or
 type per parameter in the method name option. You *cannot* specify both
 at the same time, such as
 
-[source,syntaxhighlighter-pre]
+[source,text]
 ----
- doSomething(com.foo.MyOrder ${body}, boolean ${header.high})
+doSomething(com.foo.MyOrder ${body}, boolean ${header.high})
 ----
 
 This may change in the future.
