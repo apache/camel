@@ -81,7 +81,6 @@ camel routes without them knowing
 * xref:batch-consumer.adoc[Batch Consumer]
 * xref:browsable-endpoint.adoc[BrowsableEndpoint]
 * xref:camelcontext.adoc[CamelContext]
-* xref:camel-core.adoc[Camel Core]
 * xref:cep.adoc[CEP]
 * xref:clustering.adoc[Clustering and loadbalancing]
 * xref:components::index.adoc[Component]

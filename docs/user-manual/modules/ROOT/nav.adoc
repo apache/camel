@@ -41,7 +41,6 @@
 ** xref:bean-binding.adoc[Bean Binding]
 ** xref:bean-integration.adoc[Bean Integration]
 ** xref:browsable-endpoint.adoc[BrowsableEndpoint]
-** xref:camel-core.adoc[Core]
 ** xref:camelcontext.adoc[Context]
 ** xref:clustering.adoc[Clustering and loadbalancing]
 ** xref:cep.adoc[Complex Event Processing]
