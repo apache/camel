@@ -1,7 +1,7 @@
 [[CamelJBang]]
 = Camel JBang
 
-A JBang-based Camel app for searching for kamelets, components, languages,  running routes. This component is available from Camel 3.12 and newer versions.
+A JBang-based Camel app for searching for kamelets, components, languages,  running routes. This component is available from *Camel 3.12* and newer versions.
 
 
 [[CamelJBang-Installation]]
@@ -9,9 +9,10 @@ A JBang-based Camel app for searching for kamelets, components, languages,  runn
 
 JBang makes it easy for us by providing an installation feature that works with Github. If you have JBang installed on your system, then you can run the following command to install CamelJBang:
 
-```
+[source,bash]
+----
 jbang app install CamelJBang@apache/camel
-```
+----
 
 
 [[CamelJBang-Usage]]
@@ -19,9 +20,10 @@ jbang app install CamelJBang@apache/camel
 
 The CamelJBang supports multiple commands. Running the command below, will print all of them:
 
-```
+[source,bash]
+----
 CamelJBang.java [command]
-```
+----
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
@@ -30,21 +32,24 @@ All the commands support the `--help` and will display the appropriate help if t
 
 You can use the CLI to search for kamelets, components, languages and miscelaneous components (others). Running the following command will present a list of items that can be searched:
 
-```
+[source,bash]
+----
 CamelJBang.java search --help
-```
+----
 
 For example, to search for kamelets named `jms`, you can use:
 
-```
+[source,bash]
+----
 CamelJBang.java search kamelets --search-term=jms
-```
+----
 
 To list all the kamelets, just run the command without any search term:
 
-```
+[source,bash]
+----
 CamelJBang.java search kamelets
-```
+----
 
 
 The same behavior also works for all the other search commands. The table below lists all search commands available at the moment:
@@ -55,10 +60,8 @@ The same behavior also works for all the other search commands. The table below 
 |kamelets
 |search for kamelets
 
-
 |components
 |search for components
-
 
 |languages
 |search for languages
@@ -76,9 +79,10 @@ The init sub-command can be used to simplify creating Kamelets. Through this com
 
 To bootstrap the Kamelet run:
 
-```
+[source,bash]
+----
 CamelJBang init kamelet --bootstrap
-```
+----
 
 This will create a sub-directory called `work` in the current directory with a properties file named `init-template.properties` inside it.
 
@@ -86,9 +90,10 @@ The keys of the properties file are commented with the details about what need t
 
 After you have filled the values, you can generate the Kamelet using:
 
-```
+[source,bash]
+----
 CamelJBang init kamelet --properties-path work/init-template.properties
-```
+----
 
 Running this command will create a new file in the `work` directory. The name of the generated file is determined by the `kameletMetadataName` property in the properties file. As such, parsing the default properties file would generate a file named `my-sample-sink.kamelet.yaml` in the directory.
 
@@ -102,7 +107,8 @@ At the moment it is possible to run YAML-based routes which also refer to Kamele
 
 In order to do so, write a YAML-based file with the `route`, the `steps` and the `to` destination for the route. The following example, shows a route that uses the Timer Source Kamelet to produce messages every second. The body of the messages will be logged to the standard output. Subsequently, they will be sent to a AMQP 1.0 compliant broker using the JMS AMQ 1.0 Sink Kamelet.
 
-```
+[source,yaml]
+----
 - route:
     from:
       uri: "kamelet:timer-source"
@@ -116,12 +122,15 @@ In order to do so, write a YAML-based file with the `route`, the `steps` and the
           parameters:
             remoteURI: amqp://localhost:61616
             destinationName: test-queue
-```
+----
 
 Execute the following command to run this route:
 
-```
+[source,bash]
+----
 CamelJBang run jms-amqp-10-sink-binding.yaml
-```
+----
 
-*Note*: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
+NOTE: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
+
+
