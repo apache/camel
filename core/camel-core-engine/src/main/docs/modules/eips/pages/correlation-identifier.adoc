@@ -15,9 +15,8 @@ conversation (or business process).
 
 image::eip/CorrelationIdentifierSolution.gif[image]
 
-The use of a Correlation Identifier is key to working with the
-xref:latest@manual:ROOT:bam.adoc[Camel Business Activity Monitoring Framework] and can also
-be highly useful when testing with simulation or canned data such as
+The use of a Correlation Identifier is key to working with xref:components::tracing.adoc[Tracing]
+and be useful when testing with simulation or canned data such as
 with the xref:components::mock-component.adoc[Mock testing framework]
 
 Some xref:enterprise-integration-patterns.adoc[EIP] patterns will spin off a sub message, and in

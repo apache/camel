@@ -37,7 +37,6 @@
 ** xref:asynchronous-routing-engine.adoc[Asynchronous Routing Engine]
 ** xref:backlogdebugger.adoc[Backlog debugger]
 ** xref:backlog-tracer.adoc[Backlog Tracer]
-** xref:bam.adoc[Business Activity Monitoring]
 ** xref:batch-consumer.adoc[Batch Consumer]
 ** xref:bean-binding.adoc[Bean Binding]
 ** xref:bean-integration.adoc[Bean Integration]
