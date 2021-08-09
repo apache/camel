@@ -24,7 +24,6 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsSelectorOptionTest extends JmsTestSupport {
 
@@ -52,25 +51,16 @@ public class JmsSelectorOptionTest extends JmsTestSupport {
     }
 
     @Test
-    public void testConsumerTemplate() throws Exception {
+    public void testConsumerTemplate() {
         template.sendBodyAndHeader("sjms:queue:consumer", "Message1", "SIZE_NUMBER", 1505);
         template.sendBodyAndHeader("sjms:queue:consumer", "Message3", "SIZE_NUMBER", 1300);
         template.sendBodyAndHeader("sjms:queue:consumer", "Message2", "SIZE_NUMBER", 1600);
 
-        // process every exchange which is ready. If no exchange is left break
-        // the loop
-        while (true) {
-            Exchange ex = consumer.receiveNoWait("sjms:queue:consumer?messageSelector=SIZE_NUMBER<1500");
-            if (ex != null) {
-                Message message = ex.getIn();
-                int size = message.getHeader("SIZE_NUMBER", int.class);
-                assertTrue(size < 1500, "The message header SIZE_NUMBER should be less than 1500");
-                assertEquals("Message3", message.getBody(), "The message body is wrong");
-            } else {
-                break;
-            }
-        }
-
+        Exchange ex = consumer.receive("sjms:queue:consumer?messageSelector=SIZE_NUMBER<1500", 5000L);
+        Message message = ex.getIn();
+        int size = message.getHeader("SIZE_NUMBER", int.class);
+        assertEquals(1300, size, "The message header SIZE_NUMBER should be less than 1500");
+        assertEquals("Message3", message.getBody(), "The message body is wrong");
     }
 
     @Override
