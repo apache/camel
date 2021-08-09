@@ -45,7 +45,7 @@ In such example, note that you need to set `usingIterator=true`
 
 [source,java]
 -----------------------------------------------------------------------
-from("direct:unmarshal").unmarshal(asn1).split(body(Iterator.class)).streaming().to("mock:unmarshal");
+from("direct:unmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().to("mock:unmarshal");
 -----------------------------------------------------------------------
 
 In the last example we unmarshal BER file payload to plain old Java Objects using Split EIP. The reason for applying Split EIP is already mentioned in the previous example. Please note and keep in mind that reason. In such example we also need to set the fully qualified name of the class or <YourObject>.class reference through data format.
@@ -58,7 +58,7 @@ The nice thing about this example, you will get POJO instance at the mock endpoi
 from("direct:unmarshaldsl")
          .unmarshal()
          .asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr")
-         .split(body(Iterator.class)).streaming()
+         .split(bodyAs(Iterator.class)).streaming()
 .to("mock:unmarshaldsl");
 -----------------------------------------------------------------------
 
