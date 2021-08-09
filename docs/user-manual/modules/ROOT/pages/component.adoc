@@ -3,15 +3,34 @@
 
 A Component is essentially a factory of xref:endpoint.adoc[Endpoint] instances.
 
-You can explicitly configure Component instances
-and add them to a xref:camelcontext.adoc[CamelContext] in an IoC
-container like Spring, or they can be auto-discovered using
-xref:uris.adoc[URIs].
+== Configuring Component Options
 
-[[Component-ComponentsIncluded]]
-== Components Included
+Camel components are configured on two separate levels:
 
-Camel includes the following Component implementations via xref:uris.adoc[URIs].
+- component level
+- endpoint level
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
 
 [NOTE]
 ====
