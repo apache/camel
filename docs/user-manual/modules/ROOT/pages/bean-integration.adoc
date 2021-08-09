@@ -1,7 +1,7 @@
 [[BeanIntegration-BeanIntegration]]
 = Bean Integration
 
-Camel supports the integration of beans and POJOs in a number of ways
+Camel supports the integration of beans and POJOs in a number of ways.
 
 [[BeanIntegration-Annotations]]
 == Annotations
@@ -20,12 +20,15 @@ The following annotations is supported and inject by Camel's
 |Annotation |Description
 |`@EndpointInject` |To inject an endpoint, see more details at xref:pojo-producing.adoc[POJO Producing].
 |`@BeanInject` |To inject a bean obtained from the Registry. See xref:bean-injection.adoc[Bean Injection].
+|`@BeanConfigInject` |To inject a configuration bean obtained from the Registry. The bean is a POJO that represents
+a set of configuration options, which is automatic configured with values loaded via Camel xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders].
 |`@PropertyInject` |To inject a value using property placeholder.
 |`@Produce` |To inject a producer to send message to an endpoint. See xref:pojo-producing.adoc[POJO Producing].
 |`@Consume` |To inject a consumer on a method. See xref:pojo-consuming.adoc[POJO Consuming].
 |`@BindToRegistry` |Used for binding a bean to the registry.
   If no name is specified then the bean will have its name auto computed based on the class name,
  field name, or method name where the annotation is configured.
+|`@DeferredContextBinding` | Used to indicate that if the target type is `CamelContextAware` then the `CamelContext` is deferred and injected later; after the bootstrap of Camel so the `CamelContext` is ready for use.
 |=======================================================================
 
 See more details at:
@@ -50,29 +53,6 @@ for how to use the annotations for routing and messaging.
 
 The xref:components::bean-component.adoc[Bean] component allows one to invoke a particular
 method. Alternately the xref:components::bean-component.adoc[Bean] component supports the
-creation of a proxy via `ProxyHelper` to a Java interface; which allows to hide sending data
+creation of a proxy via `ProxyHelper` to a Java interface; which allows hiding sending data
 to the endpoint via an interface. See more at xref:hiding-middleware.adoc[Hiding Middleware].
 
-[[BeanIntegration-SpringRemoting]]
-== Spring Remoting
-
-We support a Spring Remoting provider which
-uses Camel as the underlying transport mechanism. The nice thing about
-this approach is we can use any of the Camel transport
-Components to communicate between beans. It also
-means we can use Content Based Router
-and the other xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
-Integration Patterns] in between the beans; in particular we can use
-Message Translator to be able to convert
-what the on-the-wire messages look like in addition to adding various
-headers and so forth.
-
-*Bean binding*
-
-Whenever Camel invokes a bean method via one of the above methods
-(xref:components::bean-component.adoc[Bean] component, or POJO Consuming) then the
-*Bean Binding* mechanism is used to figure out
-what method to use (if it is not explicit) and how to bind the
-Message to the parameters possibly using the
-Parameter Binding Annotations
-or using a method name option.

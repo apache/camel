@@ -42,6 +42,31 @@
 
     <build>
         <plugins>
+            <!-- we want to copy some adoc files from tooling -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-maven-plugin-doc</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/user-manual/modules/ROOT/pages</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../tooling/maven/camel-maven-plugin/src/main/docs</directory>
+                                </resource>
+                                <resource>
+                                    <directory>../catalog/camel-report-maven-plugin/src/main/docs</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
