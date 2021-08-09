@@ -40,7 +40,6 @@
 ** xref:batch-consumer.adoc[Batch Consumer]
 ** xref:bean-binding.adoc[Bean Binding]
 ** xref:bean-integration.adoc[Bean Integration]
-** xref:binding.adoc[Binding]
 ** xref:browsable-endpoint.adoc[BrowsableEndpoint]
 ** xref:camel-core.adoc[Core]
 ** xref:camelcontext.adoc[Context]

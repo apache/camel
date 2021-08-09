@@ -79,7 +79,6 @@ camel routes without them knowing
 * xref:backlogdebugger.adoc[BacklogDebugger]
 * xref:backlog-tracer.adoc[BacklogTracer]
 * xref:batch-consumer.adoc[Batch Consumer]
-* xref:binding.adoc[Binding]
 * xref:browsable-endpoint.adoc[BrowsableEndpoint]
 * xref:camelcontext.adoc[CamelContext]
 * xref:camel-core.adoc[Camel Core]
