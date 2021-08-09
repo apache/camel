@@ -26,9 +26,9 @@ or
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Consumer.html[Consumer]
 on an Endpoint to exchange messages with it.
 
-The DSL makes heavy use of pluggable
-Languages to create an
-Expression or Predicate to
+The xref:dsl.adoc[Camel Domain Specific Language] makes heavy use of pluggable
+xref:languages.adoc[Languages] to create an
+xref:expression.adoc[Expression] or xref:predicate.adoc[Predicate] to
 make a truly powerful DSL which is extensible to the most suitable
 language depending on your needs. Many of the Languages 
 are also supported as

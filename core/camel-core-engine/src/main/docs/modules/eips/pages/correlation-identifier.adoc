@@ -15,7 +15,7 @@ conversation (or business process).
 
 image::eip/CorrelationIdentifierSolution.gif[image]
 
-The use of a Correlation Identifier is key to working with xref:components::tracing.adoc[Tracing]
+The use of a Correlation Identifier is key to working with xref:components:others:tracing.adoc[Tracing]
 and be useful when testing with simulation or canned data such as
 with the xref:components::mock-component.adoc[Mock testing framework]
 
