@@ -32,7 +32,9 @@
     <name>Camel :: Huawei Cloud :: Parent</name>
     <description>Camel Huawei Cloud parent</description>
 
+    
     <modules>
+		<module>camel-huaweicloud-common</module>
         <module>camel-huaweicloud-functiongraph</module>
         <module>camel-huaweicloud-iam</module>
 		<module>camel-huaweicloud-obs</module>

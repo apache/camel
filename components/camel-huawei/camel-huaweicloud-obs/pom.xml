@@ -40,6 +40,12 @@
       <artifactId>camel-support</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-huaweicloud-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- HuaweiCloud OBS SDK -->
     <dependency>
       <groupId>com.huaweicloud</groupId>

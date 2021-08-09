@@ -67,7 +67,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
     private static final String[] EXCLUDE_DOC_FILES
             = {
                     "camel-core-model", "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common",
-                    "camel-debezium-common", "camel-infinispan-common", "camel-vertx-common" };
+                    "camel-debezium-common", "camel-infinispan-common", "camel-vertx-common",
+                    "camel-huaweicloud-common" };
 
     private static final int UNUSED_LABELS_WARN = 15;
 

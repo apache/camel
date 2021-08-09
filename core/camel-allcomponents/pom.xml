@@ -615,6 +615,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-huaweicloud-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-functiongraph</artifactId>
 		</dependency>
 		<dependency>

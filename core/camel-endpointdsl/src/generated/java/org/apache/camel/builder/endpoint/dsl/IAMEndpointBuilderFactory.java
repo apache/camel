@@ -248,7 +248,7 @@ public interface IAMEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.iam.models.ServiceKeys&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -263,7 +263,7 @@ public interface IAMEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.iam.models.ServiceKeys&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
          * 
          * Group: producer
          * 

@@ -46,7 +46,7 @@ public class FunctionGraphEndpointConfigurer extends PropertyConfigurerSupport i
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "servicekeys":
-        case "serviceKeys": target.setServiceKeys(property(camelContext, org.apache.camel.models.ServiceKeys.class, value)); return true;
+        case "serviceKeys": target.setServiceKeys(property(camelContext, org.apache.camel.component.huaweicloud.common.models.ServiceKeys.class, value)); return true;
         default: return false;
         }
     }
@@ -79,7 +79,7 @@ public class FunctionGraphEndpointConfigurer extends PropertyConfigurerSupport i
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "servicekeys":
-        case "serviceKeys": return org.apache.camel.models.ServiceKeys.class;
+        case "serviceKeys": return org.apache.camel.component.huaweicloud.common.models.ServiceKeys.class;
         default: return null;
         }
     }

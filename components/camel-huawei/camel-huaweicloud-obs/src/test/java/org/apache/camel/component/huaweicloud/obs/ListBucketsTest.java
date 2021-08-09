@@ -27,7 +27,7 @@ import com.obs.services.model.Owner;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.huaweicloud.obs.models.ServiceKeys;
+import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
