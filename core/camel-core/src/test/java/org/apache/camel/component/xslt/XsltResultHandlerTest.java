@@ -16,21 +16,25 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XsltEndpointResultHandlerFactoryTest extends CamelTestSupport {
+public class XsltResultHandlerTest extends TestSupport {
 
     @Test
     public void testResultHandlerFactory() throws Exception {
+        RouteBuilder builder = createRouteBuilder();
+        CamelContext context = new DefaultCamelContext();
         ResultHandlerFactory factory = new DomResultHandlerFactory();
         context.getRegistry().bind("factory", factory);
-        configureRoute();
+        context.addRoutes(builder);
         context.start();
 
         XsltEndpoint endpoint = null;
@@ -48,15 +52,12 @@ public class XsltEndpointResultHandlerFactoryTest extends CamelTestSupport {
     }
 
 
-    private void configureRoute() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:start")
-                  .to("xslt:org/apache/camel/component/xslt/transform.xsl?output=bytes&resultHandlerFactory=#factory");
-//                  .to("mock:result");
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:start").to("xslt:org/apache/camel/component/xslt/example.xsl?output=bytes&resultHandlerFactory=#factory");
             }
-        });
+        };
     }
 
 }
