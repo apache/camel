@@ -132,10 +132,11 @@ For our simple example, the configuration looks like the following.
 == Support for Dozer in Camel
 
 Camel provides a simple mechanism to integrate Dozer Mappers with it's
-own powerful http://camel.apache.org/type-converter.html[Type
-Conversion] framework. Its configured by creating an instance of
-`DozerTypeConverterLoader` providing it the camel context and an
-optional Dozer mapper. If no mapper is supplied, Camel's registry will
+own powerful xref:type-converter.adoc[Type Conversion] framework.
+Its configured by creating an instance of `DozerTypeConverterLoader`
+providing it the camel context and an optional Dozer mapper.
+
+If no mapper is supplied, Camel's registry will
 be searched for suitable instances. The loader will query the Dozer
 Mapper for the types it converts and register them with Camel's
 type conversion framework to be handled by the mapper.
@@ -159,7 +160,7 @@ Mapper mapper = DozerBeanMapperBuilder.create()
 new DozerTypeConverterLoader(camelContext, mapper);
 -----------------------------------------------------------------------------------------
 
-Or in Spring:
+Or in Spring XML:
 
 [source,xml]
 --------------------------------------------------------------------------------------------------
@@ -180,31 +181,6 @@ Or in Spring:
   ...
 </camelContext>
 --------------------------------------------------------------------------------------------------
-
-Or in OSGi Blueprints:
-
-[source,xml]
---------------------------------------------------------------------------------------------------
-<bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader">
-  <argument index="0" ref="myCamel"/>
-  <argument index="1" ref="mapperConfiguration"/>
-</bean>
-
-<bean id="mapperConfiguration" class="org.apache.camel.converter.dozer.DozerBeanMapperConfiguration">
-  <property name="mappingFiles">
-    <list>
-      <value>mapping.xml</value>
-    </list>
-  </property>
-</bean>
- 
-<camelContext id="myCamel" xmlns="http://camel.apache.org/schema/blueprint">
-  ...
-</camelContext>
---------------------------------------------------------------------------------------------------
-
-You should have noticed that the configuration for Spring or OSGi Blueprints
-is the same, except for the 'xmlns' for the 'camelContext'.
 
 Now, where necessary, Camel will use Dozer to do conversions; in our
 case between the new domain and legacy Customer types e.g.

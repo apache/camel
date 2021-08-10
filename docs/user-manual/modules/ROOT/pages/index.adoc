@@ -83,7 +83,6 @@ camel routes without them knowing
 * xref:data-format.adoc[Data Format]
 * xref:debugger.adoc[Debugger]
 * xref:delay-interceptor.adoc[Delayer]
-* xref:dependency-injection.adoc[Dependency Injection]
 * xref:dozer-type-conversion.adoc[Dozer Type Conversion]
 * xref:dsl.adoc[DSL]
 * xref:endpoint.adoc[Endpoint]
