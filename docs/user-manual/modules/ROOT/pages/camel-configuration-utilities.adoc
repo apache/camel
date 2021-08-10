@@ -35,7 +35,7 @@ http://download.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefG
 that is used by non-blocking IO to support TLS.
 
 The JSSE configuration
-utility provides an easy to use builder for configuring these JSSE
+utility provides an easy-to-use builder for configuring these JSSE
 components, among others, in a manner that allows you to provide all
 configuration options up front during the initialization of your
 application such that you don't have to customize library code or dig

@@ -1,60 +1,15 @@
 [[DataFormat-DataFormat]]
 = Data Format
 
-Camel supports a pluggable DataFormat to allow messages to be marshalled
+Camel supports a pluggable `DataFormat` to allow messages to be marshalled
 to and from binary or text formats to support a kind of
 xref:{eip-vc}:eips:message-translator.adoc[Message Translator].
 
-The following data formats are currently supported:
+== Supported data formats
 
-* Object marshalling
-** xref:components:dataformats:avro-dataformat.adoc[Avro]
-** xref:json.adoc[JSON]
-** xref:components:dataformats:protobuf-dataformat.adoc[Protobuf]
-** xref:components:dataformats:yaml-snakeyaml-dataformat.adoc[YAML]
+There are more than 40 different xref:latest@components:dataformats:index.adoc[Data Formats] that
+supports formats such as XML, CSV, JSon, YAML, Avro, Protobuf, and many more.
 
-* Object/XML marshalling
-** xref:components:dataformats:jaxb-dataformat.adoc[JAXB]
-** xref:components:dataformats:xstream-dataformat.adoc[XStream]
-** xref:components:dataformats:jacksonxml-dataformat.adoc[Jackson XML]
-
-* Flat data structure marshalling
-** xref:components:dataformats:beanio-dataformat.adoc[BeanIO]
-** xref:components:dataformats:bindy-dataformat.adoc[Bindy]
-** xref:components:dataformats:csv-dataformat.adoc[CSV]
-** xref:components:dataformats:flatpack-dataformat.adoc[Flatpack DataFormat]
-** uniVocity DataFormats xref:components:dataformats:univocity-csv-dataformat.adoc[CSV] / xref:components:dataformats:univocity-tsv-dataformat.adoc[TSV] / xref:components:dataformats:univocity-fixed-dataformat.adoc[Fixed Length]
-
-* Domain specific marshalling
-** xref:components:dataformats:hl7-dataformat.adoc[HL7 DataFormat]
-
-* Compression
-** xref:components:dataformats:zipfile-dataformat.adoc[Zip File DataFormat]
-** xref:components:dataformats:lzf-dataformat.adoc[LZF Data Format]
-
-* Security
-** xref:components::crypto-component.adoc[Crypto]
-** xref:components::crypto-component.adoc[PGP]
-** xref:components:dataformats:secureXML-dataformat.adoc[XMLSecurity DataFormat]
-
-* Misc.
-** xref:components:dataformats:base64-dataformat.adoc[Base64]
-** xref:components:dataformats:mime-multipart-dataformat.adoc[MIME-Multipart]
-** xref:components:dataformats:rss-dataformat.adoc[RSS]
-** xref:components:dataformats:syslog-dataformat.adoc[Syslog]
-** xref:components:dataformats:ical-dataformat.adoc[ICal]
-** xref:components:dataformats:barcode-dataformat.adoc[Barcode] -- to read and generate barcodes
-(QR-Code, PDF417, ...)
-
-And related is the following:
-
-* xref:components::dataformat-component.adoc[DataFormat Component] for working with
-  Data Formats as if it was a regular xref:component.adoc[Component]
-  supporting xref:endpoint.adoc[Endpoints] and xref:uris.adoc[URIs].
-* xref:dozer-type-conversion.adoc[Dozer Type Conversion] using Dozer for
-  type converting POJOs
-
-[[DataFormat-Unmarshalling]]
 == Unmarshalling
 
 If you receive a message from one of the Camel
@@ -83,18 +38,6 @@ reference to a data format which can then be defined in your
 xref:registry.adoc[Registry] such as via your xref:spring.adoc[Spring]
 XML file.
 
-You can also use the DSL itself to define the data format as you use it.
-For example the following uses Java serialization to unmarshal a binary
-file then send it as an ObjectMessage to xref:components::activemq-component.adoc[ActiveMQ]
-
-[source,java]
-----
-from("file://foo/bar").
-  unmarshal().serialization().
-  to("activemq:Some.Queue");
-----
-
-[[DataFormat-Marshalling]]
 == Marshalling
 
 Marshalling is the opposite of unmarshalling, where a bean is marshalled
@@ -105,20 +48,18 @@ DataFormat instance, you can configure the DataFormat dynamically using
 the DSL or you can refer to a named instance of the format in the
 xref:registry.adoc[Registry].
 
-The following example unmarshals via serialization then marshals using a
+The following example marshals using a
 named JAXB data format to perform a kind of
 xref:{eip-vc}:eips:message-translator.adoc[Message Translator]:
 
 [source,java]
 ----
 from("file://foo/bar").
-  unmarshal().serialization(). 
   marshal("jaxb").
   to("activemq:Some.Queue");
 ----
 
-[[DataFormat-UsingSpringXML]]
-== Using Spring XML
+== Example using Spring XML
 
 This example shows how to configure the data type just once and reuse it
 on multiple routes:
@@ -132,12 +73,16 @@ on multiple routes:
 
   <route>
     <from uri="direct:start"/>
-    <marshal ref="myJaxb"/>
+    <marshal>
+        <custom ref="myJaxb"/>
+    </marshal>
     <to uri="direct:marshalled"/>
   </route>
   <route>
     <from uri="direct:marshalled"/>
-    <unmarshal ref="myJaxb"/>
+    <unmarshal>
+        <custom ref="myJaxb"/>
+    </unmarshal>
     <to uri="mock:result"/>
   </route>
 
