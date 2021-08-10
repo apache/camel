@@ -1,45 +1,17 @@
 [[Debugger-Debugger]]
 = Debugger
 
-Camel Debugger is much related to
-Tracer, in fact they are sisters. Debugger is a
-enhanced tracer with a debugger framework so that tooling can be
-developed to easily monitor Camel routes, trace messages and set
-breakpoints at points in a route etc.
-
-TIP: There is also a BacklogDebugger which allows
-to debug from JMX, and 3rd party tooling.
-
-[[Debugger-AbouttheDebugger]]
-== About the Debugger
+The Camel Debugger is intended for 3rd party tooling to make it possible to
+debug routes, trace messages and to use breakpoints with the EIP patterns in the Camel routes.
 
 The Debugger allows tooling or the likes to attach breakpoints which is
 being invoked when Exchanges is being routed.
 
-[[Debugger-Defaultimplementation]]
-== Default implementation
-
-Camel provides a default implementation
-`org.apache.camel.impl.DefaultDebugger` which you can set on the
-`CamelContext` using the `setDebugger` method. +
- Likewise you can get hold of the Debugger using the
-`getDebugger` method on `CamelContext`.
-
-The `org.apache.camel.spi.Debugger` has methods to attach and remove
-breakpoints. And to suspend/resume all breakpoints etc. +
- You can also attach a condition to the breakpoint so it only reacts if
-the condition matches.
-
-[[Debugger-EasilydebuggingCamelroutesfromcamel-test]]
-== Easily debugging Camel routes from `camel-test`
+== Debugging Camel routes from `camel-test`
 
 If you are developing unit tests using the `camel-test` component, then
-the Debugger comes out of the box. +
- From *Camel 2.9* onwards you would need to explicit enable the
-debugger, by overriding `isUseDebugger()` method and return `true`.
-
-[[Debugger-Example]]
-=== Example
+the Debugger is available if you turn it on via overriding the `isUseDebugger()`
+method and return `true`.
 
 In this unit test
 
@@ -101,9 +73,27 @@ the route.
 
 The screenshot below shows the Debugger in action.
 The IDE (IDEA) has hit the breakpoint and we can inspect the
-parameters. +
- Notice how we can see that the message is to be send to the "mock:a"
+parameters. Notice how we can see that the message is to be send to the "mock:a"
 endpoint.
 
 image::debug.png[image]
+
+== Implementing a custom debugger
+
+The debugger API is defined in `org.apache.camel.spi.Debugger`.
+This API has methods to attach and remove
+breakpoints. And to suspend/resume all breakpoints etc.
+You can also attach a condition to the breakpoint so it only reacts if
+the condition matches.
+
+Camel provides a base implementation `org.apache.camel.impl.DefaultDebugger`,
+which can be used to extend for custom implementations.
+
+== JMX debugger
+
+There is also a `BacklogDebugger` which allows to debug from JMX,
+and some 3rd party tooling such as https://hawt.io/[hawtio] uses this for its
+web based debugging functionality.
+
+Camel requires to have `camel-management` JAR on the classpath for having JMX enabled.
 
