@@ -17,22 +17,23 @@
 package org.apache.camel.component.xslt;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XsltEndpointResultHandlerFactoryTest extends CamelSpringTestSupport {
+public class XsltEndpointResultHandlerFactoryTest extends CamelTestSupport {
 
     @Test
-    public void testResultHandlerFactory() {
-        ResultHandlerFactory factory = context.getRegistry().lookupByNameAndType("factory", ResultHandlerFactory.class);
+    public void testResultHandlerFactory() throws Exception {
+        ResultHandlerFactory factory = new DomResultHandlerFactory();
+        context.getRegistry().bind("factory", factory);
+        configureRoute();
+        context.start();
+
         XsltEndpoint endpoint = null;
-
-        assertNotNull(factory);
-
         for (Endpoint ep : context.getEndpoints()) {
             if (ep instanceof XsltEndpoint) {
                 endpoint = (XsltEndpoint) ep;
@@ -46,8 +47,16 @@ public class XsltEndpointResultHandlerFactoryTest extends CamelSpringTestSupport
         assertEquals(factory, endpoint.getXslt().getResultHandlerFactory());
     }
 
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return newAppContext("XsltEndpointResultHandlerFactoryTest.xml");
+
+    private void configureRoute() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                  .to("xslt:org/apache/camel/component/xslt/transform.xsl?output=bytes&resultHandlerFactory=#factory");
+//                  .to("mock:result");
+            }
+        });
     }
+
 }
