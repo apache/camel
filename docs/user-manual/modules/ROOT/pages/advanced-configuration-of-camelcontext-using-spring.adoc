@@ -10,9 +10,10 @@ The following functions such as can be configured:
 * xref:pluggable-class-resolvers.adoc[Class resolvers]
 * xref:lifecycle.adoc[Lifecycle factories]
 * xref:registry.adoc[Registry for lookup]
-* xref:debugger.adoc[Debugger], xref:tracer.adoc[Tracer],
-xref:delay-interceptor.adoc[Delay] and
-xref:uuidgenerator.adoc[UuidGenerator]
+* xref:debugger.adoc[Debugger]
+* xref:tracer.adoc[Tracer]
+* xref:delay-interceptor.adoc[Delayer]
+* xref:uuidgenerator.adoc[UuidGenerator]
 * xref:{eip-vc}:eips:intercept.adoc[Intercept]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]
 * xref:stream-caching.adoc[Stream caching]
