@@ -11,7 +11,6 @@
 ** xref:camel-report-maven-plugin.adoc[Camel Maven Report Plugin]
 ** xref:camel-maven-archetypes.adoc[Camel Maven Archetypes]
 ** xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring route startup ordering and autostartup]
-** xref:creating-a-new-spring-based-camel-route.adoc[Creating a new Spring based Camel Route]
 ** xref:component-dsl.adoc[Component-dsl]
 ** xref:Endpoint-dsl.adoc[Endpoint-dsl]
 ** xref:examples.adoc[Examples]

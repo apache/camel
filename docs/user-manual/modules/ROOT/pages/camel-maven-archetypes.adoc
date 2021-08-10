@@ -93,9 +93,3 @@ camel-maven-plugin
 </pluginRepositories>
 ----
 
-[[CamelMavenArchetypes-Examples]]
-== Examples
-
-See xref:creating-a-new-spring-based-camel-route.adoc[Creating a new
-Spring based Camel Route] for a sample how to use the
-camel-archetype-java and camel-archetype-spring.

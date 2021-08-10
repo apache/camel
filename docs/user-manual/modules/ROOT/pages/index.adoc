@@ -64,7 +64,6 @@ camel routes without them knowing
 * xref:camel-component-maven-plugin.adoc[Camel Component Maven Plugin] to generate all the necessary metadata and Java file for your custom component.
 * xref:camel-report-maven-plugin.adoc[Camel Maven Report Plugin] to validate your source code and report the code coverage of your camel routes
 * xref:camel-maven-archetypes.adoc[Camel Maven Archetypes]
-* xref:creating-a-new-spring-based-camel-route.adoc[Creating a new Spring based Camel Route]
 * xref:components::jmx-component.adoc[Camel JMX]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * xref:rest-dsl.adoc[Working with REST and Rest DSL]
