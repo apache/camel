@@ -386,9 +386,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
             LOG.debug("Using TransformerFactory {}", factory);
             xslt.setTransformerFactory(factory);
         }
-        if (resultHandlerFactory != null) {
-            xslt.setResultHandlerFactory(resultHandlerFactory);
-        }
+
         if (errorListener != null) {
             xslt.errorListener(errorListener);
         }
@@ -399,6 +397,10 @@ public class XsltEndpoint extends ProcessorEndpoint {
         xslt.setDeleteOutputFile(deleteOutputFile);
 
         configureOutput(xslt, output.name());
+
+        if (resultHandlerFactory != null) {
+            xslt.setResultHandlerFactory(resultHandlerFactory);
+        }
 
         // any additional transformer parameters then make a copy to avoid side-effects
         if (parameters != null) {
