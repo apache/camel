@@ -21,7 +21,6 @@
 ** xref:how-can-i-stop-a-route-from-a-route.adoc[How can I stop a route from a route?]
 ** xref:how-can-webservice-clients-see-remote-faults-with-stacktraces-when-using-camel-cxf.adoc[How can webservice clients see remote faults with stacktraces when using camel-cxf?]
 ** xref:how-does-camel-look-up-beans-and-endpoints.adoc[How does Camel look up beans and endpoints?]
-** xref:ROOT:configuring-camel.adoc[How do I add a component?]
 ** xref:how-do-i-change-the-logging.adoc[How do I change the logging?]
 ** xref:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
 ** xref:how-do-i-configure-password-options-on-camel-endpoints-without-the-value-being-encoded.adoc[How do I configure password options on Camel endpoints without the value being encoded?]

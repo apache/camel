@@ -15,8 +15,6 @@ understand how things fit together using the Java xref:dsl.adoc[DSL] to
 set up some routes in a simple `main(...)` method.
 * Walk through the xref:walk-through-another-example.adoc[Spring DSL
 example] to look at XML-based routing.
-* Walk through the xref:console-example.adoc[Console Example] to
-practice reading input from the console.
 
 [NOTE]
 ====

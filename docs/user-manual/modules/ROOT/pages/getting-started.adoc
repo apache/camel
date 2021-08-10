@@ -20,9 +20,8 @@ documentation before continuing:
 To get started with Camel:
 
 1.  Create a xref:camelcontext.adoc[CamelContext].
-2.  Optionally, xref:configuring-camel.adoc[configure components or endpoints].
-3.  Add whatever routing rules you wish using the DSL and `RouteBuilder` or using XML DSL.
-4.  Start the Camel context.
+2.  Add whatever routing rules you wish using the DSL and `RouteBuilder` or using XML DSL.
+3.  Start the Camel context.
 
 When your application is closing you may wish to stop the context
 
