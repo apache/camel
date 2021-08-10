@@ -51,11 +51,11 @@ public class XsltResultHandlerTest extends TestSupport {
         assertEquals(factory, endpoint.getXslt().getResultHandlerFactory());
     }
 
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").to("xslt:org/apache/camel/component/xslt/example.xsl?output=bytes&resultHandlerFactory=#factory");
+                from("direct:start")
+                        .to("xslt:org/apache/camel/component/xslt/example.xsl?output=bytes&resultHandlerFactory=#factory");
             }
         };
     }
