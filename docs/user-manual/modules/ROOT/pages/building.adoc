@@ -11,9 +11,9 @@ Download a distribution or JAR.
 *Required:*
 
 * Java
-** 1.8 or 1.11
+** 1.8 or 11
 
-* https://github.com/takari/maven-wrapper[Maven Wrapper] is used and bundled.
+* https://github.com/takari/maven-wrapper[Maven Wrapper] can be used and bundled.
 
 * Otherwise, http://maven.apache.org/download.html[download and install Maven]
 ** Maven 3.6.x or newer is required to build Camel 3 onwards
@@ -28,7 +28,7 @@ To build camel maven has to be configured to use more memory
 [[Building-UnixLinuxMac]]
 Unix/Linux/Mac
 
-[source,text]
+[source,bash]
 ------------------------------------------------------------
 export MAVEN_OPTS="-Xms2048m -Xmx3584m"
 ------------------------------------------------------------
@@ -37,7 +37,7 @@ export MAVEN_OPTS="-Xms2048m -Xmx3584m"
 [[Building-Windows]]
 Windows
 
-[source,text]
+[source,bash]
 -------------------------------------------------------
 set MAVEN_OPTS="-Xms2048m -Xmx3584m"
 -------------------------------------------------------
@@ -45,9 +45,9 @@ set MAVEN_OPTS="-Xms2048m -Xmx3584m"
 [[Building-Anormalbuild]]
 == A normal build
 
-Beware this runs all the unit tests which takes a couple of hours.
+Beware this runs all the unit tests which takes many hours.
 
-[source,text]
+[source,bash]
 -----------------
 mvn clean install
 -----------------
@@ -56,9 +56,9 @@ mvn clean install
 == A quick build without running tests
 
 The following skips building the manual, the distro and does not execute
-the unit tests, which can complete in 15-20 minutes.
+the unit tests, which can complete in less than 10 minutes.
 
-[source,text]
+[source,bash]
 -------------------------------
 mvn clean install -Pfastinstall
 -------------------------------
@@ -66,7 +66,7 @@ mvn clean install -Pfastinstall
 [[Building-Anormalbuildwithoutrunningtestsbutcheckstyleverificationenabled]]
 == A normal build without running tests but checkstyle verification enabled
 
-[source,text]
+[source,bash]
 -------------------------------------------
 mvn clean install -Pfastinstall,sourcecheck
 -------------------------------------------
@@ -75,9 +75,9 @@ mvn clean install -Pfastinstall,sourcecheck
 == Building with checkstyle
 
 To enable source style checking with checkstyle, build Camel with the
--Psourcecheck parameter
+`-Psourcecheck` parameter
 
-[source,text]
+[source,bash]
 -------------------------------
 mvn clean install -Psourcecheck 
 -------------------------------
@@ -89,21 +89,8 @@ If you want to build jar files with the source code, that for instance
 Eclipse can important so you can debug the Camel code as well. Then you
 can run this command from the camel root folder:
 
-[source,text]
+[source,bash]
 ------------------------------------------
 mvn clean source:jar install -Pfastinstall
 ------------------------------------------
-
-[[Building-Workingwithkaraffeatures]]
-== Working with karaf features
-
-If you change anything in the features.xml from `platform/karaf` you can
-run a validation step to ensure the generated features.xml file is
-correct. You can do this running the following maven goal from the
-`platform` directory.
-
-[source,text]
-----------------------------
-mvn clean install -Pvalidate
-----------------------------
 

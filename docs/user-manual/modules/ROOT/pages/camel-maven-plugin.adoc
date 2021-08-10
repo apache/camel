@@ -1,40 +1,63 @@
 = Camel Maven Plugin
 
-The
-https://github.com/apache/camel/tree/main/tooling/maven/camel-maven-plugin[Camel
-Maven Plugin] allows you to run your
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns] using xref:spring.adoc[Spring] for
-xref:dependency-injection.adoc[Dependency Injection] inside Maven.
+The Camel Maven Plugin supports the following goals
 
-== Goals Supported
+ - camel:run - To run your Camel application
+ - camel:prepare-fatjar - To prepare your Camel application for being packaged as a fat-jar (such as by maven-assembly-plugin)
 
-[width="100%",cols="34%,33%,33%",options="header",]
-|=======================================================================
-|Documentation |Goal |Description
-|xref:camel-run-maven-goal.adoc[camel:run] |camel:run |Boots up Camel in
-the context of a separately initiated Java thread using the
-xref:spring.adoc[Spring] configuration at *META-INF/spring/*.xml* and
-runs your routing rules. From Camel 2.10 onwards also OSGi blueprint is
-supported to load from *OSGI-INF/blueprint/*.xml* (requires to configure
-the plugin to use blueprint).
+== camel:run
 
-|=======================================================================
+The `camel:run` goal of the Camel Maven Plugin is used to run your Camel Spring configurations in a forked JVM from Maven.
+A good example application to get you started is the Spring Example.
 
-== Adding the plugin to your pom.xml
+----
+cd examples/camel-example-spring
+mvn camel:run
+----
 
-Add the following in your <build><plugins> section
+This makes it very easy to spin up and test your routing rules without having to write a main(...) method;
+it also lets you create multiple jars to host different sets of routing rules and easily test them independently.
 
-[NOTE]
-====
+How this works is that the plugin will compile the source code in the maven project,
+then boot up a Spring ApplicationContext using the XML configuration files on the classpath at `META-INF/spring/*.xml`
+
+If you want to boot up your Camel routes a little faster, you could try the `camel:embedded` instead.
+
+=== Options
+
+The maven plugin *run* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+| duration | -1 | Sets the time duration (seconds) that the application will run for before terminating. A value <= 0 will run forever.
+| durationIdle | -1 | Sets the idle time duration (seconds) duration that the application can be idle before terminating. A value <= 0 will run forever.
+| durationMaxMessages | -1 | Sets the duration of maximum number of messages that the application will process before terminating.
+| logClasspath | false | Whether to log the classpath when starting
+|===
 
 
-You may override the default Spring application context file uri
-*META-INF/spring/*.xml* by using the applicationContextUri property in
-the camel-maven-plugin configuration. Paths may be split using a
-semi-colon (;).
+=== Running OSGi Blueprint
 
-====
+Use the `camel-karaf-maven-plugin` which is intended for Apache Camel on Karaf/OSGi.
+
+=== Running CDI
+
+The `camel:run` plugin also supports running a CDI application
+
+This allows you to boot up any CDI services you wish - whether they are Camel-related, or any other CDI enabled services.
+You should add the CDI container of your choice (e.g. Weld or OpenWebBeans) to the dependencies of the camel-maven-plugin such as in this example.
+
+From the source of Camel you can run a CDI example via
+
+----
+cd examples/camel-example-cdi
+mvn compile camel:run
+----
+
+=== Logging the classpath
+
+You can configure whether the classpath should be logged when `camel:run` executes.
+You can enable this in the configuration using:
 
 [source,xml]
 ----
@@ -42,35 +65,14 @@ semi-colon (;).
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-maven-plugin</artifactId>
   <configuration>
-    <applicationContextUri>META-INF/spring/*.xml;YOUR_FILE_NAME_IN_THE_CLASS_PATH.xml</applicationContextUri>
+    <logClasspath>true</logClasspath>
   </configuration>
 </plugin>
 ----
 
-You can also specify what Main class to use when running the plugin. By
-default this is `org.apache.camel.spring.Main`.
+=== Using live reload of XML files
 
-[source,xml]
-----
-<plugin>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-maven-plugin</artifactId>
-  <!-- optional, default value: org.apache.camel.spring.Main -->
-  <configuration>
-    <mainClass>mypackage.boot.camel.CamelStartup</mainClass>
-  </configuration>
-</plugin>
-----
-
-== File based spring configuration files
-
-From Camel 1.4 onwards loading Spring context files via a file location
-is also supported. You configure this with the
-*fileApplicationContextUri* option. Paths may be split using a
-semi-colon (;). This sort of file location is useful for web application
-projects that store spring configuration files in WEB-INF. It can also
-be used to replace configuration that requires an OSGi container with an
-equivalent non-OSGi configuration.
+You can configure the plugin to scan for XML file changes and trigger a reload of the Camel routes which are contained in those XML files.
 
 [source,xml]
 ----
@@ -78,11 +80,87 @@ equivalent non-OSGi configuration.
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-maven-plugin</artifactId>
   <configuration>
-    <fileApplicationContextUri>
-      src/main/webapp/WEB-INF/camel*.xml;
-      src/test/spring/test-context.xml
-    </fileApplicationContextUri>
+    <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
   </configuration>
 </plugin>
 ----
 
+Then the plugin watches this directory. This allows you to edit the source code from your editor and save the file, and have
+    the running Camel application pickup those changes.
+
+Notice its only changes of Camel routes, eg `<routes>`, or `<route>` which is supported.
+You cannot change Spring or OSGi Blueprint `<bean>` elements.
+
+
+== camel:prepare-fatjar
+
+The `camel:prepare-fatjar` goal of the Camel Maven Plugin is used to prepare your Camel application
+for being packaged as a _fat jar_. The goal scans the Maven dependencies to discover Camel JARs and
+extract if they have type converters, which gets merged together into a single _uber_ file stored
+in `target/classes/META-INF/services/org/apache/camel/UberTypeConverterLoader`.
+
+This _uber_ loader file contains all the combined type converters the Camel application uses at runtime.
+They are merged together into this single file.
+
+This is needed as otherwise the _fat jar_ maven plugins (such as maven-assembly-plugin, or maven-shade-plugin)
+causes the `TypeConverterLoader` files to be overwritten in the assembled JAR which causes not all type converters
+to be loaded by Camel.
+
+The `UberTypeConverterLoader` ensures they all type converters gets loaded as this file contains all the known
+type converter files.
+
+To use this goal, you can add the following to your Camel application `pom.xml` file:
+
+[source,xml]
+----
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-fatjar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+----
+
+For example to use this with the `maven-assembly-plugin` you can do as below.
+Remember to specify the class name of *your* main class where it says `com.foo.NameOfMainClass`:
+
+[source,xml]
+----
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-fatjar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.foo.NameOfMainClass</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+----

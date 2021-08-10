@@ -166,10 +166,17 @@ public class SjmsTemplate {
         }
     }
 
-    public Message receive(String destinationName, boolean isTopic, long timeout) throws Exception {
+    public Message receive(String destinationName, String messageSelector, boolean isTopic, long timeout) throws Exception {
         Object obj = execute(sc -> {
             Destination dest = destinationCreationStrategy.createDestination(sc, destinationName, isTopic);
-            MessageConsumer consumer = sc.createConsumer(dest);
+            MessageConsumer consumer;
+
+            if (ObjectHelper.isNotEmpty(messageSelector)) {
+                consumer = sc.createConsumer(dest, messageSelector);
+            } else {
+                consumer = sc.createConsumer(dest);
+            }
+
             Message message = null;
             try {
                 if (timeout < 0) {

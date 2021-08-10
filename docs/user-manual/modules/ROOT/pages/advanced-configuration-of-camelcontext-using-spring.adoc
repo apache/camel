@@ -2,12 +2,10 @@
 
 When using Spring the CamelContext can be pre configured based on
 defined beans in spring XML.
-This page documents these features. Most of these features
-requires *Camel 2.0*.
 
 == What can be configured
 
-The following functions can be configured:
+The following functions such as can be configured:
 
 * xref:pluggable-class-resolvers.adoc[Class resolvers]
 * xref:lifecycle.adoc[Lifecycle factories]
@@ -18,7 +16,7 @@ xref:uuidgenerator.adoc[UuidGenerator]
 * xref:{eip-vc}:eips:intercept.adoc[Intercept]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]
 * xref:stream-caching.adoc[Stream caching]
-* Logging
+* xref:components::log-component.adoc[Log] and xref:{eip-vc}:eips:log-eip.adoc[log() EIP]
 
 Camel will configure these functions by doing a lookup in the Spring
 bean registry to find beans of the given type 
@@ -40,7 +38,7 @@ xref:pluggable-class-resolvers.adoc[Pluggable Class Resolvers].
 |FactoryFinderResolver |0..1 |To use a 3rd party factory finder.
 
 |Registry |0..1 |To use a 3rd party bean registry. By default Camel will
-use Spring ApplicationContext as registry.
+use Spring ApplicationContext (when using Spring) as registry.
 
 |Debugger |0..1 |To use a xref:debugger.adoc[Debugger] usually for
 tooling.
@@ -50,66 +48,63 @@ tooling.
 |TraceFormatter |0..1 |To use a bean that has the tracing options
 configured.
 
-|HandleFault |0..1 |To use a 3rd part fault handler to handle FAULT
-messages.
-
 |Delayer |0..1 |To use a 3rd part xref:{eip-vc}:eips:delay-eip.adoc[Delayer].
 
-|ManagementStrategy |0..1 |*Camel 2.1:* To use a 3rd part strategy for
+|ManagementStrategy |0..1 |To use a 3rd part strategy for
 xref:jmx.adoc[management], for example JMX management.
 
-|ManagementNamingStrategy |0..1 |*Camel 2.6:* To use a 3rd part strategy
+|ManagementNamingStrategy |0..1 |To use a 3rd part strategy
 for naming MBeans for xref:jmx.adoc[management].
 
-|NodeIdFactory |0..1 |*Camel 2.10:* To use a 3rd part node id factory.
+|NodeIdFactory |0..1 |To use a 3rd part node id factory.
 
-|EventFactory |0..1 |*Camel 2.1:* To use a 3rd part event factory.
+|EventFactory |0..1 |To use a 3rd part event factory.
 
-|EventNotifier |0..1 |*Camel 2.1:* To use a 3rd part event notifier. In
+|EventNotifier |0..1 |To use a 3rd part event notifier. In
 Camel 2.2 onwards you can have multiple notifiers, see next table.
 
-|InflightRepository |0..1 |*Camel 2.1:* To use a 3rd part inflight
+|InflightRepository |0..1 |To use a 3rd part inflight
 repository.
 
-|ShutdownStrategy |0..1 |*Camel 2.2:* To use a 3rd part shutdown
+|ShutdownStrategy |0..1 |To use a 3rd part shutdown
 strategy.
 
-|ExecutorServiceStrategy |0..1 |*Camel 2.3 - 2.8.x:* To use a 3rd part
+|ExecutorServiceStrategy |0..1 |To use a 3rd part
 executor service strategy. More details at
 xref:threading-model.adoc[Threading Model].
 
-|ExecutorServiceManager |0..1 |*Camel 2.9:* To use a 3rd part executor
+|ExecutorServiceManager |0..1 |To use a 3rd part executor
 service manager. More details at xref:threading-model.adoc[Threading
 Model].
 
-|ThreadPoolFactory |0..1 |*Camel 2.9:* To use a 3rd part thread pool
+|ThreadPoolFactory |0..1 |To use a 3rd part thread pool
 factory. More details at xref:threading-model.adoc[Threading Model].
 
-|ProcessorFactory |0..1 |*Camel 2.4:* To use a 3rd part processor
+|ProcessorFactory |0..1 |To use a 3rd part processor
 factory.
 
-|UuidGenerator |0..1 |*Camel 2.5:* To use a 3rd part
+|UuidGenerator |0..1 |To use a 3rd part
 xref:uuidgenerator.adoc[UuidGenerator].
 
-|StreamCachingStrategy |0..1 |*Camel 2.12:* To use a 3rd part
+|StreamCachingStrategy |0..1 |To use a 3rd part
 xref:stream-caching.adoc[Stream caching] strategy.
 
-|UnitOfWorkFactory |0..1 |*Camel 2.12.3/2.13:* To use 3rd part
+|UnitOfWorkFactory |0..1 |To use 3rd part
 `UnitOfWork` implementations created by the factory.
 
-|RuntimeEndpointRegistry |0..1 |*Camel 2.13.1:* To use a 3rd party
+|RuntimeEndpointRegistry |0..1 |To use a 3rd party
 RuntimeEndpointRegistry implementation.
 
-|Logger |0..1 |*Camel 2.12.4/2.13.1:* To use provided org.slf4j.Logger
+|Logger |0..1 |To use provided org.slf4j.Logger
 for xref:components::log-component.adoc[Log] component and xref:{eip-vc}:eips:log-eip.adoc[log() EIP].
 
-|AsyncProcessorAwaitManager |0..1 |*Camel 2.15:* To use a 3rd part async
+|AsyncProcessorAwaitManager |0..1 |To use a 3rd part async
 process await manager.
 
-|ModelJAXBContextFactory |0..1 |*Camel 2.15.2:* To use a 3rd party model
+|ModelJAXBContextFactory |0..1 |To use a 3rd party model
 JAXB ContextFactory
 
-|MessageHistoryFactory |0..1 |*Camel 2.17:* To use a 3rd party
+|MessageHistoryFactory |0..1 |To use a 3rd party
 MessageHistoryFactory implementation.
 |=======================================================================
 
@@ -123,13 +118,13 @@ that intercepts every processing steps in all routes in the
 xref:camelcontext.adoc[CamelContext]. For instance you can use this to
 do an AOP like performance timer interceptor.
 
-|LifecycleStrategy |0..n |*Camel 2.1:* To use 3rd party lifecycle
+|LifecycleStrategy |0..n |To use 3rd party lifecycle
 strategies. By default Camel uses a JMX aware that does JMX
 instrumentation.
 
-|EventNotifier |0..n |*Camel 2.2:* To use 3rd part event notifiers.
+|EventNotifier |0..n |To use 3rd part event notifiers.
 
-|RoutePolicyFactory |0..n |*Camel 2.14:* To use a 3rd party route policy
+|RoutePolicyFactory |0..n |To use a 3rd party route policy
 factory to create a route policy for every route.
 |=======================================================================
 
@@ -181,7 +176,7 @@ Okay lets build our interceptor to simply count the number of
 interceptions. This is quite easy as we can just implement this logic in
 our implementation directly as the code below illustrates:Error
 rendering macro 'code': Invalid value specified for parameter
-'java.lang.NullPointerException'
+`java.lang.NullPointerException`
 
 [source,java]
 ----
