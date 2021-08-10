@@ -14,7 +14,7 @@ xref:how-do-i-enable-debug-logging.adoc[turn on DEBUG logging] at
 
 Well, this is really a
 http://en.wikipedia.org/wiki/Chicken_or_the_egg["chicken or the egg"]
-question. The Camel xref:ROOT:error-handling-in-camel.adoc[error handler]
+question. The Camel xref:ROOT:error-handler.adoc[error handler]
 (e.g., in the routes) only applies when a message is being routed by the
 routing engine.
 Before this happens, a consumer must successfully receive a message,

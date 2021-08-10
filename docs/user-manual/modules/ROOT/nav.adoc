@@ -15,7 +15,7 @@
 ** xref:Endpoint-dsl.adoc[Endpoint-dsl]
 ** xref:examples.adoc[Examples]
 ** xref:graceful-shutdown.adoc[Graceful Shutdown]
-** xref:error-handling-in-camel.adoc[Error handling in Camel]
+** xref:error-handler.adoc[Error handler]
 ** xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 ** xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
 ** xref:templating.adoc[Templating]

@@ -8,9 +8,6 @@ strategies to deal with errors processing an xref:{eip-vc}:eips:eventDrivenConsu
 An alternative is to specify the error handling directly in the xref:dsl.adoc[DSL]
 using the xref:exception-clause.adoc[Exception Clause].
 
-For introduction and background material see xref:error-handler.adoc[Error handling]
-in Camel.
-
 == Exception Clause
 
 Using Error Handler combined with

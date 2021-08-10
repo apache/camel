@@ -53,7 +53,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:bean-integration.adoc[Bean Integration]
 * xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring route startup ordering and autostartup]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]
-* xref:error-handling-in-camel.adoc[Error handling in Camel]
+* xref:error-handler.adoc[Error handler]
 * xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
 * xref:examples.adoc[Examples]
 * xref:testing.adoc[Testing]
