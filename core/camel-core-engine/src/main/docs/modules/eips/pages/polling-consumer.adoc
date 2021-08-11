@@ -187,8 +187,6 @@ For more details see:
 
 The *`ScheduledPollConsumer`* supports the following options:
 
-confluenceTableSmall
-
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Option |Default |Description
