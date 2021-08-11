@@ -80,6 +80,8 @@ This also works in Java DSL:
 from("activemq:myQueue").process("#class:com.acme.MyProcessor");
 ----
 
+NOTE: For more details about the `#class:` prefix (and others) then see xref:property-binding.adoc[Property Binding].
+
 However in Java DSL you would often use the type safe way and provide the class type directly as previously shown:
 
 [source,java]

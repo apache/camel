@@ -2,7 +2,7 @@
 = Property binding in Camel
 
 Camel supports binding property values (key=value) in many places such as configuration of Camel
-components, endpoints, EIPs, and Camel bootstrap configuration.
+components, endpoints, EIPs, routes, and Camel bootstrap configuration.
 
 Together with property placeholders, property placeholder functions, then there is plenty of power, but also
 something that takes a little learning to master.
