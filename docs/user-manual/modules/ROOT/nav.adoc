@@ -61,7 +61,6 @@
 ** xref:{eip-vc}:eips:content-enricher.adoc[Content Enrichment]
 ** xref:injector.adoc[Injector]
 ** xref:{eip-vc}:eips:intercept.adoc[Intercept]
-** xref:inversion-of-control-with-smart-defaults.adoc[Inversion Of Control With Smart Defaults]
 ** xref:jmx.adoc[JMX]
 ** xref:lifecycle.adoc[Camel Lifecycle]
 ** xref:oncompletion.adoc[OnCompletion]

@@ -23,7 +23,6 @@ General questions about Camel
 * xref:how-do-i-become-a-committer.adoc[How do I become a committer?]
 * xref:how-do-i-compile-the-code.adoc[How do I compile the code?]
 * xref:how-do-i-edit-the-website.adoc[How do I edit the website?]
-* xref:is-camel-ioc-friendly.adoc[Is Camel IoC friendly?]
 * xref:running-camel-standalone.adoc[Running Camel standalone]
 * xref:what-is-a-router.adoc[What is a router?]
 * xref:what-is-camel.adoc[What is Camel?]

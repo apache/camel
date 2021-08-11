@@ -95,7 +95,6 @@ camel routes without them knowing
 * xref:http-session-handling.adoc[HTTP-Session Handling]
 * xref:injector.adoc[Injector]
 * xref:{eip-vc}:eips:intercept.adoc[Intercept]
-* xref:inversion-of-control-with-smart-defaults.adoc[Inversion of Control with Smart Defaults]
 * xref:languages.adoc[Languages]
 * xref:lifecycle.adoc[Lifecycle]
 * xref:oncompletion.adoc[OnCompletion]
