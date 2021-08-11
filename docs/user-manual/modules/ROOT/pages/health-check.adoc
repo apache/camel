@@ -80,7 +80,7 @@ camel.health.routesEnabled=false
 camel.health.registryEnabled=false
 ----
 
-== Configuring routes health-check
+=== Configuring routes health-check
 
 The `routes` health check supports filtering by route id, or endpoint uri using a pattern style (* as wildcard, and regexp supported).
 For example to turn off all routes that are from kafka, you can do:
@@ -121,7 +121,7 @@ the readiness or liveness checks.
 
 The health checks can also be invoked from JMX.
 
-== Writing a custom check:
+== Writing a custom health check:
 
 There are a limited number of health checks provided by Camel out of the box, so you may need to write your own check which you can do by implementing the _HealthCheck_ interface or by extending _AbstractHealthCheck_ which provides some useful methods:
 
@@ -155,4 +155,8 @@ The example `camel-example-main-health` has a custom health check.
 
 == Examples
 
-You can find a standalone example in the Camel examples in the `camel-example-main-health` directory.
+There are examples for Camel at:
+
+- Camel Standalone: https://github.com/apache/camel-examples/tree/main/examples/main-health[main-health]
+- Camel Spring Boot: https://github.com/apache/camel-spring-boot-examples/tree/main/health-checks[health-checks]
+- Camel Quarkus: https://github.com/apache/camel-quarkus-examples/tree/main/health[health]

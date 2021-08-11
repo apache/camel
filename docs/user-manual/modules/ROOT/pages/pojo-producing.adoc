@@ -41,11 +41,10 @@ attribute on *`@Produce`*, *`@EndpointInject`*.
 [[POJOProducing-HidingtheCamelAPIsFromYourCodeUsingProduce]]
 == Hiding the Camel APIs From Your Code Using `@Produce`
 
-We recommend xref:hiding-middleware.adoc[Hiding Middleware] APIs from
-your application code so the next option might be more suitable. You can
-add the *`@Produce`* annotation to an injection point (a field or
-property setter) using a *`ProducerTemplate`* *or* using some interface
-you use in your business logic. Example:
+You can hide Camel APIs from your application code so the next option might
+be more suitable. You can add the *`@Produce`* annotation to an injection
+point (a field or property setter) using a *`ProducerTemplate`* *or*
+using some interface you use in your business logic. Example:
 
 [source,java]
 ----

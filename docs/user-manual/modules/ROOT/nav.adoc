@@ -85,7 +85,6 @@
 ** xref:uris.adoc[URIs]
 ** xref:uuidgenerator.adoc[UuidGenerator]
 ** xref:validator.adoc[Validator]
-** xref:hiding-middleware.adoc[Hiding Middleware]
 ** xref:health-check.adoc[Health Checks]
 * Domain Specific Languages
 ** xref:dsl.adoc[Camel Domain Specific Language]
