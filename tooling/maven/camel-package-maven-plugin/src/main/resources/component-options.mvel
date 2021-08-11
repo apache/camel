@@ -1,15 +1,1 @@
-== Component Options
-
-@if{componentOptions.isEmpty()}
-The @{title} component has no options.
-@else{}
-The @{title} component supports @{componentOptions.size()} options, which are listed below.
-@end{}
-
-@if{!componentOptions.isEmpty()}
-[width="100%",cols="2,5,^1,2",options="header"]
-|===@comment{ Render table cells. If description contains newline, prefix cell with `a`, so the content is rendered with formatting. }
-| Name | Description | Default | Type
-@foreach{row : componentOptions}| *@{row.getShortName(30)}* (@{row.shortGroup}) @{row.description.?contains("\n") ? "a" : ""}| @{util.escape(row.description)} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType()}
-@end{}|===
-@end{}
+include::partial$component-endpoint-options.adoc[]
