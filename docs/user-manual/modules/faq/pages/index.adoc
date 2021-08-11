@@ -124,7 +124,6 @@ Questions on using the xref:components::jms-component.adoc[JMS] endpoints in Cam
 Common Problems that people have when riding the Camel
 
 * xref:exception-beandefinitionstoreexception.adoc[Exception - BeanDefinitionStoreException]
-* xref:exception-javaxnamingnoinitialcontextexception.adoc[Exception - javax.naming.NoInitialContextException]
 * xref:exception-orgapachecamelnosuchendpointexception.adoc[Exception - org.apache.camel.NoSuchEndpointException]
 * xref:exception-orgxmlsaxsaxparseexception.adoc[Exception - org.xml.sax.SAXParseException]
 * xref:memory-leak-when-adding-and-removing-routes-at-runtime.adoc[Memory leak when adding and removing routes at runtime]

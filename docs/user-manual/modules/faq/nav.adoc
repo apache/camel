@@ -70,7 +70,6 @@
 ** xref:how-do-the-timer-and-quartz-endpoints-compare.adoc[How do the Timer and Quartz endpoints compare?]
 ** xref:why-does-my-jms-route-only-consume-one-message-at-once.adoc[Why does my JMS route only consume one message at once?]
 ** xref:exception-beandefinitionstoreexception.adoc[Exception - BeanDefinitionStoreException]
-** xref:exception-javaxnamingnoinitialcontextexception.adoc[Exception - javax.naming.NoInitialContextException]
 ** xref:exception-orgapachecamelnosuchendpointexception.adoc[Exception - org.apache.camel.NoSuchEndpointException]
 ** xref:exception-orgxmlsaxsaxparseexception.adoc[Exception - org.xml.sax.SAXParseException]
 ** xref:memory-leak-when-adding-and-removing-routes-at-runtime.adoc[Memory leak when adding and removing routes at runtime]
