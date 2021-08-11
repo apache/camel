@@ -1,16 +1,23 @@
 = Improving the documentation
 
+The Apache Camel project loves your help with improving the documentation, whether its
+a tiny typo fix, or adding more details to an existing component, etc.
 
 == Where to find the documentation
-All of the documentation accessible in the left-hand navigation panel on the website is managed in the link:https://asciidoc.org/[AsciiDoc format]. The files have the extension .adoc and are managed in the Camel repositories. They are found in two different places in the repositories:
 
-* In the src/main/docs folder for each component or camel module
-* In the /docs/user-manual folder for the User Manual and FAQ pages.
+All of the documentation accessible in the left-hand navigation panel on the website
+is managed in the link:https://asciidoc.org/[AsciiDoc format].
+
+The files have the extension `.adoc` and are managed in the Camel repositories.
+They are found in two different places in the repositories:
+
+* In the `src/main/docs` folder for each component or camel module
+* In the `/docs/user-manual` folder for the User Manual and FAQ pages.
 
 == Editing the documentation for a component
 
 * It's easy as opening a Pull Request
-* You'll find on each component under src/main/docs an .adoc file
+* You'll find on each component under `src/main/docs` an `.adoc` file(s)
  ** This file contains a static part and a dynamically generated part: the former can be edited directly in the .adoc file, while the latter needs your intervention on the javadoc
  ** After you modify the javadoc, you'll need to rebuild the component and the .adoc will be automatically updated
 * The generated .adoc file can be previewed in a browser using a plugin
@@ -18,7 +25,7 @@ All of the documentation accessible in the left-hand navigation panel on the web
  
 == Edit the user manual or FAQs
 
-These .adoc files are edited directly in /docs/user-manual/modules/ROOT/pages and docs/user-manual/modules/faq/pages.
+These .adoc files are edited directly in `/docs/user-manual/modules/ROOT/pages` and `docs/user-manual/modules/faq/pages`.
 If you add a new page, don't forget to add it to the nav.adoc file which represents the table of contents shown in the left-hand navigation panel in the website.
 After editing the file, you will need to raise a Pull Request for your changes.
 
