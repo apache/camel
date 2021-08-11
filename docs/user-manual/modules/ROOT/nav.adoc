@@ -49,7 +49,6 @@
 ** xref:endpoint-annotations.adoc[Endpoint Annotations]
 ** xref:exception-clause.adoc[Exception Clause]
 ** xref:exchange-pooling.adoc[Exchange Pooling]
-** xref:fluent-builders.adoc[Fluent Builders]
 ** xref:http-session-handling.adoc[HTTP-Session Handling]
 ** xref:parameter-binding-annotations.adoc[Parameter Binding Annotations]
 ** xref:pojo-producing.adoc[POJO Producing]

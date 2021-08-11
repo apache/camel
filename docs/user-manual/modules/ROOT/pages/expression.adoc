@@ -3,24 +3,21 @@
 
 Expressions and Predicates can then be used to
 create the various xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
-Integration Patterns] in the DSL or
-XML Configuration like the
-Recipient List. +
- To support dynamic rules Camel supports pluggable
+Integration Patterns] in the xref:dsl.adoc[DSL] like with the xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List] EIP.
+
+To support dynamic rules Camel supports pluggable
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Expression.html[Expression]
 strategies using a variety of different Languages.
 
-[[Expression-API]]
-== API
+== Expression API
 
-If you are outside of the DSL and want to create your own
+If you are outside the DSL and want to create your own
 expressions you can either implement the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Expression.html[Expression
 interface], reuse one of the other builders or try the
 https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/builder/ExpressionBuilder.html[ExpressionBuilder
 class].
 
-[[Expression-Expression]]
 === Expression
 
 The API for a Camel Expression is defined in the
@@ -41,7 +38,6 @@ public interface Expression {
 }
 -------------------------------------------------------------------------------
 
-[[Expression-Predicate]]
 === Predicate
 
 The API for a Camel Predicate is defined in the
@@ -54,7 +50,7 @@ public interface Predicate {
     /**
      * Evaluates the predicate on the message exchange and returns true if this
      * exchange matches the predicate
-     * 
+     *
      * @param exchange the message exchange
      * @return true if the predicate matches
      */
@@ -62,56 +58,4 @@ public interface Predicate {
 
 }
 -------------------------------------------------------------------------------
-
-[[Expression-ExpressionLanguages]]
-== Expression Languages
-
-The following languages are supported out of the box
-
-* xref:components:languages:bean-language.adoc[Bean Language] for using Java for expressions
-* xref:components:languages:constant-language.adoc[Constant]
-* xref:components:languages:header-language.adoc[Header]
-* xref:components:languages:jsonpath-language.adoc[JSonPath]
-* xref:components::mvel-component.adoc[Mvel]
-* xref:components:languages:ognl-language.adoc[OGNL]
-* xref:components:languages:ref-language.adoc[Ref Language]
-* ExchangeProperty / Property
-* Scripting Languages such as
-** BeanShell
-** JavaScript
-** xref:components:languages:groovy-language.adoc[Groovy]
-* xref:components:languages:simple-language.adoc[Simple]
-** xref:components:languages:file-language.adoc[File Language]
-* xref:components:languages:spel-language.adoc[Spring Expression Language]
-* xref:components::sql-component.adoc[SQL]
-* Tokenizer
-* xref:components:languages:xpath-language.adoc[XPath]
-* xref:components::xquery-component.adoc[XQuery]
-* https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
-
-Most of these languages is also supported used as
-xref:parameter-binding-annotations.adoc[Annotation Based
-Expression Language].
-
-[[Expression-UsingExpressionsinyourIDE]]
-== Using Expressions in your IDE
-
-To use different expression and predicates in your IDE you need to
-perform a static import of the builder class for the language(s) you
-wish to use.
-
-[width="100%",cols="20%,80%",options="header",]
-|=======================================================================
-|Language(s) |Builder class to import
-
-|Scripting Languages such as
-BeanShell, JavaScript,
-xref:components:languages:groovy-language.adoc[Groovy] |
-
-|xref:components::sql-component.adoc[SQL] |
-
-|xref:components:languages:xpath-language.adoc[XPath] |https://github.com/apache/camel/blob/main/components/camel-xpath/src/main/java/org/apache/camel/language/xpath/XPathBuilder.java[org.apache.camel.builder.xml.XPathBuilder]
-
-|xref:components::xquery-component.adoc[XQuery] |https://github.com/apache/camel/blob/main/components/camel-saxon/src/main/java/org/apache/camel/component/xquery/XQueryBuilder.java[org.apache.camel.builder.saxon.XQueryBuilder]
-|=======================================================================
 

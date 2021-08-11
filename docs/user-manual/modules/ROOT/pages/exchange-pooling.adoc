@@ -1,8 +1,6 @@
 [[ExchangePooling-ExchangePooling]]
 = Exchange Pooling
 
-*Since Camel 3.9*
-
 Apache Camel requires a tiny resource overhead when routing message.
 
 For example the routing engine keeps state of each individual message, keeping track of the message flow,
@@ -76,6 +74,6 @@ via JMX. This requires to add `camel-management` JAR to the classpath.
 == Examples
 
 We have provided a few examples which we are using for performance profiling.
-For example the basic `timer-log` example is on github at: https://github.com/apache/camel-performance-tests/tree/master/profiling/timer-log
+For example the basic https://github.com/apache/camel-performance-tests/tree/master/profiling/timer-log[timer-log] example.
 
 
