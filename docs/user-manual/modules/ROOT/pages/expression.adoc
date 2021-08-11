@@ -1,13 +1,13 @@
 [[Expression-Expressions]]
 = Expressions
 
-Expressions and Predicates can then be used to
+Expressions and xref:predicate.adoc[Predicates] can then be used to
 create the various xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] in the xref:dsl.adoc[DSL] like with the xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List] EIP.
 
 To support dynamic rules Camel supports pluggable
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Expression.html[Expression]
-strategies using a variety of different Languages.
+strategies using a variety of different xref:latest@components:languages:index.adoc[Languages].
 
 == Expression API
 
@@ -35,27 +35,6 @@ public interface Expression {
      * @return the value of the expression
      */
     <T> T evaluate(Exchange exchange, Class<T> type);
-}
--------------------------------------------------------------------------------
-
-=== Predicate
-
-The API for a Camel Predicate is defined in the
-`org.apache.camel.Predicate` interface as shown:
-
-[source,java]
--------------------------------------------------------------------------------
-public interface Predicate {
-
-    /**
-     * Evaluates the predicate on the message exchange and returns true if this
-     * exchange matches the predicate
-     *
-     * @param exchange the message exchange
-     * @return true if the predicate matches
-     */
-    boolean matches(Exchange exchange);
-
 }
 -------------------------------------------------------------------------------
 
