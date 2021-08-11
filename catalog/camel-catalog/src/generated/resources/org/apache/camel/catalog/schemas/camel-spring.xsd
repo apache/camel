@@ -2406,7 +2406,7 @@ A flag that indicates whether to register mbeans always. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 A flag that indicates whether to register mbeans when starting new routes.
-Default value: false
+Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
