@@ -53,7 +53,7 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     @Metadata(defaultValue = "false")
     private String registerAlways;
     @XmlAttribute
-    @Metadata(defaultValue = "false")
+    @Metadata(defaultValue = "true")
     private String registerNewRoutes;
     @XmlAttribute
     @Metadata(defaultValue = "Default")

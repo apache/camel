@@ -4,6 +4,7 @@
 Camel supports the definition of routing rules using a Java DSL (domain specific language) which avoids the need for cumbersome XML using a RouteBuilder.
 
 For example a simple route can be created as follows.
+
 [source,java]
 ------------------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
