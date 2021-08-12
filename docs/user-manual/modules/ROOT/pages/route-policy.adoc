@@ -66,7 +66,7 @@ The throttling inflight route policy has the following options:
 
 |Option |Default |Description
 
-|`scope` |`Route` |A scope for either *`Route`* or *`Context`* which defines if the current
+|`scope` |`Route` |A scope for either `Route` or `Context` which defines if the current
 number of inflight exchanges is context based or for that particular
 route.
 
@@ -74,7 +74,7 @@ route.
 route if the current number of inflight exchanges is higher than this
 value.
 
-|`resumePercentOfMax` |`70` |A percentage *`0..100`* which defines when the throttling should resume
+|`resumePercentOfMax` |`70` |A percentage `0..100` which defines when the throttling should resume
 again in case it has been suspended.
 
 |`loggingLevel` |`INFO` |The logging level used for logging the throttling activity.
@@ -82,38 +82,40 @@ again in case it has been suspended.
 |`logger` |`ThrottlingInflightRoutePolicy` |The logger category.
 |===
 
-== ThrottlingInflightRoutePolicy compared to the Throttler EIP
+=== ThrottlingInflightRoutePolicy compared to the Throttler EIP
 
-The *`ThrottlingInflightRoutePolicy`* compared to
-xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] is that it does *not* block during
+The `ThrottlingInflightRoutePolicy` compared to
+xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] EIP is that it does *not* block during
 throttling. It does throttling that is approximate based, meaning that
 its more coarse grained and not explicit precise as the
-xref:{eip-vc}:eips:throttle-eip.adoc[Throttler]. The xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] can
+xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] EIP.
+
+The xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] EIP can
 be much more accurate and only allow a specific number of messages being
-passed per a given time unit. Also the *`ThrottlingInflightRoutePolicy`*
+passed per a given time unit. Also the `ThrottlingInflightRoutePolicy`
 is based its metrics on number of inflight exchanges where as
-xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] is based on number of messages per time
-unit.
+xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] EIP is based on number o
+messages per time unit.
 
-== `ScheduledRoutePolicy` (Simple and Cron based) using camel Quartz
+== ScheduledRoutePolicy
 
-For more details check out the following links
+See xref:scheduledroutepolicy.adoc[Scheduled Route Policy] for scheduling based route policy.
 
-== Configuring Policy
+== Using route policies in Camel routes
 
 You configure the route policy as follows from Java DSL, using the
-*`routePolicy`* method:
+`routePolicy` method:
 
 [source,java]
 -----------------------------------------------------------
 RoutePolicy myPolicy = new MyRoutePolicy();
+
 from("seda:foo").routePolicy(myPolicy).to("mock:result");
 -----------------------------------------------------------
 
-In Spring XML its a bit different as follows using the
-*`routePolicyRef`* attribute:
+In Spring XML you configure using the `routePolictRef` attribute on `<route>` as shown:
 
-[source,java]
+[source,xml]
 ---------------------------------------------------------
 <bean id="myPolicy" class="com.mycompany.MyRoutePolicy"/>
    
@@ -123,77 +125,60 @@ In Spring XML its a bit different as follows using the
 </route>
 ---------------------------------------------------------
 
-== Configuring Policy Sets
+You can configure one or more route policies (separated by comma), such as:
 
-*`RoutePolicy`* has been further improved to allow addition of policy
-sets or a collection of policies that are concurrently applied on a
-route. The addition of policies is done as follows.
+[source,java]
+----
+from("seda:foo").routePolicy(myPolicy, myOtherPolicy).to("mock:result");
+----
 
-In the example below, the route *`testRoute`* has a *`startPolicy`*
-and *`throttlePolicy`* applied concurrently. Both policies are applied
-as necessary on the route.
+And in XML:
 
 [source,xml]
-----------------------------------------------------------------------------------------------
-<bean id="date" class="org.apache.camel.routepolicy.quartz.SimpleDate"/>
-
-<bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy">
-  <property name="routeStartDate" ref="date"/>
-  <property name="routeStartRepeatCount" value="1"/>
-  <property name="routeStartRepeatInterval" value="3000"/>        
-</bean>
-
-<bean id="throttlePolicy" class="org.apache.camel.impl.ThrottlingInflightRoutePolicy">
-  <property name="maxInflightExchanges" value="10"/>        
-</bean>
-
-<camelContext id="testRouteContext" xmlns="http://camel.apache.org/schema/spring">
-  <route id="testRoute" autoStartup="false" routePolicyRef="startPolicy, throttlePolicy">
-    <from uri="seda:foo?concurrentConsumers=20"/>
+---------------------------------------------------------
+<route routePolicyRef="myPolicy,myOtherPolicy">
+    <from uri="seda:foo"/>
     <to uri="mock:result"/>
-  </route>
-</camelContext>
-----------------------------------------------------------------------------------------------
+</route>
+---------------------------------------------------------
 
-== Using `RoutePolicyFactory`
+== Using RoutePolicyFactory
 
 If you want to use a route policy for every route, you can use
-a *`org.apache.camel.spi.RoutePolicyFactory`* as a factory for creating
-a *`RoutePolicy`* instance for each route. This can be used when you
-want to use the same kind of route policy for every routes. Then you
-need to only configure the factory once, and every route created will
+a `org.apache.camel.spi.RoutePolicyFactory` as a factory for creating
+a `RoutePolicy` instance for each route. This can be used when you
+want to use the same kind of route policy for all or some routes.
+
+With the factory you only need to configure this once, and every route created will
 have the policy assigned.
 
-There is API on CamelContext to add a factory, as shown below
+There is API on `CamelContext` to add a factory, as shown below
 
 [source,java]
 ----------------------------------------------------------
 context.addRoutePolicyFactory(new MyRoutePolicyFactory());
 ----------------------------------------------------------
 
-And from XML DSL you just define a *`<bean>`* with the factory
+And from XML DSL you just define a `<bean>` with the factory, and Camel wil automatic detect this factory:
 
 [source,xml]
 ----------------------------------------------------------------------
 <bean id="myRoutePolicyFactory" class="com.foo.MyRoutePolicyFactory"/>
 ----------------------------------------------------------------------
 
-The factory has a single method that creates the route policy
+You can have as many route policy factories as you want, so if you have two factories,
+you can just add them both as shown:
 
 [source,java]
-------------------------------------------------------------------------------------------------------------------------
-/**
- * Creates a new {@link org.apache.camel.spi.RoutePolicy} which will be assigned to the given route.
- *
- * @param camelContext the camel context
- * @param routeId      the route id
- * @param route        the route definition
- * @return the created {@link org.apache.camel.spi.RoutePolicy}, or <tt>null</tt> to not use a policy for this route
- */
-RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route);
-------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------
+context.addRoutePolicyFactory(new MyRoutePolicyFactory());
+context.addRoutePolicyFactory(new MyOtherRoutePolicyFactory());
+----------------------------------------------------------
 
-Note you can have as many route policy factories as you want. Just call
-the *`addRoutePolicyFactory`* again, or declare the other factories
-as *`<bean>`* in XML.
+And in XML:
 
+[source,xml]
+----------------------------------------------------------------------
+<bean id="myRoutePolicyFactory" class="com.foo.MyRoutePolicyFactory"/>
+<bean id="myOtherRoutePolicyFactory" class="com.foo.MyOtherRoutePolicyFactory"/>
+----------------------------------------------------------------------
