@@ -20,7 +20,6 @@ import java.time.Duration;
 import java.util.Map;
 
 import com.azure.core.http.rest.Response;
-import com.azure.storage.queue.models.SendMessageResult;
 import com.azure.storage.queue.models.UpdateMessageResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
@@ -119,7 +118,7 @@ public class QueueOperations {
 
     public QueueOperationResponse receiveMessages(final Exchange exchange) {
         if (exchange == null) {
-            return new QueueOperationResponse(
+            return QueueOperationResponse.create(
                     client.receiveMessages(configurationOptionsProxy.getMaxMessages(null),
                             configurationOptionsProxy.getVisibilityTimeout(null),
                             configurationOptionsProxy.getTimeout(null)));
@@ -129,12 +128,12 @@ public class QueueOperations {
         final Duration visibilityTimeout = configurationOptionsProxy.getVisibilityTimeout(exchange);
         final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
-        return new QueueOperationResponse(client.receiveMessages(maxMessages, visibilityTimeout, timeout));
+        return QueueOperationResponse.create(client.receiveMessages(maxMessages, visibilityTimeout, timeout));
     }
 
     public QueueOperationResponse peekMessages(final Exchange exchange) {
         if (exchange == null) {
-            return new QueueOperationResponse(
+            return QueueOperationResponse.create(
                     client.peekMessages(configurationOptionsProxy.getMaxMessages(null),
                             configurationOptionsProxy.getTimeout(null)));
         }
@@ -142,7 +141,7 @@ public class QueueOperations {
         final Integer maxMessages = configurationOptionsProxy.getMaxMessages(exchange);
         final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
-        return new QueueOperationResponse(client.peekMessages(maxMessages, timeout));
+        return QueueOperationResponse.create(client.peekMessages(maxMessages, timeout));
     }
 
     public QueueOperationResponse updateMessage(final Exchange exchange) {
@@ -182,28 +181,11 @@ public class QueueOperations {
                 .popReceipt(response.getValue().getPopReceipt())
                 .httpHeaders(response.getHeaders());
 
-        return new QueueOperationResponse(true, headers.toMap());
+        return QueueOperationResponse.createWithEmptyBody(headers.toMap());
     }
 
     @SuppressWarnings("rawtypes")
     private QueueOperationResponse buildResponseWithEmptyBody(final Response response) {
-        return buildResponse(response, true);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private QueueOperationResponse buildResponse(final Response response, final boolean emptyBody) {
-        final Object body = emptyBody ? true : response.getValue();
-        QueueExchangeHeaders exchangeHeaders;
-
-        if (response.getValue() instanceof SendMessageResult) {
-            exchangeHeaders = QueueExchangeHeaders
-                    .createQueueExchangeHeadersFromSendMessageResult((SendMessageResult) response.getValue());
-        } else {
-            exchangeHeaders = new QueueExchangeHeaders();
-        }
-
-        exchangeHeaders.httpHeaders(response.getHeaders());
-
-        return new QueueOperationResponse(body, exchangeHeaders.toMap());
+        return QueueOperationResponse.createWithEmptyBody(response);
     }
 }

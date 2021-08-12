@@ -19,28 +19,72 @@ package org.apache.camel.component.azure.storage.queue.operations;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QueueOperationResponse {
+import com.azure.core.http.rest.Response;
+import com.azure.storage.queue.models.SendMessageResult;
+import org.apache.camel.component.azure.storage.queue.QueueExchangeHeaders;
+
+public final class QueueOperationResponse {
 
     private Object body;
     private Map<String, Object> headers = new HashMap<>();
-
-    public QueueOperationResponse() {
-    }
 
     public QueueOperationResponse(final Object body, final Map<String, Object> headers) {
         this.body = body;
         this.headers = headers;
     }
 
-    public QueueOperationResponse(final Object body) {
+    private QueueOperationResponse(final Object body) {
         setBody(body);
+    }
+
+    public static QueueOperationResponse create(final Object body) {
+        return new QueueOperationResponse(body);
+    }
+
+    public static QueueOperationResponse create(final Object body, final Map<String, Object> headers) {
+        return new QueueOperationResponse(body, headers);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static QueueOperationResponse create(final Response response) {
+        return buildResponse(response, false);
+    }
+
+    public static QueueOperationResponse createWithEmptyBody(final Map<String, Object> headers) {
+        return new QueueOperationResponse(true, headers);
+    }
+
+    public static QueueOperationResponse createWithEmptyBody() {
+        return new QueueOperationResponse(true);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static QueueOperationResponse createWithEmptyBody(final Response response) {
+        return buildResponse(response, true);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static QueueOperationResponse buildResponse(final Response response, final boolean emptyBody) {
+        final Object body = emptyBody ? true : response.getValue();
+        QueueExchangeHeaders exchangeHeaders;
+
+        if (response.getValue() instanceof SendMessageResult) {
+            exchangeHeaders = QueueExchangeHeaders
+                    .createQueueExchangeHeadersFromSendMessageResult((SendMessageResult) response.getValue());
+        } else {
+            exchangeHeaders = new QueueExchangeHeaders();
+        }
+
+        exchangeHeaders.httpHeaders(response.getHeaders());
+
+        return new QueueOperationResponse(body, exchangeHeaders.toMap());
     }
 
     public Object getBody() {
         return body;
     }
 
-    public void setBody(Object body) {
+    private void setBody(Object body) {
         this.body = body;
     }
 
@@ -48,7 +92,7 @@ public class QueueOperationResponse {
         return headers;
     }
 
-    public void setHeaders(final Map<String, Object> headers) {
+    private void setHeaders(final Map<String, Object> headers) {
         this.headers = headers;
     }
 }

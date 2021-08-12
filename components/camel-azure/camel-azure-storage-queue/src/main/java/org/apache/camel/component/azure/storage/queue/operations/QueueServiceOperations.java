@@ -42,11 +42,11 @@ public class QueueServiceOperations {
 
     public QueueOperationResponse listQueues(final Exchange exchange) {
         if (exchange == null) {
-            return new QueueOperationResponse(client.listQueues(null, null));
+            return QueueOperationResponse.create(client.listQueues(null, null));
         }
         final QueuesSegmentOptions segmentOptions = configurationOptionsProxy.getQueuesSegmentOptions(exchange);
         final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
-        return new QueueOperationResponse(client.listQueues(segmentOptions, timeout));
+        return QueueOperationResponse.create(client.listQueues(segmentOptions, timeout));
     }
 }
