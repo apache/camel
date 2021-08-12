@@ -285,9 +285,9 @@ And in Camel Main / Quarkus:
 camel.main.startup-summary-level = verbose
 ----
 
-== See Also
+== More Information
 
-See the examples:
+See these examples:
 
 - https://github.com/apache/camel-examples/tree/main/examples/routes-configuration[camel-example-routes-configuration]
 - https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[camel-example-spring-boot-routes-configuration]

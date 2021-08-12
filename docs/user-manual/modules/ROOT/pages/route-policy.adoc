@@ -1,58 +1,56 @@
 = RoutePolicy
 
-*Since Camel 2.1*
-
-A route policy *`org.apache.camel.spi.RoutePolicy`* is used to control
-route(s) at runtime. For example you can use it to determine whether a
-route should be running or not. However the policies can support any
+A route policy `org.apache.camel.spi.RoutePolicy` is used to control
+route(s) at runtime. For example, you can use it to determine whether a
+route should be running or not. However, the policies can support any
 kind of use cases.
 
 == How it works
 
-You associate a route with a given *`RoutePolicy`* and then during
+You associate a route with a given `RoutePolicy` and then during
 runtime Camel will invoke callbacks on this policy where you can
 implement your custom logic. Camel provides a support class that is a
-good base class to extend *`org.apache.camel.impl.RoutePolicySupport`*.
+good base class to extend `org.apache.camel.support.RoutePolicySupport`.
 
 There are these callbacks invoked:
 
-* `onInit` *Camel 2.3*
-* `onRemove` *Camel 2.9*
-* `onStart` *Camel 2.9*
-* `onStop` *Camel 2.9*
-* `onSuspend` *Camel 2.9*
-* `onResume` *Camel 2.9*
+* `onInit`
+* `onRemove`
+* `onStart`
+* `onStop`
+* `onSuspend`
+* `onResume`
 * `onExchangeBegin`
 * `onExchangeDone`
 
-See the Javadoc of the *`org.apache.camel.spi.RoutePolicy`* for more
-details. And also the implementation of the
-*`org.apache.camel.impl.ThrottlingInflightRoutePolicy`* for a concrete
+See the Javadoc of the `org.apache.camel.spi.RoutePolicy` for more
+details; and also the implementation of the
+`org.apache.camel.throttling.ThrottlingInflightRoutePolicy` for a concrete
 example.
 
 Camel provides the following policies out of the box:
 
-* *`org.apache.camel.impl.ThrottlingInflightRoutePolicy`* - a throttling
+* `org.apache.camel.throttling.ThrottlingInflightRoutePolicy` - a throttling
 based policy that automatic suspends/resumes route(s) based on metrics
 from the current in flight exchanges. You can use this to dynamically
 throttle e.g. a xref:components::jms-component.adoc[JMS] consumer, to avoid it consuming too
 fast.
 
-As of *Camel 2.5*, Camel also provides an ability to schedule routes to
+* `org.apache.camel.throttling.ThrottlingExceptionRoutePolicy` - a throttling
+based policy modeled after the circuit breaker. This policy will stop consuming
+from an endpoint based on the type of exceptions that are thrown and the threshold setting.
+
+Camel also provides an ability to schedule routes to
 be activated, deactivated, suspended and/or resumed at certain times
 during the day using a
 xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] (offered via the
-http://camel.apache.org/quartz.html[camel-quartz] component).
+xref:components::quartz-component.adoc[Quartz] component).
 
 == SuspendableService
 
-If you want to dynamic suspend/resume routes as the
-*`org.apache.camel.impl.ThrottlingRoutePolicy`* does then its advised to
-use *`org.apache.camel.SuspendableService`* as it allows for fine
-grained *`suspend`* and *`resume`* operations. And use the
-*`org.apache.camel.util.ServiceHelper`* to aid when invoking these
-operations as it support fallback for regular
-*`org.apache.camel.Service`* instances.
+If you want to dynamic suspend/resume routes as the then it is advised to
+use `SuspendableService` as it allows for fine-grained
+suspend and resume operations.
 
 == `ThrottlingInflightRoutePolicy`
 

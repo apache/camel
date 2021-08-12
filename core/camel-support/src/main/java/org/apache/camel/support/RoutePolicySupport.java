@@ -79,8 +79,7 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     /**
      * Starts the consumer.
      *
-     * @return the returned value is always <tt>true</tt> and should not be used.
-     * @see    #resumeOrStartConsumer(Consumer)
+     * @see #resumeOrStartConsumer(Consumer)
      */
     public void startConsumer(Consumer consumer) throws Exception {
         ServiceHelper.startService(consumer);
@@ -89,8 +88,7 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     /**
      * Stops the consumer.
      *
-     * @return the returned value is always <tt>true</tt> and should not be used.
-     * @see    #suspendOrStopConsumer(Consumer)
+     * @see #suspendOrStopConsumer(Consumer)
      */
     public void stopConsumer(Consumer consumer) throws Exception {
         ServiceHelper.stopService(consumer);
