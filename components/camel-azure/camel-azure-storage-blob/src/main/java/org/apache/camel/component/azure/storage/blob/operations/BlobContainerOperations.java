@@ -53,12 +53,12 @@ public class BlobContainerOperations {
         final String regex = configurationProxy.getRegex(exchange);
         List<BlobItem> blobs = client.listBlobs(listBlobOptions, timeout);
         if (ObjectHelper.isEmpty(regex)) {
-            return new BlobOperationResponse(blobs);
+            return BlobOperationResponse.create(blobs);
         }
         List<BlobItem> filteredBlobs = blobs.stream()
                 .filter(x -> x.getName().matches(regex))
                 .collect(Collectors.toCollection(LinkedList<BlobItem>::new));
-        return new BlobOperationResponse(filteredBlobs);
+        return BlobOperationResponse.create(filteredBlobs);
     }
 
     public BlobOperationResponse createContainer(final Exchange exchange) {
@@ -68,7 +68,7 @@ public class BlobContainerOperations {
 
         final BlobExchangeHeaders blobExchangeHeaders
                 = new BlobExchangeHeaders().httpHeaders(client.createContainer(metadata, publicAccessType, timeout));
-        return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
+        return BlobOperationResponse.createWithEmptyBody(blobExchangeHeaders.toMap());
     }
 
     public BlobOperationResponse deleteContainer(final Exchange exchange) {
@@ -76,6 +76,6 @@ public class BlobContainerOperations {
         final Duration timeout = configurationProxy.getTimeout(exchange);
         final BlobExchangeHeaders blobExchangeHeaders
                 = new BlobExchangeHeaders().httpHeaders(client.deleteContainer(blobRequestConditions, timeout));
-        return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
+        return BlobOperationResponse.createWithEmptyBody(blobExchangeHeaders.toMap());
     }
 }

@@ -44,6 +44,6 @@ public class BlobServiceOperations {
         final ListBlobContainersOptions listBlobContainersOptions = configurationProxy.getListBlobContainersOptions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
 
-        return new BlobOperationResponse(client.listBlobContainers(listBlobContainersOptions, timeout));
+        return BlobOperationResponse.create(client.listBlobContainers(listBlobContainersOptions, timeout));
     }
 }

@@ -97,7 +97,7 @@ public class BlobOperations {
             final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders
                     .createBlobExchangeHeadersFromBlobProperties((BlobProperties) blobInputStream.get("properties"));
 
-            return new BlobOperationResponse(blobInputStream.get("inputStream"), blobExchangeHeaders.toMap());
+            return BlobOperationResponse.create(blobInputStream.get("inputStream"), blobExchangeHeaders.toMap());
         }
         // we have an outputStream set, so we use it
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
@@ -111,7 +111,7 @@ public class BlobOperations {
                     = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(response.getDeserializedHeaders())
                             .httpHeaders(response.getHeaders());
 
-            return new BlobOperationResponse(outputStream, blobExchangeHeaders.toMap());
+            return BlobOperationResponse.create(outputStream, blobExchangeHeaders.toMap());
         } finally {
             if (configurationProxy.getConfiguration().isCloseStreamAfterRead()) {
                 outputStream.close();
@@ -142,15 +142,16 @@ public class BlobOperations {
                         .httpHeaders(response.getHeaders())
                         .fileName(fileToDownload.toString());
 
-        return new BlobOperationResponse(fileToDownload, exchangeHeaders.toMap());
+        return BlobOperationResponse.create(fileToDownload, exchangeHeaders.toMap());
     }
 
     public BlobOperationResponse deleteBlob(final Exchange exchange) {
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final DeleteSnapshotsOptionType deleteSnapshotsOptionType = configurationProxy.getDeleteSnapshotsOptionType(exchange);
 
-        return buildResponse(client.delete(deleteSnapshotsOptionType, commonRequestOptions.getBlobRequestConditions(),
-                commonRequestOptions.getTimeout()), true);
+        return BlobOperationResponse
+                .createWithEmptyBody(client.delete(deleteSnapshotsOptionType, commonRequestOptions.getBlobRequestConditions(),
+                        commonRequestOptions.getTimeout()));
     }
 
     public BlobOperationResponse downloadLink(final Exchange exchange) {
@@ -172,7 +173,7 @@ public class BlobOperations {
 
         final BlobExchangeHeaders headers = BlobExchangeHeaders.create().downloadLink(url);
 
-        return new BlobOperationResponse(true, headers.toMap());
+        return BlobOperationResponse.createWithEmptyBody(headers.toMap());
     }
 
     public BlobOperationResponse uploadBlockBlob(final Exchange exchange) throws IOException {
@@ -190,7 +191,7 @@ public class BlobOperations {
                     commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(),
                     commonRequestOptions.getTimeout());
 
-            return buildResponse(response, true);
+            return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
             closeInputStreamIfNeeded(blobStreamAndLength.getInputStream());
         }
@@ -236,7 +237,7 @@ public class BlobOperations {
             return commitBlobBlockList(exchange);
         }
 
-        return new BlobOperationResponse(true);
+        return BlobOperationResponse.createWithEmptyBody();
     }
 
     @SuppressWarnings("unchecked")
@@ -268,7 +269,7 @@ public class BlobOperations {
                 commonRequestOptions.getAccessTier(), commonRequestOptions.getBlobRequestConditions(),
                 commonRequestOptions.getTimeout());
 
-        return buildResponse(response, true);
+        return BlobOperationResponse.createWithEmptyBody(response);
     }
 
     public BlobOperationResponse getBlobBlockList(final Exchange exchange) {
@@ -280,7 +281,7 @@ public class BlobOperations {
         final Response<BlockList> response
                 = client.listBlobBlocks(blockListType, commonRequestOptions.leaseId(), commonRequestOptions.getTimeout());
 
-        return buildResponse(response, false);
+        return BlobOperationResponse.create(response);
     }
 
     public BlobOperationResponse createAppendBlob(final Exchange exchange) {
@@ -292,7 +293,7 @@ public class BlobOperations {
                 = client.createAppendBlob(commonRequestOptions.getBlobHttpHeaders(), commonRequestOptions.getMetadata(),
                         commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
 
-        return buildResponse(response, true);
+        return BlobOperationResponse.createWithEmptyBody(response);
     }
 
     public BlobOperationResponse commitAppendBlob(final Exchange exchange) throws IOException {
@@ -314,7 +315,7 @@ public class BlobOperations {
                             commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(),
                             commonRequestOptions.getTimeout());
 
-            return buildResponse(response, true);
+            return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
             closeInputStreamIfNeeded(streamAndLength.getInputStream());
         }
@@ -331,7 +332,7 @@ public class BlobOperations {
                 = client.createPageBlob(pageSize, sequenceNumber, requestOptions.getBlobHttpHeaders(),
                         requestOptions.getMetadata(), requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
-        return buildResponse(response, true);
+        return BlobOperationResponse.createWithEmptyBody(response);
     }
 
     public BlobOperationResponse uploadPageBlob(final Exchange exchange) throws IOException {
@@ -357,7 +358,7 @@ public class BlobOperations {
                     = client.uploadPageBlob(pageRange, streamAndLength.getInputStream(), requestOptions.getContentMD5(),
                             requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
-            return buildResponse(response, true);
+            return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
             closeInputStreamIfNeeded(streamAndLength.getInputStream());
         }
@@ -372,7 +373,7 @@ public class BlobOperations {
         final Response<PageBlobItem> response
                 = client.resizePageBlob(pageSize, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
-        return buildResponse(response, true);
+        return BlobOperationResponse.createWithEmptyBody(response);
     }
 
     public BlobOperationResponse clearPageBlob(final Exchange exchange) {
@@ -388,7 +389,7 @@ public class BlobOperations {
         final Response<PageBlobItem> response
                 = client.clearPagesBlob(pageRange, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
-        return buildResponse(response, true);
+        return BlobOperationResponse.createWithEmptyBody(response);
     }
 
     public BlobOperationResponse getPageBlobRanges(final Exchange exchange) {
@@ -403,7 +404,7 @@ public class BlobOperations {
         final Response<PageList> response = client.getPageBlobRanges(blobRange, commonRequestOptions.getBlobRequestConditions(),
                 commonRequestOptions.getTimeout());
 
-        return buildResponse(response, false);
+        return BlobOperationResponse.create(response);
     }
 
     private DownloadRetryOptions getDownloadRetryOptions(final BlobConfigurationOptionsProxy configurationProxy) {
@@ -419,31 +420,6 @@ public class BlobOperations {
         final byte[] contentMD5 = configurationProxy.getContentMd5(exchange);
 
         return new BlobCommonRequestOptions(blobHttpHeaders, metadata, accessTier, blobRequestConditions, contentMD5, timeout);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private BlobOperationResponse buildResponse(final Response response, final boolean emptyBody) {
-        final Object body = emptyBody ? true : response.getValue();
-        BlobExchangeHeaders exchangeHeaders;
-
-        if (response.getValue() instanceof BlockBlobItem) {
-            exchangeHeaders
-                    = BlobExchangeHeaders.createBlobExchangeHeadersFromBlockBlobItem((BlockBlobItem) response.getValue());
-        } else if (response.getValue() instanceof AppendBlobItem) {
-            exchangeHeaders
-                    = BlobExchangeHeaders.createBlobExchangeHeadersFromAppendBlobItem((AppendBlobItem) response.getValue());
-        } else if (response.getValue() instanceof PageBlobItem) {
-            exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromPageBlobItem((PageBlobItem) response.getValue());
-        } else if (response.getValue() instanceof BlobProperties) {
-            exchangeHeaders
-                    = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties((BlobProperties) response.getValue());
-        } else {
-            exchangeHeaders = BlobExchangeHeaders.create();
-        }
-
-        exchangeHeaders.httpHeaders(response.getHeaders());
-
-        return new BlobOperationResponse(body, exchangeHeaders.toMap());
     }
 
     private Long getPageBlobSize(final Exchange exchange) {
