@@ -26,7 +26,7 @@ Camel support coding in other languages such as XML:
 
 == RouteBuilder with Java DSL
 
-When coding routes with the xref:java-dsl.adoc[Java DSL] then you would use a `RouteBuilder` classes where
+When coding routes with the xref:java-dsl.adoc[Java DSL] then you would use a xref:route-builder.adoc[`RouteBuilder`] classes where
 you code the route in the `configure` method as shown:
 
 [source,java]
@@ -46,6 +46,7 @@ Camel now supports to define Camel routes in Java DSL using Lambda style. This c
 you may want to quickly define a few routes.
 
 For example using lambda style you can define a Camel route that takes messages from Kafka and send to JMS in a single line of code:
+
 [source,java]
 ----
 rb -> rb.from("kafka:cheese").to("jms:queue:foo");
@@ -56,4 +57,4 @@ See more at the xref:lambda-route-builder.adoc[LambdaRouteBuilder] documentation
 
 == More Information
 
-See xref:dsl.adoc[DSL] for a list of supported languages you can use for coding Camel routes.
+See xref:route-builder.adoc[RouteBuilder] and xref:dsl.adoc[DSL] for a list of supported languages you can use for coding Camel routes.
