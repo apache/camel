@@ -1,19 +1,14 @@
-[[SpringSupport-SpringSupport]]
-= Spring Support
+[[Spring-Spring]]
+= Spring
 
 Apache Camel is designed to work nicely with the Spring Framework in a number of ways.
 
-* Camel uses Spring Transactions as the default transaction handling in components like JMS and JPA
-* Camel works with Spring 2 XML processing with the XML Configuration
-* Camel Spring XML Schema's is defined at Xml Reference
-* Camel supports a powerful version of Spring Remoting which can use powerful routing between the client and server side along with using all of the available Components for the transport
-* Camel provides powerful Bean Integration with any bean defined in a Spring ApplicationContext.
-* Camel integrates with various Spring helper classes; such as providing Type Converter support for Spring Resources etc
-* Allows Spring to dependency inject Component instances or the xref:camelcontext.adoc[CamelContext] instance itself and auto-expose Spring beans as components and endpoints.
-* Allows you to reuse the Spring Testing framework to simplify your unit and integration testing using Enterprise Integration Patterns and Camel's powerful Mock and Test endpoints
-* From Camel 2.15: Camel supports Spring Boot using the camel-spring-boot component.
-* From Camel 2.17.1: Camel supports Spring Cache based Idempotent repository
-
+* Camel runs on Spring Boot with the Camel Spring Boot project
+* Camel works with Spring XML configuration files (classic Spring XML)
+* Camel works with Spring dependency injection
+* Camel works with configuration and property placeholders
+* Camel works with Spring Transaction
+* Camel works with Spring Testing making it easy to write unit and integration tests with Camel and Spring
 
 == Using Spring to configure the CamelContext
 
