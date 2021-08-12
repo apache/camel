@@ -140,19 +140,35 @@ as documented next.
 
 == Using optimised components
 
-But a better solution would be if the HTTP component could be optimised to handle the variations of dynamic computed endpoint uris.
+A better solution would be if the HTTP component could be optimised to handle the variations of dynamic computed endpoint uris.
 This is with among the following components, which have been optimised for `toD`:
 
 - camel-http
 - camel-jetty
 - camel-netty-http
 - camel-undertow
+- camel-vertx-http
+
+A number of non-HTTP components has been optimised as well:
+
+- camel-activemq
+- camel-amqp
+- camel-file
+- camel-ftp
+- camel-jms
+- camel-kafka
+- camel-paho-mqtt5
+- camel-paho
+- camel-rabbitmq
+- camel-sjms
+- camel-sjms2
+- camel-spring-rabbitmq
 
 For the optimisation to work, then:
 
-1. The optimisation is detected and activated during startup of the Camel routes with `toD`'s.
-2. The dynamic uri in `toD` must provide the component name as either static or resolved via property placeholders.
-3. The supported components must be on the classpath.
+. The optimisation is detected and activated during startup of the Camel routes with `toD`'s.
+. The dynamic uri in `toD` must provide the component name as either static or resolved via property placeholders.
+. The supported components must be on the classpath.
 
 The HTTP based components will be optimised to use the same hostname:port for each endpoint, and the dynamic values
 for context-path and query parameters will be provided as headers:

@@ -209,7 +209,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * To use an specific hostname for the API documentation
+     * To use a specific hostname for the API documentation (such as swagger or openapi)
      * <p/>
      * This can be used to override the generated host with this configured hostname
      */
