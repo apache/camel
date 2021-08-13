@@ -11,7 +11,6 @@ http://www.springframework.org/[Spring Framework] in a number of ways.
 components like xref:jms-component.adoc[JMS] and xref:jms-component.adoc[JPA]
 * Camel works with Spring 2 XML processing with the
 Xml Configuration
-* Camel Spring XML Schema's is defined at `https://camel.apache.org/schema/spring/`
 * Camel provides powerful Bean Integration
 with any bean defined in a Spring ApplicationContext
 * Camel integrates with various Spring helper classes; such as providing
