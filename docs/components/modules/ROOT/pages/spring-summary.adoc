@@ -13,8 +13,7 @@ Spring Framework in a number of ways.
 instances or the CamelContext instance itself
 and auto-expose Spring beans as components and endpoints.
 * Camel works with Spring XML processing with the XML Configuration
-* Camel Spring XML Schema's is defined at xref:manual::xml-reference.adoc[XML
-Reference]
+* Camel Spring XML Schema's is defined at `https://camel.apache.org/schema/spring/`
 * Camel provides powerful Bean Integration
 with any bean defined in a Spring ApplicationContext
 * Camel uses Spring Transactions as the default transaction handling in
