@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.TimeUtils;
 
@@ -88,7 +90,15 @@ public abstract class PropertyConfigurerSupport {
             }
         }
 
-        return camelContext.getTypeConverter().convertTo(type, value);
+        if (value != null) {
+            try {
+                return camelContext.getTypeConverter().mandatoryConvertTo(type, value);
+            } catch (NoTypeConversionAvailableException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        } else {
+            return null;
+        }
     }
 
 }
