@@ -310,7 +310,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
             String value = null;
 
             // favour local properties if
-            Properties local = propertiesComponent.getLocalProperties();
+            Properties local = propertiesComponent != null ? propertiesComponent.getLocalProperties() : null;
             if (local != null) {
                 value = local.getProperty(key);
                 if (value != null) {
