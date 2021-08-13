@@ -14420,8 +14420,9 @@ The hostname to use for exposing the REST service.
     <xs:attribute name="apiHost" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-To use an specific hostname for the API documentation This can be used to
-override the generated host with this configured hostname.
+To use a specific hostname for the API documentation (such as swagger or
+openapi) This can be used to override the generated host with this configured
+hostname.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
