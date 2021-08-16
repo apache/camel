@@ -170,6 +170,21 @@ public interface GraphqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of a header containing a JsonObject instance containing the
+         * operation variables.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param variablesHeader the value to set
+         * @return the dsl builder
+         */
+        default GraphqlEndpointBuilder variablesHeader(String variablesHeader) {
+            doSetProperty("variablesHeader", variablesHeader);
+            return this;
+        }
+        /**
          * The access token sent in the Authorization header.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
