@@ -202,4 +202,3 @@ The following example sends a new message which has
 
 See details at xref:multicast-eip.adoc[Multicast]
 
-xref:latest@manual:ROOT:using-this-pattern.adoc[Using This Pattern]
