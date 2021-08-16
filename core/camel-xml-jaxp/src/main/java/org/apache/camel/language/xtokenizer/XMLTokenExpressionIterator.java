@@ -537,11 +537,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                                     popSegment();
                                 }
                             }
+                        }
 
-                            if ((ancestor() == null && !isTop())
-                                    || (ancestor() != null && ancestor().matches(endname))) {
-                                up();
-                            }
+                        if (ancestor() == null && !isTop()
+                                || ancestor() != null && ancestor().matches(endname)) {
+                            up();
                         }
                         break;
                     case XMLStreamConstants.END_DOCUMENT:

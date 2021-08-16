@@ -81,6 +81,33 @@ public class XMLTokenExpressionIteratorTest {
                                                          + "</grandparent>"
                                                          + "</g:greatgrandparent>").getBytes();
 
+    // mixing different namespaces within a tag
+    private static final byte[] TEST_BODY_MIXED_CHILDREN = ("<?xml version='1.0' encoding='UTF-8'?>"
+                                                            + "<greatgrandparent xmlns='urn:g' xmlns:c='urn:c' xmlns:x='urn:x'>"
+                                                            + "<grandparent>"
+                                                            + "<x:uncle>bob</x:uncle>"
+                                                            + "<x:aunt>emma</x:aunt>"
+                                                            + "</grandparent>"
+                                                            + "<grandparent>"
+                                                            + "<c:parent some_attr='1'>"
+                                                            + "<c:child some_attr='a' anotherAttr='a'></c:child>"
+                                                            + "<c:child some_attr='b' anotherAttr='b' />"
+                                                            + "</c:parent>"
+                                                            + "<c:parent some_attr='2'>"
+                                                            + "<c:child some_attr='c' anotherAttr='c'></c:child>"
+                                                            + "<c:child some_attr='d' anotherAttr='d' />"
+                                                            + "</c:parent>"
+                                                            + "</grandparent>"
+                                                            + "<grandparent>"
+                                                            + "<x:uncle>ben</x:uncle>"
+                                                            + "<x:aunt>jenna</x:aunt>"
+                                                            + "<c:parent some_attr='3'>"
+                                                            + "<c:child some_attr='e' anotherAttr='e'></c:child>"
+                                                            + "<c:child some_attr='f' anotherAttr='f' />"
+                                                            + "</c:parent>"
+                                                            + "</grandparent>"
+                                                            + "</greatgrandparent>").getBytes();
+
     private static final String RESULTS_CW1 = "<?xml version='1.0' encoding='UTF-8'?>"
                                               + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
                                               + "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
@@ -267,13 +294,20 @@ public class XMLTokenExpressionIteratorTest {
             "ben"
     };
 
+    private static final String[] RESULTS_AUNT_AND_UNCLE = {
+            "<x:uncle xmlns=\"urn:g\" xmlns:x=\"urn:x\" xmlns:c=\"urn:c\">bob</x:uncle>",
+            "<x:aunt xmlns=\"urn:g\" xmlns:x=\"urn:x\" xmlns:c=\"urn:c\">emma</x:aunt>",
+            "<x:uncle xmlns=\"urn:g\" xmlns:x=\"urn:x\" xmlns:c=\"urn:c\">ben</x:uncle>",
+            "<x:aunt xmlns=\"urn:g\" xmlns:x=\"urn:x\" xmlns:c=\"urn:c\">jenna</x:aunt>"
+    };
+
     private static final String[] RESULTS_NULL = {
     };
 
     private Map<String, String> nsmap;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         nsmap = new HashMap<>();
         nsmap.put("G", "urn:g");
         nsmap.put("C", "urn:c");
@@ -430,6 +464,13 @@ public class XMLTokenExpressionIteratorTest {
     public void testExtractGrandParentText() throws Exception {
         invokeAndVerify("//grandparent",
                 't', new ByteArrayInputStream(TEST_BODY), RESULTS_GRANDPARENT_TEXT);
+    }
+
+    @Test
+    public void testExtractAuntAndUncleByNamespace() throws Exception {
+        nsmap.put("X", "urn:x");
+        invokeAndVerify("//G:grandparent/X:*",
+                'i', new ByteArrayInputStream(TEST_BODY_MIXED_CHILDREN), RESULTS_AUNT_AND_UNCLE);
     }
 
     private void invokeAndVerify(String path, char mode, InputStream in, String[] expected) throws Exception {
