@@ -140,6 +140,20 @@ public interface GraphqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of a header containing the GraphQL query.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param queryHeader the value to set
+         * @return the dsl builder
+         */
+        default GraphqlEndpointBuilder queryHeader(String queryHeader) {
+            doSetProperty("queryHeader", queryHeader);
+            return this;
+        }
+        /**
          * The JsonObject instance containing the operation variables.
          * 
          * The option is a:

@@ -35,6 +35,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "queryfile":
         case "queryFile": target.setQueryFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "queryheader":
+        case "queryHeader": target.setQueryHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "variables": target.setVariables(property(camelContext, org.apache.camel.util.json.JsonObject.class, value)); return true;
         case "variablesheader":
@@ -60,6 +62,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "query": return java.lang.String.class;
         case "queryfile":
         case "queryFile": return java.lang.String.class;
+        case "queryheader":
+        case "queryHeader": return java.lang.String.class;
         case "username": return java.lang.String.class;
         case "variables": return org.apache.camel.util.json.JsonObject.class;
         case "variablesheader":
@@ -86,6 +90,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "query": return target.getQuery();
         case "queryfile":
         case "queryFile": return target.getQueryFile();
+        case "queryheader":
+        case "queryHeader": return target.getQueryHeader();
         case "username": return target.getUsername();
         case "variables": return target.getVariables();
         case "variablesheader":
