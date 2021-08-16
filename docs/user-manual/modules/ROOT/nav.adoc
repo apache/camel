@@ -76,7 +76,6 @@
 ** xref:transformer.adoc[Transformer]
 ** xref:threading-model.adoc[Threading Model]
 ** xref:tracer.adoc[Tracer]
-** xref:transport.adoc[Transport]
 ** xref:type-converter.adoc[Type Converter]
 ** xref:uris.adoc[URIs]
 ** xref:uuidgenerator.adoc[UuidGenerator]

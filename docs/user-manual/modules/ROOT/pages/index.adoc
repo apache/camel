@@ -106,7 +106,6 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:stream-caching.adoc[Stream caching]
 * xref:threading-model.adoc[Threading Model]
 * xref:tracer.adoc[Tracer]
-* xref:transport.adoc[Transport]
 * xref:type-converter.adoc[Type Converter]
 * xref:uris.adoc[URIs]
 * xref:uuidgenerator.adoc[UuidGenerator]
