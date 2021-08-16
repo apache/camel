@@ -187,8 +187,6 @@ For more details see:
 
 The *`ScheduledPollConsumer`* supports the following options:
 
-confluenceTableSmall
-
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Option |Default |Description
@@ -320,7 +318,7 @@ executed. For instance if Camel should poll a file network, and this
 network resource is not available then a *`java.io.IOException`* could
 occur. As this error happens *before* any xref:latest@manual:ROOT:exchange.adoc[Exchange]
 has been created and prepared for routing, then the regular
-xref:latest@manual:ROOT:error-handling-in-camel.adoc[Error handling in Camel] does not
+xref:latest@manual:ROOT:error-handler.adoc[Error handler] does not
 apply. So what does the consumer do then? Well the exception is
 propagated back to the *`run`* method where its handled. Camel will by
 default log the exception at *`WARN`* level and then ignore it. At next
