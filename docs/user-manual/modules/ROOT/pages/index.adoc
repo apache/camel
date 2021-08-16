@@ -5,10 +5,7 @@ known xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integra
 Patterns].
 
 Camel empowers you to define routing and mediation rules in a variety of
-domain-specific languages, including a Java-based xref:dsl.adoc[Fluent
-API], xref:spring.adoc[Spring] or
-xref:using-osgi-blueprint-with-camel.adoc[Blueprint]
-xref:xml-configuration.adoc[XML Configuration] files.
+domain-specific languages (xref:manual::dsl.adoc[DSL], such as Java, XML, Groovy, Kotlin, and YAML).
 This means you get smart completion of
 routing rules in your IDE, whether in a Java or XML editor.
 
@@ -57,9 +54,6 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
 * xref:examples.adoc[Examples]
 * xref:testing.adoc[Testing]
-* xref:xml-configuration.adoc[XML Configuration]
-* [Using CamelProxy] for how to use proxies for clients to easily invoke
-camel routes without them knowing
 * xref:camel-maven-plugin.adoc[Camel Maven Plugin] for running Camel from a Maven goal
 * xref:camel-component-maven-plugin.adoc[Camel Component Maven Plugin] to generate all the necessary metadata and Java file for your custom component.
 * xref:camel-report-maven-plugin.adoc[Camel Maven Report Plugin] to validate your source code and report the code coverage of your camel routes
@@ -116,7 +110,6 @@ camel routes without them knowing
 * xref:type-converter.adoc[Type Converter]
 * xref:uris.adoc[URIs]
 * xref:uuidgenerator.adoc[UuidGenerator]
-* xref:xml-configuration.adoc[XML Configuration]
 
 === xref:dsl.adoc[DSL]
 

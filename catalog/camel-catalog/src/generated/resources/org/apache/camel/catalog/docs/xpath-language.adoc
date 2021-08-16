@@ -10,12 +10,13 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xpath.adoc[
 *Since Camel {since}*
 
 Camel supports http://www.w3.org/TR/xpath[XPath] to allow an
-Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
-Configuration]. For example you could use XPath to create an
+xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] to be
+used in the xref:manual::dsl.adoc[DSL].
+
+For example you could use XPath to create an
 Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a
-Recipient List.
+xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List].
 
 *Streams*
 
@@ -212,8 +213,6 @@ type so the concat function works.
 
 == Using XPath on Headers
 
-*Since Camel 2.11*
-
 Some users may have XML stored in a header. To apply an XPath to a
 header's value you can do this by defining the 'headerName' attribute.
 
@@ -279,8 +278,6 @@ public class Foo {
 
 == Using XPathBuilder without an Exchange
 
-*Since Camel 2.3*
-
 You can now use the `org.apache.camel.builder.XPathBuilder` without the
 need for an Exchange. This comes handy if you want
 to use it as a helper to do custom xpath evaluations.
@@ -319,8 +316,6 @@ String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese<
 
 == Using Saxon with XPathBuilder
 
-*Since Camel 2.3*
-
 You need to add *camel-saxon* as dependency to your project.
 
 Its now easier to use http://saxon.sourceforge.net/[Saxon] with the
@@ -333,8 +328,6 @@ XPathBuilder which can be done in several ways as shown below. +
 The easy one
 
 == Setting a custom XPathFactory using System Property
-
-*Since Camel 2.3*
 
 Camel now supports reading the
 http://java.sun.com/j2se/1.5.0/docs/api/javax/xml/xpath/XPathFactory.html#newInstance(java.lang.String)[JVM
@@ -361,8 +354,6 @@ To use Apache Xerces you can configure the system property
 
 == Enabling Saxon from Spring DSL
 
-*Since Camel 2.10*
-
 Similarly to Java DSL, to enable Saxon from Spring DSL you have three
 options:
 
@@ -388,8 +379,6 @@ Shortcut
 ----
 
 == Namespace auditing to aid debugging
-
-*Since Camel 2.10*
 
 A large number of XPath-related issues that users frequently face are
 linked to the usage of namespaces. You may have some misalignment
@@ -483,8 +472,6 @@ xmlns:b=[http://apache.org/camelA, http://apache.org/camelB]}
 
 == Loading script from external resource
 
-*Since Camel 2.11*
-
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
  This is done using the following syntax: `"resource:scheme:location"`,
@@ -497,6 +484,20 @@ eg to refer to a file on the classpath you can do:
 
 == Dependencies
 
-The XPath language is part of camel-core.
+To use XPath in your camel routes you need to add the a dependency on
+*camel-xpath* which implements the XPath language.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+--------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xpath</artifactId>
+  <version>x.x.x</version>
+</dependency>
+--------------------------------------
 
 include::{page-component-version}@camel-spring-boot::page$xpath-starter.adoc[]

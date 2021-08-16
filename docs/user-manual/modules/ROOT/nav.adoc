@@ -22,7 +22,6 @@
 ** xref:testing.adoc[Testing]
 ** xref:rest-dsl.adoc[Working with REST and Rest DSL]
 ** xref:writing-components.adoc[Writing Components]
-** xref:xml-configuration.adoc[XML Configuration]
 ** xref:release-guide.adoc[Release guide]
 ** xref:improving-the-documentation.adoc[Improving the Documentation]
 * xref:migration-and-upgrade.adoc[Migration and Upgrade]

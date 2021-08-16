@@ -6,10 +6,7 @@ known xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integra
 Patterns].
 
 Camel empowers you to define routing and mediation rules in a variety of
-domain-specific languages, including a Java-based xref:ROOT:dsl.adoc[Fluent
-API], xref:ROOT:spring.adoc[Spring] or
-xref:ROOT:using-osgi-blueprint-with-camel.adoc[Blueprint]
-xref:ROOT:xml-configuration.adoc[XML Configuration] files.
+domain-specific languages (xref:manual::dsl.adoc[DSL], such as Java, XML, Groovy, Kotlin, and YAML).
 This means you get smart completion of
 routing rules in your IDE, whether in a Java or XML editor.
 

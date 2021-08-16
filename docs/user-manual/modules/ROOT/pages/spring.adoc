@@ -1,14 +1,14 @@
 [[Spring-Spring]]
 = Spring
 
-Apache Camel is designed to work nicely with the Spring Framework in a number of ways.
+Apache Camel is designed to work first class with Spring in a number of ways, such as:
 
 * Camel runs on Spring Boot with the Camel Spring Boot project
 * Camel works with Spring XML configuration files (classic Spring XML)
 * Camel works with Spring dependency injection
-* Camel works with configuration and property placeholders
-* Camel works with Spring Transaction
-* Camel works with Spring Testing making it easy to write unit and integration tests with Camel and Spring
+* Camel works with Spring configuration and property placeholders
+* Camel works with Spring transactions
+* Camel works with Spring testing
 
 == Using Spring to configure the CamelContext
 

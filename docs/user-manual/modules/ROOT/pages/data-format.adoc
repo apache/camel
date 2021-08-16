@@ -18,8 +18,7 @@ xref:components::http-component.adoc[HTTP] or xref:components::jms-component.ado
 the payload into some bean so that you can process it using some
 xref:bean-integration.adoc[Bean Integration] or perform
 xref:predicate.adoc[Predicate] evaluation and so forth. To do this use
-the `unmarshal` word in the xref:dsl.adoc[DSL] in Java or the
-xref:xml-configuration.adoc[XML DSL].
+the `unmarshal` word in the xref:dsl.adoc[DSL].
 
 For example:
 

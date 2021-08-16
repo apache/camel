@@ -11,17 +11,20 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/groovy.adoc
 
 *Since Camel {since}*
 
-Camel supports http://groovy.codehaus.org/[Groovy] among other
-Scripting Languages to allow an
-Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
-Configuration].
+Camel supports http://www.groovy-lang.org/[Groovy] to allow an
+xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] to be
+used in the xref:manual::dsl.adoc[DSL].
+
+For example you could use Groovy to create an
+Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
+Filter] or as an Expression for a
+xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List].
 
 To use a Groovy expression use the following Java code
 
 [source,java]
 ---------------------------------------
-... groovy("someGroovyExpression") ...
+groovy("someGroovyExpression")
 ---------------------------------------
 
 For example you could use the *groovy* function to create an
@@ -116,15 +119,11 @@ And the Spring DSL:
 
 == Additional arguments to ScriptingEngine
 
-*Since Camel 2.8*
-
 You can provide additional arguments to the `ScriptingEngine` using a
 header on the Camel message with the key `CamelScriptArguments`. +
  See this example:
 
 == Loading script from external resource
-
-*Since Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
@@ -137,8 +136,6 @@ eg to refer to a file on the classpath you can do:
 -------------------------------------------------------------------
 
 == How to get the result from multiple statements script
-
-*Since Camel 2.14*
 
 As the scripteengine evaluate method just return a Null if it runs a
 multiple statements script. Camel now look up the value of script result

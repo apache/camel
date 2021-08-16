@@ -12,12 +12,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xquery.ado
 
 *{component-header}*
 
-Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
-Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
-Configuration]. For example you could use XQuery to create an
-Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
-Filter] or as an Expression for a Recipient List.
+Camel supports http://www.w3.org/TR/xquery/[XQuery] component for message transformation
 
 // component-configure options: START
 == Configuring Options
@@ -219,7 +214,7 @@ attribute:
 
 [source,xml]
 -------------------------------------------------------------------------------
-    <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
+<xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
 -------------------------------------------------------------------------------
 
 == Using XQuery as transformation

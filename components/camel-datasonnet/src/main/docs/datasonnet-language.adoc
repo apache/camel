@@ -9,13 +9,20 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/datasonnet.
 
 *Since Camel {since}*
 
-Camel supports https://datasonnet.com/[DataSonnet] transformations to allow an Expression or Predicate to be used in the Java DSL or  xref:manual::xml-configuration.adoc[XML
-Configuration].
+Camel supports https://datasonnet.com/[DataSonnet] transformations to allow an
+xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] to be
+used in the xref:manual::dsl.adoc[DSL].
+
+For example you could use DataSonnet to create an
+Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
+Filter] or as an Expression for a
+xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List].
 
 To use a DataSonnet expression use the following Java code:
+
 [source,java]
 ---------------------------------------
-... datasonnet("someDSExpression") ...
+datasonnet("someDSExpression")
 ---------------------------------------
 
 == DataSonnet Options
