@@ -1,15 +1,15 @@
 = Tracer
 
 Camel's tracer is used for logging message details during routing, where
-you can see the route path of each message as they happens. Details of the message is also logged such as the message body.
+you can see the route path of each message as they happen. Details of the message is also logged such as the message body.
 
 == Formatting
 
 The tracer formats the execution of exchanges to log lines. They are
-logged at *`INFO`* level in the log category:
-*`org.apache.camel.Tracing`*. 
+logged at `INFO` level in the log category: `org.apache.camel.Tracing`.
 
-The message information from the Exchange is formatted using `ExchangeFormatter` and the default implementation has many options you can configure. See the source code/javadoc of the `org.apache.camel.support.processor.DefaultExchangeFormatter` class.
+The message information from the Exchange is formatted using `ExchangeFormatter` and the default implementation
+has many options you can configure accordingly to the https://www.javadoc.io/doc/org.apache.camel/camel-support/latest/org/apache/camel/support/processor/DefaultExchangeFormatter.html[javadoc].
 
 == Enabling
 

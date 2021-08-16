@@ -1,13 +1,3 @@
-ifdef::env-github[]
-:icon-frown: :frowning:
-:icon-smile: :smiley:
-endif::[]
-ifndef::env-github[]
-:icons: font
-:icon-frown: icon:frown-o[fw,role=yellow]
-:icon-smile: icon:smile-o[fw,role=yellow]
-endif::[]
-
 [[Testing-Testing]]
 = Testing
 
