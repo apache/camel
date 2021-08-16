@@ -100,10 +100,8 @@ public class KubernetesJobProducer extends DefaultProducer {
         }
 
         MixedOperation<Job, JobList, ScalableResource<Job>> jobs = getEndpoint().getKubernetesClient().batch().v1().jobs();
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
-            jobs.withLabel(entry.getKey(), entry.getValue());
-        }
-        JobList jobList = jobs.list();
+
+        JobList jobList = jobs.withLabels(labels).list();
 
         prepareOutboundMessage(exchange, jobList.getItems());
     }

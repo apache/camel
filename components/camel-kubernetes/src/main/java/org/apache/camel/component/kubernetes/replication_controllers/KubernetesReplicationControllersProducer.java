@@ -107,18 +107,14 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             NonNamespaceOperation<ReplicationController, ReplicationControllerList, RollableScalableResource<ReplicationController>> replicationControllers
                     = getEndpoint()
                             .getKubernetesClient().replicationControllers().inNamespace(namespaceName);
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                replicationControllers.withLabel(entry.getKey(), entry.getValue());
-            }
-            rcList = replicationControllers.list();
+
+            rcList = replicationControllers.withLabels(labels).list();
         } else {
             FilterWatchListMultiDeletable<ReplicationController, ReplicationControllerList> replicationControllers
                     = getEndpoint()
                             .getKubernetesClient().replicationControllers().inAnyNamespace();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                replicationControllers.withLabel(entry.getKey(), entry.getValue());
-            }
-            rcList = replicationControllers.list();
+
+            rcList = replicationControllers.withLabels(labels).list();
         }
 
         prepareOutboundMessage(exchange, rcList.getItems());
