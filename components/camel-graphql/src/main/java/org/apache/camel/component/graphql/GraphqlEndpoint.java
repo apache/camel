@@ -76,6 +76,8 @@ public class GraphqlEndpoint extends DefaultEndpoint {
     private JsonObject variables;
     @UriParam
     private String variablesHeader;
+    @UriParam
+    private String queryHeader;
 
     private CloseableHttpClient httpClient;
 
@@ -255,5 +257,24 @@ public class GraphqlEndpoint extends DefaultEndpoint {
      */
     public void setVariablesHeader(String variablesHeader) {
         this.variablesHeader = variablesHeader;
+    }
+
+    public String getQueryHeader() {
+        return queryHeader;
+    }
+
+    /**
+     * The name of a header containing the GraphQL query.
+     */
+    public void setQueryHeader(String queryHeader) {
+        this.queryHeader = queryHeader;
+    }
+
+    public CloseableHttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 }

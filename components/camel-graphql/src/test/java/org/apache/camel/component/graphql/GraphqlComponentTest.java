@@ -103,6 +103,15 @@ public class GraphqlComponentTest extends CamelTestSupport {
                         .to("graphql://http://localhost:" + server.getPort()
                             + "/graphql?query={books{id name}}&variablesHeader=bookByIdQueryVariables")
                         .to("mock:result");
+                from("direct:start6")
+                        .to("graphql://http://localhost:" + server.getPort()
+                            + "/graphql")
+                        .to("mock:result");
+                from("direct:start7")
+                        .setHeader("myQuery", constant("{books{id name}}"))
+                        .to("graphql://http://localhost:" + server.getPort()
+                            + "/graphql?queryHeader=myQuery")
+                        .to("mock:result");
             }
         };
     }
@@ -113,6 +122,26 @@ public class GraphqlComponentTest extends CamelTestSupport {
         result.expectedBodiesReceived(booksQueryResult);
 
         template.sendBody("direct:start1", "");
+
+        result.assertIsSatisfied();
+    }
+
+    @Test
+    public void booksQueryWithStaticQueryInBody() throws Exception {
+        result.expectedMessageCount(1);
+        result.expectedBodiesReceived(booksQueryResult);
+
+        template.sendBody("direct:start6", "{books{id name}}");
+
+        result.assertIsSatisfied();
+    }
+
+    @Test
+    public void booksQueryWithStaticQueryInHeader() throws Exception {
+        result.expectedMessageCount(1);
+        result.expectedBodiesReceived(booksQueryResult);
+
+        template.sendBody("direct:start7", "");
 
         result.assertIsSatisfied();
     }
