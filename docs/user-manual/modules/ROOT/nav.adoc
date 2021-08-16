@@ -18,7 +18,6 @@
 ** xref:error-handler.adoc[Error handler]
 ** xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 ** xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
-** xref:templating.adoc[Templating]
 ** xref:testing.adoc[Testing]
 ** xref:rest-dsl.adoc[Working with REST and Rest DSL]
 ** xref:writing-components.adoc[Writing Components]
