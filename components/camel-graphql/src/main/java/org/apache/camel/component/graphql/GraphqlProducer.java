@@ -47,7 +47,7 @@ public class GraphqlProducer extends DefaultAsyncProducer {
             CloseableHttpClient httpClient = getEndpoint().getHttpclient();
             URI httpUri = getEndpoint().getHttpUri();
             String requestBody = buildRequestBody(getEndpoint().getQuery(), getEndpoint().getOperationName(),
-                    getEndpoint().getVariables());
+                    getVariables(exchange));
             HttpEntity requestEntity = new StringEntity(requestBody, ContentType.create("application/json", "UTF-8"));
 
             HttpPost httpPost = new HttpPost(httpUri);
@@ -73,5 +73,17 @@ public class GraphqlProducer extends DefaultAsyncProducer {
         jsonObject.put("operationName", operationName);
         jsonObject.put("variables", variables != null ? variables : new JsonObject());
         return jsonObject.toJson();
+    }
+
+    private JsonObject getVariables(Exchange exchange) {
+        JsonObject variables = null;
+        if (getEndpoint().getVariables() != null) {
+            variables = getEndpoint().getVariables();
+        } else if (getEndpoint().getVariablesHeader() != null) {
+            variables = exchange.getIn().getHeader(getEndpoint().getVariablesHeader(), JsonObject.class);
+        } else if (exchange.getIn().getBody() instanceof JsonObject) {
+            variables = exchange.getIn().getBody(JsonObject.class);
+        }
+        return variables;
     }
 }

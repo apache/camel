@@ -99,6 +99,10 @@ public class GraphqlComponentTest extends CamelTestSupport {
                         .to("graphql://http://localhost:" + server.getPort()
                             + "/graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
                         .to("mock:result");
+                from("direct:start5")
+                        .to("graphql://http://localhost:" + server.getPort()
+                            + "/graphql?query={books{id name}}&variablesHeader=bookByIdQueryVariables")
+                        .to("mock:result");
             }
         };
     }
@@ -143,4 +147,27 @@ public class GraphqlComponentTest extends CamelTestSupport {
         result.assertIsSatisfied();
     }
 
+    @Test
+    public void booksQueryWithVariablesHeader() throws Exception {
+        result.expectedMessageCount(1);
+        result.expectedBodiesReceived(booksQueryResult);
+
+        JsonObject variables = new JsonObject();
+        variables.put("id", "book-1");
+        template.sendBodyAndHeader("direct:start5", "", "bookByIdQueryVariables", variables);
+
+        result.assertIsSatisfied();
+    }
+
+    @Test
+    public void booksQueryWithVariablesBody() throws Exception {
+        result.expectedMessageCount(1);
+        result.expectedBodiesReceived(booksQueryResult);
+
+        JsonObject variables = new JsonObject();
+        variables.put("id", "book-1");
+        template.sendBody("direct:start1", variables);
+
+        result.assertIsSatisfied();
+    }
 }

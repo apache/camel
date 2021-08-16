@@ -100,7 +100,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (10 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,6 +112,7 @@ with the following path and query parameters:
 | *query* (producer) | The query text. |  | String
 | *queryFile* (producer) | The query file name located in the classpath. |  | String
 | *variables* (producer) | The JsonObject instance containing the operation variables. |  | JsonObject
+| *variablesHeader* (producer) | The name of a header containing a JsonObject instance containing the operation variables. |  | String
 | *accessToken* (security) | The access token sent in the Authorization header. |  | String
 | *jwtAuthorizationType* (security) | The JWT Authorization type. Default is Bearer. | Bearer | String
 | *password* (security) | The password for Basic authentication. |  | String
@@ -122,7 +123,7 @@ with the following path and query parameters:
 
 == Message Body
 
-Camel will store the GraphQL response from the external server on the OUT message body. All headers from the IN message will be copied to the OUT message, so headers are preserved during routing. Additionally Camel will add the HTTP response headers as well to the OUT message headers.
+If the `variables` and `variablesHeader` parameters are not used and the IN body is a JsonObject instance, Camel will use it for the operation's variables. Camel will store the GraphQL response from the external server on the OUT message body. All headers from the IN message will be copied to the OUT message, so headers are preserved during routing. Additionally Camel will add the HTTP response headers as well to the OUT message headers.
 
 == Examples
 
@@ -175,6 +176,19 @@ public JsonObject bookByIdQueryVariables() {
 
 from("direct:start")
     .to("graphql://http://example.com/graphql?queryFile=bookByIdQuery.graphql&variables=#bookByIdQueryVariables")
+----
+
+A query that accesses variables via the variablesHeader parameter:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader("myVariables", () -> {
+        JsonObject variables = new JsonObject();
+        variables.put("id", "book-1");
+        return variables;
+    })
+    .to("graphql://http://example.com/graphql?queryFile=bookByIdQuery.graphql&variablesHeader=myVariables")
 ----
 
 === Mutations

@@ -74,6 +74,8 @@ public class GraphqlEndpoint extends DefaultEndpoint {
     private String operationName;
     @UriParam
     private JsonObject variables;
+    @UriParam
+    private String variablesHeader;
 
     private CloseableHttpClient httpClient;
 
@@ -244,4 +246,14 @@ public class GraphqlEndpoint extends DefaultEndpoint {
         this.variables = variables;
     }
 
+    public String getVariablesHeader() {
+        return variablesHeader;
+    }
+
+    /**
+     * The name of a header containing a JsonObject instance containing the operation variables.
+     */
+    public void setVariablesHeader(String variablesHeader) {
+        this.variablesHeader = variablesHeader;
+    }
 }
