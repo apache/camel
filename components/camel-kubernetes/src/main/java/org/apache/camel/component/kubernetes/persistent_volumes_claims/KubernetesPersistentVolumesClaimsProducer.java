@@ -22,9 +22,6 @@ import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimList;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -93,20 +90,19 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<PersistentVolumeClaim, PersistentVolumeClaimList, Resource<PersistentVolumeClaim>> pvcs
-                    = getEndpoint()
-                            .getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName);
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                pvcs.withLabel(entry.getKey(), entry.getValue());
-            }
-            pvcList = pvcs.list();
+            pvcList = getEndpoint()
+                    .getKubernetesClient()
+                    .persistentVolumeClaims()
+                    .inNamespace(namespaceName)
+                    .withLabels(labels)
+                    .list();
         } else {
-            FilterWatchListMultiDeletable<PersistentVolumeClaim, PersistentVolumeClaimList> pvcs = getEndpoint()
-                    .getKubernetesClient().persistentVolumeClaims().inAnyNamespace();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                pvcs.withLabel(entry.getKey(), entry.getValue());
-            }
-            pvcList = pvcs.list();
+            pvcList = getEndpoint()
+                    .getKubernetesClient()
+                    .persistentVolumeClaims()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, pvcList.getItems());

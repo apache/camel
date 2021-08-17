@@ -62,7 +62,7 @@ public class KubernetesReplicationControllersConsumerIT extends KubernetesTestSu
     @Order(1)
     public void createReplicationController() throws Exception {
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-                "MODIFIED", "MODIFIED", "MODIFIED", "MODIFIED");
+                "MODIFIED", "MODIFIED");
 
         Exchange ex = template.request("direct:createReplicationController", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");

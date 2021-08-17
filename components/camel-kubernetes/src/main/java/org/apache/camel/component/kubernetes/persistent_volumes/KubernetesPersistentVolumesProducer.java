@@ -20,8 +20,6 @@ import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.PersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolumeList;
-import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -77,15 +75,9 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
     }
 
     protected void doListPersistentVolumesByLabels(Exchange exchange) {
-        PersistentVolumeList pvList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);
-        NonNamespaceOperation<PersistentVolume, PersistentVolumeList, Resource<PersistentVolume>> pvs
-                = getEndpoint().getKubernetesClient().persistentVolumes();
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
-            pvs.withLabel(entry.getKey(), entry.getValue());
-        }
-        pvList = pvs.list();
+        PersistentVolumeList pvList = getEndpoint().getKubernetesClient().persistentVolumes().withLabels(labels).list();
 
         prepareOutboundMessage(exchange, pvList.getItems());
     }
