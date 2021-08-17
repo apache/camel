@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.Service;
@@ -41,6 +42,8 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperties({
@@ -50,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
+    private static final String TEST_SERVICE_NAME = "test" + ThreadLocalRandom.current().nextInt(1, 100);
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
@@ -57,12 +61,12 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
     @Test
     @Order(1)
     public void createService() throws Exception {
-        mockResultEndpoint.expectedMessageCount(1);
+        //        mockResultEndpoint.expectedMessageCount(1);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED");
 
         Exchange ex = template.request("direct:createService", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, TEST_SERVICE_NAME);
             Map<String, String> labels = new HashMap<>();
             labels.put("this", "rocks");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
@@ -80,28 +84,28 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, serviceSpec);
         });
 
+        assertFalse(ex.isFailed());
+        assertNull(ex.getException());
+
         Service serv = ex.getMessage().getBody(Service.class);
 
-        assertEquals("test", serv.getMetadata().getName());
-
-        mockResultEndpoint.assertIsSatisfied();
+        assertEquals(TEST_SERVICE_NAME, serv.getMetadata().getName());
     }
 
     @Test
     @Order(2)
     public void deleteService() throws Exception {
-        mockResultEndpoint.expectedMessageCount(2);
-
         Exchange ex = template.request("direct:deleteService", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, TEST_SERVICE_NAME);
         });
+
+        assertFalse(ex.isFailed());
+        assertNull(ex.getException());
 
         boolean servDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(servDeleted);
-
-        mockResultEndpoint.assertIsSatisfied();
     }
 
     @Override

@@ -20,9 +20,6 @@ import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccountList;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -90,19 +87,19 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<ServiceAccount, ServiceAccountList, Resource<ServiceAccount>> serviceAccounts
-                    = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName);
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                serviceAccounts.withLabel(entry.getKey(), entry.getValue());
-            }
-            saList = serviceAccounts.list();
+            saList = getEndpoint()
+                    .getKubernetesClient()
+                    .serviceAccounts()
+                    .inNamespace(namespaceName)
+                    .withLabels(labels)
+                    .list();
         } else {
-            FilterWatchListMultiDeletable<ServiceAccount, ServiceAccountList> serviceAccounts
-                    = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                serviceAccounts.withLabel(entry.getKey(), entry.getValue());
-            }
-            saList = serviceAccounts.list();
+            saList = getEndpoint()
+                    .getKubernetesClient()
+                    .serviceAccounts()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, saList.getItems());

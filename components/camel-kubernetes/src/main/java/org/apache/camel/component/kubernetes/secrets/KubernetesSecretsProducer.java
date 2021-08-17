@@ -20,9 +20,6 @@ import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretList;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -89,19 +86,18 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Secret, SecretList, Resource<Secret>> secrets
-                    = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName);
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                secrets.withLabel(entry.getKey(), entry.getValue());
-            }
-            secretsList = secrets.list();
+            secretsList = getEndpoint()
+                    .getKubernetesClient()
+                    .secrets()
+                    .inNamespace(namespaceName)
+                    .withLabels(labels)
+                    .list();
         } else {
-            FilterWatchListMultiDeletable<Secret, SecretList> secrets
-                    = getEndpoint().getKubernetesClient().secrets().inAnyNamespace();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                secrets.withLabel(entry.getKey(), entry.getValue());
-            }
-            secretsList = secrets.list();
+            secretsList = getEndpoint()
+                    .getKubernetesClient()
+                    .secrets()
+                    .inAnyNamespace()
+                    .withLabels(labels).list();
         }
 
         prepareOutboundMessage(exchange, secretsList.getItems());
