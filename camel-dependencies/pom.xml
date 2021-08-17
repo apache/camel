@@ -36,7 +36,7 @@
     <activemq-artemis-version>2.17.0</activemq-artemis-version>
     <activemq-version>5.16.2</activemq-version>
     <ahc-version>2.12.3</ahc-version>
-    <apache-any23-version>2.3</apache-any23-version>
+    <apache-any23-version>2.4</apache-any23-version>
     <apache-drill-version>1.19.0</apache-drill-version>
     <apache-gora-version>0.9</apache-gora-version>
     <apacheds-version>2.0.0.AM26</apacheds-version>
@@ -467,8 +467,8 @@
     <quartz-version>2.3.2</quartz-version>
     <quickfixj-version>2.3.0</quickfixj-version>
     <rabbitmq-amqp-client-version>5.12.0</rabbitmq-amqp-client-version>
-    <rdf4j-model-version>2.4.4</rdf4j-model-version>
-    <rdf4j-rio-version>2.4.4</rdf4j-rio-version>
+    <rdf4j-model-version>3.7.2</rdf4j-model-version>
+    <rdf4j-rio-version>3.7.2</rdf4j-rio-version>
     <reactive-streams-version>1.0.3</reactive-streams-version>
     <reactor-netty-version>1.0.2</reactor-netty-version>
     <reactor-version>3.4.5</reactor-version>

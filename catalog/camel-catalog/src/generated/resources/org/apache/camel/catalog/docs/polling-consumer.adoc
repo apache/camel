@@ -424,5 +424,4 @@ defined in the xref:latest@manual:ROOT:registry.adoc[Registry] with the bean id 
 from("file://inbox/?pollStrategy=#myPoll").to("activemq:queue:inbox")
 ----
 
-xref:latest@manual:ROOT:using-this-pattern.adoc[Using This Pattern]
 
