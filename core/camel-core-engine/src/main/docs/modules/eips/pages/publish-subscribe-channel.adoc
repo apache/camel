@@ -23,7 +23,7 @@ image::eip/PublishSubscribeSolution.gif[image]
 Another option is to explicitly list the publish-subscribe relationship
 in your routing logic; this keeps the producer and consumer decoupled
 but lets you control the fine grained routing configuration using the
-xref:latest@manual:ROOT:dsl.adoc[DSL] or xref:latest@manual:ROOT:xml-configuration.adoc[Xml Configuration].
+xref:latest@manual:ROOT:dsl.adoc[DSL].
 
 In Java code:
 

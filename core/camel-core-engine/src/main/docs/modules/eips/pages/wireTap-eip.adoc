@@ -201,5 +201,3 @@ The following example sends a new message which has
 == Using `onPrepare` to Execute Custom Logic when Preparing Messages
 
 See details at xref:multicast-eip.adoc[Multicast]
-
-xref:latest@manual:ROOT:using-this-pattern.adoc[Using This Pattern]
