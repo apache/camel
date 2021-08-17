@@ -227,8 +227,7 @@ above in the `<packageScan>` documentation.
 
 *Available as of Camel 2.3*
 
-When defining routes in Camel using xref:latest@manual::xml-configuration.adoc[Xml
-Configuration] you may want to define some routes in other XML files.
+When defining routes in Camel using XML DSL you may want to define some routes in other XML files.
 For example you may have many routes and it may help to maintain the
 application if some of the routes are in separate XML files. You may
 also want to store common and reusable routes in other XML files, which

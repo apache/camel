@@ -15,8 +15,7 @@ Camel supports
 http://en.wikipedia.org/wiki/JavaScript[JavaScript/ECMAScript] among
 other Scripting Languages to allow an
 Expression or Predicate to be
-used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
-Configuration].
+used in the DSL or XML DSL.
 
 To use a JavaScript expression use the following Java code
 

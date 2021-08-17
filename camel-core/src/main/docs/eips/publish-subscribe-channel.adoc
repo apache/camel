@@ -23,7 +23,7 @@ image:http://www.enterpriseintegrationpatterns.com/img/PublishSubscribeSolution.
 Another option is to explicitly list the publish-subscribe relationship
 in your routing logic; this keeps the producer and consumer decoupled
 but lets you control the fine grained routing configuration using the
-link:dsl.html[DSL] or link:xml-configuration.html[Xml Configuration].
+link:dsl.html[DSL] or XML DSL.
 
 In Java code:
 

@@ -13,8 +13,7 @@
 Camel supports http://www.ruby-lang.org/en/[Ruby] among other
 Scripting Languages to allow an
 Expression or Predicate to be
-used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
-Configuration].
+used in the DSL or XML DSL.
 
 To use a Ruby expression use the following Java code
 

@@ -14,8 +14,7 @@
 Camel supports http://www.python.org/[Python] among other
 Scripting Languages to allow an
 Expression or Predicate to be
-used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
-Configuration].
+used in the DSL or XML DSL.
 
 To use a Python expression use the following Java code
 
