@@ -209,8 +209,7 @@ above in the `<packageScan>` documentation.
 
 == How do I import routes from other XML files
 
-When defining routes in Camel using xref:manual::xml-configuration.adoc[Xml
-Configuration] you may want to define some routes in other XML files.
+When defining routes in Camel using Spring XML you may want to define some routes in other XML files.
 For example you may have many routes and it may help to maintain the
 application if some of the routes are in separate XML files. You may
 also want to store common and reusable routes in other XML files, which
