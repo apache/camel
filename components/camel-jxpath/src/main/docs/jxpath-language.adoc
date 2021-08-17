@@ -12,8 +12,7 @@
 Camel supports http://commons.apache.org/jxpath/[JXPath] to allow
 XPath expressions to be used on beans in an
 Expression or Predicate to be
-used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
-Configuration]. For example you could use JXPath to create an
+used in the DSL or XML DSL. For example you could use JXPath to create an
 Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a
 Recipient List.

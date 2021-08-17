@@ -14,8 +14,7 @@
 Camel supports the unified JSP and JSF Expression Language via the
 http://juel.sourceforge.net/[JUEL] to allow an
 Expression or Predicate to be
-used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
-Configuration].
+used in the DSL or XML DSL.
 
 For example you could use EL inside a xref:{eip-vc}:eips:filter-eip.adoc[Message
 Filter] in XML

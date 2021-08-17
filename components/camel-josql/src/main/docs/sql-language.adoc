@@ -40,8 +40,7 @@ the download page for the latest versions).
 
 Camel supports http://en.wikipedia.org/wiki/SQL[SQL] to allow an
 Expression or Predicate to be
-used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
-Configuration]. For example you could use SQL to create an
+used in the DSL or XML DSL. For example you could use SQL to create an
 Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a
 Recipient List.
