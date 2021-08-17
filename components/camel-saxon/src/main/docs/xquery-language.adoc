@@ -10,12 +10,13 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xquery.adoc
 *Since Camel {since}*
 
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
-Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
-Configuration]. For example you could use XQuery to create an
+xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] to be
+used in the xref:manual::dsl.adoc[DSL].
+
+For example you could use XQuery to create an
 Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a
-Recipient List.
+xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List].
 
 == XQuery Language options
 
@@ -116,7 +117,7 @@ attribute:
 
 [source,xml]
 -------------------------------------------------------------------------------
-    <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
+<xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
 -------------------------------------------------------------------------------
 
 == Learning XQuery
@@ -153,7 +154,7 @@ If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
-[source,java]
+[source,xml]
 --------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
