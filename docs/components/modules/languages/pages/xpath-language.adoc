@@ -11,12 +11,13 @@
 *Since Camel {since}*
 
 Camel supports http://www.w3.org/TR/xpath[XPath] to allow an
-Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
-Configuration]. For example you could use XPath to create an
+xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] to be
+used in the xref:manual::dsl.adoc[DSL].
+
+For example you could use XPath to create an
 Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a
-Recipient List.
+xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List].
 
 *Streams*
 
@@ -228,14 +229,14 @@ shown:
 == Examples
 
 Here is a simple
-https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/processor/XPathFilterTest.java[example]
+https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/XPathFilterTest.java[example]
 using an XPath expression as a predicate in a
 Message Filter
 
 If you have a standard set of namespaces you wish to work with and wish
 to share them across many different XPath expressions you can use the
 NamespaceBuilder as shown
-https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/processor/XPathWithNamespaceBuilderFilterTest.java[in
+https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/XPathWithNamespaceBuilderFilterTest.java[in
 this example]
 
 In this sample we have a choice construct. The first choice evaulates if
@@ -497,6 +498,20 @@ eg to refer to a file on the classpath you can do:
 
 == Dependencies
 
-The XPath language is part of camel-core.
+To use XPath in your camel routes you need to add the a dependency on
+*camel-xpath* which implements the XPath language.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+--------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xpath</artifactId>
+  <version>x.x.x</version>
+</dependency>
+--------------------------------------
 
 include::{page-component-version}@camel-spring-boot::page$xpath-starter.adoc[]
