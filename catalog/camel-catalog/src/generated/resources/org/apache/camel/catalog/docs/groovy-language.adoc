@@ -9,17 +9,20 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/groovy.adoc
 
 *Since Camel {since}*
 
-Camel supports http://groovy.codehaus.org/[Groovy] among other
-Scripting Languages to allow an
-Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
-Configuration].
+Camel supports http://www.groovy-lang.org/[Groovy] to allow an
+xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] to be
+used in the xref:manual::dsl.adoc[DSL].
+
+For example you could use Groovy to create an
+Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
+Filter] or as an Expression for a
+xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List].
 
 To use a Groovy expression use the following Java code
 
 [source,java]
 ---------------------------------------
-... groovy("someGroovyExpression") ...
+groovy("someGroovyExpression")
 ---------------------------------------
 
 For example you could use the *groovy* function to create an
