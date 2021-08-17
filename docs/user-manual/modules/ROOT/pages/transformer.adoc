@@ -194,3 +194,7 @@ XML DSL:
     </route>
 </camelContext>
 -------------------------------------------------------------------
+
+== See Also
+
+The xref:validator.adoc[Validator] is a related functionality.
