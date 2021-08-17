@@ -52,7 +52,7 @@ invoke a bean
 </route>
 ----
 
-You can also use xref:latest@manual:ROOT:templating.adoc[Templating] to consume a message
+You can consume a message
 from one destination, transform it with something like
 xref:components::velocity-component.adoc[Velocity] or xref:components::xquery-component.adoc[XQuery] and then send
 it on to another destination. For example using InOnly (one way
