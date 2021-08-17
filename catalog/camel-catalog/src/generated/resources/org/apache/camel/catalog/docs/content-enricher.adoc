@@ -14,9 +14,7 @@ image::eip/DataEnricher.gif[image]
 [[ContentEnricher-ContentenrichmentusingaMessageTranslatororaProcessor]]
 == Content enrichment using a Message Translator or a Processor
 
-*Using the* *xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]*
-
-You can use xref:latest@manual:ROOT:templating.adoc[Templating] to consume a message from
+You can consume a message from
 one destination, transform it with something like
 xref:components::velocity-component.adoc[Velocity] or xref:components::xquery-component.adoc[XQuery], and then send
 it on to another destination. For example using InOnly (one way
@@ -136,8 +134,6 @@ longer apply and it just works.
 [[ContentEnricher-EnrichOptions]]
 == Enrich Options
 
-confluenceTableSmall
-
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Name |Default Value |Description
@@ -205,9 +201,6 @@ to -1 allows to turn off the cache all together.
 endpoint URI that could not be resolved. If disabled, Camel will throw
 an exception identifying the invalid endpoint URI.
 |=======================================================================
-
-*Using the* *xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]*
-
 
 [source,java]
 ----

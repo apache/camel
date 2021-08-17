@@ -75,8 +75,6 @@ values.
 
 == Sending a Copy (traditional wiretap)
 
-* Using the xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]
-
 [source,java]
 ----
     protected RouteBuilder createRouteBuilder() {
@@ -101,8 +99,6 @@ values.
 ----
 
 == Sending a New xref:latest@manual:ROOT:exchange.adoc[Exchange]
-
-*Using the xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]*
 
 Camel supports either a processor or an
 xref:latest@manual:ROOT:expression.adoc[Expression] to populate the new
@@ -205,5 +201,3 @@ The following example sends a new message which has
 == Using `onPrepare` to Execute Custom Logic when Preparing Messages
 
 See details at xref:multicast-eip.adoc[Multicast]
-
-xref:latest@manual:ROOT:using-this-pattern.adoc[Using This Pattern]
