@@ -87,17 +87,17 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
         @Override
         public void run() {
             MixedOperation<Service, ServiceList, ServiceResource<Service>> w = getEndpoint().getKubernetesClient().services();
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
-                w.inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
-            }
+
+            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace(), w::inNamespace);
+
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
                     && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
                 w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(),
                         getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
-                w.withName(getEndpoint().getKubernetesConfiguration().getResourceName());
-            }
+
+            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName(), w::withName);
+
             watch = w.watch(new Watcher<Service>() {
 
                 @Override

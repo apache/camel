@@ -60,7 +60,7 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
                 break;
 
             case KubernetesOperations.GET_PERSISTENT_VOLUME_OPERATION:
-                doGetPersistentVolume(exchange, operation);
+                doGetPersistentVolume(exchange);
                 break;
 
             default:
@@ -82,7 +82,7 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, pvList.getItems());
     }
 
-    protected void doGetPersistentVolume(Exchange exchange, String operation) {
+    protected void doGetPersistentVolume(Exchange exchange) {
         PersistentVolume pv = null;
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {

@@ -88,9 +88,9 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
         public void run() {
             NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>> w
                     = getEndpoint().getKubernetesClient().namespaces();
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
-                w.withName(getEndpoint().getKubernetesConfiguration().getNamespace());
-            }
+
+            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace(), w::withName);
+
             watch = w.watch(new Watcher<Namespace>() {
 
                 @Override
