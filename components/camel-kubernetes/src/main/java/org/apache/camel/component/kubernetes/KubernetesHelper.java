@@ -60,45 +60,21 @@ public final class KubernetesHelper {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
         }
-        if (ObjectHelper.isNotEmpty(configuration.getOauthToken())) {
-            builder.withOauthToken(configuration.getOauthToken());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getCaCertData())) {
-            builder.withCaCertData(configuration.getCaCertData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getCaCertFile())) {
-            builder.withCaCertFile(configuration.getCaCertFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientCertData())) {
-            builder.withClientCertData(configuration.getClientCertData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientCertFile())) {
-            builder.withClientCertFile(configuration.getClientCertFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getApiVersion())) {
-            builder.withApiVersion(configuration.getApiVersion());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyAlgo())) {
-            builder.withClientKeyAlgo(configuration.getClientKeyAlgo());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyData())) {
-            builder.withClientKeyData(configuration.getClientKeyData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyFile())) {
-            builder.withClientKeyFile(configuration.getClientKeyFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyPassphrase())) {
-            builder.withClientKeyPassphrase(configuration.getClientKeyPassphrase());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getTrustCerts())) {
-            builder.withTrustCerts(configuration.getTrustCerts());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getConnectionTimeout())) {
-            builder.withConnectionTimeout(configuration.getConnectionTimeout());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getNamespace())) {
-            builder.withNamespace(configuration.getNamespace());
-        }
+
+        ObjectHelper.ifNotEmpty(configuration.getOauthToken(), builder::withOauthToken);
+        ObjectHelper.ifNotEmpty(configuration.getCaCertData(), builder::withCaCertData);
+        ObjectHelper.ifNotEmpty(configuration.getCaCertFile(), builder::withCaCertFile);
+        ObjectHelper.ifNotEmpty(configuration.getClientCertData(), builder::withClientCertData);
+        ObjectHelper.ifNotEmpty(configuration.getClientCertFile(), builder::withClientCertFile);
+        ObjectHelper.ifNotEmpty(configuration.getApiVersion(), builder::withApiVersion);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyAlgo(), builder::withClientKeyAlgo);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyData(), builder::withClientKeyData);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyFile(), builder::withClientKeyFile);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyPassphrase(), builder::withClientKeyPassphrase);
+        ObjectHelper.ifNotEmpty(configuration.getTrustCerts(), builder::withTrustCerts);
+        ObjectHelper.ifNotEmpty(configuration.getConnectionTimeout(), builder::withConnectionTimeout);
+        ObjectHelper.ifNotEmpty(configuration.getNamespace(), builder::withNamespace);
+
         Config conf = builder.build();
         return new DefaultKubernetesClient(conf);
     }
