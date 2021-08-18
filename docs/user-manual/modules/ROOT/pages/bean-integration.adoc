@@ -3,11 +3,10 @@
 
 Camel supports the integration of beans and POJOs in a number of ways.
 
-[[BeanIntegration-Annotations]]
 == Annotations
 
 If a bean is defined in Spring XML or scanned using
-the Spring component scanning mechanism and a *<camelContext>* is used
+the Spring component scanning mechanism, and a *<camelContext>* is used
 or a `CamelBeanPostProcessor` then we process a number of Camel
 annotations to do various things such as injecting resources or
 producing, consuming or routing messages.
@@ -48,9 +47,48 @@ See more details at:
 See the https://github.com/apache/camel-examples/tree/master/examples/camel-example-pojo-messaging[POJO Messaging Example]
 for how to use the annotations for routing and messaging.
 
-[[BeanIntegration-BeanComponent]]
-== Bean Component
+== Using @PropertyInject
 
-The xref:components::bean-component.adoc[Bean] component allows one to invoke a particular
-method.
+Camel allows to inject property placeholders in POJOs using
+the `@PropertyInject` annotation which can be set on fields and setter
+methods. For example you can use that with `RouteBuilder` classes,
+such as shown below:
 
+[source,java]
+----
+public class MyRouteBuilder extends RouteBuilder {
+
+    @PropertyInject("hello")
+    private String greeting;
+
+    @Override
+    public void configure() throws Exception {
+        from("direct:start")
+            .transform().constant(greeting)
+            .to("{{result}}");
+    }
+}
+----
+
+Notice we have annotated the greeting field with `@PropertyInject` and
+define it to use the key `hello`. Camel will then lookup the property
+with this key and inject its value, converted to a String type.
+
+You can also use multiple placeholders and text in the key, for example
+we can do:
+
+[source,java]
+----
+@PropertyInject("Hello {{name}} how are you?")
+private String greeting;
+----
+
+This will lookup the placeholder with they key `name`.
+
+You can also add a default value if the key does not exists, such as:
+
+[source,java]
+----
+@PropertyInject(value = "myTimeout", defaultValue = "5000")
+private int timeout;
+----
