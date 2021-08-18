@@ -229,6 +229,8 @@ xref:producertemplate.adoc[ProducerTemplate] for example:
 template.sendBody("{{cool.start}}", "Hello World");
 ----
 
+=== Using property placeholders with consumer template
+
 This can also be done when using xref:consumertemplate.adoc[ConsumerTemplate], such as:
 
 [source,java]
@@ -236,36 +238,43 @@ This can also be done when using xref:consumertemplate.adoc[ConsumerTemplate], s
 Object body = template.receiveBody("{{cool.start}}");
 ----
 
-
-
-[[UsingPropertyPlaceholder-Examplewithlanguage]]
-== Example with xref:components:languages:simple-language.adoc[Simple] language
+== Using property placeholders with simple language
 
 The xref:components:languages:simple-language.adoc[Simple] language now also support using property
 placeholders, for example in the route below:
 
+[source,properties]
+----
+cheese.quote = Camel rocks
+----
+
+And in the route you can use the placeholder with the usual syntax `{{key}}` as shown:
 
 [source,java]
 ----
-// properties
-cheese.quote=Camel rocks
-
-// route from("direct:start")
-    .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
-----
-
-You can also specify the location in the xref:components:languages:simple-language.adoc[Simple]
-language for example:
-
-
-[source,java]
-----
-// bar.properties
-bar.quote=Beer tastes good
-
-// route
 from("direct:start")
-    .transform().simple("Hi ${body}. ${properties:com/mycompany/bar.properties:bar.quote}.");
+  .transform().simple("Hi ${body} do you think {{cheese.quote}}?");
+----
+
+What happens is that Camel will resolve the placeholder during initialization of the route,
+so the route becomes:
+
+[source,java]
+----
+from("direct:start")
+  .transform().simple("Hi ${body} do you think Camel rocks?");
+----
+
+So the simple language would not have any property placeholders anymore.
+This is the most common way.
+
+However, if the placeholder must be resolved by simple language itself,
+then you can use its `${properties}` function:
+
+[source,java]
+----
+from("direct:start")
+  .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
 ----
 
 
