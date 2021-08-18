@@ -47,13 +47,6 @@ Camel now provides a new `PropertiesComponent` in *camel-core* which
 allows you to use property placeholders when defining Camel
 Endpoint URIs.
 
-This works much like you would do if using Spring's
-`<property-placeholder>` tag. However Spring have a limitation which
-prevents 3rd party frameworks to leverage Spring property placeholders
-to the fullest. See more at
-xref:manual:faq:how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
-I use Spring Property Placeholder with Camel XML].
-
 [TIP]
 **Bridging Spring and Camel property placeholders** +
 You can bridge the Spring property placeholder
