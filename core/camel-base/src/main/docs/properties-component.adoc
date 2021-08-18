@@ -13,7 +13,7 @@ The properties component is used for property placeholders in your Camel applica
 It is *not* a regular Camel component with producer and consumer for routing messages.
 However, for historical reasons it was named `PropertiesComponent` and this name is commonly known so we keep using it.
 
-IMPORTANT: See the xref:latest@manual:ROOT:using-propertyplaceholder[Property Placeholder] documentation for general information on using property placeholders in Camel.
+IMPORTANT: See the xref:latest@manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder] documentation for general information on using property placeholders in Camel.
 
 The properties component requires to load the properties (key=value pairs) from an external source such as `.properties` files.
 The component is pluggable and you can configure to use other sources or write a custom implementation (for example to load from a database).
