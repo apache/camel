@@ -12,9 +12,9 @@ Camel provides a default strategy in the
 `org.apache.camel.impl.engine.DefaultShutdownStrategy` which is capable of
 doing that.
 
-== DefaultShutdownStrategy
+== Default Shutdown Strategy
 
-The default strategy will gracefully shutdown routes:
+The default strategy (`DefaultShutdownStrategy`) will gracefully shutdown routes:
 
 * in the reverse order they were started
 * let pending and current in flight exchanges run to completion before
@@ -28,32 +28,22 @@ When shutting down the strategy will output to log the progress:
 
 [source,log]
 ---------------------------------
-2009-12-20 10:56:53,055 [main ] INFO DefaultCamelContext - Apache Camel
-(CamelContext:camel-1) is stopping 2009-12-20 10:56:53,056 [main ] INFO
-DefaultShutdownStrategy - Starting to graceful shutdown routes (timeout
-300 seconds) 2009-12-20 10:56:53,059 [1: ShutdownTask] INFO
-DefaultShutdownStrategy - Waiting as there are still 5 inflight
-exchanges to complete before we can shutdown 2009-12-20 10:56:54,060 [1:
-ShutdownTask] INFO DefaultShutdownStrategy - Waiting as there are still
-4 inflight exchanges to complete before we can shutdown 2009-12-20
-10:56:55,061 [1: ShutdownTask] INFO DefaultShutdownStrategy - Waiting as
-there are still 3 inflight exchanges to complete before we can shutdown
-2009-12-20 10:56:56,065 [1: ShutdownTask] INFO DefaultShutdownStrategy -
-Waiting as there are still 2 inflight exchanges to complete before we
-can shutdown 2009-12-20 10:56:57,066 [1: ShutdownTask] INFO
-DefaultShutdownStrategy - Waiting as there are still 1 inflight
-exchanges to complete before we can shutdown 2009-12-20 10:56:58,069
-[main ] INFO DefaultShutdownStrategy - Graceful shutdown of routes
-complete in 5 seconds. 2009-12-20 10:56:58,072 [main ] INFO
-DefaultInflightRepository - Shutting down with no inflight exchanges.
-2009-12-20 10:56:58,077 [main ] INFO DefaultCamelContext - Apache Camel
-(CamelContext:camel-1) stopped
+2009-12-20 10:56:53,055 [main ] INFO DefaultCamelContext - Apache Camel (CamelContext:camel-1) is stopping
+2009-12-20 10:56:53,056 [main ] INFO DefaultShutdownStrategy - Starting to graceful shutdown routes (timeout 45 seconds)
+2009-12-20 10:56:53,059 [1: ShutdownTask] INFO DefaultShutdownStrategy - Waiting as there are still 5 inflight exchanges to complete before we can shutdown
+2009-12-20 10:56:54,060 [1: ShutdownTask] INFO DefaultShutdownStrategy - Waiting as there are still 4 inflight exchanges to complete before we can shutdown
+2009-12-20 10:56:55,061 [1: ShutdownTask] INFO DefaultShutdownStrategy - Waiting as there are still 3 inflight exchanges to complete before we can shutdown
+2009-12-20 10:56:56,065 [1: ShutdownTask] INFO DefaultShutdownStrategy - Waiting as there are still 2 inflight exchanges to complete before we can shutdown
+2009-12-20 10:56:57,066 [1: ShutdownTask] INFO DefaultShutdownStrategy - Waiting as there are still 1 inflight exchanges to complete before we can shutdown
+2009-12-20 10:56:58,069 [main ] INFO DefaultShutdownStrategy - Graceful shutdown of routes complete in 5 seconds.
+2009-12-20 10:56:58,072 [main ] INFO DefaultInflightRepository - Shutting down with no inflight exchanges.
+2009-12-20 10:56:58,077 [main ] INFO DefaultCamelContext - Apache Camel (CamelContext:camel-1) stopped
 ---------------------------------
 
 Notice how the strategy waits while there are inflight exchanges still being
-processed before it shtudown the routes and after that Camel itself.
+processed before it shutdown the routes and after that Camel itself.
 
-== Suppressing logging due to timeout not allowing all inflight messages to complete
+=== Suppressing logging due to timeout not allowing all inflight messages to complete
 
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown (hard) by
@@ -73,7 +63,7 @@ context.getShutdownStrategy().setSuppressLoggingOnTimeout(true);
 Notice that suppression is _a best effort_ attempt and there may still be some
 logging from 3rd party libraries, which Camel cannot control.
 
-== Logging inflight exchange information on timeout
+=== Logging inflight exchange information on timeout
 
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown by
@@ -106,6 +96,11 @@ the option logInflightExchangesOnTimeout to false.
 ---------------------------------
 context.getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
 ---------------------------------
+
+=== JMX managed
+
+The `ShutdownStrategy` is JMX aware, so you can manage it from a
+JMX console. This allows to adjust the strategy at runtime, such as changing the timeout setting.
 
 == Controlling ordering of routes
 
@@ -154,11 +149,6 @@ consumer will shut down. The other option `CompleteAllTasks` allows the
 consumer to complete all the tasks (messages) before shutting down. For
 example a xref:components::file-component.adoc[File] consumer will process all the pending
 files it has picked up before shutting down.
-
-== JMX managed
-
-The `ShutdownStrategy` is JMX aware, so you can manage it from a
-JMX console. This allows to adjust the strategy at runtime, such as changing the timeout setting.
 
 == Stop individual routes
 
