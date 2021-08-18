@@ -104,3 +104,7 @@ Object result = FluentProducerTemplate.on(context)
     .to("direct:start")
     .request();
 ----
+
+== See Also
+
+See xref:consumertemplate.adoc[ConsumerTemplate]

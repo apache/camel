@@ -61,7 +61,6 @@ Questions on using Apache Camel
 * xref:how-do-i-retry-processing-a-message-from-a-certain-point-back-or-an-entire-route.adoc[How do I retry processing a message from a certain point back or an entire route?]
 * xref:how-do-i-reuse-the-contexttestsupport-class-in-my-unit-tests.adoc[How do I reuse the ContextTestSupport class in my unit tests?]
 * xref:how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[How do I set the max chars when debug logging messages in Camel?]
-* xref:how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do I use Spring Property Placeholder with Camel XML?]
 * xref:how-do-i-use-uris-with-parameters-in-xml.adoc[How do I use URIs with parameters in XML?]
 * xref:how-do-i-write-a-custom-processor-which-sends-multiple-messages.adoc[How do I write a custom Processor which sends multiple messages?]
 * xref:how-should-i-invoke-my-pojos-or-spring-services.adoc[How should I invoke my POJOs or Spring Services?]

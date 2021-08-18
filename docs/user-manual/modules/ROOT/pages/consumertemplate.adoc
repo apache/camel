@@ -1,0 +1,28 @@
+[[ConsumerTemplate-ConsumerTemplate]]
+= ConsumerTemplate
+
+The `ConsumerTemplate` interface allows you to receive message exchanges from
+endpoints in a variety of different ways to make it easy to work with
+Camel xref:endpoint.adoc[Endpoint] instances from Java code.
+
+It can be configured with a default endpoint if you just want to receive
+lots of messages to the same endpoint; or you can specify an
+xref:endpoint.adoc[Endpoint] or uri as the first parameter.
+
+The `receiveBody()` method allows you to receive any object to an endpoint
+easily as shown:
+
+[source,java]
+----
+ConsumerTemplate template = exchange.getContext().createConsumerTemplate();
+
+// recieve from default endpoint
+Object body = template.receiveBody();
+
+// receive from a specific queue
+body = template.receiveBody("activemq:MyQueue");
+----
+
+== See Also
+
+See xref:producertemplate.adoc[ProducerTemplate]
