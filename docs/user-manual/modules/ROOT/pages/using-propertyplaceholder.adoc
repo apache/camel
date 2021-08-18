@@ -101,9 +101,9 @@ In the example above then the FTP route or the JMS route should only be started.
 We can do this be negating the `autoStartup` in the JMS route, by using `!integration.ftpEnabled` as the key.
 
 
-== Example using property placeholders
+== Using property placeholders
 
-When using property placeholders in the endpoint URIs you should use this with the syntax `{{key}}` as shown in this example:
+When using property placeholders in the endpoint xref:uris.adoc[URIs] you should use this with the syntax `{{key}}` as shown in this example:
 
 [source,properties]
 ----
@@ -224,45 +224,6 @@ This can also be done when using xref:consumertemplate.adoc[ConsumerTemplate], s
 [source,java]
 ----
 Object body = template.receiveBody("{{cool.start}}");
-----
-
-== Using property placeholders with Simple language
-
-The xref:components:languages:simple-language.adoc[Simple] language now also support using property
-placeholders, for example in the route below:
-
-[source,properties]
-----
-cheese.quote = Camel rocks
-----
-
-And in the route you can use the placeholder with the usual syntax `{{key}}` as shown:
-
-[source,java]
-----
-from("direct:start")
-  .transform().simple("Hi ${body} do you think {{cheese.quote}}?");
-----
-
-What happens is that Camel will resolve the placeholder during initialization of the route,
-so the route becomes:
-
-[source,java]
-----
-from("direct:start")
-  .transform().simple("Hi ${body} do you think Camel rocks?");
-----
-
-So the simple language would not have any property placeholders anymore.
-This is the most common way.
-
-However, if the placeholder must be resolved by simple language itself,
-then you can use its `${properties}` function:
-
-[source,java]
-----
-from("direct:start")
-  .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
 ----
 
 == Resolving property placeholders from Java code
@@ -434,7 +395,7 @@ Notice how the hello bean is using pure Spring property placeholders using
 the `${}` notation. And in the Camel routes we use the Camel
 placeholder notation with `{{key}}`.
 
-== Using out of the box functions
+== Using property placeholder functions
 
 The xref:components::properties-component.adoc[Properties] component includes the following functions out of the box:
 
@@ -444,31 +405,30 @@ The xref:components::properties-component.adoc[Properties] component includes th
 * `service.name` - A function to lookup the property from OS environment variables using the service naming idiom returning the hostname part only
 * `service.port` - A function to lookup the property from OS environment variables using the service naming idiom returning the port part only
 
-As you can see these functions is intended to make it easy to lookup values from the environment.
-As they are provided out of the box, they can easily be used as shown below:
+These functions are intended to make it easy to lookup values from the environment, as shown in the example below:
 
 [source,xml]
 ----
-  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+<camelContext>
     <route>
-      <from uri="direct:start"/>
-      <to uri="{{env:SOMENAME}}"/>
-      <to uri="{{sys:MyJvmPropertyName}}"/>
+        <from uri="direct:start"/>
+        <to uri="{{env:SOMENAME}}"/>
+        <to uri="{{sys:MyJvmPropertyName}}"/>
     </route>
-  </camelContext>
+</camelContext>
 ----
 
 You can use default values as well, so if the property does not exist, you can define a default value as shown below, where the default value is a `log:foo` and `log:bar` value.
 
 [source,xml]
 ----
-  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+<camelContext>
     <route>
-      <from uri="direct:start"/>
-      <to uri="{{env:SOMENAME:log:foo}}"/>
-      <to uri="{{sys:MyJvmPropertyName:log:bar}}"/>
+        <from uri="direct:start"/>
+        <to uri="{{env:SOMENAME:log:foo}}"/>
+        <to uri="{{sys:MyJvmPropertyName:log:bar}}"/>
     </route>
-  </camelContext>
+</camelContext>
 ----
 
 The service function is for looking up a service which is defined using OS environment variables using the service naming idiom, to refer to a service location using `hostname : port`
@@ -479,7 +439,7 @@ The service function is for looking up a service which is defined using OS envir
 in other words the service uses `_SERVICE_HOST` and `_SERVICE_PORT` as prefix.
 So if the service is named FOO, then the OS environment variables should be set as
 
-[source]
+[source,bash]
 ----
 export $FOO_SERVICE_HOST=myserver
 export $FOO_SERVICE_PORT=8888
@@ -489,33 +449,33 @@ For example if the FOO service a remote HTTP service, then we can refer to the s
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
-  <route>
-    <from uri="direct:start"/>
-    <to uri="http://{`{service:FOO}`}/myapp"/>
-  </route>
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="http://{{service:FOO}}/myapp"/>
+    </route>
 </camelContext>
 ----
 
-And we can use default values if the service has not been defined, for example to call a service on localhost, maybe for unit testing etc
+And we can use default values if the service has not been defined, for example to call a service on localhost, maybe for unit testing.
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
-  <route>
+<camelContext>
+<route>
     <from uri="direct:start"/>
-    <to uri="http://{`{service:FOO:localhost:8080}`}/myapp"/>
-  </route>
+    <to uri="http://{{service:FOO:localhost:8080}}/myapp"/>
+</route>
 </camelContext>
 ----
 
-== Using custom functions (advanced)
+=== Using custom property placeholder functions
 
 The xref:components::properties-component.adoc[Properties] component allow to plugin 3rd party functions which can be used during parsing of the property placeholders.
 These functions are then able to do custom logic to resolve the placeholders, such as looking up in databases, do custom computations, or whatnot.
 The name of the function becomes the prefix used in the placeholder.
 
-This is best illustrated in the example code below
+This is best illustrated in the example code below with Spring XML files:
 
 [source,xml]
 ----
@@ -536,15 +496,15 @@ This is best illustrated in the example code below
 </beans>
 ----
 
-Here we have a Camel XML route where we have defined the
-`<propertyPlaceholder>` to use a custom function, which we refer to be the bean id - eg the `beerFunction`.
+Here we have a Camel Spring XML route where we have defined the
+`<propertyPlaceholder>` to use a custom function, which we refer to be the bean id (`beerFunction`).
 As the beer function uses `"beer"` as its name, then the placeholder syntax can trigger the beer function by starting with `beer:value`.
 
 The implementation of the function is only two methods as shown below:
 
 [source,java]
 ----
-public static final class MyBeerFunction implements PropertiesFunction {
+public class MyBeerFunction implements PropertiesFunction {
 
     @Override
     public String getName() {
@@ -559,9 +519,9 @@ public static final class MyBeerFunction implements PropertiesFunction {
 ----
 
 The function must implement the `org.apache.camel.spi.PropertiesFunction` interface.
-The method `getName` is the name of the function, eg beer.
+The method `getName` is the name of the function (beer).
 And the `apply` method is where we implement the custom logic to do.
-As the sample code is from an unit test, it just returns a value to refer to a mock endpoint.
+As the sample code is from a unit test, it just returns a value to refer to a mock endpoint.
 
 To register a custom function from Java code is as shown below:
 
@@ -571,7 +531,10 @@ PropertiesComponent pc = context.getPropertiesComponent();
 pc.addFunction(new MyBeerFunction());
 ----
 
-== Writing custom property sources (advanced)
+== Using third party property sources
+
+The properties component allows to plugin 3rd party sources to load and lookup properties via the `PropertySource`
+API from camel-api.
 
 The regular `PropertySource` will lookup the property on-demand,
 for example to lookup values from a backend source such as a database or HashiCorp Vault etc.
@@ -579,11 +542,6 @@ for example to lookup values from a backend source such as a database or HashiCo
 A `PropertySource` can define that it supports loading all its properties
 (by implementing `LoadablePropertiesSource`) from the source at once, for example from file system.
 This allows Camel properties component to load these properties at once during startup.
-
-=== Using third party property sources
-
-The properties component allows to plugin 3rd party sources to load and lookup properties via the `PropertySource`
-API from camel-api.
 
 For example the `camel-microprofile-config` component is implemented using this.
 The 3rd-party `PropertySource` can automatic be discovered from classpath when Camel is starting up.
