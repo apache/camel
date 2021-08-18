@@ -43,6 +43,7 @@ import static com.github.dozermapper.core.classmap.MappingDirection.ONE_WAY;
  * mapper is queried for the types it converts. The queried types are used to register the {@link TypeConverter} with
  * the context via its {@link TypeConverterRegistry}.
  */
+@Deprecated
 public class DozerTypeConverterLoader extends ServiceSupport implements CamelContextAware {
 
     private final Logger log = LoggerFactory.getLogger(getClass());

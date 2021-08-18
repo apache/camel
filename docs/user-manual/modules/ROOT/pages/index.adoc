@@ -77,7 +77,6 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:data-format.adoc[Data Format]
 * xref:debugger.adoc[Debugger]
 * xref:delay-interceptor.adoc[Delayer]
-* xref:dozer-type-conversion.adoc[Dozer Type Conversion]
 * xref:dsl.adoc[DSL]
 * xref:endpoint.adoc[Endpoint]
 * xref:endpoint-annotations.adoc[Endpoint Annotations]

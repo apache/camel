@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see DozerTypeConverterLoader
  */
+@Deprecated
 public class DozerTypeConverter extends TypeConverterSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DozerTypeConverter.class);

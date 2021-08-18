@@ -41,7 +41,6 @@
 ** xref:data-format.adoc[Data Format]
 ** xref:debugger.adoc[Debugger]
 ** xref:delay-interceptor.adoc[Delayer]
-** xref:dozer-type-conversion.adoc[Dozer Type Conversion]
 ** xref:endpoint.adoc[Endpoints]
 ** xref:endpoint-annotations.adoc[Endpoint Annotations]
 ** xref:exception-clause.adoc[Exception Clause]
