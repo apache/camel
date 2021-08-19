@@ -25,13 +25,11 @@ import org.junit.jupiter.api.Test;
 public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
 
     @Test
-    public void testPollEnrich() throws Exception {
-        //        getMockEndpoint("mock:start").expectedBodiesReceived("Event1");
+    public void testNonEmptyAfterEmpty() throws Exception {
+        getMockEndpoint("mock:start").expectedBodiesReceived("Event1", "Event2");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        //        mock.expectedMinimumMessageCount(2);
         mock.expectedBodiesReceived("Event1", "EnrichData");
-
         mock.expectedFileExists(testFile("enrich/.done/Event1.txt"));
         mock.expectedFileExists(testFile("enrich/.done/Event2.txt"));
         mock.expectedFileExists(testFile("enrichdata/.done/AAA.dat"));
@@ -43,8 +41,7 @@ public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
         Thread.sleep(1000);
         template.sendBodyAndHeader(fileUri("enrichdata"), "EnrichData",
                 Exchange.FILE_NAME, "AAA.dat");
-        // Trigger second event
-        //        Thread.sleep(1000);
+        // Trigger second event which should find the EnrichData file
         template.sendBodyAndHeader(fileUri("enrich"), "Event2", Exchange.FILE_NAME,
                 "Event2.txt");
         log.info("... write done");
@@ -54,11 +51,10 @@ public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
 
     @Test
     public void testPollEmptyEnrich() throws Exception {
-        //        getMockEndpoint("mock:start").expectedBodiesReceived("Event1");
+        getMockEndpoint("mock:start").expectedBodiesReceived("Event1");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Event1");
-
         mock.expectedFileExists(testFile("enrich/.done/Event1.txt"));
 
         template.sendBodyAndHeader(fileUri("enrich"), "Event1", Exchange.FILE_NAME,
