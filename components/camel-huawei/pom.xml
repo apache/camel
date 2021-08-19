@@ -34,11 +34,11 @@
 
     
     <modules>
-		<module>camel-huaweicloud-common</module>
-		<module>camel-huaweicloud-dms</module>
+	<module>camel-huaweicloud-common</module>
+	<module>camel-huaweicloud-dms</module>
         <module>camel-huaweicloud-functiongraph</module>
         <module>camel-huaweicloud-iam</module>
-		<module>camel-huaweicloud-obs</module>
+	<module>camel-huaweicloud-obs</module>
         <module>camel-huaweicloud-smn</module>
     </modules>
 
