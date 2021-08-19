@@ -150,8 +150,9 @@ public final class MyHealthCheck extends AbstractHealthCheck {
 }
 ----
 
-You can now make _MyHealthCheck_ available to Camel by adding an instance to the application context (Spring, Blueprint) or directly to the registry.
-The example `camel-example-main-health` has a custom health check.
+You can now make _MyHealthCheck_ available to Camel by adding an instance to (for example Spring application context) or directly to the Camel xref:registry.adoc[Registry].
+
+TIP: The example `camel-example-main-health` has a custom health check.
 
 == Examples
 

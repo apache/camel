@@ -52,10 +52,6 @@ parity with the plain JUnit 3.x/4.x based testing approach. Notice
 older Camel release use `camel-test` which has built-in
 Spring Testing.
 
-|Blueprint Testing |camel-test-blueprint
-|*Camel 2.10:* Provides the ability to do unit testing on blueprint
-configurations
-
 |=======================================================================
 
 In all approaches the test classes look pretty much the same in that
@@ -176,18 +172,6 @@ Notice how a custom test runner is used with the `@RunWith` annotation
 to support the features of `CamelTestSupport` through annotations on
 the test class.  See Spring Testing for a list
 of annotations you can use in your tests.
-
-[[Testing-BlueprintTest]]
-=== Blueprint Test
-
-Here is the Blueprint Testing
-https://github.com/apache/camel-karaf/blob/main/components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[example
-using XML Config]:
-
-Also notice the use of `getBlueprintDescriptors` to indicate that by
-default we should look for the
-https://github.com/apache/camel-karaf/blob/main/components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml[`camelContext.xml`
-in the package] to configure the test case which looks like this:
 
 [[Testing-Testingendpoints]]
 == Testing endpoints

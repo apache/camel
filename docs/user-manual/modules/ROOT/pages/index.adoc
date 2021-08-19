@@ -59,7 +59,6 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:camel-report-maven-plugin.adoc[Camel Maven Report Plugin] to validate your source code and report the code coverage of your camel routes
 * xref:camel-maven-archetypes.adoc[Camel Maven Archetypes]
 * xref:components::jmx-component.adoc[Camel JMX]
-* xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * xref:rest-dsl.adoc[Working with REST and Rest DSL]
 * xref:writing-components.adoc[Writing Custom Camel Components]
 
@@ -114,7 +113,6 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:java-dsl.adoc[Java DSL]
 * xref:bean-integration.adoc[Java Annotation DSL]
 * xref:components::spring-summary.adoc[Spring XML DSL]
-* xref:using-osgi-blueprint-with-camel.adoc[OSGi Blueprint XML DSL]
 * xref:rest-dsl.adoc[Rest DSL]
 
 == Developers

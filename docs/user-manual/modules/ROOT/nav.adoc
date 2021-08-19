@@ -16,7 +16,6 @@
 ** xref:examples.adoc[Examples]
 ** xref:graceful-shutdown.adoc[Graceful Shutdown]
 ** xref:error-handler.adoc[Error handler]
-** xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 ** xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
 ** xref:testing.adoc[Testing]
 ** xref:rest-dsl.adoc[Working with REST and Rest DSL]
