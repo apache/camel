@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hwcloud-dms",
     "title": "Huawei Distributed Message Service (DMS)",
-    "description": "To provide a fully managed, high-performance message queuing service",
+    "description": "To integrate with a fully managed, high-performance message queuing service on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.12.0",
     "label": "cloud",

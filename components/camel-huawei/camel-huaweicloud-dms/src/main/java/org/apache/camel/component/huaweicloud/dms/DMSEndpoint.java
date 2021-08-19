@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To provide a fully managed, high-performance message queuing service
+ * To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-dms", title = "Huawei Distributed Message Service (DMS)",
              syntax = "hwcloud-dms:operation",

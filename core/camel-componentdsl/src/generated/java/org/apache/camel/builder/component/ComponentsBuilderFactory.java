@@ -2013,7 +2013,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
-     * To provide a fully managed, high-performance message queuing service
+     * To integrate with a fully managed, high-performance message queuing
+     * service on Huawei Cloud
      * 
      * Category: cloud
      * Since: 3.12

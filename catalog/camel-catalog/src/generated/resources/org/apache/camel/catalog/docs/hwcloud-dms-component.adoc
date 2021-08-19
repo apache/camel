@@ -2,7 +2,7 @@
 = Huawei Distributed Message Service (DMS) Component
 :docTitle: Huawei Distributed Message Service (DMS)
 :artifactId: camel-huaweicloud-dms
-:description: To provide a fully managed, high-performance message queuing service
+:description: To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
 :since: 3.12
 :supportLevel: Preview
 :component-header: Only producer is supported

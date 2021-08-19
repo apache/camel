@@ -34,7 +34,7 @@
   <artifactId>camel-huaweicloud-dms</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Huawei Cloud :: DMS Component</name>
-  <description>To provide a fully managed, high-performance message queuing service</description>
+  <description>To integrate with a fully managed, high-performance message queuing service on Huawei Cloud</description>
 
   <dependencies>
 
