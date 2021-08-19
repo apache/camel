@@ -72,7 +72,6 @@ Questions on using Apache Camel
 * xref:how-to-switch-the-cxf-consumer-between-http-and-https-without-touching-the-spring-configuration.adoc[How to switch the CXF consumer between HTTP and HTTPS without touching the Spring configuration?]
 * xref:how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in to()?]
 * xref:is-there-an-ide.adoc[Is there an IDE?]
-* xref:using-camel-core-testsjar.adoc[Using camel-core-tests.jar]
 * xref:using-getin-or-getout-methods-on-exchange.adoc[Using getIn or getOut methods on Exchange]
 * xref:why-cant-i-use-sign-in-my-password.adoc[Why can't I use + sign in my password?]
 * xref:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why can I not use when or otherwise in a Java Camel route?]
