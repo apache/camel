@@ -161,12 +161,6 @@ You can specify a marker name in the DSL
 </route>
 ----
 
-== Using log DSL in OSGi
-
-When using log DSL inside OSGi (e.g., in Karaf), the underlying logging mechanisms are provided by PAX logging. It searches for a bundle which invokes org.slf4j.LoggerFactory.getLogger() method and associates the bundle with the logger instance. Passing only logger name to log DSL results in associating camel-core bundle with the logger instance created.
-
-In some scenarios it is required that the bundle associated with logger should be the bundle which contains route definition. This is possible using provided logger instance both for Java DSL and Spring DSL (see the examples above).
-
 == Masking sensitive information like password
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
