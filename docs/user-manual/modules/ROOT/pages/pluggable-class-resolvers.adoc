@@ -4,7 +4,7 @@ Camel provides pluggable class resolvers allowing third party platforms
 and containers to provide their own resolvers in case the default ones
 would not fit.
 
-When running Camel on platforms such as Spring Boot, Quarkus, or OSGi on Apache Karaf,
+When running Camel on platforms such as Spring Boot, Quarkus, or Apache Karaf,
 then Camel uses platform specific resolvers to support classloading in these runtimes.
 
 == Configuration of a custom class resolver
@@ -12,7 +12,7 @@ then Camel uses platform specific resolvers to support classloading in these run
 To instruct Camel to use your own custom class resolver, you set the
 resolver on the `CamelContext` using the appropriate setters;
 or register a custom resolver in the xref:registry.adoc[Registry] then Camel
-will automatic detect this during startup.
+will automatically detect this during startup.
 
 === SPI providers
 
