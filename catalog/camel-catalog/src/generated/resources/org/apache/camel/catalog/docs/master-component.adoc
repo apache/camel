@@ -205,6 +205,9 @@ Camel provides the following ClusterService implementations:
 - camel-atomix
 - camel-consul
 - camel-file
+- camel-infinispan
+- camel-jgroups-raft
+- camel-jgroups
 - camel-kubernetes
 - camel-zookeeper
 
