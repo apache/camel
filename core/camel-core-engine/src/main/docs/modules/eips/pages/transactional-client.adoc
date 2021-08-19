@@ -109,8 +109,7 @@ from("activemq:queue:foo").policy(notsupported)
 [[TransactionalClient-OSGiBlueprint]]
 == OSGi Blueprint
 
-If you are using
-xref:latest@manual:ROOT:using-osgi-blueprint-with-camel.adoc[OSGi Blueprint]
+If you are using OSGi Blueprint
 then you most likely have to explicit declare a policy and
 refer to the policy from the transacted in the route.
 
