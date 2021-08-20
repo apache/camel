@@ -4126,6 +4126,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "JsonPatchComponentBuilderFactory": {
+    "kind": "component",
+    "name": "json-patch",
+    "title": "JsonPatch",
+    "description": "JsonPatch component which transform JSON using JSON patch (RFC 6902).",
+    "deprecated": false,
+    "firstVersion": "3.12.0-SNAPSHOT",
+    "label": "transformation",
+    "javaType": "org.apache.camel.component.jsonpatch.JsonPatchComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-json-patch",
+    "version": "3.12.0-SNAPSHOT",
+    "scheme": "json-patch",
+    "extendsScheme": "",
+    "syntax": "json-patch:resourceUri",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "JsonValidatorComponentBuilderFactory": {
     "kind": "component",
     "name": "json-validator",
