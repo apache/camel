@@ -483,9 +483,6 @@ Request Only messaging.
 The `threads` DSL leverages the JDK concurrency framework for multi-threading. It can be used to turn a synchronous route into
 Async. What happens is that from the point forwards
 from `threads` the messages are routed asynchronous in a new thread.
-Camel leverages the xref:asynchronous-routing-engine.adoc[asynchronous routing engine],
-which was re-introduced in Camel 2.4, to continue
-routing the Exchange asynchronously.
 
 The `threads` DSL supports the following options:
 

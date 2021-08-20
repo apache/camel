@@ -65,7 +65,6 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 === xref:architecture.adoc[Architecture]
 
 * xref:async.adoc[Async]
-* xref:asynchronous-routing-engine.adoc[Asynchronous Routing Engine]
 * xref:backlogdebugger.adoc[BacklogDebugger]
 * xref:backlog-tracer.adoc[BacklogTracer]
 * xref:batch-consumer.adoc[Batch Consumer]
