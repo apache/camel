@@ -151,6 +151,7 @@ If any of the above properties are set, they will override their corresponding q
 
 == List of Supported DMS Operations
 
+- deleteInstance
 - listInstances
 - queryInstance
 
