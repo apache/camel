@@ -1,28 +1,18 @@
 [[Async-Async]]
 = Async
 
-*Since Camel 2.0*
-
-The asynchronous API in Camel has been rewritten for Camel 2.0, and the
-information on this page applies for Camel 2.0 and later.
-
-The Async API in Camel is primarily divided in two
-areas:
+The Async API in Camel is primarily divided in two areas:
 
  1. Initiating an Async messaging from the client
  2. Turning a route into Async using the *threads* DSL
 
 Before we look at these two areas we start with a bit of background
 information and look at the concept from a higher level using
-diagrams. +
- Then we check out the first area how a client can initiate an
+diagrams. Then we check out the first area how a client can initiate an
 Async message exchange and we also throw in the
 synchronous message exchange in the mix as well so we can compare and
-distill the difference. +
- And finally, we turn our attention towards the last area the new
-*threads* DSL and what it can be used for.
+distill the difference.
 
-[[Async-Background]]
 == Background
 
 The new Async API in Camel 2.0 leverages in much
@@ -31,7 +21,6 @@ tasks asynchronously. +
  Therefore the Camel Async API should be familiar for
 users with knowledge of the Java Concurrency API.
 
-[[Async-Afewconceptstomaster]]
 == A few concepts to master
 
 When doing messaging there are a few aspects to keep in mind.
@@ -62,7 +51,6 @@ For all message exchange they can be executed either:
 * synchronous
 * asynchronous
 
-[[Async-SynchronousRequestReply]]
 === Synchronous Request Reply
 
 A synchronous exchange is defined as the caller sends a message and
@@ -79,7 +67,6 @@ synchronous Request Reply. The client
 application still waits for the response.
  3. The response is sent back to the client.
 
-[[Async-AsynchronousRequestReply]]
 === Asynchronous Request Reply
 
 On the other hand, the asynchronous version is where the caller sends a
@@ -102,7 +89,6 @@ application can do other work simultaneously.
 got as _response_ from step 1. With this handle it retrieves the reply,
 wait if necessary if the reply is not ready.
 
-[[Async-SynchronousRequestOnly]]
 == Synchronous Request Only
 
 You can also do synchronous Request only with
@@ -129,7 +115,6 @@ successful the control is returned to the client with no notion of error.
 In case of failure, the client can detect this as an exception is thrown.
 (and `exchange.isFailed()` returns `true`).
 
-[[Async-AsynchronousRequestOnly]]
 == Asynchronous Request Only
 
 As opposed to the synchronous Request Only the
@@ -168,7 +153,6 @@ the task is done.
 With these diagrams in mind, lets turn out attention to the
 Async API and how to use it with Camel.
 
-[[Async1TheClientAPI]]
 == The Async Client API
 
 Camel provides the Async Client API in the
@@ -205,7 +189,6 @@ handle is what the caller must use later to retrieve the asynchronous
 response. You can do this by using the `extractFutureBody` method, or
 just use plain Java but invoke `get()` on the `Future` handle.
 
-[[Async-TheClientAPIwithcallbacks]]
 == The Async Client API with callbacks
 
 In addition to the Client API from above Camel provides a variation that
@@ -232,7 +215,6 @@ These methods also returns the Future handle in case you need them. The
 difference is that they invokes the callback as well when the
 Exchange is done being routed.
 
-[[Async-TheFutureAPI]]
 === The Future API
 
 The `java.util.concurrent.Future` API have among others the following
@@ -250,7 +232,6 @@ methods:
 exception.
 |=======================================================================
 
-[[Async-Example:AsynchronousRequestReply]]
 == Example: Asynchronous Request Reply
 
 Suppose we want to call an xref:components::http-component.adoc[HTTP] service but it is usually
@@ -319,7 +300,6 @@ assertMockEndpointsSatisfied();
 All together it should give you the basic idea of how to use this
 Async API and what it can do.
 
-[[Async-Example:SynchronousRequestReply]]
 == Example: Synchronous Request Reply
 
 This example is just a pure synchronous version of the async based example above.
@@ -344,7 +324,6 @@ assertEquals("Claus", name);
 assertMockEndpointsSatisfied();
 ---------------------------------------------------------------------------
 
-[[Async-UsingtheAPIwithcallbacks]]
 == Using the Async API with callbacks
 
 Suppose we want to call an xref:components::http-component.adoc[HTTP] service but it is usually
@@ -424,7 +403,6 @@ template.asyncCallbackRequestBody(url, "Hadrian", callback);
 template.asyncCallbackRequestBody(url, "Willem", callback);
 ---------------------------------------------------------------------------
 
-[[Async-UsingtheAPIwiththeCamelclassicAPI]]
 == Using the Async API with the Camel classic API
 
 When using the Camel API to create a producer and send an
@@ -460,158 +438,3 @@ Future<Exchange> future = AsyncProcessorHelper.asyncProcess(executor, producer, 
 // and to get the response we use regular Java Concurrency API
 Exchange response = future.get();
 ------------------------------------------------------------------------------------------------------------------------------
-
-[[Async2UsingtheThreadsDSL]]
-== Using the Threads DSL
-
-In Camel 2.0 the `threads` DSL replaces the old `thread` DSL.
-
-[[Async-Camel2.0to2.3behavior]]
-== Camel 2.0 to 2.3 behavior
-
-The `threads` DSL leverages the JDK concurrency framework for multi-threading. It can be used to turn a synchronous route into
-Async. What happens is that from the point forwards
-from `threads` the messages are routed asynchronous in a new thread. The
-caller will either wait for a reply if a reply is expected, such as when
-we use Request Reply messaging. Or the caller
-will complete as well if no reply was expected such as
-Request Only messaging.
-
-[[Async-Camel2.4onwardsbehavior]]
-== Camel 2.4 onwards behavior
-
-The `threads` DSL leverages the JDK concurrency framework for multi-threading. It can be used to turn a synchronous route into
-Async. What happens is that from the point forwards
-from `threads` the messages are routed asynchronous in a new thread.
-
-The `threads` DSL supports the following options:
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Option |Description
-
-|poolSize |A number to indicate the core pool size of the underlying Java
-`ExecutorService` that is actually doing all the heavy lifting of
-handling Async tasks and correlate replies etc. By
-default, a pool size of 10 is used.
-
-|maxPoolSize |A number to indicate the maximum pool size of the underlying Java
-`ExecutorService`
-
-|keepAliveTime |A number to indicate how long to keep inactive threads alive
-
-|timeUnit |Time unit for the `keepAliveTime` option
-
-|maxQueueSize |A number to indicate the maximum number of tasks to keep in the worker
-queue for the underlying Java `ExecutorService`
-
-|threadName |To use a custom thread name pattern. See
-Threading Model for more details.
-
-|rejectedPolicy |How to handle rejected tasks. Can be either `Abort`, `CallerRuns`,
-`Discard`, or `DiscardOldest`. See below for more details.
-
-|callerRunsWhenRejected |A boolean to more easily configure between the most common rejection
-policies. This option is default enabled. `true` is the same as
-`rejectedPolicy=CallerRuns`, and `false` is the same as
-`rejectedPolicy=Abort`.
-
-|executorService |You can provide a custom `ExecutorService` to use, for instance in a
-managed environment a J2EE container could provide this service so all
-thread pools is controlled by the J2EE container.
-
-|executorServiceRef |You can provide a named reference to the custom `ExecutorService` from
-the Camel registry. Keep in mind that reference to the custom executor
-service cannot be used together with the executor-related options (like
-`poolSize` or `maxQueueSize`) as referenced executor service should be
-configured already.
-
-|waitForTaskToComplete |*@deprecated (removed in Camel 2.4):* Option to specify if the caller
-should wait for the async task to be complete or not before continuing.
-The following 3 options is supported: *Always*, *Never* or
-*IfReplyExpected*. The first two options are self-explained. The last
-will only wait if the message is Request Reply
-based. The default option is *IfReplyExpected*.
-|=======================================================================
-
-[[Async-Aboutrejectedtasks]]
-=== About rejected tasks
-
-The `threads` DSL uses a thread pool which has a worker queue for tasks.
-When the worker queue gets full, the task is rejected. You can customize
-how to react upon this using the `rejectedPolicy` and
-`callerRunsWhenRejected` option. The latter is used to easily switch
-between the two most common and recommended settings. Either let the
-current caller thread execute the task (i.e. it will become synchronous),
-but also give time for the thread pool to process its current tasks,
-without adding more tasks - sort of self throttling. This is the default
-behavior. If setting `callerRunsWhenRejected` you use the `Abort`
-policy, which means the task is rejected, and a
-`RejectedExecutionException` is set on the Exchange,
-and the Exchange will stop continue being routed,
-and its `UnitOfWork` will be regarded as failed.
-
-The other options `Discard` and `DiscardOldest` work a bit like
-`Abort`, however they do *not* set any Exception on the
-Exchange, which means the
-Exchange will *not* be regarded as failed, but the
-Exchange will be successful. When using `Discard`
-and `DiscardOldest` then the Exchange will not
-continue being routed. *Notice:* There is an issue with these two options
-in Camel 2.9 or below, that cause the `UnitOfWork` not to be triggered,
-so we discourage you from using these options in those Camel releases.
-This has been fixed in Camel 2.10 onwards.
-
-[[Async-Example:threadsDSL]]
-== Example: threads DSL
-
-Suppose we receive orders on a JMS queue. Some of the orders expect a
-reply while others do not (either a `JMSReplyTo` exists or not). And let's
-imagine to process this order we need to do some heavy CPU calculation.
-So how do we avoid the messages that do not expect a reply to block
-until the entire message is processed? Well, we use the `threads` DSL to
-turn the route into multi-threading asynchronous routing before the
-heavy CPU task. Then the messages that do not expect a reply can
-return beforehand. And the messages that expect a reply, well yeah they
-have to wait anyway. So this can be accomplished like the route below:
-
-[source,java]
-------------------------------------------------------------------------------------------------------------------------------
-// just a unit test but imagine using your own data format that does complex
-// and CPU heavy processing for decrypting the message
-DataFormat mySecureDataFormat = new StringDataFormat("iso-8859-1");
-
-// list on the JMS queue for new orders
-from("jms:queue:order")
-  // do some sanity check validation
-  .to("bean:validateOrder")
-  .to("mock:validate")
-  // use multi threading with a pool size of 20
-  // turn the route async as some others do not expect a reply
-  // and a few does then we can use the threads DSL as a turning point
-  // if the JMS ReplyTo was set then we expect a reply, otherwise not
-  // use a pool of 20 threads for the point forward
-  .threads(20)
-  // do some CPU heavy processing of the message (we simulate and delay just 500 ms)
-  .unmarshal(mySecureDataFormat)
-  .delay(500)
-  .to("bean:handleOrder")
-  .to("mock:order");
-------------------------------------------------------------------------------------------------------------------------------
-
-WARNING: *Transactions and threads DSL*
-Mind that when using transactions it's often required that the
-Exchange is processed entirely in the same thread,
-as the transaction manager often uses `ThreadLocal` to store the
-intermediate transaction status. For instance, Spring Transaction does
-this. So when using `threads` DSL the Exchange that
-is processed in the async thread cannot participate in the same
-transaction as the caller thread.
-*Notice:* This does not apply to the `ProducerTemplate` Async API as
-such as the client usually does not participate in a transaction. So you
-can still use the Camel Client Async API and do async messaging where
-the processing of the Exchange is still handled
-within a transaction. It's only the client that submitted the
-Exchange that does not participate in the same
-transaction.
-
