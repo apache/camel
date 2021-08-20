@@ -32,6 +32,7 @@ public class TestConfiguration {
         propertyMap.put("secretKey", "dummy_secret_key");
         propertyMap.put("region", "dummy_region");
         propertyMap.put("endpoint", "dummy_endpoint");
+        propertyMap.put("projectId", "dummy_project_id");
         propertyMap.put("engine", "kafka");
         propertyMap.put("instanceId", "dummy_id");
     }

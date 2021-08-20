@@ -14,18 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.dms.constants;
+package org.apache.camel.component.huaweicloud.dms.models;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Constants for properties set on the exchange object
+ * Delete instance request object
  */
-public final class DMSProperties {
-    public static final String OPERATION = "CamelHwCloudDmsOperation";
-    public static final String ENGINE = "CamelHwCloudDmsEngine";
-    public static final String INSTANCE_ID = "CamelHwCloudDmsInstanceId";
+public class DeleteInstanceRequest {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty(value = "instance_id")
+    private String instanceId;
 
-    public static final String INSTANCE_DELETED = "CamelHwCloudDmsInstanceDeleted";
+    public DeleteInstanceRequest withInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+        return this;
+    }
 
-    private DMSProperties() {
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
+
+    @Override
+    public String toString() {
+        return "DeleteInstanceRequest{" +
+               "instanceId='" + instanceId + '\'' +
+               '}';
     }
 }

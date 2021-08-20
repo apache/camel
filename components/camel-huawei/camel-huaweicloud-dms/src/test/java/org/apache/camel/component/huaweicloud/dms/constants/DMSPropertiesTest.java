@@ -26,5 +26,7 @@ public class DMSPropertiesTest {
         assertEquals("CamelHwCloudDmsOperation", DMSProperties.OPERATION);
         assertEquals("CamelHwCloudDmsEngine", DMSProperties.ENGINE);
         assertEquals("CamelHwCloudDmsInstanceId", DMSProperties.INSTANCE_ID);
+
+        assertEquals("CamelHwCloudDmsInstanceDeleted", DMSProperties.INSTANCE_DELETED);
     }
 }

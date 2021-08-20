@@ -50,6 +50,7 @@ public class ListInstancesTest extends CamelTestSupport {
                         .to("hwcloud-dms:listInstances?" +
                             "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
+                            "&projectId=" + testConfiguration.getProperty("projectId") +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&engine=" + testConfiguration.getProperty("engine") +
                             "&ignoreSslVerification=true" +

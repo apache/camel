@@ -21,14 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
-import org.apache.camel.component.huaweicloud.dms.models.DmsInstance;
-import org.apache.camel.component.huaweicloud.dms.models.QueryInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceResponse;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class QueryInstanceTest extends CamelTestSupport {
+public class DeleteInstanceTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
     @BindToRegistry("dmsClient")
@@ -44,12 +44,12 @@ public class QueryInstanceTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:operation")
-                        .setProperty(DMSProperties.OPERATION, constant("queryInstance"))
+                        .setProperty(DMSProperties.OPERATION, constant("deleteInstance"))
+                        .setProperty(DMSProperties.INSTANCE_ID, constant(testConfiguration.getProperty("instanceId")))
                         .to("hwcloud-dms:?" +
                             "serviceKeys=#serviceKeys" +
                             "&projectId=" + testConfiguration.getProperty("projectId") +
                             "&region=" + testConfiguration.getProperty("region") +
-                            "&instanceId=" + testConfiguration.getProperty("instanceId") +
                             "&ignoreSslVerification=true" +
                             "&dmsClient=#dmsClient")
                         .log("Operation successful")
@@ -60,15 +60,9 @@ public class QueryInstanceTest extends CamelTestSupport {
 
     @Test
     public void testOperation() throws Exception {
-        DmsInstance instance = new DmsInstance()
-                .withName("test-instance-1")
-                .withEngine(testConfiguration.getProperty("engine"))
-                .withStorageSpace(500)
-                .withInstanceId("id-1")
-                .withVpcId("vpc-id-1")
-                .withUserName("user-1");
+        DeleteInstanceResponse response = new DeleteInstanceResponse();
 
-        Mockito.when(mockClient.queryInstance(Mockito.any(QueryInstanceRequest.class))).thenReturn(instance);
+        Mockito.when(mockClient.deleteInstance(Mockito.any(DeleteInstanceRequest.class))).thenReturn(response);
 
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);
@@ -77,12 +71,6 @@ public class QueryInstanceTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals(
-                "{\"name\":\"test-instance-1\",\"engine\":\"kafka\",\"storage_space\":500,\"partition_num\":0,\"used_storage_space\":0,\"port\":0,"
-                     +
-                     "\"instance_id\":\"id-1\",\"charging_mode\":0,\"vpc_id\":\"vpc-id-1\",\"user_name\":\"user-1\",\"enable_publicip\":false,\"ssl_enable\":false,"
-                     +
-                     "\"is_logical_volume\":false,\"extend_times\":0,\"enable_auto_topic\":false}",
-                responseExchange.getIn().getBody(String.class));
+        assertTrue(responseExchange.getProperty(DMSProperties.INSTANCE_DELETED, boolean.class));
     }
 }

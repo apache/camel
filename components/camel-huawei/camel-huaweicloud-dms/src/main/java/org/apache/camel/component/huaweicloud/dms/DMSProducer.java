@@ -22,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSOperations;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
 import org.apache.camel.component.huaweicloud.dms.models.ClientConfigurations;
+import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceResponse;
 import org.apache.camel.component.huaweicloud.dms.models.DmsInstance;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesRequest;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesResponse;
@@ -55,6 +57,9 @@ public class DMSProducer extends DefaultProducer {
         updateClientConfigs(exchange);
 
         switch (clientConfigurations.getOperation()) {
+            case DMSOperations.DELETE_INSTANCE:
+                deleteInstance(exchange);
+                break;
             case DMSOperations.LIST_INSTANCES:
                 listInstances(exchange);
                 break;
@@ -65,6 +70,23 @@ public class DMSProducer extends DefaultProducer {
                 throw new UnsupportedOperationException(
                         String.format("%s is not a supported operation", clientConfigurations.getOperation()));
         }
+    }
+
+    /**
+     * Perform delete instance operation
+     *
+     * @param exchange
+     */
+    private void deleteInstance(Exchange exchange) {
+        // check for instance id, which is mandatory to delete an instance
+        if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
+            throw new IllegalArgumentException("Instance id is mandatory to delete an instance");
+        }
+
+        DeleteInstanceRequest request = new DeleteInstanceRequest()
+                .withInstanceId(clientConfigurations.getInstanceId());
+        DeleteInstanceResponse response = dmsClient.deleteInstance(request);
+        exchange.setProperty(DMSProperties.INSTANCE_DELETED, true);
     }
 
     /**
