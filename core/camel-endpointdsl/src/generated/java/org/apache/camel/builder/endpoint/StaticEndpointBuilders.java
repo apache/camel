@@ -6804,6 +6804,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
+     * To integrate with a fully managed, high-performance message queuing
+     * service on Huawei Cloud
+     * 
+     * Category: cloud
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-dms
+     * 
+     * Syntax: <code>hwcloud-dms:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to be performed
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DMSEndpointBuilderFactory.DMSEndpointBuilder hwcloudDms(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DMSEndpointBuilderFactory.endpointBuilder("hwcloud-dms", path);
+    }
+    /**
+     * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
+     * To integrate with a fully managed, high-performance message queuing
+     * service on Huawei Cloud
+     * 
+     * Category: cloud
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-dms
+     * 
+     * Syntax: <code>hwcloud-dms:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to be performed
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DMSEndpointBuilderFactory.DMSEndpointBuilder hwcloudDms(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DMSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
