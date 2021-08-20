@@ -209,6 +209,7 @@
         <module>camel-jsonata</module>
         <module>camel-jsonb</module>
         <module>camel-jsonpath</module>
+        <module>camel-json-patch</module>
         <module>camel-jt400</module>
         <module>camel-jta</module>
         <module>camel-kafka</module>
