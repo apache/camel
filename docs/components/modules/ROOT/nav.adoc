@@ -150,6 +150,7 @@
 ** xref:hdfs-component.adoc[HDFS]
 ** xref:http-component.adoc[HTTP]
 ** xref:hwcloud-summary.adoc[Huawei Cloud]
+*** xref:hwcloud-dms-component.adoc[Huawei Distributed Message Service (DMS)]
 *** xref:hwcloud-functiongraph-component.adoc[Huawei FunctionGraph]
 *** xref:hwcloud-iam-component.adoc[Huawei Identity and Access Management (IAM)]
 *** xref:hwcloud-obs-component.adoc[Huawei Object Storage Service (OBS)]

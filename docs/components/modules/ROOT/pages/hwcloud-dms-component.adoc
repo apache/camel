@@ -1,7 +1,7 @@
 [[hwcloud-dms-component]]
 = Huawei Distributed Message Service (DMS) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: componentscamel-huaweicamel-huaweicloud-dmssrcmaindocshwcloud-dms-component.adoc
+:page-source: components/camel-huawei/camel-huaweicloud-dms/src/main/docs/hwcloud-dms-component.adoc
 :docTitle: Huawei Distributed Message Service (DMS)
 :artifactId: camel-huaweicloud-dms
 :description: To integrate with a fully managed, high-performance message queuing service on Huawei Cloud

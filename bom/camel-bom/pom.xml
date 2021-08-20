@@ -942,7 +942,7 @@
         <artifactId>camel-huaweicloud-common</artifactId>
         <version>${project.version}</version>
       </dependency>
-	  <dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-dms</artifactId>
         <version>${project.version}</version>
