@@ -47,6 +47,7 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.xml.XmlLineNumberParser;
 
@@ -156,10 +157,24 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                     }
 
                     if (resolvePlaceholders) {
+                        PropertiesComponent pc = context.getPropertiesComponent();
+                        if (definition instanceof RouteDefinition) {
+                            RouteDefinition routeDefinition = (RouteDefinition) definition;
+                            // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
+                            if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
+                                    && routeDefinition.getTemplateParameters() != null) {
+                                Properties prop = new Properties();
+                                prop.putAll(routeDefinition.getTemplateParameters());
+                                pc.setLocalProperties(prop);
+                            }
+                        }
                         try {
                             after = context.resolvePropertyPlaceholders(after);
                         } catch (Exception e) {
                             // ignore
+                        } finally {
+                            // clear local after the route is dumped
+                            pc.setLocalProperties(null);
                         }
                     }
 
