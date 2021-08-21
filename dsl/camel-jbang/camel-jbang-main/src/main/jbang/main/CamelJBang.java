@@ -235,10 +235,6 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    @Option(names = { "--branch" }, defaultValue = "main", hidden = true,
-            description = "The branch to use when downloading resources from (used for development/testing)")
-    private String branch;
-
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "KAMELET", "DESCRIPTION", "LINK");
@@ -248,7 +244,6 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         setResourceLocation(resourceLocation, "camel-kamelets:docs/modules/ROOT/nav.adoc");
-        setBranch(branch);
 
         MatchExtractor<Kamelet> matchExtractor;
 
@@ -287,10 +282,6 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    @Option(names = { "--branch" }, defaultValue = "camel-${camel.jbang.version}", hidden = true,
-            description = "The branch to use when downloading or searching resources (mostly used for development/testing)")
-    private String branch;
-
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "COMPONENT", "DESCRIPTION", "LINK");
@@ -300,7 +291,6 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         setResourceLocation(resourceLocation, "camel:docs/components/modules/ROOT/nav.adoc");
-        setBranch(branch);
 
         MatchExtractor<Component> matchExtractor;
         if (searchTerm.isEmpty()) {
@@ -343,10 +333,6 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    @Option(names = { "--branch" }, defaultValue = "camel-${camel.jbang.version}", hidden = true,
-            description = "The branch to use when downloading or searching resources (mostly used for development/testing)")
-    private String branch;
-
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "LANGUAGE", "DESCRIPTION", "LINK");
@@ -356,7 +342,6 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         setResourceLocation(resourceLocation, "camel:docs/components/modules/languages/nav.adoc");
-        setBranch(branch);
 
         MatchExtractor<Language> matchExtractor;
         if (searchTerm.isEmpty()) {
@@ -398,10 +383,6 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    @Option(names = { "--branch" }, defaultValue = "camel-${camel.jbang.version}", hidden = true,
-            description = "The branch to use when downloading or searching resources (mostly used for development/testing)")
-    private String branch;
-
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "COMPONENT", "DESCRIPTION", "LINK");
@@ -411,7 +392,6 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         setResourceLocation(resourceLocation, "camel:docs/components/modules/others/nav.adoc");
-        setBranch(branch);
 
         MatchExtractor<Other> matchExtractor;
         if (searchTerm.isEmpty()) {
