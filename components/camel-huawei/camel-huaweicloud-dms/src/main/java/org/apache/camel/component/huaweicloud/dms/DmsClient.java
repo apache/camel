@@ -18,6 +18,8 @@ package org.apache.camel.component.huaweicloud.dms;
 
 import com.huaweicloud.sdk.core.ClientBuilder;
 import com.huaweicloud.sdk.core.HcClient;
+import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceResponse;
 import org.apache.camel.component.huaweicloud.dms.models.DmsInstance;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesRequest;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesResponse;
@@ -36,6 +38,10 @@ public class DmsClient {
 
     public static ClientBuilder<DmsClient> newBuilder() {
         return new ClientBuilder<>(DmsClient::new);
+    }
+
+    public DeleteInstanceResponse deleteInstance(DeleteInstanceRequest request) {
+        return hcClient.syncInvokeHttp(request, DmsMeta.DELETE_INSTANCE);
     }
 
     public ListInstancesResponse listInstances(ListInstancesRequest request) {

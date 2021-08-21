@@ -20,6 +20,7 @@ package org.apache.camel.component.huaweicloud.dms.constants;
  * Constants for all the supported DMS operations
  */
 public final class DMSOperations {
+    public static final String DELETE_INSTANCE = "deleteInstance";
     public static final String LIST_INSTANCES = "listInstances";
     public static final String QUERY_INSTANCE = "queryInstance";
 

@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.dms.constants;
+package org.apache.camel.component.huaweicloud.dms.models;
 
-import org.junit.Test;
+import com.huaweicloud.sdk.core.SdkResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+/**
+ * Delete instance response object
+ */
+public class DeleteInstanceResponse extends SdkResponse {
 
-public class DMSOperationsTest {
-    @Test
-    public void test() {
-        assertEquals("deleteInstance", DMSOperations.DELETE_INSTANCE);
-        assertEquals("listInstances", DMSOperations.LIST_INSTANCES);
-        assertEquals("queryInstance", DMSOperations.QUERY_INSTANCE);
+    @Override
+    public String toString() {
+        return "DeleteInstanceResponse{}";
     }
 }

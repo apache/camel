@@ -95,7 +95,7 @@ public class DMSEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String engine;
 
-    @UriParam(description = "The id of the instance. This option is mandatory when querying an instance",
+    @UriParam(description = "The id of the instance. This option is mandatory when deleting or querying an instance",
               displayName = "Instance id")
     @Metadata(required = false)
     private String instanceId;
