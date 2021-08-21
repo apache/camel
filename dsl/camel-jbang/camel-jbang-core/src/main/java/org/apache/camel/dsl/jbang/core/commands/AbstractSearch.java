@@ -34,6 +34,7 @@ import org.apache.commons.io.IOUtils;
 
 public abstract class AbstractSearch {
     private String resourceLocation;
+    private String branch;
 
     // Only used for the search subcommand
     protected AbstractSearch() {
@@ -47,6 +48,10 @@ public abstract class AbstractSearch {
         this.resourceLocation = baseResourceLocation + ":" + resourcePath;
     }
 
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
     protected void downloadResource(File indexFile) throws ResourceDoesNotExist, IOException {
         KameletMain main = new KameletMain();
         main.start();
@@ -54,6 +59,7 @@ public abstract class AbstractSearch {
 
         try (GitHubResourceResolver resolver = new GitHubResourceResolver()) {
             resolver.setCamelContext(context);
+            resolver.setBranch(branch);
 
             Resource resource = resolver.resolve(resourceLocation);
 
