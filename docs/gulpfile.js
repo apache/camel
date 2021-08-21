@@ -39,14 +39,14 @@ function deleteComponentSymlinks () {
 }
 
 function deleteComponentImageSymlinks () {
-  return del(['components/modules/ROOT/assets/images/*'])
+  return del(['components/modules/ROOT/images/*'])
 }
 
-function createComponentSymlinks () {
+function createComponentSymlinks() {
   return (
     src([
       '../core/camel-base/src/main/docs/*-component.adoc',
-      '../components/{*,*/*}/src/main/docs/*-component.adoc',
+      '../components/{*,*/*,*/*/*}/src/main/docs/*-component.adoc',
       '../components/{*,*/*}/src/main/docs/*-summary.adoc',
     ])
       .pipe(
@@ -57,20 +57,84 @@ function createComponentSymlinks () {
           done(null, file)
         })
       )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(insertSourceAttribute())
-      .pipe(dest('components/modules/ROOT/pages/'))
+      .pipe(symlink('components/modules/ROOT/pages/', {
+        relativeSymlinks: true
+      }))
   )
 }
 
+const symlinkData = {
+  components: {
+    src: [
+      // '../core/camel-base/src/main/docs/*-component.adoc',
+      '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/component/**/*.json',
+      '../components/{camel-coap,camel-oaipmh,camel-websocket-jsr356}/src/generated/resources/org/apache/camel/**/*.json',
+      '../components/camel-huawei/camel-huaweicloud-functiongraph/src/generated/resources/org/apache/camel/*.json',
+    ],
+    dest: 'components/modules/ROOT/examples/json/',
+  },
+  //most dataformat json files are not under a dataformat directory but under a component directory.
+  //Therefore we link the all the component ones into dataformats as well.
+  //Please FIXME!
+  dataformats: {
+    src: [
+      //first, so name collisions override the component irrelevant json file.
+      '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/component/**/*.json',
+      '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/dataformat/**/*.json',
+      '../core/camel-core-model/src/generated/resources/org/apache/camel/model/dataformat/*.json',
+      '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/converter/**/*.json',
+    ],
+    dest: 'components/modules/dataformats/examples/json/',
+  },
+  languages: {
+    src: [
+      '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/language/**/*.json',
+      '../core/camel-core-languages/src/generated/resources/org/apache/camel/language/**/*.json',
+      '../core/camel-core-model/src/generated/resources/org/apache/camel/model/language/*.json',
+    ],
+    dest: 'components/modules/languages/examples/json/',
+  },
+  others: {
+    src: [
+      '../components/{*,*/*,*/*/*}/src/generated/resources/*.json',
+    ],
+    dest: 'components/modules/others/examples/json/',
+  },
+  eips: {
+    src: [
+      '../core/camel-core-model/src/generated/resources/org/apache/camel/model/**/*.json',
+    ],
+    dest: '../core/camel-core-engine/src/main/docs/modules/eips/examples/json/'
+  }
+}
+
+const createJsonSymlinks =
+    parallel(
+      ...Object.values(symlinkData).map( ({src: srcLocations, dest}) => {
+        return () => {
+          return src(srcLocations)
+            .pipe(map((file, done) => {
+              // this flattens the output to just .../pages/....adoc
+              // instead of .../pages/camel-.../src/main/docs/....adoc
+              file.base = path.dirname(file.path)
+              done(null, file)
+            }))
+            .pipe(symlink(dest, {
+              relativeSymlinks: true
+            }))
+        }
+      })
+  )
+
+//TODO this newly copies several dsl pages. Is this correct?
+// (output edited) diff --git a/docs/components/modules/others/nav.adoc b/docs/components/modules/others/nav.adoc
+// +** xref:groovy-dsl.adoc[Groovy Dsl]
+// +** xref:js-dsl.adoc[JavaScript Dsl]
+// +** xref:java-xml-jaxb-dsl.adoc[Jaxb XML Dsl]
+// +** xref:kotlin-dsl.adoc[Kotlin Dsl]
+// +** xref:java-xml-io-dsl.adoc[XML Dsl]
+//These seem to have no content, just a non-xref link to the user manual,
+// where the dsls are not actually explained.  Should the sources be removed?
 function createComponentOthersSymlinks () {
   const f = filter([
     '**',
@@ -84,6 +148,7 @@ function createComponentOthersSymlinks () {
       '../core/camel-base/src/main/docs/*.adoc',
       '../core/camel-main/src/main/docs/*.adoc',
       '../components/{*,*/*}/src/main/docs/*.adoc',
+      '../dsl/{*,*/*}/src/main/docs/*.adoc',
     ])
       .pipe(f)
       .pipe(
@@ -94,17 +159,9 @@ function createComponentOthersSymlinks () {
           done(null, file)
         })
       )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(insertSourceAttribute())
-      .pipe(dest('components/modules/others/pages/'))
+      .pipe(symlink('components/modules/others/pages/', {
+          relativeSymlinks: true
+      }))
   )
 }
 
@@ -119,23 +176,21 @@ function createComponentDataFormatSymlinks () {
           done(null, file)
         })
       )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(insertSourceAttribute())
-      .pipe(dest('components/modules/dataformats/pages/'))
+      .pipe(symlink('components/modules/dataformats/pages/', {
+          relativeSymlinks: true
+      }))
   )
 }
 
+//IMPORTANT NOTE: some language adocs may also be copied by an undocumented process
+//from core/camel-core-languages and core/camel-xml-jaxp.
 function createComponentLanguageSymlinks () {
   return (
-    src(['../components/{*,*/*}/src/main/docs/*-language.adoc'])
+    src([
+      '../components/{*,*/*}/src/main/docs/*-language.adoc',
+      '../core/camel-core-languages/src/main/docs/modules/languages/pages/*-language.adoc',
+      '../core/camel-xml-jaxp/src/main/docs/modules/languages/pages/*-language.adoc',
+    ])
       .pipe(
         map((file, done) => {
           // this flattens the output to just .../pages/....adoc
@@ -144,17 +199,9 @@ function createComponentLanguageSymlinks () {
           done(null, file)
         })
       )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(insertSourceAttribute())
-      .pipe(dest('components/modules/languages/pages/'))
+      .pipe(symlink('components/modules/languages/pages/', {
+          relativeSymlinks: true
+      }))
   )
 }
 
@@ -169,21 +216,14 @@ function createComponentImageSymlinks () {
           done(null, file)
         })
       )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(dest('components/modules/ROOT/assets/images/'))
+      .pipe(symlink('components/modules/ROOT/images/', {
+          relativeSymlinks: true
+      }))
   )
 }
 
 function titleFrom (file) {
-  var maybeName = /(?::docTitle: )(.*)/.exec(file.contents.toString())
+  var maybeName = /(?::doctitle: )(.*)/.exec(file.contents.toString())
   if (maybeName === null) {
     //TODO investigate these... why dont they have them?
     // console.warn(`${file.path} doesn't contain Asciidoc docTitle attribute (':docTitle: <Title>'`);
@@ -240,12 +280,6 @@ function insertGeneratedNotice () {
     transform: (filename, file) => {
       return file.contents.toString('utf8')
     },
-  })
-}
-
-function insertSourceAttribute () {
-  return replace(/^= .+/m, function (match) {
-    return `${match}\n//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n:page-source: ${path.relative('..', this.file.path)}`
   })
 }
 
@@ -393,6 +427,9 @@ function deleteExamples () {
   return del([
     'user-manual/modules/ROOT/examples/',
     'user-manual/modules/faq/examples/',
+    'components/modules/dataformats/examples/',
+    'components/modules/languages/examples/',
+    'components/modules/others/examples/',
     'components/modules/ROOT/examples/',
   ])
 }
@@ -457,7 +494,8 @@ const examples = series(
   createFAQExamples,
   createEIPExamples,
   createUserManualLanguageExamples,
-  createComponentExamples
+  createComponentExamples,
+  createJsonSymlinks,
 )
 
 exports.symlinks = symlinks
