@@ -8,8 +8,8 @@ patterns with different
 expression languages together with different forms
 of Bean Integration and
 Dependency Injection so its very easy
-for things to go wrong! {icon-frown}. Testing is the crucial weapon to ensure
-that things work as you would expect {icon-smile}.
+for things to go wrong!. Testing is the crucial weapon to ensure
+that things work as you would expect.
 
 Camel is a Java library so you can easily wire up tests in whatever unit
 testing framework you use (JUnit 3.x (deprecated) or 4.x).
