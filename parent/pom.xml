@@ -284,7 +284,7 @@
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
-        <jbpm-version>7.57.0.Final</jbpm-version>
+        <jbpm-version>7.58.0.Final</jbpm-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.4.0.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
