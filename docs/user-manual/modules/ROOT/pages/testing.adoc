@@ -56,16 +56,15 @@ Camel provides a number of xref:endpoint.adoc[endpoints] which can make testing 
 |=======================================================================
 |Name |Description
 |xref:components::mock-component.adoc[Mock] |For testing routes and mediation rules using
-mocks and allowing assertions to be added to an endpoint
-
-|xref:components:others:test.adoc[Test] |Creates a xref:components::mock-component.adoc[Mock] endpoint which
-expects to receive all the message bodies that could be polled from the
-given underlying endpoint
+mocks and allowing assertions to be added to an endpoint.
 
 |xref:components::dataset-component.adoc[DataSet] |For load & soak testing this endpoint
 provides a way to create huge numbers of messages for sending to
-Components and asserting that they are consumed
-correctly
+components and asserting that they are consumed correctly.
+
+|xref:components::dataset-test-component.adoc[DataSet Test] |Used for automatic load
+a set of expected message from another endpoint which is then compared to the messages
+that arrives at this endpoint.
 
 |=======================================================================
 
@@ -110,7 +109,7 @@ completed 5 messages. You can build complex expressions to match your
 criteria when to be notified.
 
 |AdviceWith |Allows you to _advice_ (enhance)
-an existing route using a `RouteBuilder` style.
+an existing route using a xref:route-builder.adoc[RouteBuilder] style.
 For example, you can send (or send and skip) message to a xref:components::mock-component.adoc[Mock]
 endpoint for validating the message send by Camel is as expected.
 |=======================================================================
@@ -123,7 +122,5 @@ There are a number of third party testing libraries that Camel users have found 
 |=======================================================================
 |Name |Description
 | https://citrusframework.org/[Citrus Integration Framework] | Framework for automated integration tests supporting a wide range of message protocols and data formats
-
 | https://citrusframework.org/yaks/[Citrus Yaks] | YAKS is a framework to enable Cloud Native BDD testing on Kubernetes
-
 |=======================================================================

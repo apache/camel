@@ -27,7 +27,8 @@ together with the powerful Bean Integration.
 The *dataset-test* component extends the xref:mock-component.adoc[Mock] component to
 support pulling messages from another endpoint on startup to set the
 expected message bodies on the underlying xref:mock-component.adoc[Mock] endpoint.
-That is, you use the test endpoint in a route and messages arriving on
+
+That is, you use the dataset test endpoint in a route and messages arriving at
 it will be implicitly compared to some expected messages extracted from
 some other location.
 
