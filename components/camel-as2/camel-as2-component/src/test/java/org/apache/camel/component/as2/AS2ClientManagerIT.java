@@ -117,6 +117,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private static final String SUBJECT = "Test Case";
     private static final String AS2_NAME = "878051556";
     private static final String FROM = "mrAS@example.org";
+    private static final String ATTACHED_FILE_NAME = "filename.txt";
 
     private static final String MDN_FROM = "as2Test@server.example.com";
     private static final String MDN_SUBJECT_PREFIX = "MDN Response:";
@@ -241,6 +242,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
         headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
+        // parameter type is String
+        headers.put("CamelAS2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -326,6 +329,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAS2.encryptingAlgorithm", AS2EncryptionAlgorithm.AES128_CBC);
         // parameter type is java.security.cert.Certificate[]
         headers.put("CamelAS2.encryptingCertificateChain", certList);
+        // parameter type is String
+        headers.put("CamelAS2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -420,6 +425,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String[]
         headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
+        // parameter type is String
+        headers.put("CamelAS2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -522,6 +529,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String[]
         headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
+        // parameter type is String
+        headers.put("CamelAS2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -607,7 +616,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         // Create plain edi request message to acknowledge
         ApplicationEDIEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, false);
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, false, ATTACHED_FILE_NAME);
         HttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", REQUEST_URI);
         HttpMessageUtils.setHeaderValue(request, AS2Header.SUBJECT, SUBJECT);
         String httpdate = DATE_GENERATOR.getCurrentDate();

@@ -20,7 +20,7 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(35);
+        Set<String> props = new HashSet<>(36);
         props.add("server");
         props.add("apiName");
         props.add("as2Version");
@@ -29,6 +29,7 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("encryptingCertificateChain");
         props.add("subject");
         props.add("signingPrivateKey");
+        props.add("attachedFileName");
         props.add("signedReceiptMicAlgorithms");
         props.add("ediMessage");
         props.add("as2To");

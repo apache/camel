@@ -93,7 +93,8 @@ public class MicUtilsTest {
         request.addHeader(AS2Header.CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         ApplicationEDIFACTEntity edifactEntity
-                = new ApplicationEDIFACTEntity(EDI_MESSAGE, AS2Charset.US_ASCII, AS2TransferEncoding.NONE, true);
+                = new ApplicationEDIFACTEntity(
+                        EDI_MESSAGE, AS2Charset.US_ASCII, AS2TransferEncoding.NONE, true, "filename.txt");
         InputStream is = edifactEntity.getContent();
         BasicHttpEntity basicEntity = new BasicHttpEntity();
         basicEntity.setContent(is);

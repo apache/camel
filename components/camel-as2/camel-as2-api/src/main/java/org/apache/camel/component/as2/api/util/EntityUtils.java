@@ -186,7 +186,8 @@ public final class EntityUtils {
     }
 
     public static ApplicationEDIEntity createEDIEntity(
-            String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody)
+            String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody,
+            String filename)
             throws CamelException {
         Args.notNull(ediMessage, "EDI Message");
         Args.notNull(ediMessageContentType, "EDI Message Content Type");
@@ -196,11 +197,11 @@ public final class EntityUtils {
         }
         switch (ediMessageContentType.getMimeType().toLowerCase()) {
             case AS2MediaType.APPLICATION_EDIFACT:
-                return new ApplicationEDIFACTEntity(ediMessage, charset, contentTransferEncoding, isMainBody);
+                return new ApplicationEDIFACTEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             case AS2MediaType.APPLICATION_EDI_X12:
-                return new ApplicationEDIX12Entity(ediMessage, charset, contentTransferEncoding, isMainBody);
+                return new ApplicationEDIX12Entity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             case AS2MediaType.APPLICATION_EDI_CONSENT:
-                return new ApplicationEDIConsentEntity(ediMessage, charset, contentTransferEncoding, isMainBody);
+                return new ApplicationEDIConsentEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             default:
                 throw new CamelException("Invalid EDI entity mime type: " + ediMessageContentType.getMimeType());
         }
