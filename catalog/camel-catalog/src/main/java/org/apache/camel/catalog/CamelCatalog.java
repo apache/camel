@@ -291,6 +291,7 @@ public interface CamelCatalog {
      * @param  name the component name
      * @return      component documentation in ascii doc format.
      */
+    @Deprecated
     String componentAsciiDoc(String name);
 
     /**
@@ -299,6 +300,7 @@ public interface CamelCatalog {
      * @param  name the component name
      * @return      component documentation in html format.
      */
+    @Deprecated
     String componentHtmlDoc(String name);
 
     /**
@@ -307,6 +309,7 @@ public interface CamelCatalog {
      * @param  name the data format name
      * @return      data format documentation in ascii doc format.
      */
+    @Deprecated
     String dataFormatAsciiDoc(String name);
 
     /**
@@ -315,6 +318,7 @@ public interface CamelCatalog {
      * @param  name the data format name
      * @return      data format documentation in HTML format.
      */
+    @Deprecated
     String dataFormatHtmlDoc(String name);
 
     /**
@@ -323,6 +327,7 @@ public interface CamelCatalog {
      * @param  name the language name
      * @return      language documentation in ascii doc format.
      */
+    @Deprecated
     String languageAsciiDoc(String name);
 
     /**
@@ -331,6 +336,7 @@ public interface CamelCatalog {
      * @param  name the language name
      * @return      language documentation in HTML format.
      */
+    @Deprecated
     String languageHtmlDoc(String name);
 
     /**
@@ -339,6 +345,7 @@ public interface CamelCatalog {
      * @param  name the other (miscellaneous) name
      * @return      other (miscellaneous) documentation in ascii doc format.
      */
+    @Deprecated
     String otherAsciiDoc(String name);
 
     /**
@@ -347,6 +354,7 @@ public interface CamelCatalog {
      * @param  name the other (miscellaneous) name
      * @return      other (miscellaneous) documentation in HTML format.
      */
+    @Deprecated
     String otherHtmlDoc(String name);
 
     /**
