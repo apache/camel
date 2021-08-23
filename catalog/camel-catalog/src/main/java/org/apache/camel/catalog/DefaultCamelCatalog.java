@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -60,7 +59,6 @@ import org.apache.camel.util.json.JsonObject;
 public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCatalog {
 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
-    private static final String DOC_DIR = "org/apache/camel/catalog/docs";
     private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
     private static final String MAIN_DIR = "org/apache/camel/catalog/main";
@@ -351,193 +349,6 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public MainModel mainModel() {
         return cache("main-model", "main-model", k -> super.mainModel());
-    }
-
-    @Override
-    public String componentAsciiDoc(String name) {
-        String answer = doComponentAsciiDoc(name);
-        if (answer == null) {
-            // maybe the name is an alternative scheme name, and then we need to find the component that
-            // has the name as alternative, and use the first scheme as the name to find the documentation
-            List<String> names = findComponentNames();
-            for (String alternative : names) {
-                String schemes = getAlternativeComponentName(alternative, name);
-                if (schemes != null && schemes.contains(name)) {
-                    String first = schemes.split(",")[0];
-                    if (Objects.equals(first, name)) {
-                        continue;
-                    }
-                    return componentAsciiDoc(first);
-                }
-            }
-        }
-        return answer;
-    }
-
-    @Override
-    public String componentHtmlDoc(String name) {
-        String answer = doComponentHtmlDoc(name);
-        if (answer == null) {
-            // maybe the name is an alternative scheme name, and then we need to find the component that
-            // has the name as alternative, and use the first scheme as the name to find the documentation
-            List<String> names = findComponentNames();
-            for (String alternative : names) {
-                String schemes = getAlternativeComponentName(alternative, name);
-                if (schemes != null && schemes.contains(name)) {
-                    String first = schemes.split(",")[0];
-                    return componentHtmlDoc(first);
-                }
-            }
-        }
-        return answer;
-    }
-
-    private String getAlternativeComponentName(String componentName, String alternativeTo) {
-        // optimize for this very call to avoid loading all schemas
-        String json = componentJSonSchema(componentName);
-        if (json.contains("alternativeSchemes") && json.contains(alternativeTo)) {
-            ComponentModel model = componentModel(componentName);
-            if (model != null) {
-                return model.getAlternativeSchemes();
-            }
-        }
-        return null;
-    }
-
-    private String doComponentAsciiDoc(String componentName) {
-        // special for mail component
-        String name;
-        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3")
-                || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
-            name = "mail";
-        } else {
-            name = componentName;
-        }
-        String file = DOC_DIR + "/" + name + "-component.adoc";
-        return cache(file, () -> {
-            if (findComponentNames().contains(componentName)) {
-                return loadResource(file);
-            } else if (extraComponents.containsKey(name)) {
-                String className = extraComponents.get(name);
-                String packageName = className.substring(0, className.lastIndexOf('.'));
-                packageName = packageName.replace('.', '/');
-                String path = packageName + "/" + name + "-component.adoc";
-                return loadResource(path);
-            } else {
-                return null;
-            }
-        });
-    }
-
-    private String doComponentHtmlDoc(String componentName) {
-        // special for mail component
-        String name;
-        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3")
-                || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
-            name = "mail";
-        } else {
-            name = componentName;
-        }
-        String file = DOC_DIR + "/" + name + "-component.html";
-        return cache(file, () -> {
-            if (findComponentNames().contains(name)) {
-                return loadResource(file);
-            } else if (extraComponents.containsKey(name)) {
-                String className = extraComponents.get(name);
-                String packageName = className.substring(0, className.lastIndexOf('.'));
-                packageName = packageName.replace('.', '/');
-                String path = packageName + "/" + name + "-component.html";
-                return loadResource(path);
-            } else {
-                return null;
-            }
-        });
-    }
-
-    @Override
-    public String dataFormatAsciiDoc(String dataformatName) {
-        // special for some name data formats
-        String name;
-        if (dataformatName.startsWith("bindy")) {
-            name = "bindy";
-        } else if (dataformatName.startsWith("univocity")) {
-            name = "univocity";
-        } else {
-            name = dataformatName;
-        }
-        String file = DOC_DIR + "/" + name + "-dataformat.adoc";
-        return cache(file, () -> {
-            if (findDataFormatNames().contains(dataformatName)) {
-                return loadResource(file);
-            } else if (extraDataFormats.containsKey(name)) {
-                String className = extraDataFormats.get(name);
-                String packageName = className.substring(0, className.lastIndexOf('.'));
-                packageName = packageName.replace('.', '/');
-                String path = packageName + "/" + name + "-dataformat.adoc";
-                return loadResource(path);
-            } else {
-                return null;
-            }
-        });
-    }
-
-    @Override
-    public String dataFormatHtmlDoc(String dataformatName) {
-        // special for some name data formats
-        String name;
-        if (dataformatName.startsWith("bindy")) {
-            name = "bindy";
-        } else if (dataformatName.startsWith("univocity")) {
-            name = "univocity";
-        } else {
-            name = dataformatName;
-        }
-        String file = DOC_DIR + "/" + name + "-dataformat.html";
-        return cache(file, () -> {
-            if (findDataFormatNames().contains(name)) {
-                return loadResource(file);
-            } else if (extraDataFormats.containsKey(name)) {
-                String className = extraDataFormats.get(name);
-                String packageName = className.substring(0, className.lastIndexOf('.'));
-                packageName = packageName.replace('.', '/');
-                String path = packageName + "/" + name + "-dataformat.html";
-                return loadResource(path);
-            } else {
-                return null;
-            }
-        });
-    }
-
-    @Override
-    public String languageAsciiDoc(String name) {
-        // if we try to look method then its in the bean.adoc file
-        if ("method".equals(name)) {
-            name = "bean";
-        }
-        String file = DOC_DIR + "/" + name + "-language.adoc";
-        return cache(file, this::loadResource);
-    }
-
-    @Override
-    public String languageHtmlDoc(String name) {
-        // if we try to look method then its in the bean.html file
-        if ("method".equals(name)) {
-            name = "bean";
-        }
-        String file = DOC_DIR + "/" + name + "-language.html";
-        return cache(file, this::loadResource);
-    }
-
-    @Override
-    public String otherAsciiDoc(String name) {
-        String file = DOC_DIR + "/" + name + ".adoc";
-        return cache(file, this::loadResource);
-    }
-
-    @Override
-    public String otherHtmlDoc(String name) {
-        String file = DOC_DIR + "/" + name + "-other.html";
-        return cache(file, this::loadResource);
     }
 
     @Override

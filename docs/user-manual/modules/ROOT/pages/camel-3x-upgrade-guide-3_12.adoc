@@ -40,3 +40,11 @@ The `camel-spark` component has been upgraded from Spark 2.x to 3.x.
 
 Kamelet parameters that are named such as `host`, `port` are now always used with their configured value.
 Before the value in use may be from an ENV variable with the same name.
+
+=== camel-catalog
+
+Remove the APIs to return the website documentation in ascii doc and html format, it is the methods
+with naming pattern `...AsciiDoc` and `...HtmlDoc`.
+
+
+
