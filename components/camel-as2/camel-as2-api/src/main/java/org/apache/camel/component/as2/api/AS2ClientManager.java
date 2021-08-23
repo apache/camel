@@ -188,6 +188,8 @@ public class AS2ClientManager {
      *                                    EDI message unencrypted
      * @param  encryptingCertificateChain - the chain of certificates used to encrypt the message or <code>null</code>
      *                                    if sending EDI message unencrypted
+     * @param  attachedFileName           - the name of the attached file or <code>null</code> if user doesn't want to
+     *                                    specify it
      * @return                            {@link HttpCoreContext} containing request and response used to send EDI
      *                                    message
      * @throws HttpException              when things go wrong.
@@ -209,7 +211,8 @@ public class AS2ClientManager {
             String dispositionNotificationTo,
             String[] signedReceiptMicAlgorithms,
             AS2EncryptionAlgorithm encryptingAlgorithm,
-            Certificate[] encryptingCertificateChain)
+            Certificate[] encryptingCertificateChain,
+            String attachedFileName)
             throws HttpException {
 
         Args.notNull(ediMessage, "EDI Message");
@@ -247,7 +250,8 @@ public class AS2ClientManager {
         ApplicationEDIEntity applicationEDIEntity;
         try {
             applicationEDIEntity
-                    = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, ediMessageTransferEncoding, false);
+                    = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, ediMessageTransferEncoding, false,
+                            attachedFileName);
         } catch (Exception e) {
             throw new HttpException("Failed to create EDI message entity", e);
         }

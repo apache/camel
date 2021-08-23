@@ -22,8 +22,9 @@ import org.apache.http.entity.ContentType;
 public class ApplicationEDIFACTEntity extends ApplicationEDIEntity {
 
     public ApplicationEDIFACTEntity(String content, String charset, String contentTransferEncoding,
-                                    boolean isMainBody) {
-        super(content, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, charset), contentTransferEncoding, isMainBody);
+                                    boolean isMainBody, String filename) {
+        super(content, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, charset), contentTransferEncoding, isMainBody,
+              filename);
     }
 
 }

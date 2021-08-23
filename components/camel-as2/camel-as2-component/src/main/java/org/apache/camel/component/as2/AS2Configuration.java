@@ -97,6 +97,8 @@ public class AS2Configuration {
     private PrivateKey decryptingPrivateKey;
     @UriParam
     private String mdnMessageTemplate;
+    @UriParam
+    private String attachedFileName;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -424,4 +426,14 @@ public class AS2Configuration {
         this.mdnMessageTemplate = mdnMessageTemplate;
     }
 
+    public String getAttachedFileName() {
+        return attachedFileName;
+    }
+
+    /**
+     * The name of the attached file
+     */
+    public void setAttachedFileName(String attachedFileName) {
+        this.attachedFileName = attachedFileName;
+    }
 }

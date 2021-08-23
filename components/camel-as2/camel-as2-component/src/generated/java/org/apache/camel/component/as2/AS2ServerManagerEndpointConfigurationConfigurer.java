@@ -25,6 +25,7 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("As2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class);
         map.put("As2To", java.lang.String.class);
         map.put("As2Version", java.lang.String.class);
+        map.put("AttachedFileName", java.lang.String.class);
         map.put("ClientFqdn", java.lang.String.class);
         map.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
@@ -66,6 +67,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "As2To": target.setAs2To(property(camelContext, java.lang.String.class, value)); return true;
         case "as2version":
         case "As2Version": target.setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
+        case "attachedfilename":
+        case "AttachedFileName": target.setAttachedFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientfqdn":
         case "ClientFqdn": target.setClientFqdn(property(camelContext, java.lang.String.class, value)); return true;
         case "compressionalgorithm":
@@ -136,6 +139,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "As2To": return java.lang.String.class;
         case "as2version":
         case "As2Version": return java.lang.String.class;
+        case "attachedfilename":
+        case "AttachedFileName": return java.lang.String.class;
         case "clientfqdn":
         case "ClientFqdn": return java.lang.String.class;
         case "compressionalgorithm":
@@ -202,6 +207,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "As2To": return target.getAs2To();
         case "as2version":
         case "As2Version": return target.getAs2Version();
+        case "attachedfilename":
+        case "AttachedFileName": return target.getAttachedFileName();
         case "clientfqdn":
         case "ClientFqdn": return target.getClientFqdn();
         case "compressionalgorithm":

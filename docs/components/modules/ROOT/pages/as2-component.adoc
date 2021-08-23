@@ -118,7 +118,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (30 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -128,6 +128,7 @@ with the following path and query parameters:
 | *as2MessageStructure* (common) | The structure of AS2 Message. One of: PLAIN - No encryption, no signature, SIGNED - No encryption, signature, ENCRYPTED - Encryption, no signature, ENCRYPTED_SIGNED - Encryption, signature. There are 8 enums and the value can be one of: PLAIN, SIGNED, ENCRYPTED, SIGNED_ENCRYPTED, PLAIN_COMPRESSED, SIGNED_COMPRESSED, ENCRYPTED_COMPRESSED, ENCRYPTED_COMPRESSED_SIGNED |  | AS2MessageStructure
 | *as2To* (common) | The value of the AS2To header of AS2 message. |  | String
 | *as2Version* (common) | The version of the AS2 protocol. There are 2 enums and the value can be one of: 1.0, 1.1 | 1.1 | String
+| *attachedFileName* (common) | The name of the attached file |  | String
 | *clientFqdn* (common) | The Client Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint. | camel.apache.org | String
 | *compressionAlgorithm* (common) | The algorithm used to compress EDI message. There are 1 enums and the value can be one of: ZLIB |  | AS2CompressionAlgorithm
 | *decryptingPrivateKey* (common) | The key used to encrypt the EDI message. |  | PrivateKey
@@ -193,7 +194,7 @@ The client API has 1 method(s) which is represented by the following method sign
 [source,java]
 ----
 
-org.apache.http.protocol.HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, org.apache.http.entity.ContentType ediMessageContentType, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain);
+org.apache.http.protocol.HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, org.apache.http.entity.ContentType ediMessageContentType, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName);
 
 ----
 
@@ -219,6 +220,7 @@ The client API method(s) has the following set of parameters listed in the table
 | send | *as2From* |  AS2 name of sender | String
 | send | *as2MessageStructure* |  The structure of AS2 to send; see AS2MessageStructure | AS2MessageStructure
 | send | *as2To* |  AS2 name of recipient | String
+| send | *attachedFileName* | *Optional*  The name of the attached file or null if user doesn't want to specify it | String
 | send | *compressionAlgorithm* | *Optional*  The algorithm used to compress the message or null if sending EDI message uncompressed | AS2CompressionAlgorithm
 | send | *dispositionNotificationTo* | *Optional*  An RFC2822 address to request a receipt or null if no receipt requested | String
 | send | *ediMessage* |  EDI message to transport | String
@@ -235,7 +237,7 @@ The client API method(s) has the following set of parameters listed in the table
 | send | *subject* |  Message subject | String
 |===
 
-In addition to the parameters above, the client API can also use from the 30 endpoint query option
+In addition to the parameters above, the client API can also use from the 31 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -284,7 +286,7 @@ The server API method(s) has the following set of parameters listed in the table
 | listen | *requestUriPattern* |   | String
 |===
 
-In addition to the parameters above, the server API can also use from the 30 endpoint query option
+In addition to the parameters above, the server API can also use from the 31 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
