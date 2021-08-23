@@ -107,18 +107,27 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *accessUser* (producer) | The username of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance. |  | String
 | *authenticationKey* (producer) | *Required* Authentication key for the cloud user |  | String
+| *availableZones* (producer) | The ID of an available zone. This option is mandatory when creating an instance and it cannot be an empty array. |  | List
 | *endpoint* (producer) | DMS url. Carries higher precedence than region parameter based client initialization |  | String
 | *engine* (producer) | The message engine. Either kafka or rabbitmq. If the parameter is not specified, all instances will be queried. There are 2 enums and the value can be one of: kafka, rabbitmq |  | String
+| *engineVersion* (producer) | The version of the message engine. This option is mandatory when creating a Kafka instance. |  | String
 | *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
 | *instanceId* (producer) | The id of the instance. This option is mandatory when deleting or querying an instance |  | String
+| *kafkaManagerPassword* (producer) | The password for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance. |  | String
+| *kafkaManagerUser* (producer) | The username for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *name* (producer) | The name of the instance for creating and updating an instance. This option is mandatory when creating an instance |  | String
+| *partitionNum* (producer) | The maximum number of partitions in a Kafka instance. This option is mandatory when creating a Kafka instance. |  | int
+| *password* (producer) | The password of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance. |  | String
+| *productId* (producer) | The product ID. This option is mandatory when creating an instance. |  | String
 | *projectId* (producer) | *Required* Cloud project ID |  | String
 | *proxyHost* (producer) | Proxy server ip/hostname |  | String
 | *proxyPassword* (producer) | Proxy authentication password |  | String
@@ -126,7 +135,13 @@ with the following path and query parameters:
 | *proxyUser* (producer) | Proxy authentication user |  | String
 | *region* (producer) | *Required* DMS service region |  | String
 | *secretKey* (producer) | *Required* Secret key for the cloud user |  | String
+| *securityGroupId* (producer) | The security group which the instance belongs to. This option is mandatory when creating an instance. |  | String
 | *serviceKeys* (producer) | Configuration object for cloud service authentication |  | ServiceKeys
+| *specification* (producer) | The baseline bandwidth of a Kafka instance. This option is mandatory when creating a Kafka instance. |  | String
+| *storageSpace* (producer) | The message storage space. This option is mandatory when creating an instance. |  | int
+| *storageSpecCode* (producer) | The storage I/O specification. This option is mandatory when creating an instance. |  | String
+| *subnetId* (producer) | The subnet ID. This option is mandatory when creating an instance. |  | String
+| *vpcId* (producer) | The VPC ID. This option is mandatory when creating an instance. |  | String
 |===
 // endpoint options: END
 
@@ -151,9 +166,11 @@ If any of the above properties are set, they will override their corresponding q
 
 == List of Supported DMS Operations
 
+- createInstance
 - deleteInstance
 - listInstances
 - queryInstance
+- updateInstance
 
 == Using ServiceKey Configuration Bean
 

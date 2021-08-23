@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.dms.constants;
+package org.apache.camel.component.huaweicloud.dms.models;
+
+import com.huaweicloud.sdk.core.SdkResponse;
 
 /**
- * Constants for all the supported DMS operations
+ * Update instance response object
  */
-public final class DMSOperations {
-    public static final String CREATE_INSTANCE = "createInstance";
-    public static final String DELETE_INSTANCE = "deleteInstance";
-    public static final String LIST_INSTANCES = "listInstances";
-    public static final String QUERY_INSTANCE = "queryInstance";
-    public static final String UPDATE_INSTANCE = "updateInstance";
-
-    private DMSOperations() {
+public class UpdateInstanceResponse extends SdkResponse {
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

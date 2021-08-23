@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.huaweicloud.dms;
 
+import java.util.List;
+
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.http.HttpConfig;
 import org.apache.camel.Category;
@@ -99,6 +101,78 @@ public class DMSEndpoint extends DefaultEndpoint {
               displayName = "Instance id")
     @Metadata(required = false)
     private String instanceId;
+
+    @UriParam(description = "The name of the instance for creating and updating an instance. This option is mandatory when creating an instance",
+              displayName = "Name")
+    @Metadata(required = false)
+    private String name;
+
+    @UriParam(description = "The version of the message engine. This option is mandatory when creating a Kafka instance.",
+              displayName = "Engine version")
+    @Metadata(required = false)
+    private String engineVersion;
+
+    @UriParam(description = "The baseline bandwidth of a Kafka instance. This option is mandatory when creating a Kafka instance.",
+              displayName = "Engine version")
+    @Metadata(required = false)
+    private String specification;
+
+    @UriParam(description = "The message storage space. This option is mandatory when creating an instance.",
+              displayName = "Storage space")
+    @Metadata(required = false)
+    private int storageSpace;
+
+    @UriParam(description = "The maximum number of partitions in a Kafka instance. This option is mandatory when creating a Kafka instance.",
+              displayName = "Partition Number")
+    @Metadata(required = false)
+    private int partitionNum;
+
+    @UriParam(description = "The username of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance.",
+              displayName = "Access user")
+    @Metadata(required = false)
+    private String accessUser;
+
+    @UriParam(description = "The password of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance.",
+              displayName = "Password")
+    @Metadata(required = false)
+    private String password;
+
+    @UriParam(description = "The VPC ID. This option is mandatory when creating an instance.", displayName = "VPC ID")
+    @Metadata(required = false)
+    private String vpcId;
+
+    @UriParam(description = "The security group which the instance belongs to. This option is mandatory when creating an instance.",
+              displayName = "Security group ID")
+    @Metadata(required = false)
+    private String securityGroupId;
+
+    @UriParam(description = "The subnet ID. This option is mandatory when creating an instance.", displayName = "Subnet ID")
+    @Metadata(required = false)
+    private String subnetId;
+
+    @UriParam(description = "The ID of an available zone. This option is mandatory when creating an instance and it cannot be an empty array.",
+              displayName = "Available zones")
+    @Metadata(required = false)
+    private List<String> availableZones;
+
+    @UriParam(description = "The product ID. This option is mandatory when creating an instance.", displayName = "Product ID")
+    @Metadata(required = false)
+    private String productId;
+
+    @UriParam(description = "The username for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance.",
+              displayName = "Kafka manager username")
+    @Metadata(required = false)
+    private String kafkaManagerUser;
+
+    @UriParam(description = "The password for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance.",
+              displayName = "Kafka manager password")
+    @Metadata(required = false)
+    private String kafkaManagerPassword;
+
+    @UriParam(description = "The storage I/O specification. This option is mandatory when creating an instance.",
+              displayName = "Storage specification code")
+    @Metadata(required = false)
+    private String storageSpecCode;
 
     private DmsClient dmsClient;
 
@@ -228,6 +302,126 @@ public class DMSEndpoint extends DefaultEndpoint {
 
     public void setInstanceId(String instanceId) {
         this.instanceId = instanceId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEngineVersion() {
+        return engineVersion;
+    }
+
+    public void setEngineVersion(String engineVersion) {
+        this.engineVersion = engineVersion;
+    }
+
+    public String getSpecification() {
+        return specification;
+    }
+
+    public void setSpecification(String specification) {
+        this.specification = specification;
+    }
+
+    public int getStorageSpace() {
+        return storageSpace;
+    }
+
+    public void setStorageSpace(int storageSpace) {
+        this.storageSpace = storageSpace;
+    }
+
+    public int getPartitionNum() {
+        return partitionNum;
+    }
+
+    public void setPartitionNum(int partitionNum) {
+        this.partitionNum = partitionNum;
+    }
+
+    public String getAccessUser() {
+        return accessUser;
+    }
+
+    public void setAccessUser(String accessUser) {
+        this.accessUser = accessUser;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getVpcId() {
+        return vpcId;
+    }
+
+    public void setVpcId(String vpcId) {
+        this.vpcId = vpcId;
+    }
+
+    public String getSecurityGroupId() {
+        return securityGroupId;
+    }
+
+    public void setSecurityGroupId(String securityGroupId) {
+        this.securityGroupId = securityGroupId;
+    }
+
+    public String getSubnetId() {
+        return subnetId;
+    }
+
+    public void setSubnetId(String subnetId) {
+        this.subnetId = subnetId;
+    }
+
+    public List<String> getAvailableZones() {
+        return availableZones;
+    }
+
+    public void setAvailableZones(List<String> availableZones) {
+        this.availableZones = availableZones;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getKafkaManagerUser() {
+        return kafkaManagerUser;
+    }
+
+    public void setKafkaManagerUser(String kafkaManagerUser) {
+        this.kafkaManagerUser = kafkaManagerUser;
+    }
+
+    public String getKafkaManagerPassword() {
+        return kafkaManagerPassword;
+    }
+
+    public void setKafkaManagerPassword(String kafkaManagerPassword) {
+        this.kafkaManagerPassword = kafkaManagerPassword;
+    }
+
+    public String getStorageSpecCode() {
+        return storageSpecCode;
+    }
+
+    public void setStorageSpecCode(String storageSpecCode) {
+        this.storageSpecCode = storageSpecCode;
     }
 
     public DmsClient getDmsClient() {

@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.huaweicloud.dms.constants;
 
-/**
- * Constants for all the supported DMS operations
- */
-public final class DMSOperations {
-    public static final String CREATE_INSTANCE = "createInstance";
-    public static final String DELETE_INSTANCE = "deleteInstance";
-    public static final String LIST_INSTANCES = "listInstances";
-    public static final String QUERY_INSTANCE = "queryInstance";
-    public static final String UPDATE_INSTANCE = "updateInstance";
+import org.junit.Test;
 
-    private DMSOperations() {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class DMSConstantsTest {
+    @Test
+    public void test() {
+        assertEquals("kafka", DMSConstants.KAFKA);
+        assertEquals("rabbitmq", DMSConstants.RABBITMQ);
     }
 }

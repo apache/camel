@@ -26,7 +26,23 @@ public class DMSPropertiesTest {
         assertEquals("CamelHwCloudDmsOperation", DMSProperties.OPERATION);
         assertEquals("CamelHwCloudDmsEngine", DMSProperties.ENGINE);
         assertEquals("CamelHwCloudDmsInstanceId", DMSProperties.INSTANCE_ID);
+        assertEquals("CamelHwCloudDmsName", DMSProperties.NAME);
+        assertEquals("CamelHwCloudDmsEngineVersion", DMSProperties.ENGINE_VERSION);
+        assertEquals("CamelHwCloudDmsSpecification", DMSProperties.SPECIFICATION);
+        assertEquals("CamelHwCloudDmsStorageSpace", DMSProperties.STORAGE_SPACE);
+        assertEquals("CamelHwCloudDmsPartitionNum", DMSProperties.PARTITION_NUM);
+        assertEquals("CamelHwCloudDmsAccessUser", DMSProperties.ACCESS_USER);
+        assertEquals("CamelHwCloudDmsPassword", DMSProperties.PASSWORD);
+        assertEquals("CamelHwCloudDmsVpcId", DMSProperties.VPC_ID);
+        assertEquals("CamelHwCloudDmsSecurityGroupId", DMSProperties.SECURITY_GROUP_ID);
+        assertEquals("CamelHwCloudDmsSubnetId", DMSProperties.SUBNET_ID);
+        assertEquals("CamelHwCloudDmsAvailableZones", DMSProperties.AVAILABLE_ZONES);
+        assertEquals("CamelHwCloudDmsProductId", DMSProperties.PRODUCT_ID);
+        assertEquals("CamelHwCloudDmsKafkaManagerUser", DMSProperties.KAFKA_MANAGER_USER);
+        assertEquals("CamelHwCloudDmsKafkaManagerPassword", DMSProperties.KAFKA_MANAGER_PASSWORD);
+        assertEquals("CamelHwCloudDmsStorageSpecCode", DMSProperties.STORAGE_SPEC_CODE);
 
         assertEquals("CamelHwCloudDmsInstanceDeleted", DMSProperties.INSTANCE_DELETED);
+        assertEquals("CamelHwCloudDmsInstanceUpdated", DMSProperties.INSTANCE_UPDATED);
     }
 }

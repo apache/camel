@@ -23,8 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DMSOperationsTest {
     @Test
     public void test() {
+        assertEquals("createInstance", DMSOperations.CREATE_INSTANCE);
         assertEquals("deleteInstance", DMSOperations.DELETE_INSTANCE);
         assertEquals("listInstances", DMSOperations.LIST_INSTANCES);
         assertEquals("queryInstance", DMSOperations.QUERY_INSTANCE);
+        assertEquals("updateInstance", DMSOperations.UPDATE_INSTANCE);
     }
 }
