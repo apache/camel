@@ -107,8 +107,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     /**
      * Creates the {@link CamelContext} and allows to control whether the context should automatic initialize or not.
      * <p/>
-     * This is used by some Camel components such as camel-cdi and camel-blueprint, however this constructor is not
-     * intended for regular Camel end users.
+     * Note: Not for end users - this method is used internally by camel-blueprint/camel-cdi
      *
      * @param init whether to automatic initialize.
      */

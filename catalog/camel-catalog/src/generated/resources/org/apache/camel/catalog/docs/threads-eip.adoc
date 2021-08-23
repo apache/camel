@@ -26,7 +26,28 @@ The Threads EIP supports 10 options which are listed below:
 |===
 // eip options: END
 
-== Samples
+== About rejected tasks
+
+The Threads EIP uses a thread pool which has a worker queue for tasks.
+When the worker queue gets full, the task is rejected. You can customize
+how to react upon this using the `rejectedPolicy` and
+`callerRunsWhenRejected` option. The latter is used to easily switch
+between the two most common and recommended settings. Either let the
+current caller thread execute the task (i.e. it will become synchronous),
+but also give time for the thread pool to process its current tasks,
+without adding more tasks (self throttling). This is the default
+behavior. If setting `callerRunsWhenRejected` you use the `Abort`
+policy, which means the task is rejected, and a
+`RejectedExecutionException` is set on the xref:latest@manual:ROOT:exchange.adoc[Exchange],
+and the `Exchange` will stop continue being routed, and its `UnitOfWork` will be regarded as failed.
+
+The other options `Discard` and `DiscardOldest` work a bit like
+`Abort`, however they do *not* set any exception on the
+Exchange, which means the `Exchange` will *not* be regarded as failed, but the
+`Exchange` will be successful. When using `Discard` and `DiscardOldest` then the `Exchange` will not
+continue being routed.
+
+== Example
 
 The example below will add a Thread pool with a pool size of 5 threads before sending to *mock:result*.
 
@@ -37,18 +58,15 @@ from("seda:a")
   .to("mock:result");
 ----
 
-=== Spring DSL
-
-The sample below demonstrates the threads EIP in Spring DSL:
+And in XML DSL
 
 [source,xml]
 ----
-
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="seda:a"/>
-        <threads poolSize="5"/>
-        <to uri="mock:result"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="seda:a"/>
+    <threads poolSize="5"/>
+    <to uri="mock:result"/>
+</route>
 ----
+
+

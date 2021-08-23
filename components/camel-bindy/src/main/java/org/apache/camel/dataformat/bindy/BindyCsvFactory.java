@@ -116,7 +116,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 if (dataField != null) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Position defined in the class: {}, position: {}, Field: {}",
-                                new Object[] { cl.getName(), dataField.pos(), dataField });
+                                cl.getName(), dataField.pos(), dataField);
                     }
 
                     if (dataField.required()) {

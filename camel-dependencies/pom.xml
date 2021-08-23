@@ -34,7 +34,7 @@
   <properties>
     <abdera-version>1.1.3</abdera-version>
     <activemq-artemis-version>2.17.0</activemq-artemis-version>
-    <activemq-version>5.16.2</activemq-version>
+    <activemq-version>5.16.3</activemq-version>
     <ahc-version>2.12.3</ahc-version>
     <apache-any23-version>2.4</apache-any23-version>
     <apache-drill-version>1.19.0</apache-drill-version>
@@ -66,7 +66,7 @@
     <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.1.0</awaitility-version>
-    <aws-java-sdk2-version>2.17.13</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.24</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -188,7 +188,7 @@
     <etcd4j-version>2.18.0</etcd4j-version>
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <facebook4j-core-version>2.4.13</facebook4j-core-version>
-    <fastjson-version>1.2.76</fastjson-version>
+    <fastjson-version>1.2.78</fastjson-version>
     <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
     <flatpack-version>4.0.5</flatpack-version>
     <flink-version>1.13.1</flink-version>
@@ -277,13 +277,13 @@
     <ivy-version>2.5.0</ivy-version>
     <jackrabbit-version>2.21.7</jackrabbit-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.12.3</jackson2-version>
+    <jackson2-version>2.12.4</jackson2-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jakarta-api-version>2.1.5</jakarta-api-version>
     <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
     <jakarta-mail-version>1.6.6</jakarta-mail-version>
     <jakarta.el-version>3.0.3</jakarta.el-version>
-    <jandex-version>2.3.0.Final</jandex-version>
+    <jandex-version>2.3.1.Final</jandex-version>
     <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
     <jasn1-version>1.11.3</jasn1-version>
     <jasypt-version>1.9.3</jasypt-version>
@@ -307,7 +307,7 @@
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
     <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
-    <jbpm-version>7.57.0.Final</jbpm-version>
+    <jbpm-version>7.58.0.Final</jbpm-version>
     <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
     <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
     <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
@@ -400,8 +400,8 @@
     <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-    <metrics-version>4.1.22</metrics-version>
-    <micrometer-version>1.7.0</micrometer-version>
+    <metrics-version>4.1.25</metrics-version>
+    <micrometer-version>1.7.3</micrometer-version>
     <microprofile-config-version>2.0</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-health-version>3.1</microprofile-health-version>
@@ -414,7 +414,7 @@
     <minimal-json-version>0.9.5</minimal-json-version>
     <minio-version>8.3.0</minio-version>
     <mock-javamail-version>1.9</mock-javamail-version>
-    <mockito-version>3.11.2</mockito-version>
+    <mockito-version>3.12.1</mockito-version>
     <mockwebserver-version>0.1.8</mockwebserver-version>
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mongo-java-driver-version>4.1.0</mongo-java-driver-version>
@@ -445,7 +445,7 @@
     <opentracing-version>0.33.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
-    <optaplanner-version>8.9.1.Final</optaplanner-version>
+    <optaplanner-version>8.10.0.Final</optaplanner-version>
     <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
     <paho-version>1.2.5</paho-version>
     <partial-build-plugin-version>2.7</partial-build-plugin-version>
@@ -516,7 +516,7 @@
     <spock-version>2.0-M4-groovy-3.0</spock-version>
     <spring-batch-version>4.3.3</spring-batch-version>
     <spring-data-redis-version>2.5.3</spring-data-redis-version>
-    <spring-integration-version>5.4.3</spring-integration-version>
+    <spring-integration-version>5.5.3</spring-integration-version>
     <spring-ldap-version>2.3.4.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.3.10</spring-rabbitmq-version>
     <spring-security-version>5.5.1</spring-security-version>

@@ -46,8 +46,6 @@ Out of the box camel provides the following implementations:
 |zookeeper  |camel-zookeeper  | org.apache.camel.component.zookeeper.cluster.ZooKeeperClusterService
 |====
 
-On Spring/Blueprint all the _Cluster Service_ instances are automatically added to the camel context.
-
 Configuration examples:
 
 - *Spring Boot*
@@ -72,7 +70,6 @@ camel.cluster.file.root = ${java.io.tmpdir}
          http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring
          http://camel.apache.org/schema/spring/camel-spring.xsd">
-
 
   <bean id="zx" class="org.apache.camel.component.zookeeper.cluster.ZooKeeperClusterService">
     <property name="id" value="node-1"/>

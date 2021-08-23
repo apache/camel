@@ -68,19 +68,27 @@ import org.slf4j.LoggerFactory;
 public class MailBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailBinding.class);
-    private HeaderFilterStrategy headerFilterStrategy;
+    private final HeaderFilterStrategy headerFilterStrategy;
     private ContentTypeResolver contentTypeResolver;
     private boolean decodeFilename;
+    private boolean mapMailMessage = true;
 
     public MailBinding() {
         headerFilterStrategy = new DefaultHeaderFilterStrategy();
     }
 
+    @Deprecated
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
                        boolean decodeFilename) {
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, true);
+    }
+
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
+                       boolean decodeFilename, boolean mapMailMessage) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.contentTypeResolver = contentTypeResolver;
         this.decodeFilename = decodeFilename;
+        this.mapMailMessage = mapMailMessage;
     }
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
@@ -255,7 +263,7 @@ public class MailBinding {
     public Object extractBodyFromMail(Exchange exchange, MailMessage mailMessage) {
         Message message = mailMessage.getMessage();
         try {
-            if (((MailEndpoint) exchange.getFromEndpoint()).getConfiguration().isMapMailMessage()) {
+            if (mapMailMessage) {
                 return message.getContent();
             }
             return message; // raw message
@@ -655,7 +663,7 @@ public class MailBinding {
             }
         }
         // if the message is a multipart message, do not set the content type to multipart/*
-        if (mailConfiguration.isMapMailMessage()) {
+        if (mapMailMessage) {
             Object content = mailMessage.getContent();
             if (content instanceof MimeMultipart) {
                 MimeMultipart multipart = (MimeMultipart) content;

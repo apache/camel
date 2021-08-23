@@ -235,6 +235,10 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
+    @Option(names = { "--branch" }, defaultValue = "main", hidden = true,
+            description = "The branch to use when downloading resources from (used for development/testing)")
+    private String branch;
+
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "KAMELET", "DESCRIPTION", "LINK");
@@ -244,6 +248,7 @@ class SearchKamelets extends AbstractSearch implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         setResourceLocation(resourceLocation, "camel-kamelets:docs/modules/ROOT/nav.adoc");
+        setBranch(branch);
 
         MatchExtractor<Kamelet> matchExtractor;
 
@@ -282,6 +287,10 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
+    @Option(names = { "--branch" }, defaultValue = "camel-3.12.0-SNAPSHOT", hidden = true,
+            description = "The branch to use when downloading or searching resources (mostly used for development/testing)")
+    private String branch;
+
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "COMPONENT", "DESCRIPTION", "LINK");
@@ -291,6 +300,7 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         setResourceLocation(resourceLocation, "camel:docs/components/modules/ROOT/nav.adoc");
+        setBranch(branch);
 
         MatchExtractor<Component> matchExtractor;
         if (searchTerm.isEmpty()) {
@@ -333,6 +343,10 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
+    @Option(names = { "--branch" }, defaultValue = "camel-3.12.0-SNAPSHOT", hidden = true,
+            description = "The branch to use when downloading or searching resources (mostly used for development/testing)")
+    private String branch;
+
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "LANGUAGE", "DESCRIPTION", "LINK");
@@ -342,6 +356,7 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         setResourceLocation(resourceLocation, "camel:docs/components/modules/languages/nav.adoc");
+        setBranch(branch);
 
         MatchExtractor<Language> matchExtractor;
         if (searchTerm.isEmpty()) {
@@ -383,6 +398,10 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
+    @Option(names = { "--branch" }, defaultValue = "camel-3.12.0-SNAPSHOT", hidden = true,
+            description = "The branch to use when downloading or searching resources (mostly used for development/testing)")
+    private String branch;
+
     @Override
     public void printHeader() {
         System.out.printf("%-35s %-45s %s%n", "COMPONENT", "DESCRIPTION", "LINK");
@@ -392,6 +411,7 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         setResourceLocation(resourceLocation, "camel:docs/components/modules/others/nav.adoc");
+        setBranch(branch);
 
         MatchExtractor<Other> matchExtractor;
         if (searchTerm.isEmpty()) {
@@ -512,7 +532,54 @@ class InitKamelet extends AbstractInitKamelet implements Callable<Integer> {
             return 1;
         }
     }
+}
 
+@Command(name = "binding", description = "Provide init templates for kamelet bindings")
+class InitBinding extends AbstractInitKamelet implements Callable<Integer> {
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
+
+    @Option(names = { "--base-resource-location" }, defaultValue = "github:apache", hidden = true,
+            description = "Where to download the resources from (used for development/testing)")
+    private String baseResourceLocation;
+
+    @Option(names = { "--branch" }, defaultValue = "main", hidden = true,
+            description = "The branch to use when downloading resources from (used for development/testing)")
+    private String branch;
+
+    @Option(names = { "--destination" }, defaultValue = "work",
+            description = "The destination directory where to download the files")
+    private String destination;
+
+    @Option(names = { "--kamelet" }, defaultValue = "",
+            description = "The kamelet to create a binding for")
+    private String kamelet;
+
+    @Option(names = { "--project" }, defaultValue = "camel-k",
+            description = "The project to create a binding for (either camel-k or core)")
+    private String project;
+
+    private int downloadSample() throws IOException, CamelException {
+        setBranch(branch);
+
+        String resourcePath = String.format("camel-kamelets:templates/bindings/%s/%s-binding.yaml", project, kamelet);
+
+        setResourceLocation(baseResourceLocation, resourcePath);
+
+        try {
+            resolveResource(new File(destination));
+        } catch (ResourceAlreadyExists e) {
+            System.err.println(e.getMessage());
+            return 1;
+        }
+
+        return 0;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+        return downloadSample();
+    }
 }
 
 @Command(name = "CamelJBang", mixinStandardHelpOptions = true, version = "CamelJBang 3.12.0-SNAPSHOT",
@@ -533,7 +600,8 @@ public class CamelJBang implements Callable<Integer> {
                         .addSubcommand("languages", new SearchLanguages())
                         .addSubcommand("others", new SearchOthers()))
                 .addSubcommand("init", new CommandLine(new Init())
-                        .addSubcommand("kamelet", new InitKamelet()));
+                        .addSubcommand("kamelet", new InitKamelet())
+                        .addSubcommand("binding", new InitBinding()));
 
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);

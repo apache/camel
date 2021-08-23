@@ -3282,6 +3282,28 @@
     "producerOnly": true,
     "lenientProperties": true
   },
+  "HwcloudDmsComponentBuilderFactory": {
+    "kind": "component",
+    "name": "hwcloud-dms",
+    "title": "Huawei Distributed Message Service (DMS)",
+    "description": "To integrate with a fully managed, high-performance message queuing service on Huawei Cloud",
+    "deprecated": false,
+    "firstVersion": "3.12.0",
+    "label": "cloud",
+    "javaType": "org.apache.camel.component.huaweicloud.dms.DMSComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-huaweicloud-dms",
+    "version": "3.12.0-SNAPSHOT",
+    "scheme": "hwcloud-dms",
+    "extendsScheme": "",
+    "syntax": "hwcloud-dms:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "HwcloudFunctiongraphComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-functiongraph",

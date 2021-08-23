@@ -1113,24 +1113,6 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testComponentAsciiDoc() {
-        String doc = catalog.componentAsciiDoc("mock");
-        assertNotNull(doc);
-        assertTrue(doc.contains("mock:someName"));
-
-        doc = catalog.componentAsciiDoc("geocoder");
-        assertNotNull(doc);
-        assertTrue(doc.contains("looking up geocodes"));
-
-        doc = catalog.componentAsciiDoc("smtp");
-        assertNotNull(doc);
-        assertTrue(doc.contains("The mail component"));
-
-        doc = catalog.componentAsciiDoc("unknown");
-        assertNull(doc);
-    }
-
-    @Test
     public void testTransactedAndPolicyNoOutputs() {
         String json = catalog.modelJSonSchema("transacted");
         assertNotNull(json);
@@ -1141,31 +1123,6 @@ public class CamelCatalogTest {
         assertNotNull(json);
         assertTrue(json.contains("\"output\": false"));
         assertFalse(json.contains("\"outputs\":"));
-    }
-
-    @Test
-    public void testDataFormatAsciiDoc() {
-        String doc = catalog.dataFormatAsciiDoc("json-jackson");
-        assertNotNull(doc);
-        assertTrue(doc.contains("Jackson dataformat"));
-
-        doc = catalog.dataFormatAsciiDoc("bindy-csv");
-        assertNotNull(doc);
-        assertTrue(doc.contains("CsvRecord"));
-    }
-
-    @Test
-    public void testLanguageAsciiDoc() {
-        String doc = catalog.languageAsciiDoc("jsonpath");
-        assertNotNull(doc);
-        assertTrue(doc.contains("JsonPath language"));
-    }
-
-    @Test
-    public void testOtherAsciiDoc() {
-        String doc = catalog.otherAsciiDoc("swagger-java");
-        assertNotNull(doc);
-        assertTrue(doc.contains("Swagger"));
     }
 
     @Test

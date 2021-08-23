@@ -123,9 +123,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     /**
      * Marks the route definition as prepared.
      * <p/>
-     * This is needed if routes have been created by components such as <tt>camel-spring</tt> or
-     * <tt>camel-blueprint</tt>. Usually they share logic in the <tt>camel-core-xml</tt> module which prepares the
-     * routes.
+     * This is needed if routes have been created by components such as camel-spring-xml or camel-blueprint. Usually
+     * they share logic in the camel-core-xml module which prepares the routes.
      */
     public void markPrepared() {
         prepared.set(true);

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MailBindingAttachmentEncodedFilenameTest {
 
     // enable file decoding
-    private final MailBinding binding = new MailBinding(new DefaultHeaderFilterStrategy(), null, true);
+    private final MailBinding binding = new MailBinding(new DefaultHeaderFilterStrategy(), null, true, true);
 
     @Test
     public void shouldNotBreakEncodedFileNamesWithSlashes() throws Exception {

@@ -104,13 +104,14 @@ public interface ExtendedCamelContext extends CamelContext {
     void setupRoutes(boolean done);
 
     /**
-     * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
+     * Indicates whether current thread is setting up route(s) as part of starting Camel.
      * <p/>
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      * <p/>
-     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus Spring or
-     * Blueprint, then we need to know when Spring/Blueprint is setting up the routes, which can happen after the
-     * {@link CamelContext} itself is in started state, due the asynchronous event nature of especially Blueprint.
+     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus
+     * camel-spring-xml or camel-blueprint, then we need to know when spring/blueprint are setting up the routes, which
+     * can happen after the {@link CamelContext} itself is in started state, due the asynchronous event nature of
+     * especially blueprint.
      *
      * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
      */

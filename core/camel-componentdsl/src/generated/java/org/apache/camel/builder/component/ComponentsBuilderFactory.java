@@ -2012,6 +2012,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HttpsComponentBuilderFactory.https();
     }
     /**
+     * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
+     * To integrate with a fully managed, high-performance message queuing
+     * service on Huawei Cloud
+     * 
+     * Category: cloud
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-dms
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HwcloudDmsComponentBuilderFactory.HwcloudDmsComponentBuilder hwcloudDms() {
+        return org.apache.camel.builder.component.dsl.HwcloudDmsComponentBuilderFactory.hwcloudDms();
+    }
+    /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
      * 
