@@ -115,8 +115,8 @@ public interface DMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * The id of the instance. This option is mandatory when querying an
-         * instance.
+         * The id of the instance. This option is mandatory when deleting or
+         * querying an instance.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

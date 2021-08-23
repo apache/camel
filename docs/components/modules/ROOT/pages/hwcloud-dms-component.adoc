@@ -119,7 +119,7 @@ with the following path and query parameters:
 | *endpoint* (producer) | DMS url. Carries higher precedence than region parameter based client initialization |  | String
 | *engine* (producer) | The message engine. Either kafka or rabbitmq. If the parameter is not specified, all instances will be queried. There are 2 enums and the value can be one of: kafka, rabbitmq |  | String
 | *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
-| *instanceId* (producer) | The id of the instance. This option is mandatory when querying an instance |  | String
+| *instanceId* (producer) | The id of the instance. This option is mandatory when deleting or querying an instance |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *projectId* (producer) | *Required* Cloud project ID |  | String
 | *proxyHost* (producer) | Proxy server ip/hostname |  | String
@@ -153,6 +153,7 @@ If any of the above properties are set, they will override their corresponding q
 
 == List of Supported DMS Operations
 
+- deleteInstance
 - listInstances
 - queryInstance
 
