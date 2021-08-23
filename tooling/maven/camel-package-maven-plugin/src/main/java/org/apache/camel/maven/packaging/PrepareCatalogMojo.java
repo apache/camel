@@ -110,12 +110,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File othersOutDir;
 
     /**
-     * The output directory for documents catalog
-     */
-    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/docs")
-    protected File documentsOutDir;
-
-    /**
      * The output directory for models catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/models")
@@ -665,10 +659,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
     }
 
     protected void executeDocuments(Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) throws Exception {
-        Path documentsOutDir = this.documentsOutDir.toPath();
-
-        getLog().info("Copying all Camel documents (ascii docs)");
-
         // lets use sorted set/maps
         Set<Path> adocFiles = new TreeSet<>();
         Set<Path> missingAdocFiles = new TreeSet<>();
@@ -699,22 +689,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         getLog().info("Found " + adocFiles.size() + " ascii document files");
 
-        // make sure to create out dir
-        Files.createDirectories(documentsOutDir);
-
         // Check duplicates
         duplicateAdocFiles = getDuplicates(adocFiles);
-
-        // Copy all descriptors
-        Map<Path, Path> newJsons = map(adocFiles, p -> p, p -> documentsOutDir.resolve(p.getFileName()));
-        list(documentsOutDir).filter(p -> !newJsons.containsValue(p) && !newJsons.containsValue(p.resolveSibling(p.getFileName().toString().replace(".html", ".adoc"))))
-                .forEach(this::delete);
-        newJsons.forEach(this::copy);
-
-        Path all = documentsOutDir.resolve("../docs.properties");
         Set<String> docNames = adocFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
-        FileUtil.updateFile(all, String.join("\n", docNames) + "\n");
-
         printDocumentsReport(adocFiles, duplicateAdocFiles, missingAdocFiles);
 
         // find out if we have documents for each component / dataformat /
