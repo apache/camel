@@ -188,7 +188,7 @@
     <etcd4j-version>2.18.0</etcd4j-version>
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <facebook4j-core-version>2.4.13</facebook4j-core-version>
-    <fastjson-version>1.2.76</fastjson-version>
+    <fastjson-version>1.2.78</fastjson-version>
     <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
     <flatpack-version>4.0.5</flatpack-version>
     <flink-version>1.13.1</flink-version>
