@@ -35,6 +35,12 @@ import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType
 @UriParams
 public class PulsarConfiguration implements Cloneable {
 
+    @UriParam(label = "common")
+    private String serviceUrl;
+    @UriParam(label = "common")
+    private String authenticationClass;
+    @UriParam(label = "common")
+    private String authenticationParams;
     @UriParam(label = "consumer")
     private boolean topicsPattern;
     @UriParam(label = "consumer", defaultValue = "PersistentOnly")
@@ -482,5 +488,38 @@ public class PulsarConfiguration implements Cloneable {
      */
     public void setNumberOfConsumerThreads(int numberOfConsumerThreads) {
         this.numberOfConsumerThreads = numberOfConsumerThreads;
+    }
+
+    public String getServiceUrl() {
+        return serviceUrl;
+    }
+
+    /**
+     * The Pulsar Service URL to point while creating the client from URI
+     */
+    public void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+    }
+
+    public String getAuthenticationClass() {
+        return authenticationClass;
+    }
+
+    /**
+     * The Authentication FQCN to be used while creating the client from URI
+     */
+    public void setAuthenticationClass(String authenticationClass) {
+        this.authenticationClass = authenticationClass;
+    }
+
+    public String getAuthenticationParams() {
+        return authenticationParams;
+    }
+
+    /**
+     * The Authentication Parameters to be used while creating the client from URI
+     */
+    public void setAuthenticationParams(String authenticationParams) {
+        this.authenticationParams = authenticationParams;
     }
 }

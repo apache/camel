@@ -26,6 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.pulsar.client.api.ClientBuilder;
 import org.apache.pulsar.client.api.PulsarClient;
 
 /**
@@ -151,7 +152,18 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(pulsarClient, "pulsarClient", this);
+        if (ObjectHelper.isEmpty(pulsarClient)) {
+            ClientBuilder builder = PulsarClient.builder();
+            if (ObjectHelper.isNotEmpty(pulsarConfiguration.getServiceUrl())) {
+                builder = builder.serviceUrl(pulsarConfiguration.getServiceUrl());
+            }
+            if (ObjectHelper.isNotEmpty(pulsarConfiguration.getAuthenticationClass())
+                    && ObjectHelper.isNotEmpty(pulsarConfiguration.getAuthenticationParams())) {
+                builder = builder.authentication(pulsarConfiguration.getAuthenticationClass(),
+                        pulsarConfiguration.getAuthenticationParams());
+            }
+            pulsarClient = builder.build();
+        }
     }
 
     @Override
