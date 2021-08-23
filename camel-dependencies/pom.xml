@@ -34,7 +34,7 @@
   <properties>
     <abdera-version>1.1.3</abdera-version>
     <activemq-artemis-version>2.17.0</activemq-artemis-version>
-    <activemq-version>5.16.2</activemq-version>
+    <activemq-version>5.16.3</activemq-version>
     <ahc-version>2.12.3</ahc-version>
     <apache-any23-version>2.4</apache-any23-version>
     <apache-drill-version>1.19.0</apache-drill-version>
@@ -277,7 +277,7 @@
     <ivy-version>2.5.0</ivy-version>
     <jackrabbit-version>2.21.7</jackrabbit-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.12.3</jackson2-version>
+    <jackson2-version>2.12.4</jackson2-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jakarta-api-version>2.1.5</jakarta-api-version>
     <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
@@ -400,8 +400,8 @@
     <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-    <metrics-version>4.1.22</metrics-version>
-    <micrometer-version>1.7.0</micrometer-version>
+    <metrics-version>4.1.25</metrics-version>
+    <micrometer-version>1.7.3</micrometer-version>
     <microprofile-config-version>2.0</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-health-version>3.1</microprofile-health-version>
