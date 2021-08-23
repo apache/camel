@@ -73,7 +73,7 @@ The same behavior also works for all the other search commands. The table below 
 
 
 [[CamelJBang-Init-Kamets]]
-== Search Init
+== Init Kamelets
 
 The init sub-command can be used to simplify creating Kamelets. Through this command, it is possible to create new Kamelets through pre-configured templates. It works in two steps: first it is necessary to bootstrap the Kamelet by creating a properties file with the parameters necessary to create the Kamelet. Once the properties file is correctly set, then it is possible to create a pre-filled Kamelet by processing that properties file.
 
@@ -98,6 +98,28 @@ CamelJBang init kamelet --properties-path work/init-template.properties
 Running this command will create a new file in the `work` directory. The name of the generated file is determined by the `kameletMetadataName` property in the properties file. As such, parsing the default properties file would generate a file named `my-sample-sink.kamelet.yaml` in the directory.
 
 After the file is generated, it may still need to require final adjustments, such as correctly setting the name, the icon and other requirements for official Kamelets. Please consult the Kamelet development documentation for updated details.
+
+
+[[CamelJBang-Init-Bindings]]
+== Init Bindings
+
+The init sub-command can also be used to simplify creating Kamelets bindings. Through this command, it is possible to create new bindings through pre-configured templates. Use the  `--kamelet` option (you can list the available ones using the search command) to set the Kamelet to generate the binding for.
+
+To execute this feature run:
+
+[source,bash]
+----
+CamelJBang init binding --destination /path/to/destination/directory/ --kamelet sftp-source
+----
+
+This will create a new sample YAML binding file that can be modified and used in Camel K.
+
+You can also generate bindings that can be run by CamelJBang or Camel Core, but setting the `--project` option:
+
+[source,bash]
+----
+CamelJBang init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
+----
 
 
 [[CamelJBang-Running]]
