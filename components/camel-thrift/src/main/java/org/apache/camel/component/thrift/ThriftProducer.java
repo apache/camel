@@ -152,7 +152,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
         syncTransport.open();
     }
 
-    protected void initializeAsyncTransport() throws IOException {
+    protected void initializeAsyncTransport() throws IOException, TTransportException {
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             LOG.info("Creating transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
             asyncTransport = new TNonblockingSocket(configuration.getHost(), configuration.getPort());

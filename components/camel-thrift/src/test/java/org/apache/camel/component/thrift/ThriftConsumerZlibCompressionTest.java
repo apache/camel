@@ -25,6 +25,7 @@ import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.thrift.TConfiguration;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -58,7 +59,7 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
         if (transport == null) {
             LOG.info("Connecting to the Thrift server with zlib compression on port: {}", THRIFT_TEST_PORT);
 
-            transport = new TSocket("localhost", THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT);
+            transport = new TSocket(new TConfiguration(), "localhost", THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT);
             protocol = new TBinaryProtocol(new TZlibTransport(transport));
             thriftClient = new Calculator.Client(protocol);
             transport.open();

@@ -371,7 +371,7 @@
     <leveldb-version>0.12</leveldb-version>
     <leveldbjni-version>1.8</leveldbjni-version>
     <libphonenumber-version>8.12.28</libphonenumber-version>
-    <libthrift-version>0.12.0</libthrift-version>
+    <libthrift-version>0.14.1</libthrift-version>
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lightcouch-version>0.2.0</lightcouch-version>
     <log4j2-version>2.13.3</log4j2-version>

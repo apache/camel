@@ -136,11 +136,11 @@ public class ThriftDataFormat extends ServiceSupport
 
         if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_JSON)) {
             serializer = new TSerializer(new TJSONProtocol.Factory());
-            IOUtils.write(serializer.toString((TBase) graph, "UTF-8"), outputStream, "UTF-8");
+            IOUtils.write(serializer.toString((TBase) graph), outputStream, "UTF-8");
             contentTypeHeader = CONTENT_TYPE_HEADER_JSON;
         } else if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_SIMPLE_JSON)) {
             serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
-            IOUtils.write(serializer.toString((TBase) graph, "UTF-8"), outputStream, "UTF-8");
+            IOUtils.write(serializer.toString((TBase) graph), outputStream, "UTF-8");
             contentTypeHeader = CONTENT_TYPE_HEADER_JSON;
         } else if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_BINARY)) {
             serializer = new TSerializer(new TBinaryProtocol.Factory());
