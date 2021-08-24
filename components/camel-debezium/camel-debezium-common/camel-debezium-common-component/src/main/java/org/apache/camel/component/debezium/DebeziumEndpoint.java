@@ -91,7 +91,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         message.setHeader(DebeziumConstants.HEADER_OPERATION, operation);
         message.setHeader(DebeziumConstants.HEADER_BEFORE, before);
         message.setHeader(DebeziumConstants.HEADER_TIMESTAMP, timestamp);
-        message.setHeader(DebeziumConstants.HEADER_SQL, ddl);
+        message.setHeader(DebeziumConstants.HEADER_DDL_SQL, ddl);
         message.setHeader(Exchange.MESSAGE_TIMESTAMP, timestamp);
 
         message.setBody(body);

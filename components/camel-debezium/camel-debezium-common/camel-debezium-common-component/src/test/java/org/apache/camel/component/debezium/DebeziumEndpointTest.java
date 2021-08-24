@@ -210,7 +210,7 @@ public class DebeziumEndpointTest {
         // assert headers
         assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
         assertEquals("SET character_set_server=utf8, collation_server=utf8_bin",
-                inMessage.getHeader(DebeziumConstants.HEADER_SQL));
+                inMessage.getHeader(DebeziumConstants.HEADER_DDL_SQL));
     }
 
     private SourceRecord createCreateRecord() {
