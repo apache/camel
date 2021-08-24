@@ -14,18 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.dms.constants;
+package org.apache.camel.component.huaweicloud.dms.models;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Constants for all the supported DMS operations
+ * Create instance request object
  */
-public final class DMSOperations {
-    public static final String CREATE_INSTANCE = "createInstance";
-    public static final String DELETE_INSTANCE = "deleteInstance";
-    public static final String LIST_INSTANCES = "listInstances";
-    public static final String QUERY_INSTANCE = "queryInstance";
-    public static final String UPDATE_INSTANCE = "updateInstance";
+public class CreateInstanceRequest {
 
-    private DMSOperations() {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty(value = "body")
+    private CreateInstanceRequestBody body;
+
+    public CreateInstanceRequest withBody(CreateInstanceRequestBody body) {
+        this.body = body;
+        return this;
+    }
+
+    public CreateInstanceRequestBody getBody() {
+        return body;
+    }
+
+    public void setBody(CreateInstanceRequestBody body) {
+        this.body = body;
+    }
+
+    @Override
+    public String toString() {
+        return "CreateInstanceRequest{" +
+               "body=" + body +
+               '}';
     }
 }

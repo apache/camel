@@ -17,15 +17,12 @@
 package org.apache.camel.component.huaweicloud.dms.constants;
 
 /**
- * Constants for all the supported DMS operations
+ * Constants for the DMS component
  */
-public final class DMSOperations {
-    public static final String CREATE_INSTANCE = "createInstance";
-    public static final String DELETE_INSTANCE = "deleteInstance";
-    public static final String LIST_INSTANCES = "listInstances";
-    public static final String QUERY_INSTANCE = "queryInstance";
-    public static final String UPDATE_INSTANCE = "updateInstance";
+public final class DMSConstants {
+    public static final String KAFKA = "kafka";
+    public static final String RABBITMQ = "rabbitmq";
 
-    private DMSOperations() {
+    private DMSConstants() {
     }
 }

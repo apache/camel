@@ -20,15 +20,23 @@ import com.huaweicloud.sdk.core.http.FieldExistence;
 import com.huaweicloud.sdk.core.http.HttpMethod;
 import com.huaweicloud.sdk.core.http.HttpRequestDef;
 import com.huaweicloud.sdk.core.http.LocationType;
+import org.apache.camel.component.huaweicloud.dms.models.CreateInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.CreateInstanceRequestBody;
+import org.apache.camel.component.huaweicloud.dms.models.CreateInstanceResponse;
 import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceRequest;
 import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceResponse;
 import org.apache.camel.component.huaweicloud.dms.models.DmsInstance;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesRequest;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesResponse;
 import org.apache.camel.component.huaweicloud.dms.models.QueryInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.UpdateInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.UpdateInstanceRequestBody;
+import org.apache.camel.component.huaweicloud.dms.models.UpdateInstanceResponse;
 
 @SuppressWarnings("unchecked")
 public final class DmsMeta {
+
+    public static final HttpRequestDef<CreateInstanceRequest, CreateInstanceResponse> CREATE_INSTANCE = genForcreateInstance();
 
     public static final HttpRequestDef<DeleteInstanceRequest, DeleteInstanceResponse> DELETE_INSTANCE = genFordeleteInstance();
 
@@ -36,7 +44,27 @@ public final class DmsMeta {
 
     public static final HttpRequestDef<QueryInstanceRequest, DmsInstance> QUERY_INSTANCE = genForqueryInstance();
 
+    public static final HttpRequestDef<UpdateInstanceRequest, UpdateInstanceResponse> UPDATE_INSTANCE = genForupdateInstsance();
+
     private DmsMeta() {
+    }
+
+    private static HttpRequestDef<CreateInstanceRequest, CreateInstanceResponse> genForcreateInstance() {
+        // basic
+        HttpRequestDef.Builder<CreateInstanceRequest, CreateInstanceResponse> builder
+                = HttpRequestDef.builder(HttpMethod.POST, CreateInstanceRequest.class, CreateInstanceResponse.class)
+                        .withName("CreateInstanceKafka")
+                        .withUri("/v1.0/{project_id}/instances")
+                        .withContentType("application/json");
+
+        // requests
+        builder.withRequestField("body",
+                LocationType.Body,
+                FieldExistence.NON_NULL_NON_EMPTY,
+                CreateInstanceRequestBody.class,
+                f -> f.withMarshaller(CreateInstanceRequest::getBody, CreateInstanceRequest::setBody));
+
+        return builder.build();
     }
 
     private static HttpRequestDef<DeleteInstanceRequest, DeleteInstanceResponse> genFordeleteInstance() {
@@ -89,6 +117,30 @@ public final class DmsMeta {
                 FieldExistence.NON_NULL_NON_EMPTY,
                 String.class,
                 f -> f.withMarshaller(QueryInstanceRequest::getInstanceId, QueryInstanceRequest::setInstanceId));
+
+        return builder.build();
+    }
+
+    private static HttpRequestDef<UpdateInstanceRequest, UpdateInstanceResponse> genForupdateInstsance() {
+        // basic
+        HttpRequestDef.Builder<UpdateInstanceRequest, UpdateInstanceResponse> builder
+                = HttpRequestDef.builder(HttpMethod.PUT, UpdateInstanceRequest.class, UpdateInstanceResponse.class)
+                        .withName("UpdateInstance")
+                        .withUri("/v1.0/{project_id}/instances/{instance_id}")
+                        .withContentType("application/json");
+
+        // requests
+        builder.withRequestField("instance_id",
+                LocationType.Path,
+                FieldExistence.NON_NULL_NON_EMPTY,
+                String.class,
+                f -> f.withMarshaller(UpdateInstanceRequest::getInstanceId, UpdateInstanceRequest::setInstanceId));
+
+        builder.withRequestField("body",
+                LocationType.Body,
+                FieldExistence.NON_NULL_NON_EMPTY,
+                UpdateInstanceRequestBody.class,
+                f -> f.withMarshaller(UpdateInstanceRequest::getBody, UpdateInstanceRequest::setBody));
 
         return builder.build();
     }

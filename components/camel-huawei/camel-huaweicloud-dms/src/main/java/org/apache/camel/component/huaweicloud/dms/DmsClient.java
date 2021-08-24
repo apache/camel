@@ -18,12 +18,16 @@ package org.apache.camel.component.huaweicloud.dms;
 
 import com.huaweicloud.sdk.core.ClientBuilder;
 import com.huaweicloud.sdk.core.HcClient;
+import org.apache.camel.component.huaweicloud.dms.models.CreateInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.CreateInstanceResponse;
 import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceRequest;
 import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceResponse;
 import org.apache.camel.component.huaweicloud.dms.models.DmsInstance;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesRequest;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesResponse;
 import org.apache.camel.component.huaweicloud.dms.models.QueryInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.UpdateInstanceRequest;
+import org.apache.camel.component.huaweicloud.dms.models.UpdateInstanceResponse;
 
 /**
  * DMS Client class
@@ -40,6 +44,10 @@ public class DmsClient {
         return new ClientBuilder<>(DmsClient::new);
     }
 
+    public CreateInstanceResponse createInstance(CreateInstanceRequest request) {
+        return hcClient.syncInvokeHttp(request, DmsMeta.CREATE_INSTANCE);
+    }
+
     public DeleteInstanceResponse deleteInstance(DeleteInstanceRequest request) {
         return hcClient.syncInvokeHttp(request, DmsMeta.DELETE_INSTANCE);
     }
@@ -50,5 +58,9 @@ public class DmsClient {
 
     public DmsInstance queryInstance(QueryInstanceRequest request) {
         return hcClient.syncInvokeHttp(request, DmsMeta.QUERY_INSTANCE);
+    }
+
+    public UpdateInstanceResponse updateInstance(UpdateInstanceRequest request) {
+        return hcClient.syncInvokeHttp(request, DmsMeta.UPDATE_INSTANCE);
     }
 }
