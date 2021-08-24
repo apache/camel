@@ -148,7 +148,7 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         }
         // reverse the order, from oldest comment to recent
         Collections.reverse(comments);
-        // expect 6000 comments
+        // expect 3000 comments
         mockResult.expectedBodiesReceived(comments);
         mockResult.assertIsSatisfied();
     }
