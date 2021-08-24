@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -169,12 +170,17 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 // same group then sort by order
                 Integer order1 = asInteger(o1.annotation(CONVERTER_ANNOTATION), "order");
                 Integer order2 = asInteger(o2.annotation(CONVERTER_ANNOTATION), "order");
-                return order1.compareTo(order2);
+                sort = order1.compareTo(order2);
+                if (sort == 0) {
+                    String str1 = o1.parameters().stream().findFirst().map(Type::toString).orElse("");
+                    String str2 = o2.parameters().stream().findFirst().map(Type::toString).orElse("");
+                    return str1.compareTo(str2);
+                }
             }
             return sort;
         });
 
-        Set<String> converterClasses = new LinkedHashSet<>();
+        Set<String> converterClasses = new TreeSet<>();
 
         int pos = fqn.lastIndexOf('.');
         String p = fqn.substring(0, pos);

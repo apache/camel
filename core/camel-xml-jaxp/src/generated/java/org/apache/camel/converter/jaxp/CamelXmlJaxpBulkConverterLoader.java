@@ -698,14 +698,6 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
         }
         return domConverter;
     }
-    private volatile org.apache.camel.converter.jaxp.XmlConverter xmlConverter;
-    private org.apache.camel.converter.jaxp.XmlConverter getXmlConverter() {
-        if (xmlConverter == null) {
-            xmlConverter = new org.apache.camel.converter.jaxp.XmlConverter();
-            CamelContextAware.trySetCamelContext(xmlConverter, camelContext);
-        }
-        return xmlConverter;
-    }
     private volatile org.apache.camel.converter.jaxp.StaxConverter staxConverter;
     private org.apache.camel.converter.jaxp.StaxConverter getStaxConverter() {
         if (staxConverter == null) {
@@ -713,5 +705,13 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             CamelContextAware.trySetCamelContext(staxConverter, camelContext);
         }
         return staxConverter;
+    }
+    private volatile org.apache.camel.converter.jaxp.XmlConverter xmlConverter;
+    private org.apache.camel.converter.jaxp.XmlConverter getXmlConverter() {
+        if (xmlConverter == null) {
+            xmlConverter = new org.apache.camel.converter.jaxp.XmlConverter();
+            CamelContextAware.trySetCamelContext(xmlConverter, camelContext);
+        }
+        return xmlConverter;
     }
 }
