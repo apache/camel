@@ -37,6 +37,9 @@ class for all your configuration and routing without.
 
 |=======================================================================
 
+NOTE: If you are using Camel Quarkus then you can find information in
+its documentation how to do testing with Quarkus and Camel.
+
 In all approaches the test classes look pretty much the same in that
 they all reuse the xref:bean-integration.adoc[Camel binding and
 injection annotations].
