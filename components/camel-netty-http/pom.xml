@@ -180,8 +180,10 @@
                         </goals>
                         <configuration>
                             <discoverClasses>true</discoverClasses>
-                            <classes>org.apache.camel.component.netty.http.NettyHttpConfiguration</classes>
-                            <classes>org.apache.camel.component.netty.http.cloud.NettyHttpServiceExpressionFactory</classes>
+                            <classes>
+                                <class>org.apache.camel.component.netty.http.NettyHttpConfiguration</class>
+                                <class>org.apache.camel.component.netty.http.cloud.NettyHttpServiceExpressionFactory</class>
+                            </classes>
                         </configuration>
                     </execution>
                 </executions>
