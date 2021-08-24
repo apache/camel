@@ -192,6 +192,7 @@
 ** xref:jslt-component.adoc[JSLT]
 ** xref:json-validator-component.adoc[JSON Schema Validator]
 ** xref:jsonata-component.adoc[JSONata]
+** xref:json-patch-component.adoc[JsonPatch]
 ** xref:jt400-component.adoc[JT400]
 ** xref:kafka-component.adoc[Kafka]
 ** xref:kamelet-component.adoc[Kamelet]
