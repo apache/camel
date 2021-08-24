@@ -183,6 +183,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "jooq":
             case "jpa":
             case "jslt":
+            case "json-patch":
             case "json-validator":
             case "jsonata":
             case "jt400":
