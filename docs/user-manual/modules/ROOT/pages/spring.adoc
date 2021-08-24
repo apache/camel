@@ -39,5 +39,5 @@ See xref:{eip-vc}:eips:transactional-client.adoc[Transactional Client]} EIP.
 
 == Using Camel with Spring testing
 
-See xref:spring-testing.adoc[Spring testing] documentation.
+See xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5] documentation.
 

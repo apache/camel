@@ -6,7 +6,7 @@ We support the injection of various resources using `@EndpointInject` or
 
 * xref:endpoint.adoc[Endpoint] instances which can be used for testing
 when used with xref:components::mock-component.adoc[Mock] endpoints; see the
-xref:spring-testing.adoc[Spring Testing] for an example.
+xref:testing.adoc[Testing] for an example.
 * xref:producertemplate.adoc[ProducerTemplate] instances for
 xref:pojo-producing.adoc[POJO Producing]
 * client side proxies for xref:pojo-producing.adoc[POJO Producing]
