@@ -27,6 +27,10 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "ackTimeoutMillis": target.getPulsarConfiguration().setAckTimeoutMillis(property(camelContext, long.class, value)); return true;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": target.getPulsarConfiguration().setAllowManualAcknowledgement(property(camelContext, boolean.class, value)); return true;
+        case "authenticationclass":
+        case "authenticationClass": target.getPulsarConfiguration().setAuthenticationClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticationparams":
+        case "authenticationParams": target.getPulsarConfiguration().setAuthenticationParams(property(camelContext, java.lang.String.class, value)); return true;
         case "batcherbuilder":
         case "batcherBuilder": target.getPulsarConfiguration().setBatcherBuilder(property(camelContext, org.apache.pulsar.client.api.BatcherBuilder.class, value)); return true;
         case "batchingenabled":
@@ -81,6 +85,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "readCompacted": target.getPulsarConfiguration().setReadCompacted(property(camelContext, boolean.class, value)); return true;
         case "sendtimeoutms":
         case "sendTimeoutMs": target.getPulsarConfiguration().setSendTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "serviceurl":
+        case "serviceUrl": target.getPulsarConfiguration().setServiceUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "subscriptioninitialposition":
         case "subscriptionInitialPosition": target.getPulsarConfiguration().setSubscriptionInitialPosition(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class, value)); return true;
         case "subscriptionname":
@@ -104,6 +110,10 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "ackTimeoutMillis": return long.class;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return boolean.class;
+        case "authenticationclass":
+        case "authenticationClass": return java.lang.String.class;
+        case "authenticationparams":
+        case "authenticationParams": return java.lang.String.class;
         case "batcherbuilder":
         case "batcherBuilder": return org.apache.pulsar.client.api.BatcherBuilder.class;
         case "batchingenabled":
@@ -158,6 +168,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "readCompacted": return boolean.class;
         case "sendtimeoutms":
         case "sendTimeoutMs": return int.class;
+        case "serviceurl":
+        case "serviceUrl": return java.lang.String.class;
         case "subscriptioninitialposition":
         case "subscriptionInitialPosition": return org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class;
         case "subscriptionname":
@@ -182,6 +194,10 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "ackTimeoutMillis": return target.getPulsarConfiguration().getAckTimeoutMillis();
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return target.getPulsarConfiguration().isAllowManualAcknowledgement();
+        case "authenticationclass":
+        case "authenticationClass": return target.getPulsarConfiguration().getAuthenticationClass();
+        case "authenticationparams":
+        case "authenticationParams": return target.getPulsarConfiguration().getAuthenticationParams();
         case "batcherbuilder":
         case "batcherBuilder": return target.getPulsarConfiguration().getBatcherBuilder();
         case "batchingenabled":
@@ -236,6 +252,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "readCompacted": return target.getPulsarConfiguration().isReadCompacted();
         case "sendtimeoutms":
         case "sendTimeoutMs": return target.getPulsarConfiguration().getSendTimeoutMs();
+        case "serviceurl":
+        case "serviceUrl": return target.getPulsarConfiguration().getServiceUrl();
         case "subscriptioninitialposition":
         case "subscriptionInitialPosition": return target.getPulsarConfiguration().getSubscriptionInitialPosition();
         case "subscriptionname":

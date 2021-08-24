@@ -51,6 +51,38 @@ public interface PulsarComponentBuilderFactory {
             extends
                 ComponentBuilder<PulsarComponent> {
         /**
+         * The Authentication FQCN to be used while creating the client from
+         * URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationClass the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder authenticationClass(
+                java.lang.String authenticationClass) {
+            doSetProperty("authenticationClass", authenticationClass);
+            return this;
+        }
+        /**
+         * The Authentication Parameters to be used while creating the client
+         * from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationParams the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder authenticationParams(
+                java.lang.String authenticationParams) {
+            doSetProperty("authenticationParams", authenticationParams);
+            return this;
+        }
+        /**
          * Allows to pre-configure the Pulsar component with common options that
          * the endpoints will reuse.
          * 
@@ -65,6 +97,20 @@ public interface PulsarComponentBuilderFactory {
         default PulsarComponentBuilder configuration(
                 org.apache.camel.component.pulsar.PulsarConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The Pulsar Service URL to point while creating the client from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceUrl the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder serviceUrl(java.lang.String serviceUrl) {
+            doSetProperty("serviceUrl", serviceUrl);
             return this;
         }
         /**
@@ -726,7 +772,10 @@ public interface PulsarComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "authenticationClass": getOrCreateConfiguration((PulsarComponent) component).setAuthenticationClass((java.lang.String) value); return true;
+            case "authenticationParams": getOrCreateConfiguration((PulsarComponent) component).setAuthenticationParams((java.lang.String) value); return true;
             case "configuration": ((PulsarComponent) component).setConfiguration((org.apache.camel.component.pulsar.PulsarConfiguration) value); return true;
+            case "serviceUrl": getOrCreateConfiguration((PulsarComponent) component).setServiceUrl((java.lang.String) value); return true;
             case "ackGroupTimeMillis": getOrCreateConfiguration((PulsarComponent) component).setAckGroupTimeMillis((long) value); return true;
             case "ackTimeoutMillis": getOrCreateConfiguration((PulsarComponent) component).setAckTimeoutMillis((long) value); return true;
             case "allowManualAcknowledgement": getOrCreateConfiguration((PulsarComponent) component).setAllowManualAcknowledgement((boolean) value); return true;

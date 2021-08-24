@@ -70,14 +70,17 @@ The following two sections lists all the options, firstly for the component foll
 == Component Options
 
 
-The Pulsar component supports 38 options, which are listed below.
+The Pulsar component supports 41 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *authenticationClass* (common) | The Authentication FQCN to be used while creating the client from URI |  | String
+| *authenticationParams* (common) | The Authentication Parameters to be used while creating the client from URI |  | String
 | *configuration* (common) | Allows to pre-configure the Pulsar component with common options that the endpoints will reuse. |  | PulsarConfiguration
+| *serviceUrl* (common) | The Pulsar Service URL to point while creating the client from URI |  | String
 | *ackGroupTimeMillis* (consumer) | Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100 | 100 | long
 | *ackTimeoutMillis* (consumer) | Timeout for unacknowledged messages in milliseconds - defaults to 10000 | 10000 | long
 | *allowManualAcknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not acknowledged automatically after successful route completion. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean
@@ -142,12 +145,15 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (35 parameters):
+=== Query Parameters (38 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *authenticationClass* (common) | The Authentication FQCN to be used while creating the client from URI |  | String
+| *authenticationParams* (common) | The Authentication Parameters to be used while creating the client from URI |  | String
+| *serviceUrl* (common) | The Pulsar Service URL to point while creating the client from URI |  | String
 | *ackGroupTimeMillis* (consumer) | Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100 | 100 | long
 | *ackTimeoutMillis* (consumer) | Timeout for unacknowledged messages in milliseconds - defaults to 10000 | 10000 | long
 | *allowManualAcknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not acknowledged automatically after successful route completion. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean

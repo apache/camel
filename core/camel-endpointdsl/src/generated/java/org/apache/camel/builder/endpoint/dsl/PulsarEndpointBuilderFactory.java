@@ -42,6 +42,52 @@ public interface PulsarEndpointBuilderFactory {
             return (AdvancedPulsarEndpointConsumerBuilder) this;
         }
         /**
+         * The Authentication FQCN to be used while creating the client from
+         * URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationClass the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder authenticationClass(
+                String authenticationClass) {
+            doSetProperty("authenticationClass", authenticationClass);
+            return this;
+        }
+        /**
+         * The Authentication Parameters to be used while creating the client
+         * from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationParams the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder authenticationParams(
+                String authenticationParams) {
+            doSetProperty("authenticationParams", authenticationParams);
+            return this;
+        }
+        /**
+         * The Pulsar Service URL to point while creating the client from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceUrl the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder serviceUrl(String serviceUrl) {
+            doSetProperty("serviceUrl", serviceUrl);
+            return this;
+        }
+        /**
          * Group the consumer acknowledgments for the specified time in
          * milliseconds - defaults to 100.
          * 
@@ -731,6 +777,52 @@ public interface PulsarEndpointBuilderFactory {
             return (AdvancedPulsarEndpointProducerBuilder) this;
         }
         /**
+         * The Authentication FQCN to be used while creating the client from
+         * URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationClass the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointProducerBuilder authenticationClass(
+                String authenticationClass) {
+            doSetProperty("authenticationClass", authenticationClass);
+            return this;
+        }
+        /**
+         * The Authentication Parameters to be used while creating the client
+         * from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationParams the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointProducerBuilder authenticationParams(
+                String authenticationParams) {
+            doSetProperty("authenticationParams", authenticationParams);
+            return this;
+        }
+        /**
+         * The Pulsar Service URL to point while creating the client from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceUrl the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointProducerBuilder serviceUrl(String serviceUrl) {
+            doSetProperty("serviceUrl", serviceUrl);
+            return this;
+        }
+        /**
          * Control batching method used by the producer.
          * 
          * The option is a:
@@ -1226,6 +1318,52 @@ public interface PulsarEndpointBuilderFactory {
                 PulsarEndpointProducerBuilder {
         default AdvancedPulsarEndpointBuilder advanced() {
             return (AdvancedPulsarEndpointBuilder) this;
+        }
+        /**
+         * The Authentication FQCN to be used while creating the client from
+         * URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationClass the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointBuilder authenticationClass(
+                String authenticationClass) {
+            doSetProperty("authenticationClass", authenticationClass);
+            return this;
+        }
+        /**
+         * The Authentication Parameters to be used while creating the client
+         * from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationParams the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointBuilder authenticationParams(
+                String authenticationParams) {
+            doSetProperty("authenticationParams", authenticationParams);
+            return this;
+        }
+        /**
+         * The Pulsar Service URL to point while creating the client from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceUrl the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointBuilder serviceUrl(String serviceUrl) {
+            doSetProperty("serviceUrl", serviceUrl);
+            return this;
         }
     }
 

@@ -34,6 +34,10 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "ackTimeoutMillis": getOrCreateConfiguration(target).setAckTimeoutMillis(property(camelContext, long.class, value)); return true;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": getOrCreateConfiguration(target).setAllowManualAcknowledgement(property(camelContext, boolean.class, value)); return true;
+        case "authenticationclass":
+        case "authenticationClass": getOrCreateConfiguration(target).setAuthenticationClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticationparams":
+        case "authenticationParams": getOrCreateConfiguration(target).setAuthenticationParams(property(camelContext, java.lang.String.class, value)); return true;
         case "autoconfiguration":
         case "autoConfiguration": target.setAutoConfiguration(property(camelContext, org.apache.camel.component.pulsar.utils.AutoConfiguration.class, value)); return true;
         case "autowiredenabled":
@@ -93,6 +97,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readCompacted": getOrCreateConfiguration(target).setReadCompacted(property(camelContext, boolean.class, value)); return true;
         case "sendtimeoutms":
         case "sendTimeoutMs": getOrCreateConfiguration(target).setSendTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "serviceurl":
+        case "serviceUrl": getOrCreateConfiguration(target).setServiceUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "subscriptioninitialposition":
         case "subscriptionInitialPosition": getOrCreateConfiguration(target).setSubscriptionInitialPosition(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class, value)); return true;
         case "subscriptionname":
@@ -121,6 +127,10 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "ackTimeoutMillis": return long.class;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return boolean.class;
+        case "authenticationclass":
+        case "authenticationClass": return java.lang.String.class;
+        case "authenticationparams":
+        case "authenticationParams": return java.lang.String.class;
         case "autoconfiguration":
         case "autoConfiguration": return org.apache.camel.component.pulsar.utils.AutoConfiguration.class;
         case "autowiredenabled":
@@ -180,6 +190,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readCompacted": return boolean.class;
         case "sendtimeoutms":
         case "sendTimeoutMs": return int.class;
+        case "serviceurl":
+        case "serviceUrl": return java.lang.String.class;
         case "subscriptioninitialposition":
         case "subscriptionInitialPosition": return org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class;
         case "subscriptionname":
@@ -204,6 +216,10 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "ackTimeoutMillis": return getOrCreateConfiguration(target).getAckTimeoutMillis();
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return getOrCreateConfiguration(target).isAllowManualAcknowledgement();
+        case "authenticationclass":
+        case "authenticationClass": return getOrCreateConfiguration(target).getAuthenticationClass();
+        case "authenticationparams":
+        case "authenticationParams": return getOrCreateConfiguration(target).getAuthenticationParams();
         case "autoconfiguration":
         case "autoConfiguration": return target.getAutoConfiguration();
         case "autowiredenabled":
@@ -263,6 +279,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readCompacted": return getOrCreateConfiguration(target).isReadCompacted();
         case "sendtimeoutms":
         case "sendTimeoutMs": return getOrCreateConfiguration(target).getSendTimeoutMs();
+        case "serviceurl":
+        case "serviceUrl": return getOrCreateConfiguration(target).getServiceUrl();
         case "subscriptioninitialposition":
         case "subscriptionInitialPosition": return getOrCreateConfiguration(target).getSubscriptionInitialPosition();
         case "subscriptionname":
