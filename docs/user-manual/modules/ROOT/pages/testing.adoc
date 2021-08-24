@@ -106,7 +106,7 @@ For example, you may have a production ready route which you want to test with s
 [width="100%",cols="1,3",options="header",]
 |=======================================================================
 |Name |Description
-|NotifyBuilder |Allows you to be notified when
+|xref:notify-builder.adoc[NotifyBuilder] |Allows you to be notified when
 a certain condition has occurred. For example when the route has
 completed 5 messages. You can build complex expressions to match your
 criteria when to be notified.
