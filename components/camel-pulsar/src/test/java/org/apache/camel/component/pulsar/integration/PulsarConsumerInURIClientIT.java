@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.pulsar.integration;
 
-import org.apache.camel.Endpoint;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.pulsar.PulsarComponent;
-import org.apache.camel.component.pulsar.utils.AutoConfiguration;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -35,8 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.TimeUnit;
-
 public class PulsarConsumerInURIClientIT extends PulsarITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInURIClientIT.class);
@@ -44,7 +39,8 @@ public class PulsarConsumerInURIClientIT extends PulsarITSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
     private static final String URI_ENDPOINT = "pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer&serviceUrl=" + service.getPulsarBrokerUrl();
+                                               + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer&serviceUrl="
+                                               + service.getPulsarBrokerUrl();
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
