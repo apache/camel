@@ -21,16 +21,32 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DMSEndpoint target = (DMSEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accessuser":
+        case "accessUser": target.setAccessUser(property(camelContext, java.lang.String.class, value)); return true;
         case "authenticationkey":
         case "authenticationKey": target.setAuthenticationKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "availablezones":
+        case "availableZones": target.setAvailableZones(property(camelContext, java.util.List.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "engine": target.setEngine(property(camelContext, java.lang.String.class, value)); return true;
+        case "engineversion":
+        case "engineVersion": target.setEngineVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "ignoresslverification":
         case "ignoreSslVerification": target.setIgnoreSslVerification(property(camelContext, boolean.class, value)); return true;
         case "instanceid":
         case "instanceId": target.setInstanceId(property(camelContext, java.lang.String.class, value)); return true;
+        case "kafkamanagerpassword":
+        case "kafkaManagerPassword": target.setKafkaManagerPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "kafkamanageruser":
+        case "kafkaManagerUser": target.setKafkaManagerUser(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
+        case "partitionnum":
+        case "partitionNum": target.setPartitionNum(property(camelContext, int.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "productid":
+        case "productId": target.setProductId(property(camelContext, java.lang.String.class, value)); return true;
         case "projectid":
         case "projectId": target.setProjectId(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -44,8 +60,19 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "securitygroupid":
+        case "securityGroupId": target.setSecurityGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "servicekeys":
         case "serviceKeys": target.setServiceKeys(property(camelContext, org.apache.camel.component.huaweicloud.common.models.ServiceKeys.class, value)); return true;
+        case "specification": target.setSpecification(property(camelContext, java.lang.String.class, value)); return true;
+        case "storagespace":
+        case "storageSpace": target.setStorageSpace(property(camelContext, int.class, value)); return true;
+        case "storagespeccode":
+        case "storageSpecCode": target.setStorageSpecCode(property(camelContext, java.lang.String.class, value)); return true;
+        case "subnetid":
+        case "subnetId": target.setSubnetId(property(camelContext, java.lang.String.class, value)); return true;
+        case "vpcid":
+        case "vpcId": target.setVpcId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -53,16 +80,32 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accessuser":
+        case "accessUser": return java.lang.String.class;
         case "authenticationkey":
         case "authenticationKey": return java.lang.String.class;
+        case "availablezones":
+        case "availableZones": return java.util.List.class;
         case "endpoint": return java.lang.String.class;
         case "engine": return java.lang.String.class;
+        case "engineversion":
+        case "engineVersion": return java.lang.String.class;
         case "ignoresslverification":
         case "ignoreSslVerification": return boolean.class;
         case "instanceid":
         case "instanceId": return java.lang.String.class;
+        case "kafkamanagerpassword":
+        case "kafkaManagerPassword": return java.lang.String.class;
+        case "kafkamanageruser":
+        case "kafkaManagerUser": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "name": return java.lang.String.class;
+        case "partitionnum":
+        case "partitionNum": return int.class;
+        case "password": return java.lang.String.class;
+        case "productid":
+        case "productId": return java.lang.String.class;
         case "projectid":
         case "projectId": return java.lang.String.class;
         case "proxyhost":
@@ -76,8 +119,19 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
+        case "securitygroupid":
+        case "securityGroupId": return java.lang.String.class;
         case "servicekeys":
         case "serviceKeys": return org.apache.camel.component.huaweicloud.common.models.ServiceKeys.class;
+        case "specification": return java.lang.String.class;
+        case "storagespace":
+        case "storageSpace": return int.class;
+        case "storagespeccode":
+        case "storageSpecCode": return java.lang.String.class;
+        case "subnetid":
+        case "subnetId": return java.lang.String.class;
+        case "vpcid":
+        case "vpcId": return java.lang.String.class;
         default: return null;
         }
     }
@@ -86,16 +140,32 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DMSEndpoint target = (DMSEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accessuser":
+        case "accessUser": return target.getAccessUser();
         case "authenticationkey":
         case "authenticationKey": return target.getAuthenticationKey();
+        case "availablezones":
+        case "availableZones": return target.getAvailableZones();
         case "endpoint": return target.getEndpoint();
         case "engine": return target.getEngine();
+        case "engineversion":
+        case "engineVersion": return target.getEngineVersion();
         case "ignoresslverification":
         case "ignoreSslVerification": return target.isIgnoreSslVerification();
         case "instanceid":
         case "instanceId": return target.getInstanceId();
+        case "kafkamanagerpassword":
+        case "kafkaManagerPassword": return target.getKafkaManagerPassword();
+        case "kafkamanageruser":
+        case "kafkaManagerUser": return target.getKafkaManagerUser();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "name": return target.getName();
+        case "partitionnum":
+        case "partitionNum": return target.getPartitionNum();
+        case "password": return target.getPassword();
+        case "productid":
+        case "productId": return target.getProductId();
         case "projectid":
         case "projectId": return target.getProjectId();
         case "proxyhost":
@@ -109,8 +179,28 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "region": return target.getRegion();
         case "secretkey":
         case "secretKey": return target.getSecretKey();
+        case "securitygroupid":
+        case "securityGroupId": return target.getSecurityGroupId();
         case "servicekeys":
         case "serviceKeys": return target.getServiceKeys();
+        case "specification": return target.getSpecification();
+        case "storagespace":
+        case "storageSpace": return target.getStorageSpace();
+        case "storagespeccode":
+        case "storageSpecCode": return target.getStorageSpecCode();
+        case "subnetid":
+        case "subnetId": return target.getSubnetId();
+        case "vpcid":
+        case "vpcId": return target.getVpcId();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "availablezones":
+        case "availableZones": return java.lang.String.class;
         default: return null;
         }
     }

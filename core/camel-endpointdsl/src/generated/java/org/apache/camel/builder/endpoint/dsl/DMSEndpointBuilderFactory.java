@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -37,6 +38,21 @@ public interface DMSEndpointBuilderFactory {
      */
     public interface DMSEndpointBuilder extends EndpointProducerBuilder {
         /**
+         * The username of a RabbitMQ instance. This option is mandatory when
+         * creating a RabbitMQ instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param accessUser the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder accessUser(String accessUser) {
+            doSetProperty("accessUser", accessUser);
+            return this;
+        }
+        /**
          * Authentication key for the cloud user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -49,6 +65,38 @@ public interface DMSEndpointBuilderFactory {
          */
         default DMSEndpointBuilder authenticationKey(String authenticationKey) {
             doSetProperty("authenticationKey", authenticationKey);
+            return this;
+        }
+        /**
+         * The ID of an available zone. This option is mandatory when creating
+         * an instance and it cannot be an empty array.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param availableZones the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder availableZones(List<String> availableZones) {
+            doSetProperty("availableZones", availableZones);
+            return this;
+        }
+        /**
+         * The ID of an available zone. This option is mandatory when creating
+         * an instance and it cannot be an empty array.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param availableZones the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder availableZones(String availableZones) {
+            doSetProperty("availableZones", availableZones);
             return this;
         }
         /**
@@ -79,6 +127,21 @@ public interface DMSEndpointBuilderFactory {
          */
         default DMSEndpointBuilder engine(String engine) {
             doSetProperty("engine", engine);
+            return this;
+        }
+        /**
+         * The version of the message engine. This option is mandatory when
+         * creating a Kafka instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param engineVersion the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder engineVersion(String engineVersion) {
+            doSetProperty("engineVersion", engineVersion);
             return this;
         }
         /**
@@ -130,6 +193,37 @@ public interface DMSEndpointBuilderFactory {
             return this;
         }
         /**
+         * The password for logging in to the Kafka Manager. This option is
+         * mandatory when creating a Kafka instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param kafkaManagerPassword the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder kafkaManagerPassword(
+                String kafkaManagerPassword) {
+            doSetProperty("kafkaManagerPassword", kafkaManagerPassword);
+            return this;
+        }
+        /**
+         * The username for logging in to the Kafka Manager. This option is
+         * mandatory when creating a Kafka instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param kafkaManagerUser the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder kafkaManagerUser(String kafkaManagerUser) {
+            doSetProperty("kafkaManagerUser", kafkaManagerUser);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -174,6 +268,80 @@ public interface DMSEndpointBuilderFactory {
          */
         default DMSEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The name of the instance for creating and updating an instance. This
+         * option is mandatory when creating an instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param name the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder name(String name) {
+            doSetProperty("name", name);
+            return this;
+        }
+        /**
+         * The maximum number of partitions in a Kafka instance. This option is
+         * mandatory when creating a Kafka instance.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param partitionNum the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder partitionNum(int partitionNum) {
+            doSetProperty("partitionNum", partitionNum);
+            return this;
+        }
+        /**
+         * The maximum number of partitions in a Kafka instance. This option is
+         * mandatory when creating a Kafka instance.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param partitionNum the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder partitionNum(String partitionNum) {
+            doSetProperty("partitionNum", partitionNum);
+            return this;
+        }
+        /**
+         * The password of a RabbitMQ instance. This option is mandatory when
+         * creating a RabbitMQ instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * The product ID. This option is mandatory when creating an instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param productId the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder productId(String productId) {
+            doSetProperty("productId", productId);
             return this;
         }
         /**
@@ -292,6 +460,21 @@ public interface DMSEndpointBuilderFactory {
             return this;
         }
         /**
+         * The security group which the instance belongs to. This option is
+         * mandatory when creating an instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param securityGroupId the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder securityGroupId(String securityGroupId) {
+            doSetProperty("securityGroupId", securityGroupId);
+            return this;
+        }
+        /**
          * Configuration object for cloud service authentication.
          * 
          * The option is a:
@@ -319,6 +502,94 @@ public interface DMSEndpointBuilderFactory {
          */
         default DMSEndpointBuilder serviceKeys(String serviceKeys) {
             doSetProperty("serviceKeys", serviceKeys);
+            return this;
+        }
+        /**
+         * The baseline bandwidth of a Kafka instance. This option is mandatory
+         * when creating a Kafka instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param specification the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder specification(String specification) {
+            doSetProperty("specification", specification);
+            return this;
+        }
+        /**
+         * The message storage space. This option is mandatory when creating an
+         * instance.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param storageSpace the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder storageSpace(int storageSpace) {
+            doSetProperty("storageSpace", storageSpace);
+            return this;
+        }
+        /**
+         * The message storage space. This option is mandatory when creating an
+         * instance.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param storageSpace the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder storageSpace(String storageSpace) {
+            doSetProperty("storageSpace", storageSpace);
+            return this;
+        }
+        /**
+         * The storage I/O specification. This option is mandatory when creating
+         * an instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param storageSpecCode the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder storageSpecCode(String storageSpecCode) {
+            doSetProperty("storageSpecCode", storageSpecCode);
+            return this;
+        }
+        /**
+         * The subnet ID. This option is mandatory when creating an instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param subnetId the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder subnetId(String subnetId) {
+            doSetProperty("subnetId", subnetId);
+            return this;
+        }
+        /**
+         * The VPC ID. This option is mandatory when creating an instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param vpcId the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder vpcId(String vpcId) {
+            doSetProperty("vpcId", vpcId);
             return this;
         }
     }
