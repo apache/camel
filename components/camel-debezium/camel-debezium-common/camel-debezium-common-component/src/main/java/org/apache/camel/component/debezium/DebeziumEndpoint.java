@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import io.debezium.data.Envelope;
+import io.debezium.relational.history.HistoryRecord;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -82,7 +83,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         final Object before = extractValueFromValueStruct(valueSchema, value, Envelope.FieldName.BEFORE);
         final Object body = extractBodyValueFromValueStruct(valueSchema, value);
         final Object timestamp = extractValueFromValueStruct(valueSchema, value, Envelope.FieldName.TIMESTAMP);
-
+        final Object ddl = extractValueFromValueStruct(valueSchema, value, HistoryRecord.Fields.DDL_STATEMENTS);
         // set message headers
         message.setHeader(DebeziumConstants.HEADER_IDENTIFIER, record.topic());
         message.setHeader(DebeziumConstants.HEADER_KEY, record.key());
@@ -90,6 +91,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         message.setHeader(DebeziumConstants.HEADER_OPERATION, operation);
         message.setHeader(DebeziumConstants.HEADER_BEFORE, before);
         message.setHeader(DebeziumConstants.HEADER_TIMESTAMP, timestamp);
+        message.setHeader(DebeziumConstants.HEADER_DDL_SQL, ddl);
         message.setHeader(Exchange.MESSAGE_TIMESTAMP, timestamp);
 
         message.setBody(body);

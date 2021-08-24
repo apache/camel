@@ -34,6 +34,7 @@ public final class DebeziumConstants {
     public static final String HEADER_OPERATION = HEADER_PREFIX + "Operation";
     public static final String HEADER_TIMESTAMP = HEADER_PREFIX + "Timestamp";
     public static final String HEADER_BEFORE = HEADER_PREFIX + "Before";
+    public static final String HEADER_DDL_SQL = HEADER_PREFIX + "DdlSQL";
 
     private DebeziumConstants() {
     }

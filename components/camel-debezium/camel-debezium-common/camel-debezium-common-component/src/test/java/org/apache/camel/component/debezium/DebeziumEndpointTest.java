@@ -199,6 +199,20 @@ public class DebeziumEndpointTest {
         assertNull(body);
     }
 
+    @Test
+    void testIfCreatesExchangeFromSourceDdlRecord() {
+        final SourceRecord sourceRecord = createDdlSQLRecord();
+
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
+        final Message inMessage = exchange.getIn();
+
+        assertNotNull(exchange);
+        // assert headers
+        assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
+        assertEquals("SET character_set_server=utf8, collation_server=utf8_bin",
+                inMessage.getHeader(DebeziumConstants.HEADER_DDL_SQL));
+    }
+
     private SourceRecord createCreateRecord() {
         final Schema recordSchema = SchemaBuilder.struct().field("id", SchemaBuilder.int8()).build();
         final Schema sourceSchema = SchemaBuilder.struct().field("lsn", SchemaBuilder.int32()).build();
@@ -254,6 +268,17 @@ public class DebeziumEndpointTest {
         return new SourceRecord(
                 new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
+    }
+
+    private SourceRecord createDdlSQLRecord() {
+        final Schema recordSchema = SchemaBuilder.struct().field("ddl", SchemaBuilder.string()).build();
+        Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema).withSource(SchemaBuilder.struct().build())
+                .build();
+        final Struct recordValue = new Struct(recordSchema);
+        recordValue.put("ddl", "SET character_set_server=utf8, collation_server=utf8_bin");
+        return new SourceRecord(
+                new HashMap<>(), createSourceOffset(), "dummy", null,
+                null, recordValue.schema(), recordValue);
     }
 
     private SourceRecord createUnknownUnnamedSchemaRecord() {
