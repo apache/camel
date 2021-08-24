@@ -209,9 +209,9 @@ public class DebeziumEndpointTest {
         assertNotNull(exchange);
         // assert headers
         assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
-        assertEquals("SET character_set_server=utf8, collation_server=utf8_bin", inMessage.getHeader(DebeziumConstants.HEADER_SQL));
+        assertEquals("SET character_set_server=utf8, collation_server=utf8_bin",
+                inMessage.getHeader(DebeziumConstants.HEADER_SQL));
     }
-
 
     private SourceRecord createCreateRecord() {
         final Schema recordSchema = SchemaBuilder.struct().field("id", SchemaBuilder.int8()).build();
