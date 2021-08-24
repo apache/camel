@@ -117,6 +117,7 @@
                                         <nullableOption>signedReceiptMicAlgorithms</nullableOption>
                                         <nullableOption>encryptingAlgorithm</nullableOption>
                                         <nullableOption>encryptingCertificateChain</nullableOption>
+                                        <nullableOption>attachedFileName</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>
