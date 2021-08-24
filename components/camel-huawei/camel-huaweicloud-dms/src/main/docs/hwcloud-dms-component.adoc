@@ -164,6 +164,19 @@ with the following path and query parameters:
 
 If any of the above properties are set, they will override their corresponding query parameter.
 
+=== Message properties set by the DMS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelHwCloudDmsInstanceDeleted` |`boolean` | Set as `true` when the deleteInstance operation is successful
+
+|`CamelHwCloudDmsInstanceUpdated` |`boolean` | Set as `true` when the updateInstance operation is successful
+
+|=======================================================================
+
+
 == List of Supported DMS Operations
 
 - createInstance
