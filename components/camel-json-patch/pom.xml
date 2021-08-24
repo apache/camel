@@ -35,7 +35,7 @@
     <dependency>
       <groupId>com.github.java-json-tools</groupId>
       <artifactId>json-patch</artifactId>
-      <version>1.13</version>
+      <version>${json-patch-version}</version>
     </dependency>
 
     <dependency>
