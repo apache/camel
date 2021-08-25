@@ -107,7 +107,7 @@ public class DMSEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String name;
 
-    @UriParam(description = "The version of the message engine. This option is mandatory when creating a Kafka instance.",
+    @UriParam(description = "The version of the message engine. This option is mandatory when creating an instance.",
               displayName = "Engine version")
     @Metadata(required = false)
     private String engineVersion;
