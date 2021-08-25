@@ -65,8 +65,6 @@ AdviceWith.adviceWith(context, "myRoute", new AdviceWithRouteBuilder() {
 });
 ----
 
-=== Using AdviceWith lambda style
-
 We introduce a more modern API for _advicing_ routes using Java lambda style.
 
 Below we are _advicing_ the route with ID myRoute:
@@ -83,7 +81,7 @@ for inlining the route manipulation.
 
 IMPORTANT: Before using `adviceWith` then it is best to tell Camel that advice is in use, which is covered in the following section.
 
-=== Turning on advice during testing
+=== Enabling advice during testing
 
 When `adviceWith` is being used, then Camel will restart the adviced routes. This happens
 because the route is manipulated, and Camel needs to:
@@ -140,7 +138,7 @@ public void testMockEndpoints() throws Exception {
 In the unit test method above, we first advice the route by ID, where we auto mock all the endpoints.
 After that we start Camel.
 
-==== Logging before and after advicing routes
+=== Logging before and after advicing routes
 
 When using `adviceWith` then Camel will automatic log, the before and after, of each adviced route, in XML format.
 
@@ -191,7 +189,7 @@ public void testReplaceFrom() throws Exception {
 This replaces the input endpoint (from) in the route with ID myRoute, with a direct endpoint, which makes it
 easy to send message to the route when unit testing.
 
-==== Mocking endpoints
+=== Mocking endpoints
 
 When using the `mockEndpoints` methods when _advicing_ routes, then Camel will log during startup
 which endpoints has been _adviced_ and their corresponding mock uri, such as:
@@ -323,7 +321,7 @@ AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceW
 
 That means the message being sent after mock:bar would have been transformed to a constant message Bye World
 
-==== weave without using IDs
+=== weave without using IDs
 
 When weaving a route, you need to use one of the `weaveBy` methods
 as criteria to select one or more nodes in the route graph.
@@ -355,7 +353,7 @@ weaveByType(SplitDefinition.class)
 Here we weave and select the xref:{eip-vc}:eips:split-eip.adoc[Split] EIP and weave in a message transformation, that
 is processed before calling the splitter. This means the message body is appended with _Camel is awesome_.
 
-==== weaveByToUri
+=== weaveByToUri
 
 The `weaveByToUri` is a handy method that makes it easy to _weave_ a Camel route that
 send messages to a given endpoint URI or pattern.
@@ -384,7 +382,7 @@ Notice the `weaveByToUri` method is using a wildcard (`*`) to match the two bran
 TIP: You can also use `mockEndpoints` to auto mock instead of `weaveByToUri` in the example above.
 The `weave` methods has a lot more power to manipulate the route, such as message transformation, routing the message or much more.
 
-==== weaveAddFirst and weaveAddLast
+=== weaveAddFirst and weaveAddLast
 
 The `weaveAddFirst` and `weaveAddLast` is a shorthand to easily add nodes to the route.
 These methods can only add to an existing routes. If you want to manipulate the route, then use the other `weave` methods as already covered.
@@ -392,7 +390,7 @@ These methods can only add to an existing routes. If you want to manipulate the 
 The `weaveAddFirst` methods adds in the beginning of the route, and `weaveAddLast` at the end.
 Using them works the same as the other `weaveBy` methods, so see above for examples.
 
-==== weave using node selection
+=== weave using node selection
 
 The `weaveBy` methods, select all matching nodes, which can be anything
 from none, one, two, or more nodes. In those situations, you may want to narrow
