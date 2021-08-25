@@ -27,6 +27,7 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -136,30 +137,36 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             Index index;
             try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
                 index = new IndexReader(is).read();
+            } catch (NoSuchFileException e) {
+                // ignore if no jandex index
+                index = null;
+                ;
             } catch (IOException e) {
                 throw new MojoExecutionException("IOException: " + e.getMessage(), e);
             }
 
-            // discover all classes annotated with @Configurer
-            List<AnnotationInstance> annotations = index.getAnnotations(CONFIGURER);
-            annotations.stream()
-                    .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS)
-                    .filter(annotation -> annotation.target().asClass().nestingType() == ClassInfo.NestingType.TOP_LEVEL)
-                    .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
-                    .forEach(annotation -> {
-                        String currentClass = annotation.target().asClass().name().toString();
-                        boolean bootstrap = asBooleanDefaultFalse(annotation, "bootstrap");
-                        boolean extended = asBooleanDefaultFalse(annotation, "extended");
-                        if (bootstrap && extended) {
-                            bootstrapAndExtendedSet.add(currentClass);
-                        } else if (bootstrap) {
-                            bootstrapSet.add(currentClass);
-                        } else if (extended) {
-                            extendedSet.add(currentClass);
-                        } else {
-                            set.add(currentClass);
-                        }
-                    });
+            if (index != null) {
+                // discover all classes annotated with @Configurer
+                List<AnnotationInstance> annotations = index.getAnnotations(CONFIGURER);
+                annotations.stream()
+                        .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS)
+                        .filter(annotation -> annotation.target().asClass().nestingType() == ClassInfo.NestingType.TOP_LEVEL)
+                        .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
+                        .forEach(annotation -> {
+                            String currentClass = annotation.target().asClass().name().toString();
+                            boolean bootstrap = asBooleanDefaultFalse(annotation, "bootstrap");
+                            boolean extended = asBooleanDefaultFalse(annotation, "extended");
+                            if (bootstrap && extended) {
+                                bootstrapAndExtendedSet.add(currentClass);
+                            } else if (bootstrap) {
+                                bootstrapSet.add(currentClass);
+                            } else if (extended) {
+                                extendedSet.add(currentClass);
+                            } else {
+                                set.add(currentClass);
+                            }
+                        });
+            }
         }
 
         // additional classes
