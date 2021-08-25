@@ -126,8 +126,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
             while (isRunAllowed() && !isSuspendingOrSuspended()) {
                 MessageReceiver messageReceiver = new CamelMessageReceiver(GooglePubsubConsumer.this, endpoint, processor);
 
-                Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver,
-                        endpoint.getServiceAccountKey());
+                Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver, endpoint);
                 try {
                     subscribers.add(subscriber);
                     subscriber.startAsync().awaitRunning();
@@ -143,7 +142,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
 
         private void synchronousPull(String subscriptionName) {
             while (isRunAllowed() && !isSuspendingOrSuspended()) {
-                try (SubscriberStub subscriber = endpoint.getComponent().getSubscriberStub(endpoint.getServiceAccountKey())) {
+                try (SubscriberStub subscriber = endpoint.getComponent().getSubscriberStub(endpoint)) {
 
                     PullRequest pullRequest = PullRequest.newBuilder()
                             .setMaxMessages(endpoint.getMaxMessagesPerPoll())
