@@ -69,6 +69,7 @@ public class PubsubTestSupport extends CamelTestSupport {
 
         GooglePubsubComponent component = new GooglePubsubComponent();
         component.setEndpoint(service.getServiceAddress());
+        component.setAuthenticate(false);
 
         context.addComponent("google-pubsub", component);
         context.getPropertiesComponent().setLocation("ref:prop");
