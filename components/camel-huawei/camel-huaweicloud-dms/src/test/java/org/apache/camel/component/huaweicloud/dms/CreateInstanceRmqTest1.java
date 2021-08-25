@@ -59,6 +59,7 @@ public class CreateInstanceRmqTest1 extends CamelTestSupport {
 
                             "&name=" + testConfiguration.getProperty("name") +
                             "&engine=rabbitmq" +
+                            "&engineVersion=" + testConfiguration.getProperty("engineVersion") +
                             "&storageSpace=1000" +
                             "&accessUser=" + testConfiguration.getProperty("accessUser") +
                             "&password=" + testConfiguration.getProperty("password") +

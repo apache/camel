@@ -117,12 +117,12 @@ public class DMSProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(clientConfigurations.getEngine())) {
                 throw new IllegalArgumentException("Engine is mandatory to create an instance");
             }
+            if (ObjectHelper.isEmpty(clientConfigurations.getEngineVersion())) {
+                throw new IllegalArgumentException("Engine version is mandatory to create an instance");
+            }
 
             if (clientConfigurations.getEngine().equals(DMSConstants.KAFKA)) {
                 // check for mandatory Kafka values
-                if (ObjectHelper.isEmpty(clientConfigurations.getEngineVersion())) {
-                    throw new IllegalArgumentException("Engine version is mandatory to create a Kafka instance");
-                }
                 if (ObjectHelper.isEmpty(clientConfigurations.getSpecification())) {
                     throw new IllegalArgumentException("Specification is mandatory to create a Kafka instance");
                 }

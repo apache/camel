@@ -52,6 +52,7 @@ public class CreateInstanceRmqTest2 extends CamelTestSupport {
                 from("direct:operation")
                         .setProperty(DMSProperties.NAME, constant(testConfiguration.getProperty("name")))
                         .setProperty(DMSProperties.ENGINE, constant("rabbitmq"))
+                        .setProperty(DMSProperties.ENGINE_VERSION, constant(testConfiguration.getProperty("engineVersion")))
                         .setProperty(DMSProperties.STORAGE_SPACE, constant(1000))
                         .setProperty(DMSProperties.ACCESS_USER, constant(testConfiguration.getProperty("accessUser")))
                         .setProperty(DMSProperties.PASSWORD, constant(testConfiguration.getProperty("password")))

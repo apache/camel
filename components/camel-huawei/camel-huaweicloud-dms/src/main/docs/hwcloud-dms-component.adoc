@@ -118,7 +118,7 @@ with the following path and query parameters:
 | *availableZones* (producer) | The ID of an available zone. This option is mandatory when creating an instance and it cannot be an empty array. |  | List
 | *endpoint* (producer) | DMS url. Carries higher precedence than region parameter based client initialization |  | String
 | *engine* (producer) | The message engine. Either kafka or rabbitmq. If the parameter is not specified, all instances will be queried. There are 2 enums and the value can be one of: kafka, rabbitmq |  | String
-| *engineVersion* (producer) | The version of the message engine. This option is mandatory when creating a Kafka instance. |  | String
+| *engineVersion* (producer) | The version of the message engine. This option is mandatory when creating an instance. |  | String
 | *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
 | *instanceId* (producer) | The id of the instance. This option is mandatory when deleting or querying an instance |  | String
 | *kafkaManagerPassword* (producer) | The password for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance. |  | String
