@@ -31,13 +31,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @CamelSpringTest
 @ContextConfiguration(classes = { ValidatorConfiguration.class })
-// @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-// @DisableJmx(false)
-// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SMSMessageTest {
 
     @Autowired
@@ -52,131 +51,128 @@ public class SMSMessageTest {
         validNumber = pnu.format(pnu.getExampleNumber("ES"), PhoneNumberFormat.E164);
     }
 
-    // @After
-    // public void afterTest() {
-
     @Test
-    public void testSMSMessageConstructor() throws Throwable {
+    public void testSMSMessageConstructor() {
 
         // Coverage ;)
         SMSMessage message = new SMSMessage(null, null);
-        Assert.isNull(message.getMessage(), "SMS message should be null");
-        Assert.isNull(message.getPhoneNumber(), "Number null have been null");
+        assertNull(message.getMessage(), "SMS message should be null");
+        assertNull(message.getPhoneNumber(), "Number null have been null");
 
         message = new SMSMessage("idAsString", null, null, "MySelf");
-        Assert.isTrue(message.getId().equals("idAsString"), "Unexpected id");
-        Assert.isTrue(message.getFrom().equals("MySelf"), "Unexpected from");
+        assertEquals("idAsString", message.getId(), "Unexpected id");
+        assertEquals("MySelf", message.getFrom(), "Unexpected from");
     }
 
     @Test
-    public void testNullMessageField() throws Exception {
+    public void testNullMessageField() {
 
         final SMSMessage m = new SMSMessage(null, validNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testNullPhoneNumber() throws Exception {
+    public void testNullPhoneNumber() {
 
         final SMSMessage m = new SMSMessage("Hello world!", null);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testDynamicFromFieldMaxLength() throws Exception {
+    public void testDynamicFromFieldMaxLength() {
 
         String dynamicFrom = "messagelengthgreaterthan12";
 
         final SMSMessage m = new SMSMessage("idAsString", "Hello World", validNumber, dynamicFrom);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testDynamicFromFieldZeroLength() throws Exception {
+    public void testDynamicFromFieldZeroLength() {
 
         String zeroLengthDynamicFrom = "";
 
         final SMSMessage m = new SMSMessage("idAsString", "Hello World", validNumber, zeroLengthDynamicFrom);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testIdAsStringMaxLength() throws Exception {
+    public void testIdAsStringMaxLength() {
 
         String idAsString = "thisistheidastringlengthgreaterthan32";
 
         final SMSMessage m = new SMSMessage(idAsString, "Hello World", validNumber, "MySelf");
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testIdAsStringFieldZeroLength() throws Exception {
+    public void testIdAsStringFieldZeroLength() {
 
         String zeroLengthIdAsString = "";
 
         final SMSMessage m = new SMSMessage(zeroLengthIdAsString, "Hello World", validNumber, "MySelf");
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testE164NullNumberIsInValid() throws Exception {
+    public void testE164NullNumberIsInValid() {
 
         final String phoneNumber = null;
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testE164IsValid() throws Exception {
+    public void testE164IsValid() {
 
         final SMSMessage m = new SMSMessage("Hello world!", validNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(0 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(0, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testE164NoPlusSignedNumberIsInvalid() throws Exception {
+    public void testE164NoPlusSignedNumberIsInvalid() {
 
         final String phoneNumber = "34600000000";
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testE164NoPlusSignedNumberBut00IsInvalid() throws Exception {
+    public void testE164NoPlusSignedNumberBut00IsInvalid() {
 
         final String phoneNumber = new PhoneNumber().setCountryCodeSource(CountryCodeSource.FROM_NUMBER_WITHOUT_PLUS_SIGN)
                 .setNationalNumber(0034600000000).toString();
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
-    public void testE164NumberWithPlusSignIsInvalid() throws Exception {
+    public void testE164NumberWithPlusSignIsInvalid() {
 
         final String phoneNumber = "+34 600 00 00 00";
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 }
