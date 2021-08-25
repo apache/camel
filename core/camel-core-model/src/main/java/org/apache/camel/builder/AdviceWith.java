@@ -46,8 +46,7 @@ public final class AdviceWith {
      * Advices this route with the route builder using a lambda expression. It can be used as following:
      *
      * <pre>
-     * AdviceWith.adviceWith(context, "myRoute", a ->
-     *     a.weaveAddLast().to("mock:result");
+     * AdviceWith.adviceWith(context, "myRoute", a -> a.weaveAddLast().to("mock:result"));
      * </pre>
      * <p/>
      * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
@@ -85,8 +84,7 @@ public final class AdviceWith {
      * Advices this route with the route builder using a lambda expression. It can be used as following:
      *
      * <pre>
-     * AdviceWith.adviceWith(context, "myRoute", false, a ->
-     *     a.weaveAddLast().to("mock:result");
+     * AdviceWith.adviceWith(context, "myRoute", false, a -> a.weaveAddLast().to("mock:result"));
      * </pre>
      * <p/>
      * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).

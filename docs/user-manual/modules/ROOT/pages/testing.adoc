@@ -111,7 +111,7 @@ a certain condition has occurred. For example when the route has
 completed 5 messages. You can build complex expressions to match your
 criteria when to be notified.
 
-|AdviceWith |Allows you to _advice_ (enhance)
+|xref:advice-with.adoc[AdviceWith] |Allows you to _advice_ (enhance)
 an existing route using a xref:route-builder.adoc[RouteBuilder] style.
 For example, you can send (or send and skip) message to a xref:components::mock-component.adoc[Mock]
 endpoint for validating the message send by Camel is as expected.
