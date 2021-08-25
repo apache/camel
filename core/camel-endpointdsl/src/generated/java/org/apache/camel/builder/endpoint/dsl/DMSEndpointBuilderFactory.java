@@ -131,7 +131,7 @@ public interface DMSEndpointBuilderFactory {
         }
         /**
          * The version of the message engine. This option is mandatory when
-         * creating a Kafka instance.
+         * creating an instance.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
