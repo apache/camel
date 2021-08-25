@@ -32,19 +32,23 @@ The `camel-protobuf` data format has renamed the option `jsonViewTypeName` to `j
 The `camel-protobuf` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
 The `camel-yaml` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
 
-=== camel-spark
+=== camel-catalog
 
-The `camel-spark` component has been upgraded from Spark 2.x to 3.x.
+Remove the APIs to return the website documentation in ascii doc and html format, it is the methods
+with naming pattern `...AsciiDoc` and `...HtmlDoc`.
+
+=== camel-jms
+
+The `camel-jms` component now better support Apache Artemis in streaming mode for large messages support,
+when Artemis is using a pooled connection pool (previously pooled was not supported). Now the option `artemisStreamingEnabled`
+must explicit be set to `true` to enable support for Artemis streaming mode. Previously Camel tried to auto-detect this.
 
 === camel-kamelet / route templates
 
 Kamelet parameters that are named such as `host`, `port` are now always used with their configured value.
 Before the value in use may be from an ENV variable with the same name.
 
-=== camel-catalog
+=== camel-spark
 
-Remove the APIs to return the website documentation in ascii doc and html format, it is the methods
-with naming pattern `...AsciiDoc` and `...HtmlDoc`.
-
-
+The `camel-spark` component has been upgraded from Spark 2.x to 3.x.
 

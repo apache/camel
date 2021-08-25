@@ -1379,11 +1379,13 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -1395,12 +1397,14 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -3864,11 +3868,13 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -3880,12 +3886,14 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -5468,11 +5476,13 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -5484,12 +5494,14 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set

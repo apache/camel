@@ -67,7 +67,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
 import static org.apache.camel.component.jms.JmsMessageHelper.getSafeLongProperty;
-import static org.apache.camel.component.jms.JmsMessageHelper.isVendor;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 import static org.apache.camel.component.jms.JmsMessageType.Bytes;
 import static org.apache.camel.component.jms.JmsMessageType.Map;
@@ -619,9 +618,10 @@ public class JmsBinding {
         }
 
         if (type == Stream) {
-            boolean artemis = endpoint.isArtemisStreamingEnabled() && isVendor(session, "Artemis");
+            boolean artemis = endpoint.isArtemisStreamingEnabled();
             if (artemis) {
-                // if running ActiveMQ Artemis then it has optimised streaming mode using byte messages so enforce as bytes
+                // if running ActiveMQ Artemis then it has optimised streaming mode
+                // that requires using byte messages instead of stream, so we have to enforce as bytes
                 type = Bytes;
             }
         }
@@ -652,7 +652,7 @@ public class JmsBinding {
                 BytesMessage message = session.createBytesMessage();
                 if (body != null) {
                     try {
-                        if (endpoint.isArtemisStreamingEnabled() && isVendor(session, "Artemis")) {
+                        if (endpoint.isArtemisStreamingEnabled()) {
                             LOG.trace("Optimised for Artemis: Streaming payload in BytesMessage");
                             InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                             message.setObjectProperty("JMS_AMQ_InputStream", is);
