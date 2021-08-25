@@ -24,32 +24,29 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringTest
 @ContextConfiguration(classes = { ValidatorConfiguration.class })
-// @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-// @DisableJmx(false)
-// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CMMessageTest {
 
     private final PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
     private String validNumber;
 
     @BeforeEach
-    public void beforeTest() throws Exception {
+    public void beforeTest() {
         validNumber = pnu.format(pnu.getExampleNumber("ES"), PhoneNumberFormat.E164);
     }
-
-    // @After
-    // public void afterTest() {
 
     /*
      * GSM0338
      */
 
     @Test
-    public void testGSM338AndLTMAXGSMMESSAGELENGTH() throws Exception {
+    public void testGSM338AndLTMAXGSMMESSAGELENGTH() {
 
         // 0338 and less than 160 char -> 1 part
 
@@ -61,12 +58,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
-        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
+        assertEquals(1, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 1");
+        assertFalse(cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
-    public void testGSM338AndEQMAXGSMMESSAGELENGTH() throws Exception {
+    public void testGSM338AndEQMAXGSMMESSAGELENGTH() {
         // 0338 and length is exactly 160 -> 1 part
 
         StringBuilder sb = new StringBuilder();
@@ -77,12 +74,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
-        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
+        assertEquals(1, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 1");
+        assertFalse(cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
-    public void testGSM338AndGTMAXGSMMESSAGELENGTH() throws Exception {
+    public void testGSM338AndGTMAXGSMMESSAGELENGTH() {
 
         // 0338 and length is exactly 161 -> 2 part
 
@@ -94,13 +91,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
-        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
+        assertEquals(2, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 2");
+        assertFalse(cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
-    public void testGSM338AndLT2MAXGSMMESSAGELENGTH() throws Exception {
-
+    public void testGSM338AndLT2MAXGSMMESSAGELENGTH() {
         StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART - 1); index++) {
             sb.append("a");
@@ -109,12 +105,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
-        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
+        assertEquals(2, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 2");
+        assertFalse(cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
-    public void testGSM338AndEQ2MAXGSMMESSAGELENGTH() throws Exception {
+    public void testGSM338AndEQ2MAXGSMMESSAGELENGTH() {
 
         StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
@@ -124,13 +120,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
-        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
+        assertEquals(2, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 2");
+        assertFalse(cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
-    public void testGSM338AndGT2MAXGSMMESSAGELENGTH() throws Exception {
-
+    public void testGSM338AndGT2MAXGSMMESSAGELENGTH() {
         StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
             sb.append("a");
@@ -139,13 +134,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 3, "Call to getMultiparts() should have returned 3");
-        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
+        assertEquals(3, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 3");
+        assertFalse(cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
-    public void testGSM338AndEQ8MAXGSMMESSAGELENGTH() throws Exception {
-
+    public void testGSM338AndEQ8MAXGSMMESSAGELENGTH() {
         StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
             sb.append("a");
@@ -154,12 +148,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
-        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
+        assertEquals(8, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 8");
+        assertFalse(cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
-    public void testGSM338AndGT8MAXGSMMESSAGELENGTH() throws Exception {
+    public void testGSM338AndGT8MAXGSMMESSAGELENGTH() {
 
         StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
@@ -169,8 +163,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
-        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
+        assertEquals(8, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 8");
+        assertFalse(cmMessage.isUnicode(), "Should not be unicode");
     }
 
     /*
@@ -178,7 +172,7 @@ public class CMMessageTest {
      */
 
     @Test
-    public void testUnicodeAndLTMAXGSMMESSAGELENGTH() throws Exception {
+    public void testUnicodeAndLTMAXGSMMESSAGELENGTH() {
 
         String ch = "\uF400";
 
@@ -192,12 +186,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
-        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
+        assertEquals(1, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 1");
+        assertTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
-    public void testUnicodeAndEQMAXGSMMESSAGELENGTH() throws Exception {
+    public void testUnicodeAndEQMAXGSMMESSAGELENGTH() {
         // 0338 and length is exactly 160 -> 1 part
 
         String ch = "\uF400";
@@ -210,12 +204,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
-        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
+        assertEquals(1, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 1");
+        assertTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
-    public void testUnicodeAndGTMAXGSMMESSAGELENGTH() throws Exception {
+    public void testUnicodeAndGTMAXGSMMESSAGELENGTH() {
 
         // 0338 and length is exactly 161 -> 2 part
 
@@ -229,12 +223,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
-        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
+        assertEquals(2, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 2");
+        assertTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
-    public void testUnicodeAndLT2MAXGSMMESSAGELENGTH() throws Exception {
+    public void testUnicodeAndLT2MAXGSMMESSAGELENGTH() {
 
         String ch = "\uF400";
 
@@ -246,12 +240,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
-        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
+        assertEquals(2, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 2");
+        assertTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
-    public void testUnicodeAndEQ2MAXGSMMESSAGELENGTH() throws Exception {
+    public void testUnicodeAndEQ2MAXGSMMESSAGELENGTH() {
 
         String ch = "\uF400";
 
@@ -263,12 +257,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
-        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
+        assertEquals(2, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 2");
+        assertTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
-    public void testUnicodeAndGT2MAXGSMMESSAGELENGTH() throws Exception {
+    public void testUnicodeAndGT2MAXGSMMESSAGELENGTH() {
 
         String ch = "\uF400";
 
@@ -280,12 +274,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 3, "Call to getMultiparts() should have returned 3");
-        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
+        assertEquals(3, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 3");
+        assertTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
-    public void testUnicodeAndEQ8MAXGSMMESSAGELENGTH() throws Exception {
+    public void testUnicodeAndEQ8MAXGSMMESSAGELENGTH() {
 
         String ch = "\uF400";
 
@@ -297,12 +291,12 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
-        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
+        assertEquals(8, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 8");
+        assertTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
-    public void testUnicodeAndGT8MAXGSMMESSAGELENGTH() throws Exception {
+    public void testUnicodeAndGT8MAXGSMMESSAGELENGTH() {
 
         String ch = "\uF400";
 
@@ -314,8 +308,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
-        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
+        assertEquals(8, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 8");
+        assertTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
 }

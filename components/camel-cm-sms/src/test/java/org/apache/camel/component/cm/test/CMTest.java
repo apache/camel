@@ -60,8 +60,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.Assert;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @CamelSpringTest
@@ -89,8 +89,6 @@ public class CMTest {
     @EndpointInject("mock:test")
     private MockEndpoint mock;
 
-    // private StopWatch stopWatch = new StopWatch(getClass().getSimpleName());
-
     @BeforeEach
     public void beforeTest() throws Exception {
         mock.reset();
@@ -106,15 +104,6 @@ public class CMTest {
         } catch (Exception e) {
             LOGGER.error("Exception trying to stop de routes", e);
         }
-
-        // Stop all routes
-        // for (Route route : camelContext.getRoutes()) {
-        // try {
-        // camelContext.getRouteController().stopRoute(route.getId());
-        // } catch (Exception e) {
-        // logger.error("Exception trying to stop de routes", e);
-        // }
-        // }
     }
 
     /*
@@ -122,7 +111,7 @@ public class CMTest {
      */
 
     @Test
-    public void testNotRequiredProductToken() throws Throwable {
+    public void testNotRequiredProductToken() {
         String schemedUri
                 = "cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&testConnectionOnStartup=true";
 
@@ -131,7 +120,7 @@ public class CMTest {
     }
 
     @Test
-    public void testNotRequiredDefaultFrom() throws Throwable {
+    public void testNotRequiredDefaultFrom() {
         String schemedUri
                 = "cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&testConnectionOnStartup=true";
 
@@ -140,7 +129,7 @@ public class CMTest {
     }
 
     @Test
-    public void testHostUnavailableException() throws Throwable {
+    public void testHostUnavailableException() throws Exception {
         // cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&productToken=ea723fd7-da81-4826-89bc-fa7144e71c40&testConnectionOnStartup=true
         String schemedUri
                 = "cm-sms://dummy.sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&productToken=ea723fd7-da81-4826-89bc-fa7144e71c40&testConnectionOnStartup=true";
@@ -150,7 +139,7 @@ public class CMTest {
     }
 
     @Test
-    public void testInvalidHostDuplicateScheme() throws Throwable {
+    public void testInvalidHostDuplicateScheme() {
         // cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&productToken=ea723fd7-da81-4826-89bc-fa7144e71c40&testConnectionOnStartup=true
         String schemedUri = "cm-sms://https://demo.com";
         assertThrows(ResolveEndpointFailedException.class,
@@ -162,14 +151,13 @@ public class CMTest {
      */
 
     @Test
-    public void testNullPayload() throws Throwable {
+    public void testNullPayload() {
         assertThrows(RuntimeException.class,
                 () -> cmProxy.send(null));
     }
 
-    // @DirtiesContext
     @Test
-    public void testAsPartOfARoute() throws Exception {
+    public void testAsPartOfARoute() {
 
         // Body
         final SMSMessage smsMessage = new SMSMessage(generateIdAsString(), generateUnicodeMessage(), validNumber, null);
@@ -317,7 +305,7 @@ public class CMTest {
     }
 
     @Test
-    public void testCMEndpointIsForProducing() throws Exception {
+    public void testCMEndpointIsForProducing() {
 
         // Change sending strategy
         CMEndpoint endpoint
@@ -327,17 +315,17 @@ public class CMTest {
     }
 
     @Test
-    public void testCMEndpointGetHost() throws Exception {
+    public void testCMEndpointGetHost() {
 
         // Change sending strategy
         CMEndpoint endpoint
                 = (CMEndpoint) camelContext.getEndpoint(applicationContext.getBean(CamelTestConfiguration.class).getUri());
-        Assert.isTrue(endpoint.getHost().equals(applicationContext.getEnvironment().getRequiredProperty("cm.url")),
+        assertEquals(applicationContext.getEnvironment().getRequiredProperty("cm.url"), endpoint.getHost(),
                 "Endpoint host and environment property do not match");
     }
 
     @Test
-    public void testSendInvalidPayload() throws Exception {
+    public void testSendInvalidPayload() {
 
         // Body
         final SMSMessage smsMessage = new SMSMessage(generateIdAsString(), generateGSM0338Message(), null, null);
@@ -348,19 +336,6 @@ public class CMTest {
     /*
      * CMMessages
      */
-
-    // @Test(expected = RuntimeException.class)
-    // public void testSkel() throws Exception {
-
-    // mock.expectedMessageCount(1);
-    //
-    // // Body
-    // final SMSMessage smsMessage = new SMSMessage("Hello CM", validNumber);
-    // cmProxy.send(smsMessage);
-    //
-    // mock.assertIsSatisfied();
-    // }
-
     private String generateUnicodeMessage() {
         String ch = "\uF400";
         return generateRandomLengthMessageByChar(ch);
@@ -381,7 +356,6 @@ public class CMTest {
         return sb.toString();
     }
 
-    //
     private String generateIdAsString() {
         return new BigInteger(130, random).toString(32);
     }
