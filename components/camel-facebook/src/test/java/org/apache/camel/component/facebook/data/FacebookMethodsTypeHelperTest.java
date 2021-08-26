@@ -72,7 +72,7 @@ public class FacebookMethodsTypeHelperTest {
     }
 
     @Test
-    public void testFilterMethods() throws Exception {
+    public void testfiltermethods() throws Exception {
         // TODO
     }
 

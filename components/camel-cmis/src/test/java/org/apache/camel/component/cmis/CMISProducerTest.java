@@ -285,7 +285,8 @@ public class CMISProducerTest extends CMISTestSupport {
 
         template.send(exchange);
 
-        createSession().getObject(document.getId());
+        CmisObject obj = createSession().getObject(document.getId());
+        assertNotNull(obj, "Could not get the object");
     }
 
     @Test

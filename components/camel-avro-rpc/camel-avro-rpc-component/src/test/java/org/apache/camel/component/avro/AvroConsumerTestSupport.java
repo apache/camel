@@ -30,6 +30,7 @@ import org.apache.camel.avro.test.TestReflectionImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -80,21 +81,21 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     }
 
     @Test
-    public void testInOnly() throws Exception {
+    public void testInOnly() throws IOException {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
         Object[] request = { key, value };
-        requestor.request("put", request);
+        assertDoesNotThrow(() -> requestor.request("put", request));
     }
 
     @Test
-    public void testInOnlyMessageInRoute() throws Exception {
+    public void testInOnlyMessageInRoute() throws IOException {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
         Object[] request = { key, value };
-        requestorMessageInRoute.request("put", request);
+        assertDoesNotThrow(() -> requestorMessageInRoute.request("put", request));
     }
 
     @Test

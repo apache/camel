@@ -34,6 +34,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -113,8 +115,9 @@ public class CouchbaseProducerTest {
     }
 
     @Test
-    public void testMaximumValuesForPersistToAndRepicateTo() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, 4, 3);
+    public void testMaximumValuesForPersistToAndReplicateTo() {
+        assertDoesNotThrow(() -> producer = new CouchbaseProducer(endpoint, client, 4, 3));
+        assertNotNull(producer);
     }
 
     //

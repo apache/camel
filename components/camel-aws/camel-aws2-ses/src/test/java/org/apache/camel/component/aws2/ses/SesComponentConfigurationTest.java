@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.ses;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
@@ -206,7 +207,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonSESClient", mock);
 
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        component.createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient");
+        Endpoint ep = component.createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient");
+        assertNotNull(ep, "Could not create the endpoint");
     }
 
     @Test

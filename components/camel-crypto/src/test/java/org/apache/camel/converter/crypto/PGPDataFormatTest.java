@@ -68,6 +68,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodG
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -147,48 +148,48 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     @Test
-    void testEncryption() throws Exception {
-        doRoundTripEncryptionTests("direct:inline");
+    void testEncryption() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline"));
     }
 
     @Test
-    void testEncryption2() throws Exception {
-        doRoundTripEncryptionTests("direct:inline2");
+    void testEncryption2() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline2"));
     }
 
     @Test
-    void testEncryptionArmor() throws Exception {
-        doRoundTripEncryptionTests("direct:inline-armor");
+    void testEncryptionArmor() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline-armor"));
     }
 
     @Test
-    void testEncryptionSigned() throws Exception {
-        doRoundTripEncryptionTests("direct:inline-sign");
+    void testEncryptionSigned() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline-sign"));
     }
 
     @Test
-    void testEncryptionKeyRingByteArray() throws Exception {
-        doRoundTripEncryptionTests("direct:key-ring-byte-array");
+    void testEncryptionKeyRingByteArray() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:key-ring-byte-array"));
     }
 
     @Test
-    void testEncryptionSignedKeyRingByteArray() throws Exception {
-        doRoundTripEncryptionTests("direct:sign-key-ring-byte-array");
+    void testEncryptionSignedKeyRingByteArray() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:sign-key-ring-byte-array"));
     }
 
     @Test
-    void testSeveralSignerKeys() throws Exception {
-        doRoundTripEncryptionTests("direct:several-signer-keys");
+    void testSeveralSignerKeys() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:several-signer-keys"));
     }
 
     @Test
-    void testOneUserIdWithServeralKeys() throws Exception {
-        doRoundTripEncryptionTests("direct:one-userid-several-keys");
+    void testOneUserIdWithSeveralKeys() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:one-userid-several-keys"));
     }
 
     @Test
-    void testKeyAccess() throws Exception {
-        doRoundTripEncryptionTests("direct:key_access");
+    void testKeyAccess() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:key_access"));
     }
 
     @Test
@@ -300,8 +301,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     @Test
     void testEncryptSignWithoutCompressedDataPacket() throws Exception {
-
-        doRoundTripEncryptionTests("direct:encrypt-sign-without-compressed-data-packet");
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:encrypt-sign-without-compressed-data-packet"));
         //        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         //
         ////        createEncryptedNonCompressedData(bos, PUB_KEY_RING_SUBKEYS_FILE_NAME);

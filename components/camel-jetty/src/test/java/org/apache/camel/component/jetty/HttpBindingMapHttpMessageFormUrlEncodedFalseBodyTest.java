@@ -25,13 +25,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJettyTest {
 
     @Test
-    public void testSendToJetty() throws Exception {
+    public void testSendToJetty() {
+        assertDoesNotThrow(() -> doSendToJetty());
+    }
+
+    private void doSendToJetty() {
         Map<String, Object> map = new HashMap<>();
         map.put("content-type", "application/x-www-form-urlencoded");
         map.put(Exchange.HTTP_METHOD, HttpMethods.POST);

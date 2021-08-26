@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.ec2;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
@@ -91,7 +92,8 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
         Ec2Client amazonEc2Client = new AmazonEC2ClientMock();
         context.getRegistry().bind("amazonEc2Client", amazonEc2Client);
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        component.createEndpoint("aws2-ec2://TestDomain?amazonEc2Client=#amazonEc2Client");
+        Endpoint ep = component.createEndpoint("aws2-ec2://TestDomain?amazonEc2Client=#amazonEc2Client");
+        assertNotNull(ep, "Could not create the endpoint");
     }
 
     @Test

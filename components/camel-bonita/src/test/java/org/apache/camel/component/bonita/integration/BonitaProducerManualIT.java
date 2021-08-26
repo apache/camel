@@ -25,6 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 /**
  * Bonita producer integration tests. Requires a running Bonita instance.
  *
@@ -34,7 +36,11 @@ import org.junit.jupiter.api.Test;
 public class BonitaProducerManualIT extends BonitaIntegrationTestSupport {
 
     @Test
-    public void testStartCase() throws Exception {
+    public void testStartCase() {
+        assertDoesNotThrow(() -> runTest());
+    }
+
+    private void runTest() {
         Map<String, Serializable> map = new HashMap<>();
         map.put("vacationRequestIdContract", "1");
 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
@@ -210,11 +208,11 @@ public class UriConfigurationTest extends CamelTestSupport {
         FtpConfiguration config = endpoint.getConfiguration();
         config.setHost("somewhere");
         config.setDirectory("temp.dir");
-        endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // do nothing
-            }
+        RemoteFileConsumer<?> consumer = endpoint.createConsumer(exchange -> {
+            // do nothing
         });
+
+        assertNotNull(consumer, "Could not create the consumer");
     }
 
     @Test

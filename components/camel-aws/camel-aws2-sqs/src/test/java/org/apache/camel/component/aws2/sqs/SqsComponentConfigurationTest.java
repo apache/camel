@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
@@ -263,7 +264,8 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonSQSClient", mock);
 
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        component.createEndpoint("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
+        Endpoint ep = component.createEndpoint("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
+        assertNotNull(ep, "Could not create the endpoint");
     }
 
     @Test

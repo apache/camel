@@ -40,6 +40,7 @@ import software.amazon.awssdk.services.ec2.model.StopInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.TerminateInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EC2ProducerTest extends CamelTestSupport {
@@ -203,16 +204,15 @@ public class EC2ProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void ec2RebootInstancesTest() throws Exception {
+    public void ec2RebootInstancesTest() {
+        assertDoesNotThrow(() -> issueReboot());
+    }
 
-        template.request("direct:reboot", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Collection<String> l = new ArrayList<>();
-                l.add("test-1");
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
-            }
+    private void issueReboot() {
+        template.request("direct:reboot", exchange -> {
+            Collection<String> l = new ArrayList<>();
+            l.add("test-1");
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
         });
     }
 
