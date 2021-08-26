@@ -44,6 +44,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 
+@Deprecated
 public final class CamelAnnotationsHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CamelAnnotationsHandler.class);

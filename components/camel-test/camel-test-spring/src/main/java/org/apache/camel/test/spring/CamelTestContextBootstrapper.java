@@ -22,6 +22,7 @@ import org.springframework.test.context.support.DefaultTestContextBootstrapper;
 /**
  * To bootstrap Camel for testing with Spring 4.1 onwards.
  */
+@Deprecated
 public class CamelTestContextBootstrapper extends DefaultTestContextBootstrapper {
 
     @Override

@@ -52,6 +52,7 @@ import org.apache.camel.util.StringHelper;
  *
  * @see AvailablePortFinder
  */
+@Deprecated
 public class AvailablePortFinderPropertiesFunction implements PropertiesFunction {
     private final Map<String, String> portMapping;
 

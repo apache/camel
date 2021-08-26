@@ -36,6 +36,7 @@ import org.apache.camel.CamelContext;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
+@Deprecated
 public @interface UseAdviceWith {
 
     /**

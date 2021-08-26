@@ -27,6 +27,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  * An execution listener that simulates the timing output built in to
  * {@link org.apache.camel.test.junit4.CamelTestSupport}.
  */
+@Deprecated
 public class StopWatchTestExecutionListener extends AbstractTestExecutionListener {
 
     protected static ThreadLocal<StopWatch> threadStopWatch = new ThreadLocal<>();

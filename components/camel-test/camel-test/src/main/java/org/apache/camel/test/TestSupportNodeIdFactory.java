@@ -18,6 +18,7 @@ package org.apache.camel.test;
 
 import org.apache.camel.impl.engine.DefaultNodeIdFactory;
 
+@Deprecated
 public class TestSupportNodeIdFactory extends DefaultNodeIdFactory {
 
     /**

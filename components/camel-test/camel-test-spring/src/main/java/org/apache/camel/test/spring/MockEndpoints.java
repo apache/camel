@@ -34,6 +34,7 @@ import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
+@Deprecated
 public @interface MockEndpoints {
 
     /**

@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper to dump route coverage when using {@link EnableRouteCoverage}.
  */
+@Deprecated
 public final class RouteCoverageDumper {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteCoverageDumper.class);

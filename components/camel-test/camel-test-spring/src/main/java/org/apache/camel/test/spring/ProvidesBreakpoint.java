@@ -32,5 +32,6 @@ import org.apache.camel.spi.Breakpoint;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
+@Deprecated
 public @interface ProvidesBreakpoint {
 }

@@ -35,6 +35,7 @@ import org.apache.camel.RoutesBuilder;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
+@Deprecated
 public @interface ExcludeRoutes {
 
     /**

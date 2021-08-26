@@ -23,6 +23,7 @@ import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 
+@Deprecated
 public class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
 
     public void setExcludedClasses(Set<Class<?>> excludedClasses) {

@@ -23,6 +23,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
+@Deprecated
 public class RouteCoverageEventNotifier extends EventNotifierSupport {
 
     private final String testClassName;

@@ -23,6 +23,7 @@ import org.junit.runner.Description;
 /**
  * A JUnit {@link org.junit.rules.TestWatcher} that is used to time how long the test takes.
  */
+@Deprecated
 public class CamelTestWatcher extends TestWatcher {
 
     private final StopWatch watch = new StopWatch();

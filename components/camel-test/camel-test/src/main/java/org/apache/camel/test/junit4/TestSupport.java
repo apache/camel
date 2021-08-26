@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A bunch of useful testing methods
  */
+@Deprecated
 public abstract class TestSupport extends Assert {
 
     protected static final String LS = System.lineSeparator();

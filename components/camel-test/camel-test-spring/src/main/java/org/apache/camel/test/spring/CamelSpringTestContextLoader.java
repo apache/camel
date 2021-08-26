@@ -41,6 +41,7 @@ import org.springframework.util.StringUtils;
  * Replacement for the default {@link GenericXmlContextLoader} that provides hooks for processing some class level Camel
  * related test annotations.
  */
+@Deprecated
 public class CamelSpringTestContextLoader extends AbstractContextLoader {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringTestContextLoader.class);

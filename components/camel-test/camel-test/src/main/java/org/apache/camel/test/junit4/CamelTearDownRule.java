@@ -21,6 +21,7 @@ import org.junit.rules.ExternalResource;
 /**
  * A JUnit rule to tear down Camel when using createCamelContextPerClass=true.
  */
+@Deprecated
 public class CamelTearDownRule extends ExternalResource {
 
     private final ThreadLocal<CamelTestSupport> testSupport;

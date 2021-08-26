@@ -97,6 +97,7 @@ import org.slf4j.LoggerFactory;
  * {@link org.apache.camel.ProducerTemplate} for use in the test case Do <tt>not</tt> use this class for Spring Boot
  * testing, instead use <code>@RunWith(CamelSpringBootRunner.class)</code>.
  */
+@Deprecated
 public abstract class CamelTestSupport extends TestSupport {
 
     /**

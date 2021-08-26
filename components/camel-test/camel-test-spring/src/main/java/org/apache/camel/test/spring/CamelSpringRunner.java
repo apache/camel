@@ -33,6 +33,7 @@ import org.springframework.test.context.support.DefaultBootstrapContext;
  * Test based test cases. This approach allows developers to implement tests for their Spring based applications/routes
  * using the typical Spring Test conventions for test development.
  */
+@Deprecated
 public class CamelSpringRunner extends SpringJUnit4ClassRunner {
 
     public CamelSpringRunner(Class<?> clazz) throws InitializationError {

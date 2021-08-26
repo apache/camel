@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A useful base class for testing the language plugins in Camel
  */
+@Deprecated
 public abstract class LanguageTestSupport extends ExchangeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LanguageTestSupport.class);

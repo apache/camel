@@ -23,6 +23,7 @@ import org.junit.runners.model.InitializationError;
  * This approach allows developers to implement tests for their Spring Boot based applications/routes using the typical
  * Spring Test conventions for test development.
  */
+@Deprecated
 public class CamelSpringBootRunner extends CamelSpringRunner {
 
     public CamelSpringBootRunner(Class<?> clazz) throws InitializationError {

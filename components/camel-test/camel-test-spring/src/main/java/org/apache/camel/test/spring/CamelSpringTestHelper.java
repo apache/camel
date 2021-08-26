@@ -35,6 +35,7 @@ import org.springframework.test.context.TestContext;
  * Note that this class makes use of {@link ThreadLocal}s to maintain some state. It is imperative that the state
  * setters and getters are accessed within the scope of a single thread in order for this class to work right.
  */
+@Deprecated
 public final class CamelSpringTestHelper {
 
     private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<>();

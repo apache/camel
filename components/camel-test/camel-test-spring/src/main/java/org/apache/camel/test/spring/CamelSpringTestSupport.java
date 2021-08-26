@@ -36,6 +36,7 @@ import org.springframework.context.support.GenericApplicationContext;
  * Base test-class for classic Spring application such as standalone, web applications. Do <tt>not</tt> use this class
  * for Spring Boot testing, instead use <code>@RunWith(CamelSpringBootRunner.class)</code>.
  */
+@Deprecated
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
     protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<>();
     protected static Object lock = new Object();

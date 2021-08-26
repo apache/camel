@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Finds currently available server ports.
  */
+@Deprecated
 public final class AvailablePortFinder {
 
     private static final Logger LOG = LoggerFactory.getLogger(AvailablePortFinder.class);

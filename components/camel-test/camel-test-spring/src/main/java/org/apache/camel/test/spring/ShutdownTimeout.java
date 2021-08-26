@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
+@Deprecated
 public @interface ShutdownTimeout {
 
     /**
