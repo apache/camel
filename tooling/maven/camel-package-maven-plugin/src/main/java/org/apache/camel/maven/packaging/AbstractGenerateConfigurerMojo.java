@@ -140,7 +140,6 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             } catch (NoSuchFileException e) {
                 // ignore if no jandex index
                 index = null;
-                ;
             } catch (IOException e) {
                 throw new MojoExecutionException("IOException: " + e.getMessage(), e);
             }
