@@ -53,10 +53,12 @@ public class SimpleMockTest extends CamelTestSupport {
 ----
 
 == Migrating Camel Tests from JUnit 4 to JUnit 5
+
 Find below some hints to help in migrating camel tests from JUnit 4 to JUnit 5.
 
-=== Referencing the Camel Test JUnit5 library in your project
-Projects using `camel-test` would need to use `camel-test-junit5`. For instance, maven users would update their pom.xml file as below:
+Projects using `camel-test` would need to use `camel-test-junit5`. For instance, maven users would update their `pom.xml` file as below:
+
+[source,xml]
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
@@ -65,10 +67,11 @@ Projects using `camel-test` would need to use `camel-test-junit5`. For instance,
 </dependency>
 ----
 
-Tips: It's possible to run JUnit4 & JUnit5 based camel tests side by side including the following dependencies `camel-test`,
-`camel-test-junit5` and `junit-vintage-engine`. This configuration allows to migrate a camel test at once.
+TIP: It's possible to run JUnit4 & JUnit5 based Camel tests side by side including the following dependencies `camel-test`,
+`camel-test-junit5` and `junit-vintage-engine`. This configuration allows migrating Camel tests one by one.
 
-=== Typical migration steps linked to JUnit 5 support in Camel Test
+=== Migration Steps
+
 * Imports of `org.apache.camel.test.junit4.\*` should be replaced with `org.apache.camel.test.junit5.*`
 * `TestSupport` static methods should be imported where needed, for instance `import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf`
 * Usage of the field `CamelTestSupport.log` should be replaced by another logger, for instance `org.slf4j.LoggerFactory.getLogger(MyCamelTest.class);`
@@ -76,8 +79,6 @@ Tips: It's possible to run JUnit4 & JUnit5 based camel tests side by side includ
 * Overrides of `isCreateCamelContextPerClass()` returning `false` should be removed
 * Overrides of `isCreateCamelContextPerClass()` returning `true` should be replaced by `@TestInstance(Lifecycle.PER_CLASS)`
 
-
-=== Typical migration steps linked to JUnit 5 itself
 Once Camel related steps have been performed, there are still typical JUnit 5 migration steps to remember:
 
 * New JUnit 5 assertions should be imported where needed, for instance `import static org.junit.jupiter.api.Assertions.assertEquals`
@@ -90,4 +91,4 @@ Once Camel related steps have been performed, there are still typical JUnit 5 mi
 * `org.junit.AfterClass` should be changed in favor of `import org.junit.jupiter.api.AfterAll`
 * Built-in `assertThat` from third-party assertion libraries should be used. For instance, use `org.hamcrest.MatcherAssert.assertThat` from `java-hamcrest`
 
-Depending on the context, more involved tips might be needed, please check the https://junit.org/junit5/docs/current/user-guide/[JUnit 5 User Guide] then.
+Depending on the context, more involved tips might be needed, please check the https://junit.org/junit5/docs/current/user-guide/[JUnit 5 User Guide].
