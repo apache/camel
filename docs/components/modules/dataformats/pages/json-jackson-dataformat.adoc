@@ -64,6 +64,27 @@ For example if you use Spring Boot, then Spring Boot can provide a default `Obje
 And this would allow Camel to detect that there is one bean of `ObjectMapper` class type in the Spring Boot bean registry
 and then use it. When this happens you should set a `INFO` logging from Camel.
 
+== Using Jackson for automatic type conversion
+
+The `camel-jackson` module allows integrating Jackson as a xref:manual::type-converter.adoc[Type Converter].
+This works in similar ways that xref:dataformats:jaxb-dataformat.adoc[JAXB] integrates with Camels type converter.
+
+To use this `camel-jackson` must be enabled, which is done by setting the following options
+on the `CamelContext` global options, as shown:
+
+[source,java]
+----
+// Enable Jackson JSON type converter.
+camelContext.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
+// Allow Jackson JSON to convert to pojo types also
+// (by default Jackson only converts to String and other simple types)
+getContext().getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
+----
+
+The `camel-jackson` type converter integrates with xref:dataformats:jaxb-dataformat.adoc[JAXB]
+which means you can annotate POJO class with `JAXB` annotations that Jackson can use.
+You can also use Jacksons own annotations on your POJO classes.
+
 == Dependencies
 
 To use Jackson in your camel routes you need to add the dependency
