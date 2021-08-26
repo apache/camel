@@ -1,12 +1,13 @@
 [[test-other]]
-= Test Component
+= Test Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-test/camel-test/src/main/docs/test.adoc
 :docTitle: Test
 :artifactId: camel-test
 :description: Camel unit testing
 :since: 2.9
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/test.adoc[opts=optional]
 
 *Since Camel {since}*

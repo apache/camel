@@ -4,7 +4,7 @@
     "name": "test",
     "title": "Test",
     "description": "Camel unit testing",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.9.0",
     "label": "testing,java",
     "supportLevel": "Stable",

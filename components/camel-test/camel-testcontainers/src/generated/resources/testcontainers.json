@@ -4,7 +4,7 @@
     "name": "testcontainers",
     "title": "Testcontainers",
     "description": "Camel support for testcontainers",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.22.0",
     "label": "testing,java,docker",
     "supportLevel": "Stable",

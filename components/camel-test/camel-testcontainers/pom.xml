@@ -29,7 +29,7 @@
     <artifactId>camel-testcontainers</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Testcontainers</name>
+    <name>Camel :: Testcontainers (deprecated)</name>
     <description>Camel support for testcontainers</description>
 
     <properties>

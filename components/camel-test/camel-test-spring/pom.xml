@@ -29,13 +29,12 @@
     <artifactId>camel-test-spring</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Test :: Spring</name>
+    <name>Camel :: Test :: Spring (deprecated)</name>
     <description>Camel unit testing with Spring</description>
 
     <properties>
         <firstVersion>2.10.0</firstVersion>
         <label>testing,java,spring</label>
-
         <spring-version>${spring5-version}</spring-version>
     </properties>
 

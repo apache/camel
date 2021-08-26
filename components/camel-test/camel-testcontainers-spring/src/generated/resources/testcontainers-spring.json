@@ -4,7 +4,7 @@
     "name": "testcontainers-spring",
     "title": "Testcontainers Spring",
     "description": "Camel unit testing with Spring and testcontainers",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.22.0",
     "label": "testing,java,docker",
     "supportLevel": "Stable",

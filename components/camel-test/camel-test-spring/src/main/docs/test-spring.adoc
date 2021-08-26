@@ -1,10 +1,11 @@
 [[test-spring-other]]
-= Test Spring Component
+= Test Spring Component (deprecated)
 :docTitle: Test Spring
 :artifactId: camel-test-spring
 :description: Camel unit testing with Spring
 :since: 2.10
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/test-spring.adoc[opts=optional]
 
 *Since Camel {since}*

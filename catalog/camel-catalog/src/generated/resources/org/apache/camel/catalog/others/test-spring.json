@@ -4,7 +4,7 @@
     "name": "test-spring",
     "title": "Test Spring",
     "description": "Camel unit testing with Spring",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.10.0",
     "label": "testing,java,spring",
     "supportLevel": "Stable",
