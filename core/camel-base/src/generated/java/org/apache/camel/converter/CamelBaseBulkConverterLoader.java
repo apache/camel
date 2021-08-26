@@ -284,11 +284,11 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.nio.ByteBuffer) {
                 return org.apache.camel.converter.NIOConverter.toString((java.nio.ByteBuffer) value, exchange);
             }
-            if (value instanceof org.apache.camel.spi.Resource) {
-                return org.apache.camel.converter.ResourceConverter.toString((org.apache.camel.spi.Resource) value, camelContext);
-            }
             if (value instanceof java.time.Duration) {
                 return org.apache.camel.converter.DurationConverter.toString((java.time.Duration) value);
+            }
+            if (value instanceof org.apache.camel.spi.Resource) {
+                return org.apache.camel.converter.ResourceConverter.toString((org.apache.camel.spi.Resource) value, camelContext);
             }
             if (value instanceof char[]) {
                 return org.apache.camel.converter.ObjectConverter.fromCharArray((char[]) value);
@@ -664,10 +664,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.nio.ByteBuffer.class) {
                 return this;
             }
-            if (from == org.apache.camel.spi.Resource.class) {
+            if (from == java.time.Duration.class) {
                 return this;
             }
-            if (from == java.time.Duration.class) {
+            if (from == org.apache.camel.spi.Resource.class) {
                 return this;
             }
             if (from == char[].class) {
