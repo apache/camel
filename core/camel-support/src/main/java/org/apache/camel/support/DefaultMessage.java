@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.HeadersMapFactory;
 
@@ -104,82 +105,25 @@ public class DefaultMessage extends MessageSupport {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Class<T> type) {
-        Object value = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            value = headers.get(name);
-        }
-        if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class == type) {
-                return (T) Boolean.FALSE;
-            }
-            return null;
-        }
-
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
-        if (type.isInstance(value)) {
-            return (T) value;
-        }
-
-        Exchange e = getExchange();
-        if (e != null) {
-            return typeConverter.convertTo(type, e, value);
-        } else {
-            return typeConverter.convertTo(type, value);
-        }
+        Object value = getHeader(name);
+        return convertValueToType(value, type);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Object defaultValue, Class<T> type) {
-        Object value = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            value = headers.get(name);
-        }
-        if (value == null) {
-            value = defaultValue;
-        }
-        if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class == type) {
-                return (T) Boolean.FALSE;
-            }
-            return null;
-        }
-
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
-        if (type.isInstance(value)) {
-            return (T) value;
-        }
-
-        Exchange e = getExchange();
-        if (e != null) {
-            return typeConverter.convertTo(type, e, value);
-        } else {
-            return typeConverter.convertTo(type, value);
-        }
+        Object value = getHeader(name, defaultValue);
+        return convertValueToType(value, type);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Supplier<Object> defaultValueSupplier, Class<T> type) {
         Object value = getHeader(name, defaultValueSupplier);
+        return convertValueToType(value, type);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T convertValueToType(Object value, Class<T> type) {
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
@@ -195,6 +139,11 @@ public class DefaultMessage extends MessageSupport {
         }
 
         Exchange e = getExchange();
+        // If the value is an expression, evaluate it
+        if (e != null && value instanceof Expression) {
+            return ((Expression) value).evaluate(e, type);
+        }
+
         if (e != null) {
             return typeConverter.convertTo(type, e, value);
         } else {
