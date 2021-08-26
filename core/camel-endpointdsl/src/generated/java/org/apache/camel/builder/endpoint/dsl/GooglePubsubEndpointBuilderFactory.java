@@ -76,41 +76,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use Credentials when interacting with PubSub service (no
-         * authentication is required when using emulator).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param authenticate the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder authenticate(
-                boolean authenticate) {
-            doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
-         * Use Credentials when interacting with PubSub service (no
-         * authentication is required when using emulator).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param authenticate the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder authenticate(
-                String authenticate) {
-            doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
          * The number of parallel streams consuming from the subscription.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -200,6 +165,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
          * 
          * @param serviceAccountKey the value to set
@@ -415,41 +381,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use Credentials when interacting with PubSub service (no
-         * authentication is required when using emulator).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param authenticate the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder authenticate(
-                boolean authenticate) {
-            doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
-         * Use Credentials when interacting with PubSub service (no
-         * authentication is required when using emulator).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param authenticate the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder authenticate(
-                String authenticate) {
-            doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
          * The number of parallel streams consuming from the subscription.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -539,6 +470,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
          * 
          * @param serviceAccountKey the value to set
@@ -773,39 +705,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use Credentials when interacting with PubSub service (no
-         * authentication is required when using emulator).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param authenticate the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder authenticate(boolean authenticate) {
-            doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
-         * Use Credentials when interacting with PubSub service (no
-         * authentication is required when using emulator).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param authenticate the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder authenticate(String authenticate) {
-            doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
          * The number of parallel streams consuming from the subscription.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -895,6 +794,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
          * 
          * @param serviceAccountKey the value to set
