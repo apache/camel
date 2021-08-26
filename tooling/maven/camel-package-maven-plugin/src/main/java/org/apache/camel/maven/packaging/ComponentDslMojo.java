@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -100,6 +103,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
     DynamicClassLoader projectClassLoader;
 
+    private static final Map<Path, Lock> locks = new ConcurrentHashMap<>();
+
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
             throws MojoFailureException, MojoExecutionException {
@@ -145,7 +150,13 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             throw new RuntimeException(e.getMessage(), e);
         }
 
-        executeComponent(files);
+        Lock lock = locks.computeIfAbsent(root, d -> new ReentrantLock());
+        lock.lock();
+        try {
+            executeComponent(files);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
