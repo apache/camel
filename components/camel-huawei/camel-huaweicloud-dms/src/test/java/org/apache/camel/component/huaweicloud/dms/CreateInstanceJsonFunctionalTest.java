@@ -63,6 +63,8 @@ public class CreateInstanceJsonFunctionalTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);
 
+        // new Kafka instance options: https://support.huaweicloud.com/en-us/api-kafka/kafka-api-180514002.html
+        // new RabbitMQ instance options: https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514002.html
         String sampleBody = "{" +
                             "\"name\":\"" + "replace_with_instance_information" + "\"," +
                             "\"description\":\"" + "replace_with_instance_information" + "\"," +

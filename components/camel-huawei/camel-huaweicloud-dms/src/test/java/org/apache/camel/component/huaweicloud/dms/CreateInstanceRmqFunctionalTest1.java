@@ -34,6 +34,7 @@ public class CreateInstanceRmqFunctionalTest1 extends CamelTestSupport {
     private static final String PROJECT_ID = "replace_this_with_project_id";
     private static final String REGION = "replace_this_with_region";
 
+    // new RabbitMQ instance options: https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514002.html
     private static final String NAME = "replace_this_with_name";
     private static final String ENGINE_VERSION = "replace_this_with_engine_version";
     private static final String STORAGE_SPACE = "replace_this_with_storage_space";

@@ -67,6 +67,8 @@ public class UpdateInstancePojoFunctionalTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);
 
+        // Kafka instance options: https://support.huaweicloud.com/en-us/api-kafka/kafka-api-180514004.html
+        // RabbitMQ instance options: https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514004.html
         UpdateInstanceRequestBody sampleBody = new UpdateInstanceRequestBody()
                 .withName("replace_with_new_information")
                 .withDescription("replace_with_new_information")
