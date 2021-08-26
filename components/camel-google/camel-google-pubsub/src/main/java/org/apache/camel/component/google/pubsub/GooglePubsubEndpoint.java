@@ -55,10 +55,14 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String destinationName;
 
+    @UriParam(label = "common", name = "authenticate",
+              description = "Use Credentials when interacting with PubSub service (no authentication is required when using emulator).",
+              defaultValue = "true")
+    private boolean authenticate = true;
+
     @UriParam(label = "common",
               description = "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
-    @Metadata(required = true)
     private String serviceAccountKey;
 
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
@@ -165,6 +169,14 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     public void setLoggerId(String loggerId) {
         this.loggerId = loggerId;
+    }
+
+    public boolean isAuthenticate() {
+        return authenticate;
+    }
+
+    public void setAuthenticate(boolean authenticate) {
+        this.authenticate = authenticate;
     }
 
     public String getServiceAccountKey() {

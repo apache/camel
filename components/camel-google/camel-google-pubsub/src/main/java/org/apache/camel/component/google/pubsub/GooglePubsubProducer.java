@@ -84,7 +84,7 @@ public class GooglePubsubProducer extends DefaultProducer {
         GooglePubsubEndpoint endpoint = (GooglePubsubEndpoint) getEndpoint();
         String topicName = String.format("projects/%s/topics/%s", endpoint.getProjectId(), endpoint.getDestinationName());
 
-        Publisher publisher = endpoint.getComponent().getPublisher(topicName, endpoint, endpoint.getServiceAccountKey());
+        Publisher publisher = endpoint.getComponent().getPublisher(topicName, endpoint);
 
         Object body = exchange.getIn().getBody();
         ByteString byteString;
