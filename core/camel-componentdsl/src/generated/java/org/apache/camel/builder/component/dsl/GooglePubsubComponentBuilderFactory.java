@@ -51,6 +51,22 @@ public interface GooglePubsubComponentBuilderFactory {
             extends
                 ComponentBuilder<GooglePubsubComponent> {
         /**
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param authenticate the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubComponentBuilder authenticate(boolean authenticate) {
+            doSetProperty("authenticate", authenticate);
+            return this;
+        }
+        /**
          * Endpoint to use with local Pub/Sub emulator.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -212,6 +228,7 @@ public interface GooglePubsubComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "authenticate": ((GooglePubsubComponent) component).setAuthenticate((boolean) value); return true;
             case "endpoint": ((GooglePubsubComponent) component).setEndpoint((java.lang.String) value); return true;
             case "serviceAccountKey": ((GooglePubsubComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GooglePubsubComponent) component).setBridgeErrorHandler((boolean) value); return true;
