@@ -458,12 +458,10 @@ public final class DefaultConfigurationConfigurer {
         if (serviceRegistries != null && !serviceRegistries.isEmpty()) {
             for (Map.Entry<String, ServiceRegistry> entry : serviceRegistries.entrySet()) {
                 ServiceRegistry service = entry.getValue();
-
                 if (service.getId() == null) {
                     service.setGeneratedId(camelContext.getUuidGenerator().generateUuid());
                 }
-
-                LOG.info("Using ServiceRegistry with id: {} and implementation: {}", service.getId(), service);
+                LOG.info("Adding Camel Cloud ServiceRegistry with id: {} and implementation: {}", service.getId(), service);
                 camelContext.addService(service);
             }
         }
