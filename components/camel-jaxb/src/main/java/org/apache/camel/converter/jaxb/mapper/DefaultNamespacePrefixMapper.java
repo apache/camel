@@ -22,9 +22,9 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import org.apache.camel.converter.jaxb.JaxbNamespacePrefixMapper;
 
 /**
- * A namespace prefix mapper which uses JAXB-RI 2.1 or better from SUN.
+ * A namespace prefix mapper which overrides SUN JAXB-RI to allow Camel to control the prefixes
  */
-public class SunJaxb21NamespacePrefixMapper extends NamespacePrefixMapper implements JaxbNamespacePrefixMapper {
+public class DefaultNamespacePrefixMapper extends NamespacePrefixMapper implements JaxbNamespacePrefixMapper {
 
     private Map<String, String> namespaces;
 
