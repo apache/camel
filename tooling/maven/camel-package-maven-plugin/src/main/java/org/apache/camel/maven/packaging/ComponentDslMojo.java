@@ -59,6 +59,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 @Mojo(name = "generate-component-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ComponentDslMojo extends AbstractGeneratorMojo {
+    private static final Map<Path, Lock> LOCKS = new ConcurrentHashMap<>();
     /**
      * The project build directory
      */
@@ -102,8 +103,6 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     protected String componentsDslFactoriesPackageName;
 
     DynamicClassLoader projectClassLoader;
-
-    private static final Map<Path, Lock> locks = new ConcurrentHashMap<>();
 
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
@@ -150,7 +149,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             throw new RuntimeException(e.getMessage(), e);
         }
 
-        Lock lock = locks.computeIfAbsent(root, d -> new ReentrantLock());
+        Lock lock = LOCKS.computeIfAbsent(root, d -> new ReentrantLock());
         lock.lock();
         try {
             executeComponent(files);
