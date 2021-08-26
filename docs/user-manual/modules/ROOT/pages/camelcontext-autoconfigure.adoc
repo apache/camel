@@ -11,7 +11,7 @@ to ensure the configuration is similar on these runtimes.
 
 The auto configuration is executed in several steps:
 
-1. Configure `CamelContext` (and more, such as components) from xref:properties-component[properties] such as `application.properties|yaml`
+1. Configure `CamelContext` (and more such as components) from xref:components::properties-component.adoc[properties] from external sources like `application.properties|yaml`
 2. Configure optional services that has been registering in the xref:registry.adoc[Registry]
 
 === Auto configuration of Properties
