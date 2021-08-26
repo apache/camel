@@ -162,6 +162,36 @@ with the following path and query parameters:
 
 |`CamelHwCloudDmsInstanceId` |`String` | Instance ID to invoke operation on
 
+|`CamelHwCloudDmsName` |`String` | The name of the instance for creating and updating an instance
+
+|`CamelHwCloudDmsEngineVersion` |`String` | The version of the message engine
+
+|`CamelHwCloudDmsSpecification` |`String` | The baseline bandwidth of a Kafka instance
+
+|`CamelHwCloudDmsStorageSpace` |`int` | The message storage space
+
+|`CamelHwCloudDmsPartitionNum` |`int` | The maximum number of partitions in a Kafka instance
+
+|`CamelHwCloudDmsAccessUser` |`String` | The username of a RabbitMQ instance
+
+|`CamelHwCloudDmsPassword` |`String` | The password of a RabbitMQ instance
+
+|`CamelHwCloudDmsVpcId` |`String` | The VPC ID
+
+|`CamelHwCloudDmsSecurityGroupId` |`String` | The security group which the instance belongs to
+
+|`CamelHwCloudDmsSubnetId` |`String` | The subnet ID
+
+|`CamelHwCloudDmsAvailableZones` |`List<String>` | The ID of an available zone
+
+|`CamelHwCloudDmsProductId` |`String` | The product ID
+
+|`CamelHwCloudDmsKafkaManagerUser` |`String` | The username for logging in to the Kafka Manager
+
+|`CamelHwCloudDmsKafkaManagerPassword` |`String` | The password for logging in to the Kafka Manager
+
+|`CamelHwCloudDmsStorageSpecCode` |`String` | The storage I/O specification
+
 |=======================================================================
 
 If any of the above properties are set, they will override their corresponding query parameter.
@@ -186,6 +216,40 @@ If any of the above properties are set, they will override their corresponding q
 - listInstances
 - queryInstance
 - updateInstance
+
+=== Create Instance
+To create an instance, you can pass the parameters through the endpoint, the exchange properties, and the exchange body as a CreateInstanceRequestBody object or a valid JSON String representation of it. Refer to this for the https://support.huaweicloud.com/en-us/api-kafka/kafka-api-180514002.html[Kafka parameters] and the https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514002.html[RabbitMQ parameters]. If you choose to pass these parameters through the endpoint or through exchange properties, you can only input the mandatory parameters shown in those links. If you would like to have access to all the parameters, you must pass a CreateInstanceRequestBody object or a valid JSON String representation of it through the exchange body, as shown below:
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new CreateInstanceRequestBody().withName("new-instance").withDescription("description").with*) // add remaining options
+ .to("hwcloud-dms:createInstance?region=cn-north-4&authenticationKey=********&secretKey=********&projectId=*******")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"name\":\"new-instance\",\"description\":\"description\"}") // add remaining options
+ .to("hwcloud-dms:createInstance?region=cn-north-4&authenticationKey=********&secretKey=********&projectId=*******")
+----
+
+=== Update Instance
+To update an instance, you must pass the parameters through the exchange body as an UpdateInstanceRequestBody or a valid JSON String representation of it. Refer to this for the https://support.huaweicloud.com/en-us/api-kafka/kafka-api-180514004.html[Kafka parameters] and the https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514004.html[RabbitMQ parameters]. An example of how to do this is shown below:
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new UpdateInstanceRequestBody().withName("new-instance").withDescription("description").with*) // add remaining options
+ .to("hwcloud-dms:updateInstance?instanceId=******&region=cn-north-4&authenticationKey=********&secretKey=********&projectId=*******")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"name\":\"new-instance\",\"description\":\"description\"}") // add remaining options
+ .to("hwcloud-dms:updateInstance?instanceId=******&region=cn-north-4&authenticationKey=********&secretKey=********&projectId=*******")
+----
 
 == Using ServiceKey Configuration Bean
 
