@@ -80,7 +80,9 @@ The following two sections lists all the options, firstly for the component foll
 // component options: START
 == Component Options
 
+
 The Google Pubsub component supports 9 options, which are listed below.
+
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
