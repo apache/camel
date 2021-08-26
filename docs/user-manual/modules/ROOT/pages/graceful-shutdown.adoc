@@ -173,12 +173,6 @@ You can implement your own strategy to control the shutdown by
 implementing the `org.apache.camel.spi.ShutdownStrategy` and the set it
 on the `CamelContext` using the `setShutdownStrategy` method.
 
-When using Spring XML you then just define a spring bean which
-implements the `org.apache.camel.spi.ShutdownStrategy` and Camel will
-look it up at startup and use it instead of its default. See more at
-xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
-configuration of CamelContext using Spring].
-
 === ShutdownAware
 
 The interface `org.apache.camel.spi.ShutdownAware` is an optional

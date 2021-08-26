@@ -12,13 +12,12 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nagios.ado
 
 *{component-header}*
 
-The xref:nagios-component.adoc[Nagios] component allows you to send passive checks
-to http://nagios.org[Nagios].
+The xref:nagios-component.adoc[Nagios] component allows you to send passive checks to http://nagios.org[Nagios].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
@@ -35,10 +34,9 @@ nagios://host[:port][?Options]
 ------------------------------
 
 Camel provides two abilities with the xref:nagios-component.adoc[Nagios]
-component. You can send passive check messages by sending a message to
-its endpoint. +
- Camel also provides a EventNotifer which allows
-you to send notifications to Nagios.
+component.
+You can send passive check messages by sending a message to its endpoint. +
+Camel also provides a EventNotifer which allows you to send notifications to Nagios.
 
 
 // component-configure options: START
@@ -137,10 +135,9 @@ with the following path and query parameters:
 
 == Sending message examples
 
-You can send a message to Nagios where the message payload contains the
-message. By default it will be `OK` level and use the
-CamelContext name as the service name. You can
-overrule these values using headers as shown above.
+You can send a message to Nagios where the message payload contains the message.
+By default it will be `OK` level and use the CamelContext name as the service name.
+You can overrule these values using headers as shown above.
 
 For example we send the `Hello Nagios` message to Nagios as follows:
 
@@ -162,11 +159,11 @@ To send a `CRITICAL` message you can send the headers such as:
         template.sendBodyAndHeaders("direct:start", "Hello Nagios", headers);
 -----------------------------------------------------------------------------
 
-== Using `NagiosEventNotifer`
+== Using NagiosEventNotifer
 
 The xref:nagios-component.adoc[Nagios] component also provides an
-EventNotifer which you can use to send events to
-Nagios. For example we can enable this from Java as follows:
+`EventNotifer` which you can use to send events to Nagios.
+For example we can enable this from Java as follows:
 
 [source,java]
 -------------------------------------------------------------------
@@ -180,10 +177,18 @@ Nagios. For example we can enable this from Java as follows:
         return context;
 -------------------------------------------------------------------
 
-In Spring XML its just a matter of defining a Spring bean with the type
-`EventNotifier` and Camel will pick it up as documented here:
-xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
-configuration of CamelContext using Spring].
+In Camel on Spring XML you can declare a `<bean>` which Camel will automatic pickup and use.
 
+[source,xml]
+----
+<beans>
+  <!-- setup to use nagios event notifier -->
+  <bean id="nagiosEventNotifier" class="org.apache.camel.component.nagios.NagiosEventNotifier"/>
+
+  <camelContext>
+     ...
+  </camelContext>
+</beans>
+----
 
 include::{page-component-version}@camel-spring-boot::page$nagios-starter.adoc[]

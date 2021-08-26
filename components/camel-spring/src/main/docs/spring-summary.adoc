@@ -91,11 +91,9 @@ inline namespace declaration:
 </camel:camelContext>
 ----
 
-=== Advanced configuration using Spring
+== Additional configuration of Spring XML
 
-See more details at
-xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
-configuration of CamelContext using Spring]
+See more details at xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Camel Spring XML Auto Configuration].
 
 === Using Java Code
 

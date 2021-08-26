@@ -1,4 +1,4 @@
-[[SpringXML-SpringXM]]
+[[SpringXML-SpringXML]]
 = Spring XML
 
 Using Camel with Spring XML files, is a classic way, of using XML DSL with Camel.
@@ -75,9 +75,6 @@ eg (`activemq`). Then you can refer to the component using `activemq:destination
 
 This works by the Camel lazily fetching components from the Spring context for the scheme name you use for Endpoint xref:uris.adoc[URI]s.
 
-
-
-
 == Using Java DSL with Spring XML files
 
 You can use Java Code to define your xref:route-builder.adoc[RouteBuilder] implementations. These can be defined as beans in spring and then referenced in your camel context e.g.
@@ -85,7 +82,7 @@ You can use Java Code to define your xref:route-builder.adoc[RouteBuilder] imple
 [source,xml]
 --------------------------------------------------------------------------------------------------------------
 <camelContext xmlns="http://camel.apache.org/schema/spring">
-  <routeBuilder ref="myBuilder" />
+  <routeBuilder ref="myBuilder"/>
 </camelContext>
 
 <bean id="myBuilder" class="org.apache.camel.spring.example.test1.MyRouteBuilder"/>
@@ -158,8 +155,6 @@ public class MyRoute extends RouteBuilder {
 
 You can also use the ANT style for inclusion and exclusion, as mentioned above in the package scan section.
 
-
-
 == Additional configuration of Spring XML
 
-See more details at xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced configuration of CamelContext using Spring].
+See more details at xref:advanced-configuration-of-camelcontext-using-spring.adoc[Camel Spring XML Auto Configuration].
