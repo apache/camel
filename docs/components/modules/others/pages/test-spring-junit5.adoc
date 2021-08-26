@@ -130,6 +130,28 @@ This XML file is Spring XML file as shown:
 This approach supports both Camel and Spring annotations, such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
 However, it does NOT have feature parity with `org.apache.camel.test.junit5.CamelTestSupport`.
 
+== Camel test annotations
+
+The following annotations can be used with `camel-spring-junit5` unit testing.
+
+[width="100%",cols="1m,4",options="header",]
+|=======================================================================
+|Annotation |Description
+| @CamelSpringBootTest | Used for testing Camel with Spring Boot
+| @CamelSpringTest | Used for testing Camel with classic Spring XML (not Spring Boot)
+| @DisableJmx | Used for disabling JMX
+| @EnableRouteCoverage | Enables dumping route coverage statistic. The route coverage status is written as xml files in the `target/camel-route-coverage` directory after the test has finished. See more information at xref:latest@manual::camel-report-maven-plugin.adoc[Camel Maven Report Plugin].
+| @ExcludeRoutes | Indicates if certain route builder classes should be excluded from package scan discovery
+| @MockEndpoints | Auto-mocking of endpoints whose URIs match the provided filter. For more information see xref:latest@manual::advice-with.adoc[Advice With].
+| @MockEndpointsAndSkip | Auto-mocking of endpoints whose URIs match the provided filter with the added provision that the endpoints are also skipped. For more information see xref:latest@manual::advice-with.adoc[Advice With].
+| @ProvidesBreakpoint | Indicates that the annotated method returns a `Breakpoint` for use in the test. Useful for intercepting traffic to all endpoints or simply for setting a break point in an IDE for debugging. The method must be `public static`, take no arguments, and return `Breakpoint`.
+| @ShutdownTimeout | Timeout to use for xref:latest@manual::graceful-shutdown.adoc[shutdown]. The default is 10 seconds.
+| @UseAdviceWith | To enable testing with xref:latest@manual::advice-with.adoc[Advice With].
+| @UseOverridePropertiesWithPropertiesComponent | To use custom `Properties` with the xref:ROOT:properties-component.adoc[Properties] component. The annotated method must be `public` and return `Properties`.
+|=======================================================================
+
+
+
 == Migrating Camel Spring Tests from JUnit 4 to JUnit 5
 
 Find below some hints to help in migrating Camel Spring tests from JUnit 4 to JUnit 5.
