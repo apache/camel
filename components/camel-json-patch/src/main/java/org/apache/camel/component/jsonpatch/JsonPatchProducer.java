@@ -49,7 +49,6 @@ public class JsonPatchProducer extends DefaultProducer {
         JsonNode input = objectMapper.readTree(exchange.getIn().getBody(String.class));
         JsonNode result = patch.apply(input);
         exchange.getMessage().setBody(result.toString());
-
     }
 
 }

@@ -14,7 +14,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/json-patch
 
 *{component-header}*
 
-The Jslt component allows you to process a JSON messages using an
+The JsonPatch component allows you to process a JSON messages using an
 https://github.com/schibsted/jslt[JSLT] expression. This can be
 ideal when doing JSON to JSON transformation or querying data.
 
