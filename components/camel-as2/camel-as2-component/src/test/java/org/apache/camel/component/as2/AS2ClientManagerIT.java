@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
@@ -97,6 +98,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -609,7 +611,12 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     }
 
     @Test
-    public void asyncMDNTest() throws Exception {
+    public void asyncMDNTest() {
+        assertDoesNotThrow(() -> runAsyncMDNTest());
+
+    }
+
+    private void runAsyncMDNTest() throws CamelException, HttpException {
         AS2AsynchronousMDNManager mdnManager = new AS2AsynchronousMDNManager(
                 AS2_VERSION, ORIGIN_SERVER_NAME, SERVER_FQDN,
                 certList.toArray(new X509Certificate[0]), signingKP.getPrivate());
@@ -651,7 +658,6 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         // Send MDN
         @SuppressWarnings("unused")
         HttpCoreContext httpContext = mdnManager.send(mdn, RECIPIENT_DELIVERY_ADDRESS);
-
     }
 
     @BeforeAll

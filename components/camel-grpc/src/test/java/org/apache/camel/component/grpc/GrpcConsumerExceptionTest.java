@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -61,7 +62,7 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExceptionExpected() throws Exception {
+    public void testExceptionExpected() {
         LOG.info("gRPC expected exception test start");
         PingRequest pingRequest
                 = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
@@ -69,8 +70,12 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExchangeExceptionHandling() throws Exception {
+    public void testExchangeExceptionHandling() {
         LOG.info("gRPC exchange exception handling test start");
+        assertDoesNotThrow(() -> runExchangeExceptionHandlingTest());
+    }
+
+    private void runExchangeExceptionHandlingTest() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
         PingRequest pingRequest
                 = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();

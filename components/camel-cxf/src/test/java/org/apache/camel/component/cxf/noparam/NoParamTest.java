@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class NoParamTest extends CamelSpringTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoParamTest.class);
@@ -42,8 +44,9 @@ public class NoParamTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testNullBodoy() throws Exception {
+    public void testNullBody() throws Exception {
         Object body = template.sendBody("direct:noParam", ExchangePattern.InOut, null);
+        assertNotNull(body);
         LOGGER.error(body.toString());
     }
 

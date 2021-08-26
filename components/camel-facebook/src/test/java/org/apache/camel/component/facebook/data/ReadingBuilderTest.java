@@ -26,6 +26,7 @@ import facebook4j.Reading;
 import org.apache.camel.component.facebook.FacebookConstants;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -61,7 +62,11 @@ public class ReadingBuilderTest {
     }
 
     @Test
-    public void testSetProperties() throws Exception {
+    public void testSetProperties() {
+        assertDoesNotThrow(() -> setProperties());
+    }
+
+    private void setProperties() {
         final Reading reading = new Reading();
 
         Map<String, Object> properties = new HashMap<>();

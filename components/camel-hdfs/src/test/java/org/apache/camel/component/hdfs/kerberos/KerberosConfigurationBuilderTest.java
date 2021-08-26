@@ -19,6 +19,7 @@ package org.apache.camel.component.hdfs.kerberos;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.hdfs.HdfsTestSupport.CWD;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,14 +28,12 @@ public class KerberosConfigurationBuilderTest {
 
     @Test
     public void withKerberosConfiguration() {
-        // given
+        assertDoesNotThrow(() -> prepareKerberosConfiguration());
+    }
+
+    private void prepareKerberosConfiguration() {
         String kerberosConfigFileLocation = CWD.getAbsolutePath() + "/src/test/resources/kerberos/test-kerb5.conf";
-
-        // when
         KerberosConfigurationBuilder.setKerberosConfigFile(kerberosConfigFileLocation);
-
-        // then
-
     }
 
     @Test

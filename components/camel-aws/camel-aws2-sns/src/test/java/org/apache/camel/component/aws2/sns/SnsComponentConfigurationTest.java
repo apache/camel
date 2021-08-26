@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.sns;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
@@ -227,7 +228,8 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonSNSClient", mock);
 
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
+        Endpoint ep = component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
+        assertNotNull(ep, "Could not create the endpoint");
     }
 
     @Test

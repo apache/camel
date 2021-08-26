@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.lambda;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
@@ -68,7 +69,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
+    public void createEndpointWithoutSecretKeyConfiguration() {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&accessKey=xxx");
@@ -80,7 +81,10 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient");
+        Endpoint ep
+                = component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient");
+
+        assertNotNull(ep, "The endpoint could not be created");
     }
 
     @Test

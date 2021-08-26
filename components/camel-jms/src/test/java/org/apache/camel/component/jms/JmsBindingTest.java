@@ -31,6 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -66,7 +67,7 @@ public class JmsBindingTest {
         Exchange exchange = camelContext.getEndpoint("jms:queue:foo").createExchange();
         exchange.getIn().setBody("test");
         exchange.getIn().setHeader("JMSCorrelationID", null);
-        testBindingWithoutEndpoint.appendJmsProperties(message, exchange);
+        assertDoesNotThrow(() -> testBindingWithoutEndpoint.appendJmsProperties(message, exchange));
     }
 
     @Test

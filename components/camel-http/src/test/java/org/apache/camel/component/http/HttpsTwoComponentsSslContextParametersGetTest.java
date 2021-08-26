@@ -27,6 +27,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest {
 
     private int port2;
@@ -74,7 +76,11 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
     }
 
     @Test
-    public void httpsTwoDifferentSSLContextNotSupported() throws Exception {
+    public void httpsTwoDifferentSSLContextNotSupported() {
+        assertDoesNotThrow(() -> runTest());
+    }
+
+    private void runTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

@@ -23,6 +23,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSupport {
@@ -72,14 +73,16 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
     }
 
     @Test
-    public void locallyInitializedHazelcastInstanceAdd() throws Exception {
+    public void locallyInitializedHazelcastInstanceAdd() {
+        assertDoesNotThrow(() -> runLocallyInitializedHazelcastInstanceAdd());
+    }
+
+    private void runLocallyInitializedHazelcastInstanceAdd() throws Exception {
         HazelcastAggregationRepository repo = new HazelcastAggregationRepository("hzRepoMap");
         try {
             repo.doStart();
             Exchange ex = new DefaultExchange(context());
             repo.add(context(), "somedefaultkey", ex);
-            //} catch (Throwable e) {
-            //fail(e.getMessage());
         } finally {
             repo.doStop();
         }

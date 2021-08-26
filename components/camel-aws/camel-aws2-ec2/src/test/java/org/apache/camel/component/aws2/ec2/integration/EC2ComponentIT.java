@@ -19,59 +19,61 @@ package org.apache.camel.component.aws2.ec2.integration;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.ec2.AWS2EC2Constants;
 import org.apache.camel.component.aws2.ec2.AWS2EC2Operations;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class EC2ComponentIT extends Aws2EC2Base {
 
     @Test
     public void createAndRunInstancesTest() {
+        assertDoesNotThrow(() -> execCreateAndRun());
+    }
 
-        template.send("direct:createAndRun", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "ami-fd65ba94");
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
-            }
+    private void execCreateAndRun() {
+        template.send("direct:createAndRun", exchange -> {
+            exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "ami-fd65ba94");
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
         });
     }
 
     @Test
     public void createAndRunInstancesWithSecurityGroupsTest() {
+        assertDoesNotThrow(() -> execCreateAndRunWithSecurityGroups());
+    }
 
-        template.send("direct:createAndRun", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "ami-fd65ba94");
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
-                Collection<String> secGroups = new ArrayList<>();
-                secGroups.add("secgroup-1");
-                secGroups.add("secgroup-2");
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_SECURITY_GROUPS, secGroups);
-            }
+    private void execCreateAndRunWithSecurityGroups() {
+        template.send("direct:createAndRun", exchange -> {
+            exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "ami-fd65ba94");
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
+            Collection<String> secGroups = new ArrayList<>();
+            secGroups.add("secgroup-1");
+            secGroups.add("secgroup-2");
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_SECURITY_GROUPS, secGroups);
         });
     }
 
     @Test
-    public void ec2CreateAndRunTestWithKeyPair() throws Exception {
+    public void ec2CreateAndRunTestWithKeyPair() {
+        assertDoesNotThrow(() -> execCreateAndRunWithKeyPair());
+    }
 
-        template.request("direct:createAndRun", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(AWS2EC2Constants.OPERATION, AWS2EC2Operations.createAndRunInstances);
-                exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "ami-fd65ba94");
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_KEY_PAIR, "keypair-1");
-            }
+    private void execCreateAndRunWithKeyPair() {
+        template.request("direct:createAndRun", exchange -> {
+            exchange.getIn().setHeader(AWS2EC2Constants.OPERATION, AWS2EC2Operations.createAndRunInstances);
+            exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "ami-fd65ba94");
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
+            exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_KEY_PAIR, "keypair-1");
         });
     }
 
