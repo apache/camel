@@ -458,10 +458,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         String pfqn;
         boolean hasSuper;
-        if (parentData != null) {
+        if (parentData != null
+                && loadClass(componentModel.getJavaType()).getSuperclass() == loadClass(parentData.getJavaType())) {
             try {
                 pfqn = classElement.getSuperclass().getName() + "Configurer";
-                loadClass(pfqn);
                 hasSuper = true;
             } catch (NoClassDefFoundError e) {
                 pfqn = "org.apache.camel.support.component.PropertyConfigurerSupport";

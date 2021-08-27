@@ -29,6 +29,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.cloud.ServiceLoadBalancerFactory;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -37,6 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "routing,cloud,load-balancing")
 @XmlRootElement(name = "loadBalancerConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer
 public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConfiguration
         implements ServiceLoadBalancerFactory {
     @XmlTransient

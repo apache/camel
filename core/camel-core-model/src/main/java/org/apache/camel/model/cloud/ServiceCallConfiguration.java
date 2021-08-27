@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -39,6 +40,7 @@ import org.apache.camel.support.CamelContextHelper;
 
 @XmlType(name = "serviceCallConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer
 public abstract class ServiceCallConfiguration extends IdentifiedType {
     @XmlElement(name = "properties")
     @Metadata(label = "advanced")

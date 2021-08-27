@@ -132,7 +132,7 @@
                             <!-- update names in camel-main -->
                             <goal>update-main-helper</goal>
                         </goals>
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                     </execution>
                 </executions>
             </plugin>

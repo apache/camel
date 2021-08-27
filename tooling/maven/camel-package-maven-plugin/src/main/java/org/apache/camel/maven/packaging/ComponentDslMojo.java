@@ -59,7 +59,9 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 @Mojo(name = "generate-component-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ComponentDslMojo extends AbstractGeneratorMojo {
+
     private static final Map<Path, Lock> LOCKS = new ConcurrentHashMap<>();
+
     /**
      * The project build directory
      */

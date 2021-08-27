@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -82,6 +85,8 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private static final Map<String, Class<?>> PRIMITIVEMAP;
+
+    private static final Map<Path, Lock> LOCKS = new ConcurrentHashMap<>();
 
     static {
         PRIMITIVEMAP = new HashMap<>();
@@ -195,7 +200,13 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
 
         // generate component endpoint DSL files and write them
-        executeComponent(files);
+        Lock lock = LOCKS.computeIfAbsent(root, d -> new ReentrantLock());
+        lock.lock();
+        try {
+            executeComponent(files);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private static String loadJson(File file) {
