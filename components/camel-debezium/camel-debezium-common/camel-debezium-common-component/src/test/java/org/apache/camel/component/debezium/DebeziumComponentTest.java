@@ -53,4 +53,18 @@ public class DebeziumComponentTest extends CamelTestSupport {
         assertEquals("test", endpoint.getConfiguration().getAdditionalProperties().get("extra.2"));
         assertEquals("test.extra.3", endpoint.getConfiguration().getAdditionalProperties().get("extra.3"));
     }
+
+    @Test
+    void testIfSetsKameletsProperties() throws Exception {
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/debezium/kamelets.properties");
+        final DebeziumTestComponent component = new DebeziumTestComponent(context);
+        final FileConnectorEmbeddedDebeziumConfiguration configuration = new FileConnectorEmbeddedDebeziumConfiguration();
+        configuration.setOffsetStorageFileName("/test");
+        configuration.setTestFilePath(Paths.get("."));
+        configuration.setTopicConfig("test_conf");
+        component.setConfiguration(configuration);
+
+        DebeziumTestEndpoint endpoint = (DebeziumTestEndpoint) component.createEndpoint("debezium-dummy", "test_name", null);
+        assertEquals("test", endpoint.getConfiguration().getAdditionalProperties().get("extra.2"));
+    }
 }

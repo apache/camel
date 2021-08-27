@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.debezium;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -30,6 +35,9 @@ import org.apache.camel.util.PropertiesHelper;
  * Base class for all debezium components
  */
 public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration> extends DefaultComponent {
+
+    private static final String PREFIX_CAMEL_KAMELET = "camel.kamelet.";
+    private static final Pattern KAMELET_PATTERN = Pattern.compile(PREFIX_CAMEL_KAMELET + "(.*?)\\.source\\.(.*?)");
 
     protected DebeziumComponent() {
     }
@@ -53,6 +61,12 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
         if (!ObjectHelper.isEmpty(remaining)) {
             configuration.setName(remaining);
         }
+
+        if (parameters == null) {
+            parameters = new HashMap<>();
+        }
+        // read kamelets propertiesComponentDslMojo
+        extractKameletProperties(getCamelContext(), parameters);
 
         DebeziumEndpoint endpoint = initializeDebeziumEndpoint(uri, configuration);
         setProperties(endpoint, parameters);
@@ -81,4 +95,18 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
 
     @Metadata(description = "Component configuration")
     public abstract void setConfiguration(C configuration);
+
+    private void extractKameletProperties(CamelContext context, Map<String, Object> parameters) {
+        // How to get the kamelet name by defined ?
+        // camel.kamelet.[kameletName].source.key = val
+        PropertiesComponent pc = context.getPropertiesComponent();
+        Properties prefixed = pc.loadProperties(name -> name.startsWith(PREFIX_CAMEL_KAMELET));
+        for (String name : prefixed.stringPropertyNames()) {
+            Matcher matcher = KAMELET_PATTERN.matcher(name);
+            if (matcher.find()) {
+                String kameletKey = name.substring(matcher.group().length());
+                parameters.putIfAbsent(kameletKey, prefixed.getProperty(name));
+            }
+        }
+    }
 }
