@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
@@ -214,6 +215,7 @@ public final class EntityParser {
             }
 
             MimeEntity entity = parseEntityBody(inbuffer, null, entityContentType, entityContentTransferEncoding, "", headers);
+            Objects.requireNonNull(entity, "Trying to parse entity body resulted in a null MimeEntity");
             entity.removeAllHeaders();
             entity.setHeaders(headers);
 
