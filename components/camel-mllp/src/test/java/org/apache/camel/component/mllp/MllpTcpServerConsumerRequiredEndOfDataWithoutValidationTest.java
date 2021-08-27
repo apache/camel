@@ -22,6 +22,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest
@@ -39,33 +40,33 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest
 
     @Override
     @Test
-    public void testInvalidMessage() throws Exception {
-        runNthInvalidMessage();
+    public void testInvalidMessage() {
+        assertDoesNotThrow(() -> runNthInvalidMessage());
     }
 
     @Override
     @Test
-    public void testNthInvalidMessage() throws Exception {
-        runNthInvalidMessage();
+    public void testNthInvalidMessage() {
+        assertDoesNotThrow(() -> runNthInvalidMessage());
     }
 
     @Override
     @Test
-    public void testMessageContainingEmbeddedStartOfBlock() throws Exception {
+    public void testMessageContainingEmbeddedStartOfBlock() {
         expectedCompleteCount = 1;
 
-        runMessageContainingEmbeddedStartOfBlock();
+        assertDoesNotThrow(() -> runMessageContainingEmbeddedStartOfBlock());
     }
 
     @Override
     @Test
-    public void testNthMessageContainingEmbeddedStartOfBlock() throws Exception {
-        runNthMessageContainingEmbeddedStartOfBlock();
+    public void testNthMessageContainingEmbeddedStartOfBlock() {
+        assertDoesNotThrow(() -> runNthMessageContainingEmbeddedStartOfBlock());
     }
 
     @Override
     @Test
-    public void testMessageContainingEmbeddedEndOfBlock() throws Exception {
+    public void testMessageContainingEmbeddedEndOfBlock() {
         setExpectedCounts();
 
         NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
@@ -78,36 +79,36 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest
 
     @Override
     @Test
-    public void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception {
+    public void testInvalidMessageContainingEmbeddedEndOfBlock() {
         expectedInvalidCount = 1;
 
-        runInvalidMessageContainingEmbeddedEndOfBlock();
+        assertDoesNotThrow(() -> runInvalidMessageContainingEmbeddedEndOfBlock());
     }
 
     @Override
     @Test
-    public void testNthMessageContainingEmbeddedEndOfBlock() throws Exception {
+    public void testNthMessageContainingEmbeddedEndOfBlock() {
         expectedInvalidCount = 1;
 
-        runNthMessageContainingEmbeddedEndOfBlock();
+        assertDoesNotThrow(() -> runNthMessageContainingEmbeddedEndOfBlock());
     }
 
     @Override
     @Test
-    public void testInitialMessageWithoutEndOfDataByte() throws Exception {
+    public void testInitialMessageWithoutEndOfDataByte() {
         setExpectedCounts();
 
         mllpClient.setSendEndOfData(false);
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage());
+        assertDoesNotThrow(() -> mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage()));
     }
 
     @Override
     @Test
-    public void testMessageWithoutEndOfDataByte() throws Exception {
+    public void testMessageWithoutEndOfDataByte() {
         expectedCompleteCount = 1;
         expectedInvalidCount = 1;
 
-        runMessageWithoutEndOfDataByte();
+        assertDoesNotThrow(() -> runMessageWithoutEndOfDataByte());
     }
 }

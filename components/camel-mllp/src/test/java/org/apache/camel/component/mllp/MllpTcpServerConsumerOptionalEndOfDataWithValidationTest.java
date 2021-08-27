@@ -22,6 +22,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest
@@ -39,39 +40,39 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest
 
     @Override
     @Test
-    public void testInvalidMessage() throws Exception {
+    public void testInvalidMessage() {
         expectedInvalidCount = 1;
 
-        runInvalidMessage();
+        assertDoesNotThrow(() -> runInvalidMessage());
     }
 
     @Override
     @Test
-    public void testNthInvalidMessage() throws Exception {
+    public void testNthInvalidMessage() {
         expectedInvalidCount = 1;
 
-        runNthInvalidMessage();
+        assertDoesNotThrow(() -> runNthInvalidMessage());
     }
 
     @Override
     @Test
-    public void testMessageContainingEmbeddedStartOfBlock() throws Exception {
+    public void testMessageContainingEmbeddedStartOfBlock() {
         expectedInvalidCount = 1;
 
-        runMessageContainingEmbeddedStartOfBlock();
+        assertDoesNotThrow(() -> runMessageContainingEmbeddedStartOfBlock());
     }
 
     @Override
     @Test
-    public void testNthMessageContainingEmbeddedStartOfBlock() throws Exception {
+    public void testNthMessageContainingEmbeddedStartOfBlock() {
         expectedInvalidCount = 1;
 
-        runNthMessageContainingEmbeddedStartOfBlock();
+        assertDoesNotThrow(() -> runNthMessageContainingEmbeddedStartOfBlock());
     }
 
     @Override
     @Test
-    public void testMessageContainingEmbeddedEndOfBlock() throws Exception {
+    public void testMessageContainingEmbeddedEndOfBlock() {
         expectedInvalidCount = 1;
 
         setExpectedCounts();
@@ -86,25 +87,25 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest
 
     @Override
     @Test
-    public void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception {
+    public void testInvalidMessageContainingEmbeddedEndOfBlock() {
         expectedInvalidCount = 1;
 
-        runInvalidMessageContainingEmbeddedEndOfBlock();
+        assertDoesNotThrow(() -> runInvalidMessageContainingEmbeddedEndOfBlock());
     }
 
     @Override
     @Test
-    public void testNthMessageContainingEmbeddedEndOfBlock() throws Exception {
+    public void testNthMessageContainingEmbeddedEndOfBlock() {
         expectedInvalidCount = 1;
 
-        runNthMessageContainingEmbeddedEndOfBlock();
+        assertDoesNotThrow(() -> runNthMessageContainingEmbeddedEndOfBlock());
     }
 
     @Override
     @Test
-    public void testMessageWithoutEndOfDataByte() throws Exception {
+    public void testMessageWithoutEndOfDataByte() {
         expectedCompleteCount = 1;
 
-        runMessageWithoutEndOfDataByte();
+        assertDoesNotThrow(() -> runMessageWithoutEndOfDataByte());
     }
 }
