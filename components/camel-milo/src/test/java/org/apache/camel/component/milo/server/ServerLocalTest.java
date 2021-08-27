@@ -26,6 +26,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,31 +64,31 @@ public class ServerLocalTest extends CamelTestSupport {
 
     @Test
     public void testAcceptVariantString() {
-        sendBody(MILO_ITEM_1, new Variant("Foo"));
+        Assertions.assertDoesNotThrow(() -> sendBody(MILO_ITEM_1, new Variant("Foo")));
     }
 
     @Test
     public void testAcceptVariantDouble() {
-        sendBody(MILO_ITEM_1, new Variant(0.0));
+        Assertions.assertDoesNotThrow(() -> sendBody(MILO_ITEM_1, new Variant(0.0)));
     }
 
     @Test
     public void testAcceptString() {
-        sendBody(MILO_ITEM_1, "Foo");
+        Assertions.assertDoesNotThrow(() -> sendBody(MILO_ITEM_1, "Foo"));
     }
 
     @Test
     public void testAcceptDouble() {
-        sendBody(MILO_ITEM_1, 0.0);
+        Assertions.assertDoesNotThrow(() -> sendBody(MILO_ITEM_1, 0.0));
     }
 
     @Test
     public void testAcceptDataValueString() {
-        sendBody(MILO_ITEM_1, new DataValue(new Variant("Foo")));
+        Assertions.assertDoesNotThrow(() -> sendBody(MILO_ITEM_1, new DataValue(new Variant("Foo"))));
     }
 
     @Test
     public void testAcceptDataValueDouble() {
-        sendBody(MILO_ITEM_1, new DataValue(new Variant(0.0)));
+        Assertions.assertDoesNotThrow(() -> sendBody(MILO_ITEM_1, new DataValue(new Variant(0.0))));
     }
 }

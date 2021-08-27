@@ -40,10 +40,4 @@ public class BigDecimalFormatFactoryTest {
         assertThat(new BigDecimalFormatFactory().canBuild(wrongClass), is(false));
         assertThat(new BigDecimalFormatFactory().canBuild(hasPattern), is(false));
     }
-
-    @Test
-    public void build() throws Exception {
-
-    }
-
 }

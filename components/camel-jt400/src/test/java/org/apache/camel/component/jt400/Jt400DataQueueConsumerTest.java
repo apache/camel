@@ -17,8 +17,8 @@
 package org.apache.camel.component.jt400;
 
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -88,9 +89,9 @@ public class Jt400DataQueueConsumerTest {
      * Tests whether <code>receive(long)</code> honours the <code>timeout</code> parameter.
      */
     @Test
-    @Timeout(value = TIMEOUT_VALUE + TIMEOUT_TOLERANCE, unit = TimeUnit.MILLISECONDS)
     public void testReceiveLong() {
-        consumer.receive(TIMEOUT_VALUE);
+        assertTimeout(Duration.ofMillis(TIMEOUT_VALUE + TIMEOUT_TOLERANCE),
+                () -> consumer.receive(TIMEOUT_VALUE));
     }
 
     /**

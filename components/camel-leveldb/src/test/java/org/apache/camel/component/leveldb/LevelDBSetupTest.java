@@ -18,6 +18,7 @@
 package org.apache.camel.component.leveldb;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -47,8 +48,12 @@ public class LevelDBSetupTest extends CamelTestSupport {
      */
     @Test
     public void testLevelDBStartWithNoPath() {
+        Assertions.assertDoesNotThrow(() -> runTest("leveldb.dat"));
+    }
+
+    private void runTest(String fileName) {
         levelDBFile = new LevelDBFile();
-        levelDBFile.setFileName("leveldb.dat");
+        levelDBFile.setFileName(fileName);
         levelDBFile.start();
         levelDBFile.stop();
     }
@@ -59,9 +64,6 @@ public class LevelDBSetupTest extends CamelTestSupport {
     @Test
     public void testLevelDBStartWithPath() {
         deleteDirectory("target/data");
-        levelDBFile = new LevelDBFile();
-        levelDBFile.setFileName("target/data/leveldb.dat");
-        levelDBFile.start();
-        levelDBFile.stop();
+        Assertions.assertDoesNotThrow(() -> runTest("target/data/leveldb.dat"));
     }
 }
