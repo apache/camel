@@ -18,6 +18,8 @@ package org.apache.camel.component.mllp;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class MllpTcpClientProducerOptionalEndOfDataWithoutValidationTest
         extends TcpClientProducerEndOfDataAndValidationTestSupport {
     @Override
@@ -32,63 +34,63 @@ public class MllpTcpClientProducerOptionalEndOfDataWithoutValidationTest
 
     @Override
     @Test
-    public void testSendSingleMessageWithoutEndOfData() throws Exception {
+    public void testSendSingleMessageWithoutEndOfData() {
         expectedAACount = 1;
 
-        runSendSingleMessageWithoutEndOfData();
+        assertDoesNotThrow(() -> runSendSingleMessageWithoutEndOfData());
     }
 
     @Override
     @Test
-    public void testSendMultipleMessagesWithoutEndOfDataByte() throws Exception {
+    public void testSendMultipleMessagesWithoutEndOfDataByte() {
         expectedAACount = 3;
 
-        runSendMultipleMessagesWithoutEndOfDataByte();
+        assertDoesNotThrow(() -> runSendMultipleMessagesWithoutEndOfDataByte());
     }
 
     @Override
     @Test
-    public void testEmptyAcknowledgement() throws Exception {
-        runEmptyAcknowledgement(aa);
+    public void testEmptyAcknowledgement() {
+        assertDoesNotThrow(() -> runEmptyAcknowledgement(aa));
     }
 
     @Override
     @Test
-    public void testInvalidAcknowledgement() throws Exception {
-        runInvalidAcknowledgement(aa);
+    public void testInvalidAcknowledgement() {
+        assertDoesNotThrow(() -> runInvalidAcknowledgement(aa));
     }
 
     @Override
     @Test
-    public void testMissingEndOfDataByte() throws Exception {
+    public void testMissingEndOfDataByte() {
         expectedAACount = 3;
         expectedTimeoutCount = 0;
 
-        runMissingEndOfDataByte();
+        assertDoesNotThrow(() -> runMissingEndOfDataByte());
     }
 
     @Override
     @Test
-    public void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {
+    public void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() {
         expectedAACount = 1;
 
-        runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte();
+        assertDoesNotThrow(() -> runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte());
     }
 
     @Override
     @Test
-    public void testInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() throws Exception {
+    public void testInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() {
         expectedAACount = 1;
 
-        runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte();
+        assertDoesNotThrow(() -> runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte());
     }
 
     @Override
     @Test
-    public void testSendMultipleMessagesWithoutSomeEndOfDataByte() throws Exception {
+    public void testSendMultipleMessagesWithoutSomeEndOfDataByte() {
         expectedAACount = 3;
 
-        runSendMultipleMessagesWithoutSomeEndOfDataByte();
+        assertDoesNotThrow(() -> runSendMultipleMessagesWithoutSomeEndOfDataByte());
     }
 
 }

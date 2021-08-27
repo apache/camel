@@ -76,12 +76,6 @@
             <type>test-jar</type>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- test logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
