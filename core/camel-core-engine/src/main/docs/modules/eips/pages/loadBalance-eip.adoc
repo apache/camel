@@ -1,6 +1,6 @@
 [[loadBalance-eip]]
 = Load Balance EIP
-:docTitle: Load Balance
+:doctitle: Load Balance
 :description: Balances message processing among a number of nodes
 :since: 
 :supportLevel: Stable

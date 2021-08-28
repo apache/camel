@@ -1,6 +1,6 @@
 [[threads-eip]]
 = Threads EIP
-:docTitle: Threads
+:doctitle: Threads
 :description: Specifies that all steps after this node are processed asynchronously
 :since: 
 :supportLevel: Stable

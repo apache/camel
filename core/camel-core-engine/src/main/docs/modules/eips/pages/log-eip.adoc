@@ -1,6 +1,6 @@
 [[log-eip]]
 = Log EIP
-:docTitle: Log
+:doctitle: Log
 :description: Logs the defined message to the logger
 :since: 
 :supportLevel: Stable

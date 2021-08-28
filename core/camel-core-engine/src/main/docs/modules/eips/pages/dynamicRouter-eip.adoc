@@ -1,8 +1,8 @@
 [[dynamicRouter-eip]]
 = Dynamic Router EIP
-:docTitle: Dynamic Router
+:doctitle: Dynamic Router
 :description: Route messages based on dynamic rules
-:since: 
+:since:
 :supportLevel: Stable
 
 The

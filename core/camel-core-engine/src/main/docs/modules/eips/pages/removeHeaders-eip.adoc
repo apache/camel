@@ -1,6 +1,6 @@
 [[removeHeaders-eip]]
 = Remove Headers EIP
-:docTitle: Remove Headers
+:doctitle: Remove Headers
 :description: Removes message headers whose name matches a specified pattern
 :since: 
 :supportLevel: Stable

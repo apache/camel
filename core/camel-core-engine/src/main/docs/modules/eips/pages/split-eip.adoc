@@ -1,6 +1,6 @@
 [[split-eip]]
 = Split EIP
-:docTitle: Split
+:doctitle: Split
 :description: Splits a single message into many sub-messages.
 :since: 
 :supportLevel: Stable

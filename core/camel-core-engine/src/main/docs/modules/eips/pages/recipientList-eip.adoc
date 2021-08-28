@@ -1,8 +1,8 @@
 [[recipientList-eip]]
 = Recipient List EIP
-:docTitle: Recipient List
+:doctitle: Recipient List
 :description: Route messages to a number of dynamically specified recipients (dynamic to)
-:since: 
+:since:
 :supportLevel: Stable
 
 image::eip/RecipientList.gif[image]

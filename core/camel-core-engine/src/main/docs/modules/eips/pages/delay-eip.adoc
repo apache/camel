@@ -1,6 +1,6 @@
 [[delay-eip]]
 = Delay EIP
-:docTitle: Delay
+:doctitle: Delay
 :description: Delays processing for a specified length of time
 :since: 
 :supportLevel: Stable

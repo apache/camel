@@ -1,6 +1,6 @@
 [[stop-eip]]
 = Stop EIP
-:docTitle: Stop
+:doctitle: Stop
 :description: Stops the processing of the current message
 :since: 
 :supportLevel: Stable

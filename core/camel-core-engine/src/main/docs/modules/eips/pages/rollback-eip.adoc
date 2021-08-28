@@ -1,6 +1,6 @@
 [[rollback-eip]]
 = Rollback EIP
-:docTitle: Rollback
+:doctitle: Rollback
 :description: Forces a rollback by stopping routing the message
 :since: 
 :supportLevel: Stable

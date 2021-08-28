@@ -1,6 +1,6 @@
 [[inOut-eip]]
 = In Out EIP (deprecated)
-:docTitle: In Out
+:doctitle: In Out
 :description: Marks the exchange pattern for the route to request/reply
 :since: 
 :supportLevel: Stable-deprecated

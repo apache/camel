@@ -1,6 +1,6 @@
 [[inOnly-eip]]
 = In Only EIP (deprecated)
-:docTitle: In Only
+:doctitle: In Only
 :description: Marks the exchange pattern for the route to one way
 :since: 
 :supportLevel: Stable-deprecated

@@ -1,6 +1,6 @@
 [[kamelet-eip]]
 = Kamelet EIP
-:docTitle: Kamelet
+:doctitle: Kamelet
 :description: To call Kamelets
 :since: 
 :supportLevel: Stable

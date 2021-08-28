@@ -1,6 +1,6 @@
 [[from-eip]]
 = From EIP
-:docTitle: From
+:doctitle: From
 :description: Act as a message source as input to a route
 :since: 
 :supportLevel: Stable

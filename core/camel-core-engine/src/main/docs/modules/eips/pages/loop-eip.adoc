@@ -1,6 +1,6 @@
 [[loop-eip]]
 = Loop EIP
-:docTitle: Loop
+:doctitle: Loop
 :description: Processes a message multiple times
 :since: 
 :supportLevel: Stable
