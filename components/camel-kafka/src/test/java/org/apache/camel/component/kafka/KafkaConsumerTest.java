@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.ExchangeFactory;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -62,6 +63,7 @@ public class KafkaConsumerTest {
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getConfiguration().getBrokers()).thenReturn("localhost:2181");
-        new KafkaConsumer(endpoint, processor);
+
+        assertDoesNotThrow(() -> new KafkaConsumer(endpoint, processor));
     }
 }

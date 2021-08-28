@@ -17,6 +17,7 @@
 package org.apache.camel.component.jooq;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.jooq.UpdatableRecord;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -46,24 +48,32 @@ public class JooqXMLTest extends BaseJooqTest {
     @Test
     public void testExecute() {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
-        producerTemplate.sendBody(context.getEndpoint("direct:execute"), ExchangePattern.InOut, "empty");
+        Endpoint ep = context.getEndpoint("direct:execute");
+
+        assertDoesNotThrow(() -> producerTemplate.sendBody(ep, ExchangePattern.InOut, "empty"));
     }
 
     @Test
     public void testFetch() {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
-        producerTemplate.sendBody(context.getEndpoint("direct:fetch"), ExchangePattern.InOut, "empty");
+
+        Endpoint ep = context.getEndpoint("direct:fetch");
+        assertDoesNotThrow(() -> producerTemplate.sendBody(ep, ExchangePattern.InOut, "empty"));
     }
 
     @Test
     public void testSQLSelect() {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
-        producerTemplate.sendBody(context.getEndpoint("direct:sql-select"), ExchangePattern.InOut, "empty");
+
+        Endpoint ep = context.getEndpoint("direct:sql-select");
+        assertDoesNotThrow(() -> producerTemplate.sendBody(ep, ExchangePattern.InOut, "empty"));
     }
 
     @Test
     public void testSQLDelete() {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
-        producerTemplate.sendBody(context.getEndpoint("direct:sql-delete"), ExchangePattern.InOut, "empty");
+
+        Endpoint ep = context.getEndpoint("direct:sql-delete");
+        assertDoesNotThrow(() -> producerTemplate.sendBody(ep, ExchangePattern.InOut, "empty"));
     }
 }

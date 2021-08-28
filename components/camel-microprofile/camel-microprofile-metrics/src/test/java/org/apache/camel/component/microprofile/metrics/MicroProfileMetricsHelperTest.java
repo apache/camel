@@ -23,6 +23,7 @@ import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -68,7 +69,8 @@ public class MicroProfileMetricsHelperTest {
         DefaultCamelContext camelContext = new DefaultCamelContext();
         Registry registry = camelContext.getRegistry();
         registry.bind(MicroProfileMetricsConstants.METRIC_REGISTRY_NAME, MetricRegistries.get(MetricRegistry.Type.APPLICATION));
-        MicroProfileMetricsHelper.getMetricRegistry(camelContext);
+
+        assertDoesNotThrow(() -> MicroProfileMetricsHelper.getMetricRegistry(camelContext));
     }
 
     @Test
