@@ -1,6 +1,6 @@
 [[main-component]]
 = Main Component
-:docTitle: Main
+:doctitle: Main
 :artifactId: camel-main
 :description: Camel Main support
 :since: 3.0

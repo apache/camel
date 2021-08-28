@@ -1,7 +1,7 @@
 [[properties-component]]
 = Properties Component
 //Written by hand, not generated.
-:docTitle: Properties
+:doctitle: Properties
 :artifactId: camel-base
 :description: The properties component is used for property placeholders in your Camel application, such as endpoint URIs.
 :since: 2.3
