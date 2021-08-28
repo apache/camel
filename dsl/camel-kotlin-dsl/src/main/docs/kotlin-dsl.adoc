@@ -1,6 +1,6 @@
 [[kotlin-dsl-other]]
 = Kotlin DSL
-:docTitle: Kotlin Dsl
+:doctitle: Kotlin Dsl
 :artifactId: camel-kotlin-dsl
 :description: Camel DSL with Kotlin
 :supportLevel: Experimental

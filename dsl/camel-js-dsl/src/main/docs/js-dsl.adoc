@@ -1,6 +1,6 @@
 [[js-dsl-other]]
 = JavaScript DSL
-:docTitle: JavaScript Dsl
+:doctitle: JavaScript Dsl
 :artifactId: camel-js-dsl
 :description: Camel DSL with JavaScript
 :supportLevel: Experimental

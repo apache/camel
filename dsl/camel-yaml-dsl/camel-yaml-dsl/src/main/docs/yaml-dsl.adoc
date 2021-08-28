@@ -1,6 +1,6 @@
 [[yaml-dsl-other]]
 = Yaml Dsl Component
-:docTitle: Yaml Dsl
+:doctitle: Yaml Dsl
 :artifactId: camel-yaml-dsl
 :description: Camel DSL with YAML
 :since: 3.9

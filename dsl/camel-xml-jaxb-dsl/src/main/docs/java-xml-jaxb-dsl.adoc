@@ -1,6 +1,6 @@
 [[xml-jaxb-dsl-other]]
 = Jaxb Xml Dsl Component
-:docTitle: Jaxb XML Dsl
+:doctitle: Jaxb XML Dsl
 :artifactId: camel-xml-jaxb-dsl
 :description: Camel DSL with YAML
 :supportLevel: Stable

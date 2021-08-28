@@ -1,6 +1,6 @@
 [[kamelet-main-other]]
 = Kamelet Main Component
-:docTitle: Kamelet Main
+:doctitle: Kamelet Main
 :artifactId: camel-kamelet-main
 :description: Main to run Kamelet standalone
 :since: 3.11

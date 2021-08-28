@@ -1,6 +1,6 @@
 [[java-joor-dsl-other]]
 = Java DSL based on joor
-:docTitle: XML Dsl
+:doctitle: XML Dsl
 :artifactId: camel-java-joor-dsl
 :description: Camel DSL with YAML
 :supportLevel: Stable

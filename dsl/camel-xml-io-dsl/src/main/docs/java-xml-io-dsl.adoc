@@ -1,6 +1,6 @@
 [[xml-io-dsl-other]]
 = Xml Io Dsl Component
-:docTitle: XML Dsl
+:doctitle: XML Dsl
 :artifactId: camel-xml-io-dsl
 :description: Camel DSL with YAML
 :supportLevel: Stable
