@@ -17,6 +17,7 @@
 package org.apache.camel.component.as2.api.util;
 
 import java.security.PrivateKey;
+import java.util.Objects;
 
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
@@ -143,34 +144,17 @@ public final class HttpMessageUtils {
                 break;
             }
             case AS2MimeType.MULTIPART_SIGNED: {
-                MultipartSignedEntity multipartSignedEntity = getEntity(message,
-                        MultipartSignedEntity.class);
-                MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
-                if (mimeEntity instanceof ApplicationEDIEntity) {
-                    ediEntity = (ApplicationEDIEntity) mimeEntity;
-                } else {
-                    throw new HttpException(
-                            "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue()
-                                            + "' for AS2 compressed and signed message");
-                }
+                ediEntity = extractMultipartSigned(message);
                 break;
             }
             case AS2MimeType.APPLICATION_PKCS7_MIME: {
                 switch (contentType.getParameter("smime-type")) {
                     case "compressed-data": {
-                        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
-                                = getEntity(message, ApplicationPkcs7MimeCompressedDataEntity.class);
-                        ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
+                        ediEntity = extractCompressedData(message);
                         break;
                     }
                     case "enveloped-data": {
-                        if (privateKey == null) {
-                            throw new HttpException(
-                                    "Failed to extract EDI payload: private key can not be null for AS2 enveloped message");
-                        }
-                        ApplicationPkcs7MimeEnvelopedDataEntity envelopedDataEntity
-                                = getEntity(message, ApplicationPkcs7MimeEnvelopedDataEntity.class);
-                        ediEntity = extractEdiPayloadFromEnvelopedEntity(envelopedDataEntity, privateKey);
+                        ediEntity = extractEnvelopedData(message, privateKey);
                         break;
                     }
                     default:
@@ -188,6 +172,52 @@ public final class HttpMessageUtils {
 
         return ediEntity;
 
+    }
+
+    private static ApplicationEDIEntity extractEnvelopedData(HttpMessage message, PrivateKey privateKey) throws HttpException {
+        ApplicationEDIEntity ediEntity;
+        if (privateKey == null) {
+            throw new HttpException(
+                    "Failed to extract EDI payload: private key can not be null for AS2 enveloped message");
+        }
+        ApplicationPkcs7MimeEnvelopedDataEntity envelopedDataEntity
+                = getEntity(message, ApplicationPkcs7MimeEnvelopedDataEntity.class);
+
+        Objects.requireNonNull(envelopedDataEntity,
+                "Failed to extract EDI payload: the enveloped data entity is null");
+        ediEntity = extractEdiPayloadFromEnvelopedEntity(envelopedDataEntity, privateKey);
+        return ediEntity;
+    }
+
+    private static ApplicationEDIEntity extractCompressedData(HttpMessage message) throws HttpException {
+        ApplicationEDIEntity ediEntity;
+        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
+                = getEntity(message, ApplicationPkcs7MimeCompressedDataEntity.class);
+
+        Objects.requireNonNull(compressedDataEntity,
+                "Failed to extract the EDI payload: the compressed data entity is null");
+
+        ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
+        return ediEntity;
+    }
+
+    private static ApplicationEDIEntity extractMultipartSigned(HttpMessage message) throws HttpException {
+        ApplicationEDIEntity ediEntity;
+        MultipartSignedEntity multipartSignedEntity = getEntity(message,
+                MultipartSignedEntity.class);
+
+        Objects.requireNonNull(multipartSignedEntity,
+                "Failed to extract EDI payload: the multipart signed entity is null");
+
+        MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
+        if (mimeEntity instanceof ApplicationEDIEntity) {
+            ediEntity = (ApplicationEDIEntity) mimeEntity;
+        } else {
+            throw new HttpException(
+                    "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue()
+                                    + "' for AS2 compressed and signed message");
+        }
+        return ediEntity;
     }
 
     private static ApplicationEDIEntity extractEdiPayloadFromEnvelopedEntity(
