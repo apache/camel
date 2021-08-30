@@ -34,7 +34,7 @@ public interface GoogleMailStreamComponentBuilderFactory {
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
      * 
-     * Category: cloud,api,mail
+     * Category: cloud,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
      * 

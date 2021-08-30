@@ -6,7 +6,7 @@
     "description": "Poll for incoming messages in Google Mail.",
     "deprecated": false,
     "firstVersion": "2.22.0",
-    "label": "cloud,api,mail",
+    "label": "cloud,mail",
     "javaType": "org.apache.camel.component.google.mail.stream.GoogleMailStreamComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
