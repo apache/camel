@@ -32,6 +32,7 @@ import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeade
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.PRODUCER_NAME;
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.PROPERTIES;
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.PUBLISH_TIME;
+import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.PULSAR_REDELIVERY_COUNT;
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.SEQUENCE_ID;
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.TOPIC_NAME;
 
@@ -53,6 +54,7 @@ public final class PulsarMessageUtils {
         msg.setHeader(TOPIC_NAME, message.getTopicName());
         msg.setHeader(SEQUENCE_ID, message.getSequenceId());
         msg.setHeader(PUBLISH_TIME, message.getPublishTime());
+        msg.setHeader(PULSAR_REDELIVERY_COUNT, message.getRedeliveryCount());
         msg.setHeader(PROPERTIES, message.getProperties());
         msg.setHeader(Exchange.MESSAGE_TIMESTAMP, message.getPublishTime());
 
