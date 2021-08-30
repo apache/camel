@@ -128,6 +128,8 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_ID, entry.getID());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_FILE, entry.getFileName());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_TYPE, entry.getType());
+        setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_SEVERITY, entry.getSeverity());
+        setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE, entry);
         if (AS400Message.INQUIRY == entry.getType()) {
             setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_DFT_RPY, entry.getDefaultReply());
             if (getEndpoint().isSendingReply()) {
