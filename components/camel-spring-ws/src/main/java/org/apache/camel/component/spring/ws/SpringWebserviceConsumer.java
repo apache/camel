@@ -27,7 +27,6 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -63,7 +62,6 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     public void invoke(MessageContext messageContext) throws Exception {
         Exchange exchange = createExchange(false);
         try {
-            exchange.setPattern(ExchangePattern.InOptionalOut);
             populateExchangeFromMessageContext(messageContext, exchange);
 
             // populate camel exchange with breadcrumb from transport header
@@ -189,7 +187,6 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                     SoapHeaderElement element = elementIter.next();
                     QName name = element.getName();
                     headers.put(name.getLocalPart(), element);
-
                 }
             }
         }
