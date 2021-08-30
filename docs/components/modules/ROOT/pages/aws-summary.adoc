@@ -1,6 +1,6 @@
 = AWS Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-cw/src/main/docs/aws-summary.adoc
+:page-source: components/camel-aws/src/main/docs/aws-summary.adoc
 :docTitle: AWS
 
 The *aws-* component allows you to work with the
