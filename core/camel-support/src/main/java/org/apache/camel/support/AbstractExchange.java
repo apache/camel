@@ -110,7 +110,7 @@ class AbstractExchange implements ExtendedExchange {
 
     public AbstractExchange(Endpoint fromEndpoint) {
         this.context = fromEndpoint.getCamelContext();
-        this.pattern = ExchangePattern.InOnly;
+        this.pattern = fromEndpoint.getExchangePattern();
         this.created = System.currentTimeMillis();
         this.fromEndpoint = fromEndpoint;
     }

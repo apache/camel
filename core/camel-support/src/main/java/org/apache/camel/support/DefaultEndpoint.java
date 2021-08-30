@@ -246,9 +246,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         // noop
     }
 
-    /**
-     * Returns the default exchange pattern to use when creating an exchange.
-     */
+    @Override
     public ExchangePattern getExchangePattern() {
         return exchangePattern;
     }

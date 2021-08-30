@@ -38,6 +38,11 @@ public interface Endpoint extends IsSingleton, Service {
     String getEndpointUri();
 
     /**
+     * Returns the default exchange pattern to use when creating an exchange.
+     */
+    ExchangePattern getExchangePattern();
+
+    /**
      * Returns the string representation of the base endpoint URI (without query parameters).
      */
     default String getEndpointBaseUri() {
