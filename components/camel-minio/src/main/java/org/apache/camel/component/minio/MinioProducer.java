@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,12 @@ import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.RemoveObjectsArgs;
 import io.minio.Result;
+import io.minio.errors.ErrorResponseException;
+import io.minio.errors.InsufficientDataException;
+import io.minio.errors.InternalException;
+import io.minio.errors.InvalidResponseException;
+import io.minio.errors.ServerException;
+import io.minio.errors.XmlParserException;
 import io.minio.messages.Bucket;
 import io.minio.messages.Item;
 import org.apache.camel.Endpoint;
@@ -128,62 +136,81 @@ public class MinioProducer extends DefaultProducer {
             Map<String, String> extraHeaders = determineExtraHeaders(exchange);
 
             File filePayload = null;
-            InputStream inputStream;
-            ByteArrayOutputStream baos;
+
             Object object = exchange.getIn().getMandatoryBody();
 
             // Need to check if the message body is WrappedFile
             if (object instanceof WrappedFile) {
                 object = ((WrappedFile<?>) object).getFile();
             }
-            if (object instanceof File) {
-                filePayload = (File) object;
-                inputStream = new FileInputStream(filePayload);
-            } else {
-                inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
-                if (objectMetadata.containsKey(Exchange.CONTENT_LENGTH)) {
-                    if (objectMetadata.get("Content-Length").equals("0")
-                            && isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                        LOG.debug(
-                                "The content length is not defined. It needs to be determined by reading the data into memory");
-                        baos = determineLengthInputStream(inputStream);
-                        objectMetadata.put("Content-Length", String.valueOf(baos.size()));
-                        inputStream = new ByteArrayInputStream(baos.toByteArray());
-                    } else {
-                        if (isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                            objectMetadata.put("Content-Length", exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
-                        }
-                    }
+
+            InputStream inputStream = null;
+            try {
+                if (object instanceof File) {
+                    filePayload = (File) object;
+                    inputStream = new FileInputStream(filePayload);
+                } else {
+                    inputStream = getInputStreamFromExchange(exchange, objectMetadata);
                 }
+
+                doPutObject(exchange, bucketName, objectName, objectMetadata, extraHeaders, inputStream);
+            } finally {
+                IOHelper.close(inputStream);
             }
-            PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder()
-                    .stream(inputStream, inputStream.available(), -1)
-                    .bucket(bucketName)
-                    .object(objectName)
-                    .userMetadata(objectMetadata);
-
-            if (!extraHeaders.isEmpty()) {
-                putObjectRequest.extraHeaders(extraHeaders);
-            }
-
-            LOG.trace("Put object from exchange...");
-
-            ObjectWriteResponse putObjectResult = getEndpoint().getMinioClient().putObject(putObjectRequest.build());
-
-            LOG.trace("Received result...");
-
-            Message message = getMessageForResponse(exchange);
-            message.setHeader(MinioConstants.E_TAG, putObjectResult.etag());
-            if (isNotEmpty(putObjectResult.versionId())) {
-                message.setHeader(MinioConstants.VERSION_ID, putObjectResult.versionId());
-            }
-
-            IOHelper.close(inputStream);
 
             if (getConfiguration().isDeleteAfterWrite() && isNotEmpty(filePayload)) {
                 FileUtil.deleteFile(filePayload);
             }
         }
+    }
+
+    private void doPutObject(
+            Exchange exchange, String bucketName, String objectName, Map<String, String> objectMetadata,
+            Map<String, String> extraHeaders, InputStream inputStream)
+            throws IOException, ErrorResponseException, InsufficientDataException, InternalException, InvalidKeyException,
+            InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException {
+        PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder()
+                .stream(inputStream, inputStream.available(), -1)
+                .bucket(bucketName)
+                .object(objectName)
+                .userMetadata(objectMetadata);
+
+        if (!extraHeaders.isEmpty()) {
+            putObjectRequest.extraHeaders(extraHeaders);
+        }
+
+        LOG.trace("Put object from exchange...");
+
+        ObjectWriteResponse putObjectResult = getEndpoint().getMinioClient().putObject(putObjectRequest.build());
+
+        LOG.trace("Received result...");
+
+        Message message = getMessageForResponse(exchange);
+        message.setHeader(MinioConstants.E_TAG, putObjectResult.etag());
+        if (isNotEmpty(putObjectResult.versionId())) {
+            message.setHeader(MinioConstants.VERSION_ID, putObjectResult.versionId());
+        }
+    }
+
+    private InputStream getInputStreamFromExchange(Exchange exchange, Map<String, String> objectMetadata)
+            throws InvalidPayloadException, IOException {
+        InputStream inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
+
+        if (objectMetadata.containsKey(Exchange.CONTENT_LENGTH)) {
+            if (objectMetadata.get("Content-Length").equals("0")
+                    && isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                LOG.debug(
+                        "The content length is not defined. It needs to be determined by reading the data into memory");
+                ByteArrayOutputStream baos = determineLengthInputStream(inputStream);
+                objectMetadata.put("Content-Length", String.valueOf(baos.size()));
+                inputStream = new ByteArrayInputStream(baos.toByteArray());
+            } else {
+                if (isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                    objectMetadata.put("Content-Length", exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
+                }
+            }
+        }
+        return inputStream;
     }
 
     private Map<String, String> determineExtraHeaders(Exchange exchange) {
