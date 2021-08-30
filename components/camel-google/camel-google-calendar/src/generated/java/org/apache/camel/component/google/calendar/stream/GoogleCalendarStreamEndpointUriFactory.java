@@ -20,13 +20,10 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(35);
         props.add("backoffMultiplier");
-        props.add("destination");
         props.add("initialDelay");
         props.add("consumeFromNow");
-        props.add("content");
-        props.add("setting");
         props.add("scheduler");
         props.add("emailAddress");
         props.add("bridgeErrorHandler");
@@ -36,13 +33,10 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         props.add("backoffErrorThreshold");
         props.add("greedy");
         props.add("clientSecret");
-        props.add("text");
         props.add("scheduledExecutorService");
-        props.add("ruleId");
         props.add("applicationName");
         props.add("repeatCount");
         props.add("timeUnit");
-        props.add("eventId");
         props.add("p12FileName");
         props.add("clientId");
         props.add("considerLastUpdate");
@@ -54,7 +48,6 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         props.add("syncFlow");
         props.add("accessToken");
         props.add("backoffIdleThreshold");
-        props.add("contentChannel");
         props.add("delay");
         props.add("calendarId");
         props.add("pollStrategy");

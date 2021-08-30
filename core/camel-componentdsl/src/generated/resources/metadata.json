@@ -2646,7 +2646,7 @@
     "description": "Poll for changes in a Google Calendar.",
     "deprecated": false,
     "firstVersion": "2.23.0",
-    "label": "api,cloud",
+    "label": "cloud",
     "javaType": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
