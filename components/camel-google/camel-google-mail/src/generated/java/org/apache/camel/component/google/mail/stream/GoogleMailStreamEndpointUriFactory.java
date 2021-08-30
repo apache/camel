@@ -20,24 +20,19 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(37);
+        Set<String> props = new HashSet<>(29);
         props.add("backoffMultiplier");
         props.add("initialDelay");
-        props.add("content");
         props.add("markAsRead");
         props.add("scheduler");
-        props.add("modifyMessageRequest");
         props.add("bridgeErrorHandler");
         props.add("useFixedDelay");
-        props.add("mediaContent");
         props.add("runLoggingLevel");
         props.add("maxResults");
         props.add("backoffErrorThreshold");
         props.add("greedy");
         props.add("clientSecret");
-        props.add("id");
         props.add("scheduledExecutorService");
-        props.add("batchModifyMessagesRequest");
         props.add("applicationName");
         props.add("repeatCount");
         props.add("timeUnit");
@@ -47,11 +42,8 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
         props.add("schedulerProperties");
         props.add("exchangePattern");
         props.add("index");
-        props.add("messageId");
         props.add("accessToken");
-        props.add("userId");
         props.add("backoffIdleThreshold");
-        props.add("batchDeleteMessagesRequest");
         props.add("labels");
         props.add("delay");
         props.add("pollStrategy");
