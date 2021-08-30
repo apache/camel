@@ -5866,16 +5866,17 @@ public class StaticEndpointBuilders {
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
      * 
-     * Category: api,cloud,sheets
+     * Category: cloud,sheets
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
      * 
-     * Syntax: <code>google-sheets-stream:apiName</code>
+     * Syntax: <code>google-sheets-stream:spreadsheetId</code>
      * 
-     * Path parameter: apiName (required)
-     * Sets the apiName.
+     * Path parameter: spreadsheetId (required)
+     * Specifies the spreadsheet identifier that is used to identify the target
+     * to obtain.
      * 
-     * @param path apiName
+     * @param path spreadsheetId
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(
@@ -5886,18 +5887,19 @@ public class StaticEndpointBuilders {
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
      * 
-     * Category: api,cloud,sheets
+     * Category: cloud,sheets
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
      * 
-     * Syntax: <code>google-sheets-stream:apiName</code>
+     * Syntax: <code>google-sheets-stream:spreadsheetId</code>
      * 
-     * Path parameter: apiName (required)
-     * Sets the apiName.
+     * Path parameter: spreadsheetId (required)
+     * Specifies the spreadsheet identifier that is used to identify the target
+     * to obtain.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path apiName
+     * @param path spreadsheetId
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(

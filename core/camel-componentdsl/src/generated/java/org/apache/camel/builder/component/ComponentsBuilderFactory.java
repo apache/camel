@@ -1725,7 +1725,7 @@ public interface ComponentsBuilderFactory {
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
      * 
-     * Category: api,cloud,sheets
+     * Category: cloud,sheets
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
      * 

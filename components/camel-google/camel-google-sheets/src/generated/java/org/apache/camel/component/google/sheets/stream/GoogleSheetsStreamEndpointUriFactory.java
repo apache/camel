@@ -15,14 +15,13 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":apiName";
+    private static final String BASE = ":spreadsheetId";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(41);
         props.add("backoffMultiplier");
-        props.add("apiName");
         props.add("majorDimension");
         props.add("batchClearValuesRequest");
         props.add("values");
@@ -83,7 +82,7 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "apiName", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "spreadsheetId", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

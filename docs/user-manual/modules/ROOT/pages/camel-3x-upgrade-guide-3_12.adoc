@@ -43,6 +43,13 @@ The `camel-jms` component now better support Apache Artemis in streaming mode fo
 when Artemis is using a pooled connection pool (previously pooled was not supported). Now the option `artemisStreamingEnabled`
 must explicit be set to `true` to enable support for Artemis streaming mode. Previously Camel tried to auto-detect this.
 
+=== camel-google-sheets
+
+The `google-sheets-stream` component has changed the syntax, from: `google-sheets-stream:apiName` to: `google-sheets-stream:spreadsheetId`
+
+The old `apiName` option was not in use, and therefore it has been replaced with `spreadsheetId`
+which used to be query parameter.
+
 === camel-kamelet / route templates
 
 Kamelet parameters that are named such as `host`, `port` are now always used with their configured value.

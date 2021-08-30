@@ -55,8 +55,6 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "splitresults":
         case "splitResults": getOrCreateConfiguration(target).setSplitResults(property(camelContext, boolean.class, value)); return true;
-        case "spreadsheetid":
-        case "spreadsheetId": getOrCreateConfiguration(target).setSpreadsheetId(property(camelContext, java.lang.String.class, value)); return true;
         case "valuerenderoption":
         case "valueRenderOption": getOrCreateConfiguration(target).setValueRenderOption(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -93,8 +91,6 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "scopes": return java.util.List.class;
         case "splitresults":
         case "splitResults": return boolean.class;
-        case "spreadsheetid":
-        case "spreadsheetId": return java.lang.String.class;
         case "valuerenderoption":
         case "valueRenderOption": return java.lang.String.class;
         default: return null;
@@ -132,8 +128,6 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "scopes": return getOrCreateConfiguration(target).getScopes();
         case "splitresults":
         case "splitResults": return getOrCreateConfiguration(target).isSplitResults();
-        case "spreadsheetid":
-        case "spreadsheetId": return getOrCreateConfiguration(target).getSpreadsheetId();
         case "valuerenderoption":
         case "valueRenderOption": return getOrCreateConfiguration(target).getValueRenderOption();
         default: return null;

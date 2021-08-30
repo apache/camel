@@ -89,6 +89,7 @@ public class GoogleSheetsStreamComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final GoogleSheetsStreamConfiguration configuration = this.configuration.copy();
+        configuration.setSpreadsheetId(remaining);
         GoogleSheetsStreamEndpoint endpoint = new GoogleSheetsStreamEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;

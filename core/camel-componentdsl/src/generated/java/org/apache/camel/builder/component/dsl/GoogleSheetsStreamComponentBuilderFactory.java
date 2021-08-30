@@ -34,7 +34,7 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
      * 
-     * Category: api,cloud,sheets
+     * Category: cloud,sheets
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
      * 
@@ -220,22 +220,6 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Specifies the spreadsheet identifier that is used to identify the
-         * target to obtain.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param spreadsheetId the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsStreamComponentBuilder spreadsheetId(
-                java.lang.String spreadsheetId) {
-            doSetProperty("spreadsheetId", spreadsheetId);
-            return this;
-        }
-        /**
          * Determines how values should be rendered in the output.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -371,7 +355,6 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             case "range": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setRange((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setScopes((java.util.List) value); return true;
             case "splitResults": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setSplitResults((boolean) value); return true;
-            case "spreadsheetId": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setSpreadsheetId((java.lang.String) value); return true;
             case "valueRenderOption": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setValueRenderOption((java.lang.String) value); return true;
             case "autowiredEnabled": ((GoogleSheetsStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleSheetsStreamComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;

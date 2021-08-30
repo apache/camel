@@ -36,7 +36,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     @UriPath
     @Metadata(required = true)
-    private String apiName;
+    private String spreadsheetId;
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
     @UriParam
@@ -49,8 +49,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     private String refreshToken;
     @UriParam
     private String applicationName;
-    @UriParam
-    private String spreadsheetId;
     @UriParam
     private int maxResults;
     @UriParam
@@ -130,20 +128,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
      */
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
-    }
-
-    /**
-     * Gets the apiName.
-     */
-    public String getApiName() {
-        return apiName;
-    }
-
-    /**
-     * Sets the apiName.
-     */
-    public void setApiName(String apiName) {
-        this.apiName = apiName;
     }
 
     public String getSpreadsheetId() {

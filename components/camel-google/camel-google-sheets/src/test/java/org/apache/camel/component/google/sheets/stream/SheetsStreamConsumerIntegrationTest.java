@@ -159,7 +159,7 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
             @Override
             public void configure() {
                 from(String.format(
-                        "google-sheets-stream://data?spreadsheetId=%s&range=%s&delay=20000&maxResults=5&splitResults=%s",
+                        "google-sheets-stream://%s?range=%s&delay=20000&maxResults=5&splitResults=%s",
                         spreadsheetId, range, splitResults))
                                 .routeId("google-stream-test")
                                 .to("mock:result");

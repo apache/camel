@@ -70,8 +70,6 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "splitresults":
         case "splitResults": target.getConfiguration().setSplitResults(property(camelContext, boolean.class, value)); return true;
-        case "spreadsheetid":
-        case "spreadsheetId": target.getConfiguration().setSpreadsheetId(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -136,8 +134,6 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "splitresults":
         case "splitResults": return boolean.class;
-        case "spreadsheetid":
-        case "spreadsheetId": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "timeunit":
@@ -203,8 +199,6 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "splitresults":
         case "splitResults": return target.getConfiguration().isSplitResults();
-        case "spreadsheetid":
-        case "spreadsheetId": return target.getConfiguration().getSpreadsheetId();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "timeunit":
