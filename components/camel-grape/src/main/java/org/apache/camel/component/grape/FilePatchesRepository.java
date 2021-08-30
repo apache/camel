@@ -62,8 +62,8 @@ public class FilePatchesRepository implements PatchesRepository {
 
     @Override
     public List<String> listPatches() {
-        try {
-            return IOUtils.readLines(new FileReader(repository));
+        try (FileReader reader = new FileReader(repository)) {
+            return IOUtils.readLines(reader);
         } catch (IOException e) {
             throw new IOError(e);
         }
