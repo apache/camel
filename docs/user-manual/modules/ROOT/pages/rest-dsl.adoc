@@ -317,6 +317,13 @@ to specify a custom content-type if the message body should not attempt to be
 marshalled using the binding. For example if the message body is a
 custom binary payload etc.
 
+When automatic binding from POJO to JSon/JAXB takes place the existing `content-type` header will by default be replaced with either `application/json` or `application/xml`. To disable the default behavior and be able to produce JSon/JAXB responses with custom `content-type` headers (e.g. `application/user.v2+json`) you configure this in Java DSL as shown below:
+
+[source,java]
+----
+restConfiguration().dataFormatProperty("contentTypeHeader", "false");
+----
+
 To use binding you must include the necessary data formats on the
 classpath, such as `camel-jaxb` and/or `camel-jackson`. And then enable
 the binding mode. You can configure the binding mode globally on the
