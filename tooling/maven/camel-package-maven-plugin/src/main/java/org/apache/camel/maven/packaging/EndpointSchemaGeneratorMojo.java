@@ -266,7 +266,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // enrich the component model with additional configurations for api components
-        enhanceComponentModelWithApiModel(componentModel);
+        if (componentModel.isApi()) {
+            enhanceComponentModelWithApiModel(componentModel);
+        }
 
         String json = JsonMapper.createParameterJsonSchema(componentModel);
 
@@ -863,10 +865,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         while (true) {
             String apiName = null;
             boolean apiOption = false;
-            ApiParams apiParams = classElement.getAnnotation(ApiParams.class);
-            if (apiParams != null) {
-                apiName = apiParams.apiName();
-                apiOption = !Strings.isNullOrEmpty(apiName);
+            // only check for api if component is API based
+            ApiParams apiParams = null;
+            if (componentModel.isApi()) {
+                apiParams = classElement.getAnnotation(ApiParams.class);
+                if (apiParams != null) {
+                    apiName = apiParams.apiName();
+                    apiOption = !Strings.isNullOrEmpty(apiName);
+                }
             }
 
             String excludedProperties = "";
@@ -1019,9 +1025,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
 
                 UriParam param = fieldElement.getAnnotation(UriParam.class);
-                ApiParam apiParam = fieldElement.getAnnotation(ApiParam.class);
-                fieldName = fieldElement.getName();
                 if (param != null) {
+                    ApiParam apiParam = fieldElement.getAnnotation(ApiParam.class);
+                    fieldName = fieldElement.getName();
                     String name = prefix + (Strings.isNullOrEmpty(param.name()) ? fieldName : param.name());
 
                     // should we exclude the name?
