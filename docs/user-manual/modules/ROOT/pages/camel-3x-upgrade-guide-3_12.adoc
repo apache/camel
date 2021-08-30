@@ -11,6 +11,9 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 The method `getComponentNames` and `getLanguageNames` on `CamelContext` has changed to
 return `Set<String>` instead of `List<String>`.
 
+Added `getExchangePattern` to `Endpoint` which is a method that already exists on `DefaultEndpoint`.
+However the method is needed to be exposed in the API as well.
+
 The `ThroughputLogger` has changed the return type from `int` to `long` in the `getReceivedCounter` method.
 
 === Data Formats
