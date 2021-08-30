@@ -279,6 +279,11 @@ public class WireTapProcessor extends AsyncProcessorSupport
         Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
+        // move OUT to IN if needed
+        if (copy.hasOut()) {
+            copy.setIn(copy.getOut());
+            copy.setOut(null);
+        }
         // remove STREAM_CACHE_UNIT_OF_WORK property because this wire tap will
         // close its own created stream cache(s)
         copy.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
