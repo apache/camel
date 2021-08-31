@@ -40,6 +40,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 
@@ -190,11 +191,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         Map<File, Supplier<String>> files;
 
-        try {
-            files = Files
-                    .find(buildDir.toPath(), Integer.MAX_VALUE,
-                            (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
-                    .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
+        try (Stream<Path> pathStream = Files.find(buildDir.toPath(), Integer.MAX_VALUE, super::isJsonFile)) {
+            files = pathStream.collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
