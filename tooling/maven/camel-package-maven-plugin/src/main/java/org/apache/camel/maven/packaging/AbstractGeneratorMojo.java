@@ -21,10 +21,12 @@ import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.function.Supplier;
 
 import org.apache.camel.tooling.util.FileUtil;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -190,5 +192,9 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             }
         }
         return projectClassLoader;
+    }
+
+    protected boolean isJsonFile(Path p, BasicFileAttributes a) {
+        return a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX);
     }
 }
