@@ -527,7 +527,7 @@ public class RestSwaggerReader {
                             sp.setFormat(format);
                         }
                         sp.setDescription(header.getDescription());
-                        if (header.getAllowableValues() != null) {
+                        if (!header.getAllowableValues().isEmpty()) {
                             sp.setEnum(header.getAllowableValues());
                         }
                         // add example
