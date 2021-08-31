@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Bin4;
+import com.ibm.as400.access.AS400Bin8;
 import com.ibm.as400.access.AS400ByteArray;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Message;
@@ -123,7 +125,13 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (input) {
                 if (param != null) {
                     AS400DataType typeConverter;
-                    if (getISeriesEndpoint().getFormat() == Jt400Configuration.Format.binary) {
+                    if (param instanceof String) {
+                        typeConverter = new AS400Text(length, iSeries);
+                    } else if (param instanceof Integer) {
+                        typeConverter = new AS400Bin4();
+                    } else if (param instanceof Long) {
+                        typeConverter = new AS400Bin8();
+                    } else if (getISeriesEndpoint().getFormat() == Jt400Configuration.Format.binary) {
                         typeConverter = new AS400ByteArray(length);
                     } else {
                         typeConverter = new AS400Text(length, iSeries);
