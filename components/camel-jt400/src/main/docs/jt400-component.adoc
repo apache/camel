@@ -43,7 +43,7 @@ To send or receive messages from a message queue
 jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/QUEUE.MSGQ[?options]
 ----------------------------------------------------------------------
 
-To call remote program
+To call program
 
 -----------------------------------------------------------------------
 jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/program.PGM[?options]
@@ -174,14 +174,14 @@ with the following path and query parameters:
 == Usage
 
 When configured as a data queue consumer endpoint, the endpoint will poll a data
-queue on a remote system. For every entry on the data queue, a new
+queue on an IBM i system. For every entry on the data queue, a new
 `Exchange` is sent with the entry's data in the _In_ message's body,
 formatted either as a `String` or a `byte[]`, depending on the format.
 For a provider endpoint, the _In_ message body contents will be put on
 the data queue as either raw bytes or text.
 
 When configured as a message queue consumer endpoint, the endpoint will poll
-a message queue on a remote system. For every entry on the queue, a new
+a message queue on an IBM i system. For every entry on the queue, a new
 `Exchange` is sent with the entry's data in the _In_ message's body. The
 data is always formatted as a `String`. Note that only new messages will
 be processed. That is, any existing messages on the queue that have already
@@ -199,12 +199,12 @@ Inquiry messages or messages requiring a message ID are not supported.
 You can explicit configure a connection pool on the Jt400Component, or as an uri option
 on the endpoint.
 
-=== Remote program call
+=== Program call
 
 This endpoint expects the input to be either a String array or byte[]
 array (depending on format) and handles all the CCSID handling through
 the native jt400 library mechanisms. A parameter can be _omitted_ by
-passing null as the value in its position (the remote program has to
+passing null as the value in its position (the program has to
 support it). After the program execution the endpoint returns either a
 String array or byte[] array with the values as they were returned by
 the program (the input only parameters will contain the same data as the
@@ -265,7 +265,7 @@ public class Jt400RouteBuilder extends RouteBuilder {
 }
 -------------------------------------------------------------------------------------------------------
 
-=== Remote program call example
+=== Program call example
 
 In the snippet below, the data Exchange sent to the direct:work endpoint
 will contain three string that will be used as the arguments for the
