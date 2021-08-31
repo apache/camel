@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+@SuppressWarnings({ "checkstyle:HideUtilityClassConstructor", "checkstyle:DeclarationOrder" })
 public class PortTest {
 
     @Resources
