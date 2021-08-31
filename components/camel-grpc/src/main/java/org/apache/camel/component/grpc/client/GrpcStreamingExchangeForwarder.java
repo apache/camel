@@ -56,7 +56,9 @@ class GrpcStreamingExchangeForwarder implements GrpcExchangeForwarder {
 
     @Override
     public void shutdown() {
-        checkAndRecreateStreamObserver(this.currentResponseObserver).onCompleted();
+        if (this.currentResponseObserver != null) {
+            checkAndRecreateStreamObserver(this.currentResponseObserver).onCompleted();
+        }
         doCloseStream();
     }
 
