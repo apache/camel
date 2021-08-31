@@ -473,6 +473,7 @@ public interface SecretsManagerEndpointBuilderFactory {
         deleteSecret,
         rotateSecret,
         updateSecret,
+        restoreSecret,
         replicateSecretToRegions;
     }
 
