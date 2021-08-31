@@ -264,7 +264,7 @@ public class Jt400RouteBuilder extends RouteBuilder {
 }
 -------------------------------------------------------------------------------------------------------
 
-=== Program call example
+=== Program call examples
 
 In the snippet below, the data Exchange sent to the direct:work endpoint
 will contain three string that will be used as the arguments for the
@@ -278,6 +278,32 @@ public class Jt400RouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
        from("direct:work").to("jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3").to(“direct:play”);
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In this example, the camel route will call the QUSRTVUS API to retrieve
+16 bytes of data from data area "MYUSRSPACE" in the "MYLIB" library.
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+public class Jt400RouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from("timer://foo?period=60000")
+        .process( exchange -> {
+            String usrSpc = "MYUSRSPACEMYLIB     ";
+            Object[] parms = new Object[] {
+                usrSpc, // Qualified user space name
+                1,      // starting position
+                16,     // length of data
+                "" // output
+            };
+            exchange.getIn().setBody(parms);
+        })
+        .to("jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3")
+        .setBody(simple("${body[3]}"))
+        .to("direct:foo");
     }
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
