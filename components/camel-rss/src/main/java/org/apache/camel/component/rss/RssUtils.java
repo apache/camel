@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.rss;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import org.apache.commons.codec.binary.Base64;
@@ -39,11 +40,16 @@ public final class RssUtils {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(classLoader);
-            InputStream in = new URL(feedUri).openStream();
-            SyndFeedInput input = new SyndFeedInput();
-            return input.build(new XmlReader(in));
+            return createSyndFeed(feedUri);
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
+        }
+    }
+
+    private static SyndFeed createSyndFeed(String feedUri) throws IOException, FeedException {
+        try (XmlReader reader = new XmlReader(new URL(feedUri))) {
+            SyndFeedInput input = new SyndFeedInput();
+            return input.build(reader);
         }
     }
 
@@ -60,10 +66,18 @@ public final class RssUtils {
             HttpURLConnection httpcon = (HttpURLConnection) feedUrl.openConnection();
             String encoding = Base64.encodeBase64String(username.concat(":").concat(password).getBytes());
             httpcon.setRequestProperty("Authorization", "Basic " + encoding);
-            SyndFeedInput input = new SyndFeedInput();
-            return input.build(new XmlReader(httpcon));
+
+            return createSyndFeed(httpcon);
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
         }
     }
+
+    private static SyndFeed createSyndFeed(HttpURLConnection connection) throws IOException, FeedException {
+        try (XmlReader reader = new XmlReader(connection)) {
+            SyndFeedInput input = new SyndFeedInput();
+            return input.build(reader);
+        }
+    }
+
 }
