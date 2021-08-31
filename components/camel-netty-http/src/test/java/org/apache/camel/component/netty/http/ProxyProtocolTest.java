@@ -43,7 +43,6 @@ import org.apache.camel.test.junit5.resources.Resources;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

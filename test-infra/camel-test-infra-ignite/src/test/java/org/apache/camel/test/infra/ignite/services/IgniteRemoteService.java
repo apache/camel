@@ -20,7 +20,6 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 
 public class IgniteRemoteService implements IgniteService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

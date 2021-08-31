@@ -42,7 +42,6 @@ public class IgniteEmbeddedService implements IgniteService {
 
     private Ignite ignite;
 
-    @Override
     public void registerProperties() {
 
     }
