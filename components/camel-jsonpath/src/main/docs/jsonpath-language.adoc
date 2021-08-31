@@ -181,7 +181,7 @@ And in XML DSL:
 
 This option is also available on the `@JsonPath` annotation.
 
-== Inline Simple exceptions
+== Inline Simple expressions
 
 *Since Camel 2.18*
 
