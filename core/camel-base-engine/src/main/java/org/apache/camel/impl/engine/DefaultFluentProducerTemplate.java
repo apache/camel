@@ -184,6 +184,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate withHeaders(Map<String, Object> headers) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+        }
+
         Map<String, Object> map = clone.headers;
         if (map == null) {
             map = new LinkedHashMap<>();
@@ -196,6 +200,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     public FluentProducerTemplate withHeader(String key, Object value) {
         DefaultFluentProducerTemplate clone = checkCloned();
+
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+        }
 
         Map<String, Object> map = clone.headers;
         if (map == null) {
@@ -220,6 +228,9 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate withBody(Object body) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+        }
         clone.body = body;
         return clone;
     }
@@ -227,6 +238,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     public FluentProducerTemplate withBodyAs(Object body, Class<?> type) {
         DefaultFluentProducerTemplate clone = checkCloned();
+
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+        }
 
         Object b = type != null
                 ? clone.context.getTypeConverter().convertTo(type, body)
@@ -309,6 +324,9 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate withProcessor(final Supplier<Processor> processorSupplier) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
+        if (clone.body != null) {
+            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+        }
         clone.processorSupplier = processorSupplier;
         return clone;
     }

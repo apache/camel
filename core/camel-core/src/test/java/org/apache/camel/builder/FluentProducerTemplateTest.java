@@ -28,7 +28,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for FluentProducerTemplate
@@ -233,6 +236,18 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertEquals("Forced exception by unit test", out.getException().getMessage());
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testExceptionUsingProcessorAndBody() throws Exception {
+        try {
+            DefaultFluentProducerTemplate.on(context)
+                    .withBody("World")
+                    .withProcessor(exchange -> exchange.getIn().setHeader("foo", 123)).to("direct:async").send();
+            fail();
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     @Test

@@ -33,6 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * The {@link FluentProducerTemplate} is <b>thread safe</b> with the assumption that its the same (single) thread that
  * builds the message (via the fluent methods) that also sends the message. <br/>
+ * <p/>
  * When using the fluent template its required to chain the methods such as:
  * 
  * <pre>
@@ -62,10 +63,12 @@ import org.apache.camel.util.ObjectHelper;
  *     fluent.send();
  * </pre>
  * <p/>
+ * You can either only use either withExchange, or withProcessor or a combination of withBody/withHeaders to construct
+ * the message to be sent.<br/>
+ * <p/>
  * All the methods which sends a message may throw {@link FailedToCreateProducerException} in case the {@link Producer}
  * could not be created. Or a {@link NoSuchEndpointException} if the endpoint could not be resolved. There may be other
- * related exceptions being thrown which occurs <i>before</i> the {@link Producer} has started sending the message.
- * <br/>
+ * related exceptions being thrown which occurs <i>before</i> the {@link Producer} has started sending the message.<br/>
  * <p/>
  * All the send or request methods will return the content according to this strategy:
  * <ul>
@@ -178,12 +181,18 @@ public interface FluentProducerTemplate extends Service {
     /**
      * Set the headers
      *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
      * @param headers the headers
      */
     FluentProducerTemplate withHeaders(Map<String, Object> headers);
 
     /**
      * Set the header
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
      *
      * @param key   the key of the header
      * @param value the value of the header
@@ -201,12 +210,18 @@ public interface FluentProducerTemplate extends Service {
     /**
      * Set the message body
      *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
      * @param body the body
      */
     FluentProducerTemplate withBody(Object body);
 
     /**
      * Set the message body after converting it to the given type
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
      *
      * @param body the body
      * @param type the type which the body should be converted to
@@ -249,6 +264,9 @@ public interface FluentProducerTemplate extends Service {
      *
      * When using withExchange then you must use the send method (request is not supported).
      *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
      * @param exchange the exchange
      */
     FluentProducerTemplate withExchange(Exchange exchange);
@@ -257,6 +275,9 @@ public interface FluentProducerTemplate extends Service {
      * Set the exchangeSupplier which will be invoke to get the exchange to be used for send.
      *
      * When using withExchange then you must use the send method (request is not supported).
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
      *
      * @param exchangeSupplier the supplier
      */
@@ -279,12 +300,18 @@ public interface FluentProducerTemplate extends Service {
      *     .request()}
      * </pre>
      *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
      * @param processor the processor
      */
     FluentProducerTemplate withProcessor(Processor processor);
 
     /**
      * Set the processorSupplier which will be invoke to get the processor to be used for send/request.
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
      *
      * @param processorSupplier the supplier
      */
