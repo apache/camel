@@ -331,7 +331,7 @@ with the following path and query parameters:
 
 == Examples
 
-You'll need to provide a connectioFactory to the ActiveMQ Component, to have the following examples working.
+You'll need to provide a connectionFactory to the ActiveMQ Component, to have the following examples working.
 
 === Producer Example
 
