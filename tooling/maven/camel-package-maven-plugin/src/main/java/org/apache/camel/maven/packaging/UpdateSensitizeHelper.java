@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +50,10 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
 
     private static final String START_TOKEN = "// SENSITIVE-KEYS: START";
     private static final String END_TOKEN = "// SENSITIVE-KEYS: END";
+
+    // extra keys that are regarded as secret which may not yet been in any component
+    // they MUST be in lowercase and without a dash
+    private static final String[] EXTRA_KEYS = new String[] { "apipassword" };
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/")
     protected File jsonDir;
@@ -124,8 +129,10 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             } catch (Exception e) {
                 throw new MojoExecutionException("Error loading json: " + name, e);
             }
-
         }
+
+        // add extra keys
+        secrets.addAll(Arrays.asList(EXTRA_KEYS));
 
         getLog().info("There are " + secrets.size()
                       + " distinct secret options across all the Camel components/dataformats/languages");
