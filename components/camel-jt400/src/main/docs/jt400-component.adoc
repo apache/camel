@@ -200,14 +200,17 @@ on the endpoint.
 
 === Program call
 
-This endpoint expects the input to be either a String array or byte[]
-array (depending on format) and handles all the CCSID handling through
-the native jt400 library mechanisms. A parameter can be _omitted_ by
-passing null as the value in its position (the program has to
-support it). After the program execution the endpoint returns either a
-String array or byte[] array with the values as they were returned by
-the program (the input only parameters will contain the same data as the
-beginning of the invocation). This endpoint does not implement a provider endpoint!
+This endpoint expects the input to be an `Object[]`, whose object types are
+`int`, `long`, `CharSequence` (such as `String`), or `byte[]`. All other
+data types in the input array will be converted to `String`. For character
+inputs, CCSID handling is performed through the native jt400 library
+mechanisms. A parameter can be _omitted_ by passing null as the value in
+its position (the program has to support it). After the program execution,
+the endpoint returns an `Object[]` in the message body. Depending on
+_format_, the returned array will be populated with `byte[]` or `String`
+objects representing the values as they were returned by the program. Input
+only parameters will contain the same data as the beginning of the invocation.
+This endpoint does not implement a provider endpoint!
 
 == Message headers
 
@@ -283,7 +286,7 @@ public class Jt400RouteBuilder extends RouteBuilder {
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 In this example, the camel route will call the QUSRTVUS API to retrieve
-16 bytes of data from data area "MYUSRSPACE" in the "MYLIB" library.
+16 bytes from data area "MYUSRSPACE" in the "MYLIB" library.
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
