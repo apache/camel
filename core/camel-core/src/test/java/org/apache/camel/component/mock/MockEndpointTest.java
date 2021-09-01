@@ -288,8 +288,7 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.reset();
 
         resultEndpoint.expectedHeaderReceived("number", 123);
-        template.sendBodyAndHeader("direct:a", "<foo><id>123</id></foo>", "number",
-                XPathBuilder.xpath("/foo/id", Integer.class));
+        template.sendBody("direct:xpathexprs", "<foo><id>123</id></foo>");
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -299,8 +298,7 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.reset();
 
         resultEndpoint.expectedPropertyReceived("number", 123);
-        template.sendBodyAndProperty("direct:a", "<foo><id>123</id></foo>", "number",
-                XPathBuilder.xpath("/foo/id", Integer.class));
+        template.sendBody("direct:xpathexprs", "<foo><id>123</id></foo>");
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -1080,9 +1078,8 @@ public class MockEndpointTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(987);
 
-        // start with 0 (zero) to have it converted to the number and match 987
-        // and since its an expression it would be evaluated first as well
-        template.sendBody("direct:a", ExpressionBuilder.constantExpression("0987"));
+        // Route contains: setBody(ExpressionBuilder.constantExpression("0987"))
+        template.sendBody("direct:bodyexpr", "");
 
         assertMockEndpointsSatisfied();
     }
@@ -1296,6 +1293,15 @@ public class MockEndpointTest extends ContextTestSupport {
                 from("direct:a").to("mock:result");
 
                 from("direct:b").transform(body().append(" World")).to("mock:result");
+
+                from("direct:xpathexprs")
+                        .setHeader("number", XPathBuilder.xpath("/foo/id", Integer.class))
+                        .setProperty("number", XPathBuilder.xpath("/foo/id", Integer.class))
+                        .to("mock:result");
+
+                from("direct:bodyexpr")
+                        .setBody(ExpressionBuilder.constantExpression("0987"))
+                        .to("mock:result");
             }
         };
     }
