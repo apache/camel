@@ -125,15 +125,20 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (input) {
                 if (param != null) {
                     AS400DataType typeConverter;
-                    if (param instanceof String) {
+                    if (param instanceof CharSequence) {
+                        param = param.toString();
+                        typeConverter = new AS400Text(length, iSeries);
+                    } else if (param instanceof char[]) {
+                        param = new String((char[]) param);
                         typeConverter = new AS400Text(length, iSeries);
                     } else if (param instanceof Integer) {
                         typeConverter = new AS400Bin4();
                     } else if (param instanceof Long) {
                         typeConverter = new AS400Bin8();
-                    } else if (getISeriesEndpoint().getFormat() == Jt400Configuration.Format.binary) {
+                    } else if (param instanceof byte[]) {
                         typeConverter = new AS400ByteArray(length);
                     } else {
+                        param = param.toString(); // must be a String for AS400Text class
                         typeConverter = new AS400Text(length, iSeries);
                     }
                     inputData = typeConverter.toBytes(param);
