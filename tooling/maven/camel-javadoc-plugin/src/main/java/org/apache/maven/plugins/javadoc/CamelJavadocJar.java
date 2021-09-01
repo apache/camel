@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
@@ -327,7 +328,9 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
     }
 
     TreeSet<Path> getAllRelativeFiles(Path dir) throws IOException {
-        return Files.walk(dir).map(dir::relativize).collect(Collectors.toCollection(TreeSet::new));
+        try (Stream<Path> pathStream = Files.walk(dir)) {
+            return pathStream.map(dir::relativize).collect(Collectors.toCollection(TreeSet::new));
+        }
     }
 
     // ----------------------------------------------------------------------

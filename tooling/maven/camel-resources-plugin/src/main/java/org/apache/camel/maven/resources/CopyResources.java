@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.Strings;
@@ -79,34 +80,41 @@ public class CopyResources extends AbstractMojo {
             StringBuilder sb = new StringBuilder(8192);
             for (Resource resource : resources) {
                 Path dir = resource.getDirectory().toPath();
-                List<Path> files = Files.walk(dir).filter(Files::isRegularFile).collect(Collectors.toList());
-                for (Path file : files) {
-                    boolean filtering = isFiltering(resource, file);
-                    if (filtering) {
-                        try (Reader reader = Files.newBufferedReader(file, Charset.forName(encoding))) {
-                            Reader wrapped = readerFilter.filter(reader, true, project,
-                                    null, false, session);
-                            sb.setLength(0);
-                            while (true) {
-                                int l = wrapped.read(buf, 0, buf.length);
-                                if (l >= 0) {
-                                    sb.append(buf, 0, l);
-                                } else {
-                                    break;
-                                }
-                            }
-                            String content = sb.toString();
-                            FileUtil.updateFile(output.resolve(dir.relativize(file)), content);
-                        } catch (IOException e) {
-                            throw new IOException("Error processing resource: " + file, e);
-                        }
-                    } else {
-                        FileUtil.updateFile(file, output.resolve(dir.relativize(file)));
-                    }
-                }
+                processResource(output, buf, sb, resource, dir);
             }
         } catch (IOException | MavenFilteringException e) {
             throw new MojoFailureException("Unable to copy resources", e);
+        }
+    }
+
+    private void processResource(Path output, char[] buf, StringBuilder sb, Resource resource, Path dir)
+            throws MavenFilteringException, IOException {
+        try (Stream<Path> pathStream = Files.walk(dir)) {
+            List<Path> files = pathStream.filter(Files::isRegularFile).collect(Collectors.toList());
+            for (Path file : files) {
+                boolean filtering = isFiltering(resource, file);
+                if (filtering) {
+                    try (Reader reader = Files.newBufferedReader(file, Charset.forName(encoding))) {
+                        Reader wrapped = readerFilter.filter(reader, true, project,
+                                null, false, session);
+                        sb.setLength(0);
+                        while (true) {
+                            int l = wrapped.read(buf, 0, buf.length);
+                            if (l >= 0) {
+                                sb.append(buf, 0, l);
+                            } else {
+                                break;
+                            }
+                        }
+                        String content = sb.toString();
+                        FileUtil.updateFile(output.resolve(dir.relativize(file)), content);
+                    } catch (IOException e) {
+                        throw new IOException("Error processing resource: " + file, e);
+                    }
+                } else {
+                    FileUtil.updateFile(file, output.resolve(dir.relativize(file)));
+                }
+            }
         }
     }
 
