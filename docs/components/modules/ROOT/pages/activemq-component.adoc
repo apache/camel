@@ -329,5 +329,26 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Examples
+
+You'll need to provide a connectioFactory to the ActiveMQ Component, to have the following examples working.
+
+=== Producer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+from("timer:mytimer?period=5000")
+        .setBody(constant("HELLO from Camel!"))
+        .to("jms:queue:HELLO.WORLD");
+--------------------------------------------------------------------------------
+
+=== Consumer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+from("jms:queue:HELLO.WORLD")
+        .log("Received a message - ${body}");
+--------------------------------------------------------------------------------
+
 
 include::{page-component-version}@camel-spring-boot::page$activemq-starter.adoc[]
