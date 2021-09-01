@@ -339,14 +339,14 @@ You'll need to provide a connectioFactory to the ActiveMQ Component, to have the
 --------------------------------------------------------------------------------
 from("timer:mytimer?period=5000")
         .setBody(constant("HELLO from Camel!"))
-        .to("jms:queue:HELLO.WORLD");
+        .to("activemq:queue:HELLO.WORLD");
 --------------------------------------------------------------------------------
 
 === Consumer Example
 
 [source,java]
 --------------------------------------------------------------------------------
-from("jms:queue:HELLO.WORLD")
+from("activemq:queue:HELLO.WORLD")
         .log("Received a message - ${body}");
 --------------------------------------------------------------------------------
 
