@@ -121,25 +121,25 @@ public class PrepareFatJarMojo extends AbstractMojo {
                 URL url = loaderResources.nextElement();
                 getLog().debug("Loading file " + META_INF_SERVICES_TYPE_CONVERTER_LOADER
                                + " to retrieve list of type converters, from url: " + url);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
-                String line;
-                do {
-                    line = reader.readLine();
-                    if (line != null && !line.startsWith("#") && !line.isEmpty()) {
-                        loaders.add(line);
-                    }
-                } while (line != null);
-                try {
-                    reader.close();
-                } catch (Exception e) {
-                    // ignore
-                }
+                readTypeConverters(loaders, url);
             }
         } catch (Exception e) {
             getLog().warn("Error finding type converters due to " + e.getMessage());
         }
 
         return loaders;
+    }
+
+    private void readTypeConverters(Set<String> loaders, URL url) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+            String line;
+            do {
+                line = reader.readLine();
+                if (line != null && !line.startsWith("#") && !line.isEmpty()) {
+                    loaders.add(line);
+                }
+            } while (line != null);
+        }
     }
 
     protected final DynamicClassLoader getProjectClassLoader() throws MojoExecutionException {

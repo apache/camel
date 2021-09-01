@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -72,8 +73,8 @@ public class PackageJandexMojo extends AbstractGeneratorMojo {
         if (!classesDirectory.isDirectory()) {
             return;
         }
-        try {
-            List<Path> inputs = Files.walk(classesDirectory.toPath()).filter(f -> f.getFileName().toString().endsWith(".class"))
+        try (Stream<Path> pathStream = Files.walk(classesDirectory.toPath())) {
+            List<Path> inputs = pathStream.filter(f -> f.getFileName().toString().endsWith(".class"))
                     .collect(Collectors.toList());
             if (index.exists()) {
                 long lastmod = lastmod(index.toPath());
