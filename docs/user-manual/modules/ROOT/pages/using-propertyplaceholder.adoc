@@ -103,7 +103,7 @@ We can do this be negating the `autoStartup` in the JMS route, by using `!integr
 
 == Using property placeholders
 
-When using property placeholders in the endpoint xref:uris.adoc[URIs] you should use this with the syntax `{{key}}` as shown in this example:
+When using property placeholders in the endpoint xref:uris.adoc[URIs] you should use this with the syntax `{\{key}}` as shown in this example:
 
 [source,properties]
 ----
@@ -393,7 +393,7 @@ tag as shown below:
 
 Notice how the hello bean is using pure Spring property placeholders using
 the `${}` notation. And in the Camel routes we use the Camel
-placeholder notation with `{{key}}`.
+placeholder notation with `{\{key}}`.
 
 == Using property placeholder functions
 

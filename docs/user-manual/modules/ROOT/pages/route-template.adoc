@@ -147,7 +147,7 @@ This ensures that the code creating the bean is executed later ( when Camel is c
 then the code must be specified as a _supplier_. Because we want during creation of the bean access to template parameters,
 we use a Camel `BeanSupplier` which gives access to `RouteTemplateContext` that is the _rtc_ variable in the code above.
 
-*Important:* the local bean with id `myClient` *must* be referred to using Camel's property placeholder syntax, eg `{{myClient}}`
+*Important:* the local bean with id `myClient` *must* be referred to using Camel's property placeholder syntax, eg `{\{myClient}}`
 in the route template, as shown above with the _to_ endpoint. This is because the local
 bean must be made unique and Camel will internally re-assign the bean id to use an unique id instead of `myClient`. And this is done with the help
 of the property placeholder functionality.
@@ -175,7 +175,7 @@ Suppose the route template below is defined in XML:
 </camelContext>
 ----
 
-The template has no bean bindings for `#{{myClient}}` which would be required for creating the template.
+The template has no bean bindings for `#{\{myClient}}` which would be required for creating the template.
 
 When creating routes form the template via `TemplatedRouteBuilder` then you can provide the bean binding
 if you desire the bean to be local scoped (not shared with others):
