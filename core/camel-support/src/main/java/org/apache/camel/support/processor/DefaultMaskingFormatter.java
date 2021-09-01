@@ -29,7 +29,8 @@ import org.apache.camel.spi.MaskingFormatter;
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 
-    private static final Set<String> DEFAULT_KEYWORDS = new HashSet<>(Arrays.asList("passphrase", "password", "secretKey"));
+    private static final Set<String> DEFAULT_KEYWORDS
+            = new HashSet<>(Arrays.asList("passphrase", "password", "secretKey"));
     private Set<String> keywords;
     private boolean maskKeyValue;
     private boolean maskXmlElement;
@@ -60,16 +61,24 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
             return source;
         }
 
+        // xml,json or key=value pairs is the formats supported
+        boolean xml = maskXmlElement && source.startsWith("<");
+        boolean json = maskJson && !xml && (source.startsWith("{") || source.startsWith("["));
+
         String answer = source;
-        if (maskKeyValue) {
+        if (xml) {
+            answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + maskString + "$3");
+            if (maskKeyValue) {
+                // used for the attributes in the XML tags
+                answer = keyValueMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
+            }
+        } else if (json) {
+            answer = jsonMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
+        } else if (maskKeyValue) {
+            // key=value paris
             answer = keyValueMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
         }
-        if (maskXmlElement) {
-            answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + maskString + "$3");
-        }
-        if (maskJson) {
-            answer = jsonMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
-        }
+
         return answer;
     }
 
