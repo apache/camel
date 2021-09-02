@@ -462,7 +462,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         // ContextRefreshedEvent but this is the best that we can do
         if (event.getSource() instanceof ApplicationContext) {
             ApplicationContext appCtx = (ApplicationContext) event.getSource();
-            if (appCtx.getId().equals("application:management")) {
+            if (appCtx.getId().endsWith(":management")) {
                 //don't start camel context if
                 //event is from the self management ApplicationContext
                 return;
