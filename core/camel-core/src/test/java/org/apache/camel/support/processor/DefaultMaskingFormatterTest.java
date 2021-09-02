@@ -125,4 +125,23 @@ public class DefaultMaskingFormatterTest {
                 answer);
     }
 
+    @Test
+    public void testCustomKeywords() throws Exception {
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
+        formatter.addKeyword("cheese");
+        formatter.setMaskString("**********");
+        String answer
+                = formatter.format("key=value, Cheese=gauda, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
+        assertEquals("key=value, Cheese=\"**********\", myPassword=\"**********\",\n myPassphrase=\"**********\", secretKey=\"**********\"", answer);
+
+        answer = formatter.format("<chEEse>Gauda</chEEse><xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
+        assertEquals("<chEEse>**********</chEEse><xmlPassword>\n ********** \n</xmlPassword>\n<user password=\"**********\"/>", answer);
+
+        answer = formatter.format(
+                "{\"key\" : \"value\", \"Cheese\": \"gauda\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
+        assertEquals(
+                "{\"key\" : \"value\", \"Cheese\": \"**********\", \"Password\":\"**********\", \"Passphrase\" : \"**********\", \"SecretKey\" : \"**********\"}",
+                answer);
+    }
+
 }

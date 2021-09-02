@@ -17,6 +17,7 @@
 package org.apache.camel.support.processor;
 
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.camel.spi.MaskingFormatter;
@@ -26,7 +27,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The {@link MaskingFormatter} that searches the specified keywords in the source and replace its value with mask
- * string. By default passphrase, password and secretKey are used as keywords to replace its value.
+ * string.
+ * <p>
+ * By default all the known secret keys from {@link SensitiveUtils#getSensitiveKeys()} are used.
+ * Custom keywords can be added with the {@link #addKeyword(String)} method.
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 
@@ -50,10 +54,44 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
     }
 
     public DefaultMaskingFormatter(Set<String> keywords, boolean maskKeyValue, boolean maskXmlElement, boolean maskJson) {
-        this.keywords = keywords;
+        this.keywords = new TreeSet<>(keywords);
         setMaskKeyValue(maskKeyValue);
         setMaskXmlElement(maskXmlElement);
         setMaskJson(maskJson);
+
+        initPatterns();
+    }
+
+    /**
+     * Adds a custom keyword for masking.
+     */
+    public void addKeyword(String keyword) {
+        keywords.add(keyword);
+        // recreate patterns as keywords changed
+        initPatterns();
+    }
+
+    /**
+     * Adds custom keywords for masking.
+     */
+    public void setCustomKeywords(Set<String> keywords) {
+        this.keywords.addAll(keywords);
+        // recreate patterns as keywords changed
+        initPatterns();
+    }
+
+    /**
+     * The string to use for replacement such as xxxxx
+     */
+    public String getMaskString() {
+        return maskString;
+    }
+
+    /**
+     * The string to use for replacement such as xxxxx
+     */
+    public void setMaskString(String maskString) {
+        this.maskString = maskString;
     }
 
     @Override
@@ -89,11 +127,6 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     public void setMaskKeyValue(boolean maskKeyValue) {
         this.maskKeyValue = maskKeyValue;
-        if (maskKeyValue) {
-            keyValueMaskPattern = createKeyValueMaskPattern(keywords);
-        } else {
-            keyValueMaskPattern = null;
-        }
     }
 
     public boolean isMaskXmlElement() {
@@ -102,11 +135,6 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     public void setMaskXmlElement(boolean maskXml) {
         this.maskXmlElement = maskXml;
-        if (maskXml) {
-            xmlElementMaskPattern = createXmlElementMaskPattern(keywords);
-        } else {
-            xmlElementMaskPattern = null;
-        }
     }
 
     public boolean isMaskJson() {
@@ -115,19 +143,24 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     public void setMaskJson(boolean maskJson) {
         this.maskJson = maskJson;
+    }
+
+    protected void initPatterns() {
+        if (maskKeyValue) {
+            keyValueMaskPattern = createKeyValueMaskPattern(keywords);
+        } else {
+            keyValueMaskPattern = null;
+        }
+        if (maskXmlElement) {
+            xmlElementMaskPattern = createXmlElementMaskPattern(keywords);
+        } else {
+            xmlElementMaskPattern = null;
+        }
         if (maskJson) {
             jsonMaskPattern = createJsonMaskPattern(keywords);
         } else {
             jsonMaskPattern = null;
         }
-    }
-
-    public String getMaskString() {
-        return maskString;
-    }
-
-    public void setMaskString(String maskString) {
-        this.maskString = maskString;
     }
 
     protected Pattern createKeyValueMaskPattern(Set<String> keywords) {
