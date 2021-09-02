@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
  * The {@link MaskingFormatter} that searches the specified keywords in the source and replace its value with mask
  * string.
  * <p>
- * By default all the known secret keys from {@link SensitiveUtils#getSensitiveKeys()} are used.
- * Custom keywords can be added with the {@link #addKeyword(String)} method.
+ * By default all the known secret keys from {@link SensitiveUtils#getSensitiveKeys()} are used. Custom keywords can be
+ * added with the {@link #addKeyword(String)} method.
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 
