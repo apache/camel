@@ -18,13 +18,11 @@ package org.apache.camel.support.processor;
 
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class DefaultMaskingFormatterLongJsonTest {
 
     @Test
-    @Disabled("TODO: log mask should not use regexp as the pattern is flawed")
     public void testMaskLongJson() throws Exception {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
 

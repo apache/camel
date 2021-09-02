@@ -33,9 +33,9 @@ public class DefaultMaskingFormatterTest {
         assertEquals("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"xxxxx\"/>", answer);
 
         answer = formatter.format(
-                "{\"key\" : \"value\", \"My Password\":\"foo\", \"My SecretPassphrase\" : \"foo bar\", \"My SecretKey2\" : \"!@#$%^&*() -+[]{};:'\"}");
+                "{\"key\" : \"value\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
         assertEquals(
-                "{\"key\" : \"value\", \"My Password\":\"xxxxx\", \"My SecretPassphrase\" : \"xxxxx\", \"My SecretKey2\" : \"xxxxx\"}",
+                "{\"key\" : \"value\", \"Password\":\"xxxxx\", \"Passphrase\" : \"xxxxx\", \"SecretKey\" : \"xxxxx\"}",
                 answer);
     }
 
@@ -50,9 +50,9 @@ public class DefaultMaskingFormatterTest {
         assertEquals("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"asdf qwert\"/>", answer);
 
         answer = formatter.format(
-                "{\"key\" : \"value\", \"My Password\":\"foo\", \"My SecretPassphrase\" : \"foo bar\", \"My SecretKey2\" : \"!@#$%^&*() -+[]{};:'\"}");
+                "{\"key\" : \"value\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
         assertEquals(
-                "{\"key\" : \"value\", \"My Password\":\"xxxxx\", \"My SecretPassphrase\" : \"xxxxx\", \"My SecretKey2\" : \"xxxxx\"}",
+                "{\"key\" : \"value\", \"Password\":\"xxxxx\", \"Passphrase\" : \"xxxxx\", \"SecretKey\" : \"xxxxx\"}",
                 answer);
     }
 
@@ -67,9 +67,9 @@ public class DefaultMaskingFormatterTest {
         assertEquals("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"xxxxx\"/>", answer);
 
         answer = formatter.format(
-                "{\"key\" : \"value\", \"My Password\":\"foo\", \"My SecretPassphrase\" : \"foo bar\", \"My SecretKey2\" : \"!@#$%^&*() -+[]{};:'\"}");
+                "{\"key\" : \"value\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
         assertEquals(
-                "{\"key\" : \"value\", \"My Password\":\"xxxxx\", \"My SecretPassphrase\" : \"xxxxx\", \"My SecretKey2\" : \"xxxxx\"}",
+                "{\"key\" : \"value\", \"Password\":\"xxxxx\", \"Passphrase\" : \"xxxxx\", \"SecretKey\" : \"xxxxx\"}",
                 answer);
     }
 
@@ -102,9 +102,9 @@ public class DefaultMaskingFormatterTest {
         assertEquals("<xmlPassword>\n ********** \n</xmlPassword>\n<user password=\"**********\"/>", answer);
 
         answer = formatter.format(
-                "{\"key\" : \"value\", \"My Password\":\"foo\", \"My SecretPassphrase\" : \"foo bar\", \"My SecretKey2\" : \"!@#$%^&*() -+[]{};:'\"}");
+                "{\"key\" : \"value\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
         assertEquals(
-                "{\"key\" : \"value\", \"My Password\":\"**********\", \"My SecretPassphrase\" : \"**********\", \"My SecretKey2\" : \"**********\"}",
+                "{\"key\" : \"value\", \"Password\":\"**********\", \"Passphrase\" : \"**********\", \"SecretKey\" : \"**********\"}",
                 answer);
     }
 

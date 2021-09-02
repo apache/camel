@@ -21,12 +21,16 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.util.SensitiveUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link MaskingFormatter} that searches the specified keywords in the source and replace its value with mask
  * string. By default passphrase, password and secretKey are used as keywords to replace its value.
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultMaskingFormatter.class);
 
     private Set<String> keywords;
     private boolean maskKeyValue;
@@ -70,7 +74,7 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
                 answer = keyValueMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
             }
         } else if (json) {
-            answer = jsonMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
+            answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + maskString + "\"");
         } else if (maskKeyValue) {
             // key=value paris
             answer = keyValueMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
@@ -133,6 +137,10 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
         }
         regex.insert(0, "([\\w]*(?:");
         regex.append(")[\\w]*[\\s]*?=[\\s]*?)([\\S&&[^'\",\\}\\]\\)]]+[\\S&&[^,\\}\\]\\)>]]*?|\"[^\"]*?\"|'[^']*?')");
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("KeyValue Pattern: {}", regex);
+        }
         return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
     }
 
@@ -143,6 +151,10 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
         }
         regex.insert(0, "(<([\\w]*(?:");
         regex.append(")[\\w]*)(?:[\\s]+.+)*?>[\\s]*?)(?:[\\S&&[^<]]+(?:\\s+[\\S&&[^<]]+)*?)([\\s]*?</\\2>)");
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("XML Pattern: {}", regex);
+        }
         return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
     }
 
@@ -151,8 +163,12 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
         if (regex == null) {
             return null;
         }
-        regex.insert(0, "(\"(?:[^\"]|(?:\\\"))*?(?:");
-        regex.append(")(?:[^\"]|(?:\\\"))*?\"\\s*?\\:\\s*?)(?:\"(?:[^\"]|(?:\\\"))*?\")");
+        regex.insert(0, "\\\"(");
+        regex.append(")\\\"(\\s*?):(\\s*?)\\\"([^\"]*)\\\"");
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("JSon Pattern: {}", regex);
+        }
         return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
     }
 
