@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
+public class SpringJacksonXmlDataFormatTest extends CamelSpringTestSupport {
 
     private static final String LS = System.lineSeparator();
 
@@ -100,7 +100,8 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
         Object marshalled = template.requestBody("direct:inAgeView", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        assertEquals("<TestPojoView><age>30</age><height>190</height><weight>70</weight></TestPojoView>", marshalledAsString);
+        // Weight is not written because it is not in the Age view
+        assertEquals("<TestPojoView><age>30</age><height>190</height></TestPojoView>", marshalledAsString);
 
         template.sendBody("direct:backAgeView", marshalled);
 
@@ -109,7 +110,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jacksonxml/SpringJacksonJsonDataFormatTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jacksonxml/SpringJacksonXmlDataFormatTest.xml");
     }
 
 }

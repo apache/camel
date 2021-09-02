@@ -35,7 +35,8 @@
             <!-- and this one uses our own TestPojo class as unmarshal type -->
             <jacksonxml id="pojo" unmarshalType="org.apache.camel.component.jacksonxml.TestPojo"/>
             <!-- in addition to our own TestPojoView class we make use of the jsonView attribute here as filter -->
-            <jacksonxml id="view" unmarshalType="org.apache.camel.component.jacksonxml.TestPojoView" jsonView="org.apache.camel.component.jackson.Views$Age"/>
+            <jacksonxml id="view" unmarshalType="org.apache.camel.component.jacksonxml.TestPojoView" 
+            jsonView="org.apache.camel.component.jacksonxml.Views$Age"/>
         </dataFormats>
 
         <route>
