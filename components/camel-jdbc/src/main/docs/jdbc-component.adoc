@@ -173,7 +173,7 @@ keys.
 |`CamelJdbcColumnNames` |The column names from the ResultSet as a `java.util.Set`
 type.
 
-|`CamelJdbcParametes` |A `java.util.Map` which has the headers to be used if
+|`CamelJdbcParameters` |A `java.util.Map` which has the headers to be used if
 `useHeadersAsParameters` has been enabled.
 |===
 
