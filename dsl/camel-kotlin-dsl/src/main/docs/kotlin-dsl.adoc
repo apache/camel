@@ -10,4 +10,4 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kotlin-dsl.ado
 //Manually maintained attributes
 :group: DSL
 
-See https://camel.apache.org/manual/latest/dsl.html
+See xref:manual::dsl.adoc[]

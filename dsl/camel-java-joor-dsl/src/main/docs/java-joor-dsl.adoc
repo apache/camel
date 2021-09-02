@@ -12,4 +12,4 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/java-joor-dsl.
 
 xml-io-
 
-See https://camel.apache.org/manual/latest/dsl.html
+See xref:manual::dsl.adoc[]
