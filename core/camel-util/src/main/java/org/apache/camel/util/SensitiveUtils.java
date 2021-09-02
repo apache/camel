@@ -35,6 +35,8 @@ public final class SensitiveUtils {
                     "accountsid",
                     "acltoken",
                     "apipassword",
+                    "apiuser",
+                    "apiusername",
                     "authkey",
                     "authorizationtoken",
                     "blobaccesskey",

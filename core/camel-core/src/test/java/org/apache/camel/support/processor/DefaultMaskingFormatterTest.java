@@ -108,4 +108,21 @@ public class DefaultMaskingFormatterTest {
                 answer);
     }
 
+    @Test
+    public void testDifferentSensitiveKeys() throws Exception {
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
+        String answer
+                = formatter.format("key=value, myAccessKey=foo,\n authkey=\"foo bar\", refreshtoken='!@#$%^&*() -+[]{};:'");
+        assertEquals("key=value, myAccessKey=\"xxxxx\",\n authkey=\"xxxxx\", refreshtoken=\"xxxxx\"", answer);
+
+        answer = formatter.format("<subscribeKey>\n foo bar \n</subscribeKey>\n<user verificationCode=\"asdf qwert\"/>");
+        assertEquals("<subscribeKey>\n xxxxx \n</subscribeKey>\n<user verificationCode=\"xxxxx\"/>", answer);
+
+        answer = formatter.format(
+                "{\"key\" : \"value\", \"subscribeKey\":\"foo\", \"verificationCode\" : \"foo bar\", \"RefreshToken\" : \"!@#$%^&*() -+[]{};:'\"}");
+        assertEquals(
+                "{\"key\" : \"value\", \"subscribeKey\":\"xxxxx\", \"verificationCode\" : \"xxxxx\", \"RefreshToken\" : \"xxxxx\"}",
+                answer);
+    }
+
 }

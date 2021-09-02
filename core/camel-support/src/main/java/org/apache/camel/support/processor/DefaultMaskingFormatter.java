@@ -16,12 +16,11 @@
  */
 package org.apache.camel.support.processor;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.camel.spi.MaskingFormatter;
+import org.apache.camel.util.SensitiveUtils;
 
 /**
  * The {@link MaskingFormatter} that searches the specified keywords in the source and replace its value with mask
@@ -29,8 +28,6 @@ import org.apache.camel.spi.MaskingFormatter;
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 
-    private static final Set<String> DEFAULT_KEYWORDS
-            = new HashSet<>(Arrays.asList("passphrase", "password", "secretKey"));
     private Set<String> keywords;
     private boolean maskKeyValue;
     private boolean maskXmlElement;
@@ -41,11 +38,11 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
     private Pattern jsonMaskPattern;
 
     public DefaultMaskingFormatter() {
-        this(DEFAULT_KEYWORDS, true, true, true);
+        this(SensitiveUtils.getSensitiveKeys(), true, true, true);
     }
 
     public DefaultMaskingFormatter(boolean maskKeyValue, boolean maskXml, boolean maskJson) {
-        this(DEFAULT_KEYWORDS, maskKeyValue, maskXml, maskJson);
+        this(SensitiveUtils.getSensitiveKeys(), maskKeyValue, maskXml, maskJson);
     }
 
     public DefaultMaskingFormatter(Set<String> keywords, boolean maskKeyValue, boolean maskXmlElement, boolean maskJson) {
