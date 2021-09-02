@@ -29,7 +29,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Routes messages based on dynamic rules
+ * Route messages based on dynamic rules
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "dynamicRouter")

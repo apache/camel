@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Routes messages based on a series of predicates
+ * Route messages based on a series of predicates
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "choice")

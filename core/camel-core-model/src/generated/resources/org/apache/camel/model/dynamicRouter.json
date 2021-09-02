@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "dynamicRouter",
     "title": "Dynamic Router",
-    "description": "Routes messages based on dynamic rules",
+    "description": "Route messages based on dynamic rules",
     "deprecated": false,
     "label": "eip,endpoint,routing",
     "javaType": "org.apache.camel.model.DynamicRouterDefinition",

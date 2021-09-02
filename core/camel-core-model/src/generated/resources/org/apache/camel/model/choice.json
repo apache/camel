@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "choice",
     "title": "Choice",
-    "description": "Routes messages based on a series of predicates",
+    "description": "Route messages based on a series of predicates",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.ChoiceDefinition",
