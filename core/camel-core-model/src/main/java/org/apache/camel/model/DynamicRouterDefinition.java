@@ -42,6 +42,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoints;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")

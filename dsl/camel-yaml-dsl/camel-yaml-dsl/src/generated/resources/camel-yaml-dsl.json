@@ -576,6 +576,9 @@
             "inherit-error-handler" : {
               "type" : "boolean"
             },
+            "mandatory" : {
+              "type" : "boolean"
+            },
             "type" : {
               "type" : "string"
             }
@@ -642,7 +645,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "ignore-invalid-endpoints" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "inherit-error-handler" : {
             "type" : "boolean"

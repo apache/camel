@@ -2126,6 +2126,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "charset", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "mandatory", type = "boolean"),
                     @YamlProperty(name = "type", type = "string", required = true)
             }
     )
@@ -2156,6 +2157,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "mandatory": {
+                    String val = asText(node);
+                    target.setMandatory(val);
                     break;
                 }
                 case "type": {
@@ -4191,7 +4197,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
-                    @YamlProperty(name = "ignore-invalid-endpoints", type = "string"),
+                    @YamlProperty(name = "ignore-invalid-endpoints", type = "boolean"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "uri-delimiter", type = "string")
             }

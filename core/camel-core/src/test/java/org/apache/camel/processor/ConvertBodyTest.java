@@ -24,6 +24,7 @@ import java.util.Locale;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -95,6 +96,25 @@ public class ConvertBodyTest extends ContextTestSupport {
         result.expectedBodiesReceived(11);
 
         template.sendBody("direct:start", "11");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testConvertToIntegerNotMandatory() throws Exception {
+        // mandatory should fail
+        try {
+            template.sendBody("direct:start", Double.NaN);
+            fail();
+        } catch (Exception e) {
+            assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
+        }
+
+        // optional should cause null body
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").message(0).body().isNull();
+
+        template.sendBody("direct:optional", Double.NaN);
 
         assertMockEndpointsSatisfied();
     }
@@ -189,6 +209,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").convertBodyTo(Integer.class).to("mock:result");
+                from("direct:optional").convertBodyTo(Integer.class, false).to("mock:result");
                 from("direct:invalid").convertBodyTo(Date.class).to("mock:result");
                 from("direct:charset").convertBodyTo(byte[].class, "iso-8859-1").to("mock:result");
                 from("direct:charset2").convertBodyTo(byte[].class, "utf-16").to("mock:result");

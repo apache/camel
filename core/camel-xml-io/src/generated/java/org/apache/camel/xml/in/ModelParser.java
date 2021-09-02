@@ -285,6 +285,7 @@ public class ModelParser extends BaseParser {
         return doParse(new ConvertBodyDefinition(), (def, key, val) -> {
             switch (key) {
                 case "charset": def.setCharset(val); break;
+                case "mandatory": def.setMandatory(val); break;
                 case "type": def.setType(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }

@@ -2747,8 +2747,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Converts the IN message body to the specified type
      *
+     * @param  type      the type to convert to
+     * @param  mandatory whether to use mandatory type conversion or not
+     * @return           the builder
+     */
+    public Type convertBodyTo(Class<?> type, boolean mandatory) {
+        addOutput(new ConvertBodyDefinition(type, mandatory));
+        return asType();
+    }
+
+    /**
+     * Converts the IN message body to the specified type
+     *
      * @param  type    the type to convert to
-     * @param  charset the charset to use by type converters (not all converters support specifc charset)
+     * @param  charset the charset to use by type converters (not all converters support specific charset)
      * @return         the builder
      */
     public Type convertBodyTo(Class<?> type, String charset) {

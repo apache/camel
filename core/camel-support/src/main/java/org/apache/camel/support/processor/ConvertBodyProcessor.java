@@ -42,17 +42,27 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
     private String routeId;
     private final Class<?> type;
     private final String charset;
+    private final boolean mandatory;
 
     public ConvertBodyProcessor(Class<?> type) {
         ObjectHelper.notNull(type, "type", this);
         this.type = type;
         this.charset = null;
+        this.mandatory = true;
     }
 
     public ConvertBodyProcessor(Class<?> type, String charset) {
         ObjectHelper.notNull(type, "type", this);
         this.type = type;
         this.charset = IOHelper.normalizeCharset(charset);
+        this.mandatory = true;
+    }
+
+    public ConvertBodyProcessor(Class<?> type, String charset, boolean mandatory) {
+        ObjectHelper.notNull(type, "type", this);
+        this.type = type;
+        this.charset = IOHelper.normalizeCharset(charset);
+        this.mandatory = mandatory;
     }
 
     @Override
@@ -103,7 +113,12 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
             exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
         }
         // use mandatory conversion
-        Object value = old.getMandatoryBody(type);
+        Object value;
+        if (mandatory) {
+            value = old.getMandatoryBody(type);
+        } else {
+            value = old.getBody(type);
+        }
 
         // create a new message container so we do not drag specialized message objects along
         // but that is only needed if the old message is a specialized message
