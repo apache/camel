@@ -20,9 +20,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSProperties;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CheckBucketFunctionalTest extends CamelTestSupport {
 
@@ -56,7 +58,7 @@ public class CheckBucketFunctionalTest extends CamelTestSupport {
      *
      * @throws Exception
      */
-    @Ignore("Manually enable this once you configure the parameters in the placeholders above")
+    @Disabled("Manually enable this once you configure the parameters in the placeholders above")
     @Test
     public void testListBuckets() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:check_bucket_result");

@@ -20,11 +20,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.constants.FunctionGraphProperties;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InvokeFunctionServiceKeyFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(InvokeFunctionServiceKeyFunctionalTest.class.getName());
@@ -65,7 +68,7 @@ public class InvokeFunctionServiceKeyFunctionalTest extends CamelTestSupport {
      *
      * @throws Exception
      */
-    @Ignore("Manually enable this once you configure the parameters in the placeholders above")
+    @Disabled("Manually enable this once you configure the parameters in the placeholders above")
     @Test
     public void testInvokeFunction() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:invoke_function_result");

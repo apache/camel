@@ -24,9 +24,11 @@ import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
 import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceRequest;
 import org.apache.camel.component.huaweicloud.dms.models.DeleteInstanceResponse;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DeleteInstanceTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();

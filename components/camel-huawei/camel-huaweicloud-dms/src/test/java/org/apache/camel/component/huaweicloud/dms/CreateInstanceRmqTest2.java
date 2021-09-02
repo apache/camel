@@ -27,9 +27,11 @@ import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
 import org.apache.camel.component.huaweicloud.dms.models.CreateInstanceRequest;
 import org.apache.camel.component.huaweicloud.dms.models.CreateInstanceResponse;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateInstanceRmqTest2 extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();

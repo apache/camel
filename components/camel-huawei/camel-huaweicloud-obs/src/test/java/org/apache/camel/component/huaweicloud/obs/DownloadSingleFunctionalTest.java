@@ -22,9 +22,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSHeaders;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test download objects with specific filename given
@@ -65,7 +69,7 @@ public class DownloadSingleFunctionalTest extends CamelTestSupport {
      *
      * @throws Exception
      */
-    @Ignore("Manually enable this once you configure the parameters in the placeholders above")
+    @Disabled("Manually enable this once you configure the parameters in the placeholders above")
     @Test
     public void testListBuckets() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:download_objects_result");

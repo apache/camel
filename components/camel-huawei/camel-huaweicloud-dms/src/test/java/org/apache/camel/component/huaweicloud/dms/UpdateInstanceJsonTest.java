@@ -24,9 +24,11 @@ import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
 import org.apache.camel.component.huaweicloud.dms.models.UpdateInstanceRequest;
 import org.apache.camel.component.huaweicloud.dms.models.UpdateInstanceResponse;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UpdateInstanceJsonTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();

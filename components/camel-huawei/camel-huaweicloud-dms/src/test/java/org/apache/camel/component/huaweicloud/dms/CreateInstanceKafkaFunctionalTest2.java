@@ -25,9 +25,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateInstanceKafkaFunctionalTest2 extends CamelTestSupport {
     private static final String AUTHENTICATION_KEY = "replace_this_with_authentication_key";
@@ -93,7 +96,7 @@ public class CreateInstanceKafkaFunctionalTest2 extends CamelTestSupport {
      *
      * @throws Exception
      */
-    @Ignore("Manually enable this once you configure the parameters in the placeholders above")
+    @Disabled("Manually enable this once you configure the parameters in the placeholders above")
     @Test
     public void testOperation() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
