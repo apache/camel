@@ -4600,6 +4600,16 @@ The java type to convert to.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="mandatory" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+When mandatory then the conversion must return a value (cannot be null), if this
+is not possible then NoTypeConversionAvailableException is thrown. Setting this
+to false could mean conversion is not possible and the value is null. Default
+value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="charset" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -4709,7 +4719,7 @@ Sets the uri delimiter to use. Default value: ,
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Ignore the invalidate endpoint exception when try to create a producer with that
-endpoint.
+endpoint. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
