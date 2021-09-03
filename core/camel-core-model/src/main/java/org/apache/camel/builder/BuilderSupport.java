@@ -172,26 +172,7 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Returns a Datasonnet expression value builder
      */
-    @Deprecated
-    public ValueBuilder datasonnet(Expression value) {
-        DatasonnetExpression exp = new DatasonnetExpression(value);
-        return new ValueBuilder(exp);
-    }
-
-    /**
-     * Returns a Datasonnet expression value builder
-     */
     public ValueBuilder datasonnet(String value, Class<?> resultType) {
-        DatasonnetExpression exp = new DatasonnetExpression(value);
-        exp.setResultType(resultType);
-        return new ValueBuilder(exp);
-    }
-
-    /**
-     * Returns a Datasonnet expression value builder
-     */
-    @Deprecated
-    public ValueBuilder datasonnet(Expression value, Class<?> resultType) {
         DatasonnetExpression exp = new DatasonnetExpression(value);
         exp.setResultType(resultType);
         return new ValueBuilder(exp);
