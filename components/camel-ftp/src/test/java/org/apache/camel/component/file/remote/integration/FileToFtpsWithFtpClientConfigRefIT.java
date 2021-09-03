@@ -56,7 +56,7 @@ public class FileToFtpsWithFtpClientConfigRefIT extends FtpsServerExplicitSSLWit
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:src/main/data?noop=true").log("Putting ${file:name}").to(getFtpUrl(false));
+                from("file:src/test/data?noop=true").log("Putting ${file:name}").to(getFtpUrl(false));
 
                 from(getFtpUrl(true)).to("mock:result");
             }

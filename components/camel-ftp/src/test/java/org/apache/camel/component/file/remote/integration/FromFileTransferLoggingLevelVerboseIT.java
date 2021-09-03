@@ -40,7 +40,7 @@ public class FromFileTransferLoggingLevelVerboseIT extends FtpServerTestSupport 
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(getFtpUrl()).to("mock:result");
-                from("file:src/main/data?noop=true").to(getFtpUrl());
+                from("file:src/test/data?noop=true").to(getFtpUrl());
             }
         };
     }

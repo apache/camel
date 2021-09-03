@@ -54,7 +54,7 @@ public class FromFilePasswordPropertyRefIT extends FtpServerTestSupport {
             public void configure() throws Exception {
                 from(getFtpUrl()).to("mock:result");
 
-                from("file:src/main/data?noop=true&delay=3000").to(getFtpUrl());
+                from("file:src/test/data?noop=true&delay=3000").to(getFtpUrl());
             }
         };
     }

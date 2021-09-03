@@ -51,7 +51,7 @@ public class FileToFtpsWithCustomKeyAndTrustStorePropertiesIT extends FtpsServer
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:src/main/data?noop=true").log("Got ${file:name}").to(getFtpUrl());
+                from("file:src/test/data?noop=true").log("Got ${file:name}").to(getFtpUrl());
 
                 from(getFtpUrl()).to("mock:result");
             }
