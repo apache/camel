@@ -74,4 +74,15 @@ public class StringHelperTest {
         assertEquals("jms:queue:bar?blah=123", replaceFirst("jms:queue:foo?blah=123", "foo", "bar"));
         assertEquals("jms:queue:bar?blah=foo", replaceFirst("jms:queue:foo?blah=foo", "foo", "bar"));
     }
+
+    @Test
+    public void testRemoveLeadingAndEndingQuotes() throws Exception {
+        assertEquals("abc", removeLeadingAndEndingQuotes("'abc'"));
+        assertEquals("abc", removeLeadingAndEndingQuotes("\"abc\""));
+        assertEquals("a'b'c", removeLeadingAndEndingQuotes("a'b'c"));
+        assertEquals("'b'c", removeLeadingAndEndingQuotes("'b'c"));
+        assertEquals("", removeLeadingAndEndingQuotes("''"));
+        assertEquals("'", removeLeadingAndEndingQuotes("'"));
+    }
+
 }
