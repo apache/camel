@@ -33,7 +33,7 @@ class for all your configuration and routing without.
 |xref:components:others:test-cdi.adoc[camel-test-cdi] | Used for testing Camel on xref:components:others:cdi.adoc[CDI]
 
 |xref:components:others:testcontainers-junit5.adoc[camel-test-containers-junit5] | *JUnit 5*: Camel Testcontainers extends standard camel test support providing a way to create and interact with containerized applications.
-|xref:components:others:testcontainers-spring-junit5.adoc[camel-test-containers-spring-junit5] | *JUnit 5*: Camel Testcontainers extends standard camel Spring test support providing a way to create and interact with containerized applications.
+|xref:components:others:testcontainers-spring-junit5.adoc[camel-testcontainers-spring-junit5] | *JUnit 5*: Camel Testcontainers extends standard camel Spring test support providing a way to create and interact with containerized applications.
 
 |=======================================================================
 
