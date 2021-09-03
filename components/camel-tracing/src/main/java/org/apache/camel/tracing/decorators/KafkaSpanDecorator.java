@@ -16,8 +16,6 @@
  */
 package org.apache.camel.tracing.decorators;
 
-import java.util.Map;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
@@ -35,7 +33,7 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
     protected static final String PARTITION_KEY = "kafka.PARTITION_KEY";
     protected static final String PARTITION = "kafka.PARTITION";
     protected static final String KEY = "kafka.KEY";
-    protected static final String TOPIC = "kafka.TOPIC";
+    protected static final String OVERRIDE_TOPIC = "kafka.OVERRIDE_TOPIC";
     protected static final String OFFSET = "kafka.OFFSET";
 
     @Override
@@ -50,12 +48,11 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
     public String getDestination(Exchange exchange, Endpoint endpoint) {
-        String topic = exchange.getIn().getHeader(TOPIC, String.class);
+        String topic = exchange.getIn().getHeader(OVERRIDE_TOPIC, String.class);
         if (topic == null) {
-            Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
-            topic = queryParameters.get("topic");
+            topic = stripSchemeAndOptions(endpoint);
         }
-        return topic != null ? topic : super.getDestination(exchange, endpoint);
+        return topic;
     }
 
     @Override
