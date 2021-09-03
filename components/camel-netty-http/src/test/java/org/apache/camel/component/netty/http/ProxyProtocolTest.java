@@ -57,15 +57,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 // now this real caused exception is detected by Camel
 public class ProxyProtocolTest {
 
-    private DefaultCamelContext context;
-
-    private String url;
-
     @AvailablePort
     static int originPort;
 
     @AvailablePort
     static int proxyPort;
+
+    private DefaultCamelContext context;
+
+    private String url;
 
     public void createContext(final Function<RouteBuilder, RouteDefinition> variant, final String url) throws Exception {
         this.url = url;
