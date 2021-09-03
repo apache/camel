@@ -55,6 +55,7 @@ import static org.apache.camel.xml.jaxb.JaxbHelper.extractNamespaces;
 import static org.apache.camel.xml.jaxb.JaxbHelper.getJAXBContext;
 import static org.apache.camel.xml.jaxb.JaxbHelper.modelToXml;
 import static org.apache.camel.xml.jaxb.JaxbHelper.newXmlConverter;
+import static org.apache.camel.xml.jaxb.JaxbHelper.resolveEndpointDslUris;
 
 /**
  * JAXB based {@link ModelToXMLDumper}.
@@ -73,18 +74,22 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition) definition).getRouteTemplates();
             for (RouteTemplateDefinition route : templates) {
                 extractNamespaces(route.getRoute(), namespaces);
+                resolveEndpointDslUris(route.getRoute());
             }
         } else if (definition instanceof RouteTemplateDefinition) {
             RouteTemplateDefinition template = (RouteTemplateDefinition) definition;
             extractNamespaces(template.getRoute(), namespaces);
+            resolveEndpointDslUris(template.getRoute());
         } else if (definition instanceof RoutesDefinition) {
             List<RouteDefinition> routes = ((RoutesDefinition) definition).getRoutes();
             for (RouteDefinition route : routes) {
                 extractNamespaces(route, namespaces);
+                resolveEndpointDslUris(route);
             }
         } else if (definition instanceof RouteDefinition) {
             RouteDefinition route = (RouteDefinition) definition;
             extractNamespaces(route, namespaces);
+            resolveEndpointDslUris(route);
         }
 
         Marshaller marshaller = jaxbContext.createMarshaller();
