@@ -145,6 +145,9 @@ public final class StringHelper {
         }
 
         String copy = s.trim();
+        if (copy.length() < 2) {
+            return s;
+        }
         if (copy.startsWith("'") && copy.endsWith("'")) {
             return copy.substring(1, copy.length() - 1);
         }
