@@ -29,9 +29,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
@@ -279,26 +277,6 @@ public class MockEndpointTest extends ContextTestSupport {
         // assert we can assert using other than string, eg numbers
         resultEndpoint.expectedHeaderReceived("number", 123);
         sendHeader("number", 123);
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testExpressionExpectationOfHeader() throws InterruptedException {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.reset();
-
-        resultEndpoint.expectedHeaderReceived("number", 123);
-        template.sendBody("direct:xpathexprs", "<foo><id>123</id></foo>");
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testExpressionExpectationOfProperty() throws InterruptedException {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.reset();
-
-        resultEndpoint.expectedPropertyReceived("number", 123);
-        template.sendBody("direct:xpathexprs", "<foo><id>123</id></foo>");
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -1074,17 +1052,6 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExpectedBodyExpression() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived(987);
-
-        // Route contains: setBody(ExpressionBuilder.constantExpression("0987"))
-        template.sendBody("direct:bodyexpr", "");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
     public void testResetDefaultProcessor() throws Exception {
         final AtomicInteger counter = new AtomicInteger();
 
@@ -1293,15 +1260,6 @@ public class MockEndpointTest extends ContextTestSupport {
                 from("direct:a").to("mock:result");
 
                 from("direct:b").transform(body().append(" World")).to("mock:result");
-
-                from("direct:xpathexprs")
-                        .setHeader("number", XPathBuilder.xpath("/foo/id", Integer.class))
-                        .setProperty("number", XPathBuilder.xpath("/foo/id", Integer.class))
-                        .to("mock:result");
-
-                from("direct:bodyexpr")
-                        .setBody(ExpressionBuilder.constantExpression("0987"))
-                        .to("mock:result");
             }
         };
     }
