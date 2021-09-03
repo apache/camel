@@ -171,7 +171,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
         return chunk;
     }
 
-    private Theme getOrCreateTheme() throws IOException {
+    private Theme getOrCreateTheme() {
         if (theme == null) {
             if (themeFolder == null && themeSubfolder == null) {
                 theme = new Theme();
@@ -204,7 +204,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
         }
     }
 
-    private String getResourceUriExtended() throws IOException {
+    private String getResourceUriExtended() {
         return themeLayer == null
                 ? getResourceUri()
                 : getResourceUri() + CHUNK_LAYER_SEPARATOR + themeLayer;

@@ -39,7 +39,7 @@ public interface Kinesis2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the AWS 2 Kinesis component.
+     * Builder for endpoint consumers for the AWS Kinesis component.
      */
     public interface Kinesis2EndpointConsumerBuilder
             extends
@@ -288,6 +288,43 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointConsumerBuilder uriEndpointOverride(
                 String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -1016,7 +1053,7 @@ public interface Kinesis2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the AWS 2 Kinesis component.
+     * Advanced builder for endpoint consumers for the AWS Kinesis component.
      */
     public interface AdvancedKinesis2EndpointConsumerBuilder
             extends
@@ -1135,7 +1172,7 @@ public interface Kinesis2EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the AWS 2 Kinesis component.
+     * Builder for endpoint producers for the AWS Kinesis component.
      */
     public interface Kinesis2EndpointProducerBuilder
             extends
@@ -1387,6 +1424,43 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1466,7 +1540,7 @@ public interface Kinesis2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the AWS 2 Kinesis component.
+     * Advanced builder for endpoint producers for the AWS Kinesis component.
      */
     public interface AdvancedKinesis2EndpointProducerBuilder
             extends
@@ -1477,7 +1551,7 @@ public interface Kinesis2EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the AWS 2 Kinesis component.
+     * Builder for endpoint for the AWS Kinesis component.
      */
     public interface Kinesis2EndpointBuilder
             extends
@@ -1727,6 +1801,43 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1757,7 +1868,7 @@ public interface Kinesis2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Kinesis component.
+     * Advanced builder for endpoint for the AWS Kinesis component.
      */
     public interface AdvancedKinesis2EndpointBuilder
             extends
@@ -1801,7 +1912,7 @@ public interface Kinesis2EndpointBuilderFactory {
 
     public interface Kinesis2Builders {
         /**
-         * AWS 2 Kinesis (camel-aws2-kinesis)
+         * AWS Kinesis (camel-aws2-kinesis)
          * Consume and produce records from and to AWS Kinesis Streams using AWS
          * SDK version 2.x.
          * 
@@ -1821,7 +1932,7 @@ public interface Kinesis2EndpointBuilderFactory {
             return Kinesis2EndpointBuilderFactory.endpointBuilder("aws2-kinesis", path);
         }
         /**
-         * AWS 2 Kinesis (camel-aws2-kinesis)
+         * AWS Kinesis (camel-aws2-kinesis)
          * Consume and produce records from and to AWS Kinesis Streams using AWS
          * SDK version 2.x.
          * 

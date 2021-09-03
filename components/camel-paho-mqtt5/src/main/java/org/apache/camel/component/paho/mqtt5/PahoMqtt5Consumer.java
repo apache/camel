@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.paho.mqtt5;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -103,11 +104,11 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 LOG.debug("Message arrived on topic: {} -> {}", topic, message);
-                Exchange exchange = getEndpoint().createExchange(message, topic);
+                Exchange exchange = createExchange(message, topic);
 
-                getAsyncProcessor().process(exchange, doneSync -> {
-                    // noop
-                });
+                // use default consumer callback
+                AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                getAsyncProcessor().process(exchange, cb);
             }
 
             @Override
@@ -142,6 +143,18 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     @Override
     public PahoMqtt5Endpoint getEndpoint() {
         return (PahoMqtt5Endpoint) super.getEndpoint();
+    }
+
+    public Exchange createExchange(MqttMessage mqttMessage, String topic) {
+        Exchange exchange = createExchange(true);
+
+        PahoMqtt5Message paho = new PahoMqtt5Message(exchange.getContext(), mqttMessage);
+        paho.setBody(mqttMessage.getPayload());
+        paho.setHeader(PahoMqtt5Constants.MQTT_TOPIC, topic);
+        paho.setHeader(PahoMqtt5Constants.MQTT_QOS, mqttMessage.getQos());
+
+        exchange.setIn(paho);
+        return exchange;
     }
 
 }

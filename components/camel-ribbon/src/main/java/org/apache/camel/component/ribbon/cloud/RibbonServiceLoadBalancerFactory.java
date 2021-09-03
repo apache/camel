@@ -22,9 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.cloud.ServiceLoadBalancerFactory;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
 @CloudServiceFactory("ribbon-service-load-balancer")
+@Configurer
 public class RibbonServiceLoadBalancerFactory implements ServiceLoadBalancerFactory {
     private final RibbonConfiguration configuration;
 

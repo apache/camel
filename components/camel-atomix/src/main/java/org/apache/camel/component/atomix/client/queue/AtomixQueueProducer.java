@@ -24,7 +24,6 @@ import org.apache.camel.component.atomix.client.AbstractAtomixClientProducer;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_READ_CONSISTENCY;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_VALUE;
@@ -33,7 +32,7 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
     private final AtomixQueueConfiguration configuration;
 
     protected AtomixQueueProducer(AtomixQueueEndpoint endpoint) {
-        super(endpoint);
+        super(endpoint, endpoint.getConfiguration().getDefaultAction().name());
         this.configuration = endpoint.getConfiguration();
     }
 
@@ -42,7 +41,7 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
     // *********************************
 
     @InvokeOnHeader("ADD")
-    boolean onAdd(Message message, AsyncCallback callback) throws Exception {
+    void onAdd(Message message, AsyncCallback callback) {
         final DistributedQueue<Object> queue = getResource(message);
         final Object val = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
 
@@ -50,12 +49,10 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
 
         queue.add(val).thenAccept(
                 result -> processResult(message, callback, result));
-
-        return false;
     }
 
     @InvokeOnHeader("OFFER")
-    boolean onOffer(Message message, AsyncCallback callback) throws Exception {
+    void onOffer(Message message, AsyncCallback callback) {
         final DistributedQueue<Object> queue = getResource(message);
         final Object val = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
 
@@ -63,42 +60,34 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
 
         queue.offer(val).thenAccept(
                 result -> processResult(message, callback, result));
-
-        return false;
     }
 
     @InvokeOnHeader("PEEK")
-    boolean onPeek(Message message, AsyncCallback callback) throws Exception {
+    void onPeek(Message message, AsyncCallback callback) {
         final DistributedQueue<Object> queue = getResource(message);
 
         queue.peek().thenAccept(
                 result -> processResult(message, callback, result));
-
-        return false;
     }
 
     @InvokeOnHeader("POLL")
-    boolean onPoll(Message message, AsyncCallback callback) throws Exception {
+    void onPoll(Message message, AsyncCallback callback) {
         final DistributedQueue<Object> queue = getResource(message);
 
         queue.poll().thenAccept(
                 result -> processResult(message, callback, result));
-
-        return false;
     }
 
     @InvokeOnHeader("CLEAR")
-    boolean onClear(Message message, AsyncCallback callback) throws Exception {
+    void onClear(Message message, AsyncCallback callback) {
         final DistributedQueue<Object> queue = getResource(message);
 
         queue.clear().thenAccept(
                 result -> processResult(message, callback, result));
-
-        return false;
     }
 
     @InvokeOnHeader("CONTAINS")
-    boolean onContains(Message message, AsyncCallback callback) throws Exception {
+    void onContains(Message message, AsyncCallback callback) {
         final DistributedQueue<Object> queue = getResource(message);
         final ReadConsistency consistency
                 = message.getHeader(RESOURCE_READ_CONSISTENCY, configuration::getReadConsistency, ReadConsistency.class);
@@ -113,12 +102,10 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
             queue.contains(value).thenAccept(
                     result -> processResult(message, callback, result));
         }
-
-        return false;
     }
 
     @InvokeOnHeader("IS_EMPTY")
-    boolean onIsEmpty(Message message, AsyncCallback callback) throws Exception {
+    void onIsEmpty(Message message, AsyncCallback callback) {
         final DistributedQueue<Object> queue = getResource(message);
         final ReadConsistency consistency
                 = message.getHeader(RESOURCE_READ_CONSISTENCY, configuration::getReadConsistency, ReadConsistency.class);
@@ -130,12 +117,10 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
             queue.isEmpty().thenAccept(
                     result -> processResult(message, callback, result));
         }
-
-        return false;
     }
 
     @InvokeOnHeader("REMOVE")
-    boolean onRemove(Message message, AsyncCallback callback) throws Exception {
+    void onRemove(Message message, AsyncCallback callback) {
         final DistributedQueue<Object> queue = getResource(message);
         final Object value = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
 
@@ -146,12 +131,10 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
             queue.remove(value).thenAccept(
                     result -> processResult(message, callback, result));
         }
-
-        return false;
     }
 
     @InvokeOnHeader("SIZE")
-    boolean onSize(Message message, AsyncCallback callback) throws Exception {
+    void onSize(Message message, AsyncCallback callback) {
         final DistributedQueue<Object> queue = getResource(message);
         final ReadConsistency consistency
                 = message.getHeader(RESOURCE_READ_CONSISTENCY, configuration::getReadConsistency, ReadConsistency.class);
@@ -163,18 +146,11 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
             queue.size().thenAccept(
                     result -> processResult(message, callback, result));
         }
-
-        return false;
     }
 
     // *********************************
     // Implementation
     // *********************************
-
-    @Override
-    protected String getProcessorKey(Message message) {
-        return message.getHeader(RESOURCE_ACTION, configuration::getDefaultAction, String.class);
-    }
 
     @Override
     protected String getResourceName(Message message) {

@@ -32,7 +32,7 @@ import org.springframework.jms.core.JmsOperations;
 public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
 
     @Override
-    public List<Exchange> browse(JmsOperations template, String queue, final JmsQueueEndpoint endpoint) {
+    public List<Exchange> browse(JmsOperations template, String queue, final JmsBrowsableEndpoint endpoint) {
         if (endpoint.getSelector() != null) {
             return template.browseSelected(queue, endpoint.getSelector(), (session, browser) -> {
                 int size = endpoint.getMaximumBrowseSize();

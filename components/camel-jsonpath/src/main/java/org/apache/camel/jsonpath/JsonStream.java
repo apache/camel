@@ -177,7 +177,7 @@ public class JsonStream extends FilterInputStream {
         }
     }
 
-    private CharConversionException getExceptionUnsupportedUCS4(String type) throws IOException {
+    private CharConversionException getExceptionUnsupportedUCS4(String type) {
         return new CharConversionException("Unsupported UCS-4 endianness (" + type + ") detected");
     }
 

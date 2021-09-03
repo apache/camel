@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jcache.processor.aggregate;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
@@ -32,10 +33,11 @@ public class JCacheAggregationRepositoryTest extends JCacheAggregationRepository
         repo.start();
 
         try {
-            Exchange oldOne = new DefaultExchange(context());
-            Exchange newOne = new DefaultExchange(context());
+            final CamelContext context = context();
+            Exchange oldOne = new DefaultExchange(context);
+            Exchange newOne = new DefaultExchange(context);
             assertThrows(UnsupportedOperationException.class,
-                    () -> repo.add(context(), "myKey", oldOne, newOne));
+                    () -> repo.add(context, "myKey", oldOne, newOne));
         } finally {
             repo.stop();
         }
@@ -47,9 +49,10 @@ public class JCacheAggregationRepositoryTest extends JCacheAggregationRepository
         repo.start();
 
         try {
-            Exchange ex = new DefaultExchange(context());
+            final CamelContext context = context();
+            Exchange ex = new DefaultExchange(context);
             assertThrows(UnsupportedOperationException.class,
-                    () -> repo.add(context(), "myKey", ex));
+                    () -> repo.add(context, "myKey", ex));
         } finally {
             repo.stop();
         }

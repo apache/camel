@@ -16,7 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +29,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -38,8 +42,8 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +60,13 @@ import org.slf4j.LoggerFactory;
 public class RecipientListProcessor extends MulticastProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
-    private final Iterator<?> iter;
+
+    private static final String IGNORE_DELIMITER_MARKER = "false";
+
     private boolean ignoreInvalidEndpoints;
-    private ProducerCache producerCache;
+    private final Expression expression;
+    private final String delimiter;
+    private final ProducerCache producerCache;
     private int cacheSize;
 
     /**
@@ -115,7 +123,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         public void begin() {
             // we have already acquired and prepare the producer
             LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
-            exchange.setProperty(Exchange.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
             // ensure stream caching is reset
             MessageHelper.resetStreamCache(exchange.getIn());
             // if the MEP on the endpoint is different then
@@ -147,22 +155,8 @@ public class RecipientListProcessor extends MulticastProcessor {
 
     }
 
-    // TODO: camel-bean @RecipientList cacheSize
-
-    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache, Iterator<?> iter) {
-        super(camelContext, route, null);
-        this.producerCache = producerCache;
-        this.iter = iter;
-    }
-
-    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache, Iterator<?> iter,
-                                  AggregationStrategy aggregationStrategy) {
-        super(camelContext, route, null, aggregationStrategy);
-        this.producerCache = producerCache;
-        this.iter = iter;
-    }
-
-    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache, Iterator<?> iter,
+    public RecipientListProcessor(CamelContext camelContext, Route route, Expression expression, String delimiter,
+                                  ProducerCache producerCache,
                                   AggregationStrategy aggregationStrategy,
                                   boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                                   boolean streaming, boolean stopOnException,
@@ -171,8 +165,9 @@ public class RecipientListProcessor extends MulticastProcessor {
         super(camelContext, route, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
               streaming, stopOnException, timeout, onPrepare,
               shareUnitOfWork, parallelAggregate, stopOnAggregateException);
+        this.expression = expression;
+        this.delimiter = delimiter;
         this.producerCache = producerCache;
-        this.iter = iter;
     }
 
     public int getCacheSize() {
@@ -192,46 +187,99 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     @Override
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
-        // here we iterate the recipient lists and create the exchange pair for each of those
-        List<ProcessorExchangePair> result = new ArrayList<>();
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange)
+            throws Exception {
 
-        // at first we must lookup the endpoint and acquire the producer which can send to the endpoint
-        int index = 0;
-        while (iter.hasNext()) {
-            boolean prototype = cacheSize < 0;
-
-            Object recipient = iter.next();
-            Endpoint endpoint;
-            Producer producer;
-            ExchangePattern pattern;
-            try {
-                recipient = prepareRecipient(exchange, recipient);
-                Endpoint existing = getExistingEndpoint(exchange, recipient);
-                if (existing == null) {
-                    endpoint = resolveEndpoint(exchange, recipient, prototype);
-                } else {
-                    endpoint = existing;
-                    // we have an existing endpoint then its not a prototype scope
-                    prototype = false;
-                }
-                pattern = resolveExchangePattern(recipient);
-                producer = producerCache.acquireProducer(endpoint);
-            } catch (Exception e) {
-                if (isIgnoreInvalidEndpoints()) {
-                    LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
-                    continue;
-                } else {
-                    // failure so break out
-                    throw e;
-                }
-            }
-
-            // then create the exchange pair
-            result.add(createProcessorExchangePair(index++, endpoint, producer, exchange, pattern, prototype));
+        // use the evaluate expression result if exists
+        Object recipientList = exchange.removeProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT);
+        if (recipientList == null && expression != null) {
+            // fallback and evaluate the expression
+            recipientList = expression.evaluate(exchange, Object.class);
         }
 
+        // optimize for recipient without need for using delimiter
+        // (if its list/collection/array type)
+        if (recipientList instanceof List) {
+            List col = (List) recipientList;
+            int size = col.size();
+            List<ProcessorExchangePair> result = new ArrayList<>(size);
+            int index = 0;
+            for (int i = 0; i < size; i++) {
+                Object recipient = col.get(i);
+                index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
+            }
+            return result;
+        } else if (recipientList instanceof Collection) {
+            Collection col = (Collection) recipientList;
+            int size = col.size();
+            List<ProcessorExchangePair> result = new ArrayList<>(size);
+            int index = 0;
+            for (Object recipient : col) {
+                index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
+            }
+            return result;
+        } else if (recipientList.getClass().isArray()) {
+            // TODO upper checks against instanceof do not cause NullPointerException,
+            //  but here we potentially get it because of de-referencing
+            Object[] arr = (Object[]) recipientList;
+            int size = Array.getLength(recipientList);
+            List<ProcessorExchangePair> result = new ArrayList<>(size);
+            int index = 0;
+            for (int i = 0; i < size; i++) {
+                Object recipient = arr[i];
+                index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
+            }
+            return result;
+        }
+
+        // okay we have to use iterator based separated by delimiter
+        Iterator<?> iter;
+        if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
+            iter = ObjectHelper.createIterator(recipientList, null);
+        } else {
+            iter = ObjectHelper.createIterator(recipientList, delimiter);
+        }
+        List<ProcessorExchangePair> result = new ArrayList<>();
+        int index = 0;
+        while (iter.hasNext()) {
+            index = doCreateProcessorExchangePairs(exchange, iter.next(), result, index);
+        }
         return result;
+    }
+
+    private int doCreateProcessorExchangePairs(
+            Exchange exchange, Object recipient, List<ProcessorExchangePair> result, int index)
+            throws NoTypeConversionAvailableException {
+        boolean prototype = cacheSize < 0;
+
+        Endpoint endpoint;
+        Producer producer;
+        ExchangePattern pattern;
+        try {
+            recipient = prepareRecipient(exchange, recipient);
+            Endpoint existing = getExistingEndpoint(exchange, recipient);
+            if (existing == null) {
+                endpoint = resolveEndpoint(exchange, recipient, prototype);
+            } else {
+                endpoint = existing;
+                // we have an existing endpoint then its not a prototype scope
+                prototype = false;
+            }
+            pattern = resolveExchangePattern(recipient);
+            producer = producerCache.acquireProducer(endpoint);
+        } catch (Exception e) {
+            if (isIgnoreInvalidEndpoints()) {
+                LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
+                return index;
+            } else {
+                // failure so break out
+                throw e;
+            }
+        }
+
+        // then create the exchange pair
+        result.add(createProcessorExchangePair(index++, endpoint, producer, exchange, pattern, prototype));
+        return index;
     }
 
     /**
@@ -241,7 +289,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             int index, Endpoint endpoint, Producer producer,
             Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint) {
         // copy exchange, and do not share the unit of work
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
 
         // if we share unit of work, we need to prepare the child exchange
         if (isShareUnitOfWork()) {
@@ -249,7 +297,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
         // set property which endpoint we send to
-        setToEndpoint(copy, producer);
+        setToEndpoint(copy, endpoint);
 
         // rework error handling to support fine grained error handling
         Route route = ExchangeHelper.getRoute(exchange);
@@ -330,10 +378,29 @@ public class RecipientListProcessor extends MulticastProcessor {
         return null;
     }
 
+    protected static void setToEndpoint(Exchange exchange, Endpoint endpoint) {
+        exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        ServiceHelper.buildService(producerCache);
+
+        // eager load classes
+        Object dummy = new RecipientProcessorExchangePair(0, null, null, null, null, null, null, false);
+        LOG.trace("Loaded {}", dummy.getClass().getName());
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceHelper.initService(producerCache);
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ObjectHelper.notNull(producerCache, "producerCache", this);
         ServiceHelper.startService(producerCache);
     }
 

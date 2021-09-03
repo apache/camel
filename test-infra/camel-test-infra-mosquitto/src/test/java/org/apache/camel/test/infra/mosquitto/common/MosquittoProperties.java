@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.mosquitto.common;
 
 public final class MosquittoProperties {
     public static final String PORT = "mosquitto.port";
+    public static final String MOSQUITTO_CONTAINER = "mosquitto.container";
 
     private MosquittoProperties() {
 

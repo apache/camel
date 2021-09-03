@@ -68,6 +68,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "encoding": getOrCreateConfiguration(target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "executorservice":
         case "executorService": target.setExecutorService(property(camelContext, io.netty.util.concurrent.EventExecutorGroup.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": getOrCreateConfiguration(target).setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "keepalive":
         case "keepAlive": getOrCreateConfiguration(target).setKeepAlive(property(camelContext, boolean.class, value)); return true;
         case "keystorefile":
@@ -205,6 +207,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "encoding": return java.lang.String.class;
         case "executorservice":
         case "executorService": return io.netty.util.concurrent.EventExecutorGroup.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "keepalive":
         case "keepAlive": return boolean.class;
         case "keystorefile":
@@ -343,6 +347,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "encoding": return getOrCreateConfiguration(target).getEncoding();
         case "executorservice":
         case "executorService": return target.getExecutorService();
+        case "hostnameverification":
+        case "hostnameVerification": return getOrCreateConfiguration(target).isHostnameVerification();
         case "keepalive":
         case "keepAlive": return getOrCreateConfiguration(target).isKeepAlive();
         case "keystorefile":

@@ -115,6 +115,20 @@ public interface SlackComponentBuilderFactory {
             return this;
         }
         /**
+         * The token to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: token
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default SlackComponentBuilder token(java.lang.String token) {
+            doSetProperty("token", token);
+            return this;
+        }
+        /**
          * The incoming webhook URL.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -148,6 +162,7 @@ public interface SlackComponentBuilderFactory {
             case "bridgeErrorHandler": ((SlackComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SlackComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SlackComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "token": ((SlackComponent) component).setToken((java.lang.String) value); return true;
             case "webhookUrl": ((SlackComponent) component).setWebhookUrl((java.lang.String) value); return true;
             default: return false;
             }

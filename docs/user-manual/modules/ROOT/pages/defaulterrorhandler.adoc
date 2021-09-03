@@ -1,13 +1,13 @@
 [[DefaultErrorHandler-DefaultErrorHandler]]
 = DefaultErrorHandler
 
-This is the new default error handler in Camel 2.0 onwards.
+This is the default error handler in Camel.
 
-It has the same power as the xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter Channel],
+The default error handler have the same power as the xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter Channel],
 however it does *not* support a _dead letter queue_, which is
 the only difference between the two of them.
 
-The DefaultErrorHandler is configured differently from
+The `DefaultErrorHandler` is configured differently from
 xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter Channel] as
 it is configured to:
 
@@ -20,9 +20,10 @@ to the caller and the xref:exchange.adoc[Exchange] ends immediately.
 However, you can use the xref:exception-clause.adoc[Exception Clause] to
 catch a given exception and lower the exception by marking it as
 handled. If so, the exception will *not* be sent back to the caller, and
-the xref:exchange.adoc[Exchange] continues to be routed.
+the xref:exchange.adoc[Exchange] will succeed, but *not continue* being routed.
+See the _difference_ between `handled` and `continued` in the
+xref:exception-clause.adoc[Exception Clause] documentation.
 
-[[DefaultErrorHandler-Example]]
 == Example
 
 In this route below, any exception thrown in, eg the `validateOrder`

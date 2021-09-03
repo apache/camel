@@ -16,13 +16,10 @@
  */
 package org.apache.camel.main;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.model.RouteTemplatesDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 
 /**
  * Collects routes and rests from the various sources (like registry or opinionated classpath locations) and adds these
@@ -39,34 +36,18 @@ public interface RoutesCollector {
      * @param  includePattern include pattern (see javaRoutesIncludePattern option)
      * @return                the discovered routes or an empty list
      */
-    List<RoutesBuilder> collectRoutesFromRegistry(CamelContext camelContext, String excludePattern, String includePattern);
+    Collection<RoutesBuilder> collectRoutesFromRegistry(
+            CamelContext camelContext, String excludePattern, String includePattern);
 
     /**
-     * Collects all XML routes from the given directory.
+     * Collects all {@link RoutesBuilder} from the given directory.
      *
-     * @param  camelContext the Camel Context
-     * @param  directory    the directory (see xmlRoutes option)
-     * @return              the discovered routes or an empty list
+     * @param  camelContext   the Camel Context
+     * @param  excludePattern exclude pattern (see routesExcludePattern option)
+     * @param  includePattern include pattern (see routesIncludePattern option)
+     * @return                the discovered RoutesBuilder or an empty collection
      */
-    List<RoutesDefinition> collectXmlRoutesFromDirectory(CamelContext camelContext, String directory) throws Exception;
-
-    /**
-     * Collects all XML route templates from the given directory.
-     *
-     * @param  camelContext the Camel Context
-     * @param  directory    the directory (see xmlRouteTemplates option)
-     * @return              the discovered route templates or an empty list
-     */
-    List<RouteTemplatesDefinition> collectXmlRouteTemplatesFromDirectory(CamelContext camelContext, String directory)
-            throws Exception;
-
-    /**
-     * Collects all XML rests from the given directory.
-     *
-     * @param  camelContext the Camel Context
-     * @param  directory    the directory (see xmlRests option)
-     * @return              the discovered rests or an empty list
-     */
-    List<RestsDefinition> collectXmlRestsFromDirectory(CamelContext camelContext, String directory) throws Exception;
+    Collection<RoutesBuilder> collectRoutesFromDirectory(
+            CamelContext camelContext, String excludePattern, String includePattern);
 
 }

@@ -41,9 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The BindyCsvFactory is the class who allows to : Generate a model associated to a fixed length record, bind data from
- * a record to the POJOs, export data of POJOs to a fixed length record and format data into String, Date, Double, ...
- * according to the format/pattern defined
+ * The BindyFixedLengthFactory is the class who allows to : Generate a model associated to a fixed length record, bind
+ * data from a record to the POJOs, export data of POJOs to a fixed length record and format data into String, Date,
+ * Double, ... according to the format/pattern defined
  */
 public class BindyFixedLengthFactory extends BindyAbstractFactory implements BindyFactory {
 
@@ -87,7 +87,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      * method uses to initialize the model representing the classes who will bind the data. This process will scan for
      * classes according to the package name provided, check the annotated classes and fields
      */
-    public void initFixedLengthModel() throws Exception {
+    public void initFixedLengthModel() {
 
         // Find annotated fields declared in the Model classes
         initAnnotatedFields();
@@ -462,9 +462,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                     int fieldLength = datafield.length();
 
-                    if (fieldLength == 0 && (datafield.lengthPos() > 0)) {
+                    if (fieldLength == 0 && datafield.lengthPos() > 0) {
                         List<String> resultVals = results.get(datafield.lengthPos());
-                        fieldLength = Integer.valueOf(resultVals.get(0));
+                        fieldLength = Integer.parseInt(resultVals.get(0));
                     }
 
                     if (fieldLength <= 0 && datafield.delimiter().equals("") && datafield.lengthPos() == 0) {

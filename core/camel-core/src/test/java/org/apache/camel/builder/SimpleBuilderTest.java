@@ -16,10 +16,13 @@
  */
 package org.apache.camel.builder;
 
+import java.util.Properties;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.TestSupport;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
@@ -115,6 +118,32 @@ public class SimpleBuilderTest extends TestSupport {
         // passes when } is escaped with \}
         assertEquals("http://some/rest/api/{}/activate", SimpleBuilder
                 .simple("${header.activateUrl.replaceAll(\"\\{id\\}\",\"{\\}\")}").evaluate(exchange, String.class));
+    }
+
+    @Test
+    public void testPropertyPlaceholder() throws Exception {
+        exchange.getIn().setBody("Hello");
+
+        Properties prop = new Properties();
+        prop.put("foo", "bar");
+        PropertiesComponent pc = exchange.getContext().getPropertiesComponent();
+        pc.setOverrideProperties(prop);
+
+        assertEquals("bar", SimpleBuilder.simple("{{foo}}").evaluate(exchange, String.class));
+        assertEquals("bar", SimpleBuilder.simple("${properties:foo}").evaluate(exchange, String.class));
+
+        try {
+            SimpleBuilder.simple("{{bar}}").evaluate(exchange, String.class);
+            fail("Should fail");
+        } catch (Exception e) {
+            // expected
+        }
+        try {
+            SimpleBuilder.simple("${properties:bar}").evaluate(exchange, String.class);
+            fail("Should fail");
+        } catch (Exception e) {
+            // expected
+        }
     }
 
 }

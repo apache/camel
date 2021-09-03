@@ -20,6 +20,18 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum TransactionGatewayApiMethod implements ApiMethod {
 
+    ADJUST_AUTHORIZATION(
+        com.braintreegateway.Result.class,
+        "adjustAuthorization",
+        arg("id", String.class),
+        arg("amount", java.math.BigDecimal.class)),
+
+    ADJUST_AUTHORIZATION_1(
+        com.braintreegateway.Result.class,
+        "adjustAuthorization",
+        arg("id", String.class),
+        arg("request", com.braintreegateway.TransactionRequest.class)),
+
     CANCEL_RELEASE(
         com.braintreegateway.Result.class,
         "cancelRelease",

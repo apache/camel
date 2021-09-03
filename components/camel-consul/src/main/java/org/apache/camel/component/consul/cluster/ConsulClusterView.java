@@ -52,8 +52,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
     private KeyValueClient keyValueClient;
     private String path;
 
-    ConsulClusterView(ConsulClusterService service, ConsulClusterConfiguration configuration,
-                      String namespace) throws Exception {
+    ConsulClusterView(ConsulClusterService service, ConsulClusterConfiguration configuration, String namespace) {
         super(service, namespace);
 
         this.configuration = configuration;

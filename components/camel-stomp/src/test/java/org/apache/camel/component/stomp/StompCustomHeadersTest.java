@@ -28,10 +28,6 @@ public class StompCustomHeadersTest extends StompBaseTest {
 
     @Test
     public void testConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("brokerURL", "tcp://localhost:61613");
         map.put("version", "1.2");

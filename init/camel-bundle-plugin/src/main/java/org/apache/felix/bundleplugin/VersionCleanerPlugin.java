@@ -57,8 +57,9 @@ public class VersionCleanerPlugin extends AbstractMojo {
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        for (String name : versions.keySet()) {
-            String version = versions.get(name);
+        for (Map.Entry<String, String> entry : versions.entrySet()) {
+            String name = entry.getKey();
+            String version = entry.getValue();
             String osgi = maven2OsgiConverter.getVersion(version);
             project.getProperties().put(name, osgi);
         }

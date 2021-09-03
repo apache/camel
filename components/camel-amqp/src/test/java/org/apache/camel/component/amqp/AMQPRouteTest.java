@@ -25,21 +25,21 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.qpid.jms.message.JmsMessage;
 import org.apache.qpid.jms.provider.amqp.message.AmqpJmsMessageFacade;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -47,7 +47,11 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     static int amqpPort = AvailablePortFinder.getNextAvailable();
 
-    static BrokerService broker;
+    @RegisterExtension
+    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .defaultBroker()
+            .withAmqpTransport(amqpPort)
+            .build();
 
     @EndpointInject("mock:result")
     MockEndpoint resultEndpoint;
@@ -56,17 +60,7 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     @BeforeAll
     public static void beforeClass() throws Exception {
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("amqp://0.0.0.0:" + amqpPort);
-        broker.start();
-
-        System.setProperty(AMQP_PORT, amqpPort + "");
-    }
-
-    @AfterAll
-    public static void afterClass() throws Exception {
-        broker.stop();
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, amqpPort + "");
     }
 
     @Test
@@ -161,8 +155,9 @@ public class AMQPRouteTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
-        camelContext.addComponent("amqp-customized", amqpComponent("amqp://localhost:" + amqpPort));
-        camelContext.addComponent("amqp-customized2", amqpComponent("amqp://localhost:" + amqpPort));
+
+        camelContext.addComponent("amqp-customized", amqpComponent(service.serviceAddress()));
+        camelContext.addComponent("amqp-customized2", amqpComponent(service.serviceAddress()));
         camelContext.getComponent("amqp-customized2", AMQPComponent.class).setIncludeAmqpAnnotations(true);
         return camelContext;
     }

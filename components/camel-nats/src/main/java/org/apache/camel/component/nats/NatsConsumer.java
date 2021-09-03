@@ -142,7 +142,7 @@ public class NatsConsumer extends DefaultConsumer {
                         setActive(true);
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 getExceptionHandler().handleException("Error during processing", e);
             }
 
@@ -153,30 +153,32 @@ public class NatsConsumer extends DefaultConsumer {
             @Override
             public void onMessage(Message msg) throws InterruptedException {
                 LOG.debug("Received Message: {}", msg);
-                Exchange exchange = getEndpoint().createExchange();
-                exchange.getIn().setBody(msg.getData());
-                exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
-                exchange.getIn().setHeader(NatsConstants.NATS_SID, msg.getSID());
-                exchange.getIn().setHeader(NatsConstants.NATS_SUBJECT, msg.getSubject());
-                exchange.getIn().setHeader(NatsConstants.NATS_QUEUE_NAME, msg.getSubscription().getQueueName());
-                exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
+                Exchange exchange = createExchange(false);
                 try {
+                    exchange.getIn().setBody(msg.getData());
+                    exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
+                    exchange.getIn().setHeader(NatsConstants.NATS_SID, msg.getSID());
+                    exchange.getIn().setHeader(NatsConstants.NATS_SUBJECT, msg.getSubject());
+                    exchange.getIn().setHeader(NatsConstants.NATS_QUEUE_NAME, msg.getSubscription().getQueueName());
+                    exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
+
                     processor.process(exchange);
+
+                    // is there a reply?
+                    if (!configuration.isReplyToDisabled()
+                            && msg.getReplyTo() != null && msg.getConnection() != null) {
+                        Connection con = msg.getConnection();
+                        byte[] data = exchange.getMessage().getBody(byte[].class);
+                        if (data != null) {
+                            LOG.debug("Publishing replyTo: {} message", msg.getReplyTo());
+                            con.publish(msg.getReplyTo(), data);
+                        }
+                    }
                 } catch (Exception e) {
                     getExceptionHandler().handleException("Error during processing", exchange, e);
+                } finally {
+                    releaseExchange(exchange, false);
                 }
-
-                // is there a reply?
-                if (!configuration.isReplyToDisabled()
-                        && msg.getReplyTo() != null && msg.getConnection() != null) {
-                    Connection con = msg.getConnection();
-                    byte[] data = exchange.getMessage().getBody(byte[].class);
-                    if (data != null) {
-                        LOG.debug("Publishing replyTo: {} message", msg.getReplyTo());
-                        con.publish(msg.getReplyTo(), data);
-                    }
-                }
-
             }
         }
     }

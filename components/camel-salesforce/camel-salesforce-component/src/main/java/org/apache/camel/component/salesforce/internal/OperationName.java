@@ -93,9 +93,19 @@ public enum OperationName {
     APPROVALS("approvals"),
 
     // Composite API
-    COMPOSITE_TREE("composite-tree"),
+    COMPOSITE("composite"),
     COMPOSITE_BATCH("composite-batch"),
-    COMPOSITE("composite");
+    COMPOSITE_TREE("composite-tree"),
+
+    // Composite sObject Collections API
+    COMPOSITE_CREATE_SOBJECT_COLLECTIONS("compositeCreateSObjectCollections"),
+    COMPOSITE_UPDATE_SOBJECT_COLLECTIONS("compositeUpdateSObjectCollections"),
+    COMPOSITE_UPSERT_SOBJECT_COLLECTIONS("compositeUpsertSObjectCollections"),
+    COMPOSITE_RETRIEVE_SOBJECT_COLLECTIONS("compositeRetrieveSObjectCollections"),
+    COMPOSITE_DELETE_SOBJECT_COLLECTIONS("compositeDeleteSObjectCollections"),
+
+    // Raw operation
+    RAW("raw");
 
     private final String value;
 

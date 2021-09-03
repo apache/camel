@@ -20,7 +20,6 @@ import com.google.common.eventbus.EventBus;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -67,12 +66,6 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;
-    }
-
-    public Exchange createExchange(Object event) {
-        Exchange exchange = createExchange();
-        exchange.getIn().setBody(event);
-        return exchange;
     }
 
     public String getEventBusRef() {

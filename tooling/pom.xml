@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -51,35 +51,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-format-plugin</artifactId>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
-    <!-- profiles>
-      <profile>
-        <id>build.manual</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-      <profile>
-        <id>assembly</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-      <profile>
-        <id>deploy</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-      <profile>
-        <id>apache-release</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-    </profiles -->
 </project>

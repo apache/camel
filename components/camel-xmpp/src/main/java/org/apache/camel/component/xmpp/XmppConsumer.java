@@ -119,7 +119,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         super.doStart();
     }
 
-    protected void scheduleDelayedStart() throws Exception {
+    protected void scheduleDelayedStart() {
         Runnable startRunnable = new Runnable() {
             @Override
             public void run() {
@@ -135,7 +135,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         getExecutor().schedule(startRunnable, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
     }
 
-    private void startRobustConnectionMonitor() throws Exception {
+    private void startRobustConnectionMonitor() {
         Runnable connectionCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -215,16 +215,20 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                     endpoint.getUser(), endpoint.getParticipant(), message.getBody());
         }
 
-        Exchange exchange = endpoint.createExchange(message);
-
-        if (endpoint.isDoc()) {
-            exchange.getIn().setHeader(XmppConstants.DOC_HEADER, message);
-        }
+        Exchange exchange = createExchange(message);
         try {
+            if (endpoint.isDoc()) {
+                exchange.getIn().setHeader(XmppConstants.DOC_HEADER, message);
+            }
             getProcessor().process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
         } finally {
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
+            releaseExchange(exchange, false);
+
             // must remove message from muc to avoid messages stacking up and causing OutOfMemoryError
             // pollMessage is a non blocking method
             // (see http://issues.igniterealtime.org/browse/SMACK-129)
@@ -233,9 +237,18 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                     muc.pollMessage();
                 } catch (MultiUserChatException.MucNotJoinedException e) {
                     LOG.debug("Error while polling message from MultiUserChat. This exception will be ignored.", e);
+                } catch (Exception e) {
+                    // ignore others
                 }
             }
         }
+    }
+
+    private Exchange createExchange(Stanza packet) {
+        Exchange exchange = createExchange(false);
+        exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
+        exchange.setIn(new XmppMessage(exchange, packet));
+        return exchange;
     }
 
 }

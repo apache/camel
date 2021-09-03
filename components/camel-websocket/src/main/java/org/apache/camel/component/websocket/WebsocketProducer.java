@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.List;
@@ -160,7 +159,7 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         }
     }
 
-    Future<Void> sendMessage(DefaultWebsocket websocket, Object message) throws IOException {
+    Future<Void> sendMessage(DefaultWebsocket websocket, Object message) {
         Future<Void> future = null;
         // in case there is web socket and socket connection is open - send message
         if (websocket != null && websocket.getSession().isOpen()) {

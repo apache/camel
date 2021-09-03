@@ -20,7 +20,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class XPathHeaderTest extends CamelSpringTestSupport {
 
@@ -57,7 +56,7 @@ public class XPathHeaderTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/language/xpath/XPathHeaderTest.xml");
+        return newAppContext("XPathHeaderTest.xml");
     }
 
 }

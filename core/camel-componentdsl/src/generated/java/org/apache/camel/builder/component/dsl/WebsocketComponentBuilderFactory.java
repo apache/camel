@@ -218,6 +218,30 @@ public interface WebsocketComponentBuilderFactory {
             return this;
         }
         /**
+         * This is a comma-separated list of subprotocols that are supported by
+         * the application. The list is in priority order. The first subprotocol
+         * on this list that is proposed by the client is the one that will be
+         * accepted. If no subprotocol on this list is proposed by the client,
+         * then the websocket connection is refused. The special value 'any'
+         * means that any subprotocol is acceptable. 'any' can be used on its
+         * own, or as a failsafe at the end of a list of more specific
+         * protocols. 'any' will also match the case where no subprotocol is
+         * proposed by the client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: any
+         * Group: advanced
+         * 
+         * @param subprotocol the value to set
+         * @return the dsl builder
+         */
+        default WebsocketComponentBuilder subprotocol(
+                java.lang.String subprotocol) {
+            doSetProperty("subprotocol", subprotocol);
+            return this;
+        }
+        /**
          * To use a custom thread pool for the server. MaxThreads/minThreads or
          * threadPool fields are required due to switch to Jetty9.
          * 
@@ -338,6 +362,7 @@ public interface WebsocketComponentBuilderFactory {
             case "enableJmx": ((WebsocketComponent) component).setEnableJmx((boolean) value); return true;
             case "maxThreads": ((WebsocketComponent) component).setMaxThreads((java.lang.Integer) value); return true;
             case "minThreads": ((WebsocketComponent) component).setMinThreads((java.lang.Integer) value); return true;
+            case "subprotocol": ((WebsocketComponent) component).setSubprotocol((java.lang.String) value); return true;
             case "threadPool": ((WebsocketComponent) component).setThreadPool((org.eclipse.jetty.util.thread.ThreadPool) value); return true;
             case "sslContextParameters": ((WebsocketComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "sslKeyPassword": ((WebsocketComponent) component).setSslKeyPassword((java.lang.String) value); return true;

@@ -40,7 +40,7 @@ public class ThriftEndpoint extends DefaultEndpoint {
     private String serviceName;
     private String servicePackage;
 
-    public ThriftEndpoint(String uri, ThriftComponent component, ThriftConfiguration config) throws Exception {
+    public ThriftEndpoint(String uri, ThriftComponent component, ThriftConfiguration config) {
         super(uri, component);
         this.configuration = config;
 

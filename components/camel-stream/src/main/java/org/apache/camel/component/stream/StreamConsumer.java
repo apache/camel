@@ -237,7 +237,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 List<String> copy = new ArrayList<>(lines);
                 Object body = endpoint.getGroupStrategy().groupLines(copy);
                 // remember to inc index when we create an exchange
-                Exchange exchange = endpoint.createExchange(body, index++, last);
+                Exchange exchange = createExchange(body, index++, last);
 
                 // clear lines
                 lines.clear();
@@ -247,7 +247,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         } else if (line != null) {
             // single line
             // remember to inc index when we create an exchange
-            Exchange exchange = endpoint.createExchange(line, index++, last);
+            Exchange exchange = createExchange(line, index++, last);
             getProcessor().process(exchange);
         }
 
@@ -331,6 +331,14 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         if (!TYPES_LIST.contains(this.uri)) {
             throw new IllegalArgumentException(INVALID_URI);
         }
+    }
+
+    protected Exchange createExchange(Object body, long index, boolean last) {
+        Exchange exchange = createExchange(true);
+        exchange.getIn().setBody(body);
+        exchange.getIn().setHeader(StreamConstants.STREAM_INDEX, index);
+        exchange.getIn().setHeader(StreamConstants.STREAM_COMPLETE, last);
+        return exchange;
     }
 
 }

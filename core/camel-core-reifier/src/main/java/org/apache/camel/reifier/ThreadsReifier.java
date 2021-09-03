@@ -37,7 +37,10 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         // the threads name
-        String name = definition.getThreadName() != null ? parseString(definition.getThreadName()) : "Threads";
+        String name = parseString(definition.getThreadName());
+        if (name == null || name.isEmpty()) {
+            name = "Threads";
+        }
         // prefer any explicit configured executor service
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
         ExecutorService threadPool = getConfiguredExecutorService(name, definition, false);
@@ -101,9 +104,10 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
     }
 
     protected ThreadPoolRejectedPolicy resolveRejectedPolicy() {
-        if (definition.getExecutorServiceRef() != null && definition.getRejectedPolicy() == null) {
+        String ref = parseString(definition.getExecutorServiceRef());
+        if (ref != null && definition.getRejectedPolicy() == null) {
             ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager()
-                    .getThreadPoolProfile(parseString(definition.getExecutorServiceRef()));
+                    .getThreadPoolProfile(ref);
             if (threadPoolProfile != null) {
                 return threadPoolProfile.getRejectedPolicy();
             }

@@ -39,7 +39,7 @@ public class NettyHttpEndpointUriAssemblerTest extends CamelTestSupport {
         map.put("port", "8080");
         map.put("path", "anything");
         String uri = assembler.buildUri("netty-http", map);
-        assertEquals("netty-http:http:a-b-c.hostname.tld:8080/anything", uri);
+        assertEquals("netty-http:http://a-b-c.hostname.tld:8080/anything", uri);
 
         map = new LinkedHashMap<>();
         map.put("protocol", "http");
@@ -47,7 +47,7 @@ public class NettyHttpEndpointUriAssemblerTest extends CamelTestSupport {
         map.put("port", "8888");
         map.put("path", "service/v3");
         uri = assembler.buildUri("netty-http", map);
-        assertEquals("netty-http:http:a-b-c.server.net:8888/service/v3", uri);
+        assertEquals("netty-http:http://a-b-c.server.net:8888/service/v3", uri);
 
         map = new HashMap<>();
         // use http protocol
@@ -58,20 +58,20 @@ public class NettyHttpEndpointUriAssemblerTest extends CamelTestSupport {
         map.put("disconnect", "true");
 
         uri = assembler.buildUri("netty-http", map);
-        assertEquals("netty-http:http:localhost:8080/foo/bar?disconnect=true", uri);
+        assertEquals("netty-http:http://localhost:8080/foo/bar?disconnect=true", uri);
 
         // lets switch protocol
         map.put("protocol", "https");
 
         uri = assembler.buildUri("netty-http", map);
-        assertEquals("netty-http:https:localhost:8080/foo/bar?disconnect=true", uri);
+        assertEquals("netty-http:https://localhost:8080/foo/bar?disconnect=true", uri);
 
         // lets set a query parameter in the path
         map.put("path", "foo/bar?verbose=true");
         map.put("disconnect", "true");
 
         uri = assembler.buildUri("netty-http", map);
-        assertEquals("netty-http:https:localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
+        assertEquals("netty-http:https://localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
     }
 
 }

@@ -64,7 +64,7 @@ public class UnwrappingPublisher implements Publisher<Exchange> {
                 Throwable error = null;
                 try {
                     subscriber.onNext(payload);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     error = t;
                 }
 

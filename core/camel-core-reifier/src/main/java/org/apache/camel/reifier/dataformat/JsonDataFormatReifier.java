@@ -40,24 +40,18 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
                 properties.put("useDefaultObjectMapper", definition.getUseDefaultObjectMapper());
             }
             properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
+            properties.put("jsonView", or(definition.getJsonView(), definition.getJsonViewTypeName()));
+        } else {
+            properties.put("jsonView", definition.getJsonView());
         }
         if (definition.getLibrary() != JsonLibrary.XStream) {
-            if (definition.getUnmarshalType() != null) {
-                properties.put("unmarshalTypeName", definition.getUnmarshalType().getName());
-            } else {
-                properties.put("unmarshalTypeName", definition.getUnmarshalTypeName());
-            }
+            properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
         }
         properties.put("prettyPrint", definition.getPrettyPrint());
-        properties.put("jsonView", definition.getJsonView());
         properties.put("include", definition.getInclude());
         properties.put("allowJmsType", definition.getAllowJmsType());
         if (definition.getLibrary() != JsonLibrary.XStream) {
-            if (definition.getCollectionType() != null) {
-                properties.put("collectionTypeName", definition.getCollectionType().getName());
-            } else {
-                properties.put("collectionTypeName", definition.getCollectionTypeName());
-            }
+            properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
         }
         properties.put("useList", definition.getUseList());
         properties.put("moduleClassNames", definition.getModuleClassNames());
@@ -72,11 +66,15 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             // if we have the unmarshal type, but no permission set, then use it to be allowed
             String type = definition.getUnmarshalTypeName();
             if (type == null && definition.getUnmarshalType() != null) {
-                type = definition.getUnmarshalType().getName();
+                type = asTypeName(definition.getUnmarshalType());
             }
             properties.put("permissions", type);
             // xstream has no unmarshalType option
             properties.remove("unmarshalType");
+        }
+        if (definition.getLibrary() == JsonLibrary.Jackson) {
+            properties.put("schemaResolver", asRef(definition.getSchemaResolver()));
+            properties.put("autoDiscoverSchemaResolver", definition.getAutoDiscoverSchemaResolver());
         }
     }
 

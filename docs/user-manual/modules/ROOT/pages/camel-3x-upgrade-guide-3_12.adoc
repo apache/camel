@@ -1,0 +1,64 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.11 to 3.12
+
+=== API changes
+
+The method `getComponentNames` and `getLanguageNames` on `CamelContext` has changed to
+return `Set<String>` instead of `List<String>`.
+
+Added `getExchangePattern` to `Endpoint` which is a method that already exists on `DefaultEndpoint`.
+However the method is needed to be exposed in the API as well.
+
+The `ThroughputLogger` has changed the return type from `int` to `long` in the `getReceivedCounter` method.
+
+=== Data Formats
+
+The `camel-asn1` data format has renamed the option `clazzName` to `unmarshalType`.
+The `camel-avro` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-avro` data format has renamed the option `jsonViewTypeName` to `jsonView`.
+The `camel-avro` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-cbor` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-cbor` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-jacksonxml` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-jacksonxml` data format has renamed the option `jsonViewTypeName` to `jsonView`.
+The `camel-jacksonxml` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-json` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-json` data format has renamed the option `jsonViewTypeName` to `jsonView`.
+The `camel-json` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-protobuf` data format has renamed the option `collectionTypeName` to `collectionType`.
+The `camel-protobuf` data format has renamed the option `jsonViewTypeName` to `jsonView`.
+The `camel-protobuf` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+The `camel-yaml` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+
+=== camel-catalog
+
+Remove the APIs to return the website documentation in ascii doc and html format, it is the methods
+with naming pattern `...AsciiDoc` and `...HtmlDoc`.
+
+=== camel-jms
+
+The `camel-jms` component now better support Apache Artemis in streaming mode for large messages support,
+when Artemis is using a pooled connection pool (previously pooled was not supported). Now the option `artemisStreamingEnabled`
+must explicit be set to `true` to enable support for Artemis streaming mode. Previously Camel tried to auto-detect this.
+
+=== camel-google-sheets
+
+The `google-sheets-stream` component has changed the syntax, from: `google-sheets-stream:apiName` to: `google-sheets-stream:spreadsheetId`
+
+The old `apiName` option was not in use, and therefore it has been replaced with `spreadsheetId`
+which used to be query parameter.
+
+=== camel-kamelet / route templates
+
+Kamelet parameters that are named such as `host`, `port` are now always used with their configured value.
+Before the value in use may be from an ENV variable with the same name.
+
+=== camel-spark
+
+The `camel-spark` component has been upgraded from Spark 2.x to 3.x.
+

@@ -28,31 +28,33 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class InfinispanLocalContainerService implements InfinispanService, ContainerService<GenericContainer<?>> {
-    public static final String CONTAINER_IMAGE = "quay.io/infinispan/server:12.0.0.Final-1";
+    public static final String CONTAINER_IMAGE = "quay.io/infinispan/server:12.1.7.Final-1";
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";
     private static final String DEFAULT_PASSWORD = "password";
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanLocalContainerService.class);
 
-    private GenericContainer<?> container;
+    private final GenericContainer container;
 
     public InfinispanLocalContainerService() {
-        String containerImage = System.getProperty("infinispan.container", CONTAINER_IMAGE);
-
-        initContainer(containerImage);
+        this(System.getProperty(InfinispanProperties.INFINISPAN_CONTAINER, CONTAINER_IMAGE));
     }
 
     public InfinispanLocalContainerService(String containerImage) {
-        initContainer(containerImage);
+        container = initContainer(containerImage, CONTAINER_NAME);
     }
 
-    protected void initContainer(String containerImage) {
-        final Logger containerLog = LoggerFactory.getLogger("container." + CONTAINER_NAME);
+    public InfinispanLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        final Logger containerLog = LoggerFactory.getLogger("container." + containerName);
         final Consumer<OutputFrame> logConsumer = new Slf4jLogConsumer(containerLog);
 
-        container = new GenericContainer<>(containerImage)
-                .withNetworkAliases(CONTAINER_NAME)
+        return new GenericContainer<>(imageName)
+                .withNetworkAliases(containerName)
                 .withEnv("USER", DEFAULT_USERNAME)
                 .withEnv("PASS", DEFAULT_PASSWORD)
                 .withLogConsumer(logConsumer)

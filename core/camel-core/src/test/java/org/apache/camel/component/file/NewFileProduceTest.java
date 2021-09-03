@@ -16,36 +16,25 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import java.util.HashMap;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Simple unit test to produce a new file
  */
 public class NewFileProduceTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/producefile");
-        super.setUp();
-    }
-
     @Test
     public void testNewFileProducer() throws Exception {
         FileComponent comp = new FileComponent();
         comp.setCamelContext(context);
 
-        Endpoint endpoint = comp.createEndpoint("file://target/data/producefile", "target/data/producefile",
+        Endpoint endpoint = comp.createEndpoint(fileUri(), testDirectory().toString(),
                 new HashMap<String, Object>());
         template.send(endpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -54,8 +43,7 @@ public class NewFileProduceTest extends ContextTestSupport {
             }
         });
 
-        File file = new File("target/data/producefile/bye.txt");
-        assertTrue(file.exists(), "The file should have been created");
+        assertFileExists(testFile("bye.txt"));
     }
 
 }

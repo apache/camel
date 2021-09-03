@@ -1,0 +1,18 @@
+{
+  "id" : "05e9228c-af70-4878-83fa-093113eaa53b",
+  "name" : "image_upload.json",
+  "request" : {
+    "url" : "/v1/images/4b434528-032b-4467-946c-b5880ce15c06",
+    "method" : "PUT"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"image\":{\"status\":\"active\",\"name\":\"amphora-x64-haproxy\",\"tags\":[],\"container_format\":\"bare\",\"created_at\":\"2016-08-09T21:36:25Z\",\"size\":566600704,\"disk_format\":\"qcow2\",\"updated_at\":\"2016-08-09T21:36:29Z\",\"self\":\"\/v2\/images\/8a2ea42d-06b5-42c2-a54d-97105420f2bb\",\"min_disk\":0,\"protected\":false,\"id\":\"4b434528-032b-4467-946c-b5880ce15c06\",\"file\":\"\/v1\/images\/4b434528-032b-4467-946c-b5880ce15c06\/file\",\"checksum\":\"896e5473caaafac8899c21c912a46c98\",\"owner\":\"48e3c436235547a68324c2891bea41ac\",\"virtual_size\":null,\"min_ram\":0,\"schema\":\"\/v1\/schemas\/image\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "05e9228c-af70-4878-83fa-093113eaa53b",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

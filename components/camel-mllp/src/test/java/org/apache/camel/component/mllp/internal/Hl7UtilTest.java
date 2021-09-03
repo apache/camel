@@ -19,6 +19,7 @@ package org.apache.camel.component.mllp.internal;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
+import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.apache.camel.test.stub.camel.MllpEndpointStub;
 import org.junit.jupiter.api.Test;
@@ -677,5 +678,16 @@ public class Hl7UtilTest {
         final String testMessage = MSH_SEGMENT + "|||||||" + '\r' + REMAINING_SEGMENTS;
 
         assertEquals("", Hl7Util.findMsh18(testMessage.getBytes()));
+    }
+
+    @Test
+    public void testConvertToPrintFriendlyStringWithPhiMaxBytes() {
+        try {
+            System.setProperty(MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY, "3");
+            String result = Hl7Util.convertToPrintFriendlyString(TEST_MESSAGE);
+            assertEquals("MSH", result);
+        } finally {
+            System.clearProperty(MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY);
+        }
     }
 }

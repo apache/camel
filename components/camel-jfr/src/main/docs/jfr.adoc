@@ -4,7 +4,7 @@
 :artifactId: camel-jfr
 :description: Diagnose Camel applications with Java Flight Recorder
 :since: 3.8
-:supportLevel: Preview
+:supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jfr.adoc[opts=optional]
 
 *Since Camel {since}*
@@ -23,8 +23,12 @@ See the __startupRecorder__ options from xref:components:others:main.adoc[Camel 
 [[jfr-Example]]
 == Example
 
-To enable you just need to add `camel-jfr` to the classpath.
+To enable you just need to add `camel-jfr` to the classpath, and enable JFR recording.
+
+JFR recordings can be started either at:
+- When running the JVM using JVM arguments
+- When starting Camel by setting `camel.main.startup-recorder-recording=true`.
 
 See the `camel-example-flight-recorder` from the Camel Examples.
 
-include::camel-spring-boot::page$jfr-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$jfr-starter.adoc[]

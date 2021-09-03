@@ -24,6 +24,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -44,7 +45,7 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("foo"));
         assertTrue(xml.contains("<from uri=\"{{cool.start}}\"/>"));
-        assertTrue(xml.contains("<to id=\"to1\" uri=\"{{cool.end}}\"/>"));
+        assertThat(xml).containsPattern("\\Q<to id=\"\\Eto[0-9]+\\Q\" uri=\"{{cool.end}}\"/>\\E");
     }
 
     @Override

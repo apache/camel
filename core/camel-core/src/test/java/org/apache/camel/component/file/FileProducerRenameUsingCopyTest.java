@@ -16,40 +16,27 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file");
-        super.setUp();
-    }
 
     @Test
     public void testMove() throws Exception {
         final String body = "Hello Camel";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/file/done/hello.txt", body);
+        mock.expectedFileExists(testFile("done/hello.txt"), body);
 
-        template.sendBodyAndHeader("file://target/data/file", body, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(new File("target/data/file/done/hello.txt").exists(), "File not copied");
-        assertFalse(new File("target/data/file/hello.txt").exists(), "File not deleted");
+        assertFileExists(testFile("done/hello.txt"));
+        assertFileNotExists(testFile("hello.txt"));
     }
 
     @Override
@@ -57,7 +44,7 @@ public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file?renameUsingCopy=true&move=done").convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?renameUsingCopy=true&move=done")).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

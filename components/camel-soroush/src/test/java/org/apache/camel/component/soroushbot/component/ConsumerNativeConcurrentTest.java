@@ -27,11 +27,13 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.logging.log4j.LogManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled("Flaky test")
 public class ConsumerNativeConcurrentTest extends SoroushBotTestSupport {
     ConcurrentHashMap<String, Thread> userToThread;
     AtomicInteger badThread = new AtomicInteger();
@@ -65,7 +67,7 @@ public class ConsumerNativeConcurrentTest extends SoroushBotTestSupport {
         mockEndpoint.assertIsSatisfied();
         LogManager.getLogger().info(userToThread.size());
         LogManager.getLogger().info(userToThread.values());
-        assertEquals(badThread.get(), 0, "previous and current thread must be equal");
+        assertEquals(0, badThread.get(), "previous and current thread must be equal");
         assertTrue(new HashSet<>(userToThread.values()).size() > 1,
                 "there must be more than 1 thread in $userToThread unless this test is not useful");
     }

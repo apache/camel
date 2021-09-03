@@ -322,7 +322,7 @@ public interface StitchEndpointBuilderFactory {
          * The name of the destination table the data is being pushed to. Table
          * names must be unique in each destination schema, or loading issues
          * will occur. Note: The number of characters in the table name should
-         * be within the destinations allowed limits or data will rejected.
+         * be within the destination's allowed limits or data will rejected.
          * 
          * @param path tableName
          * @return the dsl builder
@@ -345,7 +345,7 @@ public interface StitchEndpointBuilderFactory {
          * The name of the destination table the data is being pushed to. Table
          * names must be unique in each destination schema, or loading issues
          * will occur. Note: The number of characters in the table name should
-         * be within the destinations allowed limits or data will rejected.
+         * be within the destination's allowed limits or data will rejected.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

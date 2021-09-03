@@ -168,7 +168,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         if (answer.getConcurrentConsumers() > 1) {
             // log that we are using concurrent consumers
             log.info("Using {}-{} concurrent consumers on {}",
-                    new Object[] { answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name });
+                    answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name);
         }
         return answer;
     }

@@ -28,7 +28,6 @@ import org.springframework.dao.DataAccessException;
 public class SqlStoredProducer extends DefaultProducer {
 
     private String resolvedTemplate;
-    private CallableStatementWrapperFactory callableStatementWrapperFactory;
 
     public SqlStoredProducer(SqlStoredEndpoint endpoint) {
         super(endpoint);

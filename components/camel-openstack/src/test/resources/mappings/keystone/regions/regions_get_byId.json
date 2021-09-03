@@ -1,0 +1,18 @@
+{
+  "id" : "2ae1f597-9421-424e-a98d-02b1ad3db3ae",
+  "name" : "regions_get_byId.json",
+  "request" : {
+    "url" : "/v3/regions/Region_CRUD",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"region\":{\"parent_region_id\":\"RegionOne\",\"id\":\"Region_CRUD\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/regions\/Region_CRUD\"},\"description\":\"No description provided.\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "2ae1f597-9421-424e-a98d-02b1ad3db3ae",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

@@ -12,9 +12,6 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spark.adoc
 
 *{component-header}*
 
-*Since Camel 2.17*
-
-
 This documentation page covers the http://spark.apache.org/[Apache
 Spark] component for the Apache Camel. The main purpose of the Spark
 integration with Camel is to provide a bridge between Camel connectors
@@ -54,16 +51,51 @@ or Hive SQL job.
 
 *Spark URI format*
 
-[source,java]
 --------------------------
 spark:{rdd|dataframe|hive}
 --------------------------
 
-=== Spark options
 
 
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The Spark component supports 4 options, which are listed below.
 
 
@@ -78,10 +110,9 @@ The Spark component supports 4 options, which are listed below.
 |===
 // component options: END
 
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Spark endpoint is configured using URI syntax:
 
 ----
@@ -116,14 +147,12 @@ with the following path and query parameters:
 // endpoint options: END
 
 
- 
-== RDD jobs 
+== RDD jobs
 
 To invoke an RDD job, use the following URI:
 
 *Spark RDD producer*
 
-[source,java]
 ------------------------------------------------------
 spark:rdd?rdd=#testFileRdd&rddCallback=#transformation
 ------------------------------------------------------
@@ -294,7 +323,6 @@ public class MyTransformation {
 long result = producerTemplate.requestBody("spark:rdd?rdd=#rdd&rddCallback=#rddCallback" Arrays.asList(10, "10"), long.class);
 ------------------------------------------------------------------------------------------------------------------------------
 
- 
 
 == DataFrame jobs
 
@@ -305,12 +333,11 @@ To invoke an DataFrame job, use the following URI:
 
 *Spark RDD producer*
 
-[source,java]
 --------------------------------------------------------------------------
 spark:dataframe?dataFrame=#testDataFrame&dataFrameCallback=#transformation
 --------------------------------------------------------------------------
 
- Where `dataFrame` option refers to the name of an DataFrame instance
+Where `dataFrame` option refers to the name of an DataFrame instance
 (`instances of org.apache.spark.sql.Dataset and org.apache.spark.sql.Row`) from a Camel registry,
 while `dataFrameCallback` refers to the implementation
 of `org.apache.camel.component.spark.DataFrameCallback` interface (also
@@ -373,13 +400,12 @@ Dataset<Row> cars(HiveContext hiveContext) {
 
 == Hive jobs
 
- Instead of working with RDDs or DataFrame Spark component can also
+Instead of working with RDDs or DataFrame Spark component can also
 receive Hive SQL queries as payloads. To send Hive query to Spark
 component, use the following URI:
 
 *Spark RDD producer*
 
-[source,java]
 ----------
 spark:hive
 ----------
@@ -411,4 +437,4 @@ Dataset<Row> cars(HiveContext hiveContext) {
 }
 ------------------------------------------------------------------------
 
-include::camel-spring-boot::page$spark-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$spark-starter.adoc[]

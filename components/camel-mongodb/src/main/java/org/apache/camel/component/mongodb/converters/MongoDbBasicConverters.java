@@ -117,8 +117,11 @@ public final class MongoDbBasicConverters {
         return true;
     }
 
-    @Converter
+    @Converter(allowNull = true)
     public static List<Bson> fromStringToList(String value) {
+        if (!isArrayNotation(value)) {
+            return null;
+        }
 
         final CodecRegistry codecRegistry = CodecRegistries.fromProviders(
                 Arrays.asList(new ValueCodecProvider(), new BsonValueCodecProvider(), new DocumentCodecProvider()));
@@ -134,6 +137,11 @@ public final class MongoDbBasicConverters {
             answer.add(doc.asDocument());
         }
         return answer;
+    }
+
+    private static boolean isArrayNotation(String value) {
+        return value != null && !value.isEmpty() && value.length() > 1 && value.charAt(0) == '['
+                && value.charAt(value.length() - 1) == ']';
     }
 
 }

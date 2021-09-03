@@ -20,11 +20,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,load-balancing")
 @XmlRootElement(name = "defaultLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
 public class DefaultServiceCallServiceLoadBalancerConfiguration extends ServiceCallServiceLoadBalancerConfiguration {
     public DefaultServiceCallServiceLoadBalancerConfiguration() {
         this(null);

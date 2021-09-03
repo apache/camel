@@ -18,10 +18,11 @@ package org.apache.camel.builder.endpoint;
 
 import java.io.File;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,12 +31,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 /**
  *
  */
-public class FileConsumeCharsetTest extends ContextTestSupport {
+public class FileConsumeCharsetTest extends BaseEndpointDslTest {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/files");
+        TestSupport.deleteDirectory("target/data/files");
         super.setUp();
         template.sendBodyAndHeader("file://target/data/files?charset=UTF-8", "Hello World \u4f60\u597d", Exchange.FILE_NAME,
                 "report.txt");
@@ -43,6 +44,8 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
 
     @Test
     public void testConsumeAndDelete() throws Exception {
+        NotifyBuilder oneExchangeDone = new NotifyBuilder(context).whenDone(1).create();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World \u4f60\u597d");
 

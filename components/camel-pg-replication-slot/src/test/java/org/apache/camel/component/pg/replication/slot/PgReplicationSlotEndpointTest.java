@@ -34,35 +34,35 @@ public class PgReplicationSlotEndpointTest {
 
         endpoint = new PgReplicationSlotEndpoint("pg-replication-slot:/database/slot:plugin", component);
 
-        assertEquals(endpoint.getDatabase(), "database");
-        assertEquals(endpoint.getPort(), Integer.valueOf(5432));
-        assertEquals(endpoint.getHost(), "localhost");
-        assertEquals(endpoint.getSlot(), "slot");
-        assertEquals(endpoint.getOutputPlugin(), "plugin");
+        assertEquals("database", endpoint.getDatabase());
+        assertEquals(Integer.valueOf(5432), endpoint.getPort());
+        assertEquals("localhost", endpoint.getHost());
+        assertEquals("slot", endpoint.getSlot());
+        assertEquals("plugin", endpoint.getOutputPlugin());
 
         endpoint = new PgReplicationSlotEndpoint("pg-replication-slot:remote-server/database/slot:plugin", component);
 
-        assertEquals(endpoint.getDatabase(), "database");
-        assertEquals(endpoint.getPort(), Integer.valueOf(5432));
-        assertEquals(endpoint.getHost(), "remote-server");
-        assertEquals(endpoint.getSlot(), "slot");
-        assertEquals(endpoint.getOutputPlugin(), "plugin");
+        assertEquals("database", endpoint.getDatabase());
+        assertEquals(Integer.valueOf(5432), endpoint.getPort());
+        assertEquals("remote-server", endpoint.getHost());
+        assertEquals("slot", endpoint.getSlot());
+        assertEquals("plugin", endpoint.getOutputPlugin());
 
         endpoint = new PgReplicationSlotEndpoint("pg-replication-slot:remote-server:333/database/slot:plugin", component);
 
-        assertEquals(endpoint.getDatabase(), "database");
-        assertEquals(endpoint.getPort(), Integer.valueOf(333));
-        assertEquals(endpoint.getHost(), "remote-server");
-        assertEquals(endpoint.getSlot(), "slot");
-        assertEquals(endpoint.getOutputPlugin(), "plugin");
+        assertEquals("database", endpoint.getDatabase());
+        assertEquals(Integer.valueOf(333), endpoint.getPort());
+        assertEquals("remote-server", endpoint.getHost());
+        assertEquals("slot", endpoint.getSlot());
+        assertEquals("plugin", endpoint.getOutputPlugin());
 
         endpoint = new PgReplicationSlotEndpoint("pg-replication-slot://remote-server:333/database/slot:plugin", component);
 
-        assertEquals(endpoint.getDatabase(), "database");
-        assertEquals(endpoint.getPort(), Integer.valueOf(333));
-        assertEquals(endpoint.getHost(), "remote-server");
-        assertEquals(endpoint.getSlot(), "slot");
-        assertEquals(endpoint.getOutputPlugin(), "plugin");
+        assertEquals("database", endpoint.getDatabase());
+        assertEquals(Integer.valueOf(333), endpoint.getPort());
+        assertEquals("remote-server", endpoint.getHost());
+        assertEquals("slot", endpoint.getSlot());
+        assertEquals("plugin", endpoint.getOutputPlugin());
     }
 
     @Test

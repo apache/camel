@@ -1,0 +1,75 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.yaml.deserializers;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
+import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
+import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.YamlSupport;
+import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.annotations.YamlIn;
+import org.apache.camel.spi.annotations.YamlProperty;
+import org.apache.camel.spi.annotations.YamlType;
+import org.apache.camel.util.ObjectHelper;
+import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.SequenceNode;
+
+@YamlIn
+@YamlType(
+          nodes = "beans",
+          order = YamlDeserializerResolver.ORDER_DEFAULT,
+          properties = {
+                  @YamlProperty(name = "__extends",
+                                type = "array:org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition")
+          })
+public class BeansDeserializer extends YamlDeserializerSupport implements ConstructNode {
+    @Override
+    public Object construct(Node node) {
+        final SequenceNode sn = asSequenceNode(node);
+        final List<CamelContextCustomizer> customizers = new ArrayList<>();
+        final YamlDeserializationContext dc = getDeserializationContext(node);
+
+        for (Node item : sn.getValue()) {
+            setDeserializationContext(item, dc);
+
+            NamedBeanDefinition bean = asType(item, NamedBeanDefinition.class);
+
+            ObjectHelper.notNull(bean.getName(), "The bean name must be set");
+            ObjectHelper.notNull(bean.getType(), "The bean type must be set");
+
+            customizers.add(new CamelContextCustomizer() {
+                @Override
+                public void configure(CamelContext camelContext) {
+                    try {
+                        camelContext.getRegistry().bind(
+                                bean.getName(),
+                                bean.newInstance(camelContext));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }
+
+        return YamlSupport.customizer(customizers);
+    }
+}

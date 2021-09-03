@@ -16,24 +16,21 @@
  */
 package org.apache.camel.test.infra.ftp.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class FtpServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(FtpServiceFactory.class);
 
     private FtpServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<FtpService> builder() {
+        return new SimpleTestServiceBuilder<>("ftp");
+    }
+
     public static FtpService createService() {
-        String instanceType = System.getProperty("ftp.instance.type");
-
-        if (instanceType.equals("remote")) {
-            return new FtpRemoteService();
-        }
-
-        LOG.error("Ftp instance must be one of 'remote");
-        throw new UnsupportedOperationException("Invalid Ftp instance type");
+        return builder()
+                .addRemoteMapping(FtpRemoteService::new)
+                .build();
     }
 }

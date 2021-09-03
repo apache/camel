@@ -16,35 +16,22 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for writing done files
  */
 public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/done");
-        super.setUp();
-    }
-
     @Test
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         // write the done file
-        template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "hello.txt.ready");
+        template.sendBodyAndHeader(fileUri(), "", Exchange.FILE_NAME, "hello.txt.ready");
 
         // wait a bit and it should not pickup the written file as there are no
         // target file
@@ -55,19 +42,18 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         oneExchangeDone.reset();
 
         // done file should exist
-        File file = new File("target/data/done/hello.txt.ready");
-        assertTrue(file.exists(), "Done file should exist: " + file);
+        assertFileExists(testFile("hello.txt.ready"));
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the target file
-        template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
-        assertFalse(file.exists(), "Done file should be deleted: " + file);
+        assertFileNotExists(testFile("hello.txt.ready"));
     }
 
     @Override
@@ -75,7 +61,7 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=${file:name}.ready&initialDelay=0&delay=50")
+                from(fileUri("?doneFileName=${file:name}.ready&initialDelay=0&delay=50"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

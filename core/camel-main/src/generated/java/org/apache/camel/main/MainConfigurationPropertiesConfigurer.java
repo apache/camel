@@ -31,6 +31,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationFailFast": target.setAutoConfigurationFailFast(property(camelContext, boolean.class, value)); return true;
         case "autoconfigurationlogsummary":
         case "AutoConfigurationLogSummary": target.setAutoConfigurationLogSummary(property(camelContext, boolean.class, value)); return true;
+        case "autoconfigurationsystempropertiesenabled":
+        case "AutoConfigurationSystemPropertiesEnabled": target.setAutoConfigurationSystemPropertiesEnabled(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "AutoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
@@ -51,6 +53,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": target.setConfigurations(property(camelContext, java.util.List.class, value)); return true;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": target.setConsumerTemplateCacheSize(property(camelContext, int.class, value)); return true;
+        case "dumproutes":
+        case "DumpRoutes": target.setDumpRoutes(property(camelContext, boolean.class, value)); return true;
         case "durationhitexitcode":
         case "DurationHitExitCode": target.setDurationHitExitCode(property(camelContext, int.class, value)); return true;
         case "durationmaxidleseconds":
@@ -59,14 +63,24 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": target.setDurationMaxMessages(property(camelContext, int.class, value)); return true;
         case "durationmaxseconds":
         case "DurationMaxSeconds": target.setDurationMaxSeconds(property(camelContext, int.class, value)); return true;
+        case "eagerclassloading":
+        case "EagerClassloading": target.setEagerClassloading(property(camelContext, boolean.class, value)); return true;
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": target.setEndpointBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "endpointlazystartproducer":
         case "EndpointLazyStartProducer": target.setEndpointLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "endpointruntimestatisticsenabled":
         case "EndpointRuntimeStatisticsEnabled": target.setEndpointRuntimeStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "exchangefactory":
+        case "ExchangeFactory": target.setExchangeFactory(property(camelContext, java.lang.String.class, value)); return true;
+        case "exchangefactorycapacity":
+        case "ExchangeFactoryCapacity": target.setExchangeFactoryCapacity(property(camelContext, int.class, value)); return true;
+        case "exchangefactorystatisticsenabled":
+        case "ExchangeFactoryStatisticsEnabled": target.setExchangeFactoryStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
         case "fileconfigurations":
         case "FileConfigurations": target.setFileConfigurations(property(camelContext, java.lang.String.class, value)); return true;
+        case "globaloptions":
+        case "GlobalOptions": target.setGlobalOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "inflightrepositorybrowseenabled":
         case "InflightRepositoryBrowseEnabled": target.setInflightRepositoryBrowseEnabled(property(camelContext, boolean.class, value)); return true;
         case "javaroutesexcludepattern":
@@ -133,6 +147,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": target.setRoutesBuilders(property(camelContext, java.util.List.class, value)); return true;
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": target.setRoutesCollectorEnabled(property(camelContext, boolean.class, value)); return true;
+        case "routesexcludepattern":
+        case "RoutesExcludePattern": target.setRoutesExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesincludepattern":
+        case "RoutesIncludePattern": target.setRoutesIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": target.setShutdownLogInflightExchangesOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "shutdownnowontimeout":
@@ -189,12 +207,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseDataType": target.setUseDataType(property(camelContext, boolean.class, value)); return true;
         case "usemdclogging":
         case "UseMdcLogging": target.setUseMdcLogging(property(camelContext, boolean.class, value)); return true;
-        case "xmlrests":
-        case "XmlRests": target.setXmlRests(property(camelContext, java.lang.String.class, value)); return true;
-        case "xmlroutetemplates":
-        case "XmlRouteTemplates": target.setXmlRouteTemplates(property(camelContext, java.lang.String.class, value)); return true;
-        case "xmlroutes":
-        case "XmlRoutes": target.setXmlRoutes(property(camelContext, java.lang.String.class, value)); return true;
+        case "uuidgenerator":
+        case "UuidGenerator": target.setUuidGenerator(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -212,6 +226,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationFailFast": return boolean.class;
         case "autoconfigurationlogsummary":
         case "AutoConfigurationLogSummary": return boolean.class;
+        case "autoconfigurationsystempropertiesenabled":
+        case "AutoConfigurationSystemPropertiesEnabled": return boolean.class;
         case "autostartup":
         case "AutoStartup": return boolean.class;
         case "autowiredenabled":
@@ -232,6 +248,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": return java.util.List.class;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": return int.class;
+        case "dumproutes":
+        case "DumpRoutes": return boolean.class;
         case "durationhitexitcode":
         case "DurationHitExitCode": return int.class;
         case "durationmaxidleseconds":
@@ -240,14 +258,24 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": return int.class;
         case "durationmaxseconds":
         case "DurationMaxSeconds": return int.class;
+        case "eagerclassloading":
+        case "EagerClassloading": return boolean.class;
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": return boolean.class;
         case "endpointlazystartproducer":
         case "EndpointLazyStartProducer": return boolean.class;
         case "endpointruntimestatisticsenabled":
         case "EndpointRuntimeStatisticsEnabled": return boolean.class;
+        case "exchangefactory":
+        case "ExchangeFactory": return java.lang.String.class;
+        case "exchangefactorycapacity":
+        case "ExchangeFactoryCapacity": return int.class;
+        case "exchangefactorystatisticsenabled":
+        case "ExchangeFactoryStatisticsEnabled": return boolean.class;
         case "fileconfigurations":
         case "FileConfigurations": return java.lang.String.class;
+        case "globaloptions":
+        case "GlobalOptions": return java.util.Map.class;
         case "inflightrepositorybrowseenabled":
         case "InflightRepositoryBrowseEnabled": return boolean.class;
         case "javaroutesexcludepattern":
@@ -314,6 +342,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": return java.util.List.class;
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": return boolean.class;
+        case "routesexcludepattern":
+        case "RoutesExcludePattern": return java.lang.String.class;
+        case "routesincludepattern":
+        case "RoutesIncludePattern": return java.lang.String.class;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return boolean.class;
         case "shutdownnowontimeout":
@@ -370,12 +402,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseDataType": return boolean.class;
         case "usemdclogging":
         case "UseMdcLogging": return boolean.class;
-        case "xmlrests":
-        case "XmlRests": return java.lang.String.class;
-        case "xmlroutetemplates":
-        case "XmlRouteTemplates": return java.lang.String.class;
-        case "xmlroutes":
-        case "XmlRoutes": return java.lang.String.class;
+        case "uuidgenerator":
+        case "UuidGenerator": return java.lang.String.class;
         default: return null;
         }
     }
@@ -394,6 +422,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationFailFast": return target.isAutoConfigurationFailFast();
         case "autoconfigurationlogsummary":
         case "AutoConfigurationLogSummary": return target.isAutoConfigurationLogSummary();
+        case "autoconfigurationsystempropertiesenabled":
+        case "AutoConfigurationSystemPropertiesEnabled": return target.isAutoConfigurationSystemPropertiesEnabled();
         case "autostartup":
         case "AutoStartup": return target.isAutoStartup();
         case "autowiredenabled":
@@ -414,6 +444,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": return target.getConfigurations();
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": return target.getConsumerTemplateCacheSize();
+        case "dumproutes":
+        case "DumpRoutes": return target.isDumpRoutes();
         case "durationhitexitcode":
         case "DurationHitExitCode": return target.getDurationHitExitCode();
         case "durationmaxidleseconds":
@@ -422,14 +454,24 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": return target.getDurationMaxMessages();
         case "durationmaxseconds":
         case "DurationMaxSeconds": return target.getDurationMaxSeconds();
+        case "eagerclassloading":
+        case "EagerClassloading": return target.isEagerClassloading();
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": return target.isEndpointBridgeErrorHandler();
         case "endpointlazystartproducer":
         case "EndpointLazyStartProducer": return target.isEndpointLazyStartProducer();
         case "endpointruntimestatisticsenabled":
         case "EndpointRuntimeStatisticsEnabled": return target.isEndpointRuntimeStatisticsEnabled();
+        case "exchangefactory":
+        case "ExchangeFactory": return target.getExchangeFactory();
+        case "exchangefactorycapacity":
+        case "ExchangeFactoryCapacity": return target.getExchangeFactoryCapacity();
+        case "exchangefactorystatisticsenabled":
+        case "ExchangeFactoryStatisticsEnabled": return target.isExchangeFactoryStatisticsEnabled();
         case "fileconfigurations":
         case "FileConfigurations": return target.getFileConfigurations();
+        case "globaloptions":
+        case "GlobalOptions": return target.getGlobalOptions();
         case "inflightrepositorybrowseenabled":
         case "InflightRepositoryBrowseEnabled": return target.isInflightRepositoryBrowseEnabled();
         case "javaroutesexcludepattern":
@@ -496,6 +538,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": return target.getRoutesBuilders();
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": return target.isRoutesCollectorEnabled();
+        case "routesexcludepattern":
+        case "RoutesExcludePattern": return target.getRoutesExcludePattern();
+        case "routesincludepattern":
+        case "RoutesIncludePattern": return target.getRoutesIncludePattern();
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return target.isShutdownLogInflightExchangesOnTimeout();
         case "shutdownnowontimeout":
@@ -552,12 +598,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseDataType": return target.isUseDataType();
         case "usemdclogging":
         case "UseMdcLogging": return target.isUseMdcLogging();
-        case "xmlrests":
-        case "XmlRests": return target.getXmlRests();
-        case "xmlroutetemplates":
-        case "XmlRouteTemplates": return target.getXmlRouteTemplates();
-        case "xmlroutes":
-        case "XmlRoutes": return target.getXmlRoutes();
+        case "uuidgenerator":
+        case "UuidGenerator": return target.getUuidGenerator();
         default: return null;
         }
     }
@@ -567,6 +609,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "configurations":
         case "Configurations": return java.lang.Object.class;
+        case "globaloptions":
+        case "GlobalOptions": return java.lang.String.class;
         case "routesbuilders":
         case "RoutesBuilders": return org.apache.camel.RoutesBuilder.class;
         default: return null;

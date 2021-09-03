@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xmlsecurity.processor;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 
 import org.w3c.dom.Document;
@@ -120,7 +118,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         valContext.setProperty("javax.xml.crypto.dsig.cacheReference", Boolean.TRUE);
         valContext.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
 
-        if (getConfiguration().getSecureValidation() == Boolean.TRUE) {
+        if (getConfiguration().getSecureValidation().equals(Boolean.TRUE)) {
             valContext.setProperty("org.apache.jcp.xml.dsig.secureValidation", Boolean.TRUE);
             valContext.setProperty("org.jcp.xml.dsig.secureValidation", Boolean.TRUE);
         }
@@ -222,7 +220,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     }
 
     private NodeList getSignatureNodes(Document doc)
-            throws IOException, ParserConfigurationException, XmlSignatureFormatException {
+            throws XmlSignatureFormatException {
 
         // Find Signature element
         NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");

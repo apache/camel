@@ -51,12 +51,9 @@ public final class Approvals implements Serializable {
         private final int sortOrder;
 
         @JsonCreator
-        Info(@JsonProperty("id")
-        final String id, @JsonProperty("description")
-        final String description, @JsonProperty("name")
-        final String name, @JsonProperty("object")
-        final String object, @JsonProperty("sortOrder")
-        final int sortOrder) {
+        Info(@JsonProperty("id") final String id, @JsonProperty("description") final String description,
+             @JsonProperty("name") final String name, @JsonProperty("object") final String object,
+             @JsonProperty("sortOrder") final int sortOrder) {
             this.description = description;
             this.id = id;
             this.name = name;
@@ -107,8 +104,7 @@ public final class Approvals implements Serializable {
     private final Map<String, List<Info>> approvals;
 
     @JsonCreator
-    Approvals(@JsonProperty("approvals")
-    final Map<String, List<Info>> approvals) {
+    Approvals(@JsonProperty("approvals") final Map<String, List<Info>> approvals) {
         this.approvals = Optional.ofNullable(approvals).orElse(Collections.emptyMap());
     }
 

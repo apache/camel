@@ -32,9 +32,12 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsNormalFileHandler.class);
     private boolean consumed;
 
     @Override
@@ -152,7 +155,10 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
             }
 
             if (outputDest.exists()) {
-                outputDest.delete();
+                boolean result = outputDest.delete();
+                if (!result) {
+                    LOG.error("Failed to delete output destination {}", outputDest);
+                }
             }
 
             HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(configuration);

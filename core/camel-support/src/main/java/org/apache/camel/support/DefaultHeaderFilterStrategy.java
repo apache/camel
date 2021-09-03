@@ -38,14 +38,24 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * A filter pattern that only accepts keys starting with <tt>Camel</tt> or <tt>org.apache.camel.</tt>
+     *
+     * @deprecated use {@link #CAMEL_FILTER_STARTS_WITH}
      */
+    @Deprecated
     public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
+
+    /**
+     * A filter pattern for keys starting with <tt>Camel</tt>, <tt>camel</tt>, or <tt>org.apache.camel.</tt>
+     */
+    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel", "org.apache.camel." };
 
     private Set<String> inFilter;
     private Pattern inFilterPattern;
+    private String[] inFilterStartsWith;
 
     private Set<String> outFilter;
     private Pattern outFilterPattern;
+    private String[] outFilterStartsWith;
 
     private boolean lowerCase;
     private boolean allowNullValues;
@@ -87,9 +97,19 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
+     * Sets the "out" direction filter by starts with pattern. The "out" direction is referred to copying headers from a
+     * Camel message to an external message.
+     *
+     * @param outFilterStartsWith one or more key names to use for filtering using starts with
+     */
+    public void setOutFilterStartsWith(String... outFilterStartsWith) {
+        this.outFilterStartsWith = outFilterStartsWith;
+    }
+
+    /**
      * Gets the "out" direction filter regular expression {@link Pattern}. The "out" direction is referred to copying
      * headers from Camel message to an external message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @return regular expression filter pattern
      */
@@ -100,7 +120,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "out" direction filter regular expression {@link Pattern}. The "out" direction is referred to copying
      * headers from Camel message to an external message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @param value regular expression filter pattern
      */
@@ -115,7 +135,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "out" direction filter regular expression {@link Pattern}. The "out" direction is referred to copying
      * headers from Camel message to an external message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @param pattern regular expression filter pattern
      */
@@ -147,9 +167,19 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
+     * Sets the "in" direction filter by starts with pattern. The "in" direction is referred to copying headers from an
+     * external message to a Camel message.
+     *
+     * @param inFilterStartsWith one or more key names to use for filtering using starts with
+     */
+    public void setInFilterStartsWith(String... inFilterStartsWith) {
+        this.inFilterStartsWith = inFilterStartsWith;
+    }
+
+    /**
      * Gets the "in" direction filter regular expression {@link Pattern}. The "in" direction is referred to copying
      * headers from an external message to a Camel message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @return regular expression filter pattern
      */
@@ -160,7 +190,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "in" direction filter regular expression {@link Pattern}. The "in" direction is referred to copying
      * headers from an external message to a Camel message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @param value regular expression filter pattern
      */
@@ -175,7 +205,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "in" direction filter regular expression {@link Pattern}. The "in" direction is referred to copying
      * headers from an external message to a Camel message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @param pattern regular expression filter pattern
      */
@@ -223,6 +253,11 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         return allowNullValues;
     }
 
+    /**
+     * Whether to allow null values.
+     *
+     * By default a header is skipped if its value is null. Setting this to true will preserve the header.
+     */
     public void setAllowNullValues(boolean value) {
         allowNullValues = value;
     }
@@ -238,9 +273,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * When set to true, a match will filter out the header. This is the default value for backwards compatibility.
      *
      * When set to false, the pattern or filter will indicate that the header must be kept; anything not matched will be
-     * filtered out.
+     * filtered (skipped).
      *
-     * @param filterOnMatch <tt>true</tt> if a match filters out the header.
+     * @param filterOnMatch <tt>true</tt> if a match filters (skips) the header.
      */
     public void setFilterOnMatch(boolean filterOnMatch) {
         this.filterOnMatch = filterOnMatch;
@@ -261,17 +296,38 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
         Pattern pattern = null;
         Set<String> filter = null;
+        String[] startsWith = null;
 
         if (Direction.OUT == direction) {
             pattern = outFilterPattern;
             filter = outFilter;
+            startsWith = outFilterStartsWith;
         } else if (Direction.IN == direction) {
             pattern = inFilterPattern;
             filter = inFilter;
+            startsWith = inFilterStartsWith;
         }
 
-        if (pattern != null && pattern.matcher(headerName).matches()) {
-            return filterOnMatch;
+        if (startsWith != null) {
+            for (String s : startsWith) {
+                boolean match = headerName.startsWith(s);
+                if (match) {
+                    return filterOnMatch;
+                }
+            }
+        }
+
+        if (pattern != null) {
+            // optimize if its the default pattern as we know the pattern is to check for keys starting with Camel
+            if (pattern == CAMEL_FILTER_PATTERN) {
+                boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel")
+                        || headerName.startsWith("org.apache.camel.");
+                if (match) {
+                    return filterOnMatch;
+                }
+            } else if (pattern.matcher(headerName).matches()) {
+                return filterOnMatch;
+            }
         }
 
         if (filter != null) {
@@ -282,7 +338,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
                     }
                 }
             } else if (isLowerCase()) {
-                if (filter.contains(headerName.toLowerCase(Locale.ENGLISH))) {
+                String lower = headerName.toLowerCase(Locale.ENGLISH);
+                if (filter.contains(lower)) {
                     return filterOnMatch;
                 }
             } else {

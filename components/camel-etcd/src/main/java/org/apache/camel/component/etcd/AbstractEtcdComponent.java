@@ -66,7 +66,7 @@ public abstract class AbstractEtcdComponent extends DefaultComponent implements 
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    protected EtcdConfiguration loadConfiguration(Map<String, Object> parameters) throws Exception {
+    protected EtcdConfiguration loadConfiguration(Map<String, Object> parameters) {
         EtcdConfiguration configuration = Optional.ofNullable(this.configuration).orElseGet(EtcdConfiguration::new).copy();
         configuration.setCamelContext(getCamelContext());
 

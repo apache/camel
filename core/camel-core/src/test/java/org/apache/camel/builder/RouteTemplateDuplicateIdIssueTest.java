@@ -17,10 +17,12 @@
 package org.apache.camel.builder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.HasId;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,11 +58,14 @@ public class RouteTemplateDuplicateIdIssueTest extends ContextTestSupport {
         assertDoesNotThrow(() -> context.start(), "Route creation should not fail");
 
         // should generate unique id per template for the runtime processors
-        Processor p1 = context.getProcessor("recipientList1");
-        Processor p2 = context.getProcessor("recipientList2");
+        List<Processor> processors = getProcessors("recipientList*");
+        assertEquals(2, processors.size());
+        Processor p1 = processors.get(0);
+        Processor p2 = processors.get(1);
         assertNotNull(p1);
         assertNotNull(p2);
         assertNotSame(p1, p2);
+        assertNotEquals(((HasId) p1).getId(), ((HasId) p2).getId());
 
         context.stop();
     }

@@ -22,7 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
+
+@ResourceLock(SSL_SYSPROPS)
 public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
 
     @Override

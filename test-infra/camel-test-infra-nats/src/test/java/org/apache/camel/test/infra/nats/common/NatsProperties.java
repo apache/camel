@@ -22,6 +22,7 @@ public final class NatsProperties {
     public static final String ACCESS_USERNAME = "nats.access.username";
     public static final String ACCESS_PASSWORD = "nats.access.password";
     public static final String ACCESS_TOKEN = "nats.access.token";
+    public static final String NATS_CONTAINER = "nats.container";
 
     private NatsProperties() {
 

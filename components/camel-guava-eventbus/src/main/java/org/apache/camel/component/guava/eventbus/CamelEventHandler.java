@@ -31,14 +31,16 @@ import org.slf4j.LoggerFactory;
 public class CamelEventHandler {
 
     protected final Logger log = LoggerFactory.getLogger(CamelEventHandler.class);
-    protected final GuavaEventBusEndpoint eventBusEndpoint;
+    protected final GuavaEventBusConsumer consumer;
+    protected final GuavaEventBusEndpoint endpoint;
     protected final AsyncProcessor processor;
 
-    public CamelEventHandler(GuavaEventBusEndpoint eventBusEndpoint, Processor processor) {
-        ObjectHelper.notNull(eventBusEndpoint, "eventBusEndpoint");
+    public CamelEventHandler(GuavaEventBusConsumer consumer, GuavaEventBusEndpoint endpoint, Processor processor) {
+        ObjectHelper.notNull(endpoint, "eventBusEndpoint");
         ObjectHelper.notNull(processor, "processor");
 
-        this.eventBusEndpoint = eventBusEndpoint;
+        this.consumer = consumer;
+        this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
@@ -49,7 +51,7 @@ public class CamelEventHandler {
      */
     public void doEventReceived(Object event) {
         log.trace("Received event: {}", event);
-        final Exchange exchange = eventBusEndpoint.createExchange(event);
+        final Exchange exchange = createExchange(event);
         log.debug("Processing event: {}", event);
         // use async processor to support async routing engine
         processor.process(exchange, new AsyncCallback() {
@@ -58,6 +60,12 @@ public class CamelEventHandler {
                 // noop
             }
         });
+    }
+
+    public Exchange createExchange(Object event) {
+        Exchange exchange = consumer.createExchange(true);
+        exchange.getIn().setBody(event);
+        return exchange;
     }
 
 }

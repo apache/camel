@@ -27,12 +27,14 @@ import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesDeploymentsProducer extends DefaultProducer {
 
@@ -49,38 +51,32 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String operation;
-
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
-            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
-        } else {
-            operation = getEndpoint().getKubernetesConfiguration().getOperation();
-        }
+        String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
 
             case KubernetesOperations.LIST_DEPLOYMENTS:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_DEPLOYMENTS_BY_LABELS_OPERATION:
-                doListDeploymentsByLabels(exchange, operation);
+                doListDeploymentsByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_DEPLOYMENT:
-                doGetDeployment(exchange, operation);
+                doGetDeployment(exchange);
                 break;
 
             case KubernetesOperations.DELETE_DEPLOYMENT:
-                doDeleteDeployment(exchange, operation);
+                doDeleteDeployment(exchange);
                 break;
 
             case KubernetesOperations.CREATE_DEPLOYMENT:
-                doCreateDeployment(exchange, operation);
+                doCreateDeployment(exchange);
                 break;
 
             case KubernetesOperations.SCALE_DEPLOYMENT:
-                doScaleDeployment(exchange, operation);
+                doScaleDeployment(exchange);
                 break;
 
             default:
@@ -88,28 +84,24 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange) {
         DeploymentList deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deploymentsList.getItems());
+        prepareOutboundMessage(exchange, deploymentsList.getItems());
     }
 
-    protected void doListDeploymentsByLabels(Exchange exchange, String operation) throws Exception {
-        DeploymentList deploymentList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
+    protected void doListDeploymentsByLabels(Exchange exchange) {
+        Map<String, String> labels
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
         MixedOperation<Deployment, DeploymentList, RollableScalableResource<Deployment>> deployments = getEndpoint()
                 .getKubernetesClient().apps().deployments();
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
-            deployments.withLabel(entry.getKey(), entry.getValue());
-        }
-        deploymentList = deployments.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deploymentList.getItems());
+        DeploymentList deploymentList = deployments.withLabels(labels).list();
+
+        prepareOutboundMessage(exchange, deploymentList.getItems());
     }
 
-    protected void doGetDeployment(Exchange exchange, String operation) throws Exception {
+    protected void doGetDeployment(Exchange exchange) {
         Deployment deployment = null;
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
@@ -118,11 +110,10 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         }
         deployment = getEndpoint().getKubernetesClient().apps().deployments().withName(deploymentName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deployment);
+        prepareOutboundMessage(exchange, deployment);
     }
 
-    protected void doDeleteDeployment(Exchange exchange, String operation) {
+    protected void doDeleteDeployment(Exchange exchange) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
@@ -137,11 +128,10 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         Boolean deployment = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
                 .withName(deploymentName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deployment);
+        prepareOutboundMessage(exchange, deployment);
     }
 
-    protected void doCreateDeployment(Exchange exchange, String operation) throws Exception {
+    protected void doCreateDeployment(Exchange exchange) {
         Deployment deployment = null;
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -165,11 +155,10 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         deployment = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
                 .create(deploymentCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deployment);
+        prepareOutboundMessage(exchange, deployment);
     }
 
-    protected void doScaleDeployment(Exchange exchange, String operation) throws Exception {
+    protected void doScaleDeployment(Exchange exchange) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Integer replicasNumber = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_REPLICAS, Integer.class);
@@ -188,7 +177,6 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         Deployment deploymentScaled = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
                 .withName(deploymentName).scale(replicasNumber, false);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(deploymentScaled.getStatus().getReplicas());
+        prepareOutboundMessage(exchange, deploymentScaled.getStatus().getReplicas());
     }
 }

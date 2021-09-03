@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -169,12 +170,17 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 // same group then sort by order
                 Integer order1 = asInteger(o1.annotation(CONVERTER_ANNOTATION), "order");
                 Integer order2 = asInteger(o2.annotation(CONVERTER_ANNOTATION), "order");
-                return order1.compareTo(order2);
+                sort = order1.compareTo(order2);
+                if (sort == 0) {
+                    String str1 = o1.parameters().stream().findFirst().map(Type::toString).orElse("");
+                    String str2 = o2.parameters().stream().findFirst().map(Type::toString).orElse("");
+                    return str1.compareTo(str2);
+                }
             }
             return sort;
         });
 
-        Set<String> converterClasses = new LinkedHashSet<>();
+        Set<String> converterClasses = new TreeSet<>();
 
         int pos = fqn.lastIndexOf('.');
         String p = fqn.substring(0, pos);
@@ -183,6 +189,9 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("/* ").append(GENERATED_MSG).append(" */\n");
         writer.append("package ").append(p).append(";\n");
         writer.append("\n");
+        writer.append("import org.apache.camel.CamelContext;\n");
+        writer.append("import org.apache.camel.CamelContextAware;\n");
+        writer.append("import org.apache.camel.DeferredContextBinding;\n");
         writer.append("import org.apache.camel.Exchange;\n");
         writer.append("import org.apache.camel.Ordered;\n");
         writer.append("import org.apache.camel.TypeConversionException;\n");
@@ -196,9 +205,24 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append(" * ").append(GENERATED_MSG).append("\n");
         writer.append(" */\n");
         writer.append("@SuppressWarnings(\"unchecked\")\n");
-        writer.append("public final class ").append(c).append(" implements TypeConverterLoader, BulkTypeConverters {\n");
+        writer.append("@DeferredContextBinding\n");
+        writer.append("public final class ").append(c)
+                .append(" implements TypeConverterLoader, BulkTypeConverters, CamelContextAware {\n");
+        writer.append("\n");
+        writer.append("    private CamelContext camelContext;\n");
         writer.append("\n");
         writer.append("    ").append("public ").append(c).append("() {\n");
+        writer.append("    }\n");
+        writer.append("\n");
+
+        writer.append("    @Override\n");
+        writer.append("    public void setCamelContext(CamelContext camelContext) {\n");
+        writer.append("        this.camelContext = camelContext;\n");
+        writer.append("    }\n");
+        writer.append("\n");
+        writer.append("    @Override\n");
+        writer.append("    public CamelContext getCamelContext() {\n");
+        writer.append("        return camelContext;\n");
         writer.append("    }\n");
         writer.append("\n");
 
@@ -260,6 +284,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             writer.append("    private ").append(f).append(" get").append(s).append("() {\n");
             writer.append("        if (").append(v).append(" == null) {\n");
             writer.append("            ").append(v).append(" = new ").append(f).append("();\n");
+            writer.append("            CamelContextAware.trySetCamelContext(").append(v).append(", camelContext);\n");
             writer.append("        }\n");
             writer.append("        return ").append(v).append(";\n");
             writer.append("    }\n");
@@ -370,6 +395,9 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("/* ").append(GENERATED_MSG).append(" */\n");
         writer.append("package ").append(p).append(";\n");
         writer.append("\n");
+        writer.append("import org.apache.camel.CamelContext;\n");
+        writer.append("import org.apache.camel.CamelContextAware;\n");
+        writer.append("import org.apache.camel.DeferredContextBinding;\n");
         writer.append("import org.apache.camel.Exchange;\n");
         writer.append("import org.apache.camel.TypeConversionException;\n");
         writer.append("import org.apache.camel.TypeConverterLoaderException;\n");
@@ -383,11 +411,26 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append(" * ").append(GENERATED_MSG).append("\n");
         writer.append(" */\n");
         writer.append("@SuppressWarnings(\"unchecked\")\n");
-        writer.append("public final class ").append(c).append(" implements TypeConverterLoader {\n");
+        writer.append("@DeferredContextBinding\n");
+        writer.append("public final class ").append(c).append(" implements TypeConverterLoader, CamelContextAware {\n");
+        writer.append("\n");
+        writer.append("    private CamelContext camelContext;\n");
         writer.append("\n");
         writer.append("    ").append("public ").append(c).append("() {\n");
         writer.append("    }\n");
         writer.append("\n");
+
+        writer.append("    @Override\n");
+        writer.append("    public void setCamelContext(CamelContext camelContext) {\n");
+        writer.append("        this.camelContext = camelContext;\n");
+        writer.append("    }\n");
+        writer.append("\n");
+        writer.append("    @Override\n");
+        writer.append("    public CamelContext getCamelContext() {\n");
+        writer.append("        return camelContext;\n");
+        writer.append("    }\n");
+        writer.append("\n");
+
         writer.append("    @Override\n");
         writer.append("    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {\n");
         if (converters.size() > 0) {
@@ -458,6 +501,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             writer.append("    private ").append(f).append(" get").append(s).append("() {\n");
             writer.append("        if (").append(v).append(" == null) {\n");
             writer.append("            ").append(v).append(" = new ").append(f).append("();\n");
+            writer.append("            CamelContextAware.trySetCamelContext(").append(v).append(", camelContext);\n");
             writer.append("        }\n");
             writer.append("        return ").append(v).append(";\n");
             writer.append("    }\n");
@@ -481,9 +525,21 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             converterClasses.add(converter.declaringClass().toString());
             pfx = "get" + converter.declaringClass().simpleName() + "()." + converter.name();
         }
+
+        // the 2nd parameter is optional and can either be Exchange or CamelContext
+        String param = "";
+        String paramType
+                = converter.parameters().size() == 2 ? converter.parameters().get(1).asClassType().name().toString() : null;
+        if (paramType != null) {
+            if ("org.apache.camel.Exchange".equals(paramType)) {
+                param = ", exchange";
+            } else if ("org.apache.camel.CamelContext".equals(paramType)) {
+                param = ", camelContext";
+            }
+        }
         String type = toString(converter.parameters().get(0));
         String cast = type.equals("java.lang.Object") ? "" : "(" + type + ") ";
-        return pfx + "(" + cast + "value" + (converter.parameters().size() == 2 ? ", exchange" : "") + ")";
+        return pfx + "(" + cast + "value" + param + ")";
     }
 
     private String toJavaFallback(MethodInfo converter, Set<String> converterClasses) {

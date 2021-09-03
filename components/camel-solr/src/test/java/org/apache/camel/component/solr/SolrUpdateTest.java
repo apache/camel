@@ -19,19 +19,22 @@ package org.apache.camel.component.solr;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.params.Test;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.UpdateParams;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -159,7 +162,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         template.send("direct:start", exchange);
 
         //noinspection ThrowableResultOfMethodCallIgnored
-        assertEquals(HttpSolrClient.RemoteSolrException.class, exchange.getException().getClass());
+        assertIsInstanceOf(BaseHttpSolrClient.RemoteSolrException.class, exchange.getException());
     }
 
     @Test
@@ -261,6 +264,62 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     }
 
     @Test
+    public void queryDocumentsToCSVUpdateHandlerWithoutParameters() throws Exception {
+        solrEndpoint.setRequestHandler("/update/csv");
+
+        Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
+        exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        exchange.getIn().setHeader(SolrConstants.PARAM + UpdateParams.ASSUME_CONTENT_TYPE, "text/csv");
+        template.send("direct:start", exchange);
+        solrCommit();
+
+        Exchange exchange1 = createExchangeWithBody(null);
+        exchange1.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_QUERY);
+        exchange1.getIn().setHeader(SolrConstants.QUERY_STRING, "id:0553573403");
+        Exchange result = template.send("direct:start", exchange1);
+
+        SolrDocumentList list = result.getMessage().getBody(SolrDocumentList.class);
+        assertEquals("A Game of Thrones", list.get(0).getFieldValue("name"));
+        assertEquals(7.99f, list.get(0).getFieldValue("price"));
+    }
+
+    @Test
+    public void queryDocumentsToMap() throws Exception {
+        solrEndpoint.setRequestHandler("/update/csv");
+
+        Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
+        exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        exchange.getIn().setHeader(SolrConstants.PARAM + UpdateParams.ASSUME_CONTENT_TYPE, "text/csv");
+        template.send("direct:start", exchange);
+        solrCommit();
+
+        // Required to reset request handler:
+        // The Map-based insert request used to not respect the requesthandler that was explicitly set on the endpoint:
+        // The insert-request was always using '/update' even when '/update/csv' was set on the endpoint.
+        // This has now been changed: the explicitly set requesthandler is used.
+        solrEndpoint.setRequestHandler(null);
+        // 0553579908,book,A Clash of Kings,7.99,true,George R.R. Martin,"A Song of Ice and Fire",2,fantasy
+        Exchange exchange1 = createExchangeWithBody(null);
+        Map<String, String> map = new HashMap<>();
+        map.put("id", "0553579934");
+        map.put("cat", "Test");
+        map.put("name", "Test");
+        map.put("price", "7.99");
+        map.put("author_t", "Test");
+        map.put("series_t", "Test");
+        map.put("sequence_i", "3");
+        map.put("genre_s", "Test");
+        exchange1.getMessage().setBody(map);
+        exchange1.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        template.send("direct:start", exchange1);
+        solrCommit();
+
+        QueryResponse response = executeSolrQuery("id:0553579934");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+    }
+
+    @Test
     public void indexDocumentsToCSVUpdateHandlerWithParameters() throws Exception {
         solrEndpoint.setRequestHandler("/update/csv");
 
@@ -288,29 +347,6 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
 
         Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/tutorial.pdf"));
         exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
-        exchange.getIn().setHeader("SolrParam.literal.id", "tutorial.pdf");
-
-        template.send("direct:start", exchange);
-        solrCommit();
-
-        QueryResponse response = executeSolrQuery("*:*");
-        assertEquals(0, response.getStatus());
-        assertEquals(1, response.getResults().getNumFound());
-
-        SolrDocument doc = response.getResults().get(0);
-        assertEquals("Solr", doc.getFieldValue("subject"));
-        assertEquals("tutorial.pdf", doc.getFieldValue("id"));
-        assertEquals(Arrays.asList("application/pdf"), doc.getFieldValue("content_type"));
-    }
-
-    @Test
-    @Disabled("No real advantage has yet been discovered to specifying the file in a header.")
-    public void indexPDFDocumentSpecifyingFileInParameters() throws Exception {
-        solrEndpoint.setRequestHandler("/update/extract");
-
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
-        exchange.getIn().setHeader("SolrParam.stream.file", "src/test/resources/data/tutorial.pdf");
         exchange.getIn().setHeader("SolrParam.literal.id", "tutorial.pdf");
 
         template.send("direct:start", exchange);

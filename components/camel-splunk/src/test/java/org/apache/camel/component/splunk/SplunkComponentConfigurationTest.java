@@ -52,6 +52,17 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    public void createProducerWithAnonymousAccess() throws Exception {
+        SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
+        component.setSplunkConfigurationFactory(parameters -> new SplunkConfiguration());
+
+        SplunkEndpoint endpoint = (SplunkEndpoint) component.createEndpoint("splunk://test");
+        SplunkConnectionFactory scf = endpoint.getConfiguration().getConnectionFactory();
+        //following call with fail with "Missing username or password, without fix of CAMEL-16313,
+        scf.createService(context);
+    }
+
+    @Test
     public void createProducerEndpointWithMaximalConfiguration() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
 

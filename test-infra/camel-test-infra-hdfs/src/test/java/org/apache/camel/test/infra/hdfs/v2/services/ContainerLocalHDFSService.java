@@ -31,8 +31,21 @@ public class ContainerLocalHDFSService implements HDFSService, ContainerService<
     public ContainerLocalHDFSService() {
         Network network = Network.newNetwork();
 
-        nameNodeContainer = new NameNodeContainer(network);
-        dataNodeContainer = new DataNodeContainer(network);
+        nameNodeContainer = initNameNodeContainer(network);
+        dataNodeContainer = initDataNodeContainer(network);
+    }
+
+    public ContainerLocalHDFSService(NameNodeContainer nameNodeContainer, DataNodeContainer dataNodeContainer) {
+        this.nameNodeContainer = nameNodeContainer;
+        this.dataNodeContainer = dataNodeContainer;
+    }
+
+    protected NameNodeContainer initNameNodeContainer(Network network) {
+        return new NameNodeContainer(network);
+    }
+
+    protected DataNodeContainer initDataNodeContainer(Network network) {
+        return new DataNodeContainer(network);
     }
 
     @Override

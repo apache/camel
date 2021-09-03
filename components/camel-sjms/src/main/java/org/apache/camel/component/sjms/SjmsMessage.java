@@ -52,6 +52,24 @@ public class SjmsMessage extends DefaultMessage {
         setBinding(binding);
     }
 
+    public void init(Exchange exchange, Message jmsMessage, Session jmsSession, JmsBinding binding) {
+        setExchange(exchange);
+        setJmsMessage(jmsMessage);
+        setJmsSession(jmsSession);
+        setBinding(binding);
+        // need to populate initial headers when we use pooled exchanges
+        populateInitialHeaders(getHeaders());
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        setExchange(null);
+        jmsMessage = null;
+        jmsSession = null;
+        binding = null;
+    }
+
     @Override
     public String toString() {
         // do not print jmsMessage as there could be sensitive details
@@ -240,6 +258,11 @@ public class SjmsMessage extends DefaultMessage {
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (jmsMessage != null && map != null) {
             map.putAll(getBinding().extractHeadersFromJms(jmsMessage, getExchange()));
+            try {
+                map.put(Exchange.MESSAGE_TIMESTAMP, jmsMessage.getJMSTimestamp());
+            } catch (JMSException e) {
+                // ignore
+            }
         }
     }
 

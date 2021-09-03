@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.cache.Cache;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
@@ -36,10 +37,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JCacheAggregationRepository extends ServiceSupport implements OptimisticLockingAggregationRepository {
+public class JCacheAggregationRepository extends ServiceSupport
+        implements CamelContextAware, OptimisticLockingAggregationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(JCacheAggregationRepository.class);
 
+    private CamelContext camelContext;
     private JCacheConfiguration configuration;
     private Cache<String, DefaultExchangeHolder> cache;
     private boolean optimistic;
@@ -48,6 +51,16 @@ public class JCacheAggregationRepository extends ServiceSupport implements Optim
 
     public JCacheAggregationRepository() {
         this.configuration = new JCacheConfiguration();
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public JCacheConfiguration getConfiguration() {
@@ -176,12 +189,13 @@ public class JCacheAggregationRepository extends ServiceSupport implements Optim
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "camelContext");
+        ObjectHelper.notNull(configuration, "configuration");
+
         if (cache != null) {
             cacheManager = new JCacheManager<>(cache);
         } else {
-            cacheManager = JCacheHelper.createManager(
-                    ObjectHelper.notNull(configuration, "configuration"));
-
+            cacheManager = JCacheHelper.createManager(getCamelContext(), configuration);
             cache = cacheManager.getCache();
         }
     }

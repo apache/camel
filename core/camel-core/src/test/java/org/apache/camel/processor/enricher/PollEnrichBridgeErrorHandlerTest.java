@@ -26,7 +26,9 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
 
@@ -68,7 +70,7 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
                 from("seda:start")
                         // bridge the error handler when doing a polling so we can
                         // let Camel's error handler decide what to do
-                        .pollEnrich("file:target/data/foo?initialDelay=0&delay=10&pollStrategy=#myPoll&bridgeErrorHandler=true",
+                        .pollEnrich(fileUri("?initialDelay=0&delay=10&pollStrategy=#myPoll&bridgeErrorHandler=true"),
                                 10000, new UseLatestAggregationStrategy())
                         .to("mock:result");
             }

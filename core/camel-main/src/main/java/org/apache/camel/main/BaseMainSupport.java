@@ -39,13 +39,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StartupStep;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.saga.CamelSagaService;
+import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
@@ -59,7 +60,6 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.PropertiesHelper;
@@ -69,8 +69,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.main.MainHelper.computeProperties;
-import static org.apache.camel.main.MainHelper.loadEnvironmentVariablesAsProperties;
-import static org.apache.camel.main.MainHelper.lookupPropertyFromSysOrEnv;
 import static org.apache.camel.main.MainHelper.optionKey;
 import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
 import static org.apache.camel.main.MainHelper.validateOptionAndValue;
@@ -88,10 +86,8 @@ public abstract class BaseMainSupport extends BaseService {
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
-
-    protected volatile CamelContext camelContext;
-
     protected final List<MainListener> listeners = new ArrayList<>();
+    protected volatile CamelContext camelContext;
     protected MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
     protected Properties wildcardProperties = new OrderedProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
@@ -99,12 +95,31 @@ public abstract class BaseMainSupport extends BaseService {
     protected String defaultPropertyPlaceholderLocation = DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
     protected Properties initialProperties;
     protected Properties overrideProperties;
+    private final MainHelper helper;
 
     protected BaseMainSupport() {
+        helper = new MainHelper();
     }
 
     protected BaseMainSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
+        helper = new MainHelper();
+    }
+
+    private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
+        // lookup in service registry first
+        Set<CamelSagaService> set = camelContext.getRegistry().findByType(CamelSagaService.class);
+        if (set.size() == 1) {
+            return set.iterator().next();
+        }
+        CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
+                .newInstance("lra-saga-service", CamelSagaService.class)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
+
+        // add as service so its discover by saga eip
+        camelContext.addService(answer, true, false);
+        return answer;
     }
 
     /**
@@ -275,47 +290,6 @@ public abstract class BaseMainSupport extends BaseService {
         listeners.remove(listener);
     }
 
-    protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
-        // lets use Camel's bean post processor on any existing route builder classes
-        // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-        for (RoutesBuilder routeBuilder : mainConfigurationProperties.getRoutesBuilders()) {
-            postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
-            postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
-        }
-
-        if (mainConfigurationProperties.getRoutesBuilderClasses() != null) {
-            String[] routeClasses = mainConfigurationProperties.getRoutesBuilderClasses().split(",");
-            for (String routeClass : routeClasses) {
-                Class<RoutesBuilder> routeClazz = camelContext.getClassResolver().resolveClass(routeClass, RoutesBuilder.class);
-                if (routeClazz == null) {
-                    LOG.warn("Unable to resolve class: {}", routeClass);
-                    continue;
-                }
-
-                // lets use Camel's injector so the class has some support for dependency injection
-                RoutesBuilder builder = camelContext.getInjector().newInstance(routeClazz);
-
-                mainConfigurationProperties.addRoutesBuilder(builder);
-            }
-        }
-
-        if (mainConfigurationProperties.getPackageScanRouteBuilders() != null) {
-            String[] pkgs = mainConfigurationProperties.getPackageScanRouteBuilders().split(",");
-            Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class)
-                    .getPackageScanClassResolver()
-                    .findImplementations(RoutesBuilder.class, pkgs);
-            for (Class<?> routeClazz : set) {
-                Object builder = camelContext.getInjector().newInstance(routeClazz);
-                if (builder instanceof RoutesBuilder) {
-                    mainConfigurationProperties.addRoutesBuilder((RoutesBuilder) builder);
-                } else {
-                    LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
-                }
-            }
-        }
-    }
-
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
         // lets use Camel's bean post processor on any existing configuration classes
         // so the instance has some support for dependency injection
@@ -362,7 +336,8 @@ public abstract class BaseMainSupport extends BaseService {
             String locations = propertyPlaceholderLocations;
             if (locations == null) {
                 locations
-                        = lookupPropertyFromSysOrEnv(PROPERTY_PLACEHOLDER_LOCATION).orElse(defaultPropertyPlaceholderLocation);
+                        = helper.lookupPropertyFromSysOrEnv(PROPERTY_PLACEHOLDER_LOCATION)
+                                .orElse(defaultPropertyPlaceholderLocation);
             }
             if (locations != null) {
                 locations = locations.trim();
@@ -380,7 +355,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         Properties ip = initialProperties;
         if (ip == null || ip.isEmpty()) {
-            Optional<String> location = lookupPropertyFromSysOrEnv(INITIAL_PROPERTIES_LOCATION);
+            Optional<String> location = helper.lookupPropertyFromSysOrEnv(INITIAL_PROPERTIES_LOCATION);
             if (location.isPresent()) {
                 try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, location.get())) {
                     ip = new Properties();
@@ -394,7 +369,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         Properties op = overrideProperties;
         if (op == null || op.isEmpty()) {
-            Optional<String> location = lookupPropertyFromSysOrEnv(OVERRIDE_PROPERTIES_LOCATION);
+            Optional<String> location = helper.lookupPropertyFromSysOrEnv(OVERRIDE_PROPERTIES_LOCATION);
             if (location.isPresent()) {
                 try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, location.get())) {
                     op = new Properties();
@@ -442,12 +417,15 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.info("Auto-configuration summary");
             autoConfiguredProperties.forEach((k, v) -> {
                 if (SensitiveUtils.containsSensitive(k)) {
-                    LOG.info("\t{}=xxxxxx", k);
+                    LOG.info("    {}=xxxxxx", k);
                 } else {
-                    LOG.info("\t{}={}", k, v);
+                    LOG.info("    {}={}", k, v);
                 }
             });
         }
+
+        // we are now done with the main helper during bootstrap
+        helper.bootstrapDone();
     }
 
     protected void configureStartupRecorder(CamelContext camelContext) {
@@ -460,45 +438,48 @@ public abstract class BaseMainSupport extends BaseService {
         Object value = prop.remove("camel.main.startupRecorder");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorder(value.toString());
-            }
         }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorder(value.toString());
+        }
+
         value = prop.remove("camel.main.startupRecorderRecording");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder-recording");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorderRecording("true".equalsIgnoreCase(value.toString()));
-            }
+        }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorderRecording("true".equalsIgnoreCase(value.toString()));
         }
         value = prop.remove("camel.main.startupRecorderProfile");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder-profile");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorderProfile(
-                        CamelContextHelper.parseText(camelContext, value.toString()));
-            }
+        }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorderProfile(
+                    CamelContextHelper.parseText(camelContext, value.toString()));
         }
         value = prop.remove("camel.main.startupRecorderDuration");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder-duration");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorderDuration(Long.parseLong(value.toString()));
-            }
+        }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorderDuration(Long.parseLong(value.toString()));
         }
         value = prop.remove("camel.main.startupRecorderMaxDepth");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder-max-depth");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorderMaxDepth(Integer.parseInt(value.toString()));
-            }
+        }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorderMaxDepth(Integer.parseInt(value.toString()));
         }
 
-        if ("false".equals(mainConfigurationProperties.getStartupRecorder())) {
+        if ("off".equals(mainConfigurationProperties.getStartupRecorder())
+                || "false".equals(mainConfigurationProperties.getStartupRecorder())) {
             camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().setEnabled(false);
         } else if ("logging".equals(mainConfigurationProperties.getStartupRecorder())) {
             camelContext.adapt(ExtendedCamelContext.class).setStartupStepRecorder(new LoggingStartupStepRecorder());
-        } else if ("java-flight-recorder".equals(mainConfigurationProperties.getStartupRecorder())
+        } else if ("jfr".equals(mainConfigurationProperties.getStartupRecorder())
+                || "java-flight-recorder".equals(mainConfigurationProperties.getStartupRecorder())
                 || mainConfigurationProperties.getStartupRecorder() == null) {
             // try to auto discover camel-jfr to use
             StartupStepRecorder fr = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
@@ -515,21 +496,35 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void configureRoutes(CamelContext camelContext) throws Exception {
-        // try to load the route builders
-        loadRouteBuilders(camelContext);
-
         // then configure and add the routes
-        RoutesConfigurer configurer = new RoutesConfigurer(routesCollector, mainConfigurationProperties.getRoutesBuilders());
-        configurer.configureRoutes(camelContext, mainConfigurationProperties);
+        RoutesConfigurer configurer = new RoutesConfigurer();
+
+        if (mainConfigurationProperties.isRoutesCollectorEnabled()) {
+            configurer.setRoutesCollector(routesCollector);
+        }
+
+        configurer.setBeanPostProcessor(camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor());
+        configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
+        configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
+        configurer.setPackageScanRouteBuilders(mainConfigurationProperties.getPackageScanRouteBuilders());
+        configurer.setJavaRoutesExcludePattern(mainConfigurationProperties.getJavaRoutesExcludePattern());
+        configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
+        configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
+        configurer.setRoutesIncludePattern(mainConfigurationProperties.getRoutesIncludePattern());
+        configurer.configureRoutes(camelContext);
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        // use the main autowired lifecycle strategy instead of the default
+        camelContext.getLifecycleStrategies().removeIf(s -> s instanceof AutowiredLifecycleStrategy);
+        camelContext.addLifecycleStrategy(new MainAutowiredLifecycleStrategy(camelContext));
+
         // setup properties
         configurePropertiesService(camelContext);
         // setup startup recorder before building context
         configureStartupRecorder(camelContext);
 
-        // ensure camel is initialized
+        // ensure camel context is build
         camelContext.build();
 
         for (MainListener listener : listeners) {
@@ -541,9 +536,24 @@ public abstract class BaseMainSupport extends BaseService {
             listener.beforeConfigure(this);
         }
 
+        // we want to capture startup events for import tasks during main bootstrap
+        StartupStepRecorder recorder = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+
+        StartupStep step = recorder.beginStep(BaseMainSupport.class, "autoconfigure", "Auto Configure");
         autoconfigure(camelContext);
+        recorder.endStep(step);
+
+        if (mainConfigurationProperties.isEagerClassloading()) {
+            step = recorder.beginStep(BaseMainSupport.class, "classloading", "Eager Classloading");
+            EagerClassloadedHelper.eagerLoadClasses();
+            recorder.endStep(step);
+        }
+
         configureLifecycle(camelContext);
+
+        step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
         configureRoutes(camelContext);
+        recorder.endStep(step);
 
         // allow to do configuration before its started
         for (MainListener listener : listeners) {
@@ -572,11 +582,22 @@ public abstract class BaseMainSupport extends BaseService {
                         envEnabled.toString());
             }
         }
+        // special for system-properties-enabled as we need to know this early before we set all the other options
+        Object jvmEnabled = prop.remove("camel.main.autoConfigurationSystemPropertiesEnabled");
+        if (jvmEnabled == null) {
+            jvmEnabled = prop.remove("camel.main.auto-configuration-system-properties-enabled");
+            if (jvmEnabled != null) {
+                mainConfigurationProperties.setAutoConfigurationSystemPropertiesEnabled(
+                        CamelContextHelper.parseBoolean(camelContext, jvmEnabled.toString()));
+                autoConfiguredProperties.put("camel.main.auto-configuration-system-properties-enabled",
+                        jvmEnabled.toString());
+            }
+        }
 
         // load properties from ENV (override existing)
         Properties propENV = null;
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+            propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
                 LOG.debug("Properties from OS environment variables:");
@@ -585,9 +606,27 @@ public abstract class BaseMainSupport extends BaseService {
                 }
             }
         }
+        // load properties from JVM (override existing)
+        Properties propJVM = null;
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
+                LOG.debug("Properties from JVM system properties:");
+                for (String key : propJVM.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
+                }
+            }
+        }
 
         // special for fail-fast as we need to know this early before we set all the other options
         Object failFast = propENV != null ? propENV.remove("camel.main.autoconfigurationfailfast") : null;
+        if (propJVM != null) {
+            Object val = propJVM.remove("camel.main.autoconfigurationfailfast");
+            if (val != null) {
+                failFast = val;
+            }
+        }
         if (failFast != null) {
             mainConfigurationProperties
                     .setAutoConfigurationFailFast(CamelContextHelper.parseBoolean(camelContext, failFast.toString()));
@@ -650,12 +689,23 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
+            Properties propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
                 LOG.debug("Properties from OS environment variables:");
                 for (String key : propENV.stringPropertyNames()) {
                     LOG.debug("    {}={}", key, propENV.getProperty(key));
+                }
+            }
+        }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
+                LOG.debug("Properties from JVM system properties:");
+                for (String key : propJVM.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
                 }
             }
         }
@@ -670,6 +720,7 @@ public abstract class BaseMainSupport extends BaseService {
         Map<String, Object> lraProperties = new LinkedHashMap<>();
         Map<String, Object> routeTemplateProperties = new LinkedHashMap<>();
         Map<String, Object> beansProperties = new LinkedHashMap<>();
+        Map<String, String> globalOptions = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
                 // grab the value
@@ -731,14 +782,25 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(12);
                 validateOptionAndValue(key, option, value);
                 beansProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.global-options.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(12);
+                validateOptionAndValue(key, option, value);
+                globalOptions.put(optionKey(option), value);
             }
         }
 
+        // global options first
+        if (!globalOptions.isEmpty()) {
+            mainConfigurationProperties.setGlobalOptions(globalOptions);
+        }
         // create beans first as they may be used later
         if (!beansProperties.isEmpty()) {
             LOG.debug("Creating and binding beans to registry from loaded properties: {}", beansProperties.size());
             bindBeansToRegistry(camelContext, beansProperties, "camel.beans.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    mainConfigurationProperties.isAutoConfigurationLogSummary(), true, autoConfiguredProperties);
         }
         if (!contextProperties.isEmpty()) {
             LOG.debug("Auto-configuring CamelContext from loaded properties: {}", contextProperties.size());
@@ -746,7 +808,7 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 
-        if (!restProperties.isEmpty()) {
+        if (!restProperties.isEmpty() || mainConfigurationProperties.hasRestConfiguration()) {
             RestConfigurationProperties rest = mainConfigurationProperties.rest();
             LOG.debug("Auto-configuring Rest DSL from loaded properties: {}", restProperties.size());
             setPropertiesOnTarget(camelContext, rest, restProperties, "camel.rest.",
@@ -754,12 +816,12 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.setRestConfiguration(rest);
         }
 
-        if (!threadPoolProperties.isEmpty()) {
+        if (!threadPoolProperties.isEmpty() || mainConfigurationProperties.hasThreadPoolConfiguration()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
             MainSupportModelConfigurer.setThreadPoolProperties(camelContext, mainConfigurationProperties, threadPoolProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
-        if (!healthProperties.isEmpty()) {
+        if (!healthProperties.isEmpty() || mainConfigurationProperties.hasHealthCheckConfiguration()) {
             LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
             setHealthCheckProperties(camelContext, healthProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
@@ -769,7 +831,7 @@ public abstract class BaseMainSupport extends BaseService {
             setRouteTemplateProperties(camelContext, routeTemplateProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
-        if (!lraProperties.isEmpty()) {
+        if (!lraProperties.isEmpty() || mainConfigurationProperties.hasLraConfiguration()) {
             LOG.debug("Auto-configuring Saga LRA from loaded properties: {}", lraProperties.size());
             setLraCheckProperties(camelContext, lraProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
@@ -934,7 +996,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (hc == null) {
                 hc = hcr.resolveById(parent);
                 if (hc == null) {
-                    LOG.warn("Cannot resolve HealthCheck with id: " + parent + " from classpath.");
+                    LOG.warn("Cannot resolve HealthCheck with id: {} from classpath.", parent);
                     continue;
                 }
                 hcr.register(hc);
@@ -944,7 +1006,6 @@ public abstract class BaseMainSupport extends BaseService {
                     ((HealthCheck) hc).getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
                     ((HealthCheck) hc).getConfiguration().setInterval(hcc.getInterval());
                 } else if (hc instanceof HealthCheckRepository) {
-                    ((HealthCheckRepository) hc).setEnabled(hcc.isEnabled());
                     ((HealthCheckRepository) hc).addConfiguration(id, hcc);
                 }
             }
@@ -967,26 +1028,9 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
-        // lookup in service registry first
-        Set<CamelSagaService> set = camelContext.getRegistry().findByType(CamelSagaService.class);
-        if (set.size() == 1) {
-            return set.iterator().next();
-        }
-        CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
-                .newInstance("lra-saga-service", CamelSagaService.class)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find LRASagaService on classpath. "
-                                                                + "Add camel-lra to classpath."));
-
-        // add as service so its discover by saga eip
-        camelContext.addService(answer, true, false);
-        return answer;
-    }
-
     private void bindBeansToRegistry(
             CamelContext camelContext, Map<String, Object> properties,
-            String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
+            String optionPrefix, boolean failIfNotSet, boolean logSummary, boolean ignoreCase,
             Map<String, String> autoConfiguredProperties)
             throws Exception {
 
@@ -1000,13 +1044,17 @@ public abstract class BaseMainSupport extends BaseService {
             if (key.indexOf('.') == -1) {
                 String name = key;
                 Object value = properties.remove(key);
-                Object bean = PropertyBindingSupport.resolveBean(camelContext, name, value);
+                Object bean = PropertyBindingSupport.resolveBean(camelContext, value);
                 if (bean == null) {
                     throw new IllegalArgumentException(
                             "Cannot create/resolve bean with name " + name + " from value: " + value);
                 }
                 // register bean
-                LOG.info("Binding bean: {} (type: {}) to the registry", key, ObjectHelper.classCanonicalName(bean));
+                if (logSummary) {
+                    LOG.info("Binding bean: {} (type: {}) to the registry", key, ObjectHelper.classCanonicalName(bean));
+                } else {
+                    LOG.debug("Binding bean: {} (type: {}) to the registry", key, ObjectHelper.classCanonicalName(bean));
+                }
                 camelContext.getRegistry().bind(name, bean);
             }
         }
@@ -1031,9 +1079,16 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
+            Properties propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
+            }
+        }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
             }
         }
 
@@ -1073,12 +1128,28 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+            Properties propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+            // special handling of these so remove them
+            // ENV variables cannot use dash so replace with dot
             propENV.remove(INITIAL_PROPERTIES_LOCATION.replace('-', '.'));
             propENV.remove(OVERRIDE_PROPERTIES_LOCATION.replace('-', '.'));
             propENV.remove(PROPERTY_PLACEHOLDER_LOCATION.replace('-', '.'));
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
+            }
+        }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+            // special handling of these so remove them
+            propJVM.remove(INITIAL_PROPERTIES_LOCATION);
+            propJVM.remove(StringHelper.dashToCamelCase(INITIAL_PROPERTIES_LOCATION));
+            propJVM.remove(OVERRIDE_PROPERTIES_LOCATION);
+            propJVM.remove(StringHelper.dashToCamelCase(OVERRIDE_PROPERTIES_LOCATION));
+            propJVM.remove(PROPERTY_PLACEHOLDER_LOCATION);
+            propJVM.remove(StringHelper.dashToCamelCase(PROPERTY_PLACEHOLDER_LOCATION));
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
             }
         }
 
@@ -1110,29 +1181,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void autoConfigurationFromProperties(CamelContext camelContext, Map<String, String> autoConfiguredProperties)
             throws Exception {
-        // load optional META-INF/services/org/apache/camel/autowire.properties
         Properties prop = new OrderedProperties();
-        try {
-            InputStream is = camelContext.getClassResolver()
-                    .loadResourceAsStream("/META-INF/services/org/apache/camel/autowire.properties");
-            if (is != null) {
-                prop.load(is);
-                if (!prop.isEmpty()) {
-                    LOG.info(
-                            "Autowired enabled from classpath: META-INF/services/org/apache/camel/autowire.properties with {} properties",
-                            prop.size());
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Properties from classpath: META-INF/services/org/apache/camel/autowire.properties:");
-                        for (String key : prop.stringPropertyNames()) {
-                            LOG.debug("    {}={}", key, prop.getProperty(key));
-                        }
-                    }
-                }
-                IOHelper.close(is);
-            }
-        } catch (Throwable e) {
-            // ignore as this file is optional
-        }
 
         // load properties from properties component (override existing)
         Properties propPC = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
@@ -1140,10 +1189,34 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = loadEnvironmentVariablesAsProperties(
-                    new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
+            Map<String, String> env = MainHelper
+                    .filterEnvVariables(new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
+            LOG.debug("Gathered {} ENV variables to configure components, dataformats, languages", env.size());
+
+            // special configuration when using ENV variables as we need to extract the ENV variables
+            // that are for the out of the box components first, and then afterwards for any 3rd party custom components
+            Properties propENV = new OrderedProperties();
+            helper.addComponentEnvVariables(env, propENV, false);
+            helper.addDataFormatEnvVariables(env, propENV, false);
+            helper.addLanguageEnvVariables(env, propENV, false);
+
+            if (!env.isEmpty()) {
+                LOG.debug("Remaining {} ENV variables to configure custom components, dataformats, languages", env.size());
+                helper.addComponentEnvVariables(env, propENV, true);
+                helper.addDataFormatEnvVariables(env, propENV, true);
+                helper.addLanguageEnvVariables(env, propENV, true);
+            }
+
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
+            }
+        }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(
+                    new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
             }
         }
 
@@ -1214,8 +1287,9 @@ public abstract class BaseMainSupport extends BaseService {
 
         // log which options was not set
         if (!properties.isEmpty()) {
-            for (PropertyOptionKey pok : properties.keySet()) {
-                Map<String, Object> values = properties.get(pok);
+            for (Map.Entry<PropertyOptionKey, Map<String, Object>> entry : properties.entrySet()) {
+                PropertyOptionKey pok = entry.getKey();
+                Map<String, Object> values = entry.getValue();
                 values.forEach((k, v) -> {
                     String stringValue = v != null ? v.toString() : null;
                     LOG.warn("Property ({}={}) not auto-configured with name: {} on bean: {} with value: {}",
@@ -1274,9 +1348,9 @@ public abstract class BaseMainSupport extends BaseService {
                 LOG.info("Auto-configuration component {} summary", name);
                 autoConfiguredProperties.forEach((k, v) -> {
                     if (SensitiveUtils.containsSensitive(k)) {
-                        LOG.info("\t{}=xxxxxx", k);
+                        LOG.info("    {}=xxxxxx", k);
                     } else {
-                        LOG.info("\t{}={}", k, v);
+                        LOG.info("    {}={}", k, v);
                     }
                 });
             }

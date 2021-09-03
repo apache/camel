@@ -1,7 +1,7 @@
 [[vertx-websocket-component]]
 = Vert.x WebSocket Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-vertx-websocket/src/main/docs/vertx-websocket-component.adoc
+:page-source: components/camel-vertx/camel-vertx-websocket/src/main/docs/vertx-websocket-component.adoc
 :docTitle: Vert.x WebSocket
 :artifactId: camel-vertx-websocket
 :description: Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x
@@ -31,16 +31,51 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------
 vertx-websocket://hostname[:port][/resourceUri][?options]
 ---------------------------
 
-== Options
 
 
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The Vert.x WebSocket component supports 7 options, which are listed below.
 
 
@@ -58,10 +93,9 @@ The Vert.x WebSocket component supports 7 options, which are listed below.
 |===
 // component options: END
 
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Vert.x WebSocket endpoint is configured using URI syntax:
 
 ----
@@ -103,7 +137,8 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Message Headers
+
+== Message Headers
 
 The WebSocket component uses 2 headers to indicate to either send
 messages back to a single/current client, or to all clients.
@@ -117,7 +152,7 @@ use the `sendToAll` option on the endpoint instead of using this header.
 use a comma separated list of keys to send a message to multiple clients
 |=======================================================================
 
-=== Usage
+== Usage
 The following example shows how to expose a WebSocket on http://localhost:8080/echo and returns an 'echo' response back to the same channel:
 
 [source,java]
@@ -127,9 +162,9 @@ from("vertx-websocket:localhost:8080/echo")
     .to("vertx-websocket:localhost:8080/echo");
 ----
 
-==== SSL
+== SSL
 
 By default the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
 via the `sslContextParameters` URI parameter and the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility]
 
-include::camel-spring-boot::page$vertx-websocket-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$vertx-websocket-starter.adoc[]

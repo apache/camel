@@ -29,6 +29,7 @@ import ai.djl.modality.cv.ImageFactory;
 import ai.djl.translate.TranslateException;
 import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,31 +60,31 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
             Map<String, Float> result = classify(model, translator, exchange.getIn().getBody(InputStream.class));
             exchange.getIn().setBody(result);
         } else {
-            throw new RuntimeException("Data type is not supported. Body should be byte[], InputStream or File");
+            throw new RuntimeCamelException("Data type is not supported. Body should be byte[], InputStream or File");
         }
     }
 
-    private Map<String, Float> classify(Model model, Translator translator, File input) throws Exception {
-        try {
-            Image image = ImageFactory.getInstance().fromInputStream(new FileInputStream(input));
+    private Map<String, Float> classify(Model model, Translator translator, File input) {
+        try (InputStream fileInputStream = new FileInputStream(input)) {
+            Image image = ImageFactory.getInstance().fromInputStream(fileInputStream);
             return classify(model, translator, image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeCamelException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
-    private Map<String, Float> classify(Model model, Translator translator, InputStream input) throws Exception {
+    private Map<String, Float> classify(Model model, Translator translator, InputStream input) {
         try {
             Image image = ImageFactory.getInstance().fromInputStream(input);
             return classify(model, translator, image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeCamelException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
-    private Map<String, Float> classify(Model model, Translator translator, Image image) throws Exception {
+    private Map<String, Float> classify(Model model, Translator translator, Image image) {
         try (Predictor<Image, Classifications> predictor = model.newPredictor(translator)) {
             Classifications classifications = predictor.predict(image);
             List<Classifications.Classification> list = classifications.items();
@@ -91,7 +92,7 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
                     .collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);
-            throw new RuntimeException("Could not process input or output", e);
+            throw new RuntimeCamelException("Could not process input or output", e);
         }
     }
 }

@@ -16,10 +16,8 @@
  */
 package org.apache.camel.oaipmh;
 
-import java.io.IOException;
-
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.oaipmh.utils.JettyTestServer;
+import org.apache.camel.oaipmh.utils.MockOaipmhServer;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,26 +27,26 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class OAIPMHComponentSpringTest extends CamelSpringTestSupport {
 
-    @Test
-    public void test() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-
-        template.sendBodyAndHeader("direct:start", "", "port", JettyTestServer.getInstance().port);
-        resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.assertIsSatisfied(3 * 1);
-    }
+    private static MockOaipmhServer mockOaipmhServer;
 
     @BeforeAll
-    public static void startServer() throws IOException {
-        //Mocked data  taken from https://dspace.ucuenca.edu.ec/oai/request - July 21, 2020
-        JettyTestServer.getInstance().context = "test2";
-        JettyTestServer.getInstance().startServer();
-
+    public static void startServer() {
+        mockOaipmhServer = MockOaipmhServer.create();
+        mockOaipmhServer.start();
     }
 
     @AfterAll
     public static void stopServer() {
-        JettyTestServer.getInstance().stopServer();
+        mockOaipmhServer.stop();
+    }
+
+    @Test
+    public void test() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+
+        template.sendBodyAndHeader("direct:start", "", "port", mockOaipmhServer.getHttpPort());
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.assertIsSatisfied(3 * 1);
     }
 
     @Override

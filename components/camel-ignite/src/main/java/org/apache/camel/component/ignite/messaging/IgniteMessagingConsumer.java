@@ -19,7 +19,6 @@ package org.apache.camel.component.ignite.messaging;
 import java.util.UUID;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.ignite.IgniteConstants;
@@ -44,12 +43,12 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
 
         @Override
         public boolean apply(UUID uuid, Object payload) {
-            Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
-            Message in = exchange.getIn();
-            in.setBody(payload);
-            in.setHeader(IgniteConstants.IGNITE_MESSAGING_TOPIC, endpoint.getTopic());
-            in.setHeader(IgniteConstants.IGNITE_MESSAGING_UUID, uuid);
+            Exchange exchange = createExchange(true);
             try {
+                Message in = exchange.getIn();
+                in.setBody(payload);
+                in.setHeader(IgniteConstants.IGNITE_MESSAGING_TOPIC, endpoint.getTopic());
+                in.setHeader(IgniteConstants.IGNITE_MESSAGING_UUID, uuid);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing Ignite message for subscription {} with payload {}.", uuid, payload);
                 }

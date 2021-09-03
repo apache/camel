@@ -39,7 +39,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
     private static int existsCounter;
     private static int deleteCounter;
 
-    private static class MyGenericFileOperations implements GenericFileOperations<Object> {
+    private class MyGenericFileOperations implements GenericFileOperations<Object> {
 
         @Override
         public GenericFile<Object> newGenericFile() {
@@ -60,7 +60,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         public boolean existsFile(String name) throws GenericFileOperationFailedException {
             existsCounter++;
             // The file name should be normalized
-            if (FileUtil.normalizePath("target/data/foo/boom.txt").equals(name)) {
+            if (FileUtil.normalizePath(testFile("boom.txt").toString()).equals(name)) {
                 // test that we can newer delete this file
                 return true;
             }
@@ -123,11 +123,11 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         existsCounter = 0;
 
         @SuppressWarnings("unchecked")
-        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/data/foo", GenericFileEndpoint.class);
+        GenericFileEndpoint<Object> endpoint = context.getEndpoint(fileUri(), GenericFileEndpoint.class);
         Exchange exchange = endpoint.createExchange();
 
         GenericFile<Object> file = new GenericFile<>();
-        file.setAbsoluteFilePath("target/data/foo/me.txt");
+        file.setAbsoluteFilePath(testFile("me.txt").toString());
 
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
         strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file);
@@ -142,11 +142,11 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         existsCounter = 0;
 
         @SuppressWarnings("unchecked")
-        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/data/foo", GenericFileEndpoint.class);
+        GenericFileEndpoint<Object> endpoint = context.getEndpoint(fileUri(), GenericFileEndpoint.class);
         Exchange exchange = endpoint.createExchange();
 
         GenericFile<Object> file = new GenericFile<>();
-        file.setAbsoluteFilePath("target/data/foo/boom.txt");
+        file.setAbsoluteFilePath(testFile("boom.txt").toString());
 
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
         try {

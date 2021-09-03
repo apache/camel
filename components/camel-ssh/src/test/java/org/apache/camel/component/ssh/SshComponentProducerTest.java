@@ -41,30 +41,6 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
     }
 
     @Test
-    public void testReconnect() throws Exception {
-        final String msg = "test";
-
-        MockEndpoint mock = getMockEndpoint("mock:password");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(msg);
-
-        template.sendBody("direct:ssh", msg);
-
-        assertMockEndpointsSatisfied();
-
-        sshd.stop();
-        sshd.start();
-
-        mock.reset();
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(msg);
-
-        template.sendBody("direct:ssh", msg);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
     public void testConnectionTimeout() throws Exception {
         final String msg = "test";
 

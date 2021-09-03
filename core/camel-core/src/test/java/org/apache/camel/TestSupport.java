@@ -17,7 +17,11 @@
 package org.apache.camel;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +30,6 @@ import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.support.DefaultExchange;
@@ -36,20 +39,28 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A bunch of useful testing methods
  */
+@ResourceLock(value = Resources.SYSTEM_PROPERTIES, mode = ResourceAccessMode.READ)
 public abstract class TestSupport {
 
     protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
 
     protected TestInfo info;
+    protected boolean testDirectoryCleaned;
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -69,16 +80,74 @@ public abstract class TestSupport {
 
     @BeforeEach
     public void setUp() throws Exception {
-        // start with a clean slate
-        AbstractCamelContext.setContextCounter(0);
-        TestSupportNodeIdFactory.resetCounters();
         Assumptions.assumeTrue(canRunOnThisPlatform());
+        deleteTestDirectory();
+    }
+
+    public void deleteTestDirectory() {
+        if (!testDirectoryCleaned) {
+            deleteDirectory(testDirectory().toFile());
+            testDirectoryCleaned = true;
+        }
     }
 
     @AfterEach
     public void tearDown() throws Exception {
         // make sure we cleanup the platform mbean server
         TestSupportJmxCleanup.removeMBeans(null);
+        testDirectoryCleaned = false;
+    }
+
+    protected Path testDirectory() {
+        return testDirectory(false);
+    }
+
+    protected Path testDirectory(boolean create) {
+        Class<?> testClass = getClass();
+        if (create) {
+            deleteTestDirectory();
+        }
+        return testDirectory(testClass, create);
+    }
+
+    public static Path testDirectory(Class<?> testClass, boolean create) {
+        Path dir = Paths.get("target", "data", testClass.getSimpleName());
+        if (create) {
+            try {
+                Files.createDirectories(dir);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to create test directory: " + dir, e);
+            }
+        }
+        return dir;
+    }
+
+    protected Path testFile(String dir) {
+        return testDirectory().resolve(dir);
+    }
+
+    protected Path testDirectory(String dir) {
+        return testDirectory(dir, false);
+    }
+
+    protected Path testDirectory(String dir, boolean create) {
+        Path f = testDirectory().resolve(dir);
+        if (create) {
+            try {
+                Files.createDirectories(f);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to create test directory: " + dir, e);
+            }
+        }
+        return f;
+    }
+
+    protected String fileUri() {
+        return "file:" + testDirectory();
+    }
+
+    protected String fileUri(String query) {
+        return "file:" + testDirectory() + (query.startsWith("?") ? "" : "/") + query;
     }
 
     protected boolean canRunOnThisPlatform() {
@@ -419,8 +488,10 @@ public abstract class TestSupport {
     public static void deleteDirectory(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
-            for (File child : files) {
-                deleteDirectory(child);
+            if (files != null) {
+                for (File child : files) {
+                    deleteDirectory(child);
+                }
             }
         }
 
@@ -462,6 +533,14 @@ public abstract class TestSupport {
     /**
      * To be used to check is a directory is found in the file system
      */
+    public static void assertDirectoryExists(Path file) {
+        assertTrue(Files.exists(file), "Directory " + file + " should exist");
+        assertTrue(Files.isDirectory(file), "Directory " + file + " should be a directory");
+    }
+
+    /**
+     * To be used to check is a directory is found in the file system
+     */
     public static void assertDirectoryExists(String filename) {
         File file = new File(filename);
         assertTrue(file.exists(), "Directory " + filename + " should exist");
@@ -471,10 +550,34 @@ public abstract class TestSupport {
     /**
      * To be used to check is a file is found in the file system
      */
+    public static void assertFileExists(Path file) {
+        assertTrue(Files.exists(file), "File " + file + " should exist");
+        assertTrue(Files.exists(file), "File " + file + " should be a file");
+    }
+
+    /**
+     * To be used to check is a file is found in the file system
+     */
+    public static void assertFileExists(Path file, String content) throws IOException {
+        assertTrue(Files.exists(file), "File " + file + " should exist");
+        assertTrue(Files.isRegularFile(file), "File " + file + " should be a file");
+        assertEquals(content, new String(Files.readAllBytes(file)), "File " + file + " has unexpected content");
+    }
+
+    /**
+     * To be used to check is a file is found in the file system
+     */
     public static void assertFileExists(String filename) {
         File file = new File(filename);
         assertTrue(file.exists(), "File " + filename + " should exist");
         assertTrue(file.isFile(), "File " + filename + " should be a file");
+    }
+
+    /**
+     * To be used to check is a file is <b>not</b> found in the file system
+     */
+    public static void assertFileNotExists(Path file) {
+        assertFalse(Files.exists(file), "File " + file + " should not exist");
     }
 
     /**

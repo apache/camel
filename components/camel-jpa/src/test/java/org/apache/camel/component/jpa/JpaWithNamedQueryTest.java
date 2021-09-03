@@ -95,7 +95,8 @@ public class JpaWithNamedQueryTest {
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
                 LOG.info("Received exchange: " + e.getIn());
-                receivedExchange = e;
+                // make defensive copy
+                receivedExchange = e.copy();
                 latch.countDown();
             }
         });

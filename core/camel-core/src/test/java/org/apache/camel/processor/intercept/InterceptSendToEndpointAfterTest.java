@@ -100,4 +100,27 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testInterceptEndpointWhen() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                interceptSendToEndpoint("direct:start").when(simple("${body} contains 'World'")).to("mock:detour")
+                        .afterUrl("mock:after");
+
+                from("direct:start").to("mock:foo").transform().constant("Bye World");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:detour").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World", "Hi Camel");
+        getMockEndpoint("mock:after").expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Hi Camel");
+
+        assertMockEndpointsSatisfied();
+    }
+
 }

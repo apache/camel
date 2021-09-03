@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.infinispan;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Message;
 import org.apache.camel.spi.InvokeOnHeader;
-import org.apache.camel.spi.InvokeOnHeaders;
 import org.apache.camel.support.HeaderSelectorProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCache;
@@ -53,20 +51,6 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
 
     protected M getManager() {
         return manager;
-    }
-
-    @Override
-    protected void bind() {
-        for (final Method method : getClass().getMethods()) {
-            InvokeOnHeaders annotation = method.getAnnotation(InvokeOnHeaders.class);
-            if (annotation != null) {
-                for (InvokeOnHeader processor : annotation.value()) {
-                    bind(processor, method);
-                }
-            } else {
-                bind(method.getAnnotation(InvokeOnHeader.class), method);
-            }
-        }
     }
 
     // ************************************

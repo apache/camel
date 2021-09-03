@@ -44,9 +44,8 @@ EIP book as a reference.
 The documentation is all under the Documentation category on the
 right-side menu of the Camel website.
 Camel-related books are also available, in particular
-the http://manning.com/ibsen[Camel in Action] book, presently serving as
-the Camel bible -- it has a
-http://www.manning.com/ibsen/chapter1sample.pdf[free Chapter One (pdf)],
+the https://www.manning.com/books/camel-in-action-second-edition[Camel in Action 2nd edition] book,
+presently serving as the Camel bible -- it has a free chapter one,
 which is highly recommended to read to get more familiar with Camel.
 
 [[BookGettingStarted-Ausefultipfornavigatingtheonlinedocumentation]]
@@ -59,7 +58,7 @@ left-hand side of the reddish bar contains the following links.
 
 [source,java]
 ----
-Apache Camel > Documentation > Architecture > Languages
+Apache Camel > Documentation > Languages
 ----
 
 As you might expect, clicking on "Apache Camel" takes you back to the
@@ -75,18 +74,12 @@ bookmarks to pages that you frequently reference can also save time.
 == Online Javadoc documentation
 
 The Apache Camel Javadoc documentation can be accessed from 
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html
-[javadoc.io]. It is important to note that the Javadoc documentation
-is spread over several _independent_ Javadoc hierarchies rather than
-being all contained in a single Javadoc hierarchy. In particular, there
-is one Javadoc hierarchy for the _core_ APIs of Camel, and a separate
-Javadoc hierarchy for each component technology supported by Camel. For
-example, if you will be using Camel with ActiveMQ and FTP then you need
-to look at the Javadoc hierarchies for the
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[core
-API] and
-https://www.javadoc.io/doc/org.apache.camel/camel-spring/current/index.html[Spring
-API].
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[javadoc.io].
+
+The Javadoc API that are the most relevant for Camel end users are in the following JARs:
+
+- https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[camel-core]
+- https://www.javadoc.io/doc/org.apache.camel/camel-support/latest/index.html[camel-support]
 
 [[BookGettingStarted-ConceptsandterminologyfundamentaltoCamel]]
 == Concepts and terminology fundamental to Camel
@@ -159,11 +152,11 @@ a server can read an incoming message from a mail server.
 
 In a Camel-based application, you create (Camel wrappers around) some
 endpoints and connect these endpoints with __routes__, which I will
-discuss later in xref:book-getting-started.adoc[Section 4.8 ("Routes,
+discuss later in xref:book-getting-started.adoc[Section ("Routes,
 RouteBuilders and Java DSL")]. Camel defines a Java interface called
 `Endpoint`. Each Camel-supported endpoint has a class that implements
 this `Endpoint` interface. As I discussed in
-xref:book-getting-started.adoc[Section 3.3 ("Online Javadoc
+xref:book-getting-started.adoc[Section ("Online Javadoc
 documentation")], Camel provides a separate Javadoc hierarchy for each
 communications technology supported by Camel. Because of this, you will
 find documentation on, say, the `JmsEndpoint` class in the
@@ -181,7 +174,7 @@ application executes the following steps:
 
 1.  Create a `CamelContext` object.
 2.  Add endpoints – and possibly components, which are discussed in
-Section 4.5 ("Components") – to the
+Section ("Components") – to the
 `CamelContext` object.
 3.  Add routes to the `CamelContext` object to connect the endpoints.
 4.  Invoke the `start()` operation on the `CamelContext` object. This
@@ -217,12 +210,12 @@ other open-source projects, such as the `TransactionTemplate` and
 
 The `CamelTemplate` class is a thin wrapper around the `CamelContext`
 class. It has methods that send a `Message` or `Exchange` – both
-discussed in xref:book-getting-started.adoc[Section 4.6 ("Message and
+discussed in xref:book-getting-started.adoc[Section ("Message and
 Exchange")]) – to an `Endpoint` – discussed in
-Section 4.1 ("Endpoint"). This provides
+Section ("Endpoint"). This provides
 a way to enter messages into source endpoints, so that the messages will
 move along routes – discussed in xref:book-getting-started.adoc[Section
-4.8 ("Routes, RouteBuilders and Java DSL")] – to destination endpoints.
+ ("Routes, RouteBuilders and Java DSL")] – to destination endpoints.
 
 [[BookGettingStarted-url-uri-urn-iri]]
 
@@ -355,7 +348,7 @@ the "foo"" properties file on the CLASSPATH, get the value of the
 `class` property from that properties file, and use reflection APIs to
 create an instance of the specified class.
 
-As I said in Section 4.1 ("Endpoint"),
+As I said in Section ("Endpoint"),
 Camel provides out-of-the-box support for numerous communication
 technologies. The out-of-the-box support consists of classes that
 implement the `Component` interface plus properties files that enable a
@@ -376,7 +369,7 @@ documentation and the Camel source code both claim the parameter is a
 URI. In reality, the parameter is restricted to being a URL. This is
 because when Camel extracts the component name from the parameter, it
 looks for the first ":", which is a simplistic algorithm. To understand
-why, recall from xref:book-getting-started.adoc[Section 4.4 ("The
+why, recall from xref:book-getting-started.adoc[Section ("The
 Meaning of URL, URI, URN and IRI")] that a URI can be a URL _or_ a URN.
 Now consider the following calls to `getEndpoint`:
 
@@ -496,6 +489,7 @@ explain some of the constructs used in the example.
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
         from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
+
         from("queue:c").choice()
                 .when(header("foo").isEqualTo("bar")).to("queue:d")
                 .when(header("foo").isEqualTo("cheese")).to("queue:e")
@@ -527,27 +521,6 @@ this way, these operations incrementally build up a `Route` object (with
 a `RouteBuilder` wrapper around it) and add it to the `CamelContext`
 object associated with the `RouteBuilder`.
 
-[[BookGettingStarted-CritiqueofJavaDSL]]
-==== Critique of Java DSL
-
-The online Camel documentation compares Java DSL favorably against the
-alternative of configuring routes and endpoints in a XML-based Spring
-configuration file. In particular, Java DSL is less verbose than its XML
-counterpart. In addition, many integrated development environments
-(IDEs) provide an auto-completion feature in their editors. This
-auto-completion feature works with Java DSL, thereby making it easier
-for developers to write Java DSL.
-
-However, there is another option that the Camel documentation neglects
-to consider: that of writing a parser that can process DSL stored in,
-say, an external file. Currently, Camel does not provide such a DSL
-parser, and I do not know if it is on the "to do" list of the Camel
-maintainers. I think that a DSL parser would offer a significant benefit
-over the current Java DSL. In particular, the DSL would have a syntactic
-definition that could be expressed in a relatively short BNF form. The
-effort required by a Camel user to learn how to use DSL by reading this
-BNF would almost certainly be significantly less than the effort
-currently required to study the API of the `RouterBuilder` classes.
 
 [[BookGettingStarted-ContinueLearningaboutCamel]]
 === Continue Learning about Camel

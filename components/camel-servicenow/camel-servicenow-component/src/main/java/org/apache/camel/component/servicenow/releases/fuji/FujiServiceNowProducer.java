@@ -16,20 +16,41 @@
  */
 package org.apache.camel.component.servicenow.releases.fuji;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.servicenow.AbstractServiceNowProducer;
 import org.apache.camel.component.servicenow.ServiceNowConstants;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
 import org.apache.camel.component.servicenow.ServiceNowRelease;
+import org.apache.camel.spi.InvokeOnHeader;
 
 /**
  * The Fuji ServiceNow producer.
  */
 public class FujiServiceNowProducer extends AbstractServiceNowProducer {
+
+    private final FujiServiceNowTableProcessor processor1;
+    private final FujiServiceNowAggregateProcessor processor2;
+    private final FujiServiceNowImportSetProcessor processor3;
+
     public FujiServiceNowProducer(ServiceNowEndpoint endpoint) throws Exception {
         super(endpoint, ServiceNowRelease.FUJI);
+        processor1 = new FujiServiceNowTableProcessor(endpoint);
+        processor2 = new FujiServiceNowAggregateProcessor(endpoint);
+        processor3 = new FujiServiceNowImportSetProcessor(endpoint);
+    }
 
-        bind(ServiceNowConstants.RESOURCE_TABLE, new FujiServiceNowTableProcessor(endpoint));
-        bind(ServiceNowConstants.RESOURCE_AGGREGATE, new FujiServiceNowAggregateProcessor(endpoint));
-        bind(ServiceNowConstants.RESOURCE_IMPORT, new FujiServiceNowImportSetProcessor(endpoint));
+    @InvokeOnHeader(ServiceNowConstants.RESOURCE_TABLE)
+    public void invokeProcessor1(Exchange exchange) throws Exception {
+        processor1.process(exchange);
+    }
+
+    @InvokeOnHeader(ServiceNowConstants.RESOURCE_AGGREGATE)
+    public void invokeProcessor2(Exchange exchange) throws Exception {
+        processor2.process(exchange);
+    }
+
+    @InvokeOnHeader(ServiceNowConstants.RESOURCE_IMPORT)
+    public void invokeProcessor3(Exchange exchange) throws Exception {
+        processor3.process(exchange);
     }
 }

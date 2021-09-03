@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
@@ -213,7 +214,8 @@ public final class EntityParser {
                 throw new HttpException("Failed to find Content-Type header in enveloped entity");
             }
 
-            MimeEntity entity = parseEntityBody(inbuffer, null, entityContentType, entityContentTransferEncoding, headers);
+            MimeEntity entity = parseEntityBody(inbuffer, null, entityContentType, entityContentTransferEncoding, "", headers);
+            Objects.requireNonNull(entity, "Trying to parse entity body resulted in a null MimeEntity");
             entity.removeAllHeaders();
             entity.setHeaders(headers);
 
@@ -379,7 +381,7 @@ public final class EntityParser {
 
         try {
 
-            applicationEDIEntity = parseEDIEntityBody(inBuffer, null, contentType, contentTransferEncoding);
+            applicationEDIEntity = parseEDIEntityBody(inBuffer, null, contentType, contentTransferEncoding, "");
             applicationEDIEntity.setMainBody(true);
 
             EntityUtils.setMessageEntity(message, applicationEDIEntity);
@@ -540,7 +542,7 @@ public final class EntityParser {
             }
 
             MimeEntity signedEntity = parseEntityBody(inbuffer, boundary, signedEntityContentType,
-                    signedEntityContentTransferEncoding, headers);
+                    signedEntityContentTransferEncoding, "", headers);
             signedEntity.removeAllHeaders();
             signedEntity.setHeaders(headers);
             multipartSignedEntity.addPart(signedEntity);
@@ -786,6 +788,7 @@ public final class EntityParser {
             String boundary,
             ContentType entityContentType,
             String contentTransferEncoding,
+            String filename,
             Header[] headers)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
@@ -804,7 +807,7 @@ public final class EntityParser {
                 case AS2MimeType.APPLICATION_EDIFACT:
                 case AS2MimeType.APPLICATION_EDI_X12:
                 case AS2MimeType.APPLICATION_EDI_CONSENT:
-                    entity = parseEDIEntityBody(inbuffer, boundary, entityContentType, contentTransferEncoding);
+                    entity = parseEDIEntityBody(inbuffer, boundary, entityContentType, contentTransferEncoding, filename);
                     break;
                 case AS2MimeType.MULTIPART_SIGNED:
                     String multipartSignedBoundary = AS2HeaderUtils.getParameterValue(headers,
@@ -866,7 +869,8 @@ public final class EntityParser {
             AS2SessionInputBuffer inbuffer,
             String boundary,
             ContentType ediMessageContentType,
-            String contentTransferEncoding)
+            String contentTransferEncoding,
+            String filename)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
@@ -884,7 +888,7 @@ public final class EntityParser {
                 ediMessageBodyPartContent = EntityUtils.decode(ediMessageBodyPartContent, charset, contentTransferEncoding);
             }
             ApplicationEDIEntity applicationEDIEntity = EntityUtils.createEDIEntity(ediMessageBodyPartContent,
-                    ediMessageContentType, contentTransferEncoding, false);
+                    ediMessageContentType, contentTransferEncoding, false, filename);
 
             return applicationEDIEntity;
         } catch (Exception e) {

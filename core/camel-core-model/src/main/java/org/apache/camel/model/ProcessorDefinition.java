@@ -43,6 +43,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DataFormatClause;
+import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.EnrichClause;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -1110,7 +1111,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // are we already a try?
         if (def instanceof TryDefinition) {
-            return (TryDefinition) def;
+            // then we need special logic to end
+            TryDefinition td = (TryDefinition) def;
+            return (TryDefinition) td.onEndDoTry();
         }
 
         // okay end this and get back to the try
@@ -1275,6 +1278,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public CircuitBreakerDefinition circuitBreaker() {
         CircuitBreakerDefinition answer = new CircuitBreakerDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Creates a Kamelet EIP.
+     * <p/>
+     * This requires having camel-kamelet on the classpath.
+     *
+     * @return the builder
+     */
+    public KameletDefinition kamelet(String name) {
+        KameletDefinition answer = new KameletDefinition();
+        answer.setName(name);
         addOutput(answer);
         return answer;
     }
@@ -2730,8 +2747,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Converts the IN message body to the specified type
      *
+     * @param  type      the type to convert to
+     * @param  mandatory whether to use mandatory type conversion or not
+     * @return           the builder
+     */
+    public Type convertBodyTo(Class<?> type, boolean mandatory) {
+        addOutput(new ConvertBodyDefinition(type, mandatory));
+        return asType();
+    }
+
+    /**
+     * Converts the IN message body to the specified type
+     *
      * @param  type    the type to convert to
-     * @param  charset the charset to use by type converters (not all converters support specifc charset)
+     * @param  charset the charset to use by type converters (not all converters support specific charset)
      * @return         the builder
      */
     public Type convertBodyTo(Class<?> type, String charset) {
@@ -3176,7 +3205,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      * @see                org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(EndpointProducerBuilder resourceUri) {
+    public Type pollEnrich(EndpointConsumerBuilder resourceUri) {
         return pollEnrich(resourceUri.expr(), -1, (String) null, false);
     }
 
@@ -3196,7 +3225,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                     the builder
      * @see                        org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy) {
+    public Type pollEnrich(EndpointConsumerBuilder resourceUri, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, -1, aggregationStrategy);
     }
 
@@ -3218,7 +3247,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                     the builder
      * @see                        org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(EndpointProducerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
+    public Type pollEnrich(EndpointConsumerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, timeout, aggregationStrategy, false);
     }
 
@@ -3240,7 +3269,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                        the builder
      * @see                           org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(EndpointProducerBuilder resourceUri, long timeout, String aggregationStrategyRef) {
+    public Type pollEnrich(EndpointConsumerBuilder resourceUri, long timeout, String aggregationStrategyRef) {
         return pollEnrich(resourceUri, timeout, aggregationStrategyRef, false);
     }
 
@@ -3279,7 +3308,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
      * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
-    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(EndpointProducerBuilder resourceUri) {
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(EndpointConsumerBuilder resourceUri) {
         return pollEnrichWith(resourceUri, -1);
     }
 
@@ -3288,7 +3317,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
      * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
-    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(EndpointProducerBuilder resourceUri, long timeout) {
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(EndpointConsumerBuilder resourceUri, long timeout) {
         return pollEnrichWith(resourceUri, timeout, false);
     }
 
@@ -3298,7 +3327,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
     public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(
-            EndpointProducerBuilder resourceUri, long timeout, boolean aggregateOnException) {
+            EndpointConsumerBuilder resourceUri, long timeout, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         pollEnrich(resourceUri, timeout, clause, aggregateOnException);
         return clause;
@@ -3400,7 +3429,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri EndpointConsumerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
         return pollEnrich(resourceUri.expr(), timeout, aggregationStrategy, aggregateOnException);
     }
@@ -3427,7 +3456,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, long timeout, String aggregationStrategyRef,
+            @AsEndpointUri EndpointConsumerBuilder resourceUri, long timeout, String aggregationStrategyRef,
             boolean aggregateOnException) {
         return pollEnrich(resourceUri.expr(), timeout, aggregationStrategyRef, aggregateOnException);
     }
@@ -3449,7 +3478,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      * @see                org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri EndpointProducerBuilder resourceUri, long timeout) {
+    public Type pollEnrich(@AsEndpointUri EndpointConsumerBuilder resourceUri, long timeout) {
         return pollEnrich(resourceUri, timeout, (String) null);
     }
 
@@ -3556,11 +3585,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
-        // we must remove all existing on completion definition (as they are
-        // global)
-        // and thus we are the only one as route scoped should override any
-        // global scoped
+
+        // remove all on completions if they are global scoped and we add a route scoped which
+        // should override the global
         answer.removeAllOnCompletionDefinition(this);
+
+        // create new block with the onCompletion
         popBlock();
         addOutput(answer);
         pushBlock(answer);

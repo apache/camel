@@ -30,7 +30,6 @@ public class QuartzOneCamelContextSuspendResumeTest {
     @BeforeEach
     public void setUp() throws Exception {
         camel1 = new DefaultCamelContext();
-        camel1.setName("camel-1");
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

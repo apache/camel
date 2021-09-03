@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jt400;
 
+import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QueuedMessage;
 import org.apache.camel.Exchange;
@@ -121,12 +122,20 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
             this.messageKey = entry.getKey();
         }
 
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setHeader(Jt400Constants.SENDER_INFORMATION,
                 entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_ID, entry.getID());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_FILE, entry.getFileName());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_TYPE, entry.getType());
+        setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_SEVERITY, entry.getSeverity());
+        setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE, entry);
+        if (AS400Message.INQUIRY == entry.getType()) {
+            setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_DFT_RPY, entry.getDefaultReply());
+            if (getEndpoint().isSendingReply()) {
+                setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_REPLYTO_KEY, entry.getKey());
+            }
+        }
         exchange.getIn().setBody(entry.getText());
         return exchange;
     }

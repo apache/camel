@@ -30,11 +30,15 @@ import org.apache.camel.model.language.ExpressionDefinition;
  */
 @XmlRootElement(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionSubElementDefinition {
+public class ExpressionSubElementDefinition implements HasExpressionType {
     @XmlElementRef
     private ExpressionDefinition expressionType;
 
     public ExpressionSubElementDefinition() {
+    }
+
+    public ExpressionSubElementDefinition(ExpressionDefinition expressionType) {
+        this.expressionType = expressionType;
     }
 
     public ExpressionSubElementDefinition(Expression expression) {
@@ -45,10 +49,12 @@ public class ExpressionSubElementDefinition {
         this.expressionType = new ExpressionDefinition(predicate);
     }
 
+    @Override
     public ExpressionDefinition getExpressionType() {
         return expressionType;
     }
 
+    @Override
     public void setExpressionType(ExpressionDefinition expressionType) {
         this.expressionType = expressionType;
     }

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.openapi;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -76,6 +79,35 @@ public class RestOpenApiProcessorTest {
         assertTrue(json.contains("\"/bar\""));
         assertTrue(json.contains("\"summary\" : \"Foo endpoint\""));
         assertTrue(json.contains("\"summary\" : \"Bar endpoint\""));
+    }
+
+    @Test
+    public void testRestOpenApiProcessorOpenApiYamlDeprecatedVerb() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                rest().get("/foo").description("Foo endpoint").deprecated().route().log("Hello /foo").endRest()
+                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+            }
+        });
+
+        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, false, null, context.getRestConfiguration());
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/openapi.yaml");
+        processor.process(exchange);
+
+        String yaml = exchange.getMessage().getBody(String.class);
+        assertNotNull(yaml);
+        assertEquals("text/yaml", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertTrue(yaml.contains("/foo:"));
+        assertTrue(yaml.contains("/bar:"));
+        assertTrue(yaml.contains("deprecated: true"));
+
+        JsonNode jsonNode = new ObjectMapper(new YAMLFactory()).readValue(yaml, JsonNode.class);
+        assertNull(jsonNode.get("paths").get("/bar").get("post").get("deprecated"));
+        assertNotNull(jsonNode.get("paths").get("/foo").get("get").get("deprecated"));
+        assertTrue(jsonNode.get("paths").get("/foo").get("get").get("deprecated").asBoolean());
     }
 
     @Test

@@ -53,7 +53,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
     // ****************************
 
     @InvokeOnHeader(EhcacheConstants.ACTION_CLEAR)
-    public void onClear(Message message) throws Exception {
+    public void onClear(Message message) {
         cache.clear();
 
         setResult(message, true, null, null);

@@ -34,7 +34,7 @@ public class DigitalOceanSizesProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws Exception {
         Sizes sizes = getEndpoint().getDigitalOceanClient().getAvailableSizes(configuration.getPage());
         LOG.trace("All Sizes : page {} [{}] ", sizes.getSizes(), configuration.getPage());
-        exchange.getOut().setBody(sizes.getSizes());
+        exchange.getMessage().setBody(sizes.getSizes());
     }
 
 }

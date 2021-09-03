@@ -30,8 +30,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -43,6 +43,8 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -51,6 +53,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Splitter.class);
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private final Expression expression;
@@ -111,6 +115,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        // eager load classes
+        Object dummy = new SplitterIterable();
+        LOG.trace("Loaded {}", dummy.getClass().getName());
+    }
+
+    @Override
     protected void doInit() throws Exception {
         super.doInit();
         expression.init(getCamelContext());
@@ -146,7 +158,9 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     @Override
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange)
+            throws Exception {
+
         Object value = expression.evaluate(exchange, Object.class);
         if (exchange.getException() != null) {
             // force any exceptions occurred during evaluation to be thrown
@@ -175,15 +189,27 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         // this avoids any side effect reflected upon the incoming exchange
         final Object value;
         final Iterator<?> iterator;
-        private final Exchange copy;
+        private Exchange copy;
         private final Route route;
         private final Exchange original;
+
+        private SplitterIterable() {
+            // used for eager classloading
+            value = null;
+            iterator = null;
+            copy = null;
+            route = null;
+            original = null;
+            // for loading classes from iterator
+            Object dummy = iterator();
+            LOG.trace("Loaded {}", dummy.getClass().getName());
+        }
 
         private SplitterIterable(Exchange exchange, Object value) {
             this.original = exchange;
             this.value = value;
 
-            if (delimiter != null && IGNORE_DELIMITER_MARKER.equalsIgnoreCase(delimiter)) {
+            if (IGNORE_DELIMITER_MARKER.equalsIgnoreCase(delimiter)) {
                 this.iterator = ObjectHelper.createIterator(value, null);
             } else {
                 this.iterator = ObjectHelper.createIterator(value, delimiter);
@@ -196,6 +222,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         @Override
         public Iterator<ProcessorExchangePair> iterator() {
             return new Iterator<ProcessorExchangePair>() {
+                private final Processor processor = getProcessors().iterator().next();
                 private int index;
                 private boolean closed;
 
@@ -223,14 +250,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     if (part != null) {
                         // create a correlated copy as the new exchange to be routed in the splitter from the copy
                         // and do not share the unit of work
-                        Exchange newExchange = ExchangeHelper.createCorrelatedCopy(copy, false);
+                        Exchange newExchange = processorExchangeFactory.createCorrelatedCopy(copy, false);
                         // If the splitter has an aggregation strategy
                         // then the StreamCache created by the child routes must not be
                         // closed by the unit of work of the child route, but by the unit of
                         // work of the parent route or grand parent route or grand grand parent route... (in case of nesting).
                         // Therefore, set the unit of work of the parent route as stream cache unit of work, if not already set.
-                        if (newExchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
-                            newExchange.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
+                        if (newExchange.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK) == null) {
+                            newExchange.setProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
                         }
                         // if we share unit of work, we need to prepare the child exchange
                         if (isShareUnitOfWork()) {
@@ -242,7 +269,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                             Message in = newExchange.getIn();
                             in.setBody(part);
                         }
-                        return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, route);
+                        return createProcessorExchangePair(index++, processor, newExchange, route);
                     } else {
                         return null;
                     }
@@ -256,7 +283,12 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         @Override
         public void close() throws IOException {
-            IOHelper.closeIterator(value);
+            if (copy != null) {
+                processorExchangeFactory.release(copy);
+                // null copy to avoid releasing it back again as close may be called multiple times
+                copy = null;
+                IOHelper.closeIterator(value);
+            }
         }
 
     }
@@ -283,37 +315,38 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
     @Override
     protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
-        // do not share unit of work
-        exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
-
-        exchange.setProperty(Exchange.SPLIT_INDEX, index);
+        exchange.setProperty(ExchangePropertyKey.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
             // non streaming mode, so we know the total size already
-            exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection<?>) allPairs).size());
+            exchange.setProperty(ExchangePropertyKey.SPLIT_SIZE, ((Collection<?>) allPairs).size());
         }
         if (hasNext) {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.FALSE);
         } else {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.TRUE);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.TRUE);
             // streaming mode, so set total size when we are complete based on the index
-            exchange.setProperty(Exchange.SPLIT_SIZE, index + 1);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_SIZE, index + 1);
         }
     }
 
     @Override
     protected Integer getExchangeIndex(Exchange exchange) {
-        return exchange.getProperty(Exchange.SPLIT_INDEX, Integer.class);
+        return exchange.getProperty(ExchangePropertyKey.SPLIT_INDEX, Integer.class);
     }
 
     public Expression getExpression() {
         return expression;
     }
 
-    private static Exchange copyAndPrepareSubExchange(Exchange exchange, boolean preserveExchangeId) {
-        Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
+    private Exchange copyAndPrepareSubExchange(Exchange exchange, boolean preserveExchangeId) {
+        Exchange answer = processorExchangeFactory.createCopy(exchange);
+        if (preserveExchangeId) {
+            // must preserve exchange id
+            answer.setExchangeId(exchange.getExchangeId());
+        }
         if (exchange.getContext().isMessageHistory()) {
             // we do not want to copy the message history for splitted sub-messages
-            answer.getProperties().remove(Exchange.MESSAGE_HISTORY);
+            answer.removeProperty(ExchangePropertyKey.MESSAGE_HISTORY);
         }
         return answer;
     }

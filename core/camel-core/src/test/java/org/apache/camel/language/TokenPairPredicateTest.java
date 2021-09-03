@@ -16,44 +16,28 @@
  */
 package org.apache.camel.language;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class TokenPairPredicateTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/pair");
-        super.setUp();
-    }
-
     @Test
     public void testTokenPairPredicate() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/pair", "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(fileUri(), "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
 
-        File file = new File("target/data/pair/hello.xml");
-        assertFalse(file.exists(), "File should not exists " + file);
-
-        file = new File("target/data/pair/ok/hello.xml");
-        assertTrue(file.exists(), "File should exists " + file);
+        assertFileNotExists(testFile("hello.xml"));
+        assertFileExists(testFile("ok/hello.xml"));
     }
 
     @Override
@@ -61,10 +45,9 @@ public class TokenPairPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/pair?initialDelay=0&delay=10&move=ok").choice()
+                from(fileUri("?initialDelay=0&delay=10&move=ok")).choice()
                         // does not make so much sense to use a tokenPair in a
-                        // predicate
-                        // but you can do it nevertheless
+                        // predicate but you can do it nevertheless
                         .when().tokenizePair("<hello>", "</hello>").to("mock:result").end();
             }
         };

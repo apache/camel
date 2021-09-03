@@ -1,0 +1,11 @@
+[[xml-io-dsl-other]]
+= Xml Io Dsl Component
+:docTitle: XML Dsl
+:artifactId: camel-xml-io-dsl
+:description: Camel DSL with YAML
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/xml-io-dsl.adoc[opts=optional]
+//Manually maintained attributes
+:group: DSL
+
+See https://camel.apache.org/manual/latest/dsl.html

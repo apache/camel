@@ -1,10 +1,10 @@
 [[microprofile-health-other]]
 = Microprofile Health Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-microprofile-health/src/main/docs/microprofile-health.adoc
+:page-source: components/camel-microprofile/camel-microprofile-health/src/main/docs/microprofile-health.adoc
 :docTitle: Microprofile Health
 :artifactId: camel-microprofile-health
-:description: Bridging Eclipse MicroProfile Health with Camel health checks
+:description: Expose Camel health checks via MicroProfile Health
 :since: 3.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/microprofile-health.adoc[opts=optional]
@@ -31,13 +31,13 @@ for this component:
 == Usage
 
 By default, Camel health checks are registered as both MicroProfile Health liveness and readiness checks. To have finer control over whether a Camel health check should
-be considered either a readiness or liveness check, you can extend the `AbstractCamelMicroProfileLivenessCheck` and `AbstractCamelMicroProfileReadinessCheck` classes.
+be considered either a readiness or liveness check, you can extend `AbstractHealthCheck` and override the `isLiveness()` and `isReadiness()` methods.
 
 For example, to have a check registered exclusively as a liveness check:
 
 [source,java]
 ----
-public class MyHealthCheck extends AbstractCamelMicroProfileLivenessCheck {
+public class MyHealthCheck extends AbstractHealthCheck {
 
     public MyHealthCheck() {
         super("my-liveness-check-id");
@@ -53,6 +53,10 @@ public class MyHealthCheck extends AbstractCamelMicroProfileLivenessCheck {
         } else {
             builder.down();
         }
+    }
+
+    public boolean isReadiness() {
+        return false;
     }
 }
 ----

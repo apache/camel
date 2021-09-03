@@ -48,14 +48,13 @@ class StitchMessageTest {
 
     @Test
     void testIfNotCreateFromMapFromInvalidData() {
-        final Map<String, Object> data = new LinkedHashMap<>();
+        final LinkedHashMap<String, Object> data = new LinkedHashMap<>();
         data.put(StitchMessage.ACTION, "upsert");
         data.put(StitchMessage.DATA, 1);
         data.put(StitchMessage.SEQUENCE, 1122544L);
 
         assertThrows(IllegalArgumentException.class, () -> StitchMessage
-                .fromMap(data)
-                .build());
+                .fromMap(data));
     }
 
     @Test

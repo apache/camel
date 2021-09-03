@@ -69,6 +69,25 @@ public class AntPathMatcher {
         return match(pattern, path, true);
     }
 
+    public boolean anyMatch(String[] patterns, String path) {
+        return anyMatch(patterns, path, true);
+    }
+
+    public boolean anyMatch(String[] patterns, String path, boolean isCaseSensitive) {
+        if (patterns == null) {
+            return false;
+        }
+        if (patterns.length == 0) {
+            return false;
+        }
+        for (String pattern : patterns) {
+            if (match(pattern, path, isCaseSensitive)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean matchStart(String pattern, String path) {
         return matchStart(pattern, path, true);
     }
@@ -83,7 +102,7 @@ public class AntPathMatcher {
 
     /**
      * Actually match the given <code>path</code> against the given <code>pattern</code>.
-     * 
+     *
      * @param  pattern         the pattern to match against
      * @param  path            the path String to test
      * @param  fullMatch       whether a full pattern match is required (else a pattern match as far as the given base
@@ -220,7 +239,7 @@ public class AntPathMatcher {
      * Tests whether or not a string matches against a pattern. The pattern may contain two special characters:<br>
      * '*' means zero or more characters<br>
      * '?' means one and only one character
-     * 
+     *
      * @param  pattern       pattern to match against. Must not be <code>null</code>.
      * @param  str           string which must be matched against the pattern. Must not be <code>null</code>.
      * @param  caseSensitive Whether or not matching should be performed case sensitively.
@@ -382,6 +401,9 @@ public class AntPathMatcher {
      * does <strong>not</strong> enforce this.
      */
     public String extractPathWithinPattern(String pattern, String path) {
+        if (path == null) {
+            return null;
+        }
         String[] patternParts = tokenizeToStringArray(pattern, this.pathSeparator);
         String[] pathParts = tokenizeToStringArray(path, this.pathSeparator);
 
@@ -392,7 +414,7 @@ public class AntPathMatcher {
         for (int i = 0; i < patternParts.length; i++) {
             String patternPart = patternParts[i];
             if ((patternPart.indexOf('*') > -1 || patternPart.indexOf('?') > -1) && pathParts.length >= i + 1) {
-                if (puts > 0 || (i == 0 && !pattern.startsWith(this.pathSeparator))) {
+                if (puts > 0 || i == 0 && !pattern.startsWith(this.pathSeparator)) {
                     buffer.append(this.pathSeparator);
                 }
                 buffer.append(pathParts[i]);
@@ -417,7 +439,7 @@ public class AntPathMatcher {
      * The given delimiters string is supposed to consist of any number of delimiter characters. Each of those
      * characters can be used to separate tokens. A delimiter is always a single character; for multi-character
      * delimiters, consider using <code>delimitedListToStringArray</code>
-     * 
+     *
      * @param  str        the String to tokenize
      * @param  delimiters the delimiter characters, assembled as String (each of those characters is individually
      *                    considered as delimiter).

@@ -24,7 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
+@ResourceLock("VmComponent")
 public abstract class AbstractVmTestSupport extends ContextTestSupport {
 
     protected CamelContext context2;

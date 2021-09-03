@@ -62,21 +62,25 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
                 if (subset.getPorts().size() == 1) {
                     addServers(name, result, subset.getPorts().get(0), subset);
                 } else {
-                    final List<EndpointPort> ports = subset.getPorts();
-                    final int portSize = ports.size();
-
-                    EndpointPort port;
-                    for (int p = 0; p < portSize; p++) {
-                        port = ports.get(p);
-                        if (ObjectHelper.isEmpty(this.portName) || this.portName.endsWith(port.getName())) {
-                            addServers(name, result, port, subset);
-                        }
-                    }
+                    addPortSet(name, result, subset);
                 }
             }
         }
 
         return result;
+    }
+
+    private void addPortSet(String name, List<ServiceDefinition> result, EndpointSubset subset) {
+        final List<EndpointPort> ports = subset.getPorts();
+        final int portSize = ports.size();
+
+        EndpointPort port;
+        for (int p = 0; p < portSize; p++) {
+            port = ports.get(p);
+            if (ObjectHelper.isEmpty(this.portName) || this.portName.endsWith(port.getName())) {
+                addServers(name, result, port, subset);
+            }
+        }
     }
 
     protected void addServers(String name, List<ServiceDefinition> servers, EndpointPort port, EndpointSubset subset) {
@@ -99,45 +103,29 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
 
-        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword()))
-                && ObjectHelper.isEmpty(configuration.getOauthToken())) {
+        if (hasUsernameAndPassword(configuration) && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
         } else {
             builder.withOauthToken(configuration.getOauthToken());
         }
-        if (ObjectHelper.isNotEmpty(configuration.getCaCertData())) {
-            builder.withCaCertData(configuration.getCaCertData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getCaCertFile())) {
-            builder.withCaCertFile(configuration.getCaCertFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientCertData())) {
-            builder.withClientCertData(configuration.getClientCertData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientCertFile())) {
-            builder.withClientCertFile(configuration.getClientCertFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getApiVersion())) {
-            builder.withApiVersion(configuration.getApiVersion());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyAlgo())) {
-            builder.withClientKeyAlgo(configuration.getClientKeyAlgo());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyData())) {
-            builder.withClientKeyData(configuration.getClientKeyData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyFile())) {
-            builder.withClientKeyFile(configuration.getClientKeyFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyPassphrase())) {
-            builder.withClientKeyPassphrase(configuration.getClientKeyPassphrase());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getTrustCerts())) {
-            builder.withTrustCerts(configuration.getTrustCerts());
-        }
+
+        ObjectHelper.ifNotEmpty(configuration.getCaCertData(), builder::withCaCertData);
+        ObjectHelper.ifNotEmpty(configuration.getCaCertFile(), builder::withCaCertFile);
+        ObjectHelper.ifNotEmpty(configuration.getClientCertData(), builder::withClientCertData);
+        ObjectHelper.ifNotEmpty(configuration.getClientCertFile(), builder::withClientCertFile);
+        ObjectHelper.ifNotEmpty(configuration.getApiVersion(), builder::withApiVersion);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyAlgo(), builder::withClientKeyAlgo);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyData(), builder::withClientKeyData);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyFile(), builder::withClientKeyFile);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyPassphrase(), builder::withClientKeyPassphrase);
+        ObjectHelper.ifNotEmpty(configuration.getTrustCerts(), builder::withTrustCerts);
 
         client = new AutoAdaptableKubernetesClient(builder.build());
+    }
+
+    private boolean hasUsernameAndPassword(KubernetesConfiguration configuration) {
+        return ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword());
     }
 
     @Override

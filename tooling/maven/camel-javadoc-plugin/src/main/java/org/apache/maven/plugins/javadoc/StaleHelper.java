@@ -19,6 +19,7 @@ package org.apache.maven.plugins.javadoc;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -114,9 +115,9 @@ public final class StaleHelper {
     }
 
     private static Collection<Path> walk(Path dir) {
-        try {
+        try (DirectoryStream<Path> pathStream = Files.newDirectoryStream(dir)) {
             Collection<Path> paths = new ArrayList<>();
-            for (Path p : Files.newDirectoryStream(dir)) {
+            for (Path p : pathStream) {
                 paths.add(p);
             }
             return paths;

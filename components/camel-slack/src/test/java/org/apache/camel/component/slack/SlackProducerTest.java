@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.slack;
 
+import java.util.Collections;
+
+import com.slack.api.model.Message;
+import com.slack.api.model.block.SectionBlock;
+import com.slack.api.model.block.composition.MarkdownTextObject;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
@@ -43,6 +48,24 @@ public class SlackProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testSlackAPIModelMessage() throws Exception {
+        errors.expectedMessageCount(0);
+
+        Message message = new Message();
+        message.setBlocks(Collections.singletonList(SectionBlock
+                .builder()
+                .text(MarkdownTextObject
+                        .builder()
+                        .text("*Hello from Camel!*")
+                        .build())
+                .build()));
+
+        template.sendBody(test, message);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -54,10 +77,10 @@ public class SlackProducerTest extends CamelTestSupport {
 
                 onException(Exception.class).handled(true).to(errors);
 
-                final String slacUser = System.getProperty("SLACK_USER", "CamelTest");
+                final String slackUser = System.getProperty("SLACK_USER", "CamelTest");
                 from("undertow:http://localhost:" + UNDERTOW_PORT + "/slack/webhook").setBody(constant("{\"ok\": true}"));
 
-                from(test).to(String.format("slack:#general?iconEmoji=:camel:&username=%s", slacUser));
+                from(test).to(String.format("slack:#general?iconEmoji=:camel:&username=%s", slackUser));
             }
         };
     }

@@ -37,10 +37,10 @@ public class GenericFileMessageTest extends ContextTestSupport {
         assertStringContains(message.toString(), "org.apache.camel.component.file.GenericFileMessage@");
 
         GenericFile<File> file = new GenericFile<>(true);
-        file.setFileName("target/data/test.txt");
-        file.setFile(new File("target/data/test.txt"));
+        file.setFileName("target/dummy/test.txt");
+        file.setFile(new File("target/dummy/test.txt"));
         message = new GenericFileMessage<>(camelContext, file);
-        Object o1 = FileUtil.isWindows() ? "target\\test.txt" : "target/data/test.txt";
+        Object o1 = FileUtil.isWindows() ? "target\\dummy\\test.txt" : "target/dummy/test.txt";
         assertEquals(o1, message.toString());
     }
 

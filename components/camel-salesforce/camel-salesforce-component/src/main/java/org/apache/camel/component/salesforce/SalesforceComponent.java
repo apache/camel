@@ -36,7 +36,9 @@ import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.component.salesforce.internal.client.DefaultRawClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
+import org.apache.camel.component.salesforce.internal.client.RawClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.spi.Metadata;
@@ -143,6 +145,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
                             + " a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app.",
               label = "common,security", secret = true)
     private KeyStoreParameters keystore;
+
+    @Metadata(description = "Value to use for the Audience claim (aud) when using OAuth JWT flow. If not set, the login URL will be used, which is"
+                            + " appropriate in most cases.",
+              label = "common,security")
+    private String jwtAudience;
 
     @Metadata(description = "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT."
                             + " Salesforce component can auto-determine the authentication method to use from the properties set, set this "
@@ -345,6 +352,12 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
@@ -354,6 +367,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             loginConfig.setClientId(clientId);
             loginConfig.setClientSecret(clientSecret);
             loginConfig.setKeystore(keystore);
+            loginConfig.setJwtAudience(jwtAudience);
             loginConfig.setLazyLogin(lazyLogin);
             loginConfig.setLoginUrl(loginUrl);
             loginConfig.setPassword(password);
@@ -512,6 +526,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public KeyStoreParameters getKeystore() {
         return keystore;
+    }
+
+    public String getJwtAudience() {
+        return jwtAudience;
+    }
+
+    public void setJwtAudience(String jwtAudience) {
+        this.jwtAudience = jwtAudience;
     }
 
     public String getRefreshToken() {
@@ -782,7 +804,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         return new DefaultRestClient(httpClient, config.getApiVersion(), config.getFormat(), session, loginConfig);
     }
 
-    static SalesforceHttpClient createHttpClient(final SslContextFactory sslContextFactory) throws Exception {
+    public RawClient createRawClientFor(SalesforceEndpoint endpoint) throws SalesforceException {
+        return new DefaultRawClient(httpClient, "", session, loginConfig);
+    }
+
+    static SalesforceHttpClient createHttpClient(final SslContextFactory sslContextFactory) {
         SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);

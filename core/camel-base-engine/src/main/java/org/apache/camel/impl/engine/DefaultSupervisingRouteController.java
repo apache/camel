@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
@@ -50,6 +52,7 @@ import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.backoff.BackOff;
 import org.apache.camel.util.backoff.BackOffTimer;
 import org.apache.camel.util.function.ThrowingConsumer;
@@ -196,7 +199,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         // prevent routes from automatic being started by default
         CamelContext context = getCamelContext();
         context.setAutoStartup(false);
+        // use route policy to supervise the routes
         context.addRoutePolicyFactory(new ManagedRoutePolicyFactory());
+        // use startup listener to hook into camel context to let this begin supervising routes after context is started
         context.addStartupListener(this.listener);
     }
 
@@ -204,8 +209,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     protected void doStart() throws Exception {
         this.backOff = new BackOff(
                 Duration.ofMillis(backOffDelay),
-                backOffMaxDelay > 0 ? Duration.ofMillis(backOffMaxDelay) : Duration.ofMillis(Long.MAX_VALUE),
-                backOffMaxElapsedTime > 0 ? Duration.ofMillis(backOffMaxElapsedTime) : Duration.ofMillis(Long.MAX_VALUE),
+                backOffMaxDelay > 0 ? Duration.ofMillis(backOffMaxDelay) : null,
+                backOffMaxElapsedTime > 0 ? Duration.ofMillis(backOffMaxElapsedTime) : null,
                 backOffMaxAttempts > 0 ? backOffMaxAttempts : Long.MAX_VALUE,
                 backOffMultiplier);
 
@@ -463,11 +468,85 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             }
         }
 
-        LOG.info("Total managed routes: {} of which {} successfully started (restarting: {}, exhausted: {})",
-                routes.size(),
-                routes.stream().filter(r -> r.getStatus() == ServiceStatus.Started).count(),
-                routeManager.routes.size(),
-                routeManager.exhausted.size());
+        if (getCamelContext().getStartupSummaryLevel() != StartupSummaryLevel.Off
+                && getCamelContext().getStartupSummaryLevel() != StartupSummaryLevel.Oneline) {
+            // log after first round of attempts
+            logRouteStartupSummary();
+        }
+    }
+
+    private void logRouteStartupSummary() {
+        int started = 0;
+        int total = 0;
+        int restarting = 0;
+        int exhausted = 0;
+        List<String> lines = new ArrayList<>();
+        List<String> configs = new ArrayList<>();
+        for (RouteHolder route : routes) {
+            String id = route.getId();
+            String status = getRouteStatus(id).name();
+            if (ServiceStatus.Started.name().equals(status)) {
+                // only include started routes as we pickup restarting/exhausted in the following
+                total++;
+                started++;
+                // use basic endpoint uri to not log verbose details or potential sensitive data
+                String uri = route.get().getEndpoint().getEndpointBaseUri();
+                uri = URISupport.sanitizeUri(uri);
+                lines.add(String.format("    %s %s (%s)", status, id, uri));
+                String cid = route.get().getConfigurationId();
+                if (cid != null) {
+                    configs.add(String.format("    %s (%s)", id, cid));
+                }
+            }
+        }
+        for (RouteHolder route : routeManager.routes.keySet()) {
+            total++;
+            restarting++;
+            String id = route.getId();
+            String status = "Restarting";
+            // use basic endpoint uri to not log verbose details or potential sensitive data
+            String uri = route.get().getEndpoint().getEndpointBaseUri();
+            uri = URISupport.sanitizeUri(uri);
+            BackOff backOff = getBackOff(id);
+            lines.add(String.format("    %s %s (%s) with %s", status, id, uri, backOff));
+            String cid = route.get().getConfigurationId();
+            if (cid != null) {
+                configs.add(String.format("    %s (%s)", id, cid));
+            }
+        }
+        for (RouteHolder route : routeManager.exhausted.keySet()) {
+            total++;
+            exhausted++;
+            String id = route.getId();
+            String status = "Exhausted";
+            // use basic endpoint uri to not log verbose details or potential sensitive data
+            String uri = route.get().getEndpoint().getEndpointBaseUri();
+            uri = URISupport.sanitizeUri(uri);
+            lines.add(String.format("    %s %s (%s)", status, id, uri));
+            String cid = route.get().getConfigurationId();
+            if (cid != null) {
+                configs.add(String.format("    %s (%s)", id, cid));
+            }
+        }
+
+        if (restarting == 0 && exhausted == 0) {
+            LOG.info("Routes startup summary (total:{} started:{})", total, started);
+        } else {
+            LOG.info("Routes startup summary (total:{} started:{} restarting:{} exhausted:{})", total, started, restarting,
+                    exhausted);
+        }
+        if (getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Default
+                || getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Verbose) {
+            for (String line : lines) {
+                LOG.info(line);
+            }
+            if (getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Verbose) {
+                LOG.info("Routes configuration summary");
+                for (String line : configs) {
+                    LOG.info(line);
+                }
+            }
+        }
     }
 
     private boolean isSupervised(Route route) {
@@ -499,7 +578,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                     r -> {
                         BackOff backOff = getBackOff(r.getId());
 
-                        logger.info("Start supervising route: {} with back-off: {}", r.getId(), backOff);
+                        logger.debug("Supervising route: {} with back-off: {}", r.getId(), backOff);
 
                         BackOffTimer.Task task = timer.schedule(backOff, context -> {
                             final BackOffTimer.Task state = getBackOffContext(r.getId()).orElse(null);
@@ -563,7 +642,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             exceptions.remove(route.getId());
             BackOffTimer.Task task = routes.remove(route);
             if (task != null) {
-                LOG.info("Cancelling restart task for route: {}", route.getId());
+                LOG.debug("Cancelling restart task for route: {}", route.getId());
                 task.cancel();
             }
 
@@ -667,7 +746,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
     private class ManagedRoutePolicy extends RoutePolicySupport implements NonManagedService {
 
-        // we dont want this policy to be registed in JMX
+        // we dont want this policy to be registered in JMX
 
         private void startRoute(RouteHolder holder) {
             try {

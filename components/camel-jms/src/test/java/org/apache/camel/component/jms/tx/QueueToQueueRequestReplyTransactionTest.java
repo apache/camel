@@ -22,8 +22,8 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test case derived from: http://camel.apache.org/transactional-client.html and Martin Krasser's sample:
@@ -58,7 +58,7 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
 
         for (int i = 0; i < 5; ++i) {
             Object reply = template.requestBody("activemq:queue:foo", "blah" + i);
-            assertTrue(reply.equals("Re: blah" + i), "Received unexpeced reply");
+            assertEquals("Re: blah" + i, reply, "Received unexpected reply at item " + i);
             assertNull(cp.getErrorMessage(), cp.getErrorMessage());
         }
     }

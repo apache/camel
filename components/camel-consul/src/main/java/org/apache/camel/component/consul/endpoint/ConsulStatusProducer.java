@@ -18,15 +18,25 @@ package org.apache.camel.component.consul.endpoint;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.StatusClient;
+import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulEndpoint;
+import org.apache.camel.spi.InvokeOnHeader;
 
 public final class ConsulStatusProducer extends AbstractConsulProducer<StatusClient> {
 
     public ConsulStatusProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
         super(endpoint, configuration, Consul::statusClient);
-
-        bind(ConsulStatusActions.LEADER, wrap(c -> c.getLeader()));
-        bind(ConsulStatusActions.PEERS, wrap(c -> c.getPeers()));
     }
+
+    @InvokeOnHeader("LEADER")
+    public Object invokeChecks(Message message) throws Exception {
+        return getClient().getLeader();
+    }
+
+    @InvokeOnHeader("PEERS")
+    public Object invokePeers(Message message) throws Exception {
+        return getClient().getPeers();
+    }
+
 }

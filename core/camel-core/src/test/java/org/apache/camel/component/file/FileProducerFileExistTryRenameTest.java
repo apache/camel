@@ -20,17 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file");
-        super.setUp();
-    }
 
     @Test
     public void testIgnore() throws Exception {
@@ -41,10 +33,10 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
-        mock.expectedFileExists("target/data/file/hello.txt", "Bye World");
+        mock.expectedFileExists(testFile("hello.txt"), "Bye World");
 
-        template.sendBodyAndHeader("file://target/data/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/file?fileExist=TryRename&tempPrefix=tmp", "Bye World",
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("?fileExist=TryRename&tempPrefix=tmp"), "Bye World",
                 Exchange.FILE_NAME, "hello.txt");
 
         context.getRouteController().startAllRoutes();
@@ -57,7 +49,7 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file?noop=true&initialDelay=0&delay=10").noAutoStartup().convertBodyTo(String.class)
+                from(fileUri("?noop=true&initialDelay=0&delay=10")).noAutoStartup().convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

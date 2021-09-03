@@ -132,5 +132,4 @@ public @interface Metadata {
      * specify which options each implementation only supports.
      */
     String includeProperties() default "";
-
 }

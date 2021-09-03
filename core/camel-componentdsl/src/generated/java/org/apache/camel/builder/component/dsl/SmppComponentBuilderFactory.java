@@ -492,7 +492,7 @@ public interface SmppComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -501,6 +501,39 @@ public interface SmppComponentBuilderFactory {
         default SmppComponentBuilder enquireLinkTimer(
                 java.lang.Integer enquireLinkTimer) {
             doSetProperty("enquireLinkTimer", enquireLinkTimer);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default SmppComponentBuilder pduProcessorDegree(
+                java.lang.Integer pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default SmppComponentBuilder pduProcessorQueueCapacity(
+                java.lang.Integer pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
             return this;
         }
         /**
@@ -518,6 +551,23 @@ public interface SmppComponentBuilderFactory {
         default SmppComponentBuilder sessionStateListener(
                 org.jsmpp.session.SessionStateListener sessionStateListener) {
             doSetProperty("sessionStateListener", sessionStateListener);
+            return this;
+        }
+        /**
+         * When true, the SMSC delivery receipt would be requested only for the
+         * last segment of a multi-segment (long) message. For short messages,
+         * with only 1 segment the behaviour is unchanged.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param singleDLR the value to set
+         * @return the dsl builder
+         */
+        default SmppComponentBuilder singleDLR(boolean singleDLR) {
+            doSetProperty("singleDLR", singleDLR);
             return this;
         }
         /**
@@ -763,7 +813,10 @@ public interface SmppComponentBuilderFactory {
             case "autowiredEnabled": ((SmppComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((SmppComponent) component).setConfiguration((org.apache.camel.component.smpp.SmppConfiguration) value); return true;
             case "enquireLinkTimer": getOrCreateConfiguration((SmppComponent) component).setEnquireLinkTimer((java.lang.Integer) value); return true;
+            case "pduProcessorDegree": getOrCreateConfiguration((SmppComponent) component).setPduProcessorDegree((java.lang.Integer) value); return true;
+            case "pduProcessorQueueCapacity": getOrCreateConfiguration((SmppComponent) component).setPduProcessorQueueCapacity((java.lang.Integer) value); return true;
             case "sessionStateListener": getOrCreateConfiguration((SmppComponent) component).setSessionStateListener((org.jsmpp.session.SessionStateListener) value); return true;
+            case "singleDLR": getOrCreateConfiguration((SmppComponent) component).setSingleDLR((boolean) value); return true;
             case "transactionTimer": getOrCreateConfiguration((SmppComponent) component).setTransactionTimer((java.lang.Integer) value); return true;
             case "alphabet": getOrCreateConfiguration((SmppComponent) component).setAlphabet((byte) value); return true;
             case "dataCoding": getOrCreateConfiguration((SmppComponent) component).setDataCoding((byte) value); return true;

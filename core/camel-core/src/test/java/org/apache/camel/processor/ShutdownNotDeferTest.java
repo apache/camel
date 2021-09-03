@@ -27,7 +27,6 @@ import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.ShutdownRoute.Default;
@@ -36,13 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ShutdownNotDeferTest extends ContextTestSupport {
 
     private static final AtomicBoolean CONSUMER_SUSPENDED = new AtomicBoolean();
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/deferred");
-        super.setUp();
-    }
 
     @Test
     public void testShutdownNotDeferred() throws Exception {
@@ -67,12 +59,12 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").startupOrder(1).to("file://target/data/deferred");
+                from("seda:foo").startupOrder(1).to(fileUri());
 
                 // use file component to transfer files from route 1 -> route 2
                 MyDeferFileEndpoint defer = new MyDeferFileEndpoint(
-                        "file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
-                defer.setFile(new File("target/data/deferred"));
+                        fileUri("?initialDelay=0&delay=10"), getContext().getComponent("file"));
+                defer.setFile(testDirectory().toFile());
 
                 from(defer)
                         // do NOT defer it but use default for testing this

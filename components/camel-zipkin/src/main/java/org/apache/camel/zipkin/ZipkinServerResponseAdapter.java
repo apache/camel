@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.zipkin.ZipkinHelper.prepareBodyForLogging;
@@ -46,7 +47,8 @@ class ZipkinServerResponseAdapter {
         span.tag("camel.server.exchange.pattern", mep);
 
         if (exchange.getException() != null) {
-            String message = exchange.getException().getMessage();
+            String message = ObjectHelper.isEmpty(exchange.getException().getMessage())
+                    ? exchange.getException().getClass().getName() : exchange.getException().getMessage();
             span.tag("camel.server.exchange.failure", message);
         } else if (eventNotifier.isIncludeMessageBody() || eventNotifier.isIncludeMessageBodyStreams()) {
             boolean streams = eventNotifier.isIncludeMessageBodyStreams();

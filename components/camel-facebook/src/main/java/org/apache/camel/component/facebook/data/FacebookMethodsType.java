@@ -863,7 +863,7 @@ public enum FacebookMethodsType {
     public static FacebookMethodsType findMethod(String name, Class<?>... args) {
         for (FacebookMethodsType method : values()) {
             if (method.name.equals(name)) {
-                if ((method.argTypes.isEmpty() && (args == null || args.length == 0))
+                if (method.argTypes.isEmpty() && (args == null || args.length == 0)
                         || Arrays.equals(method.argTypes.toArray(), args)) {
                     return method;
                 }

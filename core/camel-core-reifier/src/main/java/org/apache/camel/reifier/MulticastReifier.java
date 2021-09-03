@@ -19,6 +19,7 @@ package org.apache.camel.reifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.function.BiFunction;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
@@ -28,6 +29,7 @@ import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
@@ -65,7 +67,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
         ExecutorService threadPool = getConfiguredExecutorService("Multicast", definition, isParallelProcessing);
 
-        long timeout = definition.getTimeout() != null ? parseDuration(definition.getTimeout()) : 0;
+        long timeout = parseDuration(definition.getTimeout(), 0);
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
@@ -77,15 +79,25 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
                 camelContext, route, list, strategy, isParallelProcessing, threadPool, shutdownThreadPool, isStreaming,
                 isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
                 isStopOnAggregateException);
+
         return answer;
     }
 
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = lookup(parseString(definition.getStrategyRef()), Object.class);
+        String ref = parseString(definition.getStrategyRef());
+        if (strategy == null && ref != null) {
+            Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy instanceof BiFunction) {
+                AggregationStrategyBiFunctionAdapter adapter
+                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                if (definition.getStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                }
+                strategy = adapter;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter
                         = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getStrategyMethodName()));
@@ -104,10 +116,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
             // default to use latest aggregation strategy
             strategy = new UseLatestAggregationStrategy();
         }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
 
         if (parseBoolean(definition.getShareUnitOfWork(), false)) {
             // wrap strategy in share unit of work

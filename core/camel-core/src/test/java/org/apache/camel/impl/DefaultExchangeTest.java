@@ -21,18 +21,32 @@ import java.net.ConnectException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTestSupport;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultExchangeTest extends ExchangeTestSupport {
+
+    private static final String SAFE_PROPERTY = "SAFE_PROPERTY";
+    private static final String UNSAFE_PROPERTY = "UNSAFE_PROPERTY";
 
     @Test
     public void testBody() throws Exception {
@@ -85,7 +99,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         RuntimeCamelException rce = exchange.getException(RuntimeCamelException.class);
         assertNotNull(rce);
-        assertNotSame(rce.getMessage(), "Cannot connect to remote server");
+        assertNotSame("Cannot connect to remote server", rce.getMessage());
         assertEquals("Cannot connect to remote server", rce.getCause().getMessage());
     }
 
@@ -152,7 +166,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         exchange.removeProperties("fr*");
         assertTrue(exchange.hasProperties());
-        assertEquals(exchange.getProperties().size(), 1);
+        assertEquals(1, exchange.getProperties().size());
         assertEquals(null, exchange.getProperty("fruit", String.class));
         assertEquals(null, exchange.getProperty("fruit1", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
@@ -170,7 +184,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         exchange.removeProperties("*");
         assertFalse(exchange.hasProperties());
-        assertEquals(exchange.getProperties().size(), 0);
+        assertEquals(0, exchange.getProperties().size());
     }
 
     @Test
@@ -191,7 +205,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         exchange.removeProperties("fr*", "fruit1", "fruit2");
         assertTrue(exchange.hasProperties());
-        assertEquals(exchange.getProperties().size(), 3);
+        assertEquals(3, exchange.getProperties().size());
         assertEquals(null, exchange.getProperty("fruit", String.class));
         assertEquals("banana", exchange.getProperty("fruit1", String.class));
         assertEquals("peach", exchange.getProperty("fruit2", String.class));
@@ -216,11 +230,47 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         exchange.removeProperties("fr*", "fruit", "fruit1", "fruit2", "zone");
         assertTrue(exchange.hasProperties());
-        assertEquals(exchange.getProperties().size(), 4);
+        assertEquals(4, exchange.getProperties().size());
         assertEquals("apple", exchange.getProperty("fruit", String.class));
         assertEquals("banana", exchange.getProperty("fruit1", String.class));
         assertEquals("peach", exchange.getProperty("fruit2", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
+    }
+
+    @Test
+    public void testRemoveInternalProperties() throws Exception {
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, "iso-8859-1");
+
+        assertEquals("iso-8859-1", exchange.getProperty(ExchangePropertyKey.CHARSET_NAME));
+        assertEquals("iso-8859-1", exchange.getProperty(Exchange.CHARSET_NAME));
+
+        exchange.removeProperty(ExchangePropertyKey.CHARSET_NAME);
+        assertNull(exchange.getProperty(ExchangePropertyKey.CHARSET_NAME));
+        assertNull(exchange.getProperty(Exchange.CHARSET_NAME));
+
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, "iso-8859-1");
+        exchange.setProperty(ExchangePropertyKey.AGGREGATED_SIZE, "1");
+        exchange.setProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT, "2");
+
+        exchange.removeProperties("CamelAggregated*");
+        assertEquals("iso-8859-1", exchange.getProperty(ExchangePropertyKey.CHARSET_NAME));
+        assertNull(exchange.getProperty(ExchangePropertyKey.AGGREGATED_SIZE));
+        assertNull(exchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT));
+
+        exchange.removeProperties("*");
+        assertNull(exchange.getProperty(ExchangePropertyKey.CHARSET_NAME));
+    }
+
+    @Test
+    public void testAllProperties() throws Exception {
+        exchange.removeProperties("*");
+        exchange.setProperty("foo", 123);
+        exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, "seda:bar");
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, "iso-8859-1");
+
+        assertEquals(1, exchange.getProperties().size());
+        assertEquals(2, exchange.adapt(ExtendedExchange.class).getInternalProperties().size());
+        assertEquals(3, exchange.getAllProperties().size());
     }
 
     @Test
@@ -248,6 +298,38 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         Message destIn = destExchange.getIn();
 
         assertEquals(sourceIn.getClass(), destIn.getClass(), "Dest message should be of the same type as source message");
+    }
+
+    @Test
+    public void testExchangeSafeCopy() {
+        DefaultExchange exchange = new DefaultExchange(context);
+        SafeProperty property = new SafeProperty();
+        UnsafeProperty unsafeProperty = new UnsafeProperty();
+        exchange.setSafeCopyProperty(SAFE_PROPERTY, property);
+        exchange.setProperty(UNSAFE_PROPERTY, unsafeProperty);
+
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+
+        assertThat(copy.getProperty(SAFE_PROPERTY)).isNotSameAs(property);
+        assertThat(copy.getProperty(UNSAFE_PROPERTY)).isSameAs(unsafeProperty);
+
+    }
+
+    private static final class SafeProperty implements SafeCopyProperty {
+
+        private SafeProperty() {
+
+        }
+
+        @Override
+        public SafeProperty safeCopy() {
+            return new SafeProperty();
+        }
+
+    }
+
+    private static class UnsafeProperty {
+
     }
 
     public static class MyMessage extends DefaultMessage {

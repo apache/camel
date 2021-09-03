@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -29,19 +28,13 @@ import org.junit.jupiter.api.Test;
  */
 public class FileProducerAllowNullBodyFileAlreadyExistsTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/allow");
-        super.setUp();
-        template.sendBodyAndHeader("file://target/data/allow", "Hello world", Exchange.FILE_NAME, "hello.txt");
-    }
-
     @Test
     public void testFileExistAppendAllowNullBody() throws Exception {
+        template.sendBodyAndHeader(fileUri(), "Hello world", Exchange.FILE_NAME, "hello.txt");
+
         MockEndpoint mock = getMockEndpoint("mock:appendTypeAppendResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/allow/hello.txt", "Hello world");
+        mock.expectedFileExists(testFile("hello.txt"), "Hello world");
 
         template.sendBody("direct:appendTypeAppend", null);
 
@@ -50,9 +43,11 @@ public class FileProducerAllowNullBodyFileAlreadyExistsTest extends ContextTestS
 
     @Test
     public void testFileExistOverrideAllowNullBody() throws Exception {
+        template.sendBodyAndHeader(fileUri(), "Hello world", Exchange.FILE_NAME, "hello.txt");
+
         MockEndpoint mock = getMockEndpoint("mock:appendTypeOverrideResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/allow/hello.txt", "");
+        mock.expectedFileExists(testFile("hello.txt"), "");
 
         template.sendBody("direct:appendTypeOverride", null);
 
@@ -64,11 +59,11 @@ public class FileProducerAllowNullBodyFileAlreadyExistsTest extends ContextTestS
         return new RouteBuilder() {
             public void configure() {
                 from("direct:appendTypeAppend").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                        .to("file://target/data/allow?allowNullBody=true&fileExist=Append")
+                        .to(fileUri("?allowNullBody=true&fileExist=Append"))
                         .to("mock:appendTypeAppendResult");
 
                 from("direct:appendTypeOverride").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                        .to("file://target/data/allow?allowNullBody=true&fileExist=Override")
+                        .to(fileUri("?allowNullBody=true&fileExist=Override"))
                         .to("mock:appendTypeOverrideResult");
             }
         };

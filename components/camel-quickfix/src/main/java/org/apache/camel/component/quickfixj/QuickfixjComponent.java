@@ -141,7 +141,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
         super.doShutdown();
     }
 
-    private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
+    private void startQuickfixjEngine(QuickfixjEngine engine) {
         if (!engine.isLazy()) {
             LOG.info("Starting QuickFIX/J engine: {}", engine.getUri());
             engine.start();

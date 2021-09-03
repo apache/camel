@@ -177,6 +177,14 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
             return false;
         }
 
+        // must not be groovy meta class
+        if (method.getName().equals("getMetaClass") || method.getName().equals("setMetaClass")) {
+            return false;
+        }
+        if (method.getDeclaringClass().getName().startsWith("groovy.lang")) {
+            return false;
+        }
+
         // return type must not be void and it should not be a bridge method
         if (method.getReturnType().equals(Void.TYPE) || method.isBridge()) {
             return false;
@@ -231,9 +239,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
         mi = bi.createMethodInfo();
 
         // in case the POJO is CamelContextAware
-        if (pojo instanceof CamelContextAware) {
-            ((CamelContextAware) pojo).setCamelContext(getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(pojo, getCamelContext());
 
         // in case the pojo is a service
         ServiceHelper.startService(pojo);

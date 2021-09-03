@@ -101,7 +101,7 @@ public final class AtomixMessagingConsumer extends AbstractAtomixClientConsumer<
     // ********************************************
 
     private void onMessage(Message<Object> message) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setHeader(AtomixClientConstants.MESSAGE_ID, message.id());
 
         if (resultHeader == null) {

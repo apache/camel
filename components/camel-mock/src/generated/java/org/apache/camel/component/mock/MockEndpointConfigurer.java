@@ -31,6 +31,7 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         case "failFast": target.setFailFast(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "log": target.setLog(property(camelContext, boolean.class, value)); return true;
         case "reportgroup":
         case "reportGroup": target.setReportGroup(property(camelContext, int.class, value)); return true;
         case "resultminimumwaittime":
@@ -60,6 +61,7 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         case "failFast": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "log": return boolean.class;
         case "reportgroup":
         case "reportGroup": return int.class;
         case "resultminimumwaittime":
@@ -90,6 +92,7 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         case "failFast": return target.isFailFast();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "log": return target.isLog();
         case "reportgroup":
         case "reportGroup": return target.getReportGroup();
         case "resultminimumwaittime":

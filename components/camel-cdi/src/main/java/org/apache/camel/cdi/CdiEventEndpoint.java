@@ -110,7 +110,7 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
     static String eventEndpointUri(Type type, Set<Annotation> qualifiers) {
         return "cdi-event://" + authorityFromType(type) + qualifiers.stream()
                 .map(CdiSpiHelper::createAnnotationId)
-                .collect(joining("%2C", qualifiers.size() > 0 ? "?qualifiers=" : "", ""));
+                .collect(joining("%2C", !qualifiers.isEmpty() ? "?qualifiers=" : "", ""));
     }
 
     private static String authorityFromType(Type type) {

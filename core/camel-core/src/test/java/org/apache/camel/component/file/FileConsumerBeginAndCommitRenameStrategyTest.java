@@ -23,33 +23,25 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for the FileRenameStrategy using preMove and move options
  */
 public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/inprogress");
-        deleteDirectory("target/data/done");
-        deleteDirectory("target/data/reports");
-        super.setUp();
-    }
-
     @Test
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("target/data/done/paris.txt", "Hello Paris");
+        mock.expectedFileExists(testFile("done/paris.txt"), "Hello Paris");
 
-        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -57,7 +49,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
     @Test
     public void testIllegalOptions() throws Exception {
         try {
-            context.getEndpoint("file://target/data?move=../done/${file:name}&delete=true").createConsumer(new Processor() {
+            context.getEndpoint(fileUri("?move=../done/${file:name}&delete=true")).createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -67,7 +59,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         }
 
         try {
-            context.getEndpoint("file://target/data?move=${file:name.noext}.bak&delete=true").createConsumer(new Processor() {
+            context.getEndpoint(fileUri("?move=${file:name.noext}.bak&delete=true")).createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -81,14 +73,14 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/reports?preMove=../inprogress/${file:name}&move=../done/${file:name}&initialDelay=0&delay=10")
+                from(fileUri("reports?preMove=../inprogress/${file:name}&move=../done/${file:name}&initialDelay=0&delay=10"))
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) throws Exception {
                                 GenericFile<File> file
                                         = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
                                 assertNotNull(file);
-                                assertTrue(file.getRelativeFilePath().indexOf("inprogress") > -1);
+                                assertTrue(file.getRelativeFilePath().contains("inprogress"));
                             }
                         }).to("mock:report");
             }

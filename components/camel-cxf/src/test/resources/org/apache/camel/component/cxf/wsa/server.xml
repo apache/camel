@@ -39,7 +39,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 
     </cxf:bus>
     
-    <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />         
-    <bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+    <bean id="loggingOutInterceptor" class="org.apache.cxf.ext.logging.LoggingOutInterceptor" />         
+    <bean id="logInbound" class="org.apache.cxf.ext.logging.LoggingInInterceptor"/>
 
 </beans>

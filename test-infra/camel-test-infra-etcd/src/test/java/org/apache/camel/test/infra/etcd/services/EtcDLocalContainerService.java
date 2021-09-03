@@ -32,25 +32,27 @@ public class EtcDLocalContainerService implements EtcDService, ContainerService<
 
     private static final Logger LOG = LoggerFactory.getLogger(EtcDLocalContainerService.class);
 
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public EtcDLocalContainerService() {
-        String containerName = System.getProperty("etcd.container", CONTAINER_IMAGE);
-
-        initContainer(containerName);
+        this(System.getProperty("etcd.container", CONTAINER_IMAGE));
     }
 
-    public EtcDLocalContainerService(String containerName) {
-        initContainer(containerName);
+    public EtcDLocalContainerService(String imageName) {
+        container = initContainer(imageName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String containerName) {
-        container = new GenericContainer(containerName)
-                .withNetworkAliases(CONTAINER_NAME)
+    public EtcDLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    public GenericContainer initContainer(String imageName, String containerName) {
+        return new GenericContainer(imageName)
+                .withNetworkAliases(containerName)
                 .withExposedPorts(ETCD_CLIENT_PORT, ETCD_PEER_PORT)
                 .waitingFor(Wait.forLogMessage(".*etcdserver.*set the initial cluster version.*", 1))
                 .withCommand(
-                        "-name", CONTAINER_NAME + "-0",
+                        "-name", containerName + "-0",
                         "-advertise-client-urls",
                         "http://" + DockerClientFactory.instance().dockerHostIpAddress() + ":" + ETCD_CLIENT_PORT,
                         "-listen-client-urls", "http://0.0.0.0:" + ETCD_CLIENT_PORT);

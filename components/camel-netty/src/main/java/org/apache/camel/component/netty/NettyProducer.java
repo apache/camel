@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.util.Optional;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +37,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.AsyncCallback;
@@ -43,6 +45,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -59,6 +62,9 @@ import org.slf4j.LoggerFactory;
 public class NettyProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
+
+    private static final AttributeKey<NettyCamelStateCorrelationManager> CORRELATION_MANAGER_ATTR
+            = AttributeKey.valueOf("NettyCamelStateCorrelationManager");
 
     private ChannelGroup allChannels;
     private CamelContext context;
@@ -169,18 +175,6 @@ public class NettyProducer extends DefaultAsyncProducer {
     @Override
     protected void doStop() throws Exception {
         LOG.debug("Stopping producer at address: {}", configuration.getAddress());
-        // close all channels
-        LOG.trace("Closing {} channels", allChannels.size());
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-
-        // and then shutdown the thread pools
-        if (workerGroup != null) {
-            workerGroup.shutdownGracefully();
-            workerGroup = null;
-        }
-
-        ServiceHelper.stopService(correlationManager);
 
         if (pool != null) {
             if (LOG.isDebugEnabled()) {
@@ -189,6 +183,22 @@ public class NettyProducer extends DefaultAsyncProducer {
             pool.close();
         }
 
+        // close all channels
+        LOG.debug("Closing {} channels", allChannels.size());
+        ChannelGroupFuture future = allChannels.close();
+        future.awaitUninterruptibly();
+
+        // and then shutdown the thread pools
+        if (workerGroup != null) {
+            LOG.debug("Stopping worker group: {}", workerGroup);
+            workerGroup.shutdownGracefully();
+            workerGroup = null;
+        }
+
+        LOG.trace("Stopping correlation manager: {}", correlationManager);
+        ServiceHelper.stopService(correlationManager);
+
+        LOG.debug("Stopped producer at address: {}", configuration.getAddress());
         super.doStop();
     }
 
@@ -222,7 +232,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         // set the exchange encoding property
         if (getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
+                    IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
         }
 
         if (LOG.isTraceEnabled()) {
@@ -269,6 +280,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         // remember channel so we can reuse it
         final Channel channel = channelFuture.channel();
         if (getConfiguration().isReuseChannel() && exchange.getProperty(NettyConstants.NETTY_CHANNEL) == null) {
+            // remember correlation manager for this channel
+            // for use when sending subsequent messages reusing this channel
+            channel.attr(CORRELATION_MANAGER_ATTR).set(correlationManager);
             exchange.setProperty(NettyConstants.NETTY_CHANNEL, channel);
             // and defer closing the channel until we are done routing the exchange
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
@@ -298,6 +312,12 @@ public class NettyProducer extends DefaultAsyncProducer {
             });
         }
 
+        // Get appropriate correlation manager.
+        // If we reuse channel then get it from channel. CORRELATION_MANAGER_ATTR should be set at this point.
+        // Otherwise use correlation manager for this producer.
+        final NettyCamelStateCorrelationManager channelCorrelationManager
+                = Optional.ofNullable(channel.attr(CORRELATION_MANAGER_ATTR).get()).orElse(correlationManager);
+
         if (exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT) != null) {
             long timeoutInMs = exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT, Long.class);
             ChannelHandler oldHandler = channel.pipeline().get("timeout");
@@ -321,7 +341,8 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // setup state as attachment on the channel, so we can access the state later when needed
-        correlationManager.putState(channel, new NettyCamelState(producerCallback, exchange));
+        final NettyCamelState state = new NettyCamelState(producerCallback, exchange);
+        channelCorrelationManager.putState(channel, state);
         // here we need to setup the remote address information here
         InetSocketAddress remoteAddress = null;
         if (!isTcp()) {
@@ -333,7 +354,20 @@ public class NettyProducer extends DefaultAsyncProducer {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
+                    Throwable cause = null;
                     // no success then exit, (any exception has been handled by ClientChannelHandler#exceptionCaught)
+                    try {
+                        // need to get real caused exception from netty, which is not possible in a nice API
+                        // but we can try to get a result with a 0 timeout, then netty will throw the caused
+                        // exception wrapped in an outer exception
+                        channelFuture.get(0, TimeUnit.MILLISECONDS);
+                    } catch (Exception e) {
+                        cause = e.getCause();
+                    }
+                    if (cause != null) {
+                        exchange.setException(cause);
+                    }
+                    state.onExceptionCaughtOnce(false);
                     return;
                 }
 
@@ -665,7 +699,7 @@ public class NettyProducer extends DefaultAsyncProducer {
 
             try {
                 processWithConnectedChannel(exchange, callback, future, body);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
                 callback.done(false);
             }

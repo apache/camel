@@ -16,22 +16,18 @@
  */
 package org.apache.camel.component.slack;
 
+import com.slack.api.model.ConversationType;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.json.JsonObject;
 
 /**
  * Send and receive messages to/from Slack.
@@ -54,12 +50,18 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "producer")
     @Deprecated
     private String iconEmoji;
-    @UriParam(label = "consumer", secret = true)
+    @UriParam(secret = true)
     private String token;
     @UriParam(label = "consumer", defaultValue = "10")
     private String maxResults = "10";
     @UriParam(label = "consumer", defaultValue = "https://slack.com")
     private String serverUrl = "https://slack.com";
+    @UriParam(label = "consumer", defaultValue = "false", javaType = "boolean",
+              description = "Create exchanges in natural order (oldest to newest) or not")
+    private boolean naturalOrder;
+    @UriParam(label = "consumer", enums = "PUBLIC_CHANNEL,PRIVATE_CHANNEL,MPIM,IM", defaultValue = "PUBLIC_CHANNEL",
+              description = "Type of conversation")
+    private ConversationType conversationType = ConversationType.PUBLIC_CHANNEL;
 
     /**
      * Constructor for SlackEndpoint
@@ -71,11 +73,16 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     public SlackEndpoint(String uri, String channelName, SlackComponent component) {
         super(uri, component);
         this.webhookUrl = component.getWebhookUrl();
+        this.token = component.getToken();
         this.channel = channelName;
     }
 
     @Override
     public Producer createProducer() throws Exception {
+        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(webhookUrl)) {
+            throw new RuntimeCamelException(
+                    "Missing required endpoint configuration: token or webhookUrl must be defined for Slack producer");
+        }
         SlackProducer producer = new SlackProducer(this);
         return producer;
     }
@@ -183,25 +190,25 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         this.serverUrl = serverUrl;
     }
 
-    public Exchange createExchange(JsonObject object) {
-        return createExchange(getExchangePattern(), object);
+    /**
+     * Is consuming message in natural order
+     */
+    public void setNaturalOrder(boolean naturalOrder) {
+        this.naturalOrder = naturalOrder;
     }
 
-    public Exchange createExchange(ExchangePattern pattern, JsonObject object) {
-        Exchange exchange = super.createExchange(pattern);
-        SlackMessage slackMessage = new SlackMessage();
-        String text = object.getString(SlackConstants.SLACK_TEXT_FIELD);
-        String user = object.getString("user");
-        slackMessage.setText(text);
-        slackMessage.setUser(user);
-        if (ObjectHelper.isNotEmpty(object.get("icons"))) {
-            JsonObject icons = object.getMap("icons");
-            if (ObjectHelper.isNotEmpty(icons.get("emoji"))) {
-                slackMessage.setIconEmoji(icons.getString("emoji"));
-            }
-        }
-        Message message = exchange.getIn();
-        message.setBody(slackMessage);
-        return exchange;
+    public boolean isNaturalOrder() {
+        return naturalOrder;
+    }
+
+    /**
+     * The type of the conversation
+     */
+    public void setConversationType(ConversationType conversationType) {
+        this.conversationType = conversationType;
+    }
+
+    public ConversationType getConversationType() {
+        return conversationType;
     }
 }

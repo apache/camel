@@ -680,8 +680,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${id}", exchange.getIn().getMessageId());
 
         assertEquals(2, context.getLanguageNames().size());
-        assertEquals("csimple", context.getLanguageNames().get(0));
-        assertEquals("simple", context.getLanguageNames().get(1));
+        Iterator<String> it = context.getLanguageNames().iterator();
+        assertEquals("csimple", it.next());
+        assertEquals("simple", it.next());
     }
 
     @Test
@@ -1322,7 +1323,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (ExpressionEvaluationException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals(cause.getMessage(), "Index 3 out of bounds for length 2");
+            assertEquals("Index 3 out of bounds for length 2", cause.getMessage());
         }
     }
 

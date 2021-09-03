@@ -30,7 +30,6 @@ for this component:
 
 == URI format
 
-[source,text]
 -----------------------
 stream:in[?options]
 stream:out[?options]
@@ -43,13 +42,46 @@ If the `stream:header` URI is specified, the `stream` header is used to
 find the stream to write to. This option is available only for stream
 producers (that is, it cannot appear in `from()`).
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
-== Options
+// component-configure options: START
+== Configuring Options
 
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The Stream component supports 3 options, which are listed below.
 
 
@@ -63,9 +95,9 @@ The Stream component supports 3 options, which are listed below.
 |===
 // component options: END
 
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Stream endpoint is configured using URI syntax:
 
 ----
@@ -111,7 +143,6 @@ with the following path and query parameters:
 | *readTimeout* (advanced) | Sets the read timeout to a specified timeout, in milliseconds. A non-zero value specifies the timeout when reading from Input stream when a connection is established to a resource. If the timeout expires before there is data available for read, a java.net.SocketTimeoutException is raised. A timeout of zero is interpreted as an infinite timeout. |  | int
 |===
 // endpoint options: END
-
 
 
 == Message content
@@ -167,4 +198,4 @@ from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDel
   .to("bean:logService?method=parseLogLine");
 ----
 
-include::camel-spring-boot::page$stream-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$stream-starter.adoc[]

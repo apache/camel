@@ -25,6 +25,9 @@ import javax.validation.ValidationProviderResolver;
 import javax.validation.ValidatorFactory;
 import javax.validation.bootstrap.GenericBootstrap;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.CamelContextHelper;
+
 /**
  * Utility class dedicated to create new {@code javax.validation.ValidatorFactory} instances.
  */
@@ -34,63 +37,38 @@ public final class ValidatorFactories {
     }
 
     public static ValidatorFactory buildValidatorFactory(
-            boolean osgi, boolean ignoreXml,
+            CamelContext camelContext, boolean ignoreXml,
             ValidationProviderResolver validationProviderResolver,
             MessageInterpolator messageInterpolator,
             TraversableResolver traversableResolver,
             ConstraintValidatorFactory constraintValidatorFactory) {
 
-        ValidationProviderResolver resolvedValidationProviderResolver
-                = resolveValidationProviderResolver(osgi, validationProviderResolver);
-
+        if (validationProviderResolver == null) {
+            ValidationProviderResolverFactory factory
+                    = CamelContextHelper.findByType(camelContext, ValidationProviderResolverFactory.class);
+            if (factory != null) {
+                validationProviderResolver = factory.createValidationProviderResolver(camelContext);
+            }
+        }
         GenericBootstrap bootstrap = Validation.byDefaultProvider();
-        if (resolvedValidationProviderResolver != null) {
-            bootstrap.providerResolver(resolvedValidationProviderResolver);
+        if (validationProviderResolver != null) {
+            bootstrap.providerResolver(validationProviderResolver);
         }
         Configuration<?> configuration = bootstrap.configure();
-
         if (messageInterpolator != null) {
             configuration.messageInterpolator(messageInterpolator);
         }
-
         if (traversableResolver != null) {
             configuration.traversableResolver(traversableResolver);
         }
-
         if (constraintValidatorFactory != null) {
             configuration.constraintValidatorFactory(constraintValidatorFactory);
         }
-
         if (ignoreXml) {
             configuration.ignoreXmlConfiguration();
         }
 
         return configuration.buildValidatorFactory();
-    }
-
-    /**
-     * Resolves optional custom {@code javax.validation.ValidationProviderResolver} to be used by the component. By
-     * default component tries to use resolver instance bound to the Camel registry under name
-     * {@code validationProviderResolver} . If there is no such resolver instance in the registry and component is
-     * running in the OSGi environment, {@link HibernateValidationProviderResolver} will be used. In all the other cases
-     * this method will return null.
-     *
-     * @param  osgi                       specifies if validator factory should be OSGi-aware
-     * @param  validationProviderResolver predefined provider resolver. This parameter overrides the results of the
-     *                                    resolution.
-     * @return                            {@code javax.validation.ValidationProviderResolver} instance or null if no
-     *                                    custom resolver should be used by the component
-     */
-    private static ValidationProviderResolver resolveValidationProviderResolver(
-            boolean osgi,
-            ValidationProviderResolver validationProviderResolver) {
-        if (validationProviderResolver != null) {
-            return validationProviderResolver;
-        }
-        if (osgi) {
-            return new HibernateValidationProviderResolver();
-        }
-        return null;
     }
 
 }

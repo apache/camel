@@ -139,7 +139,7 @@ public class URISupportTest {
 
     @Test
     public void testParseParametersURLEncodedValue() throws Exception {
-        String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren+Hansen");
+        String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen");
         URI uri = new URI(out);
 
         Map<String, Object> parameters = URISupport.parseParameters(uri);
@@ -200,12 +200,12 @@ public class URISupportTest {
 
     @Test
     public void testParseParameters() throws Exception {
-        URI u = new URI("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?");
+        URI u = new URI("quartz:myGroup/myTimerName?cron=0%200%20*%20*%20*%20?");
         Map<String, Object> params = URISupport.parseParameters(u);
         assertEquals(1, params.size());
         assertEquals("0 0 * * * ?", params.get("cron"));
 
-        u = new URI("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?&bar=123");
+        u = new URI("quartz:myGroup/myTimerName?cron=0%200%20*%20*%20*%20?&bar=123");
         params = URISupport.parseParameters(u);
         assertEquals(2, params.size());
         assertEquals("0 0 * * * ?", params.get("cron"));
@@ -575,6 +575,19 @@ public class URISupportTest {
         assertEquals(null, URISupport.extractQuery("file:foo"));
         assertEquals("recursive=true", URISupport.extractQuery("file:foo?recursive=true"));
         assertEquals("recursive=true&delete=true", URISupport.extractQuery("file:foo?recursive=true&delete=true"));
+    }
+
+    @Test
+    public void testPlusInQuery() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("param1", "+447777111222");
+        String q = URISupport.createQueryString(map);
+        assertEquals("param1=%2B447777111222", q);
+
+        // will be double encoded however
+        map.put("param1", "%2B447777111222");
+        q = URISupport.createQueryString(map);
+        assertEquals("param1=%252B447777111222", q);
     }
 
 }

@@ -21,8 +21,10 @@ import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -83,6 +85,8 @@ public class HdfsConsumerTest {
         when(endpointConfig.getOpenedSuffix()).thenReturn(DEFAULT_OPENED_SUFFIX);
 
         context = new DefaultCamelContext();
+        // this test is mocking and its easier to test with prototype scoped
+        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PrototypeExchangeFactory());
     }
 
     @Test
@@ -159,6 +163,7 @@ public class HdfsConsumerTest {
         ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
 
         underTest = new HdfsConsumer(endpoint, processor, endpointConfig, hdfsInfoFactory, new StringBuilder(hdfsPath));
+        underTest.start();
 
         // when
         int actual = underTest.doPoll();
@@ -211,6 +216,7 @@ public class HdfsConsumerTest {
         ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
 
         underTest = new HdfsConsumer(endpoint, processor, endpointConfig, hdfsInfoFactory, new StringBuilder(hdfsPath));
+        underTest.start();
 
         // when
         int actual = underTest.doPoll();

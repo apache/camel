@@ -120,7 +120,9 @@ public final class Scanner implements Iterator<String>, Closeable {
 
     @Override
     public boolean hasNext() {
-        checkClosed();
+        if (closed) {
+            return false;
+        }
         saveState();
         while (!inputExhausted) {
             if (hasTokenInBuffer()) {
@@ -149,6 +151,10 @@ public final class Scanner implements Iterator<String>, Closeable {
                 throwFor();
             }
         }
+    }
+
+    public String getDelim() {
+        return delimPattern.pattern();
     }
 
     private void saveState() {
@@ -251,7 +257,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         }
         matcher.region(position, buf.limit());
         boolean foundNextDelim = matcher.find();
-        if (foundNextDelim && (matcher.end() == position)) {
+        if (foundNextDelim && matcher.end() == position) {
             foundNextDelim = matcher.find();
         }
         if (foundNextDelim) {

@@ -34,7 +34,7 @@ public interface GoogleMailStreamComponentBuilderFactory {
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
      * 
-     * Category: cloud,api,mail
+     * Category: cloud,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
      * 
@@ -121,7 +121,7 @@ public interface GoogleMailStreamComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param markAsRead the value to set

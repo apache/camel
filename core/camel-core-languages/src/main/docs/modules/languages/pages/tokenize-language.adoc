@@ -2,7 +2,7 @@
 = Tokenize Language
 :docTitle: Tokenize
 :artifactId: camel-core-languages
-:description: Tokenize text payloads using the specified delimiter patterns.
+:description: Tokenize text payloads using delimiter patterns.
 :since: 2.0
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/tokenize.adoc[opts=optional]
@@ -17,8 +17,9 @@ specified delimiter pattern. It can also be used to tokenize XML
 documents with some limited capability. For a truly XML-aware
 tokenization, the use of the XMLTokenizer
 language is recommended as it offers a faster, more efficient
-tokenization specifically for XML documents. For more details
-see Splitter.
+tokenization specifically for XML documents.
+
+For more details see xref:{eip-vc}:eips:split-eip.adoc[Split] EIP.
 
 == Tokenize Options
 

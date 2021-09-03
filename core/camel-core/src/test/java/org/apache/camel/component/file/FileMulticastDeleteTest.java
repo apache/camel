@@ -21,7 +21,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -29,20 +28,13 @@ import org.junit.jupiter.api.Test;
  */
 public class FileMulticastDeleteTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/inbox");
-        super.setUp();
-    }
-
     @Test
     public void testFileMulticastDelete() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Got Hello World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/data/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,7 +44,7 @@ public class FileMulticastDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/inbox?delete=true&initialDelay=0&delay=10").multicast(new UseLatestAggregationStrategy())
+                from(fileUri("?delete=true&initialDelay=0&delay=10")).multicast(new UseLatestAggregationStrategy())
                         .shareUnitOfWork().to("direct:foo", "direct:bar")
                         .end().convertBodyTo(String.class).to("mock:result");
 

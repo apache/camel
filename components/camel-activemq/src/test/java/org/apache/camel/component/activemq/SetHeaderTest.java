@@ -21,22 +21,21 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * 
  */
 
-@ContextConfiguration
-@ExtendWith(SpringExtension.class)
+@CamelSpringTest
 public class SetHeaderTest {
     private static final transient Logger LOG = LoggerFactory.getLogger(SetHeaderTest.class);
 
@@ -58,7 +57,22 @@ public class SetHeaderTest {
         List<Exchange> list = expectedEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
             Object body = exchange.getIn().getBody();
-            LOG.debug("Received: body: " + body + " of type: " + ObjectHelper.className(body) + " on: " + exchange);
+            LOG.debug("Received: body: {} of type: {} on: {}", body, ObjectHelper.className(body), exchange);
+        }
+    }
+
+    /**
+     *
+     */
+    public static class SetGroupIdProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            // lets copy the IN to the OUT message
+            Message out = exchange.getMessage();
+            out.copyFrom(exchange.getIn());
+
+            // now lets set a header
+            out.setHeader("JMSXGroupID", "ABC");
         }
     }
 }

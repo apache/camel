@@ -66,7 +66,7 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return new AsteriskProducer(this);
     }
 

@@ -25,16 +25,12 @@
     ">
 
   <!-- START SNIPPET: e1 -->
-  
-  <bean id="asn1" class="org.apache.camel.dataformat.asn1.ASN1DataFormat">
-    <property name="usingIterator" value="true"/> 
-    <property name="clazzName" value="org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr"/>
-  </bean>
-
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:unmarshal"/>
-      <unmarshal><custom ref="asn1"/></unmarshal>
+      <unmarshal>
+        <asn1 unmarshalType="org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr" usingIterator="true"/>
+      </unmarshal>
       <split streaming="true">
         <simple>${body}</simple>
         <to uri="mock:unmarshal"/>

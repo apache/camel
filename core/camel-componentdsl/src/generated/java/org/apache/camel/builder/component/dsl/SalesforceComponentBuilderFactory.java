@@ -501,6 +501,75 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
+         * performs PK chunking automatically, if necessary.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunking the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pkChunking(
+                java.lang.Boolean pkChunking) {
+            doSetProperty("pkChunking", pkChunking);
+            return this;
+        }
+        /**
+         * Chunk size for use with PK Chunking. If unspecified, salesforce
+         * default is 100,000. Maximum size is 250,000.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingChunkSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pkChunkingChunkSize(
+                java.lang.Integer pkChunkingChunkSize) {
+            doSetProperty("pkChunkingChunkSize", pkChunkingChunkSize);
+            return this;
+        }
+        /**
+         * Specifies the parent object when you're enabling PK chunking for
+         * queries on sharing objects. The chunks are based on the parent
+         * object's records rather than the sharing object's records. For
+         * example, when querying on AccountShare, specify Account as the parent
+         * object. PK chunking is supported for sharing objects as long as the
+         * parent object is supported.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingParent the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pkChunkingParent(
+                java.lang.String pkChunkingParent) {
+            doSetProperty("pkChunkingParent", pkChunkingParent);
+            return this;
+        }
+        /**
+         * Specifies the 15-character or 18-character record ID to be used as
+         * the lower boundary for the first chunk. Use this parameter to specify
+         * a starting ID when restarting a job that failed between batches.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingStartRow the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pkChunkingStartRow(
+                java.lang.String pkChunkingStartRow) {
+            doSetProperty("pkChunkingStartRow", pkChunkingStartRow);
+            return this;
+        }
+        /**
          * Query Locator provided by salesforce for use when a query results in
          * more records than can be retrieved in a single call. Use this value
          * in a subsequent call to retrieve additional records.
@@ -804,6 +873,22 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Composite API option to indicate to rollback all records if any are
+         * not successful.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allOrNone the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder allOrNone(boolean allOrNone) {
+            doSetProperty("allOrNone", allOrNone);
+            return this;
+        }
+        /**
          * APEX method URL.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -854,6 +939,68 @@ public interface SalesforceComponentBuilderFactory {
         default SalesforceComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Comma separated list of message headers to include as HTTP parameters
+         * for Raw operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawHttpHeaders the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder rawHttpHeaders(
+                java.lang.String rawHttpHeaders) {
+            doSetProperty("rawHttpHeaders", rawHttpHeaders);
+            return this;
+        }
+        /**
+         * HTTP method to use for the Raw operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawMethod the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder rawMethod(java.lang.String rawMethod) {
+            doSetProperty("rawMethod", rawMethod);
+            return this;
+        }
+        /**
+         * The portion of the endpoint URL after the domain name. E.g.,
+         * '/services/data/v52.0/sobjects/Account/'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawPath the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder rawPath(java.lang.String rawPath) {
+            doSetProperty("rawPath", rawPath);
+            return this;
+        }
+        /**
+         * Comma separated list of message headers to include as query
+         * parameters for Raw operation. Do not url-encode values as this will
+         * be done automatically.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawQueryParameters the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder rawQueryParameters(
+                java.lang.String rawQueryParameters) {
+            doSetProperty("rawQueryParameters", rawQueryParameters);
             return this;
         }
         /**
@@ -1121,6 +1268,23 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Value to use for the Audience claim (aud) when using OAuth JWT flow.
+         * If not set, the login URL will be used, which is appropriate in most
+         * cases.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param jwtAudience the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder jwtAudience(
+                java.lang.String jwtAudience) {
+            doSetProperty("jwtAudience", jwtAudience);
+            return this;
+        }
+        /**
          * KeyStore parameters to use in OAuth JWT flow. The KeyStore should
          * contain only one entry with private key and certificate. Salesforce
          * does not verify the certificate chain, so this can easily be a
@@ -1331,6 +1495,10 @@ public interface SalesforceComponentBuilderFactory {
             case "notifyForOperationUpdate": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationUpdate((java.lang.Boolean) value); return true;
             case "objectMapper": getOrCreateConfiguration((SalesforceComponent) component).setObjectMapper((com.fasterxml.jackson.databind.ObjectMapper) value); return true;
             case "packages": ((SalesforceComponent) component).setPackages((java.lang.String) value); return true;
+            case "pkChunking": getOrCreateConfiguration((SalesforceComponent) component).setPkChunking((java.lang.Boolean) value); return true;
+            case "pkChunkingChunkSize": getOrCreateConfiguration((SalesforceComponent) component).setPkChunkingChunkSize((java.lang.Integer) value); return true;
+            case "pkChunkingParent": getOrCreateConfiguration((SalesforceComponent) component).setPkChunkingParent((java.lang.String) value); return true;
+            case "pkChunkingStartRow": getOrCreateConfiguration((SalesforceComponent) component).setPkChunkingStartRow((java.lang.String) value); return true;
             case "queryLocator": getOrCreateConfiguration((SalesforceComponent) component).setQueryLocator((java.lang.String) value); return true;
             case "rawPayload": getOrCreateConfiguration((SalesforceComponent) component).setRawPayload((boolean) value); return true;
             case "reportId": getOrCreateConfiguration((SalesforceComponent) component).setReportId((java.lang.String) value); return true;
@@ -1350,9 +1518,14 @@ public interface SalesforceComponentBuilderFactory {
             case "httpClientProperties": ((SalesforceComponent) component).setHttpClientProperties((java.util.Map) value); return true;
             case "longPollingTransportProperties": ((SalesforceComponent) component).setLongPollingTransportProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((SalesforceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "allOrNone": getOrCreateConfiguration((SalesforceComponent) component).setAllOrNone((boolean) value); return true;
             case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
             case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;
             case "lazyStartProducer": ((SalesforceComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "rawHttpHeaders": getOrCreateConfiguration((SalesforceComponent) component).setRawHttpHeaders((java.lang.String) value); return true;
+            case "rawMethod": getOrCreateConfiguration((SalesforceComponent) component).setRawMethod((java.lang.String) value); return true;
+            case "rawPath": getOrCreateConfiguration((SalesforceComponent) component).setRawPath((java.lang.String) value); return true;
+            case "rawQueryParameters": getOrCreateConfiguration((SalesforceComponent) component).setRawQueryParameters((java.lang.String) value); return true;
             case "autowiredEnabled": ((SalesforceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "httpProxyExcludedAddresses": ((SalesforceComponent) component).setHttpProxyExcludedAddresses((java.util.Set) value); return true;
             case "httpProxyHost": ((SalesforceComponent) component).setHttpProxyHost((java.lang.String) value); return true;
@@ -1369,6 +1542,7 @@ public interface SalesforceComponentBuilderFactory {
             case "httpProxyUseDigestAuth": ((SalesforceComponent) component).setHttpProxyUseDigestAuth((boolean) value); return true;
             case "httpProxyUsername": ((SalesforceComponent) component).setHttpProxyUsername((java.lang.String) value); return true;
             case "instanceUrl": ((SalesforceComponent) component).setInstanceUrl((java.lang.String) value); return true;
+            case "jwtAudience": ((SalesforceComponent) component).setJwtAudience((java.lang.String) value); return true;
             case "keystore": ((SalesforceComponent) component).setKeystore((org.apache.camel.support.jsse.KeyStoreParameters) value); return true;
             case "lazyLogin": ((SalesforceComponent) component).setLazyLogin((boolean) value); return true;
             case "loginConfig": ((SalesforceComponent) component).setLoginConfig((org.apache.camel.component.salesforce.SalesforceLoginConfig) value); return true;

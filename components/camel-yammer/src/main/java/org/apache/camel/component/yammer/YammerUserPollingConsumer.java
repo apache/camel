@@ -69,7 +69,7 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = createExchange(false);
 
         try {
             String jsonBody = requestor.get();
@@ -105,6 +105,7 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
+            releaseExchange(exchange, false);
         }
     }
 

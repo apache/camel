@@ -60,4 +60,4 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -----------------------------------------------------------
 
-include::camel-spring-boot::page$xstream-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$xstream-starter.adoc[]

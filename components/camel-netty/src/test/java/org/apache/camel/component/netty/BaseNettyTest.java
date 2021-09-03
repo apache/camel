@@ -28,6 +28,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.logging.log4j.core.LogEvent;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,18 +39,15 @@ public class BaseNettyTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseNettyTest.class);
 
-    private static volatile int port;
-
-    @BeforeAll
-    public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
-    }
+    @RegisterExtension
+    protected AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @BeforeAll
     public static void startLeakDetection() {
         System.setProperty("io.netty.leakDetection.maxRecords", "100");
         System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        System.setProperty("io.netty.leakDetection.targetRecords", "100");
+        LogCaptureAppender.reset();
     }
 
     @AfterAll
@@ -58,14 +56,13 @@ public class BaseNettyTest extends CamelTestSupport {
         System.gc();
         // Kick leak detection logging
         ByteBufAllocator.DEFAULT.buffer(1).release();
-        Collection<LogEvent> events = LogCaptureAppender.getEvents();
+        Collection<LogEvent> events = LogCaptureAppender.getEvents(ResourceLeakDetector.class);
         if (!events.isEmpty()) {
             String message = "Leaks detected while running tests: " + events;
             // Just write the message into log to help debug
             for (LogEvent event : events) {
-                LOG.info(event.getMessage().getFormattedMessage());
+                LOG.info(event.getMessage().toString());
             }
-            LogCaptureAppender.reset();
             throw new AssertionError(message);
         }
     }
@@ -86,13 +83,8 @@ public class BaseNettyTest extends CamelTestSupport {
         return prop;
     }
 
-    protected int getNextPort() {
-        port = AvailablePortFinder.getNextAvailable();
-        return port;
-    }
-
     protected int getPort() {
-        return port;
+        return port.getPort();
     }
 
     protected String byteArrayToHex(byte[] bytes) {

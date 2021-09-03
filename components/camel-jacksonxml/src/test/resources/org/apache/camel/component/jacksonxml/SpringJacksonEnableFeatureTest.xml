@@ -27,7 +27,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
     <dataFormats>
-      <jacksonxml id="jack" unmarshalTypeName="org.apache.camel.component.jacksonxml.TestPojo"
+      <jacksonxml id="jack" unmarshalType="org.apache.camel.component.jacksonxml.TestPojo"
             enableFeatures="WRAP_ROOT_VALUE"/>
     </dataFormats>
 

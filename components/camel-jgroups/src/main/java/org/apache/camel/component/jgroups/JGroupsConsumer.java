@@ -40,7 +40,7 @@ public class JGroupsConsumer extends DefaultConsumer {
         this.endpoint = endpoint;
         this.clusterName = clusterName;
 
-        this.receiver = new CamelJGroupsReceiver(endpoint, processor);
+        this.receiver = new CamelJGroupsReceiver(this, endpoint, processor);
     }
 
     @Override

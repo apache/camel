@@ -19,13 +19,13 @@ package org.apache.camel.component.mllp;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.nio.charset.Charset;
 import java.util.Date;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -50,22 +50,6 @@ import org.slf4j.Logger;
 @UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port",
              category = { Category.NETWORKING, Category.RPC, Category.MLLP }, generateConfigurer = false)
 public class MllpEndpoint extends DefaultEndpoint {
-    // Use constants from MllpProtocolConstants
-    @Deprecated()
-    public static final char START_OF_BLOCK = MllpProtocolConstants.START_OF_BLOCK;
-    @Deprecated()
-    public static final char END_OF_BLOCK = MllpProtocolConstants.END_OF_BLOCK;
-    @Deprecated()
-    public static final char END_OF_DATA = MllpProtocolConstants.END_OF_DATA;
-    @Deprecated()
-    public static final int END_OF_STREAM = MllpProtocolConstants.END_OF_STREAM;
-    @Deprecated()
-    public static final char SEGMENT_DELIMITER = MllpProtocolConstants.SEGMENT_DELIMITER;
-    @Deprecated()
-    public static final char MESSAGE_TERMINATOR = MllpProtocolConstants.MESSAGE_TERMINATOR;
-
-    @Deprecated // Use MllpComponent.getDefaultCharset()
-    public static final Charset DEFAULT_CHARSET = MllpComponent.getDefaultCharset();
 
     @UriPath
     @Metadata(required = true)
@@ -109,9 +93,9 @@ public class MllpEndpoint extends DefaultEndpoint {
         super.setBridgeErrorHandler(configuration.isBridgeErrorHandler());
     }
 
-    private void setExchangeProperties(Exchange mllpExchange) {
+    void setExchangeProperties(Exchange mllpExchange) {
         if (configuration.hasCharsetName()) {
-            mllpExchange.setProperty(Exchange.CHARSET_NAME, configuration.getCharsetName());
+            mllpExchange.setProperty(ExchangePropertyKey.CHARSET_NAME, configuration.getCharsetName());
         }
     }
 
@@ -281,16 +265,6 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     public void setHl7Headers(Boolean hl7Headers) {
         configuration.setHl7Headers(hl7Headers);
-    }
-
-    /**
-     * @deprecated              this parameter will be ignored.
-     *
-     * @param      bufferWrites
-     */
-    @Deprecated
-    public void setBufferWrites(Boolean bufferWrites) {
-        configuration.setBufferWrites(bufferWrites);
     }
 
     public void setRequireEndOfData(Boolean requireEndOfData) {

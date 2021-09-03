@@ -22,18 +22,17 @@ import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ServiceResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesServicesProducer extends DefaultProducer {
 
@@ -50,34 +49,28 @@ public class KubernetesServicesProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String operation;
-
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
-            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
-        } else {
-            operation = getEndpoint().getKubernetesConfiguration().getOperation();
-        }
+        String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
 
             case KubernetesOperations.LIST_SERVICES_OPERATION:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_SERVICES_BY_LABELS_OPERATION:
-                doListServiceByLabels(exchange, operation);
+                doListServiceByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_SERVICE_OPERATION:
-                doGetService(exchange, operation);
+                doGetService(exchange);
                 break;
 
             case KubernetesOperations.CREATE_SERVICE_OPERATION:
-                doCreateService(exchange, operation);
+                doCreateService(exchange);
                 break;
 
             case KubernetesOperations.DELETE_SERVICE_OPERATION:
-                doDeleteService(exchange, operation);
+                doDeleteService(exchange);
                 break;
 
             default:
@@ -85,7 +78,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange) {
         ServiceList servicesList = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
@@ -93,34 +86,33 @@ public class KubernetesServicesProducer extends DefaultProducer {
         } else {
             servicesList = getEndpoint().getKubernetesClient().services().inAnyNamespace().list();
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(servicesList.getItems());
+        prepareOutboundMessage(exchange, servicesList.getItems());
     }
 
-    protected void doListServiceByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListServiceByLabels(Exchange exchange) {
         ServiceList servicesList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Service, ServiceList, ServiceResource<Service>> services
-                    = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName);
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                services.withLabel(entry.getKey(), entry.getValue());
-            }
-            servicesList = services.list();
+            servicesList = getEndpoint()
+                    .getKubernetesClient()
+                    .services()
+                    .inNamespace(namespaceName)
+                    .withLabels(labels)
+                    .list();
         } else {
-            FilterWatchListMultiDeletable<Service, ServiceList> services
-                    = getEndpoint().getKubernetesClient().services().inAnyNamespace();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                services.withLabel(entry.getKey(), entry.getValue());
-            }
-            servicesList = services.list();
+            servicesList = getEndpoint()
+                    .getKubernetesClient()
+                    .services()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(servicesList.getItems());
+
+        prepareOutboundMessage(exchange, servicesList.getItems());
     }
 
-    protected void doGetService(Exchange exchange, String operation) throws Exception {
+    protected void doGetService(Exchange exchange) {
         Service service = null;
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -133,11 +125,11 @@ public class KubernetesServicesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get a specific service require specify a namespace name");
         }
         service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).get();
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(service);
+
+        prepareOutboundMessage(exchange, service);
     }
 
-    protected void doCreateService(Exchange exchange, String operation) throws Exception {
+    protected void doCreateService(Exchange exchange) {
         Service service = null;
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -158,11 +150,11 @@ public class KubernetesServicesProducer extends DefaultProducer {
         Service serviceCreating = new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labels).endMetadata()
                 .withSpec(serviceSpec).build();
         service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).create(serviceCreating);
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(service);
+
+        prepareOutboundMessage(exchange, service);
     }
 
-    protected void doDeleteService(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteService(Exchange exchange) {
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(serviceName)) {
@@ -175,7 +167,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         }
         boolean serviceDeleted
                 = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).delete();
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(serviceDeleted);
+
+        prepareOutboundMessage(exchange, serviceDeleted);
     }
 }

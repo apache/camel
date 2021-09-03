@@ -25,6 +25,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
@@ -87,7 +88,9 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
 
         assertEquals(2, context.getRoutes().size());
 
-        assertTrue(context.getRouteController().getRouteStatus("route1").isStarted(), "Route should be started");
+        for (Route route : context.getRoutes()) {
+            assertTrue(context.getRouteController().getRouteStatus(route.getRouteId()).isStarted(), "Route should be started");
+        }
 
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         template.sendBody("seda:get-say-hello-bar", "Hello World");

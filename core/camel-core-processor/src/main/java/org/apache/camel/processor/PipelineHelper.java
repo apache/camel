@@ -18,15 +18,21 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.slf4j.Logger;
 
 /**
  * Helper for processing {@link org.apache.camel.Exchange} in a
  * <a href="http://camel.apache.org/pipes-and-filters.html">pipeline</a>.
  */
+@EagerClassloaded
 public final class PipelineHelper {
 
     private PipelineHelper() {
+    }
+
+    public static void onClassloaded(Logger log) {
+        log.trace("Loaded PipelineHelper");
     }
 
     /**
@@ -41,7 +47,7 @@ public final class PipelineHelper {
     public static boolean continueProcessing(Exchange exchange, String message, Logger log) {
         ExtendedExchange ee = (ExtendedExchange) exchange;
         boolean stop = ee.isFailed() || ee.isRollbackOnly() || ee.isRollbackOnlyLast()
-                || (ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled());
+                || ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled();
         if (stop) {
             // The errorErrorHandler is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.

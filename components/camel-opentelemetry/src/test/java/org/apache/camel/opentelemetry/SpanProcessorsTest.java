@@ -50,7 +50,7 @@ public class SpanProcessorsTest extends CamelOpenTelemetryTestSupport {
                 });
 
         verify();
-        assertEquals(result.getMessage().getHeader("baggage-header", String.class), "request-header-value");
+        assertEquals("request-header-value", result.getMessage().getHeader("baggage-header", String.class));
     }
 
     @Override

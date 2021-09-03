@@ -54,6 +54,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "consumerStreams": target.getConfiguration().setConsumerStreams(property(camelContext, int.class, value)); return true;
         case "consumerscount":
         case "consumersCount": target.getConfiguration().setConsumersCount(property(camelContext, int.class, value)); return true;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": target.getConfiguration().setDeliveryTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "enableidempotence":
         case "enableIdempotence": target.getConfiguration().setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -68,6 +70,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "fetchWaitMaxMs": target.getConfiguration().setFetchWaitMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "groupid":
         case "groupId": target.getConfiguration().setGroupId(property(camelContext, java.lang.String.class, value)); return true;
+        case "groupinstanceid":
+        case "groupInstanceId": target.getConfiguration().setGroupInstanceId(property(camelContext, java.lang.String.class, value)); return true;
         case "headerdeserializer":
         case "headerDeserializer": target.getConfiguration().setHeaderDeserializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class, value)); return true;
         case "headerfilterstrategy":
@@ -124,6 +128,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": target.getConfiguration().setPartitionKey(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitioner": target.getConfiguration().setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollonerror":
+        case "pollOnError": target.getConfiguration().setPollOnError(property(camelContext, org.apache.camel.component.kafka.PollOnError.class, value)); return true;
         case "polltimeoutms":
         case "pollTimeoutMs": target.getConfiguration().setPollTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
         case "producerbatchsize":
@@ -248,6 +254,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "consumerStreams": return int.class;
         case "consumerscount":
         case "consumersCount": return int.class;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return java.lang.Integer.class;
         case "enableidempotence":
         case "enableIdempotence": return boolean.class;
         case "exceptionhandler":
@@ -262,6 +270,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "fetchWaitMaxMs": return java.lang.Integer.class;
         case "groupid":
         case "groupId": return java.lang.String.class;
+        case "groupinstanceid":
+        case "groupInstanceId": return java.lang.String.class;
         case "headerdeserializer":
         case "headerDeserializer": return org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class;
         case "headerfilterstrategy":
@@ -318,6 +328,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return java.lang.Integer.class;
         case "partitioner": return java.lang.String.class;
+        case "pollonerror":
+        case "pollOnError": return org.apache.camel.component.kafka.PollOnError.class;
         case "polltimeoutms":
         case "pollTimeoutMs": return java.lang.Long.class;
         case "producerbatchsize":
@@ -443,6 +455,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "consumerStreams": return target.getConfiguration().getConsumerStreams();
         case "consumerscount":
         case "consumersCount": return target.getConfiguration().getConsumersCount();
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return target.getConfiguration().getDeliveryTimeoutMs();
         case "enableidempotence":
         case "enableIdempotence": return target.getConfiguration().isEnableIdempotence();
         case "exceptionhandler":
@@ -457,6 +471,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "fetchWaitMaxMs": return target.getConfiguration().getFetchWaitMaxMs();
         case "groupid":
         case "groupId": return target.getConfiguration().getGroupId();
+        case "groupinstanceid":
+        case "groupInstanceId": return target.getConfiguration().getGroupInstanceId();
         case "headerdeserializer":
         case "headerDeserializer": return target.getConfiguration().getHeaderDeserializer();
         case "headerfilterstrategy":
@@ -513,6 +529,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return target.getConfiguration().getPartitionKey();
         case "partitioner": return target.getConfiguration().getPartitioner();
+        case "pollonerror":
+        case "pollOnError": return target.getConfiguration().getPollOnError();
         case "polltimeoutms":
         case "pollTimeoutMs": return target.getConfiguration().getPollTimeoutMs();
         case "producerbatchsize":

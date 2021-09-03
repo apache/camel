@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslProperty;
 
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "circuitBreaker")
@@ -42,6 +43,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
     @XmlAttribute
     private String configurationRef;
+    @DslProperty
     @XmlTransient
     private OnFallbackDefinition onFallback;
 

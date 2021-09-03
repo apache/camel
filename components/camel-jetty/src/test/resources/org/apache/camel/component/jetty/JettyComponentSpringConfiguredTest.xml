@@ -33,7 +33,7 @@
 	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
-			<from uri="jetty2:http://localhost:9090/myapp"/>
+			<from uri="jetty2:http://localhost:{{port}}/myapp"/>
 			<transform>
 				<simple>Hello ${body}</simple>
 			</transform>

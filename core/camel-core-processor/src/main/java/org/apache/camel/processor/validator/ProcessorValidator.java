@@ -18,13 +18,11 @@ package org.apache.camel.processor.validator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
-import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -58,20 +56,17 @@ public class ProcessorValidator extends Validator {
 
         LOG.debug("Sending to validate processor '{}'", processor);
         // create a new exchange to use during validation to avoid side-effects on original exchange
-        Exchange validateExchange = new DefaultExchange(exchange);
-        validateExchange.setIn(message);
-        validateExchange.adapt(ExtendedExchange.class).setProperties(exchange.getProperties());
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false, true);
         try {
-            processor.process(validateExchange);
+            processor.process(copy);
 
             // if the validation failed then propagate the exception
-            if (validateExchange.getException() != null) {
-                exchange.setException(validateExchange.getException());
+            if (copy.getException() != null) {
+                exchange.setException(copy.getException());
             } else {
                 // success copy result
-                ExchangeHelper.copyResults(exchange, validateExchange);
+                ExchangeHelper.copyResults(exchange, copy);
             }
-
         } catch (Exception e) {
             if (e instanceof ValidationException) {
                 throw (ValidationException) e;
@@ -99,6 +94,16 @@ public class ProcessorValidator extends Validator {
             validatorString = String.format("ProcessorValidator[type='%s', processor='%s']", getType(), processor);
         }
         return validatorString;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processor);
     }
 
     @Override

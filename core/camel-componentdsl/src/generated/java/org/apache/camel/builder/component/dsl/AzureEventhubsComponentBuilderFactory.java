@@ -92,24 +92,6 @@ public interface AzureEventhubsComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClient the value to set
-         * @return the dsl builder
-         */
-        default AzureEventhubsComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * The component configurations.
          * 
          * The option is a:
@@ -479,7 +461,6 @@ public interface AzureEventhubsComponentBuilderFactory {
             switch (name) {
             case "amqpRetryOptions": getOrCreateConfiguration((EventHubsComponent) component).setAmqpRetryOptions((com.azure.core.amqp.AmqpRetryOptions) value); return true;
             case "amqpTransportType": getOrCreateConfiguration((EventHubsComponent) component).setAmqpTransportType((com.azure.core.amqp.AmqpTransportType) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((EventHubsComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((EventHubsComponent) component).setConfiguration((org.apache.camel.component.azure.eventhubs.EventHubsConfiguration) value); return true;
             case "blobAccessKey": getOrCreateConfiguration((EventHubsComponent) component).setBlobAccessKey((java.lang.String) value); return true;
             case "blobAccountName": getOrCreateConfiguration((EventHubsComponent) component).setBlobAccountName((java.lang.String) value); return true;

@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -133,7 +134,44 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         return done;
     }
 
-    private void processCreateJob(final Exchange exchange, final AsyncCallback callback) throws InvalidPayloadException {
+    @Override
+    public Map<String, List<String>> determineHeaders(Exchange exchange) {
+        Map<String, List<String>> headers = super.determineHeaders(exchange);
+        try {
+            Boolean pkChunking = getParameter(
+                    SalesforceEndpointConfig.PK_CHUNKING, exchange, IGNORE_BODY, IS_OPTIONAL,
+                    Boolean.class);
+            if (pkChunking != null && pkChunking) {
+                List<String> values = new ArrayList<>();
+                values.add("true");
+                Integer chunkSize = getParameter(
+                        SalesforceEndpointConfig.PK_CHUNKING_CHUNK_SIZE, exchange, IGNORE_BODY, IS_OPTIONAL,
+                        Integer.class);
+                if (chunkSize != null) {
+                    values.add("chunkSize=" + chunkSize);
+                }
+                String startRow = getParameter(
+                        SalesforceEndpointConfig.PK_CHUNKING_START_ROW, exchange, IGNORE_BODY, IS_OPTIONAL,
+                        String.class);
+                if (startRow != null) {
+                    values.add("startRow=" + startRow);
+                }
+                String parent = getParameter(
+                        SalesforceEndpointConfig.PK_CHUNKING_PARENT, exchange, IGNORE_BODY, IS_OPTIONAL,
+                        String.class);
+                if (parent != null) {
+                    values.add("parent=" + parent);
+                }
+                headers.put("Sforce-Enable-PKChunking", values);
+            }
+        } catch (SalesforceException e) {
+            throw new RuntimeException(e);
+        }
+        return headers;
+    }
+
+    private void processCreateJob(final Exchange exchange, final AsyncCallback callback)
+            throws InvalidPayloadException {
         JobInfo jobBody = exchange.getIn().getMandatoryBody(JobInfo.class);
         bulkClient.createJob(jobBody, determineHeaders(exchange), new BulkApiClient.JobInfoResponseCallback() {
             @Override

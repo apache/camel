@@ -32,6 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.snakeyaml.custom.CustomClassLoaderConstructor;
 import org.apache.camel.spi.DataFormat;
@@ -54,13 +55,16 @@ import org.yaml.snakeyaml.resolver.Resolver;
  * Marshal and unmarshal Java objects to and from YAML using <a href="http://www.snakeyaml.org">SnakeYAML</a>
  */
 @Dataformat("yaml-snakeyaml")
-public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+
+    private CamelContext camelContext;
     private final ThreadLocal<WeakReference<Yaml>> yamlCache;
     private Function<CamelContext, BaseConstructor> constructor;
     private Function<CamelContext, Representer> representer;
     private Function<CamelContext, DumperOptions> dumperOptions;
     private Function<CamelContext, Resolver> resolver;
     private ClassLoader classLoader;
+    private String unmarshalTypeName;
     private Class<?> unmarshalType;
     private List<TypeDescription> typeDescriptions;
     private ConcurrentMap<Class<?>, Tag> classTags;
@@ -98,6 +102,16 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     }
 
     @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         try (OutputStreamWriter osw = new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange))) {
             getYaml(exchange.getContext()).dump(graph, osw);
@@ -113,13 +127,12 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
+    protected void doInit() throws Exception {
+        super.doInit();
 
-    @Override
-    protected void doStop() throws Exception {
-        // noop
+        if (unmarshalTypeName != null && unmarshalType == null) {
+            setUnmarshalType(camelContext.getClassResolver().resolveClass(unmarshalTypeName));
+        }
     }
 
     protected Yaml getYaml(CamelContext context) {
@@ -201,6 +214,14 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
      */
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
+    }
+
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
     }
 
     public Class<?> getUnmarshalType() {

@@ -36,13 +36,17 @@ public class SshComponentTestSupport extends CamelTestSupport {
 
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
-        sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
+        sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get(getHostKey())));
         sshd.setCommandFactory(new TestEchoCommandFactory());
         sshd.setPasswordAuthenticator((username, password, session) -> true);
         sshd.setPublickeyAuthenticator((username, key, session) -> true);
         sshd.start();
 
         super.setUp();
+    }
+
+    protected String getHostKey() {
+        return "src/test/resources/hostkey.pem";
     }
 
     @Override

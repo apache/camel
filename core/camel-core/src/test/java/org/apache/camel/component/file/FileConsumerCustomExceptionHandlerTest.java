@@ -46,8 +46,8 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:error").expectedBodiesReceived("Error Forced to simulate no space on device");
 
-        template.sendBodyAndHeader("file:target/data/nospace", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/data/nospace", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -85,8 +85,9 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
                 // our custom exception handler on the consumer
                 // the exclusiveReadLockStrategy is only configured because this
                 // is from an unit test, so we use that to simulate exceptions
-                from("file:target/data/nospace?exclusiveReadLockStrategy=#myReadLockStrategy&exceptionHandler=#myExceptionHandler&initialDelay=0&delay=10")
-                        .convertBodyTo(String.class).to("mock:result");
+                from(fileUri(
+                        "?exclusiveReadLockStrategy=#myReadLockStrategy&exceptionHandler=#myExceptionHandler&initialDelay=0&delay=10"))
+                                .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

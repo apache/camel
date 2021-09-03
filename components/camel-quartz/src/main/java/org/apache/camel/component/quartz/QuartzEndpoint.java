@@ -548,7 +548,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return result;
     }
 
-    private JobDetail createJobDetail() throws Exception {
+    private JobDetail createJobDetail() {
         // Camel endpoint timer will assume one to one for JobDetail and Trigger, so let's use same name as trigger
         String name = triggerKey.getName();
         String group = triggerKey.getGroup();

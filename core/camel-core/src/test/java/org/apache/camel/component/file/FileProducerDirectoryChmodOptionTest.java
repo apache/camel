@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.attribute.PosixFilePermission;
@@ -28,49 +27,30 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
-    public static final String TEST_DIRECTORY = "target/data/chmoddir/foo/";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory(TEST_DIRECTORY);
-        super.setUp();
-    }
-
-    private boolean canTest() {
-        // can not run on windows
-        return !isPlatform("windows");
-    }
 
     @Test
     public void testWriteValidNoDir() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         runChmodCheck("NoDir", null, "rwxr-xr-x");
     }
 
     @Test
     public void testWriteValidChmod0755() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         runChmodCheck("0755", "rwxrwxrwx", "rwxr-xr-x");
     }
 
     @Test
     public void testWriteValidChmod666() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         runChmodCheck("666", "rwxrwxrwx", "rw-rw-rw-");
     }
@@ -80,22 +60,20 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:chmod" + routeSuffix);
         mock.expectedMessageCount(1);
         String testFileName = "chmod" + routeSuffix + ".txt";
-        String fullTestFileName = TEST_DIRECTORY + testFileName;
         String testFileContent = "Writing file with chmod " + routeSuffix + " option at " + new Date();
-        mock.expectedFileExists(fullTestFileName, testFileContent);
+        mock.expectedFileExists(testFile(testFileName), testFileContent);
 
         template.sendBodyAndHeader("direct:write" + routeSuffix, testFileContent, Exchange.FILE_NAME, testFileName);
 
         if (expectedDirectoryPermissions != null) {
-            File d = new File(TEST_DIRECTORY);
-            Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(d.toPath(), LinkOption.NOFOLLOW_LINKS);
+            Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(testDirectory(), LinkOption.NOFOLLOW_LINKS);
             assertEquals(expectedDirectoryPermissions, PosixFilePermissions.toString(permissions));
             assertEquals(expectedDirectoryPermissions.replace("-", "").length(), permissions.size());
         }
 
         if (expectedPermissions != null) {
-            File f = new File(fullTestFileName);
-            Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(f.toPath(), LinkOption.NOFOLLOW_LINKS);
+            Set<PosixFilePermission> permissions
+                    = Files.getPosixFilePermissions(testFile(testFileName), LinkOption.NOFOLLOW_LINKS);
             assertEquals(expectedPermissions, PosixFilePermissions.toString(permissions));
             assertEquals(expectedPermissions.replace("-", "").length(), permissions.size());
         }
@@ -108,11 +86,11 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // Valid chmod values
-                from("direct:write666").to("file://" + TEST_DIRECTORY + "?chmodDirectory=777&chmod=666").to("mock:chmod666");
+                from("direct:write666").to(fileUri("?chmodDirectory=777&chmod=666")).to("mock:chmod666");
 
-                from("direct:write0755").to("file://" + TEST_DIRECTORY + "?chmodDirectory=777&chmod=0755").to("mock:chmod0755");
+                from("direct:write0755").to(fileUri("?chmodDirectory=777&chmod=0755")).to("mock:chmod0755");
 
-                from("direct:writeNoDir").to("file://" + TEST_DIRECTORY + "?chmod=0755").to("mock:chmodNoDir");
+                from("direct:writeNoDir").to(fileUri("?chmod=0755")).to("mock:chmodNoDir");
 
             }
         };

@@ -28,7 +28,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.service.ServiceHelper;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,10 +39,14 @@ public abstract class SpringScheduledRoutePolicyTest {
         CRON
     }
 
-    private ClassPathXmlApplicationContext applicationContext;
+    private AbstractXmlApplicationContext applicationContext;
     private TestType testType;
 
+    public abstract void setUp();
+
     public void startTest() throws Exception {
+        setUp();
+
         CamelContext context = startRouteWithPolicy("startPolicy");
 
         MockEndpoint mock = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -52,13 +56,15 @@ public abstract class SpringScheduledRoutePolicyTest {
 
         Thread.sleep(4000);
         assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("testRoute"));
-        context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
+        context.createProducerTemplate().sendBody("direct:start?timeout=1000", "Ready or not, Here, I come");
 
         context.stop();
         mock.assertIsSatisfied();
     }
 
     public void stopTest() throws Exception {
+        setUp();
+
         boolean consumerStopped = false;
 
         CamelContext context = startRouteWithPolicy("stopPolicy");
@@ -66,7 +72,7 @@ public abstract class SpringScheduledRoutePolicyTest {
         Thread.sleep(4000);
         assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("testRoute"));
         try {
-            context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
+            context.createProducerTemplate().sendBody("direct:start?timeout=1000", "Ready or not, Here, I come");
         } catch (CamelExecutionException e) {
             consumerStopped = true;
         }
@@ -75,13 +81,15 @@ public abstract class SpringScheduledRoutePolicyTest {
     }
 
     public void suspendTest() throws Exception {
+        setUp();
+
         boolean consumerSuspended = false;
 
         CamelContext context = startRouteWithPolicy("suspendPolicy");
 
         Thread.sleep(4000);
         try {
-            context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
+            context.createProducerTemplate().sendBody("direct:start?timeout=1000", "Ready or not, Here, I come");
         } catch (CamelExecutionException e) {
             consumerSuspended = true;
         }
@@ -91,6 +99,8 @@ public abstract class SpringScheduledRoutePolicyTest {
     }
 
     public void resumeTest() throws Exception {
+        setUp();
+
         CamelContext context = startRouteWithPolicy("resumePolicy");
 
         MockEndpoint mock = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -99,7 +109,7 @@ public abstract class SpringScheduledRoutePolicyTest {
         ServiceHelper.suspendService(context.getRoute("testRoute").getConsumer());
 
         Thread.sleep(4000);
-        context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
+        context.createProducerTemplate().sendBody("direct:start?timeout=1000", "Ready or not, Here, I come");
 
         context.stop();
         mock.assertIsSatisfied();
@@ -119,11 +129,11 @@ public abstract class SpringScheduledRoutePolicyTest {
         return context;
     }
 
-    public ClassPathXmlApplicationContext getApplicationContext() {
+    public AbstractXmlApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
-    public void setApplicationContext(ClassPathXmlApplicationContext applicationContext) {
+    public void setApplicationContext(AbstractXmlApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 

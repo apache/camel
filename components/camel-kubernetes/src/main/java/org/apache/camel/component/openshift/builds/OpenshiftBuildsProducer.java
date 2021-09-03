@@ -18,22 +18,20 @@ package org.apache.camel.component.openshift.builds;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.LogWatch;
-import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildList;
 import io.fabric8.openshift.client.OpenShiftClient;
-import io.fabric8.openshift.client.dsl.BuildResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class OpenshiftBuildsProducer extends DefaultProducer {
 
@@ -50,26 +48,20 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String operation;
-
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
-            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
-        } else {
-            operation = getEndpoint().getKubernetesConfiguration().getOperation();
-        }
+        String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
 
             case KubernetesOperations.LIST_BUILD:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_BUILD_BY_LABELS_OPERATION:
-                doListBuildByLabels(exchange, operation);
+                doListBuildByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_BUILD_OPERATION:
-                doGetBuild(exchange, operation);
+                doGetBuild(exchange);
                 break;
 
             default:
@@ -77,36 +69,27 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange) {
         BuildList buildList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inAnyNamespace().list();
-        exchange.getOut().setBody(buildList.getItems());
+        exchange.getMessage().setBody(buildList.getItems());
     }
 
-    protected void doListBuildByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListBuildByLabels(Exchange exchange) {
         BuildList buildList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Build, BuildList, BuildResource<Build, LogWatch>> builds = getEndpoint().getKubernetesClient()
-                    .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                builds.withLabel(entry.getKey(), entry.getValue());
-            }
-            buildList = builds.list();
+            buildList = getEndpoint().getKubernetesClient()
+                    .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName).withLabels(labels).list();
         } else {
-            FilterWatchListMultiDeletable<Build, BuildList> builds
-                    = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
-                            .inAnyNamespace();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                builds.withLabel(entry.getKey(), entry.getValue());
-            }
-            buildList = builds.list();
+            buildList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
+                    .inAnyNamespace().withLabels(labels).list();
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(buildList.getItems());
+
+        prepareOutboundMessage(exchange, buildList.getItems());
     }
 
-    protected void doGetBuild(Exchange exchange, String operation) throws Exception {
+    protected void doGetBuild(Exchange exchange) {
         Build build = null;
         String buildName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -121,7 +104,6 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName)
                 .withName(buildName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(build);
+        prepareOutboundMessage(exchange, build);
     }
 }

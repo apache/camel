@@ -31,7 +31,8 @@ public class CustomDataFormatReifier extends DataFormatReifier<CustomDataFormat>
 
     @Override
     protected DataFormat doCreateDataFormat() {
-        return DataFormatReifier.getDataFormat(camelContext, definition.getRef());
+        String ref = parseString(definition.getRef());
+        return DataFormatReifier.getDataFormat(camelContext, ref);
     }
 
     @Override

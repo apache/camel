@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeoutException;
+import java.util.zip.GZIPOutputStream;
 
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
@@ -41,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -138,9 +140,7 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.HTTP_URI, request.getRequestURI());
         headers.put(Exchange.HTTP_PATH, rawPath);
         // only set content type if not already extracted
-        if (!headers.containsKey(Exchange.CONTENT_TYPE)) {
-            headers.put(Exchange.CONTENT_TYPE, request.getContentType());
-        }
+        headers.computeIfAbsent(Exchange.CONTENT_TYPE, k -> request.getContentType());
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("HTTP method {}", request.getMethod());
@@ -176,7 +176,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
         if (request.getCharacterEncoding() != null) {
             headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
-            message.getExchange().setProperty(Exchange.CHARSET_NAME, request.getCharacterEncoding());
+            message.getExchange().setProperty(ExchangePropertyKey.CHARSET_NAME, request.getCharacterEncoding());
         }
 
         try {
@@ -220,7 +220,7 @@ public class DefaultHttpBinding implements HttpBinding {
         populateAttachments(request, message);
     }
 
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
         Enumeration<?> names = request.getParameterNames();
@@ -448,7 +448,7 @@ public class DefaultHttpBinding implements HttpBinding {
         int codeToUse = currentCode == null ? defaultCode : currentCode;
 
         if (codeToUse != 500) {
-            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+            if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
                 // no content 
                 codeToUse = currentCode == null ? 204 : currentCode;
             }
@@ -594,25 +594,29 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     protected void doWriteGZIPResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
-        byte[] bytes;
-        try {
-            bytes = message.getMandatoryBody(byte[].class);
-        } catch (InvalidPayloadException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-
-        byte[] data = GZIPHelper.compressGZIP(bytes);
         ServletOutputStream os = response.getOutputStream();
-        try {
+        GZIPOutputStream gos = new GZIPOutputStream(os);
+
+        Object body = exchange.getIn().getBody();
+        if (body instanceof InputStream) {
+            InputStream is = (InputStream) body;
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Streaming response as GZIP in non-chunked mode with content-length {} and buffer size: {}",
-                        data.length, response.getBufferSize());
+                LOG.debug("Streaming GZIP response in chunked mode with buffer size {}", response.getBufferSize());
             }
-            response.setContentLength(data.length);
-            os.write(data);
-            os.flush();
-        } finally {
-            IOHelper.close(os);
+            copyStream(is, gos, response.getBufferSize());
+        } else {
+            byte[] bytes;
+            try {
+                bytes = message.getMandatoryBody(byte[].class);
+            } catch (InvalidPayloadException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Writing GZIP response in chunked mode from byte array with length: {}", bytes.length);
+            }
+            gos.write(bytes);
+            gos.flush();
+            IOHelper.close(gos);
         }
     }
 

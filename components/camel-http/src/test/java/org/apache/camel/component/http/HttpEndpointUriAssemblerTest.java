@@ -52,7 +52,7 @@ public class HttpEndpointUriAssemblerTest {
         String uri = assembler.buildUri("https", params);
         assertNotNull(uri);
         assertEquals(
-                "https:www.google.com?proxyAuthHost=myotherproxy&proxyAuthPassword=RAW(pwd)&proxyAuthPort=2345&proxyAuthUsername=RAW(usr)",
+                "https://www.google.com?proxyAuthHost=myotherproxy&proxyAuthPassword=RAW(pwd)&proxyAuthPort=2345&proxyAuthUsername=RAW(usr)",
                 uri);
 
         context.stop();

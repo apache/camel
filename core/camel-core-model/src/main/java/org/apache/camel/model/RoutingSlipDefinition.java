@@ -49,7 +49,11 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     private String cacheSize;
 
     public RoutingSlipDefinition() {
-        this((String) null, DEFAULT_DELIMITER);
+        if (uriDelimiter == null) {
+            setUriDelimiter(DEFAULT_DELIMITER);
+        } else {
+            setUriDelimiter(uriDelimiter);
+        }
     }
 
     public RoutingSlipDefinition(String headerName) {

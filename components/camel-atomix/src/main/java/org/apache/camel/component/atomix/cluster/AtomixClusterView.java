@@ -19,7 +19,6 @@ package org.apache.camel.component.atomix.cluster;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import io.atomix.Atomix;
@@ -174,7 +173,7 @@ final class AtomixClusterView extends AbstractCamelClusterView {
             return member != null;
         }
 
-        AtomixLocalMember join() throws ExecutionException, InterruptedException {
+        AtomixLocalMember join() {
             if (member == null && group != null) {
                 String id = getClusterService().getId();
                 if (ObjectHelper.isEmpty(id) || configuration.isEphemeral()) {

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.netty;
 
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 
@@ -30,17 +33,49 @@ public final class NettyCamelState {
 
     private final Exchange exchange;
     private final AsyncCallback callback;
+    // It is never a good idea to call the same callback twice
+    private final AtomicBoolean callbackCalled;
+    private final AtomicBoolean exceptionCaught;
 
     public NettyCamelState(AsyncCallback callback, Exchange exchange) {
         this.callback = callback;
         this.exchange = exchange;
+        this.callbackCalled = new AtomicBoolean();
+        this.exceptionCaught = new AtomicBoolean();
     }
 
     public AsyncCallback getCallback() {
         return callback;
     }
 
+    public boolean isDone() {
+        return callbackCalled.get();
+    }
+
+    public void callbackDoneOnce(boolean doneSync) {
+        if (!callbackCalled.getAndSet(true)) {
+            // this is the first time we call the callback
+            callback.done(doneSync);
+        }
+    }
+
     public Exchange getExchange() {
         return exchange;
+    }
+
+    public void onExceptionCaught() {
+        exceptionCaught.set(true);
+    }
+
+    public void onExceptionCaughtOnce(boolean doneSync) {
+        // only trigger callback once if an exception has not already been caught
+        // (ClientChannelHandler#exceptionCaught vs NettyProducer#processWithConnectedChannel)
+        if (exceptionCaught.compareAndSet(false, true)) {
+            // set some general exception as Camel should know the netty write operation failed
+            if (exchange.getException() == null) {
+                exchange.setException(new IOException("Netty write operation failed"));
+            }
+            callbackDoneOnce(doneSync);
+        }
     }
 }

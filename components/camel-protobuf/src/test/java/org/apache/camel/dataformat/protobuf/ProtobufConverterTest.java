@@ -84,8 +84,9 @@ public class ProtobufConverterTest {
         input.put("id", 1234);
         input.put("address", "wrong address");
 
+        final AddressBookProtos.Person defaultInstance = AddressBookProtos.Person.getDefaultInstance();
         assertThrows(IllegalArgumentException.class,
-                () -> ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance()));
+                () -> ProtobufConverter.toProto(input, defaultInstance));
     }
 
     @Test
@@ -96,8 +97,9 @@ public class ProtobufConverterTest {
         input.put("id", 1234);
         input.put("nicknames", "wrong nickname");
 
+        final AddressBookProtos.Person defaultInstance = AddressBookProtos.Person.getDefaultInstance();
         assertThrows(IllegalArgumentException.class,
-                () -> ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance()));
+                () -> ProtobufConverter.toProto(input, defaultInstance));
     }
 
     @Test

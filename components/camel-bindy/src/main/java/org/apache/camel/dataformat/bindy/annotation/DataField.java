@@ -36,7 +36,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface DataField {
 
     /**
-     * Position of the data in the input record, must start from 1 (mandatory).
+     * Position of the data in the input record, must start from 1 (mandatory). See the position parameter.
      */
     int pos();
 
@@ -46,16 +46,21 @@ public @interface DataField {
     String name() default "";
 
     /**
-     * Name of the header column (optional)
+     * Name of the header column (optional). Uses the name of the property as default. Only applicable when `CsvRecord`
+     * has `generateHeaderColumns = true`
      */
     String columnName() default "";
 
     /**
-     * Pattern that the formatter will use to transform the data (optional)
+     * Pattern that the Java formatter (SimpleDateFormat by example) will use to transform the data (optional). If using
+     * pattern, then setting locale on bindy data format is recommended. Either set to a known locale such as "us" or
+     * use "default" to use platform default locale.
      */
     String pattern() default "";
 
     /**
+     * Timezone to be used.
+     *
      * @return String timezone ID
      */
     String timezone() default "";
@@ -86,7 +91,9 @@ public @interface DataField {
     int precision() default 0;
 
     /**
-     * Position of the field in the output message generated (should start from 1)
+     * Position of the field in the output message generated (should start from 1). Must be used when the position of
+     * the field in the CSV generated (output message) must be different compare to input position (pos). See the pos
+     * parameter.
      *
      * @see #pos()
      */

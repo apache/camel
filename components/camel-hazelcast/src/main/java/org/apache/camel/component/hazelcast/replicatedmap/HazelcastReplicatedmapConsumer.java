@@ -38,9 +38,6 @@ public class HazelcastReplicatedmapConsumer extends HazelcastDefaultConsumer {
         cache = hazelcastInstance.getReplicatedMap(cacheName);
     }
 
-    /**
-     * @see org.apache.camel.support.DefaultConsumer#doStart()
-     */
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -48,9 +45,6 @@ public class HazelcastReplicatedmapConsumer extends HazelcastDefaultConsumer {
         listener = cache.addEntryListener(new CamelEntryListener(this, cacheName));
     }
 
-    /**
-     * @see org.apache.camel.support.DefaultConsumer#doStop()
-     */
     @Override
     protected void doStop() throws Exception {
         cache.removeEntryListener(listener);

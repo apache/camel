@@ -18,6 +18,7 @@ package org.apache.camel.component.printer;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import javax.print.Doc;
@@ -40,24 +41,36 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisabledOnOs(OS.AIX)
 public class PrinterPrintTest extends CamelTestSupport {
+    Class<?> printServiceLookupServicesClass = PrintServiceLookup.class.getDeclaredClasses()[0];
+    Object printServiceLookup;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         setupJavaPrint();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        restoreJavaPrint();
     }
 
     @Override
@@ -137,9 +150,8 @@ public class PrinterPrintTest extends CamelTestSupport {
     @Test
     @Disabled
     public void testSendingFileToPrinter() throws Exception {
-        if (isAwtHeadless()) {
-            return;
-        }
+        assumeTrue(isAwtHeadless());
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").to(
@@ -154,9 +166,8 @@ public class PrinterPrintTest extends CamelTestSupport {
     @Test
     @Disabled
     public void testSendingGIFToPrinter() throws Exception {
-        if (isAwtHeadless()) {
-            return;
-        }
+        assumeTrue(isAwtHeadless());
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").to(
@@ -171,9 +182,8 @@ public class PrinterPrintTest extends CamelTestSupport {
     @Test
     @Disabled
     public void testSendingJPEGToPrinter() throws Exception {
-        if (isAwtHeadless()) {
-            return;
-        }
+        assumeTrue(isAwtHeadless());
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("lpr://localhost/default?copies=2&flavor=DocFlavor.INPUT_STREAM"
@@ -188,9 +198,8 @@ public class PrinterPrintTest extends CamelTestSupport {
     @Test
     @Disabled
     public void testSendingJPEGToPrinterWithLandscapePageOrientation() throws Exception {
-        if (isAwtHeadless()) {
-            return;
-        }
+        assumeTrue(isAwtHeadless());
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM"
@@ -209,9 +218,8 @@ public class PrinterPrintTest extends CamelTestSupport {
     @Test
     @Disabled
     public void testDefaultPrinterConfiguration() throws Exception {
-        if (isAwtHeadless()) {
-            return;
-        }
+        assumeTrue(isAwtHeadless());
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("lpr://localhost/default?sendToPrinter=false");
@@ -222,10 +230,7 @@ public class PrinterPrintTest extends CamelTestSupport {
 
     @Test
     public void moreThanOneLprEndpoint() throws Exception {
-
-        if (isAwtHeadless()) {
-            return;
-        }
+        assumeTrue(isAwtHeadless());
 
         int numberOfPrintservicesBefore = PrintServiceLookup.lookupPrintServices(null, null).length;
 
@@ -281,10 +286,9 @@ public class PrinterPrintTest extends CamelTestSupport {
 
     @Test
     public void printerNameTest() throws Exception {
-        if (isAwtHeadless()) {
-            return;
-        }
-        // setup javax.print 
+        assumeTrue(isAwtHeadless());
+
+        // setup javax.print
         PrintService ps1 = mock(PrintService.class);
         when(ps1.getName()).thenReturn("MyPrinter\\\\remote\\printer1");
         when(ps1.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);
@@ -340,9 +344,7 @@ public class PrinterPrintTest extends CamelTestSupport {
 
     @Test
     public void setJobName() throws Exception {
-        if (isAwtHeadless()) {
-            return;
-        }
+        assumeTrue(isAwtHeadless());
 
         getMockEndpoint("mock:output").setExpectedMessageCount(1);
         context.addRoutes(new RouteBuilder() {
@@ -403,7 +405,15 @@ public class PrinterPrintTest extends CamelTestSupport {
         assertEquals("reverse-landscape", attribute.toString());
     }
 
-    protected void setupJavaPrint() {
+    protected void setupJavaPrint() throws Exception {
+        // save the current print services
+        printServiceLookup = sun.awt.AppContext.getAppContext().get(printServiceLookupServicesClass);
+        // setup a new empty list of printer services
+        sun.awt.AppContext.getAppContext().put(printServiceLookupServicesClass, null);
+        Method method = PrintServiceLookup.class.getDeclaredMethod("initListOfLookupServices");
+        method.setAccessible(true);
+        method.invoke(null);
+
         // "install" another default printer
         PrintService psDefault = mock(PrintService.class);
         when(psDefault.getName()).thenReturn("DefaultPrinter");
@@ -420,6 +430,11 @@ public class PrinterPrintTest extends CamelTestSupport {
         };
         when(psDefault.getSupportedAttributeValues(Media.class, null, null)).thenReturn(trays);
         PrintServiceLookup.registerServiceProvider(psLookup);
+    }
+
+    protected void restoreJavaPrint() {
+        // restore print services
+        sun.awt.AppContext.getAppContext().put(printServiceLookupServicesClass, printServiceLookup);
     }
 
 }

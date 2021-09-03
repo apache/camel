@@ -32,7 +32,7 @@ public interface Cw2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 CloudWatch component.
+     * Builder for endpoint for the AWS CloudWatch component.
      */
     public interface Cw2EndpointBuilder extends EndpointProducerBuilder {
         /**
@@ -127,6 +127,39 @@ public interface Cw2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Cw2EndpointBuilder overrideEndpoint(boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Cw2EndpointBuilder overrideEndpoint(String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the CW client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -202,7 +235,7 @@ public interface Cw2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The region in which EKS client needs to work. When using this
+         * The region in which CW client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
@@ -297,6 +330,59 @@ public interface Cw2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Cw2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Cw2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Cw2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * The metric value.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -365,7 +451,7 @@ public interface Cw2EndpointBuilderFactory {
 
     public interface Cw2Builders {
         /**
-         * AWS 2 CloudWatch (camel-aws2-cw)
+         * AWS CloudWatch (camel-aws2-cw)
          * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
          * 
          * Category: cloud,monitoring
@@ -384,7 +470,7 @@ public interface Cw2EndpointBuilderFactory {
             return Cw2EndpointBuilderFactory.endpointBuilder("aws2-cw", path);
         }
         /**
-         * AWS 2 CloudWatch (camel-aws2-cw)
+         * AWS CloudWatch (camel-aws2-cw)
          * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
          * 
          * Category: cloud,monitoring

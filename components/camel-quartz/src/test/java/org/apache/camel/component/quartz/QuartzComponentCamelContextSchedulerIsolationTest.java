@@ -17,7 +17,6 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -31,18 +30,17 @@ public class QuartzComponentCamelContextSchedulerIsolationTest {
 
     @AfterAll
     public static void afterTests() {
-        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
     }
 
     @Test
     public void testSchedulerIsolationUnmanaged() throws Exception {
-        disableJMX();
+        DefaultCamelContext.setDisableJmx(true);
         testSchedulerIsolation();
     }
 
     @Test
     public void testSchedulerIsolationManaged() throws Exception {
-        enableJMX();
+        DefaultCamelContext.setDisableJmx(false);
         testSchedulerIsolation();
     }
 
@@ -76,20 +74,6 @@ public class QuartzComponentCamelContextSchedulerIsolationTest {
      */
     private Scheduler getDefaultScheduler(CamelContext context) throws SchedulerException {
         return getQuartzComponent(context).getScheduler();
-    }
-
-    /**
-     * Disables the JMX agent.
-     */
-    private void disableJMX() {
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
-    }
-
-    /**
-     * Enables the JMX agent.
-     */
-    private void enableJMX() {
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
     }
 
 }

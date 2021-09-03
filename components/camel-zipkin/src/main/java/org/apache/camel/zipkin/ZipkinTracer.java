@@ -17,6 +17,7 @@
 package org.apache.camel.zipkin;
 
 import java.io.Closeable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Set;
 
 import brave.Span;
 import brave.Span.Kind;
+import brave.SpanCustomizer;
 import brave.Tracing;
 import brave.context.slf4j.MDCScopeDecorator;
 import brave.propagation.B3Propagation;
@@ -40,6 +42,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -120,7 +123,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private static final String ZIPKIN_COLLECTOR_THRIFT_SERVICE = "zipkin-collector-thrift";
     private static final Getter<CamelRequest, String> GETTER = (cr, key) -> cr.getHeader(key);
     private static final Setter<CamelRequest, String> SETTER = (cr, key, value) -> cr.setHeader(key, value);
-    private static final Extractor<CamelRequest> EXTRACTOR = B3Propagation.B3_STRING.extractor(GETTER);
+    static final Extractor<CamelRequest> EXTRACTOR = B3Propagation.B3_STRING.extractor(GETTER);
     private static final Injector<CamelRequest> INJECTOR = B3Propagation.B3_STRING.injector(SETTER);
 
     private final ZipkinEventNotifier eventNotifier = new ZipkinEventNotifier();
@@ -138,6 +141,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private Set<String> excludePatterns = new HashSet<>();
     private boolean includeMessageBody;
     private boolean includeMessageBodyStreams;
+    private Map<String, String> clientCustomTags = Collections.emptyMap();
+
     private final Map<String, Span.Kind> producerComponentToSpanKind = new HashMap<>();
     private final Map<String, Span.Kind> consumerComponentToSpanKind = new HashMap<>();
 
@@ -358,6 +363,27 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     @ManagedAttribute(description = "Whether to include stream based Camel message bodies in the zipkin traces")
     public void setIncludeMessageBodyStreams(boolean includeMessageBodyStreams) {
         this.includeMessageBodyStreams = includeMessageBodyStreams;
+    }
+
+    /**
+     * Custom tags that should be included on all client requests, in addition to the tags specified on the Exchange via
+     * <code>camel.client.customtags</code>.
+     *
+     * @param clientCustomTags custom tags to be added for all client requests
+     * @see                    ZipkinClientRequestAdapter#onRequest(Exchange, SpanCustomizer)
+     */
+    public void setClientCustomTags(Map<String, String> clientCustomTags) {
+        this.clientCustomTags = clientCustomTags == null ? Collections.emptyMap() : new HashMap<>(clientCustomTags);
+    }
+
+    /**
+     * Custom tags that are added for all client requests.
+     *
+     * @return custom tags added for all client requests
+     * @see    ZipkinClientRequestAdapter#onRequest(Exchange, SpanCustomizer)
+     */
+    public Map<String, String> getClientCustomTags() {
+        return clientCustomTags;
     }
 
     @Override
@@ -586,10 +612,11 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
     private void clientRequest(Tracing brave, String serviceName, ExchangeSendingEvent event) {
         // reuse existing span if we do multiple requests from the same
-        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
+        ExtendedExchange exchange = event.getExchange().adapt(ExtendedExchange.class);
+        ZipkinState state = exchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
         if (state == null) {
             state = new ZipkinState();
-            event.getExchange().setProperty(ZipkinState.KEY, state);
+            exchange.setSafeCopyProperty(ZipkinState.KEY, state);
         }
         // if we started from a server span then lets reuse that when we call a
         // downstream service
@@ -641,7 +668,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
     private void clientResponse(Tracing brave, String serviceName, ExchangeSentEvent event) {
         Span span = null;
-        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
+        ExtendedExchange exchange = event.getExchange().adapt(ExtendedExchange.class);
+        ZipkinState state = exchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
         if (state != null) {
             // only process if it was a zipkin client event
             span = state.popClientSpan();
@@ -674,10 +702,11 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
     private Span serverRequest(Tracing brave, String serviceName, Exchange exchange) {
         // reuse existing span if we do multiple requests from the same
-        ZipkinState state = exchange.getProperty(ZipkinState.KEY, ZipkinState.class);
+        ExtendedExchange extendedExchange = exchange.adapt(ExtendedExchange.class);
+        ZipkinState state = extendedExchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
         if (state == null) {
             state = new ZipkinState();
-            exchange.setProperty(ZipkinState.KEY, state);
+            extendedExchange.setSafeCopyProperty(ZipkinState.KEY, state);
         }
         Span span = null;
         Span.Kind spanKind = getConsumerComponentSpanKind(exchange.getFromEndpoint());
@@ -685,14 +714,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         TraceContextOrSamplingFlags sampleFlag = EXTRACTOR.extract(cr);
         if (ObjectHelper.isEmpty(sampleFlag)) {
             span = brave.tracer().nextSpan();
-            INJECTOR.inject(span.context(), cr);
         } else {
             span = brave.tracer().nextSpan(sampleFlag);
         }
         span.kind(spanKind).start();
         ZipkinServerRequestAdapter parser = new ZipkinServerRequestAdapter(this, exchange);
         parser.onRequest(exchange, span.customizer());
-
+        INJECTOR.inject(span.context(), cr);
         // store span after request
         state.pushServerSpan(span);
         TraceContext context = span.context();
@@ -723,7 +751,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
     private void serverResponse(Tracing brave, String serviceName, Exchange exchange) {
         Span span = null;
-        ZipkinState state = exchange.getProperty(ZipkinState.KEY, ZipkinState.class);
+        ExtendedExchange extendedExchange = exchange.adapt(ExtendedExchange.class);
+        ZipkinState state = extendedExchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
         if (state != null) {
             // only process if it was a zipkin server event
             span = state.popServerSpan();

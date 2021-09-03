@@ -44,7 +44,7 @@ public class ShiroSecurityTokenInjector implements Processor {
         this.cipherService = cipherService;
     }
 
-    public ByteSource encrypt() throws Exception {
+    public ByteSource encrypt() {
         return ShiroSecurityHelper.encrypt(securityToken, passPhrase, cipherService);
     }
 

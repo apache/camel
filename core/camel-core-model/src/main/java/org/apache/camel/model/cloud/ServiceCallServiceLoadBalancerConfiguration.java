@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model.cloud;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,6 +29,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.cloud.ServiceLoadBalancerFactory;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -38,6 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "routing,cloud,load-balancing")
 @XmlRootElement(name = "loadBalancerConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer
 public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConfiguration
         implements ServiceLoadBalancerFactory {
     @XmlTransient
@@ -94,7 +95,6 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
             // it should be pre-configured.
             answer = factory.newInstance(camelContext);
         } else {
-
             Class<?> type;
             try {
                 // Then use Service factory.
@@ -116,9 +116,7 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
             }
 
             try {
-                Map<String, Object> parameters = new HashMap<>();
-                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null,
-                        false);
+                Map<String, Object> parameters = getConfiguredOptions(camelContext, this);
 
                 parameters.replaceAll((k, v) -> {
                     if (v instanceof String) {
@@ -134,7 +132,10 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
                 });
 
                 // Convert properties to Map<String, String>
-                parameters.put("properties", getPropertiesAsMap(camelContext));
+                Map<String, String> map = getPropertiesAsMap(camelContext);
+                if (map != null && !map.isEmpty()) {
+                    parameters.put("properties", map);
+                }
 
                 postProcessFactoryParameters(camelContext, parameters);
 

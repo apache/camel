@@ -14,16 +14,47 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xquery.ado
 
 *{component-header}*
 
-Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
-Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
-Configuration]. For example you could use XQuery to create an
-Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
-Filter] or as an Expression for a Recipient List.
+Camel supports http://www.w3.org/TR/xquery/[XQuery] component for message transformation
 
-== Options
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The XQuery component supports 6 options, which are listed below.
 
 
@@ -40,10 +71,9 @@ The XQuery component supports 6 options, which are listed below.
 |===
 // component options: END
 
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The XQuery endpoint is configured using URI syntax:
 
 ----
@@ -102,6 +132,7 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
+
 
 == Examples
 
@@ -185,7 +216,7 @@ attribute:
 
 [source,xml]
 -------------------------------------------------------------------------------
-    <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
+<xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
 -------------------------------------------------------------------------------
 
 == Using XQuery as transformation
@@ -302,4 +333,4 @@ substituting the version number for the latest & greatest release.
 </dependency>
 --------------------------------------
 
-include::camel-spring-boot::page$saxon-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$saxon-starter.adoc[]

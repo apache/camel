@@ -46,7 +46,7 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         return replyChannel;
     }
 
-    public ProducerTemplate getCamelTemplate() throws Exception {
+    public ProducerTemplate getCamelTemplate() {
         if (camelTemplate == null) {
             CamelContext ctx = getCamelContext();
             if (ctx == null) {

@@ -59,7 +59,7 @@ public class SipPublisher extends DefaultProducer {
         if (provider != null) {
             for (ListeningPoint listeningPoint : provider.getListeningPoints()) {
                 if (listeningPoint.getIPAddress().equalsIgnoreCase(configuration.getListeningPoint().getIPAddress())
-                        && (listeningPoint.getPort() == configuration.getListeningPoint().getPort())) {
+                        && listeningPoint.getPort() == configuration.getListeningPoint().getPort()) {
                     found = true;
                 }
             }

@@ -30,8 +30,9 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/idempotent/?idempotent=true&idempotentKey=${file:onlyname}-${file:size}&move=done/${file:name}&initialDelay=0&delay=10")
-                        .convertBodyTo(String.class).to("mock:result");
+                from(fileUri(
+                        "?idempotent=true&idempotentKey=${file:onlyname}-${file:size}&move=done/${file:name}&initialDelay=0&delay=10"))
+                                .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -42,6 +43,8 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
+
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
@@ -51,7 +54,7 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
         mock.expectedBodiesReceived("Bye World");
 
         // create new file which has different length
-        template.sendBodyAndHeader("file://target/data/idempotent", "Bye World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "report.txt");
 
         assertMockEndpointsSatisfied();
     }

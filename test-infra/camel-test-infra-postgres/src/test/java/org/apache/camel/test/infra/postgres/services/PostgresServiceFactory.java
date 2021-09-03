@@ -16,28 +16,20 @@
  */
 package org.apache.camel.test.infra.postgres.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class PostgresServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(PostgresServiceFactory.class);
-
     private PostgresServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<PostgresService> builder() {
+        return new SimpleTestServiceBuilder<>("postgres");
+    }
+
     public static PostgresService createService() {
-        String instanceType = System.getProperty("postgres.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-postgres-container")) {
-            return new PostgresLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new PostgresRemoteService();
-        }
-
-        LOG.error("Postgres instance must be one of 'local-postgres-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Postgres instance type");
+        return builder().addLocalMapping(PostgresLocalContainerService::new)
+                .addRemoteMapping(PostgresRemoteService::new)
+                .build();
     }
 }

@@ -103,11 +103,14 @@ public class JsonataEndpoint extends ResourceEndpoint {
 
         JsonNode output = null;
         if (expressions == null) {
-            String spec = new BufferedReader(
-                    new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8))
-                            .lines()
-                            .collect(Collectors.joining("\n"));
-            expressions = Expressions.parse(spec);
+            try (InputStreamReader inputStreamReader
+                    = new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8);
+                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);) {
+                String spec = bufferedReader
+                        .lines()
+                        .collect(Collectors.joining("\n"));
+                expressions = Expressions.parse(spec);
+            }
         }
         output = expressions.evaluate(input);
 

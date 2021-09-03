@@ -402,7 +402,7 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets topic consumer to durable.
+         * Sets the topic to be durable.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -417,7 +417,7 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets topic consumer to durable.
+         * Sets the topic to be durable.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -482,7 +482,7 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the consumer to shared.
+         * Sets the topic to be shared.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -497,7 +497,7 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the consumer to shared.
+         * Sets the topic to be shared.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -513,7 +513,8 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the subscription Id, required for durable or shared topics.
+         * Sets the topic subscription id, required for durable or shared
+         * topics.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

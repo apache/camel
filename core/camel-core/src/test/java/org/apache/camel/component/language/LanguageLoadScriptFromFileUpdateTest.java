@@ -19,28 +19,22 @@ package org.apache.camel.component.language;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/script");
-        super.setUp();
-    }
-
     @Test
     public void testLanguage() throws Exception {
         // create script to start with
-        template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello ${body}",
+                Exchange.FILE_NAME, "myscript.txt");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 
         template.sendBody("direct:start", "World");
 
-        template.sendBodyAndHeader("file:target/data/script", "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye ${body}",
+                Exchange.FILE_NAME, "myscript.txt");
         template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
@@ -56,7 +50,8 @@ public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
                 from("direct:start")
                         // the script will be loaded on each message, as we disabled
                         // cache
-                        .to("language:simple:file:target/data/script/myscript.txt?contentCache=false").to("mock:result");
+                        .to("language:simple:" + fileUri("myscript.txt?contentCache=false"))
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

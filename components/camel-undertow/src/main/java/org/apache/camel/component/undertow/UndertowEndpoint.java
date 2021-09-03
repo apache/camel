@@ -26,14 +26,11 @@ import java.util.ServiceLoader;
 
 import javax.net.ssl.SSLContext;
 
-import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.accesslog.AccessLogReceiver;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -189,23 +186,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
                 ServiceDefinition.SERVICE_META_PORT, Integer.toString(httpURI.getPort()),
                 ServiceDefinition.SERVICE_META_PATH, httpURI.getPath(),
                 ServiceDefinition.SERVICE_META_PROTOCOL, httpURI.getScheme());
-    }
-
-    public Exchange createExchange(HttpServerExchange httpExchange) throws Exception {
-        Exchange exchange = createExchange(ExchangePattern.InOut);
-
-        Message in = getUndertowHttpBinding().toCamelMessage(httpExchange, exchange);
-
-        //securityProvider could add its own header into result exchange
-        if (getSecurityProvider() != null) {
-            getSecurityProvider().addHeader((key, value) -> in.setHeader(key, value), httpExchange);
-        }
-
-        exchange.setProperty(Exchange.CHARSET_NAME, httpExchange.getRequestCharset());
-        in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, httpExchange.getRequestCharset());
-
-        exchange.setIn(in);
-        return exchange;
     }
 
     public SSLContext getSslContext() {

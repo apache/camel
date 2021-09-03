@@ -78,7 +78,14 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
 
         // check if we can begin on this file
         String key = asKey(file);
-        boolean answer = idempotentRepository.add(exchange, key);
+        boolean answer = false;
+        try {
+            answer = idempotentRepository.add(exchange, key);
+        } catch (Exception e) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Cannot acquire read lock due to " + e.getMessage() + ". Will skip the file: " + file, e);
+            }
+        }
         if (!answer) {
             // another node is processing the file so skip
             CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
@@ -88,7 +95,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
             // if we acquired during idempotent then check rename also
             answer = rename.acquireExclusiveReadLock(operations, file, exchange);
             if (!answer) {
-                // remove from idempontent as we did not acquire it from changed
+                // remove from idempotent as we did not acquire it from changed
                 idempotentRepository.remove(exchange, key);
             }
         }

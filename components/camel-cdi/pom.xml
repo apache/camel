@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cdi</artifactId>
@@ -448,7 +448,7 @@
         </profile>
 
         <profile>
-            <id>jdk9+-weld-3.0</id>
+            <id>jdk9s-weld-3.0</id>
             <activation>
                 <jdk>[9,)</jdk>
             </activation>

@@ -39,7 +39,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * Marshal POJOs to JSON and back using <a href="https://github.com/alibaba/fastjson">Fastjson</a>
  */
 @Dataformat("json-fastjson")
-@Metadata(includeProperties = "unmarshalTypeName,prettyprint,contentTypeHeader")
+@Metadata(includeProperties = "unmarshalType,unmarshalTypeName,prettyprint,contentTypeHeader")
 public class FastjsonDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

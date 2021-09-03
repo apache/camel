@@ -56,6 +56,15 @@ public class PrepareExampleMojo extends AbstractMojo {
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
+    @Parameter(property = "startingFolder", required = true, readonly = true, defaultValue = "examples")
+    protected String startingFolder = "examples";
+
+    @Parameter(property = "filter", required = true, readonly = true, defaultValue = "camel-example")
+    protected String filter = "camel-example";
+
+    @Parameter(property = "filterMiddleFolder", required = false, readonly = true)
+    protected String filterMiddleFolder = "aws";
+
     /**
      * Maven ProjectHelper.
      */
@@ -75,12 +84,13 @@ public class PrepareExampleMojo extends AbstractMojo {
 
     protected void executeExamplesReadme() throws MojoExecutionException, MojoFailureException {
         Set<File> examples = new TreeSet<>();
-
-        // only run in examples directory where the main readme.adoc file is
-        // located
+        List<String> middleFolders = Arrays.asList(filterMiddleFolder.split(","));
         String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
-        if (!currentDir.endsWith("examples")) {
-            return;
+        if (startingFolder != null && !startingFolder.isEmpty()) {
+            // only run in examples directory where the main readme.adoc file is located
+            if (!currentDir.endsWith("examples")) {
+                return;
+            }
         }
 
         File dir = new File(".");
@@ -93,46 +103,22 @@ public class PrepareExampleMojo extends AbstractMojo {
             List<ExampleModel> models = new ArrayList<>();
 
             for (File file : examples) {
-
-                if (file.isDirectory() && file.getName().startsWith("camel-example")) {
-                    File pom = new File(file, "pom.xml");
-                    if (pom.exists()) {
-                        String existing = FileUtils.readFileToString(pom, Charset.defaultCharset());
-
-                        ExampleModel model = new ExampleModel();
-                        model.setFileName(file.getName());
-
-                        String name = Strings.between(existing, "<name>", "</name>");
-                        String title = Strings.between(existing, "<title>", "</title>");
-                        String description = Strings.between(existing, "<description>", "</description>");
-                        String category = Strings.between(existing, "<category>", "</category>");
-
-                        if (title != null) {
-                            model.setTitle(title);
-                        } else {
-                            // fallback and use file name as title
-                            model.setTitle(asTitle(file.getName()));
+                if (file.isDirectory()) {
+                    if (!middleFolders.contains(file.getName())) {
+                        File pom = new File(file, "pom.xml");
+                        if (pom.exists()) {
+                            processExamples(models, file, pom);
                         }
-                        if (description != null) {
-                            model.setDescription(description);
+                    } else {
+                        File[] subFiles = file.listFiles();
+                        for (File innerFile : subFiles) {
+                            if (innerFile.isDirectory()) {
+                                File pom = new File(innerFile, "pom.xml");
+                                if (pom.exists()) {
+                                    processExamples(models, innerFile, pom);
+                                }
+                            }
                         }
-                        if (category != null) {
-                            model.setCategory(category);
-                        }
-                        if (name != null && name.contains("(deprecated)")) {
-                            model.setDeprecated("true");
-                        } else {
-                            model.setDeprecated("false");
-                        }
-
-                        // readme files is either readme.md or readme.adoc
-                        String[] readmes = new File(file, ".")
-                                .list((folder, fileName) -> fileName.regionMatches(true, 0, "readme", 0, "readme".length()));
-                        if (readmes != null && readmes.length == 1) {
-                            model.setReadmeFileName(readmes[0]);
-                        }
-
-                        models.add(model);
                     }
                 }
             }
@@ -162,6 +148,45 @@ public class PrepareExampleMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoFailureException("Error due " + e.getMessage(), e);
         }
+    }
+
+    private void processExamples(List<ExampleModel> models, File file, File pom) throws IOException {
+        String existing = FileUtils.readFileToString(pom, Charset.defaultCharset());
+
+        ExampleModel model = new ExampleModel();
+        model.setFileName(file.getName());
+
+        String name = Strings.between(existing, "<name>", "</name>");
+        String title = Strings.between(existing, "<title>", "</title>");
+        String description = Strings.between(existing, "<description>", "</description>");
+        String category = Strings.between(existing, "<category>", "</category>");
+
+        if (title != null) {
+            model.setTitle(title);
+        } else {
+            // fallback and use file name as title
+            model.setTitle(asTitle(file.getName()));
+        }
+        if (description != null) {
+            model.setDescription(description);
+        }
+        if (category != null) {
+            model.setCategory(category);
+        }
+        if (name != null && name.contains("(deprecated)")) {
+            model.setDeprecated("true");
+        } else {
+            model.setDeprecated("false");
+        }
+
+        // readme files is either readme.md or readme.adoc
+        String[] readmes = new File(file, ".")
+                .list((folder, fileName) -> fileName.regionMatches(true, 0, "readme", 0, "readme".length()));
+        if (readmes != null && readmes.length == 1) {
+            model.setReadmeFileName(readmes[0]);
+        }
+
+        models.add(model);
     }
 
     private String templateExamples(List<ExampleModel> models, long deprecated) throws MojoExecutionException {

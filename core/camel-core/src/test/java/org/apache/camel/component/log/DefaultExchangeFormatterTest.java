@@ -71,7 +71,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
     @Test
     public void testSendMessageToLogMultiOptions() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showProperties=true&showHeaders=true", "Hello World");
+        template.sendBody("log:org.apache.camel.TEST?showAllProperties=true&showHeaders=true", "Hello World");
     }
 
     @Test

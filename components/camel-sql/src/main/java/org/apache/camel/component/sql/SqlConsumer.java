@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Queue;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
@@ -231,7 +231,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Exchange createExchange(Object data) {
-        final Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
+        final Exchange exchange = createExchange(false);
         Message msg = exchange.getIn();
         if (getEndpoint().getOutputHeader() != null) {
             msg.setHeader(getEndpoint().getOutputHeader(), data);
@@ -257,9 +257,9 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             Object data = holder.data;
 
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
@@ -274,10 +274,12 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             if (getEndpoint().isTransacted() && exchange.isFailed()) {
                 // break out as we are transacted and should rollback
                 Exception cause = exchange.getException();
+                // must release exchange
+                releaseExchange(exchange, false);
                 if (cause != null) {
                     throw cause;
                 } else {
-                    throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
+                    throw new RollbackExchangeException("Rollback transaction due error processing exchange", null);
                 }
             }
 
@@ -306,6 +308,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                 } else {
                     handleException("Error executing onConsume/onConsumeFailed query " + sql, e);
                 }
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
 

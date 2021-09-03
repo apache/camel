@@ -73,7 +73,7 @@ public class FacebookComponent extends DefaultComponent {
         return endpoint;
     }
 
-    private FacebookEndpointConfiguration copyComponentProperties() throws Exception {
+    private FacebookEndpointConfiguration copyComponentProperties() {
         Map<String, Object> componentProperties = new HashMap<>();
         BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
         beanIntrospection.getProperties(configuration, componentProperties, null, false);

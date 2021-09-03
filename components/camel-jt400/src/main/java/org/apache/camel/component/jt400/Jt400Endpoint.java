@@ -282,6 +282,14 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
         return configuration.getMessageAction();
     }
 
+    public void setSendingReply(boolean sendingReply) {
+        configuration.setSendingReply(sendingReply);
+    }
+
+    public boolean isSendingReply() {
+        return configuration.isSendingReply();
+    }
+
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;

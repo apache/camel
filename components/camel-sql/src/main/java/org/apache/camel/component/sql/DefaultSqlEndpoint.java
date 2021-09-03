@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -41,10 +42,8 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
 
-    @UriParam(description = "Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database.")
-    @Deprecated
-    private String dataSourceRef;
-    @UriParam(description = "Sets the DataSource to use to communicate with the databaset at endpoint level.")
+    @Metadata(autowired = true)
+    @UriParam(description = "Sets the DataSource to use to communicate with the database at endpoint level.")
     private DataSource dataSource;
     @UriParam(label = "consumer",
               description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
@@ -132,9 +131,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     public DefaultSqlEndpoint() {
     }
 
-    public DefaultSqlEndpoint(String uri, Component component, JdbcTemplate jdbcTemplate) {
-        super(uri, component);
-        this.jdbcTemplate = jdbcTemplate;
+    public DefaultSqlEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
     }
 
     public JdbcTemplate getJdbcTemplate() {
@@ -356,17 +354,6 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
      */
     public void setUseMessageBodyForSql(boolean useMessageBodyForSql) {
         this.useMessageBodyForSql = useMessageBodyForSql;
-    }
-
-    public String getDataSourceRef() {
-        return dataSourceRef;
-    }
-
-    /**
-     * Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database.
-     */
-    public void setDataSourceRef(String dataSourceRef) {
-        this.dataSourceRef = dataSourceRef;
     }
 
     public DataSource getDataSource() {

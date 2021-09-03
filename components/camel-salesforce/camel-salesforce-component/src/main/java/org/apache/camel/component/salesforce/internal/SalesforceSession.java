@@ -109,7 +109,7 @@ public class SalesforceSession extends ServiceSupport {
 
         // check if we need a new session
         // this way there's always a single valid session
-        if ((accessToken == null) || accessToken.equals(oldToken)) {
+        if (accessToken == null || accessToken.equals(oldToken)) {
 
             // try revoking the old access token before creating a new one
             accessToken = oldToken;
@@ -188,10 +188,11 @@ public class SalesforceSession extends ServiceSupport {
 
     String generateJwtAssertion() {
         final long utcPlusWindow = Clock.systemUTC().millis() / 1000 + JWT_CLAIM_WINDOW;
+        final String audience = config.getJwtAudience() != null ? config.getJwtAudience() : config.getLoginUrl();
 
         final StringBuilder claim = new StringBuilder().append("{\"iss\":\"").append(config.getClientId())
                 .append("\",\"sub\":\"").append(config.getUserName())
-                .append("\",\"aud\":\"").append(config.getLoginUrl()).append("\",\"exp\":\"").append(utcPlusWindow)
+                .append("\",\"aud\":\"").append(audience).append("\",\"exp\":\"").append(utcPlusWindow)
                 .append("\"}");
 
         final StringBuilder token = new StringBuilder(JWT_HEADER).append('.')
@@ -268,7 +269,7 @@ public class SalesforceSession extends ServiceSupport {
                     for (SalesforceSessionListener listener : listeners) {
                         try {
                             listener.onLogin(accessToken, instanceUrl);
-                        } catch (Throwable t) {
+                        } catch (Exception t) {
                             LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
                         }
                     }
@@ -332,7 +333,7 @@ public class SalesforceSession extends ServiceSupport {
             for (SalesforceSessionListener listener : listeners) {
                 try {
                     listener.onLogout();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
                 }
             }

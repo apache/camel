@@ -144,7 +144,7 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
     }
 
     private void processCreateJob(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException, InvalidPayloadException {
+            throws InvalidPayloadException {
         Job job = exchange.getIn().getMandatoryBody(Job.class);
         bulkClient.createJob(job, determineHeaders(exchange),
                 new JobResponseCallback() {
@@ -279,7 +279,7 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
     }
 
     private void processCreateQueryJob(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException, InvalidPayloadException {
+            throws InvalidPayloadException {
         QueryJob job = exchange.getIn().getMandatoryBody(QueryJob.class);
         bulkClient.createQueryJob(job, determineHeaders(exchange),
                 new BulkApiV2Client.QueryJobResponseCallback() {

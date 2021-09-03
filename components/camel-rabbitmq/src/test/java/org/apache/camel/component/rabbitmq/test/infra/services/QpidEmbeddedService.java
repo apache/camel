@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.component.rabbitmq.integration.AbstractRabbitMQIntTest;
+import org.apache.camel.component.rabbitmq.integration.AbstractRabbitMQIT;
 import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.apache.camel.test.infra.rabbitmq.services.RabbitMQService;
 import org.apache.qpid.server.SystemLauncher;
@@ -41,7 +41,7 @@ public class QpidEmbeddedService implements RabbitMQService {
      */
     protected static Map<String, Object> createQpidSystemConfig() {
         Map<String, Object> attributes = new HashMap<>();
-        URL initialConfig = AbstractRabbitMQIntTest.class.getClassLoader().getResource(INITIAL_CONFIGURATION);
+        URL initialConfig = AbstractRabbitMQIT.class.getClassLoader().getResource(INITIAL_CONFIGURATION);
         attributes.put(ConfiguredObject.TYPE, "Memory");
         attributes.put(SystemConfig.INITIAL_CONFIGURATION_LOCATION, initialConfig.toExternalForm());
         attributes.put(SystemConfig.STARTUP_LOGGED_TO_SYSTEM_OUT, false);

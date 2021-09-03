@@ -40,7 +40,6 @@ import io.undertow.util.HttpString;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
@@ -88,22 +87,17 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowClientCallback.class);
 
-    protected final UndertowEndpoint endpoint;
-
-    protected final Exchange exchange;
-
-    protected final ClientRequest request;
-
-    protected final AsyncCallback callback;
-
     /**
      * A queue of resources that will be closed when the exchange ends, add more resources via
      * {@link #deferClose(Closeable)}.
      */
     protected final BlockingDeque<Closeable> closables = new LinkedBlockingDeque<>();
 
+    protected final UndertowEndpoint endpoint;
+    protected final Exchange exchange;
+    protected final ClientRequest request;
+    protected final AsyncCallback callback;
     private final ByteBuffer body;
-
     private final Boolean throwExceptionOnFailure;
 
     UndertowClientCallback(final Exchange exchange, final AsyncCallback callback, final UndertowEndpoint endpoint,
@@ -209,7 +203,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                 final int code = clientExchange.getResponse().getResponseCode();
                 LOG.debug("Http responseCode: {}", code);
 
-                final boolean ok = HttpHelper.isStatusCodeOk(code, "200-299");
+                final boolean ok = code >= 200 && code <= 299;
                 if (!ok && throwExceptionOnFailure) {
                     // operation failed so populate exception to throw
                     final String uri = endpoint.getHttpURI().toString();
@@ -238,7 +232,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                     // we end Camel exchange here
                     finish(result);
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 hasFailedWith(e);
             }
         }));

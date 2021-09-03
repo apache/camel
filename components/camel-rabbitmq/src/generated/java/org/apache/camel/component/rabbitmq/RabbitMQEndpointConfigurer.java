@@ -106,6 +106,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "queue": target.setQueue(property(camelContext, java.lang.String.class, value)); return true;
         case "requeue":
         case "reQueue": target.setReQueue(property(camelContext, boolean.class, value)); return true;
+        case "recoverfromdeclareexception":
+        case "recoverFromDeclareException": target.setRecoverFromDeclareException(property(camelContext, boolean.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "requesttimeoutcheckerinterval":
@@ -230,6 +232,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "queue": return java.lang.String.class;
         case "requeue":
         case "reQueue": return boolean.class;
+        case "recoverfromdeclareexception":
+        case "recoverFromDeclareException": return boolean.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "requesttimeoutcheckerinterval":
@@ -355,6 +359,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "queue": return target.getQueue();
         case "requeue":
         case "reQueue": return target.isReQueue();
+        case "recoverfromdeclareexception":
+        case "recoverFromDeclareException": return target.isRecoverFromDeclareException();
         case "requesttimeout":
         case "requestTimeout": return target.getRequestTimeout();
         case "requesttimeoutcheckerinterval":

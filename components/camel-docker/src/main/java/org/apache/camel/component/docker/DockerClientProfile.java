@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.docker;
 
-import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -140,7 +139,7 @@ public class DockerClientProfile {
         this.maxPerRouteConnections = maxPerRouteConnections;
     }
 
-    public String toUrl() throws DockerException {
+    public String toUrl() {
         ObjectHelper.notNull(this.host, "host");
 
         if (this.socket != null && this.socket) {

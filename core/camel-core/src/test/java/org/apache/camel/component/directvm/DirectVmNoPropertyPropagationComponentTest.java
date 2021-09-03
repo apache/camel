@@ -20,12 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
  */
+@ResourceLock("DirectVmComponent")
 public class DirectVmNoPropertyPropagationComponentTest extends ContextTestSupport {
 
     @Override

@@ -29,7 +29,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Routes messages based on dynamic rules
+ * Route messages based on dynamic rules
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "dynamicRouter")
@@ -42,6 +42,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoints;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")

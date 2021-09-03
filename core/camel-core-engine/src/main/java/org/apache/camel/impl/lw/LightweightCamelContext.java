@@ -41,6 +41,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
+import org.apache.camel.RouteConfigurationsBuilder;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
@@ -60,6 +62,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
@@ -88,6 +91,8 @@ import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
+import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -112,10 +117,12 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -123,6 +130,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -440,7 +448,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public List<String> getComponentNames() {
+    public Set<String> getComponentNames() {
         return delegate.getComponentNames();
     }
 
@@ -546,6 +554,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception {
+        delegate.addRoutesConfigurations(builder);
+    }
+
+    @Override
     public boolean removeRoute(String routeId) throws Exception {
         return delegate.removeRoute(routeId);
     }
@@ -636,6 +649,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
+        return getExtendedCamelContext().resolvePropertyPlaceholders(text, keepUnresolvedOptional);
+    }
+
+    @Override
     public PropertiesComponent getPropertiesComponent() {
         return delegate.getPropertiesComponent();
     }
@@ -647,7 +665,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
 
     @Override
     @Deprecated
-    public List<String> getLanguageNames() {
+    public Set<String> getLanguageNames() {
         return delegate.getLanguageNames();
     }
 
@@ -854,6 +872,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
         delegate.setTypeConverterStatisticsEnabled(typeConverterStatisticsEnabled);
+    }
+
+    @Override
+    public Boolean isDumpRoutes() {
+        return delegate.isDumpRoutes();
+    }
+
+    @Override
+    public void setDumpRoutes(Boolean dumpRoutes) {
+        delegate.setDumpRoutes(dumpRoutes);
     }
 
     @Override
@@ -1270,6 +1298,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public FactoryFinder getBootstrapFactoryFinder(String path) {
+        return getExtendedCamelContext().getBootstrapFactoryFinder(path);
+    }
+
+    @Override
     public FactoryFinder getFactoryFinder(String path) {
         return getExtendedCamelContext().getFactoryFinder(path);
     }
@@ -1435,6 +1468,36 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public ExchangeFactory getExchangeFactory() {
+        return getExtendedCamelContext().getExchangeFactory();
+    }
+
+    @Override
+    public void setExchangeFactory(ExchangeFactory exchangeFactory) {
+        getExtendedCamelContext().setExchangeFactory(exchangeFactory);
+    }
+
+    @Override
+    public ExchangeFactoryManager getExchangeFactoryManager() {
+        return getExtendedCamelContext().getExchangeFactoryManager();
+    }
+
+    @Override
+    public void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager) {
+        getExtendedCamelContext().setExchangeFactoryManager(exchangeFactoryManager);
+    }
+
+    @Override
+    public ProcessorExchangeFactory getProcessorExchangeFactory() {
+        return getExtendedCamelContext().getProcessorExchangeFactory();
+    }
+
+    @Override
+    public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
+        getExtendedCamelContext().setProcessorExchangeFactory(processorExchangeFactory);
+    }
+
+    @Override
     public ReactiveExecutor getReactiveExecutor() {
         return getExtendedCamelContext().getReactiveExecutor();
     }
@@ -1462,6 +1525,26 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader() {
         return getExtendedCamelContext().getXMLRoutesDefinitionLoader();
+    }
+
+    @Override
+    public void setRoutesLoader(RoutesLoader routesLoader) {
+        getExtendedCamelContext().setRoutesLoader(routesLoader);
+    }
+
+    @Override
+    public RoutesLoader getRoutesLoader() {
+        return getExtendedCamelContext().getRoutesLoader();
+    }
+
+    @Override
+    public ResourceLoader getResourceLoader() {
+        return getExtendedCamelContext().getResourceLoader();
+    }
+
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        getExtendedCamelContext().setResourceLoader(resourceLoader);
     }
 
     @Override
@@ -1559,6 +1642,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         getExtendedCamelContext().setStartupStepRecorder(startupStepRecorder);
     }
 
+    @Override
+    public String getTestExcludeRoutes() {
+        return getExtendedCamelContext().getTestExcludeRoutes();
+    }
+
     //
     // CatalogCamelContext
     //
@@ -1603,6 +1691,21 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
         return getModelCamelContext().getModelLifecycleStrategies();
+    }
+
+    @Override
+    public void addRouteConfiguration(RouteConfigurationDefinition routesConfiguration) {
+        getModelCamelContext().addRouteConfiguration(routesConfiguration);
+    }
+
+    @Override
+    public void addRouteConfigurations(List<RouteConfigurationDefinition> routesConfigurations) {
+        getModelCamelContext().addRouteConfigurations(routesConfigurations);
+    }
+
+    @Override
+    public List<RouteConfigurationDefinition> getRouteConfigurationDefinitions() {
+        return getModelCamelContext().getRouteConfigurationDefinitions();
     }
 
     @Override
@@ -1674,6 +1777,12 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
             throws Exception {
         return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, parameters);
+    }
+
+    @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
+            throws Exception {
+        return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
     }
 
     @Override

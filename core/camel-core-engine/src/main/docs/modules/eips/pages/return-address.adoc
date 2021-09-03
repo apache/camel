@@ -53,6 +53,6 @@ from("activemq:queue:bar?disableReplyTo=true").to("mock:bar");
 ----
 
 For a complete example of this pattern, see this
-https://github.com/apache/camel/blob/master/components/camel-jms/src/test/java/org/apache/camel/component/jms/JmsInOnlyWithReplyToAsHeaderTest.java[junit
+https://github.com/apache/camel/blob/main/components/camel-jms/src/test/java/org/apache/camel/component/jms/JmsInOnlyWithReplyToAsHeaderTest.java[junit
 test case]
 

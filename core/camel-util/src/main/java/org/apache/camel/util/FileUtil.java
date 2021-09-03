@@ -96,7 +96,10 @@ public final class FileUtil {
         }
 
         // create parent folder
-        parentDir.mkdirs();
+        boolean mkdirsResult = parentDir.mkdirs();
+        if (!mkdirsResult) {
+            LOG.error("mkdirs() failed for " + parentDir);
+        }
 
         return Files.createTempFile(parentDir.toPath(), prefix, suffix).toFile();
     }
@@ -150,7 +153,7 @@ public final class FileUtil {
 
         String s = name;
 
-        // there must be some leading text, as we should only remove trailing separators 
+        // there must be some leading text, as we should only remove trailing separators
         while (s.endsWith("/") || s.endsWith(File.separator)) {
             s = s.substring(0, s.length() - 1);
         }
@@ -254,6 +257,17 @@ public final class FileUtil {
         return null;
     }
 
+    public static String onlyName(String name) {
+        return onlyName(name, false);
+    }
+
+    public static String onlyName(String name, boolean singleMode) {
+        name = FileUtil.stripPath(name);
+        name = FileUtil.stripExt(name, singleMode);
+
+        return name;
+    }
+
     /**
      * Compacts a path by stacking it and reducing <tt>..</tt>, and uses OS specific file separators (eg
      * {@link java.io.File#separator}).
@@ -278,7 +292,7 @@ public final class FileUtil {
             return null;
         }
 
-        if (path.startsWith("http:")) {
+        if (path.startsWith("http:") || path.startsWith("https:")) {
             return path;
         }
 
@@ -289,6 +303,14 @@ public final class FileUtil {
 
         // need to normalize path before compacting
         path = normalizePath(path);
+
+        // preserve scheme
+        String scheme = null;
+        if (hasScheme(path)) {
+            int pos = path.indexOf(':');
+            scheme = path.substring(0, pos);
+            path = path.substring(pos + 1);
+        }
 
         // preserve ending slash if given in input path
         boolean endsWithSlash = path.endsWith("/") || path.endsWith("\\");
@@ -321,6 +343,10 @@ public final class FileUtil {
 
         // build path based on stack
         StringBuilder sb = new StringBuilder();
+        if (scheme != null) {
+            sb.append(scheme);
+            sb.append(":");
+        }
 
         for (int i = 0; i < cntSlashsAtStart; i++) {
             sb.append(separator);
@@ -359,9 +385,10 @@ public final class FileUtil {
 
     private static void delete(File f) {
         if (!f.delete()) {
-            if (isWindows()) {
+            // manual GC call on every file delete? Looks very suspicious!
+            /*if (isWindows()) {
                 System.gc();
-            }
+            }*/
             try {
                 Thread.sleep(RETRY_SLEEP_MILLIS);
             } catch (InterruptedException ex) {
@@ -425,7 +452,7 @@ public final class FileUtil {
     /**
      * Rename file using copy and delete strategy. This is primarily used in environments where the regular rename
      * operation is unreliable.
-     * 
+     *
      * @param  from        the file to be renamed
      * @param  to          the new target file
      * @return             <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
@@ -541,6 +568,20 @@ public final class FileUtil {
                 throw e;
             }
         }
+    }
+
+    /**
+     * Determines whether the URI has a scheme (e.g. file:, classpath: or http:)
+     *
+     * @param  uri the URI
+     * @return     <tt>true</tt> if the URI starts with a scheme
+     */
+    private static boolean hasScheme(String uri) {
+        if (uri == null) {
+            return false;
+        }
+
+        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("http:");
     }
 
 }

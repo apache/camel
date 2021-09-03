@@ -348,6 +348,22 @@ public interface MiloClientComponentBuilderFactory {
             return this;
         }
         /**
+         * Instance for managing client connections.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.milo.client.MiloClientConnectionManager&lt;/code&gt; type.
+         * 
+         * Group: client
+         * 
+         * @param miloClientConnectionManager the value to set
+         * @return the dsl builder
+         */
+        default MiloClientComponentBuilder miloClientConnectionManager(
+                org.apache.camel.component.milo.client.MiloClientConnectionManager miloClientConnectionManager) {
+            doSetProperty("miloClientConnectionManager", miloClientConnectionManager);
+            return this;
+        }
+        /**
          * Override the server reported endpoint host with the host from the
          * endpoint URI.
          * 
@@ -482,6 +498,7 @@ public interface MiloClientComponentBuilderFactory {
             case "keyStoreUrl": getOrCreateConfiguration((MiloClientComponent) component).setKeyStoreUrl((java.lang.String) value); return true;
             case "maxPendingPublishRequests": getOrCreateConfiguration((MiloClientComponent) component).setMaxPendingPublishRequests((java.lang.Long) value); return true;
             case "maxResponseMessageSize": getOrCreateConfiguration((MiloClientComponent) component).setMaxResponseMessageSize((java.lang.Long) value); return true;
+            case "miloClientConnectionManager": ((MiloClientComponent) component).setMiloClientConnectionManager((org.apache.camel.component.milo.client.MiloClientConnectionManager) value); return true;
             case "overrideHost": getOrCreateConfiguration((MiloClientComponent) component).setOverrideHost((boolean) value); return true;
             case "productUri": getOrCreateConfiguration((MiloClientComponent) component).setProductUri((java.lang.String) value); return true;
             case "requestedPublishingInterval": getOrCreateConfiguration((MiloClientComponent) component).setRequestedPublishingInterval((java.lang.Double) value); return true;

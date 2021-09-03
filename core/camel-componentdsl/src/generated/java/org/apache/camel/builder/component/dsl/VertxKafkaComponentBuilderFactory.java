@@ -432,7 +432,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2m7s
+         * Default: 30s
          * Group: common
          * 
          * @param socketConnectionSetupTimeoutMaxMs the value to set
@@ -479,6 +479,30 @@ public interface VertxKafkaComponentBuilderFactory {
         default VertxKafkaComponentBuilder allowAutoCreateTopics(
                 boolean allowAutoCreateTopics) {
             doSetProperty("allowAutoCreateTopics", allowAutoCreateTopics);
+            return this;
+        }
+        /**
+         * Whether to allow doing manual commits via
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit.
+         * If this option is enabled then an instance of
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * is stored on the Exchange message header, which allows end users to
+         * access this API and perform manual offset commits via the Kafka
+         * consumer. Note: To take full control of the offset committing, you
+         * may need to disable the Kafka Consumer default auto commit behavior
+         * by setting 'enableAutoCommit' to 'false'.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param allowManualCommit the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder allowManualCommit(
+                boolean allowManualCommit) {
+            doSetProperty("allowManualCommit", allowManualCommit);
             return this;
         }
         /**
@@ -757,7 +781,7 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * Controls how to read messages written transactionally. If set to
          * read_committed, consumer.poll() will only return transactional
-         * messages which have been committed. If set to read_uncommitted' (the
+         * messages which have been committed. If set to read_uncommitted (the
          * default), consumer.poll() will return all messages, even
          * transactional messages which have been aborted. Non-transactional
          * messages will be returned unconditionally in either mode. Messages
@@ -852,6 +876,9 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * The maximum number of records returned in a single call to poll().
+         * Note, that max.poll.records does not impact the underlying fetching
+         * behavior. The consumer will cache the records from each fetch request
+         * and returns them incrementally from each poll.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -869,12 +896,19 @@ public interface VertxKafkaComponentBuilderFactory {
          * A list of class names or class types, ordered by preference, of
          * supported partition assignment strategies that the client will use to
          * distribute partition ownership amongst consumer instances when group
-         * management is used.In addition to the default class specified below,
-         * you can use the
-         * org.apache.kafka.clients.consumer.RoundRobinAssignorclass for round
-         * robin assignments of partitions to consumers. Implementing the
+         * management is used. Available options
+         * are:org.apache.kafka.clients.consumer.RangeAssignor: The default
+         * assignor, which works on a per-topic
+         * basis.org.apache.kafka.clients.consumer.RoundRobinAssignor: Assigns
+         * partitions to consumers in a round-robin
+         * fashion.org.apache.kafka.clients.consumer.StickyAssignor: Guarantees
+         * an assignment that is maximally balanced while preserving as many
+         * existing partition assignments as
+         * possible.org.apache.kafka.clients.consumer.CooperativeStickyAssignor:
+         * Follows the same StickyAssignor logic, but allows for cooperative
+         * rebalancing.Implementing the
          * org.apache.kafka.clients.consumer.ConsumerPartitionAssignor interface
-         * allows you to plug in a custom assignmentstrategy.
+         * allows you to plug in a custom assignment strategy.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -958,6 +992,28 @@ public interface VertxKafkaComponentBuilderFactory {
         default VertxKafkaComponentBuilder valueDeserializer(
                 java.lang.String valueDeserializer) {
             doSetProperty("valueDeserializer", valueDeserializer);
+            return this;
+        }
+        /**
+         * Factory to use for creating
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * instances. This allows to plugin a custom factory to create custom
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * instances in case special logic is needed when doing manual commits
+         * that deviates from the default implementation that comes out of the
+         * box.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommitFactory&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param kafkaManualCommitFactory the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder kafkaManualCommitFactory(
+                org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommitFactory kafkaManualCommitFactory) {
+            doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
             return this;
         }
         /**
@@ -1464,8 +1520,8 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * JAAS login context parameters for SASL connections in the format used
          * by JAAS configuration files. JAAS configuration file format is
-         * described here. The format for the value is: 'loginModuleClass
-         * controlFlag (optionName=optionValue);'. For brokers, the config must
+         * described here. The format for the value is: loginModuleClass
+         * controlFlag (optionName=optionValue);. For brokers, the config must
          * be prefixed with listener prefix and SASL mechanism name in
          * lower-case. For example,
          * listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;.
@@ -2123,6 +2179,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "socketConnectionSetupTimeoutMaxMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSocketConnectionSetupTimeoutMaxMs((long) value); return true;
             case "socketConnectionSetupTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSocketConnectionSetupTimeoutMs((long) value); return true;
             case "allowAutoCreateTopics": getOrCreateConfiguration((VertxKafkaComponent) component).setAllowAutoCreateTopics((boolean) value); return true;
+            case "allowManualCommit": getOrCreateConfiguration((VertxKafkaComponent) component).setAllowManualCommit((boolean) value); return true;
             case "autoCommitIntervalMs": getOrCreateConfiguration((VertxKafkaComponent) component).setAutoCommitIntervalMs((int) value); return true;
             case "autoOffsetReset": getOrCreateConfiguration((VertxKafkaComponent) component).setAutoOffsetReset((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((VertxKafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
@@ -2147,6 +2204,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "seekToPosition": getOrCreateConfiguration((VertxKafkaComponent) component).setSeekToPosition((java.lang.String) value); return true;
             case "sessionTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSessionTimeoutMs((int) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((VertxKafkaComponent) component).setValueDeserializer((java.lang.String) value); return true;
+            case "kafkaManualCommitFactory": ((VertxKafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommitFactory) value); return true;
             case "acks": getOrCreateConfiguration((VertxKafkaComponent) component).setAcks((java.lang.String) value); return true;
             case "batchSize": getOrCreateConfiguration((VertxKafkaComponent) component).setBatchSize((int) value); return true;
             case "bufferMemory": getOrCreateConfiguration((VertxKafkaComponent) component).setBufferMemory((long) value); return true;
@@ -2167,7 +2225,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "valueSerializer": getOrCreateConfiguration((VertxKafkaComponent) component).setValueSerializer((java.lang.String) value); return true;
             case "autowiredEnabled": ((VertxKafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "vertx": ((VertxKafkaComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
-            case "vertxKafkaClientFactory": getOrCreateConfiguration((VertxKafkaComponent) component).setVertxKafkaClientFactory((org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory) value); return true;
+            case "vertxKafkaClientFactory": ((VertxKafkaComponent) component).setVertxKafkaClientFactory((org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory) value); return true;
             case "vertxOptions": ((VertxKafkaComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
             case "saslClientCallbackHandlerClass": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslClientCallbackHandlerClass((java.lang.String) value); return true;
             case "saslJaasConfig": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslJaasConfig((java.lang.String) value); return true;

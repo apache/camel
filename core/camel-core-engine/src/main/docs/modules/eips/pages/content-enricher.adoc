@@ -14,9 +14,7 @@ image::eip/DataEnricher.gif[image]
 [[ContentEnricher-ContentenrichmentusingaMessageTranslatororaProcessor]]
 == Content enrichment using a Message Translator or a Processor
 
-*Using the* *xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]*
-
-You can use xref:latest@manual:ROOT:templating.adoc[Templating] to consume a message from
+You can consume a message from
 one destination, transform it with something like
 xref:components::velocity-component.adoc[Velocity] or xref:components::xquery-component.adoc[XQuery], and then send
 it on to another destination. For example using InOnly (one way
@@ -78,8 +76,8 @@ from("activemq:My.Queue")
 For further examples of this pattern in use you could look at one of the
 JUnit tests
 
-* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
-* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
+* https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
+* https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
 
 *Using Spring XML*
 
@@ -136,8 +134,6 @@ longer apply and it just works.
 [[ContentEnricher-EnrichOptions]]
 == Enrich Options
 
-confluenceTableSmall
-
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Name |Default Value |Description
@@ -164,7 +160,7 @@ dynamic language that can compute the uri dynamically using values from
 the current  xref:latest@manual:ROOT:exchange.adoc[Exchange].
 
 |`strategyRef` |  |Refers to an
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
 to be used to merge the reply from the external service, into a single
 outgoing message. By default Camel will use the reply from the external
 service as outgoing message. From *Camel 2.12* onwards you can also use
@@ -205,9 +201,6 @@ to -1 allows to turn off the cache all together.
 endpoint URI that could not be resolved. If disabled, Camel will throw
 an exception identifying the invalid endpoint URI.
 |=======================================================================
-
-*Using the* *xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]*
-
 
 [source,java]
 ----
@@ -377,7 +370,7 @@ dynamic language that can compute the uri dynamically using values from
 the current xref:latest@manual:ROOT:exchange.adoc[Exchange].
 
 |`strategyRef` |  |Refers to an
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
 to be used to merge the reply from the external service, into a single
 outgoing message. By default Camel will use the reply from the external
 service as outgoing message. From *Camel 2.12* onwards you can also use

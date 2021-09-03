@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-main</artifactId>
@@ -101,6 +101,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-health</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-log</artifactId>
             <scope>test</scope>
         </dependency>
@@ -147,6 +152,13 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>update-classloaded</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>update-classloaded-helper</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>generate-test-configurer</id>
                         <phase>process-test-classes</phase>
                         <goals>
@@ -156,6 +168,29 @@
                         <configuration>
                             <discoverClasses>false</discoverClasses>
                             <classes>org.apache.camel.main.MySecondFoo,org.apache.camel.main.MySecondBar</classes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/generated/java</source>
+                            </sources>
+                            <resources>
+                                <resource>
+                                    <directory>src/generated/resources</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

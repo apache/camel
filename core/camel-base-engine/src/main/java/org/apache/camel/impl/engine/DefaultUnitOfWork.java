@@ -30,13 +30,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
+import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.Service;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.MessageSupport;
@@ -47,22 +48,19 @@ import org.slf4j.LoggerFactory;
 /**
  * The default implementation of {@link org.apache.camel.spi.UnitOfWork}
  */
-public class DefaultUnitOfWork implements UnitOfWork, Service {
+@EagerClassloaded
+public class DefaultUnitOfWork implements UnitOfWork {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUnitOfWork.class);
+
+    // instances used by MDCUnitOfWork
     final InflightRepository inflightRepository;
     final boolean allowUseOriginalMessage;
     final boolean useBreadcrumb;
 
-    // TODO: This implementation seems to have transformed itself into a to broad concern
-    //   where unit of work is doing a bit more work than the transactional aspect that ties
-    //   to its name. Maybe this implementation should be named ExchangeContext and we can
-    //   introduce a simpler UnitOfWork concept. This would also allow us to refactor the
-    //   SubUnitOfWork into a general parent/child unit of work concept. However this
-    //   requires API changes and thus is best kept for future Camel work
-    private final Deque<Route> routes = new ArrayDeque<>(8);
-    private final Exchange exchange;
     private final ExtendedCamelContext context;
+    private final Deque<Route> routes = new ArrayDeque<>(8);
     private Logger log;
+    private Exchange exchange;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
@@ -80,12 +78,35 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     public DefaultUnitOfWork(Exchange exchange, InflightRepository inflightRepository, boolean allowUseOriginalMessage,
                              boolean useBreadcrumb) {
-        this.exchange = exchange;
         this.log = LOG;
         this.allowUseOriginalMessage = allowUseOriginalMessage;
         this.useBreadcrumb = useBreadcrumb;
         this.context = (ExtendedCamelContext) exchange.getContext();
         this.inflightRepository = inflightRepository;
+        doOnPrepare(exchange);
+    }
+
+    public static void onClassloaded(Logger log) {
+        log.trace("Loaded DefaultUnitOfWork");
+    }
+
+    UnitOfWork newInstance(Exchange exchange) {
+        return new DefaultUnitOfWork(exchange, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
+    }
+
+    @Override
+    public boolean onPrepare(Exchange exchange) {
+        if (this.exchange == null) {
+            doOnPrepare(exchange);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void doOnPrepare(Exchange exchange) {
+        // unit of work is reused, so setup for this exchange
+        this.exchange = exchange;
 
         if (allowUseOriginalMessage) {
             // special for JmsMessage as it can cause it to loose headers later.
@@ -127,8 +148,17 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         inflightRepository.add(exchange);
     }
 
-    UnitOfWork newInstance(Exchange exchange) {
-        return new DefaultUnitOfWork(exchange, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
+    @Override
+    public void reset() {
+        this.exchange = null;
+        routes.clear();
+        if (synchronizations != null) {
+            synchronizations.clear();
+        }
+        originalInMessage = null;
+        if (transactedBy != null) {
+            transactedBy.clear();
+        }
     }
 
     @Override
@@ -141,16 +171,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         UnitOfWork answer = newInstance(childExchange);
         answer.setParentUnitOfWork(this);
         return answer;
-    }
-
-    @Override
-    public void start() {
-        // noop
-    }
-
-    @Override
-    public void stop() {
-        // noop
     }
 
     @Override
@@ -231,6 +251,16 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             } catch (Throwable e) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during event notification. This exception will be ignored.", e);
+            }
+        }
+
+        // the exchange is now done
+        if (exchange instanceof PooledExchange) {
+            try {
+                ((PooledExchange) exchange).done(false);
+            } catch (Throwable e) {
+                // must catch exceptions to ensure synchronizations is also invoked
+                log.warn("Exception occurred during exchange done. This exception will be ignored.", e);
             }
         }
     }

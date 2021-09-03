@@ -42,13 +42,7 @@ public class DropboxTestSupport extends CamelTestSupport {
     private DbxClientV2 client;
 
     protected DropboxTestSupport() {
-        properties = new Properties();
-        try (InputStream inStream = getClass().getResourceAsStream("/test-options.properties")) {
-            properties.load(inStream);
-        } catch (IOException e) {
-            LOG.error("I/O error: reading test-options.properties: {}", e.getMessage(), e);
-            throw new IllegalAccessError("test-options.properties could not be found");
-        }
+        properties = loadProperties();
 
         workdir = properties.getProperty("workDir");
         token = properties.getProperty("accessToken");
@@ -56,6 +50,25 @@ public class DropboxTestSupport extends CamelTestSupport {
         DbxRequestConfig config = DbxRequestConfig.newBuilder(properties.getProperty("clientIdentifier")).build();
         client = new DbxClientV2(config, token);
 
+    }
+
+    private static Properties loadProperties() {
+        final Properties properties = new Properties();
+        try (InputStream inStream = DropboxTestSupport.class.getResourceAsStream("/test-options.properties")) {
+            properties.load(inStream);
+        } catch (IOException e) {
+            LOG.error("I/O error: reading test-options.properties: {}", e.getMessage(), e);
+            throw new IllegalAccessError("test-options.properties could not be found");
+        }
+        return properties;
+    }
+
+    // Used by JUnit to automatically trigger the integration tests
+    @SuppressWarnings("unused")
+    private static boolean hasCredentials() {
+        Properties properties = loadProperties();
+
+        return !properties.getProperty("accessToken", "").isEmpty();
     }
 
     @BeforeEach

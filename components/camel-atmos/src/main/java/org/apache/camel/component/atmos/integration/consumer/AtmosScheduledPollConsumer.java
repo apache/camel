@@ -38,8 +38,6 @@ public abstract class AtmosScheduledPollConsumer extends ScheduledPollConsumer {
     /**
      * Lifecycle method invoked when the consumer has created. Internally create or reuse a connection to the low level
      * atmos client
-     * 
-     * @throws Exception
      */
     @Override
     protected void doStart() throws Exception {
@@ -53,8 +51,6 @@ public abstract class AtmosScheduledPollConsumer extends ScheduledPollConsumer {
 
     /**
      * Lifecycle method invoked when the consumer has destroyed. Erase the reference to the atmos low level client
-     * 
-     * @throws Exception
      */
     @Override
     protected void doStop() throws Exception {

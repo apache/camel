@@ -24,9 +24,9 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
+import org.apache.camel.support.ObjectHelper;
 
 public class GroovyExpression extends ExpressionSupport {
     private final String text;
@@ -77,11 +77,7 @@ public class GroovyExpression extends ExpressionSupport {
         }
 
         // New instance of the script
-        try {
-            return scriptClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeCamelException(e);
-        }
+        return ObjectHelper.newInstance(scriptClass, Script.class);
     }
 
     private Binding createBinding(Exchange exchange) {

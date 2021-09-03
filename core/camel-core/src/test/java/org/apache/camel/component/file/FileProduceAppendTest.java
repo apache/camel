@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -30,9 +29,12 @@ public class FileProduceAppendTest extends ContextTestSupport {
 
     @Test
     public void testAppendText() throws Exception {
+        template.sendBodyAndHeader(fileUri(), "Hello", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), " World", Exchange.FILE_NAME, "world.txt");
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/test-file-append/hello.txt", "Hello World");
+        mock.expectedFileExists(testFile("hello.txt"), "Hello World");
 
         template.sendBody("direct:start", " World");
 
@@ -40,20 +42,11 @@ public class FileProduceAppendTest extends ContextTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/test-file-append");
-        super.setUp();
-        template.sendBodyAndHeader("file://target/data/test-file-append", "Hello", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/test-file-append", " World", Exchange.FILE_NAME, "world.txt");
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                        .to("file://target/data/test-file-append?fileExist=Append", "mock:result");
+                        .to(fileUri("?fileExist=Append"), "mock:result");
             }
         };
     }

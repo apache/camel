@@ -16,15 +16,11 @@
  */
 package org.apache.camel.component.xslt;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  *
@@ -33,19 +29,18 @@ public class XsltOutputFileDeleteTest extends ContextTestSupport {
 
     @Test
     public void testXsltOutputDeleteFile() throws Exception {
-        createDirectory("target/data/xslt");
+        testDirectory(true);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
         template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,
-                "target/data/xslt/xsltme.xml");
+                testFile("xsltme.xml").toString());
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
 
         // assert file deleted
-        File file = new File("target/data/xslt/xsltme.xml");
-        assertFalse(file.exists(), "File should be deleted");
+        assertFileNotExists(testFile("xsltme.xml"));
     }
 
     @Override

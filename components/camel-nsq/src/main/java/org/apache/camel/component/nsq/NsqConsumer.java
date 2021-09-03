@@ -44,7 +44,6 @@ public class NsqConsumer extends DefaultConsumer {
 
     private final Processor processor;
     private ExecutorService executor;
-    private boolean active;
     private final NsqConfiguration configuration;
 
     public NsqConsumer(NsqEndpoint endpoint, Processor processor) {
@@ -88,7 +87,6 @@ public class NsqConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-
         LOG.debug("Stopping NSQ Consumer");
         if (consumer != null) {
             consumer.shutdown();
@@ -111,12 +109,16 @@ public class NsqConsumer extends DefaultConsumer {
         @Override
         public void message(NSQMessage msg) {
             LOG.debug("Received Message: {}", msg);
-            Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
-            exchange.getIn().setBody(msg.getMessage());
-            exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ID, msg.getId());
-            exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, msg.getAttempts());
-            exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_TIMESTAMP, msg.getTimestamp());
+            Exchange exchange = createExchange(false);
             try {
+                exchange.setPattern(ExchangePattern.InOnly);
+                exchange.getIn().setBody(msg.getMessage());
+                exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ID, msg.getId());
+                exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, msg.getAttempts());
+                if (msg.getTimestamp() != null) {
+                    exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_TIMESTAMP, msg.getTimestamp());
+                    exchange.getIn().setHeader(Exchange.MESSAGE_TIMESTAMP, msg.getTimestamp().getTime());
+                }
                 if (configuration.getAutoFinish()) {
                     msg.finished();
                 } else {
@@ -129,6 +131,8 @@ public class NsqConsumer extends DefaultConsumer {
                     msg.requeue((int) configuration.getRequeueInterval());
                 }
                 getExceptionHandler().handleException("Error during processing", exchange, e);
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
     }

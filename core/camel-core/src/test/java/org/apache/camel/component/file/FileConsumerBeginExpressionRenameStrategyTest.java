@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,21 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/inprogress");
-        deleteDirectory("target/data/reports");
-        super.setUp();
-    }
-
     @Test
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -57,20 +48,16 @@ public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSu
     @Test
     public void testRenameFileExists() throws Exception {
         // create a file in inprogress to let there be a duplicate file
-        File file = new File("target/data/inprogress");
-        file.mkdirs();
-        FileWriter fw = new FileWriter("target/data/inprogress/london.bak");
-        try {
+        testDirectory("inprogress", true);
+        try (FileWriter fw = new FileWriter(testFile("inprogress/london.bak").toFile())) {
             fw.write("I was there once in London");
             fw.flush();
-        } finally {
-            fw.close();
         }
 
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");
 
-        template.sendBodyAndHeader("file:target/data/reports", "Hello London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader(fileUri("reports"), "Hello London", Exchange.FILE_NAME, "london.txt");
 
         mock.assertIsSatisfied();
     }
@@ -79,7 +66,7 @@ public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSu
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/reports?preMove=../inprogress/${file:name.noext}.bak&initialDelay=0&delay=10")
+                from(fileUri("reports?preMove=../inprogress/${file:name.noext}.bak&initialDelay=0&delay=10"))
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) throws Exception {

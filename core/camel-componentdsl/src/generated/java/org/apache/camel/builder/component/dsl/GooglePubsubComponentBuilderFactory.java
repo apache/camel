@@ -51,6 +51,22 @@ public interface GooglePubsubComponentBuilderFactory {
             extends
                 ComponentBuilder<GooglePubsubComponent> {
         /**
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param authenticate the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubComponentBuilder authenticate(boolean authenticate) {
+            doSetProperty("authenticate", authenticate);
+            return this;
+        }
+        /**
          * Endpoint to use with local Pub/Sub emulator.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -62,6 +78,24 @@ public interface GooglePubsubComponentBuilderFactory {
          */
         default GooglePubsubComponentBuilder endpoint(java.lang.String endpoint) {
             doSetProperty("endpoint", endpoint);
+            return this;
+        }
+        /**
+         * The Service account key that can be used as credentials for the
+         * PubSub publisher/subscriber. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubComponentBuilder serviceAccountKey(
+                java.lang.String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**
@@ -194,7 +228,9 @@ public interface GooglePubsubComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "authenticate": ((GooglePubsubComponent) component).setAuthenticate((boolean) value); return true;
             case "endpoint": ((GooglePubsubComponent) component).setEndpoint((java.lang.String) value); return true;
+            case "serviceAccountKey": ((GooglePubsubComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GooglePubsubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GooglePubsubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "publisherCacheSize": ((GooglePubsubComponent) component).setPublisherCacheSize((int) value); return true;

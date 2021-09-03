@@ -30,9 +30,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.StringHelper;
 
 /**
- * To specify the rest operation response messages using Swagger.
- * <p/>
- * This maps to the Swagger Response Message Object.
+ * To specify the rest operation response messages.
  */
 @Metadata(label = "rest")
 @XmlRootElement(name = "responseMessage")

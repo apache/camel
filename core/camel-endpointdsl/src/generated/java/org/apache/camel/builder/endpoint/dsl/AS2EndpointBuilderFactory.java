@@ -123,6 +123,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the attached file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param attachedFileName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder attachedFileName(
+                String attachedFileName) {
+            doSetProperty("attachedFileName", attachedFileName);
+            return this;
+        }
+        /**
          * The Client Fully Qualified Domain Name (FQDN). Used in message ids
          * sent by endpoint.
          * 
@@ -829,6 +844,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the attached file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param attachedFileName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder attachedFileName(
+                String attachedFileName) {
+            doSetProperty("attachedFileName", attachedFileName);
+            return this;
+        }
+        /**
          * The Client Fully Qualified Domain Name (FQDN). Used in message ids
          * sent by endpoint.
          * 
@@ -1512,6 +1542,20 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder as2Version(String as2Version) {
             doSetProperty("as2Version", as2Version);
+            return this;
+        }
+        /**
+         * The name of the attached file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param attachedFileName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder attachedFileName(String attachedFileName) {
+            doSetProperty("attachedFileName", attachedFileName);
             return this;
         }
         /**

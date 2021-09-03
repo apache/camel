@@ -8,10 +8,10 @@
     "firstVersion": "3.7.0",
     "label": "language",
     "javaType": "org.apache.camel.language.joor.JoorLanguage",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-joor",
-    "version": "3.8.0-SNAPSHOT",
+    "version": "3.12.0-SNAPSHOT",
     "modelName": "joor",
     "modelJavaType": "org.apache.camel.model.language.JoorExpression"
   },

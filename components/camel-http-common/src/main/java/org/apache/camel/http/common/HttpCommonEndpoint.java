@@ -17,7 +17,6 @@
 package org.apache.camel.http.common;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.cloud.DiscoverableService;
@@ -114,15 +113,15 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
               description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
                             + " This can be turned on in case HTTP clients do not send streamed data.")
     boolean eagerCheckContentAvailable;
-    @UriParam(label = "advanced", defaultValue = "true",
+    @UriParam(label = "consumer,advanced", defaultValue = "true",
               description = "If this option is true then IN exchange Body of the exchange will be mapped to HTTP body."
                             + " Setting this to false will avoid the HTTP mapping.")
     boolean mapHttpMessageBody = true;
-    @UriParam(label = "advanced", defaultValue = "true",
+    @UriParam(label = "consumer,advanced", defaultValue = "true",
               description = "If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers."
                             + " Setting this to false will avoid the HTTP Headers mapping.")
     boolean mapHttpMessageHeaders = true;
-    @UriParam(label = "advanced", defaultValue = "true",
+    @UriParam(label = "consumer,advanced", defaultValue = "true",
               description = "If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP."
                             + " Setting this to false will avoid the HTTP Form Encoded body mapping.")
     boolean mapHttpMessageFormUrlEncodedBody = true;
@@ -177,7 +176,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     public HttpCommonEndpoint() {
     }
 
-    public HttpCommonEndpoint(String endPointURI, HttpCommonComponent component, URI httpURI) throws URISyntaxException {
+    public HttpCommonEndpoint(String endPointURI, HttpCommonComponent component, URI httpURI) {
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;

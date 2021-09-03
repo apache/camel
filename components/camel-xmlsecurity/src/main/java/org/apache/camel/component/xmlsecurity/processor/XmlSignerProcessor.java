@@ -542,7 +542,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             throw new IllegalStateException("No element found for element ID " + elementId);
         }
         LOG.debug("Sibling element of the detached XML Signature with reference URI {}: {}  {}",
-                new Object[] { referenceUri, el.getLocalName(), el.getNamespaceURI() });
+                referenceUri, el.getLocalName(), el.getNamespaceURI());
         Element result = getParentElement(el);
         if (result != null) {
             return result;
@@ -596,8 +596,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return referenceList;
     }
 
-    protected List<? extends XMLObject> getObjects(XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties)
-            throws Exception {
+    protected List<? extends XMLObject> getObjects(
+            XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties) {
 
         if (SignatureType.enveloped == input.getSignatureType() || SignatureType.detached == input.getSignatureType()) {
             if (properties == null || properties.getObjects() == null) {
@@ -885,7 +885,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return fac.newReference("#" + keyInfoId, fac.newDigestMethod(digestAlgorithm, null), transforms, null, null);
     }
 
-    private String getKeyInfoId(KeyInfo keyInfo) throws Exception {
+    private String getKeyInfoId(KeyInfo keyInfo) {
         if (keyInfo == null) {
             return null;
         }

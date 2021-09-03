@@ -1,7 +1,7 @@
 [[LambdaRouteBuilder-LambdaRouteBuilder]]
 = LambdaRouteBuilder
 
-The `LambdaRouteBuilder` is a functional interface which is used for creating a routing rule using the DSL,
+The `LambdaRouteBuilder` is a functional interface which is used for creating a routing rule using the xref:dsl.adoc[DSL],
 using Java lambda style.
 
 [source,java]
@@ -30,4 +30,34 @@ public class MyConfiguration {
         return rb -> rb.from("kafka:cheese").to("jms:queue:foo");
     }
 }
+----
+
+== LambdaEndpointRouteBuilder
+
+The xref:Endpoint-dsl.adoc[Endpoint DSL] can also be used as a lambda route builder with the
+`org.apache.camel.builder.endpoint.LambdaEndpointRouteBuilder` class from the `camel-endpointdsl` JAR.
+
+[source,java]
+----
+public class MyConfiguration {
+    @BindToRegistry
+    public LambdaEndpointRouteBuilder myRoute() {
+        return rb -> rb.from(rb.kafka("cheese")).to(rb.jms("queue:foo"));
+    }
+}
+----
+
+The `LambdaEndpointRouteBuilder` has _type safe_ endpoint but requires to prefix with the instance name (`rb`)
+when choosing an endpoint name. Notice above how to select the kafka endpoint
+
+[source,java]
+----
+rb.from(rb.kafka("cheese"))
+----
+
+With the regular `LambdaRouteBuilder` it's just a `String` type, so the `rb` prefix is not needed anymore:
+
+[source,java]
+----
+rb.from("kafka:cheese")
 ----

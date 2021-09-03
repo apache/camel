@@ -55,6 +55,7 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         String[] hostAndPath = parseUri(entry);
         String host = hostAndPath[0];
         String path = hostAndPath[1];
+        String auth = hostAndPath[2];
         if (path != null || !entry.getLenientProperties().isEmpty()) {
             // the context path can be dynamic or any lenient properties
             // and therefore build a new static uri without path or lenient options
@@ -72,7 +73,13 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             }
 
             // build static url with the known parameters
-            String url = getScheme() + ":" + host;
+            String url;
+            if (auth != null && auth.indexOf('@') != -1) {
+                // only use auth if there is a username:password@host
+                url = getScheme() + ":" + auth;
+            } else {
+                url = getScheme() + ":" + host;
+            }
             if (!params.isEmpty()) {
                 url += "?" + URISupport.createQueryString(params, false);
             }
@@ -110,6 +117,11 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         return postProcessor;
     }
 
+    /**
+     * Parses the uri into an string array with 3 elements.
+     *
+     * 0 = host:port 1 = path 2 = authority
+     */
     public String[] parseUri(DynamicAwareEntry entry) {
         String u = entry.getUri();
 
@@ -130,11 +142,12 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             u = StringHelper.before(u, "?");
         }
 
-        // favour using java.net.URI for parsing into host and context-path
+        // favour using java.net.URI for parsing into host, context-path and authority
         try {
             URI parse = new URI(u);
             String host = parse.getHost();
             String path = parse.getPath();
+            String authority = parse.getAuthority();
             // if the path is just a trailing slash then skip it (eg it must be longer than just the slash itself)
             if (path != null && path.length() > 1) {
                 int port = parse.getPort();
@@ -152,15 +165,15 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
                         host = scheme + "://" + host;
                     }
                 }
-                return new String[] { host, path };
+                return new String[] { host, path, authority };
             }
         } catch (URISyntaxException e) {
             // ignore
-            return new String[] { u, null };
+            return new String[] { u, null, null };
         }
 
         // no context path
-        return new String[] { u, null };
+        return new String[] { u, null, null };
     }
 
 }

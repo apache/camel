@@ -42,7 +42,7 @@ import org.apache.camel.util.TimeUtils;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> {
+public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> implements HasExpressionType {
     @Metadata(required = false)
     @XmlElements({
             @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
@@ -356,4 +356,16 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         setExpression(new ExpressionDefinition(expression));
     }
 
+    @Override
+    public ExpressionDefinition getExpressionType() {
+        return getExpression();
+    }
+
+    /**
+     * Expression to use for re-ordering the messages, such as a header with a sequence number
+     */
+    @Override
+    public void setExpressionType(ExpressionDefinition expressionType) {
+        setExpression(expressionType);
+    }
 }

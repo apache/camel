@@ -164,7 +164,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
         if (log.isTraceEnabled()) {
             log.trace("Searching for: {} in package: {} using classloader: {}",
-                    new Object[] { test, packageName, loader.getClass().getName() });
+                    test, packageName, loader.getClass().getName());
         }
 
         Enumeration<URL> urls;
@@ -293,6 +293,11 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
     private void loadImplementationsInDirectory(PackageScanFilter test, String parent, File location, Set<Class<?>> classes) {
         File[] files = location.listFiles();
         StringBuilder builder;
+
+        // this will prevent NullPointerException, but there are no means to tell caller class that the location folder is empty
+        if (files == null) {
+            return;
+        }
 
         for (File file : files) {
             builder = new StringBuilder(100);

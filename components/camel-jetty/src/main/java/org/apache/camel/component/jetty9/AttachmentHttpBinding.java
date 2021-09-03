@@ -85,7 +85,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
     }
 
     @Override
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
         // we populate the http request parameters without checking the request
         // method
         Map<String, Object> headers = message.getHeaders();
@@ -95,12 +95,13 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
             jettyRequest.getHttpFields().remove(Exchange.CONTENT_ENCODING);
         }
 
+        // attachment is optional
         AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
 
         Enumeration<?> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
-            if (am.getAttachment(name) != null) {
+            if (am != null && am.getAttachment(name) != null) {
                 DataHandler dh = am.getAttachment(name);
                 Object value = dh;
                 if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
@@ -128,7 +129,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         }
     }
 
-    final class PartDataSource implements DataSource {
+    static final class PartDataSource implements DataSource {
         private final Part part;
 
         PartDataSource(Part part) {

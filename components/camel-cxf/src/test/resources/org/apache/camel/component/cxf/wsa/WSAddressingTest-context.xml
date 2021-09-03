@@ -62,8 +62,8 @@
 	<bean id="removeRequestOutHeaderProcessor"
 		class="org.apache.camel.component.cxf.wsa.WSAddressingTest$RemoveRequestOutHeaderProcessor" />
 		
-	<bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
-	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+	<bean id="loggingOutInterceptor" class="org.apache.cxf.ext.logging.LoggingOutInterceptor" />
+	<bean id="logInbound" class="org.apache.cxf.ext.logging.LoggingInInterceptor" />
 	
 	<camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
 		<route>

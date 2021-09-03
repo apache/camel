@@ -20,20 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit test that checks for the existence of the CamelFileNameConsumed header.
  */
 public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/consumedfilename");
-        super.setUp();
-    }
 
     @Test
     public void testValidFilenameOnExchange() throws Exception {
@@ -42,8 +34,8 @@ public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("hello.txt");
         mock.message(0).header(Exchange.FILE_NAME_CONSUMED).isEqualTo("hello.txt");
 
-        // the file name is also starting with target/data/consumedfilename
-        template.sendBodyAndHeader("file:target/data/consumedfilename", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        // the file name is also starting with consumedfilename
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -53,7 +45,7 @@ public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/consumedfilename?initialDelay=0&delay=10").to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10")).to("mock:result");
             }
         };
     }

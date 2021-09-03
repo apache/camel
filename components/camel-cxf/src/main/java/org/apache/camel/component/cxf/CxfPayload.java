@@ -108,15 +108,16 @@ public class CxfPayload<T> {
 
     protected static void addNamespace(Element element, Map<String, String> nsMap) {
         if (nsMap != null) {
-            for (String ns : nsMap.keySet()) {
+            for (Map.Entry<String, String> entry : nsMap.entrySet()) {
+                String ns = entry.getKey();
                 // We should not override the namespace setting of the element
                 if (XMLConstants.XMLNS_ATTRIBUTE.equals(ns)) {
                     if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE))) {
-                        element.setAttribute(ns, nsMap.get(ns));
+                        element.setAttribute(ns, entry.getValue());
                     }
                 } else {
                     if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns))) {
-                        element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+                        element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, entry.getValue());
                     }
                 }
             }

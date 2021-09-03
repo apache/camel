@@ -35,7 +35,11 @@ public class ConvertBodyReifier extends ProcessorReifier<ConvertBodyDefinition> 
     public Processor createProcessor() throws Exception {
         Class<?> typeClass = parse(Class.class, or(definition.getTypeClass(), parseString(definition.getType())));
         String charset = validateCharset(parseString(definition.getCharset()));
-        return new ConvertBodyProcessor(typeClass, charset);
+        boolean mandatory = true;
+        if (definition.getMandatory() != null) {
+            mandatory = parseBoolean(definition.getMandatory(), true);
+        }
+        return new ConvertBodyProcessor(typeClass, charset, mandatory);
     }
 
     public static String validateCharset(String charset) throws UnsupportedCharsetException {

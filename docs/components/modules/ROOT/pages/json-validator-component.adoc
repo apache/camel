@@ -34,19 +34,54 @@ for this component:
 
 == URI format
 
-[source]
 ----
 json-validator:resourceUri[?options]
 ----
 
-
-Where *resourceUri* is some URL to a local resource on the classpath or a 
+Where *resourceUri* is some URL to a local resource on the classpath or a
 full URL to a remote resource or resource on the file system which contains 
 the JSON Schema to validate against.
  
-== URI Options
+
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The JSON Schema Validator component supports 2 options, which are listed below.
 
 
@@ -59,9 +94,9 @@ The JSON Schema Validator component supports 2 options, which are listed below.
 |===
 // component options: END
 
-
-
 // endpoint options: START
+== Endpoint Options
+
 The JSON Schema Validator endpoint is configured using URI syntax:
 
 ----
@@ -93,22 +128,21 @@ with the following path and query parameters:
 | *headerName* (producer) | To validate against a header instead of the message body. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *errorHandler* (advanced) | To use a custom ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | JsonValidatorErrorHandler
-| *schemaLoader* (advanced) | To use a custom schema loader allowing for adding custom format validation. The default implementation will create a schema loader with draft v4 support. |  | JsonSchemaLoader
+| *uriSchemaLoader* (advanced) | To use a custom schema loader allowing for adding custom format validation. The default implementation will create a schema loader that tries to determine the schema version from the $schema property of the specified schema. |  | JsonUriSchemaLoader
 |===
 // endpoint options: END
 
 
-
 == Example
 
-Assumed we have the following JSON Schema
+Assuming we have the following JSON Schema
 
 *myschema.json*
 
 [source,json]
 ----
 {
-  "$schema": "http://json-schema.org/draft-04/schema#", 
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {}, 
   "id": "my-schema",
   "properties": {
@@ -152,4 +186,8 @@ from("direct:start")
   .to("mock:end")
 ----
 
-include::camel-spring-boot::page$json-validator-starter.adoc[]
+If you use the default schema loader, it will try to determine the schema version from the $schema property and instruct the https://github.com/networknt[validator] appropriately.  If it can't find (or doesn't recognize) the $schema property, it will assume your schema is version https://json-schema.org/specification-links.html#draft-2019-09-formerly-known-as-draft-8[2019-09].
+
+If your schema is local to your application (e.g. a classpath location as opposed to URL), your schema can also contain $ref links to a relative subschema in the classpath.  Per the JSON schema spec, your schema must not have an $id identifier property for this to work properly.  See the https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/java/org/apache/camel/component/jsonvalidator/LocalRefSchemaTest.java[unit test] and https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/resources/org/apache/camel/component/jsonvalidator/Order.json[schema] for an example.
+
+include::{page-component-version}@camel-spring-boot::page$json-validator-starter.adoc[]

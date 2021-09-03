@@ -93,7 +93,7 @@ public final class XmlRouteParser {
 
                 String column = (String) route.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
                 if (column != null) {
-                    node.setLinePosition(Integer.valueOf(column));
+                    node.setLinePosition(Integer.parseInt(column));
                 }
 
                 // parse the route and gather all its EIPs
@@ -115,8 +115,7 @@ public final class XmlRouteParser {
      */
     public static void parseXmlRouteEndpoints(
             InputStream xml, String baseDir, String fullyQualifiedFileName,
-            List<CamelEndpointDetails> endpoints)
-            throws Exception {
+            List<CamelEndpointDetails> endpoints) {
 
         // find all the endpoints (currently only <endpoint> and within <route>)
         // try parse it as dom
@@ -161,7 +160,7 @@ public final class XmlRouteParser {
 
                     String column = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
                     if (column != null) {
-                        detail.setLinePosition(Integer.valueOf(column));
+                        detail.setLinePosition(Integer.parseInt(column));
                     }
 
                     detail.setEndpointInstance(id);
@@ -185,8 +184,7 @@ public final class XmlRouteParser {
      */
     public static void parseXmlRouteSimpleExpressions(
             InputStream xml, String baseDir, String fullyQualifiedFileName,
-            List<CamelSimpleExpressionDetails> simpleExpressions)
-            throws Exception {
+            List<CamelSimpleExpressionDetails> simpleExpressions) {
 
         // find all the simple expressions
         // try parse it as dom
@@ -217,7 +215,7 @@ public final class XmlRouteParser {
 
                 String column = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
                 if (column != null) {
-                    detail.setLinePosition(Integer.valueOf(column));
+                    detail.setLinePosition(Integer.parseInt(column));
                 }
 
                 // is it used as predicate or not
@@ -240,8 +238,7 @@ public final class XmlRouteParser {
      */
     public static void parseXmlRouteCSimpleExpressions(
             InputStream xml, String baseDir, String fullyQualifiedFileName,
-            List<CamelCSimpleExpressionDetails> csimpleExpressions)
-            throws Exception {
+            List<CamelCSimpleExpressionDetails> csimpleExpressions) {
 
         // find all the simple expressions
         // try parse it as dom
@@ -272,7 +269,7 @@ public final class XmlRouteParser {
 
                 String column = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
                 if (column != null) {
-                    detail.setLinePosition(Integer.valueOf(column));
+                    detail.setLinePosition(Integer.parseInt(column));
                 }
 
                 // is it used as predicate or not
@@ -295,8 +292,7 @@ public final class XmlRouteParser {
      */
     public static void parseXmlRouteRouteIds(
             InputStream xml, String baseDir, String fullyQualifiedFileName,
-            List<CamelRouteDetails> routes)
-            throws Exception {
+            List<CamelRouteDetails> routes) {
 
         // find all the endpoints (currently only <route> and within <route>)
         // try parse it as dom

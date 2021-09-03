@@ -18,7 +18,6 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,22 +28,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class FileConsumeTemplateTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/template");
-        super.setUp();
-    }
-
     @Test
     public void testConsumeFileWithTemplate() throws Exception {
-        template.sendBodyAndHeader("file://target/data/template", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/template", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
-        Exchange out = consumer.receive("file://target/data/template?sortBy=file:name");
+        Exchange out = consumer.receive(fileUri("?sortBy=file:name"));
         assertNotNull(out);
 
-        Exchange out2 = consumer.receive("file://target/data/template?sortBy=file:name");
+        Exchange out2 = consumer.receive(fileUri("?sortBy=file:name"));
         assertNotNull(out2);
 
         String body = out.getIn().getBody(String.class);

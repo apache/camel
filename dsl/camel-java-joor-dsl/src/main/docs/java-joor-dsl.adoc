@@ -1,0 +1,15 @@
+[[java-joor-dsl-other]]
+= Java DSL based on joor
+:docTitle: XML Dsl
+:artifactId: camel-java-joor-dsl
+:description: Camel DSL with YAML
+:supportLevel: Stable
+:since: 3.
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/java-joor-dsl.adoc[opts=optional]
+//Manually maintained attributes
+:group: DSL
+
+xml-io-
+
+See https://camel.apache.org/manual/latest/dsl.html

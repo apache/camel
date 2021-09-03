@@ -52,7 +52,7 @@ public class SmppConfigurationTest {
         assertEquals(0x00, configuration.getDestAddrNpi());
         assertEquals(0x00, configuration.getDestAddrTon());
         assertEquals("", configuration.getAddressRange());
-        assertEquals(Integer.valueOf(5000), configuration.getEnquireLinkTimer());
+        assertEquals(Integer.valueOf(60000), configuration.getEnquireLinkTimer());
         assertEquals("localhost", configuration.getHost());
         assertEquals(null, configuration.getPassword());
         assertEquals(Integer.valueOf(2775), configuration.getPort());
@@ -78,6 +78,9 @@ public class SmppConfigurationTest {
         assertEquals(null, configuration.getHttpProxyUsername());
         assertEquals(null, configuration.getHttpProxyPassword());
         assertEquals(null, configuration.getSessionStateListener());
+        assertEquals(3, configuration.getPduProcessorDegree());
+        assertEquals(100, configuration.getPduProcessorQueueCapacity());
+        assertEquals(false, configuration.isSingleDLR());
     }
 
     @Test
@@ -87,7 +90,7 @@ public class SmppConfigurationTest {
         assertEquals("1919", configuration.getDestAddr());
         assertEquals(0x08, configuration.getDestAddrNpi());
         assertEquals(0x02, configuration.getDestAddrTon());
-        assertEquals(Integer.valueOf(5001), configuration.getEnquireLinkTimer());
+        assertEquals(Integer.valueOf(60001), configuration.getEnquireLinkTimer());
         assertEquals("127.0.0.1", configuration.getHost());
         assertEquals("secret", configuration.getPassword());
         assertEquals(Integer.valueOf(2776), configuration.getPort());
@@ -114,6 +117,9 @@ public class SmppConfigurationTest {
         assertEquals("secret", configuration.getHttpProxyPassword());
         assertNotNull(configuration.getSessionStateListener());
         assertEquals("1", configuration.getProxyHeaders().get("X-Proxy-Header"));
+        assertEquals(80, configuration.getPduProcessorQueueCapacity());
+        assertEquals(1, configuration.getPduProcessorDegree());
+        assertEquals(true, configuration.isSingleDLR());
     }
 
     @Test
@@ -173,13 +179,14 @@ public class SmppConfigurationTest {
         assertEquals(config.getHttpProxyPassword(), configuration.getHttpProxyPassword());
         assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
         assertEquals(config.getProxyHeaders(), configuration.getProxyHeaders());
+        assertEquals(config.isSingleDLR(), configuration.isSingleDLR());
     }
 
     @Test
     public void toStringShouldListAllInstanceVariables() {
         String expected = "SmppConfiguration["
                           + "usingSSL=false, "
-                          + "enquireLinkTimer=5000, "
+                          + "enquireLinkTimer=60000, "
                           + "host=localhost, "
                           + "password=null, "
                           + "port=2775, "
@@ -189,7 +196,10 @@ public class SmppConfigurationTest {
                           + "alphabet=0, "
                           + "encoding=ISO-8859-1, "
                           + "transactionTimer=10000, "
+                          + "pduProcessorQueueCapacity=100, "
+                          + "pduProcessorDegree=3, "
                           + "registeredDelivery=1, "
+                          + "singleDLR=false, "
                           + "serviceType=CMT, "
                           + "sourceAddrTon=0, "
                           + "destAddrTon=0, "
@@ -221,7 +231,7 @@ public class SmppConfigurationTest {
         config.setDestAddr("1919");
         config.setDestAddrNpi(NumberingPlanIndicator.NATIONAL.value());
         config.setDestAddrTon(TypeOfNumber.NATIONAL.value());
-        config.setEnquireLinkTimer(Integer.valueOf(5001));
+        config.setEnquireLinkTimer(Integer.valueOf(60001));
         config.setHost("127.0.0.1");
         config.setPassword("secret");
         config.setPort(Integer.valueOf(2776));
@@ -253,5 +263,8 @@ public class SmppConfigurationTest {
         Map<String, String> proxyHeaders = new HashMap<>();
         proxyHeaders.put("X-Proxy-Header", "1");
         config.setProxyHeaders(proxyHeaders);
+        config.setPduProcessorQueueCapacity(80);
+        config.setPduProcessorDegree(1);
+        config.setSingleDLR(true);
     }
 }

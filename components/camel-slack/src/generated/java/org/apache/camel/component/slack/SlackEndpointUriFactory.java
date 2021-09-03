@@ -20,8 +20,9 @@ public class SlackEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(28);
+        Set<String> props = new HashSet<>(30);
         props.add("backoffMultiplier");
+        props.add("naturalOrder");
         props.add("channel");
         props.add("initialDelay");
         props.add("scheduler");
@@ -43,6 +44,7 @@ public class SlackEndpointUriFactory extends org.apache.camel.support.component.
         props.add("webhookUrl");
         props.add("backoffIdleThreshold");
         props.add("token");
+        props.add("conversationType");
         props.add("lazyStartProducer");
         props.add("delay");
         props.add("pollStrategy");

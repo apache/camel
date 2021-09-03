@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.javaconfig;
 
+@Deprecated
 public class CamelSpringJavaconfigInitializationException extends RuntimeException {
 
     public CamelSpringJavaconfigInitializationException(Throwable cause) {

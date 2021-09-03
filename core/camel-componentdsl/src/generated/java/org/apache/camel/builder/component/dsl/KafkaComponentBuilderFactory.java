@@ -456,6 +456,28 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * A unique identifier of the consumer instance provided by the end
+         * user. Only non-empty strings are permitted. If set, the consumer is
+         * treated as a static member, which means that only one instance with
+         * this ID is allowed in the consumer group at any time. This can be
+         * used in combination with a larger session timeout to avoid group
+         * rebalances caused by transient unavailability (e.g. process
+         * restarts). If not set, the consumer will join the group as a dynamic
+         * member, which is the traditional behavior.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param groupInstanceId the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder groupInstanceId(
+                java.lang.String groupInstanceId) {
+            doSetProperty("groupInstanceId", groupInstanceId);
+            return this;
+        }
+        /**
          * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
          * values.
          * 
@@ -606,6 +628,33 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * What to do if kafka threw an exception while polling for new
+         * messages. Will by default use the value from the component
+         * configuration unless an explicit value has been configured on the
+         * endpoint level. DISCARD will discard the message and continue to poll
+         * next message. ERROR_HANDLER will use Camel's error handler to process
+         * the exception, and afterwards continue to poll next message.
+         * RECONNECT will re-connect the consumer and try poll the message again
+         * RETRY will let the consumer retry polling the same message again STOP
+         * will stop the consumer (have to be manually started/restarted if the
+         * consumer should be able to consume messages again).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;
+         * type.
+         * 
+         * Default: ERROR_HANDLER
+         * Group: consumer
+         * 
+         * @param pollOnError the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder pollOnError(
+                org.apache.camel.component.kafka.PollOnError pollOnError) {
+            doSetProperty("pollOnError", pollOnError);
+            return this;
+        }
+        /**
          * The timeout used when polling the KafkaConsumer.
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
@@ -726,6 +775,23 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom strategy with the consumer to control how to handle
+         * exceptions thrown from the Kafka broker while pooling messages.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.PollExceptionStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollExceptionStrategy the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder pollExceptionStrategy(
+                org.apache.camel.component.kafka.PollExceptionStrategy pollExceptionStrategy) {
+            doSetProperty("pollExceptionStrategy", pollExceptionStrategy);
+            return this;
+        }
+        /**
          * The total bytes of memory the producer can use to buffer records
          * waiting to be sent to the server. If records are sent faster than
          * they can be delivered to the server the producer will either block or
@@ -782,6 +848,26 @@ public interface KafkaComponentBuilderFactory {
         default KafkaComponentBuilder connectionMaxIdleMs(
                 java.lang.Integer connectionMaxIdleMs) {
             doSetProperty("connectionMaxIdleMs", connectionMaxIdleMs);
+            return this;
+        }
+        /**
+         * An upper bound on the time to report success or failure after a call
+         * to send() returns. This limits the total time that a record will be
+         * delayed prior to sending, the time to await acknowledgement from the
+         * broker (if expected), and the time allowed for retriable send
+         * failures.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: producer
+         * 
+         * @param deliveryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder deliveryTimeoutMs(
+                java.lang.Integer deliveryTimeoutMs) {
+            doSetProperty("deliveryTimeoutMs", deliveryTimeoutMs);
             return this;
         }
         /**
@@ -1374,9 +1460,7 @@ public interface KafkaComponentBuilderFactory {
          * Factory to use for creating
          * org.apache.kafka.clients.consumer.KafkaConsumer and
          * org.apache.kafka.clients.producer.KafkaProducer instances. This
-         * allows to configure a custom factory to create
-         * org.apache.kafka.clients.consumer.KafkaConsumer and
-         * org.apache.kafka.clients.producer.KafkaProducer instances with logic
+         * allows to configure a custom factory to create instances with logic
          * that extends the vanilla Kafka clients.
          * 
          * The option is a:
@@ -1918,6 +2002,7 @@ public interface KafkaComponentBuilderFactory {
             case "fetchMinBytes": getOrCreateConfiguration((KafkaComponent) component).setFetchMinBytes((java.lang.Integer) value); return true;
             case "fetchWaitMaxMs": getOrCreateConfiguration((KafkaComponent) component).setFetchWaitMaxMs((java.lang.Integer) value); return true;
             case "groupId": getOrCreateConfiguration((KafkaComponent) component).setGroupId((java.lang.String) value); return true;
+            case "groupInstanceId": getOrCreateConfiguration((KafkaComponent) component).setGroupInstanceId((java.lang.String) value); return true;
             case "headerDeserializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderDeserializer((org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setHeartbeatIntervalMs((java.lang.Integer) value); return true;
             case "keyDeserializer": getOrCreateConfiguration((KafkaComponent) component).setKeyDeserializer((java.lang.String) value); return true;
@@ -1926,6 +2011,7 @@ public interface KafkaComponentBuilderFactory {
             case "maxPollRecords": getOrCreateConfiguration((KafkaComponent) component).setMaxPollRecords((java.lang.Integer) value); return true;
             case "offsetRepository": getOrCreateConfiguration((KafkaComponent) component).setOffsetRepository((org.apache.camel.spi.StateRepository) value); return true;
             case "partitionAssignor": getOrCreateConfiguration((KafkaComponent) component).setPartitionAssignor((java.lang.String) value); return true;
+            case "pollOnError": getOrCreateConfiguration((KafkaComponent) component).setPollOnError((org.apache.camel.component.kafka.PollOnError) value); return true;
             case "pollTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setPollTimeoutMs((java.lang.Long) value); return true;
             case "seekTo": getOrCreateConfiguration((KafkaComponent) component).setSeekTo((java.lang.String) value); return true;
             case "sessionTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setSessionTimeoutMs((java.lang.Integer) value); return true;
@@ -1933,9 +2019,11 @@ public interface KafkaComponentBuilderFactory {
             case "topicIsPattern": getOrCreateConfiguration((KafkaComponent) component).setTopicIsPattern((boolean) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((KafkaComponent) component).setValueDeserializer((java.lang.String) value); return true;
             case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.kafka.KafkaManualCommitFactory) value); return true;
+            case "pollExceptionStrategy": ((KafkaComponent) component).setPollExceptionStrategy((org.apache.camel.component.kafka.PollExceptionStrategy) value); return true;
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
             case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;
+            case "deliveryTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setDeliveryTimeoutMs((java.lang.Integer) value); return true;
             case "enableIdempotence": getOrCreateConfiguration((KafkaComponent) component).setEnableIdempotence((boolean) value); return true;
             case "headerSerializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderSerializer((org.apache.camel.component.kafka.serde.KafkaHeaderSerializer) value); return true;
             case "key": getOrCreateConfiguration((KafkaComponent) component).setKey((java.lang.String) value); return true;

@@ -18,9 +18,7 @@ Spring Framework in a number of ways.
 * Allows Spring to dependency inject Component
 instances or the CamelContext instance itself
 and auto-expose Spring beans as components and endpoints.
-* Camel works with Spring XML processing with the XML Configuration
-* Camel Spring XML Schema's is defined at xref:manual::xml-reference.adoc[XML
-Reference]
+* Camel works with Spring XML processing with the XML DSL via `camel-spring-xml` component
 * Camel provides powerful Bean Integration
 with any bean defined in a Spring ApplicationContext
 * Camel uses Spring Transactions as the default transaction handling in
@@ -95,11 +93,9 @@ inline namespace declaration:
 </camel:camelContext>
 ----
 
-=== Advanced configuration using Spring
+== Additional configuration of Spring XML
 
-See more details at
-xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
-configuration of CamelContext using Spring]
+See more details at xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Camel Spring XML Auto Configuration].
 
 === Using Java Code
 
@@ -219,8 +215,7 @@ above in the `<packageScan>` documentation.
 
 == How do I import routes from other XML files
 
-When defining routes in Camel using xref:manual::xml-configuration.adoc[Xml
-Configuration] you may want to define some routes in other XML files.
+When defining routes in Camel using Spring XML you may want to define some routes in other XML files.
 For example you may have many routes and it may help to maintain the
 application if some of the routes are in separate XML files. You may
 also want to store common and reusable routes in other XML files, which
@@ -394,8 +389,7 @@ note about Spring Integration Testing under Transactional Client.
 
 == Cron Component Support
 
-Camel-spring can be used as implementation of the Camel Cron component.
-
+The `camel-spring` module can be used as implementation of the Camel Cron component.
 
 Maven users will need to add the following additional dependency to their `pom.xml`:
 
@@ -409,7 +403,7 @@ Maven users will need to add the following additional dependency to their `pom.x
 </dependency>
 ------------------------------------------------------------
 
-Users can then use the cron component inside routes of their Spring or Spring-boot application:
+Users can then use the cron component inside routes of their Spring or Spring Boot application:
 
 [source,xml]
 ----
@@ -419,4 +413,4 @@ Users can then use the cron component inside routes of their Spring or Spring-bo
 </route>
 ----
 
-include::camel-spring-boot::page$spring-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$spring-starter.adoc[]

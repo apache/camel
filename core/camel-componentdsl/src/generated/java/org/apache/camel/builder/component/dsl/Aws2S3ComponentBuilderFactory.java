@@ -32,7 +32,7 @@ import org.apache.camel.component.aws2.s3.AWS2S3Component;
 public interface Aws2S3ComponentBuilderFactory {
 
     /**
-     * AWS 2 S3 Storage Service (camel-aws2-s3)
+     * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
      * version 2.x.
      * 
@@ -47,7 +47,7 @@ public interface Aws2S3ComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 S3 Storage Service component.
+     * Builder for the AWS S3 Storage Service component.
      */
     interface Aws2S3ComponentBuilder
             extends
@@ -93,7 +93,7 @@ public interface Aws2S3ComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -432,6 +432,21 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * If provided, Camel will only consume files if a done file exists.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param doneFileName the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder doneFileName(
+                java.lang.String doneFileName) {
+            doSetProperty("doneFileName", doneFileName);
+            return this;
+        }
+        /**
          * To get the object from the bucket with the given file name.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -446,13 +461,30 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * If it is true, the S3 Object Body will be ignored completely, if it
+         * is set to false the S3 Object will be put in the body. Setting this
+         * to true, will override any behavior defined by includeBody option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder ignoreBody(boolean ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+        /**
          * If it is true, the S3Object exchange will be consumed and put into
          * the body and closed. If false the S3Object stream will be put raw
          * into the body and the headers will be set with the S3 object
          * metadata. This option is strongly related to autocloseBody option. In
          * case of setting includeBody to true because the S3Object stream will
-         * be consumed then it will also be closed in case of includeBody false
-         * then it will be up to the caller to close the S3Object stream.
+         * be consumed then it will also be closed, while in case of includeBody
+         * false then it will be up to the caller to close the S3Object stream.
          * However setting autocloseBody to true when includeBody is false it
          * will schedule to close the S3Object stream automatically on exchange
          * completion.
@@ -542,6 +574,36 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * The number of messages composing a batch in streaming upload mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param batchMessageNumber the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder batchMessageNumber(int batchMessageNumber) {
+            doSetProperty("batchMessageNumber", batchMessageNumber);
+            return this;
+        }
+        /**
+         * The batch size (in bytes) in streaming upload mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000000
+         * Group: producer
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
          * Delete file object after the S3 file has been uploaded.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -612,6 +674,23 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * The naming strategy to use in streaming upload mode.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
+         * 
+         * Default: progressive
+         * Group: producer
+         * 
+         * @param namingStrategy the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder namingStrategy(
+                org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum namingStrategy) {
+            doSetProperty("namingStrategy", namingStrategy);
+            return this;
+        }
+        /**
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option is a:
@@ -644,6 +723,23 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * The restarting policy to use in streaming upload mode.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum&lt;/code&gt; type.
+         * 
+         * Default: override
+         * Group: producer
+         * 
+         * @param restartingPolicy the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder restartingPolicy(
+                org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum restartingPolicy) {
+            doSetProperty("restartingPolicy", restartingPolicy);
+            return this;
+        }
+        /**
          * The storage class to set in the
          * com.amazonaws.services.s3.model.PutObjectRequest request.
          * 
@@ -657,6 +753,39 @@ public interface Aws2S3ComponentBuilderFactory {
         default Aws2S3ComponentBuilder storageClass(
                 java.lang.String storageClass) {
             doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * When stream mode is true the upload to bucket will be done in
+         * streaming.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param streamingUploadMode the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder streamingUploadMode(
+                boolean streamingUploadMode) {
+            doSetProperty("streamingUploadMode", streamingUploadMode);
+            return this;
+        }
+        /**
+         * While streaming upload mode is true, this option set the timeout to
+         * complete upload.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param streamingUploadTimeout the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder streamingUploadTimeout(
+                long streamingUploadTimeout) {
+            doSetProperty("streamingUploadTimeout", streamingUploadTimeout);
             return this;
         }
         /**
@@ -798,19 +927,27 @@ public interface Aws2S3ComponentBuilderFactory {
             case "destinationBucket": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucket((java.lang.String) value); return true;
             case "destinationBucketPrefix": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucketPrefix((java.lang.String) value); return true;
             case "destinationBucketSuffix": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucketSuffix((java.lang.String) value); return true;
+            case "doneFileName": getOrCreateConfiguration((AWS2S3Component) component).setDoneFileName((java.lang.String) value); return true;
             case "fileName": getOrCreateConfiguration((AWS2S3Component) component).setFileName((java.lang.String) value); return true;
+            case "ignoreBody": getOrCreateConfiguration((AWS2S3Component) component).setIgnoreBody((boolean) value); return true;
             case "includeBody": getOrCreateConfiguration((AWS2S3Component) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((AWS2S3Component) component).setIncludeFolders((boolean) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setMoveAfterRead((boolean) value); return true;
             case "prefix": getOrCreateConfiguration((AWS2S3Component) component).setPrefix((java.lang.String) value); return true;
             case "autocloseBody": getOrCreateConfiguration((AWS2S3Component) component).setAutocloseBody((boolean) value); return true;
+            case "batchMessageNumber": getOrCreateConfiguration((AWS2S3Component) component).setBatchMessageNumber((int) value); return true;
+            case "batchSize": getOrCreateConfiguration((AWS2S3Component) component).setBatchSize((int) value); return true;
             case "deleteAfterWrite": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterWrite((boolean) value); return true;
             case "keyName": getOrCreateConfiguration((AWS2S3Component) component).setKeyName((java.lang.String) value); return true;
             case "lazyStartProducer": ((AWS2S3Component) component).setLazyStartProducer((boolean) value); return true;
             case "multiPartUpload": getOrCreateConfiguration((AWS2S3Component) component).setMultiPartUpload((boolean) value); return true;
+            case "namingStrategy": getOrCreateConfiguration((AWS2S3Component) component).setNamingStrategy((org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum) value); return true;
             case "operation": getOrCreateConfiguration((AWS2S3Component) component).setOperation((org.apache.camel.component.aws2.s3.AWS2S3Operations) value); return true;
             case "partSize": getOrCreateConfiguration((AWS2S3Component) component).setPartSize((long) value); return true;
+            case "restartingPolicy": getOrCreateConfiguration((AWS2S3Component) component).setRestartingPolicy((org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum) value); return true;
             case "storageClass": getOrCreateConfiguration((AWS2S3Component) component).setStorageClass((java.lang.String) value); return true;
+            case "streamingUploadMode": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadMode((boolean) value); return true;
+            case "streamingUploadTimeout": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadTimeout((long) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
             case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;

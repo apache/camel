@@ -99,15 +99,11 @@ public class KubernetesServer implements BeforeEachCallback, AfterEachCallback {
         ((TimesOnceableOrHttpHeaderable) ((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
     }
 
-    public MockWebServer getMockServer() {
-        return this.mock.getServer();
-    }
-
     public RecordedRequest getLastRequest() throws InterruptedException {
-        int count = this.mock.getServer().getRequestCount();
+        int count = this.mock.getRequestCount();
 
         RecordedRequest request;
-        for (request = null; count-- > 0; request = this.mock.getServer().takeRequest()) {
+        for (request = null; count-- > 0; request = this.mock.takeRequest()) {
         }
 
         return request;

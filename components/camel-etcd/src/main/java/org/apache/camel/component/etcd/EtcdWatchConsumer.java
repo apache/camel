@@ -93,7 +93,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer
             try {
                 EtcdKeysResponse response = promise.get();
 
-                exchange = endpoint.createExchange();
+                exchange = createExchange(false);
                 exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "watch");
                 exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, response.node.key);
                 exchange.getIn().setBody(response);
@@ -125,6 +125,10 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer
                     getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 }
             }
+        }
+
+        if (exchange != null) {
+            releaseExchange(exchange, false);
         }
 
         if (throwable != null) {

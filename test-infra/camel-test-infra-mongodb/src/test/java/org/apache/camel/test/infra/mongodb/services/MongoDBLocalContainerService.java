@@ -29,14 +29,22 @@ public class MongoDBLocalContainerService implements MongoDBService, ContainerSe
     private final MongoDBContainer container;
 
     public MongoDBLocalContainerService() {
-        this(System.getProperty("mongodb.container"));
+        this(System.getProperty(MongoDBProperties.MONGODB_CONTAINER));
     }
 
-    public MongoDBLocalContainerService(String containerName) {
-        if (containerName == null || containerName.isEmpty()) {
-            container = new MongoDBContainer();
+    public MongoDBLocalContainerService(String imageName) {
+        container = initContainer(imageName);
+    }
+
+    public MongoDBLocalContainerService(MongoDBContainer container) {
+        this.container = container;
+    }
+
+    protected MongoDBContainer initContainer(String imageName) {
+        if (imageName == null || imageName.isEmpty()) {
+            return new MongoDBContainer();
         } else {
-            container = new MongoDBContainer(containerName);
+            return new MongoDBContainer(imageName);
         }
     }
 

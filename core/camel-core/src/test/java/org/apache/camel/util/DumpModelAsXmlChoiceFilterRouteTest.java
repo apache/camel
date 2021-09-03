@@ -21,6 +21,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,6 +29,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
+
+    @Test
+    public void testDumpModelAsXmlNoEmptyLines() throws Exception {
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        assertNotNull(xml);
+        log.info(xml);
+
+        // should not contain empty lines
+        for (String line : xml.split("\n")) {
+            line = line.trim();
+            assertFalse(line.isEmpty(), "Should not contain empty lines");
+        }
+    }
 
     @Test
     public void testDumpModelAsXml() throws Exception {

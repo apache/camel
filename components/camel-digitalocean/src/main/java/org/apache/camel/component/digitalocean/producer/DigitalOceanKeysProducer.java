@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
+import com.myjeeva.digitalocean.exception.DigitalOceanException;
+import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.pojo.Delete;
 import com.myjeeva.digitalocean.pojo.Key;
 import com.myjeeva.digitalocean.pojo.Keys;
@@ -35,7 +37,7 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
 
         switch (determineOperation(exchange)) {
 
@@ -59,7 +61,7 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         }
     }
 
-    private void getKey(Exchange exchange) throws Exception {
+    private void getKey(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer keyId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
         String fingerprint = exchange.getIn().getHeader(DigitalOceanHeaders.KEY_FINGERPRINT, String.class);
         Key key;
@@ -73,16 +75,16 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
                     DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
         }
         LOG.trace("Key [{}] ", key);
-        exchange.getOut().setBody(key);
+        exchange.getMessage().setBody(key);
     }
 
-    private void getKeys(Exchange exchange) throws Exception {
+    private void getKeys(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Keys keys = getEndpoint().getDigitalOceanClient().getAvailableKeys(configuration.getPage());
         LOG.trace("All Keys : page {} [{}] ", configuration.getPage(), keys.getKeys());
-        exchange.getOut().setBody(keys.getKeys());
+        exchange.getMessage().setBody(keys.getKeys());
     }
 
-    private void deleteKey(Exchange exchange) throws Exception {
+    private void deleteKey(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer keyId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
         String fingerprint = exchange.getIn().getHeader(DigitalOceanHeaders.KEY_FINGERPRINT, String.class);
         Delete delete;
@@ -97,10 +99,10 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         }
 
         LOG.trace("Delete Key {}", delete);
-        exchange.getOut().setBody(delete);
+        exchange.getMessage().setBody(delete);
     }
 
-    private void createKey(Exchange exchange) throws Exception {
+    private void createKey(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Key key = new Key();
 
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
@@ -122,11 +124,11 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
 
         key = getEndpoint().getDigitalOceanClient().createKey(key);
         LOG.trace("Key created {}", key);
-        exchange.getOut().setBody(key);
+        exchange.getMessage().setBody(key);
 
     }
 
-    private void updateKey(Exchange exchange) throws Exception {
+    private void updateKey(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer keyId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
         String fingerprint = exchange.getIn().getHeader(DigitalOceanHeaders.KEY_FINGERPRINT, String.class);
         Key key;
@@ -147,7 +149,7 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         }
 
         LOG.trace("Update Key [{}] ", key);
-        exchange.getOut().setBody(key);
+        exchange.getMessage().setBody(key);
     }
 
 }

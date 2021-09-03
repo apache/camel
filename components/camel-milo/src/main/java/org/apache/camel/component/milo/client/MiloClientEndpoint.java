@@ -36,6 +36,8 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
              category = { Category.IOT })
 public class MiloClientEndpoint extends DefaultEndpoint {
 
+    private final MiloClientConnectionManager connectionManager;
+
     /**
      * The OPC UA server endpoint
      */
@@ -79,17 +81,17 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     @UriParam
     private MonitorFilterType monitorFilterType;
 
-    private final MiloClientComponent component;
-
-    public MiloClientEndpoint(final String uri, final MiloClientComponent component, final String endpointUri) {
+    public MiloClientEndpoint(final String uri, final MiloClientComponent component, final String endpointUri,
+                              final MiloClientConnectionManager connectionManager) {
         super(uri, component);
 
         Objects.requireNonNull(component);
         Objects.requireNonNull(endpointUri);
+        Objects.requireNonNull(connectionManager);
 
         this.endpointUri = endpointUri;
-        this.component = component;
         this.setMonitorFilterConfiguration(new MonitorFilterConfiguration());
+        this.connectionManager = connectionManager;
     }
 
     public void setConfiguration(MiloClientConfiguration configuration) {
@@ -110,7 +112,7 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new MiloClientProducer(this, this.createConnection(), this.defaultAwaitWrites);
+        return new MiloClientProducer(this, this.defaultAwaitWrites);
     }
 
     @Override
@@ -121,11 +123,14 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     }
 
     public MiloClientConnection createConnection() {
-        return new MiloClientConnection(configuration, monitorFilterConfiguration);
+        return this.connectionManager.createConnection(configuration, monitorFilterConfiguration);
+    }
+
+    public void releaseConnection(MiloClientConnection connection) {
+        this.connectionManager.releaseConnection(connection);
     }
 
     // item configuration
-
     public void setMethod(String method) {
         this.method = method;
     }

@@ -774,7 +774,7 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Is used to exclude files, if filename matches the regex pattern
-         * (matching is case in-senstive). Notice if you use symbols such as
+         * (matching is case in-sensitive). Notice if you use symbols such as
          * plus sign and others you would need to configure this using the RAW()
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
@@ -794,7 +794,10 @@ public interface SftpEndpointBuilderFactory {
          * Is used to exclude files matching file extension name (case
          * insensitive). For example to exclude bak files, then use
          * excludeExt=bak. Multiple extensions can be separated by comma, for
-         * example to exclude bak and dat files, use excludeExt=bak,dat.
+         * example to exclude bak and dat files, use excludeExt=bak,dat. Note
+         * that the file extension includes all parts, for example having a file
+         * named mydata.tar.gz will have extension as tar.gz. For more
+         * flexibility then use the include/exclude options.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1043,7 +1046,10 @@ public interface SftpEndpointBuilderFactory {
          * Is used to include files matching file extension name (case
          * insensitive). For example to include txt files, then use
          * includeExt=txt. Multiple extensions can be separated by comma, for
-         * example to include txt and xml files, use includeExt=txt,xml.
+         * example to include txt and xml files, use includeExt=txt,xml. Note
+         * that the file extension includes all parts, for example having a file
+         * named mydata.tar.gz will have extension as tar.gz. For more
+         * flexibility then use the include/exclude options.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2339,6 +2345,24 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder ciphers(String ciphers) {
             doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Set a comma separated list of key exchange protocols that will be
+         * used in order of preference. Possible cipher names are defined by
+         * JCraft JSCH. Some examples include:
+         * diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1,diffie-hellman-group14-sha1, diffie-hellman-group-exchange-sha256,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521. If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyExchangeProtocols the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder keyExchangeProtocols(
+                String keyExchangeProtocols) {
+            doSetProperty("keyExchangeProtocols", keyExchangeProtocols);
             return this;
         }
         /**
@@ -4280,6 +4304,24 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a comma separated list of key exchange protocols that will be
+         * used in order of preference. Possible cipher names are defined by
+         * JCraft JSCH. Some examples include:
+         * diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1,diffie-hellman-group14-sha1, diffie-hellman-group-exchange-sha256,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521. If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyExchangeProtocols the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder keyExchangeProtocols(
+                String keyExchangeProtocols) {
+            doSetProperty("keyExchangeProtocols", keyExchangeProtocols);
+            return this;
+        }
+        /**
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
          * 
@@ -5727,6 +5769,24 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder ciphers(String ciphers) {
             doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Set a comma separated list of key exchange protocols that will be
+         * used in order of preference. Possible cipher names are defined by
+         * JCraft JSCH. Some examples include:
+         * diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1,diffie-hellman-group14-sha1, diffie-hellman-group-exchange-sha256,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521. If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyExchangeProtocols the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder keyExchangeProtocols(
+                String keyExchangeProtocols) {
+            doSetProperty("keyExchangeProtocols", keyExchangeProtocols);
             return this;
         }
         /**

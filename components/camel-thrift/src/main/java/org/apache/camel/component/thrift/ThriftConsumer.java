@@ -31,7 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.thrift.server.ThriftHsHaServer;
 import org.apache.camel.component.thrift.server.ThriftMethodHandler;
 import org.apache.camel.component.thrift.server.ThriftThreadPoolServer;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -126,7 +125,6 @@ public class ThriftConsumer extends DefaultConsumer {
         }
 
         if (configuration.getNegotiationType() == ThriftNegotiationType.SSL && endpoint.isSynchronous()) {
-            ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
             SSLContextParameters sslParameters = configuration.getSslParameters();
 
             if (sslParameters == null) {
@@ -149,14 +147,14 @@ public class ThriftConsumer extends DefaultConsumer {
             if (ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getProvider())
                     && ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getType())) {
                 sslParams.setKeyStore(
-                        ResourceHelper.resolveResourceAsInputStream(classResolver,
+                        ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
                                 sslParameters.getKeyManagers().getKeyStore().getResource()),
                         sslParameters.getKeyManagers().getKeyStore().getPassword(),
                         sslParameters.getKeyManagers().getKeyStore().getProvider(),
                         sslParameters.getKeyManagers().getKeyStore().getType());
             } else {
                 sslParams.setKeyStore(
-                        ResourceHelper.resolveResourceAsInputStream(classResolver,
+                        ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
                                 sslParameters.getKeyManagers().getKeyStore().getResource()),
                         sslParameters.getKeyManagers().getKeyStore().getPassword());
             }

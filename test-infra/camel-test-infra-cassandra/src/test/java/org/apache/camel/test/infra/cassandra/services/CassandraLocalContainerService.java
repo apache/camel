@@ -27,11 +27,24 @@ import org.testcontainers.containers.CassandraContainer;
  */
 public class CassandraLocalContainerService implements CassandraService, ContainerService<CassandraContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLocalContainerService.class);
+    private static final String IMAGE_NAME = "cassandra:3.11.2";
 
-    private CassandraContainer container;
+    private final CassandraContainer container;
 
     public CassandraLocalContainerService() {
-        container = new CassandraContainer();
+        this(System.getProperty(CassandraProperties.CASSANDRA_CONTAINER, IMAGE_NAME));
+    }
+
+    public CassandraLocalContainerService(String imageName) {
+        container = initContainer(IMAGE_NAME);
+    }
+
+    public CassandraLocalContainerService(CassandraContainer container) {
+        this.container = container;
+    }
+
+    protected CassandraContainer initContainer(String imageName) {
+        return new CassandraContainer(imageName);
     }
 
     @Override

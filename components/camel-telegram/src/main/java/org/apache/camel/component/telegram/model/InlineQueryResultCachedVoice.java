@@ -54,7 +54,7 @@ public class InlineQueryResultCachedVoice extends InlineQueryResult {
     public static final class Builder {
         private String id;
         private InlineKeyboardMarkup replyMarkup;
-        private String voiceFileId;
+        private String voiceFileId; // TODO this field is never assigned
         private String title;
         private String caption;
         private String parseMode;

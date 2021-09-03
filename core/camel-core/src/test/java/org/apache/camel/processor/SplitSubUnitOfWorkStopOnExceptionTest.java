@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class SplitSubUnitOfWorkStopOnExceptionTest extends ContextTestSupport {
 
-    private static int counter;
+    private int counter;
 
     @Test
     public void testOK() throws Exception {
@@ -79,7 +79,7 @@ public class SplitSubUnitOfWorkStopOnExceptionTest extends ContextTestSupport {
         };
     }
 
-    public static class MyProcessor implements Processor {
+    public class MyProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {

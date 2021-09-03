@@ -50,7 +50,7 @@ public class ThriftMethodHandler implements MethodHandler {
             // {org.apache.thrift.async.AsyncMethodCallback}
             if (args.length > 0 && args[args.length - 1] instanceof AsyncMethodCallback) {
                 AsyncMethodCallback callback = (AsyncMethodCallback) args[args.length - 1];
-                Exchange exchange = endpoint.createExchange();
+                Exchange exchange = consumer.createExchange(false);
                 if (args.length >= 2) {
                     exchange.getIn().setBody(Arrays.asList(Arrays.copyOfRange(args, 0, args.length - 1)));
                 } else {
@@ -84,16 +84,22 @@ public class ThriftMethodHandler implements MethodHandler {
                         callback.onError(new TException("Unable process null message"));
                     }
 
+                    consumer.releaseExchange(exchange, false);
                     callback.onComplete(response);
                 });
             } else {
-                Exchange exchange = endpoint.createExchange();
-                exchange.getIn().setBody(Arrays.asList(args));
-                exchange.getIn().setHeader(ThriftConstants.THRIFT_METHOD_NAME_HEADER, thisMethod.getName());
+                Object responseBody = null;
+                Exchange exchange = consumer.createExchange(false);
+                try {
+                    exchange.getIn().setBody(Arrays.asList(args));
+                    exchange.getIn().setHeader(ThriftConstants.THRIFT_METHOD_NAME_HEADER, thisMethod.getName());
 
-                consumer.getProcessor().process(exchange);
+                    consumer.getProcessor().process(exchange);
+                    responseBody = exchange.getIn().getBody(thisMethod.getReturnType());
+                } finally {
+                    consumer.releaseExchange(exchange, false);
+                }
 
-                Object responseBody = exchange.getIn().getBody(thisMethod.getReturnType());
                 if (responseBody == null && !thisMethod.getReturnType().equals(Void.TYPE)) {
                     throw new TApplicationException("Return type requires not empty body");
                 }

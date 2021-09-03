@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.pubnub.example;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
@@ -113,7 +113,7 @@ public final class PubNubSensor2Example {
         private int temperature;
 
         DeviceWeatherInfo(String device) {
-            Random rand = new Random();
+            SecureRandom rand = new SecureRandom();
             this.device = device;
             this.humidity = rand.nextInt(100);
             this.temperature = rand.nextInt(40);

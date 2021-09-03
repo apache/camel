@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,8 +37,6 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     private static int counter;
     private static volatile String event = "";
 
-    private String fileUrl = "file://target/data/pollstrategy/?pollStrategy=#myPoll&initialDelay=0&delay=10";
-
     @Override
     protected Registry createRegistry() throws Exception {
         Registry jndi = super.createRegistry();
@@ -48,15 +45,19 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/pollstrategy");
-        super.setUp();
-        template.sendBodyAndHeader("file:target/data/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class).to("mock:result");
+            }
+        };
     }
 
     @Test
     public void testStopOnRollback() throws Exception {
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
@@ -65,15 +66,6 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         mock.assertIsSatisfied(50);
 
         assertEquals("rollback", event);
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
-            }
-        };
     }
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {

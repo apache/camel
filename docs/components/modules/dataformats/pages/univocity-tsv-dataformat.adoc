@@ -173,4 +173,4 @@ All the rows can either:
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-include::camel-spring-boot::page$univocity-parsers-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$univocity-parsers-starter.adoc[]

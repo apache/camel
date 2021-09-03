@@ -41,10 +41,25 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJettyInvalid() {
+    public void testJettyInvalidNullBody() {
         fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
+                .to("http://localhost:" + getPort() + "/users/123/update");
+
+        Exception ex = assertThrows(CamelExecutionException.class, () -> fluentTemplate.request(String.class));
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(400, cause.getStatusCode());
+        assertEquals("The request body is missing.", cause.getResponseBody());
+    }
+
+    @Test
+    public void testJettyInvalidEmptyBody() {
+        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withHeader("Accept", "application/json")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody(" ")
                 .to("http://localhost:" + getPort() + "/users/123/update");
 
         Exception ex = assertThrows(CamelExecutionException.class, () -> fluentTemplate.request(String.class));

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.infinispan;
 
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +53,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     static void wait(long delay, long timout, Callable<Boolean> condition) {
-        long jitter = 50 + new Random().nextInt(50);
+        long jitter = 50 + new SecureRandom().nextInt(50);
 
         Awaitility.await()
                 // wait for the given delay (plus some jitter)

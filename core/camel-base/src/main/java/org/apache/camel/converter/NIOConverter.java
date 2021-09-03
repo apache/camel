@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +92,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(String value, Exchange exchange) {
         byte[] bytes = null;
         if (exchange != null) {
-            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            String charsetName = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             if (charsetName != null) {
                 try {
                     bytes = value.getBytes(charsetName);

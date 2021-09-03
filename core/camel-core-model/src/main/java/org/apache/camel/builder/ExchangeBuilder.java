@@ -104,17 +104,19 @@ public final class ExchangeBuilder {
      */
     public Exchange build() {
         Exchange exchange = new DefaultExchange(context);
-        Message message = exchange.getIn();
-        message.setBody(body);
+
+        if (pattern != null) {
+            exchange.setPattern(pattern);
+        }
+
+        exchange.getMessage().setBody(body);
+
         if (headers.size() > 0) {
-            message.setHeaders(headers);
+            exchange.getMessage().setHeaders(headers);
         }
         // setup the properties on the exchange
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             exchange.setProperty(entry.getKey(), entry.getValue());
-        }
-        if (pattern != null) {
-            exchange.setPattern(pattern);
         }
 
         return exchange;

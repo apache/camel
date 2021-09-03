@@ -28,7 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.BROADCAST_TYPE;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.CHANNEL_NAME;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.MEMBER_NAME;
-import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_VALUE;
 import static org.apache.camel.component.atomix.client.messaging.AtomixMessaging.OPTIONS_BROADCAST;
@@ -39,7 +38,7 @@ public final class AtomixMessagingProducer extends AbstractAtomixClientProducer<
     private final AtomixMessagingConfiguration configuration;
 
     protected AtomixMessagingProducer(AtomixMessagingEndpoint endpoint) {
-        super(endpoint);
+        super(endpoint, endpoint.getConfiguration().getDefaultAction().name());
         this.configuration = endpoint.getConfiguration();
     }
 
@@ -48,7 +47,7 @@ public final class AtomixMessagingProducer extends AbstractAtomixClientProducer<
     // *********************************
 
     @InvokeOnHeader("DIRECT")
-    boolean onDirect(Message message, AsyncCallback callback) throws Exception {
+    void onDirect(Message message, AsyncCallback callback) {
         final Object value = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
         final String memberName = message.getHeader(MEMBER_NAME, configuration::getMemberName, String.class);
         final String channelName = message.getHeader(CHANNEL_NAME, configuration::getChannelName, String.class);
@@ -63,12 +62,10 @@ public final class AtomixMessagingProducer extends AbstractAtomixClientProducer<
 
         producer.send(value).thenAccept(
                 result -> processResult(message, callback, result));
-
-        return false;
     }
 
     @InvokeOnHeader("BROADCAST")
-    boolean onBroadcast(Message message, AsyncCallback callback) throws Exception {
+    void onBroadcast(Message message, AsyncCallback callback) {
         final Object value = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
         final String channelName = message.getHeader(CHANNEL_NAME, configuration::getChannelName, String.class);
         final AtomixMessaging.BroadcastType type
@@ -86,18 +83,11 @@ public final class AtomixMessagingProducer extends AbstractAtomixClientProducer<
 
         producer.send(value).thenRun(
                 () -> processResult(message, callback, null));
-
-        return false;
     }
 
     // *********************************
     // Implementation
     // *********************************
-
-    @Override
-    protected String getProcessorKey(Message message) {
-        return message.getHeader(RESOURCE_ACTION, configuration::getDefaultAction, String.class);
-    }
 
     @Override
     protected String getResourceName(Message message) {

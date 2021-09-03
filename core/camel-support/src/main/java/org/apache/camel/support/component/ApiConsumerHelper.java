@@ -139,11 +139,10 @@ public final class ApiConsumerHelper {
             T extends DefaultConsumer & ResultInterceptor> void processResult(T consumer, Object methodResult, Object result)
                     throws Exception {
 
-        Exchange exchange = consumer.getEndpoint().createExchange();
-        exchange.getIn().setBody(result);
-
-        consumer.interceptResult(methodResult, exchange);
+        Exchange exchange = consumer.createExchange(false);
         try {
+            exchange.getIn().setBody(result);
+            consumer.interceptResult(methodResult, exchange);
             // send message to next processor in the route
             consumer.getProcessor().process(exchange);
         } finally {
@@ -152,6 +151,7 @@ public final class ApiConsumerHelper {
             if (exception != null) {
                 consumer.getExceptionHandler().handleException("Error processing exchange", exchange, exception);
             }
+            consumer.releaseExchange(exchange, false);
         }
     }
 }

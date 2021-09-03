@@ -23,12 +23,15 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A unit test to verify mbean registration of multi-instances of a processor
  */
+@DisabledOnOs(OS.AIX)
 public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsTest {
 
     @Override
@@ -49,11 +52,6 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
     @Override
     @Test
     public void testMBeansRegistered() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         assertDefaultDomain();
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
@@ -74,11 +72,6 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
     @Override
     @Test
     public void testCounters() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>", "<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");

@@ -38,6 +38,11 @@ public interface Endpoint extends IsSingleton, Service {
     String getEndpointUri();
 
     /**
+     * Returns the default exchange pattern to use when creating an exchange.
+     */
+    ExchangePattern getExchangePattern();
+
+    /**
      * Returns the string representation of the base endpoint URI (without query parameters).
      */
     default String getEndpointBaseUri() {
@@ -63,7 +68,10 @@ public interface Endpoint extends IsSingleton, Service {
     String getEndpointKey();
 
     /**
-     * Create a new exchange for communicating with this endpoint
+     * Create a new exchange for communicating with this endpoint.
+     * <p/>
+     * <b>Important:</b> Consumers should use {@link Consumer#createExchange(boolean)} to create an exchange for which
+     * the consumer received a message.
      *
      * @return a new exchange
      */
@@ -72,11 +80,21 @@ public interface Endpoint extends IsSingleton, Service {
     /**
      * Create a new exchange for communicating with this endpoint with the specified {@link ExchangePattern} such as
      * whether its going to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
+     * <p/>
+     * <b>Important:</b> Consumers should use {@link Consumer#createExchange(boolean)} to create an exchange for which
+     * the consumer received a message.
      *
      * @param  pattern the message exchange pattern for the exchange
      * @return         a new exchange
      */
     Exchange createExchange(ExchangePattern pattern);
+
+    /**
+     * Configures a newly created {@link Exchange}.
+     *
+     * @param exchange the new exchange
+     */
+    void configureExchange(Exchange exchange);
 
     /**
      * Returns the context which created the endpoint

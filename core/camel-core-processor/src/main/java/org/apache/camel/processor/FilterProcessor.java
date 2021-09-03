@@ -78,9 +78,6 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
 
         LOG.debug("Filter matches: {} for exchange: {}", matches, exchange);
 
-        // set property whether the filter matches or not
-        exchange.setProperty(Exchange.FILTER_MATCHED, matches);
-
         if (matches) {
             filtered++;
         }

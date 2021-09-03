@@ -367,6 +367,47 @@ public interface Jt400EndpointBuilderFactory {
             return this;
         }
         /**
+         * If true, the consumer endpoint will set the
+         * Jt400Constants.MESSAGE_REPLYTO_KEY header of the camel message for
+         * any IBM i inquiry messages received. If that message is then routed
+         * to a producer endpoint, the action will not be processed as sending a
+         * message to the queue, but rather a reply to the specific inquiry
+         * message.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param sendingReply the value to set
+         * @return the dsl builder
+         */
+        default Jt400EndpointConsumerBuilder sendingReply(boolean sendingReply) {
+            doSetProperty("sendingReply", sendingReply);
+            return this;
+        }
+        /**
+         * If true, the consumer endpoint will set the
+         * Jt400Constants.MESSAGE_REPLYTO_KEY header of the camel message for
+         * any IBM i inquiry messages received. If that message is then routed
+         * to a producer endpoint, the action will not be processed as sending a
+         * message to the queue, but rather a reply to the specific inquiry
+         * message.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param sendingReply the value to set
+         * @return the dsl builder
+         */
+        default Jt400EndpointConsumerBuilder sendingReply(String sendingReply) {
+            doSetProperty("sendingReply", sendingReply);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 

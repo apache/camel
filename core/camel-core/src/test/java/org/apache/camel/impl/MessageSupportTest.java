@@ -117,4 +117,17 @@ public class MessageSupportTest extends ContextTestSupport {
         assertSame(exchange, three.getExchange());
     }
 
+    @Test
+    public void testNoMessageTimestamp() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        assertEquals(0L, exchange.getMessage().getMessageTimestamp());
+    }
+
+    @Test
+    public void testMessageTimestamp() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(Exchange.MESSAGE_TIMESTAMP, 1234L);
+        assertEquals(1234L, exchange.getMessage().getMessageTimestamp());
+    }
+
 }

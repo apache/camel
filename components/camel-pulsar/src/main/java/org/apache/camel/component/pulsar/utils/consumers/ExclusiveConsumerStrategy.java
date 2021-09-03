@@ -37,7 +37,7 @@ public class ExclusiveConsumerStrategy implements ConsumerCreationStrategy {
     public Collection<Consumer<byte[]>> create(final PulsarEndpoint pulsarEndpoint) throws Exception {
         String consumerName = pulsarEndpoint.getPulsarConfiguration().getConsumerName();
 
-        ConsumerBuilder<byte[]> builder = CommonCreationStrategyImpl.create(consumerName, pulsarEndpoint, pulsarConsumer);
+        ConsumerBuilder<byte[]> builder = CommonCreationStrategyImpl.getBuilder(consumerName, pulsarEndpoint, pulsarConsumer);
         return Collections.singletonList(builder.subscriptionType(SubscriptionType.Exclusive).subscribe());
     }
 }

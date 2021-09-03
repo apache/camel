@@ -129,7 +129,7 @@ public class GridFsProducer extends DefaultProducer {
         }
     }
 
-    private class DBCursorFilenameReader extends Reader {
+    private static class DBCursorFilenameReader extends Reader {
         MongoCursor<GridFSFile> cursor;
         StringBuilder current;
         int pos;

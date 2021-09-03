@@ -35,18 +35,49 @@ URI format
 The pg-replication-slot component uses the following two styles of endpoint URI
 notation:
 
-[source,java]
 -------------------------------------------------
 pg-replication-slot://host:port/database/slot:plugin[?parameters]
 -------------------------------------------------
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
+// component-configure options: START
+== Configuring Options
 
-== Options
+Camel components are configured on two separate levels:
 
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The PostgresSQL Replication Slot component supports 2 options, which are listed below.
 
 
@@ -59,9 +90,9 @@ The PostgresSQL Replication Slot component supports 2 options, which are listed 
 |===
 // component options: END
 
-
-
 // endpoint options: START
+== Endpoint Options
+
 The PostgresSQL Replication Slot endpoint is configured using URI syntax:
 
 ----
@@ -117,7 +148,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-== Example
+== Examples
 
 [source,java]
 ----
@@ -127,19 +158,13 @@ from("pg-replication-slot://localhost:5432/finance/sync_slot:test_decoding?user=
 
 == Tips
 
-[TIP]
-====
 PostgreSQL can generate a huge amount of empty transactions on certain operations (e.g. `VACUUM`). These transactions can congest
 your route. Using `greedy=true` query parameter can help with this problem. It will help your route filter out empty transactions quickly
 without waiting for the `delay`*`timeUnit` parameter between each exchange.
-====
 
-[TIP]
-====
 The order of the messages is guaranteed, but the same message might come more than once. So, for example, if you're using
 this component to sync data from PostgreSQL to other database, make sure your operations are idempotent (e.g. use UPSERT
 instead of INSERT,...). This will make sure repeated messages won't affect your system negatively.
-====
 
 
-include::camel-spring-boot::page$pg-replication-slot-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$pg-replication-slot-starter.adoc[]

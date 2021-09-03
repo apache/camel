@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -34,7 +36,10 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.sshd.common.NamedResource;
+import org.apache.sshd.common.config.keys.FilePasswordProvider;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
+import org.apache.sshd.common.session.SessionContext;
 import org.apache.sshd.common.util.io.IoUtils;
 import org.apache.sshd.common.util.security.SecurityUtils;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -111,7 +116,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
     }
 
     @Override
-    public Iterable<KeyPair> loadKeys() {
+    public Iterable<KeyPair> loadKeys(SessionContext sessionContext) throws IOException, GeneralSecurityException {
         if (!SecurityUtils.isBouncyCastleRegistered()) {
             throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
         }
@@ -123,6 +128,36 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
             InputStreamReader isr = null;
             InputStream is = null;
             try {
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, resource);
+
+                // first try with apache sshd itself
+                FilePasswordProvider passwordProvider = null;
+                if (passwordFinder != null) {
+                    passwordProvider = new FilePasswordProvider() {
+                        @Override
+                        public String getPassword(SessionContext session, NamedResource resourceKey, int retryIndex)
+                                throws IOException {
+                            return new String(passwordFinder.get());
+                        }
+                    };
+                }
+                try {
+                    // this method uses aggregate parser, which includes:
+                    //  - DSSPEMResourceKeyPairParser
+                    //  - ECDSAPEMResourceKeyPairParser
+                    //  - PKCS8PEMResourceKeyPairParser
+                    //  - RSAPEMResourceKeyPairParser
+                    //  - OpenSSHKeyPairResourceParser
+                    // but it doesn't read keys with "BEGIN ENCRYPTED PRIVATE KEY"
+                    Iterable<KeyPair> keyPairs
+                            = SecurityUtils.loadKeyPairIdentities(sessionContext, null, is, passwordProvider);
+                    if (keyPairs != null) {
+                        return keyPairs;
+                    }
+                } catch (IOException | GeneralSecurityException e) {
+                    log.debug("Unable to read key: {}", e.getMessage());
+                }
+
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, resource);
                 isr = new InputStreamReader(is);
                 r = new PEMParser(isr);

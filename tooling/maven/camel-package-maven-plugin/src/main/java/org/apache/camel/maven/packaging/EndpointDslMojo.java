@@ -35,8 +35,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 
@@ -82,6 +86,8 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private static final Map<String, Class<?>> PRIMITIVEMAP;
+
+    private static final Map<Path, Lock> LOCKS = new ConcurrentHashMap<>();
 
     static {
         PRIMITIVEMAP = new HashMap<>();
@@ -185,17 +191,20 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         Map<File, Supplier<String>> files;
 
-        try {
-            files = Files
-                    .find(buildDir.toPath(), Integer.MAX_VALUE,
-                            (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
-                    .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
+        try (Stream<Path> pathStream = Files.find(buildDir.toPath(), Integer.MAX_VALUE, super::isJsonFile)) {
+            files = pathStream.collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
 
         // generate component endpoint DSL files and write them
-        executeComponent(files);
+        Lock lock = LOCKS.computeIfAbsent(root, d -> new ReentrantLock());
+        lock.lock();
+        try {
+            executeComponent(files);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private static String loadJson(File file) {
@@ -227,8 +236,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels
                     = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
-            for (String componentClass : grModels.keySet()) {
-                List<ComponentModel> compModels = grModels.get(componentClass);
+            for (List<ComponentModel> compModels : grModels.values()) {
                 ComponentModel model = compModels.get(0); // They should be
                                                          // equivalent
                 List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());

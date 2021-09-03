@@ -28,7 +28,7 @@
   <bean id="quartzDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
     <!-- refer the embedded database we setup inside SpringQuartzClusteredAppDatabase.xml -->
-    <property name="url" value="jdbc:derby:memory:quartz-db" />
+    <property name="url" value="jdbc:derby:memory:SpringQuartzTwoAppsClusteredFailoverTest" />
     <property name="username" value="sa" />
     <property name="password" value="" />
   </bean>
@@ -43,18 +43,18 @@
     <property name="schedulerContextAsMap">
       <!-- hook Camel into Quartz -->
       <map>
-        <entry key="CamelQuartzCamelContext" value-ref="camelContext"/>
+        <entry key="CamelQuartzCamelContext" value-ref="camelContext-{{testClassSimpleName}}"/>
       </map>
     </property>
     <property name="quartzProperties">
       <props>
-        <prop key="org.quartz.scheduler.instanceName">myscheduler</prop>
+        <prop key="org.quartz.scheduler.instanceName">myscheduler-{{testClassSimpleName}}</prop>
         <prop key="org.quartz.scheduler.instanceId">app-one</prop>
         <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
         <prop key="org.terracotta.quartz.skipUpdateCheck">true</prop>
         <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
         <prop key="org.quartz.jobStore.isClustered">true</prop>
-        <prop key="org.quartz.jobStore.clusterCheckinInterval">5000</prop>
+        <prop key="org.quartz.jobStore.clusterCheckinInterval">500</prop>
       </props>
     </property>
   </bean>
@@ -63,7 +63,7 @@
     <property name="routeStartTime" value="0/3 * * * * ?" />
   </bean>
 
-  <camelContext id="camelContext" shutdownEager="false" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camelContext-{{testClassSimpleName}}" shutdownEager="false" xmlns="http://camel.apache.org/schema/spring">
     <template id="template" />
     <route id="myRoute" routePolicyRef="startPolicy" autoStartup="false">
       <from uri="direct:start" />

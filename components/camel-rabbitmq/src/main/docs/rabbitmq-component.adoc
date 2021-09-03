@@ -32,20 +32,6 @@ for this component:
 
 == URI format
 
-The old syntax is *deprecated*:
-[source,text]
-----
-rabbitmq://hostname[:port]/exchangeName?[options]
-----
-Where *hostname* is the hostname of the running rabbitmq instance or
-cluster. Port is optional and if not specified then defaults to the
-RabbitMQ client default (5672).
-
-Instead the hostname and port is configured on the component level, or
-can be provided as uri query parameters instead.
-
-The new syntax is:
-[source,text]
 ----
 rabbitmq:exchangeName?[options]
 ----
@@ -54,10 +40,46 @@ The exchange name determines the exchange to which the produced
 messages will be sent to. In the case of consumers, the exchange name 
 determines the exchange the queue will be bound to.
 
-== Options
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
-The RabbitMQ component supports 55 options, which are listed below.
+== Component Options
+
+
+The RabbitMQ component supports 56 options, which are listed below.
 
 
 
@@ -88,6 +110,7 @@ The RabbitMQ component supports 55 options, which are listed below.
 | *prefetchEnabled* (consumer) | Enables the quality of service on the RabbitMQConsumer side. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
 | *prefetchGlobal* (consumer) | If the settings should be applied to the entire channel rather than each consumer You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
 | *prefetchSize* (consumer) | The maximum amount of content (measured in octets) that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | int
+| *recoverFromDeclareException* (consumer) | Decides whether an exception during declaration of exchanges or queues is recoverable or not. If the option is false, camel will throw an exception when starting the consumer, which will interrupt application startup (e.g. in the case when the exchange / queue is already declared in RabbitMQ and has incompatible configuration). If set to true, the consumer will try to reconnect periodically. | false | boolean
 | *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
 | *additionalHeaders* (producer) | Map of additional headers. These headers will be set only when the 'allowCustomHeaders' is set to true |  | Map
 | *additionalProperties* (producer) | Map of additional properties. These are standard RabbitMQ properties as defined in com.rabbitmq.client.AMQP.BasicProperties The map keys should be from org.apache.camel.component.rabbitmq.RabbitMQConstants. Any other keys will be ignored. When the message already contains these headers they will be given precedence over these properties. |  | Map
@@ -122,8 +145,9 @@ The RabbitMQ component supports 55 options, which are listed below.
 |===
 // component options: END
 
-
 // endpoint options: START
+== Endpoint Options
+
 The RabbitMQ endpoint is configured using URI syntax:
 
 ----
@@ -142,7 +166,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (65 parameters):
+=== Query Parameters (66 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -179,6 +203,7 @@ with the following path and query parameters:
 | *prefetchEnabled* (consumer) | Enables the quality of service on the RabbitMQConsumer side. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
 | *prefetchGlobal* (consumer) | If the settings should be applied to the entire channel rather than each consumer You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
 | *prefetchSize* (consumer) | The maximum amount of content (measured in octets) that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | int
+| *recoverFromDeclareException* (consumer) | Decides whether an exception during declaration of exchanges or queues is recoverable or not. If the option is false, camel will throw an exception when starting the consumer, which will interrupt application startup (e.g. in the case when the exchange / queue is already declared in RabbitMQ and has incompatible configuration). If set to true, the consumer will try to reconnect periodically. | true | boolean
 | *reQueue* (consumer) | This is used by the consumer to control rejection of the message. When the consumer is complete processing the exchange, and if the exchange failed, then the consumer is going to reject the message from the RabbitMQ broker. If the header CamelRabbitmqRequeue is present then the value of the header will be used, otherwise this endpoint value is used as fallback. If the value is false (by default) then the message is discarded/dead-lettered. If the value is true, then the message is re-queued. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
@@ -217,10 +242,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-See
-https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/ConnectionFactory.html[https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/ConnectionFactory.html]
-and the AMQP specification for more information on connection options.
 
 == Using a connection factory
 
@@ -431,4 +452,4 @@ public Map<String, Object> bindArgsBuilder() {
 ----
 
 
-include::camel-spring-boot::page$rabbitmq-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$rabbitmq-starter.adoc[]

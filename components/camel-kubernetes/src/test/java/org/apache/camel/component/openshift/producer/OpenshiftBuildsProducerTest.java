@@ -76,7 +76,7 @@ public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
             }
         });
 
-        List<Build> result = ex.getOut().getBody(List.class);
+        List<Build> result = ex.getMessage().getBody(List.class);
 
         assertEquals(2, result.size());
     }

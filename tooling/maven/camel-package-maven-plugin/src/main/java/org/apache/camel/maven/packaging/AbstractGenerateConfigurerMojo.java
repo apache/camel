@@ -27,6 +27,7 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.util.ReflectionHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -135,30 +137,35 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             Index index;
             try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
                 index = new IndexReader(is).read();
+            } catch (NoSuchFileException e) {
+                // ignore if no jandex index
+                index = null;
             } catch (IOException e) {
                 throw new MojoExecutionException("IOException: " + e.getMessage(), e);
             }
 
-            // discover all classes annotated with @Configurer
-            List<AnnotationInstance> annotations = index.getAnnotations(CONFIGURER);
-            annotations.stream()
-                    .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS)
-                    .filter(annotation -> annotation.target().asClass().nestingType() == ClassInfo.NestingType.TOP_LEVEL)
-                    .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
-                    .forEach(annotation -> {
-                        String currentClass = annotation.target().asClass().name().toString();
-                        boolean bootstrap = asBooleanDefaultFalse(annotation, "bootstrap");
-                        boolean extended = asBooleanDefaultFalse(annotation, "extended");
-                        if (bootstrap && extended) {
-                            bootstrapAndExtendedSet.add(currentClass);
-                        } else if (bootstrap) {
-                            bootstrapSet.add(currentClass);
-                        } else if (extended) {
-                            extendedSet.add(currentClass);
-                        } else {
-                            set.add(currentClass);
-                        }
-                    });
+            if (index != null) {
+                // discover all classes annotated with @Configurer
+                List<AnnotationInstance> annotations = index.getAnnotations(CONFIGURER);
+                annotations.stream()
+                        .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS)
+                        .filter(annotation -> annotation.target().asClass().nestingType() == ClassInfo.NestingType.TOP_LEVEL)
+                        .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
+                        .forEach(annotation -> {
+                            String currentClass = annotation.target().asClass().name().toString();
+                            boolean bootstrap = asBooleanDefaultFalse(annotation, "bootstrap");
+                            boolean extended = asBooleanDefaultFalse(annotation, "extended");
+                            if (bootstrap && extended) {
+                                bootstrapAndExtendedSet.add(currentClass);
+                            } else if (bootstrap) {
+                                bootstrapSet.add(currentClass);
+                            } else if (extended) {
+                                extendedSet.add(currentClass);
+                            } else {
+                                set.add(currentClass);
+                            }
+                        });
+            }
         }
 
         // additional classes
@@ -441,6 +448,11 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         } else if ("setHostNameResolver".equals(setter.getName())) {
             // we only want the string setter
             return setter.getParameterTypes()[0] == String.class;
+        }
+
+        Metadata meta = setter.getAnnotation(Metadata.class);
+        if (meta != null && meta.skip()) {
+            return false;
         }
 
         return true;

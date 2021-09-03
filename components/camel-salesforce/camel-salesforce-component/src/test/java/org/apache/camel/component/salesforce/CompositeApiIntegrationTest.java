@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -60,7 +61,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
 
     }
 
-    private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("38.0", "41.0"));
+    private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("38.0", "50.0"));
 
     @Parameter
     private String format;
@@ -178,6 +179,24 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
+    public void shouldSupportRaw() throws Exception {
+        final String rawComposite = "{\n" +
+                                    "   \"allOrNone\" : true,\n" +
+                                    "   \"compositeRequest\" : [{\n" +
+                                    "      \"method\": \"GET\",\n" +
+                                    "      \"url\": \"/services/data/v" + version
+                                    + "/query/?q=SELECT+Id+FROM+Contact+LIMIT+1\",\n" +
+                                    "      \"referenceId\": \"contacts\"\n" +
+                                    "    }]\n" +
+                                    "}\n";
+        final String response = testRawComposite(rawComposite);
+        ObjectMapper objectMapper = new ObjectMapper();
+        SObjectCompositeResponse sObjectCompositeResponse = objectMapper.readValue(
+                response, SObjectCompositeResponse.class);
+        assertResponseContains(sObjectCompositeResponse, "done");
+    }
+
+    @Test
     public void shouldSupportQuery() {
         final SObjectComposite composite = new SObjectComposite(version, true);
         composite.addQuery("SELECT Id, Name FROM Account", "SelectQueryReferenceId");
@@ -218,6 +237,15 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
 
         Assertions.assertThat(response.getCompositeResponse()).as("Received errors in: " + response)
                 .allMatch(val -> val.getHttpStatusCode() >= 200 && val.getHttpStatusCode() <= 299);
+
+        return response;
+    }
+
+    String testRawComposite(final String rawComposite) {
+        final String rawCompositeUri = "salesforce:composite?rawPayload=true";
+        final String response = template.requestBody(rawCompositeUri, rawComposite, String.class);
+
+        Assertions.assertThat(response).as("Response should be provided").isNotNull();
 
         return response;
     }

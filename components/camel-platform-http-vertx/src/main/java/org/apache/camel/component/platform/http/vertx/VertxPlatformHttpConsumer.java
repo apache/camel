@@ -35,6 +35,8 @@ import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -43,7 +45,6 @@ import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 import org.apache.camel.component.platform.http.spi.Method;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +65,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     private final String fileNameExtWhitelist;
     private Set<Method> methods;
     private String path;
-
     private Route route;
+    private VertxPlatformHttpRouter router;
 
-    public VertxPlatformHttpConsumer(
-                                     PlatformHttpEndpoint endpoint,
+    public VertxPlatformHttpConsumer(PlatformHttpEndpoint endpoint,
                                      Processor processor,
                                      List<Handler<RoutingContext>> handlers) {
         super(endpoint, processor);
@@ -88,13 +88,13 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         super.doInit();
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
         path = configureEndpointPath(getEndpoint());
+        router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        final VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
         final Route newRoute = router.route(path);
 
         if (!methods.equals(Method.getAll())) {
@@ -145,7 +145,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
 
     private String configureEndpointPath(PlatformHttpEndpoint endpoint) {
         String path = endpoint.getPath();
-        if (endpoint.isMatchOnUriPrefix()) {
+        if (endpoint.isMatchOnUriPrefix() && !path.endsWith("*")) {
             path += "*";
         }
         // Transform from the Camel path param syntax /path/{key} to vert.x web's /path/:key
@@ -211,26 +211,25 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                         }
                     } finally {
                         doneUoW(exchange);
+                        releaseExchange(exchange, false);
                     }
                 });
     }
 
     private Exchange toExchange(RoutingContext ctx) {
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(false);
+        exchange.setPattern(ExchangePattern.InOut);
         final Message in = toCamelMessage(ctx, exchange);
-
         final String charset = ctx.parsedHeaders().contentType().parameter("charset");
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
         }
-
-        exchange.setIn(in);
         return exchange;
     }
 
     private Message toCamelMessage(RoutingContext ctx, Exchange exchange) {
-        final Message result = new DefaultMessage(exchange);
+        final Message result = exchange.getIn();
 
         final HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         populateCamelHeaders(ctx, result.getHeaders(), exchange, headerFilterStrategy);
@@ -248,7 +247,11 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                     }
                 }
             }
-            result.setBody(body);
+
+            if (!body.isEmpty()) {
+                result.setBody(body);
+            }
+
             if (isMultipartFormData) {
                 populateAttachments(ctx.fileUploads(), result);
             }
@@ -259,7 +262,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             if (m.canHaveBody()) {
                 final Buffer body = ctx.getBody();
                 if (body != null) {
-                    result.setBody(body.getBytes());
+                    result.setBody(body);
                 } else {
                     result.setBody(null);
                 }

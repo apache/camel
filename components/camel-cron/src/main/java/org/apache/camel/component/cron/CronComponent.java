@@ -43,12 +43,20 @@ public class CronComponent extends DefaultComponent {
     }
 
     @Override
-    public Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
+    public Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CamelCronConfiguration configuration = new CamelCronConfiguration();
         configuration.setName(remaining);
 
+        // special for schedule where we replace + as space
+        String schedule = getAndRemoveParameter(parameters, "schedule", String.class);
+        if (schedule != null) {
+            // replace + as space
+            schedule = schedule.replace('+', ' ');
+        }
+        configuration.setSchedule(schedule);
+
         CronEndpoint answer = new CronEndpoint(uri, this, configuration);
-        setProperties(answer, properties);
+        setProperties(answer, parameters);
 
         // validate configuration
         validate(configuration);

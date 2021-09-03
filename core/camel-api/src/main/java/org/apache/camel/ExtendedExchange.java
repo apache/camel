@@ -29,6 +29,14 @@ import org.apache.camel.spi.UnitOfWork;
 public interface ExtendedExchange extends Exchange {
 
     /**
+     * If there is an existing inbound message of the given type then return it as-is, otherwise return null.
+     *
+     * @param  type the given type
+     * @return      the message if exists with the given type, otherwise null.
+     */
+    <T> T getInOrNull(Class<T> type);
+
+    /**
      * Sets the endpoint which originated this message exchange. This method should typically only be called by
      * {@link Endpoint} implementations
      */
@@ -163,4 +171,50 @@ public interface ExtendedExchange extends Exchange {
      */
     void setErrorHandlerHandled(Boolean errorHandlerHandled);
 
+    /**
+     * To copy the internal properties from this exchange to the target exchange
+     * <p/>
+     * This method is only intended for Camel internally.
+     *
+     * @param target the target exchange
+     */
+    void copyInternalProperties(Exchange target);
+
+    /**
+     * Gets the internal properties from this exchange. The known set of internal keys is defined in
+     * {@link ExchangePropertyKey}.
+     * <p/>
+     * This method is only intended for Camel internally.
+     *
+     * @return all the internal properties in a Map
+     */
+    Map<String, Object> getInternalProperties();
+
+    /**
+     * Callback used by {@link Consumer} if the consumer is completing the exchange processing with default behaviour.
+     *
+     * This is only used when pooled exchange is enabled for optimization and reducing object allocations.
+     */
+    AsyncCallback getDefaultConsumerCallback();
+
+    /**
+     * Callback used by {@link Consumer} if the consumer is completing the exchange processing with default behaviour.
+     *
+     * This is only used when pooled exchange is enabled for optimization and reducing object allocations.
+     */
+    void setDefaultConsumerCallback(AsyncCallback callback);
+
+    /**
+     * To set a property that must be copied specially (thread safe with deep cloning).
+     *
+     * @see SafeCopyProperty
+     */
+    void setSafeCopyProperty(String key, SafeCopyProperty value);
+
+    /**
+     * To get a property that was copied specially (thread safe with deep cloning).
+     *
+     * @see SafeCopyProperty
+     */
+    <T> T getSafeCopyProperty(String key, Class<T> type);
 }

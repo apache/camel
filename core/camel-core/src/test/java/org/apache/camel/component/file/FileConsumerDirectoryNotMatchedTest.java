@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,25 +27,13 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumerDirectoryNotMatchedTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/dirnotmatched/?initialDelay=0&delay=10&recursive=true&include=.*txt$";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/dirnotmatched");
-        super.setUp();
-
-        template.sendBodyAndHeader("file:target/data/dirnotmatched/", "This is a dot file", Exchange.FILE_NAME, ".skipme");
-
-        template.sendBodyAndHeader("file:target/data/dirnotmatched/", "This is a web file", Exchange.FILE_NAME, "index.html");
-
-        template.sendBodyAndHeader("file:target/data/dirnotmatched/2007", "2007 report", Exchange.FILE_NAME, "report2007.txt");
-
-        template.sendBodyAndHeader("file:target/data/dirnotmatched/2008", "2008 report", Exchange.FILE_NAME, "report2008.txt");
-    }
-
     @Test
     public void testSkipDirectories() throws Exception {
+        template.sendBodyAndHeader(fileUri(), "This is a dot file", Exchange.FILE_NAME, ".skipme");
+        template.sendBodyAndHeader(fileUri(), "This is a web file", Exchange.FILE_NAME, "index.html");
+        template.sendBodyAndHeader(fileUri("2007"), "2007 report", Exchange.FILE_NAME, "report2007.txt");
+        template.sendBodyAndHeader(fileUri("2008"), "2008 report", Exchange.FILE_NAME, "report2008.txt");
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
@@ -57,7 +44,9 @@ public class FileConsumerDirectoryNotMatchedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10&recursive=true&include=.*txt$"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

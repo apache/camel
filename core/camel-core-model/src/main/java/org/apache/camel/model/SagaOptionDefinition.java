@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "eip,routing")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SagaOptionDefinition {
+public class SagaOptionDefinition implements HasExpressionType {
 
     @XmlAttribute(required = true)
     private String optionName;
@@ -72,5 +72,15 @@ public class SagaOptionDefinition {
      */
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
+    }
+
+    @Override
+    public ExpressionDefinition getExpressionType() {
+        return getExpression();
+    }
+
+    @Override
+    public void setExpressionType(ExpressionDefinition expressionType) {
+        setExpression(expressionType);
     }
 }

@@ -61,10 +61,16 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "delayer":
         case "Delayer": target.setDelayer(property(camelContext, java.lang.Long.class, value)); return true;
+        case "dumproutes":
+        case "DumpRoutes": target.setDumpRoutes(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": target.setErrorHandlerFactory(property(camelContext, org.apache.camel.ErrorHandlerFactory.class, value)); return true;
         case "eventnotificationapplicable":
         case "EventNotificationApplicable": target.setEventNotificationApplicable(property(camelContext, boolean.class, value)); return true;
+        case "exchangefactory":
+        case "ExchangeFactory": target.setExchangeFactory(property(camelContext, org.apache.camel.spi.ExchangeFactory.class, value)); return true;
+        case "exchangefactorymanager":
+        case "ExchangeFactoryManager": target.setExchangeFactoryManager(property(camelContext, org.apache.camel.spi.ExchangeFactoryManager.class, value)); return true;
         case "executorservicemanager":
         case "ExecutorServiceManager": target.setExecutorServiceManager(property(camelContext, org.apache.camel.spi.ExecutorServiceManager.class, value)); return true;
         case "factoryfinderresolver":
@@ -117,6 +123,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "PackageScanClassResolver": target.setPackageScanClassResolver(property(camelContext, org.apache.camel.spi.PackageScanClassResolver.class, value)); return true;
         case "packagescanresourceresolver":
         case "PackageScanResourceResolver": target.setPackageScanResourceResolver(property(camelContext, org.apache.camel.spi.PackageScanResourceResolver.class, value)); return true;
+        case "processorexchangefactory":
+        case "ProcessorExchangeFactory": target.setProcessorExchangeFactory(property(camelContext, org.apache.camel.spi.ProcessorExchangeFactory.class, value)); return true;
         case "processorfactory":
         case "ProcessorFactory": target.setProcessorFactory(property(camelContext, org.apache.camel.spi.ProcessorFactory.class, value)); return true;
         case "propertiescomponent":
@@ -125,6 +133,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": target.setReactiveExecutor(property(camelContext, org.apache.camel.spi.ReactiveExecutor.class, value)); return true;
         case "registry":
         case "Registry": target.setRegistry(property(camelContext, org.apache.camel.spi.Registry.class, value)); return true;
+        case "resourceloader":
+        case "ResourceLoader": target.setResourceLoader(property(camelContext, org.apache.camel.spi.ResourceLoader.class, value)); return true;
         case "restbindingjaxbdataformatfactory":
         case "RestBindingJaxbDataFormatFactory": target.setRestBindingJaxbDataFormatFactory(property(camelContext, org.apache.camel.spi.RestBindingJaxbDataFormatFactory.class, value)); return true;
         case "restconfiguration":
@@ -135,6 +145,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "RouteController": target.setRouteController(property(camelContext, org.apache.camel.spi.RouteController.class, value)); return true;
         case "routefactory":
         case "RouteFactory": target.setRouteFactory(property(camelContext, org.apache.camel.spi.RouteFactory.class, value)); return true;
+        case "routesloader":
+        case "RoutesLoader": target.setRoutesLoader(property(camelContext, org.apache.camel.spi.RoutesLoader.class, value)); return true;
         case "runtimecamelcatalog":
         case "RuntimeCamelCatalog": target.setRuntimeCamelCatalog(property(camelContext, org.apache.camel.catalog.RuntimeCamelCatalog.class, value)); return true;
         case "runtimeendpointregistry":
@@ -226,10 +238,16 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "delayer":
         case "Delayer": return java.lang.Long.class;
+        case "dumproutes":
+        case "DumpRoutes": return java.lang.Boolean.class;
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": return org.apache.camel.ErrorHandlerFactory.class;
         case "eventnotificationapplicable":
         case "EventNotificationApplicable": return boolean.class;
+        case "exchangefactory":
+        case "ExchangeFactory": return org.apache.camel.spi.ExchangeFactory.class;
+        case "exchangefactorymanager":
+        case "ExchangeFactoryManager": return org.apache.camel.spi.ExchangeFactoryManager.class;
         case "executorservicemanager":
         case "ExecutorServiceManager": return org.apache.camel.spi.ExecutorServiceManager.class;
         case "factoryfinderresolver":
@@ -282,6 +300,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "PackageScanClassResolver": return org.apache.camel.spi.PackageScanClassResolver.class;
         case "packagescanresourceresolver":
         case "PackageScanResourceResolver": return org.apache.camel.spi.PackageScanResourceResolver.class;
+        case "processorexchangefactory":
+        case "ProcessorExchangeFactory": return org.apache.camel.spi.ProcessorExchangeFactory.class;
         case "processorfactory":
         case "ProcessorFactory": return org.apache.camel.spi.ProcessorFactory.class;
         case "propertiescomponent":
@@ -290,6 +310,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": return org.apache.camel.spi.ReactiveExecutor.class;
         case "registry":
         case "Registry": return org.apache.camel.spi.Registry.class;
+        case "resourceloader":
+        case "ResourceLoader": return org.apache.camel.spi.ResourceLoader.class;
         case "restbindingjaxbdataformatfactory":
         case "RestBindingJaxbDataFormatFactory": return org.apache.camel.spi.RestBindingJaxbDataFormatFactory.class;
         case "restconfiguration":
@@ -300,6 +322,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "RouteController": return org.apache.camel.spi.RouteController.class;
         case "routefactory":
         case "RouteFactory": return org.apache.camel.spi.RouteFactory.class;
+        case "routesloader":
+        case "RoutesLoader": return org.apache.camel.spi.RoutesLoader.class;
         case "runtimecamelcatalog":
         case "RuntimeCamelCatalog": return org.apache.camel.catalog.RuntimeCamelCatalog.class;
         case "runtimeendpointregistry":
@@ -392,10 +416,16 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "delayer":
         case "Delayer": return target.getDelayer();
+        case "dumproutes":
+        case "DumpRoutes": return target.isDumpRoutes();
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": return target.getErrorHandlerFactory();
         case "eventnotificationapplicable":
         case "EventNotificationApplicable": return target.isEventNotificationApplicable();
+        case "exchangefactory":
+        case "ExchangeFactory": return target.getExchangeFactory();
+        case "exchangefactorymanager":
+        case "ExchangeFactoryManager": return target.getExchangeFactoryManager();
         case "executorservicemanager":
         case "ExecutorServiceManager": return target.getExecutorServiceManager();
         case "factoryfinderresolver":
@@ -448,6 +478,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "PackageScanClassResolver": return target.getPackageScanClassResolver();
         case "packagescanresourceresolver":
         case "PackageScanResourceResolver": return target.getPackageScanResourceResolver();
+        case "processorexchangefactory":
+        case "ProcessorExchangeFactory": return target.getProcessorExchangeFactory();
         case "processorfactory":
         case "ProcessorFactory": return target.getProcessorFactory();
         case "propertiescomponent":
@@ -456,6 +488,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": return target.getReactiveExecutor();
         case "registry":
         case "Registry": return target.getRegistry();
+        case "resourceloader":
+        case "ResourceLoader": return target.getResourceLoader();
         case "restbindingjaxbdataformatfactory":
         case "RestBindingJaxbDataFormatFactory": return target.getRestBindingJaxbDataFormatFactory();
         case "restconfiguration":
@@ -466,6 +500,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "RouteController": return target.getRouteController();
         case "routefactory":
         case "RouteFactory": return target.getRouteFactory();
+        case "routesloader":
+        case "RoutesLoader": return target.getRoutesLoader();
         case "runtimecamelcatalog":
         case "RuntimeCamelCatalog": return target.getRuntimeCamelCatalog();
         case "runtimeendpointregistry":

@@ -31,7 +31,7 @@ public interface ECS2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Elastic Container Service (ECS)
+     * Builder for endpoint for the AWS Elastic Container Service (ECS)
      * component.
      */
     public interface ECS2EndpointBuilder extends EndpointProducerBuilder {
@@ -142,6 +142,39 @@ public interface ECS2EndpointBuilderFactory {
          */
         default ECS2EndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default ECS2EndpointBuilder overrideEndpoint(boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default ECS2EndpointBuilder overrideEndpoint(String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -303,6 +336,59 @@ public interface ECS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default ECS2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the ECS client should expect to load credentials through
+         * a default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default ECS2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the ECS client should expect to load credentials through
+         * a default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default ECS2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -353,7 +439,7 @@ public interface ECS2EndpointBuilderFactory {
 
     public interface ECS2Builders {
         /**
-         * AWS 2 Elastic Container Service (ECS) (camel-aws2-ecs)
+         * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
          * Manage AWS ECS cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -372,7 +458,7 @@ public interface ECS2EndpointBuilderFactory {
             return ECS2EndpointBuilderFactory.endpointBuilder("aws2-ecs", path);
         }
         /**
-         * AWS 2 Elastic Container Service (ECS) (camel-aws2-ecs)
+         * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
          * Manage AWS ECS cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management

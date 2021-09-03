@@ -100,8 +100,8 @@ public class WeatherConfiguration {
     public void setPeriod(String period) {
         notNull(period, "period");
         int result = 0;
-        try {
-            result = new Scanner(period).useDelimiter("\\D+").nextInt();
+        try (Scanner scanner = new Scanner(period)) {
+            result = scanner.useDelimiter("\\D+").nextInt();
         } catch (Exception e) {
             // ignore and fallback the period to be an empty string
         }

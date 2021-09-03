@@ -16,9 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,9 +27,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -45,20 +42,8 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
     private MyBean myBean = new MyBean();
     private AggStrategy aggStrategy = new AggStrategy();
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/files");
-        super.setUp();
-    }
-
     @Test
-    public void testDummy() throws Exception {
-        // noop
-    }
-
-    // Enable me for manual unit testing
-    public void xxxtestAggregateSimpleExpression() throws Exception {
+    public void testAggregateSimpleExpression() throws Exception {
         // 10 files + 10 files * 100 batches
         int files = 10;
         int rows = 100000;
@@ -70,11 +55,11 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
         LOG.info("Writing 10 files with 100000 rows in each file");
         // write 10 files of 100k rows
         for (int i = 0; i < files; i++) {
-            Writer out = IOHelper.buffered(new FileWriter(new File("target/data/files", "data" + i)));
-            for (int j = 0; j < rows; j++) {
-                out.write(DATA);
+            try (Writer out = Files.newBufferedWriter(testFile("data" + i))) {
+                for (int j = 0; j < rows; j++) {
+                    out.write(DATA);
+                }
             }
-            out.close();
         }
 
         // start the route
@@ -93,7 +78,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/files").routeId("foo").noAutoStartup().log("Picked up ${file:name}").split()
+                from(fileUri()).routeId("foo").noAutoStartup().log("Picked up ${file:name}").split()
                         .tokenize("\n").streaming()
                         .aggregate(constant(true), aggStrategy).completionSize(simple("1000")).completionTimeout(simple("500"))
                         .bean(myBean).end().end();

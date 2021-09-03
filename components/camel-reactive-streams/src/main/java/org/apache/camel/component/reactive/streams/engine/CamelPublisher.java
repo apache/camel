@@ -81,7 +81,7 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
 
         DispatchCallback<Exchange> originalCallback = ReactiveStreamsHelper.getCallback(data);
         DispatchCallback<Exchange> callback = originalCallback;
-        if (originalCallback != null && subs.size() > 0) {
+        if (originalCallback != null && !subs.isEmpty()) {
             // When multiple subscribers have an active subscription,
             // we acknowledge the exchange once it has been delivered to every
             // subscriber (or their subscription is cancelled)
@@ -97,7 +97,7 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
             });
         }
 
-        if (subs.size() > 0) {
+        if (!subs.isEmpty()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Exchange published to {} subscriptions for the stream {}: {}", subs.size(), name, data);
             }

@@ -26,11 +26,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.PatternHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A series of Camel routes
@@ -38,7 +43,11 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition> implements RouteContainer {
+public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition>
+        implements RouteContainer, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RoutesDefinition.class);
+
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<>();
     @XmlTransient
@@ -148,6 +157,8 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     /**
      * Creates a new route
      *
+     * Prefer to use the from methods when creating a new route.
+     *
      * @return the builder
      */
     public RouteDefinition route() {
@@ -186,19 +197,80 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates a new route using the given route
+     * Creates a new route using the given route.
+     * <p/>
+     * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      *
      * @param  route the route
      * @return       the builder
      */
     public RouteDefinition route(RouteDefinition route) {
-        // must prepare the route before we can add it to the routes list
-        RouteDefinitionHelper.prepareRoute(getCamelContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
-                getInterceptSendTos(), getOnCompletions());
+        // must set the error handler if not already set on the route
+        ErrorHandlerFactory handler = getErrorHandlerFactory();
+        if (handler != null) {
+            route.setErrorHandlerFactoryIfNull(handler);
+        }
         getRoutes().add(route);
+        return route;
+    }
+
+    public void prepareRoute(RouteDefinition route) {
+        if (route.isPrepared()) {
+            return;
+        }
+
+        // reset before preparing route
+        route.resetPrepare();
+
+        // merge global and route scoped together
+        List<OnExceptionDefinition> oe = new ArrayList<>(onExceptions);
+        List<InterceptDefinition> icp = new ArrayList<>(intercepts);
+        List<InterceptFromDefinition> ifrom = new ArrayList<>(interceptFroms);
+        List<InterceptSendToEndpointDefinition> ito = new ArrayList<>(interceptSendTos);
+        List<OnCompletionDefinition> oc = new ArrayList<>(onCompletions);
+        if (getCamelContext() != null) {
+            List<RouteConfigurationDefinition> globalConfigurations
+                    = getCamelContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
+            if (globalConfigurations != null) {
+                // if there are multiple ids configured then we should apply in that same order
+                String[] ids = route.getRouteConfigurationId() != null
+                        ? route.getRouteConfigurationId().split(",") : new String[] { "*" };
+                for (String id : ids) {
+                    // sort according to ordered
+                    globalConfigurations.stream().sorted(OrderedComparator.get())
+                            .filter(g -> {
+                                if (route.getRouteConfigurationId() != null) {
+                                    // if the route has a route configuration assigned then use pattern matching
+                                    return PatternHelper.matchPattern(g.getId(), id);
+                                } else {
+                                    // global configurations have no id assigned or is a wildcard
+                                    return g.getId() == null || g.getId().equals(id);
+                                }
+                            })
+                            .forEach(g -> {
+                                String aid = g.getId() == null ? "<default>" : g.getId();
+                                // remember the id that was used on the route
+                                route.addAppliedRouteConfigurationId(aid);
+                                oe.addAll(g.getOnExceptions());
+                                icp.addAll(g.getIntercepts());
+                                ifrom.addAll(g.getInterceptFroms());
+                                ito.addAll(g.getInterceptSendTos());
+                                oc.addAll(g.getOnCompletions());
+                            });
+                }
+            }
+        }
+
+        // must prepare the route before we can add it to the routes list
+        RouteDefinitionHelper.prepareRoute(getCamelContext(), route, oe, icp, ifrom, ito, oc);
+
+        if (LOG.isDebugEnabled() && route.getAppliedRouteConfigurationIds() != null) {
+            LOG.debug("Route: {} is using route configurations ids: {}", route.getId(),
+                    route.getAppliedRouteConfigurationIds());
+        }
+
         // mark this route as prepared
         route.markPrepared();
-        return route;
     }
 
     /**
@@ -231,8 +303,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @param  uri uri of the endpoint
      * @return     the interceptor builder to configure
      */
-    public InterceptFromDefinition interceptFrom(@AsEndpointUri
-    final String uri) {
+    public InterceptFromDefinition interceptFrom(@AsEndpointUri final String uri) {
         InterceptFromDefinition answer = new InterceptFromDefinition(uri);
         getInterceptFroms().add(answer);
         return answer;
@@ -244,8 +315,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @param  uri uri of the endpoint
      * @return     the builder
      */
-    public InterceptSendToEndpointDefinition interceptSendToEndpoint(@AsEndpointUri
-    final String uri) {
+    public InterceptSendToEndpointDefinition interceptSendToEndpoint(@AsEndpointUri final String uri) {
         InterceptSendToEndpointDefinition answer = new InterceptSendToEndpointDefinition(uri);
         getInterceptSendTos().add(answer);
         return answer;
@@ -253,7 +323,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
     /**
      * Adds an on exception
-     * 
+     *
      * @param  exception the exception
      * @return           the builder
      */

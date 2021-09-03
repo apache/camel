@@ -29,7 +29,7 @@ public interface Ordered {
     /**
      * The lowest precedence
      */
-    int LOWEST = Integer.MAX_VALUE;
+    int LOWEST = Integer.MAX_VALUE - 1000; // reserve for internal use
 
     /**
      * Gets the order.

@@ -108,9 +108,11 @@ public class ExecEndpointTest {
     @DirtiesContext
     public void testCreateEndpointWithArgs() throws Exception {
         String args = "arg1 arg2 arg3";
-        // Need to properly encode the URI
-        ExecEndpoint e = createExecEndpoint("exec:test?args=" + args.replaceAll(" ", "+"));
+        // can use space or %20
+        ExecEndpoint e = createExecEndpoint("exec:test?args=" + args.replaceAll(" ", "%20"));
         assertEquals(args, e.getArgs());
+        ExecEndpoint e2 = createExecEndpoint("exec:test?args=" + args);
+        assertEquals(args, e2.getArgs());
     }
 
     @Test

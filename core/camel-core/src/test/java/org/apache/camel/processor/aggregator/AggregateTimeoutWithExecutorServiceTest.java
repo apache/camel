@@ -78,9 +78,9 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
                 for (int i = 0; i < NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
                             // aggregate timeout after 0.1 second
-                            .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
+                            .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(1000)
                             .timeoutCheckerExecutorService(threadPool)
-                            .completionTimeoutCheckerInterval(10).to("mock:result" + i);
+                            .completionTimeoutCheckerInterval(100).to("mock:result" + i);
                 }
             }
         };

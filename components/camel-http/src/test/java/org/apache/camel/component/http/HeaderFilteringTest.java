@@ -54,9 +54,11 @@ public class HeaderFilteringTest {
 
     @Test
     public void shouldFilterIncomingHttpHeadersInProducer() throws Exception {
-        final HttpComponent http = new HttpComponent();
-
         final DefaultCamelContext context = new DefaultCamelContext();
+        context.start();
+
+        final HttpComponent http = context.getComponent("http", HttpComponent.class);
+
         final Producer producer = http.createProducer(context, "http://localhost:" + port, GET.name(), "/test", null, null,
                 APPLICATION_JSON.getMimeType(), APPLICATION_JSON.getMimeType(), new RestConfiguration(),
                 Collections.emptyMap());
@@ -67,11 +69,14 @@ public class HeaderFilteringTest {
         in.setBody(BODY);
         exchange.setIn(in);
 
+        producer.start();
         try {
             producer.process(exchange);
         } catch (final HttpOperationFailedException e) {
             fail(e.getMessage() + "\n%s", e.getResponseBody());
         }
+        producer.stop();
+        context.stop();
     }
 
     @BeforeEach

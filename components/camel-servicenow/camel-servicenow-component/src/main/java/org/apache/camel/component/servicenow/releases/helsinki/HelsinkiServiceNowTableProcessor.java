@@ -100,7 +100,6 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
         final String apiVersion = getApiVersion(in);
         final Class<?> requestModel = getRequestModel(in, tableName);
         final Class<?> responseModel = getResponseModel(in, tableName);
-        final String sysId = getSysID(in);
 
         validateBody(in, requestModel);
 

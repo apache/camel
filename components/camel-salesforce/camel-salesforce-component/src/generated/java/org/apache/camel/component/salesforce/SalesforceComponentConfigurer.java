@@ -28,6 +28,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SalesforceComponent target = (SalesforceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": getOrCreateConfig(target).setAllOrNone(property(camelContext, boolean.class, value)); return true;
         case "apexmethod":
         case "apexMethod": getOrCreateConfig(target).setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "apexqueryparams":
@@ -102,6 +104,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "instanceUrl": target.setInstanceUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "jobid":
         case "jobId": getOrCreateConfig(target).setJobId(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtaudience":
+        case "jwtAudience": target.setJwtAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "keystore": target.setKeystore(property(camelContext, org.apache.camel.support.jsse.KeyStoreParameters.class, value)); return true;
         case "lazylogin":
         case "lazyLogin": target.setLazyLogin(property(camelContext, boolean.class, value)); return true;
@@ -134,10 +138,26 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "objectMapper": getOrCreateConfig(target).setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
         case "packages": target.setPackages(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pkchunking":
+        case "pkChunking": getOrCreateConfig(target).setPkChunking(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": getOrCreateConfig(target).setPkChunkingChunkSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pkchunkingparent":
+        case "pkChunkingParent": getOrCreateConfig(target).setPkChunkingParent(property(camelContext, java.lang.String.class, value)); return true;
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": getOrCreateConfig(target).setPkChunkingStartRow(property(camelContext, java.lang.String.class, value)); return true;
         case "querylocator":
         case "queryLocator": getOrCreateConfig(target).setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": getOrCreateConfig(target).setRawHttpHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawmethod":
+        case "rawMethod": getOrCreateConfig(target).setRawMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawpath":
+        case "rawPath": getOrCreateConfig(target).setRawPath(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
         case "rawPayload": getOrCreateConfig(target).setRawPayload(property(camelContext, boolean.class, value)); return true;
+        case "rawqueryparameters":
+        case "rawQueryParameters": getOrCreateConfig(target).setRawQueryParameters(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "reportid":
@@ -179,6 +199,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return boolean.class;
         case "apexmethod":
         case "apexMethod": return java.lang.String.class;
         case "apexqueryparams":
@@ -253,6 +275,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "instanceUrl": return java.lang.String.class;
         case "jobid":
         case "jobId": return java.lang.String.class;
+        case "jwtaudience":
+        case "jwtAudience": return java.lang.String.class;
         case "keystore": return org.apache.camel.support.jsse.KeyStoreParameters.class;
         case "lazylogin":
         case "lazyLogin": return boolean.class;
@@ -285,10 +309,26 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
         case "packages": return java.lang.String.class;
         case "password": return java.lang.String.class;
+        case "pkchunking":
+        case "pkChunking": return java.lang.Boolean.class;
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": return java.lang.Integer.class;
+        case "pkchunkingparent":
+        case "pkChunkingParent": return java.lang.String.class;
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": return java.lang.String.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return java.lang.String.class;
+        case "rawmethod":
+        case "rawMethod": return java.lang.String.class;
+        case "rawpath":
+        case "rawPath": return java.lang.String.class;
         case "rawpayload":
         case "rawPayload": return boolean.class;
+        case "rawqueryparameters":
+        case "rawQueryParameters": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "reportid":
@@ -331,6 +371,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SalesforceComponent target = (SalesforceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return getOrCreateConfig(target).isAllOrNone();
         case "apexmethod":
         case "apexMethod": return getOrCreateConfig(target).getApexMethod();
         case "apexqueryparams":
@@ -405,6 +447,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "instanceUrl": return target.getInstanceUrl();
         case "jobid":
         case "jobId": return getOrCreateConfig(target).getJobId();
+        case "jwtaudience":
+        case "jwtAudience": return target.getJwtAudience();
         case "keystore": return target.getKeystore();
         case "lazylogin":
         case "lazyLogin": return target.isLazyLogin();
@@ -437,10 +481,26 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "objectMapper": return getOrCreateConfig(target).getObjectMapper();
         case "packages": return target.getPackages();
         case "password": return target.getPassword();
+        case "pkchunking":
+        case "pkChunking": return getOrCreateConfig(target).getPkChunking();
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": return getOrCreateConfig(target).getPkChunkingChunkSize();
+        case "pkchunkingparent":
+        case "pkChunkingParent": return getOrCreateConfig(target).getPkChunkingParent();
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": return getOrCreateConfig(target).getPkChunkingStartRow();
         case "querylocator":
         case "queryLocator": return getOrCreateConfig(target).getQueryLocator();
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return getOrCreateConfig(target).getRawHttpHeaders();
+        case "rawmethod":
+        case "rawMethod": return getOrCreateConfig(target).getRawMethod();
+        case "rawpath":
+        case "rawPath": return getOrCreateConfig(target).getRawPath();
         case "rawpayload":
         case "rawPayload": return getOrCreateConfig(target).isRawPayload();
+        case "rawqueryparameters":
+        case "rawQueryParameters": return getOrCreateConfig(target).getRawQueryParameters();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "reportid":

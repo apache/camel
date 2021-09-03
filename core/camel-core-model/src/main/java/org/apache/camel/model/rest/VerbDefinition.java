@@ -28,7 +28,10 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.model.Block;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.OutputNode;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
@@ -40,7 +43,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest")
 @XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> {
+public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> implements Block, OutputNode {
 
     @XmlAttribute
     private String method;
@@ -111,6 +114,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private String routeId;
     @XmlAttribute
     private String apiDocs;
+    @XmlAttribute
+    private Boolean deprecated;
 
     @XmlTransient
     private Boolean usedForGeneratingNodeId = Boolean.FALSE;
@@ -129,12 +134,38 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         }
     }
 
+    @Override
+    public void addOutput(ProcessorDefinition<?> processorDefinition) {
+        if (route == null) {
+            route = new RouteDefinition();
+        }
+
+        route.addOutput(processorDefinition);
+    }
+
+    public Boolean getDeprecated() {
+        // default is not to be deprecated
+        return deprecated != null ? deprecated : Boolean.FALSE;
+    }
+
+    /**
+     * Sets deprecated flag in openapi
+     */
+    public VerbDefinition deprecated() {
+        this.deprecated = Boolean.TRUE;
+        return this;
+    }
+
+    public void setDeprecated(Boolean deprecated) {
+        this.deprecated = deprecated;
+    }
+
     public List<RestOperationParamDefinition> getParams() {
         return params;
     }
 
     /**
-     * To specify the REST operation parameters using Swagger.
+     * To specify the REST operation parameters.
      */
     public void setParams(List<RestOperationParamDefinition> params) {
         this.params = params;
@@ -145,7 +176,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets swagger operation response messages.
+     * Sets operation response messages.
      */
     public void setResponseMsgs(List<RestOperationResponseMsgDefinition> responseMsgs) {
         this.responseMsgs = responseMsgs;
@@ -156,7 +187,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets the swagger security settings for this verb.
+     * Sets the security settings for this verb.
      */
     public void setSecurity(List<SecurityDefinition> security) {
         this.security = security;

@@ -16,45 +16,29 @@
  */
 package org.apache.camel.language;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class XPathFromFileExceptionTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/xpath");
-        super.setUp();
-    }
-
     @Test
     public void testXPathFromFileExceptionOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/data/xpath", "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(fileUri(), "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
 
-        File file = new File("target/data/xpath/hello.xml");
-        assertFalse(file.exists(), "File should not exists " + file);
-
-        file = new File("target/data/xpath/ok/hello.xml");
-        assertTrue(file.exists(), "File should exists " + file);
+        assertFileNotExists(testFile("hello.xml"));
+        assertFileExists(testFile("ok/hello.xml"));
     }
 
     @Test
@@ -63,17 +47,14 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
         // the last tag is not ended properly
-        template.sendBodyAndHeader("file:target/data/xpath", "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
+        template.sendBodyAndHeader(fileUri(), "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
 
-        File file = new File("target/data/xpath/hello2.xml");
-        assertFalse(file.exists(), "File should not exists " + file);
-
-        file = new File("target/data/xpath/error/hello2.xml");
-        assertTrue(file.exists(), "File should exists " + file);
+        assertFileNotExists(testFile("hello2.xml"));
+        assertFileExists(testFile("error/hello2.xml"));
     }
 
     @Override
@@ -81,7 +62,7 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/xpath?initialDelay=0&delay=10&moveFailed=error&move=ok").onException(Exception.class)
+                from(fileUri("?initialDelay=0&delay=10&moveFailed=error&move=ok")).onException(Exception.class)
                         .to("mock:error").end().choice().when().xpath("/hello")
                         .to("mock:result").end();
             }

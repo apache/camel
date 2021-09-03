@@ -17,7 +17,7 @@
 package org.apache.camel.component.leveldb;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,10 +25,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Parameterized;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 @Parameterized
 public class LevelDBBinaryTest extends LevelDBTestSupport {
 
@@ -43,11 +46,11 @@ public class LevelDBBinaryTest extends LevelDBTestSupport {
     public void testLevelDBAggregate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         byte[] a = new byte[10];
-        new Random().nextBytes(a);
+        new SecureRandom().nextBytes(a);
         byte[] b = new byte[10];
-        new Random().nextBytes(b);
+        new SecureRandom().nextBytes(b);
         byte[] c = new byte[10];
-        new Random().nextBytes(c);
+        new SecureRandom().nextBytes(c);
 
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             outputStream.write(a);

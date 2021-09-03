@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistry {
 
+    public static final String META_INF_SERVICES_UBER_TYPE_CONVERTER_LOADER
+            = "META-INF/services/org/apache/camel/UberTypeConverterLoader";
     public static final String META_INF_SERVICES_TYPE_CONVERTER_LOADER
             = "META-INF/services/org/apache/camel/TypeConverterLoader";
     public static final String META_INF_SERVICES_FALLBACK_TYPE_CONVERTER
@@ -89,6 +91,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         try {
             // scan the class for @Converter and load them into this registry
             TypeConvertersLoader loader = new TypeConvertersLoader(typeConverters);
+            CamelContextAware.trySetCamelContext(loader, getCamelContext());
             loader.load(this);
         } catch (TypeConverterLoaderException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -98,12 +101,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     @Override
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         super.addFallbackTypeConverter(typeConverter, canPromote);
-        if (typeConverter instanceof CamelContextAware) {
-            CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
-            if (camelContext != null) {
-                camelContextAware.setCamelContext(camelContext);
-            }
-        }
+        CamelContextAware.trySetCamelContext(typeConverter, camelContext);
     }
 
     private void addCoreFallbackTypeConverterToList(
@@ -115,12 +113,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         converters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
 
-        if (typeConverter instanceof CamelContextAware) {
-            CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
-            if (camelContext != null) {
-                camelContextAware.setCamelContext(camelContext);
-            }
-        }
+        CamelContextAware.trySetCamelContext(typeConverter, camelContext);
     }
 
     @Override
@@ -161,8 +154,10 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
                 throw new ClassNotFoundException(name);
             }
             Object obj = getInjector().newInstance(clazz, false);
+            CamelContextAware.trySetCamelContext(obj, getCamelContext());
             if (obj instanceof TypeConverterLoader) {
                 TypeConverterLoader loader = (TypeConverterLoader) obj;
+                CamelContextAware.trySetCamelContext(loader, getCamelContext());
                 LOG.debug("TypeConverterLoader: {} loading converters", name);
                 loader.load(this);
             }
@@ -171,14 +166,21 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
 
     /**
      * Finds the type converter loader classes from the classpath looking for text files on the classpath at the
-     * {@link #META_INF_SERVICES_TYPE_CONVERTER_LOADER} location.
+     * {@link #META_INF_SERVICES_UBER_TYPE_CONVERTER_LOADER} and {@link #META_INF_SERVICES_TYPE_CONVERTER_LOADER}
+     * locations.
      */
     protected Collection<String> findTypeConverterLoaderClasses() throws IOException {
-        Set<String> loaders = new LinkedHashSet<>();
-        Collection<URL> loaderResources = getLoaderUrls();
+        Collection<String> loaders = new LinkedHashSet<>();
+        findTypeConverterLoaderClasses(loaders, META_INF_SERVICES_UBER_TYPE_CONVERTER_LOADER);
+        findTypeConverterLoaderClasses(loaders, META_INF_SERVICES_TYPE_CONVERTER_LOADER);
+        return loaders;
+    }
+
+    protected void findTypeConverterLoaderClasses(Collection<String> loaders, String basePath) throws IOException {
+        Collection<URL> loaderResources = getLoaderUrls(basePath);
         for (URL url : loaderResources) {
             LOG.debug("Loading file {} to retrieve list of type converters, from url: {}",
-                    META_INF_SERVICES_TYPE_CONVERTER_LOADER, url);
+                    basePath, url);
             BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
             String line;
             do {
@@ -189,13 +191,12 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
             } while (line != null);
             IOHelper.close(reader);
         }
-        return loaders;
     }
 
-    protected Collection<URL> getLoaderUrls() throws IOException {
+    protected Collection<URL> getLoaderUrls(String basePath) throws IOException {
         List<URL> loaderResources = new ArrayList<>();
         for (ClassLoader classLoader : resolver.getClassLoaders()) {
-            Enumeration<URL> resources = classLoader.getResources(META_INF_SERVICES_TYPE_CONVERTER_LOADER);
+            Enumeration<URL> resources = classLoader.getResources(basePath);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
                 loaderResources.add(url);
@@ -208,8 +209,9 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
      * Checks if the registry is loaded and if not lazily load it
      */
     protected void loadTypeConverters() throws Exception {
-        for (TypeConverterLoader typeConverterLoader : getTypeConverterLoaders()) {
-            typeConverterLoader.load(this);
+        for (TypeConverterLoader loader : getTypeConverterLoaders()) {
+            CamelContextAware.trySetCamelContext(loader, getCamelContext());
+            loader.load(this);
         }
 
         // lets try load any other fallback converters

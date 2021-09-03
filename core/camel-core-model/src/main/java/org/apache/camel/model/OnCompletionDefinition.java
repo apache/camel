@@ -111,15 +111,16 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Removes all existing {@link org.apache.camel.model.OnCompletionDefinition} from the definition.
+     * Removes all existing global {@link org.apache.camel.model.OnCompletionDefinition} from the definition.
      * <p/>
-     * This is used to let route scoped <tt>onCompletion</tt> overrule any global <tt>onCompletion</tt>. Hence we remove
-     * all existing as they are global.
+     * This is used to let route scoped <tt>onCompletion</tt> overrule any global <tt>onCompletion</tt>. Do not remove
+     * an existing route-scoped because it is now possible (CAMEL-16374) to have several.
      *
      * @param definition the parent definition that is the route
      */
     public void removeAllOnCompletionDefinition(ProcessorDefinition<?> definition) {
-        definition.getOutputs().removeIf(out -> out instanceof OnCompletionDefinition);
+        definition.getOutputs().removeIf(out -> out instanceof OnCompletionDefinition &&
+                !((OnCompletionDefinition) out).isRouteScoped());
     }
 
     @Override

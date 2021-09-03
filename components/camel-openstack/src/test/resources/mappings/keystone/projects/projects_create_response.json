@@ -1,0 +1,18 @@
+{
+  "id" : "a41972c3-5f86-4d0e-837b-e3bfdb62062b",
+  "name" : "projects_create_response.json",
+  "request" : {
+    "url" : "/v3/projects",
+    "method" : "POST"
+  },
+  "response" : {
+    "body" : "{\"project\":{\"is_domain\":false,\"description\":\"Project used for CRUD tests\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/projects\/3337151a1c38496c8bffcb280b19c346\"},\"enabled\":true,\"id\":\"3337151a1c38496c8bffcb280b19c346\",\"parent_id\":null,\"domain_id\":\"7a71863c2d1d4444b3e6c2cd36955e1e\",\"name\":\"ProjectX\",\"extra_key1\":\"value1\",\"tags\":[\"one\",\"two\",\"three\"]}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 201
+  },
+  "uuid" : "a41972c3-5f86-4d0e-837b-e3bfdb62062b",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

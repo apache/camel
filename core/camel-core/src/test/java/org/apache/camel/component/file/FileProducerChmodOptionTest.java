@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.attribute.PosixFilePermission;
@@ -31,40 +30,25 @@ import org.apache.camel.PropertyBindingException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class FileProducerChmodOptionTest extends ContextTestSupport {
-    public static final String TEST_DIRECTORY = "target/data/fileProducerChmodOptionTest/";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory(TEST_DIRECTORY);
-        super.setUp();
-    }
-
-    private boolean canTest() {
-        // can not run on windows
-        return !isPlatform("windows");
-    }
 
     @Test
     public void testWriteValidChmod0755() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         runChmodCheck("0755", "rwxr-xr-x");
     }
 
     @Test
     public void testWriteValidChmod666() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         runChmodCheck("666", "rw-rw-rw-");
     }
@@ -73,14 +57,12 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:chmod" + routeSuffix);
         mock.expectedMessageCount(1);
         String testFileName = "chmod" + routeSuffix + ".txt";
-        String fullTestFileName = TEST_DIRECTORY + testFileName;
         String testFileContent = "Writing file with chmod " + routeSuffix + " option at " + new Date();
-        mock.expectedFileExists(fullTestFileName, testFileContent);
+        mock.expectedFileExists(testFile(testFileName), testFileContent);
 
         template.sendBodyAndHeader("direct:write" + routeSuffix, testFileContent, Exchange.FILE_NAME, testFileName);
 
-        File f = new File(fullTestFileName);
-        Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(f.toPath(), LinkOption.NOFOLLOW_LINKS);
+        Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(testFile(testFileName), LinkOption.NOFOLLOW_LINKS);
         assertEquals(expectedPermissions, PosixFilePermissions.toString(permissions));
         assertEquals(expectedPermissions.replace("-", "").length(), permissions.size());
 
@@ -89,16 +71,14 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
 
     @Test
     public void testInvalidChmod() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         try {
             context.addRoutes(new RouteBuilder() {
 
                 @Override
                 public void configure() throws Exception {
-                    from("direct:writeBadChmod1").to("file://" + TEST_DIRECTORY + "?chmod=abc").to("mock:badChmod1");
+                    from("direct:writeBadChmod1").to(fileUri("?chmod=abc")).to("mock:badChmod1");
                 }
             });
             fail("Expected FailedToCreateRouteException");
@@ -118,16 +98,13 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
      */
     @Test
     public void testWriteNoChmod() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         MockEndpoint mock = getMockEndpoint("mock:noChmod");
         mock.expectedMessageCount(1);
         String testFileName = "noChmod.txt";
-        String fullTestFileName = TEST_DIRECTORY + testFileName;
         String testFileContent = "Writing file with no chmod option at " + new Date();
-        mock.expectedFileExists(fullTestFileName, testFileContent);
+        mock.expectedFileExists(testFile(testFileName), testFileContent);
         template.sendBodyAndHeader("direct:writeNoChmod", testFileContent, Exchange.FILE_NAME, testFileName);
         assertMockEndpointsSatisfied();
     }
@@ -137,12 +114,12 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // Valid chmod values
-                from("direct:write666").to("file://" + TEST_DIRECTORY + "?chmod=666").to("mock:chmod666");
+                from("direct:write666").to(fileUri("?chmod=666")).to("mock:chmod666");
 
-                from("direct:write0755").to("file://" + TEST_DIRECTORY + "?chmod=0755").to("mock:chmod0755");
+                from("direct:write0755").to(fileUri("?chmod=0755")).to("mock:chmod0755");
 
                 // No chmod
-                from("direct:writeNoChmod").to("file://" + TEST_DIRECTORY).to("mock:noChmod");
+                from("direct:writeNoChmod").to(fileUri()).to("mock:noChmod");
             }
         };
     }

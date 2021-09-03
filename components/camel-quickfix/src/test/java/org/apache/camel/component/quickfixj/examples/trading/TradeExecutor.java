@@ -169,8 +169,8 @@ public class TradeExecutor {
             char side = order.getChar(Side.FIELD);
             BigDecimal thePrice = new BigDecimal(price.getValue());
 
-            return (side == Side.BUY && thePrice.compareTo(limitPrice) <= 0)
-                    || ((side == Side.SELL || side == Side.SELL_SHORT) && thePrice.compareTo(limitPrice) >= 0);
+            return side == Side.BUY && thePrice.compareTo(limitPrice) <= 0
+                    || (side == Side.SELL || side == Side.SELL_SHORT) && thePrice.compareTo(limitPrice) >= 0;
         }
         return true;
     }

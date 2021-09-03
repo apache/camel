@@ -1,0 +1,18 @@
+{
+  "id" : "abd83ce9-92e5-41dd-8bad-b5ce5408c775",
+  "name" : "volume_snapshots.json",
+  "request" : {
+    "url" : "/v2/123ac695d4db400a9001b91bb3b8aa46/snapshots",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"snapshots\":[{\"status\":\"available\",\"display_name\":\"snap-vol-test-1\",\"created_at\":\"2015-04-23T11:32:28.364877\",\"display_description\":\"\",\"volume_id\":\"b0e394e6-bb10-4bfe-960d-edf72100c810\",\"metadata\":{},\"id\":\"a06b0531-c14b-4a7b-8749-de1378dd1007\",\"size\":1},{\"status\":\"available\",\"display_name\":\"snap-vol-test-2\",\"created_at\":\"2015-04-23T11:32:14.620321\",\"display_description\":\"\",\"volume_id\":\"7f47ab73-303c-4a19-b311-6123bb115775\",\"metadata\":{},\"id\":\"6489c55f-b9f4-442e-8d0a-5a87349d2d07\",\"size\":1}]}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "abd83ce9-92e5-41dd-8bad-b5ce5408c775",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

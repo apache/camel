@@ -34,7 +34,7 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
      * Google Calendar Stream (camel-google-calendar)
      * Poll for changes in a Google Calendar.
      * 
-     * Category: api,cloud
+     * Category: cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-calendar
      * 

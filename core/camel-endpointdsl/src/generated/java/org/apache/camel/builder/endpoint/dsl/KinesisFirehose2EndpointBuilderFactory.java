@@ -31,7 +31,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Kinesis Firehose component.
+     * Builder for endpoint for the AWS Kinesis Firehose component.
      */
     public interface KinesisFirehose2EndpointBuilder
             extends
@@ -369,6 +369,43 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Kinesis Firehose client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis Firehose client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -420,7 +457,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
 
     public interface KinesisFirehose2Builders {
         /**
-         * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
+         * AWS Kinesis Firehose (camel-aws2-kinesis)
          * Produce data to AWS Kinesis Firehose streams using AWS SDK version
          * 2.x.
          * 
@@ -440,7 +477,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return KinesisFirehose2EndpointBuilderFactory.endpointBuilder("aws2-kinesis-firehose", path);
         }
         /**
-         * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
+         * AWS Kinesis Firehose (camel-aws2-kinesis)
          * Produce data to AWS Kinesis Firehose streams using AWS SDK version
          * 2.x.
          * 

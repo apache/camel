@@ -46,7 +46,7 @@ public class QuartzSimpleRouteTest extends BaseQuartzTest {
         assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE).equals("simple"), CoreMatchers.is(true));
         assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER).equals(-1),
                 CoreMatchers.is(true));
-        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL).equals(2000L),
+        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL).equals(100L),
                 CoreMatchers.is(true));
     }
 
@@ -54,7 +54,7 @@ public class QuartzSimpleRouteTest extends BaseQuartzTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2000&trigger.repeatCount=-1").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=100&trigger.repeatCount=-1").to("mock:result");
             }
         };
     }

@@ -24,11 +24,13 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceFilter;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,service-filter")
 @XmlRootElement(name = "customServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
 public class CustomServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     @XmlAttribute(name = "ref")
     private String serviceFilterRef;

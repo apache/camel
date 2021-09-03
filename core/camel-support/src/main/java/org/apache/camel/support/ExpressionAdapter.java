@@ -16,7 +16,9 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConverter;
 
 /**
  * A helper class for developers wishing to implement an {@link org.apache.camel.Expression} using Java code with a
@@ -24,6 +26,14 @@ import org.apache.camel.Exchange;
  * {@link #evaluate(org.apache.camel.Exchange, Class)} or {@link #evaluate(org.apache.camel.Exchange)} methods.
  */
 public abstract class ExpressionAdapter extends ExpressionSupport {
+
+    private TypeConverter converter;
+
+    @Override
+    public void init(CamelContext context) {
+        super.init(context);
+        this.converter = context.getTypeConverter();
+    }
 
     @Override
     protected String assertionFailureMessage(Exchange exchange) {
@@ -37,7 +47,12 @@ public abstract class ExpressionAdapter extends ExpressionSupport {
             // do not use type converter if type is Object (optimize)
             return (T) value;
         }
-        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
+        if (converter != null) {
+            // optimized to use converter from init
+            return converter.convertTo(type, exchange, value);
+        } else {
+            return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
+        }
     }
 
 }

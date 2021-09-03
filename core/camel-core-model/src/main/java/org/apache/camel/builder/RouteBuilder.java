@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder;
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
@@ -34,6 +36,7 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -43,10 +46,13 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.OnCamelContextEvent;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.function.ThrowingBiConsumer;
+import org.apache.camel.util.function.ThrowingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,14 +62,16 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered {
     protected Logger log = LoggerFactory.getLogger(getClass());
-    private AtomicBoolean initialized = new AtomicBoolean();
+
+    private final AtomicBoolean initialized = new AtomicBoolean();
+    private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
+    private final List<TransformerBuilder> transformerBuilders = new ArrayList<>();
+    private final List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
+
     private RestsDefinition restCollection = new RestsDefinition();
     private RestConfigurationDefinition restConfiguration;
-    private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
-    private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
     private RouteTemplatesDefinition routeTemplateCollection = new RouteTemplatesDefinition();
-    private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
 
     public RouteBuilder() {
         this(null);
@@ -74,24 +82,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
-     * Override this method to define ordering of {@link RouteBuilder} classes that are added to Camel from various
-     * runtimes such as camel-main, camel-spring-boot. This allows end users to control the ordering if some routes must
-     * be added and started before others.
-     * <p/>
-     * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards. So if you want to
-     * be last then use {@link Integer#MAX_VALUE} or eg {@link #LOWEST}.
-     */
-    @Override
-    public int getOrder() {
-        return LOWEST;
-    }
-
-    /**
      * Add routes to a context using a lambda expression. It can be used as following:
      *
      * <pre>
      * RouteBuilder.addRoutes(context, rb ->
-     *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
+     *     rb.from("direct:inbound").bean(MyBean.class)));
      * </pre>
      *
      * @param  context   the camel context to add routes
@@ -105,6 +100,56 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 rbc.accept(this);
             }
         });
+    }
+
+    /**
+     * Loads {@link RoutesBuilder} from {@link Resource} using the given consumer to create a {@link RouteBuilder}
+     * instance.
+     *
+     * @param  resource the resource to be loaded.
+     * @param  consumer the function used to create a {@link RoutesBuilder}
+     * @return          a {@link RoutesBuilder}
+     */
+    public static RouteBuilder loadRoutesBuilder(
+            Resource resource, ThrowingBiConsumer<Reader, RouteBuilder, Exception> consumer) {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                CamelContextAware.trySetCamelContext(resource, getContext());
+
+                try (Reader reader = resource.getReader()) {
+                    consumer.accept(reader, this);
+                }
+            }
+        };
+    }
+
+    /**
+     * Loads {@link RoutesBuilder} using the given consumer to create a {@link RouteBuilder} instance.
+     *
+     * @param  consumer the function used to create a {@link RoutesBuilder}
+     * @return          a {@link RoutesBuilder}
+     */
+    public static RouteBuilder loadRoutesBuilder(ThrowingConsumer<RouteBuilder, Exception> consumer) {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                consumer.accept(this);
+            }
+        };
+    }
+
+    /**
+     * Override this method to define ordering of {@link RouteBuilder} classes that are added to Camel from various
+     * runtimes such as camel-main, camel-spring-boot. This allows end users to control the ordering if some routes must
+     * be added and started before others.
+     * <p/>
+     * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards. So if you want to
+     * be last then use {@link Integer#MAX_VALUE} or eg {@link #LOWEST}.
+     */
+    @Override
+    public int getOrder() {
+        return LOWEST;
     }
 
     @Override
@@ -121,6 +166,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public abstract void configure() throws Exception;
+
+    /**
+     * <b>Called on initialization to build routes configuration (global routes configurations) using the fluent builder
+     * syntax.</b>
+     *
+     * @throws Exception can be thrown during configuration
+     */
+    public void configuration() throws Exception {
+        // noop
+    }
 
     /**
      * Binds the bean to the repository (if possible).
@@ -276,6 +331,19 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
+     * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder
+     *
+     * @param ref reference to the error handler to use
+     */
+    public void errorHandler(String ref) {
+        if (!getRouteCollection().getRoutes().isEmpty()) {
+            throw new IllegalArgumentException("errorHandler must be defined before any routes in the RouteBuilder");
+        }
+        getRouteCollection().setCamelContext(getContext());
+        setErrorHandlerBuilder(new ErrorHandlerBuilderRef(ref));
+    }
+
+    /**
      * Injects a property placeholder value with the given key converted to the given type.
      *
      * @param  key       the property key
@@ -405,12 +473,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         configureRoutes(context);
         configureRests(context);
 
-        // but populate rests before routes, as we want to turn rests into
-        // routes
+        // but populate rests before routes, as we want to turn rests into routes
         populateRests();
         populateTransformers();
         populateValidators();
         populateRouteTemplates();
+
+        // ensure routes are prepared before being populated
+        for (RouteDefinition route : routeCollection.getRoutes()) {
+            routeCollection.prepareRoute(route);
+        }
         populateRoutes();
 
         if (this instanceof OnCamelContextEvent) {
@@ -426,7 +498,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public RoutesDefinition configureRoutes(CamelContext context) throws Exception {
-        setContext(context);
+        setCamelContext(context);
         checkInitialized();
         routeCollection.setCamelContext(context);
         return routeCollection;
@@ -440,7 +512,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public RestsDefinition configureRests(CamelContext context) throws Exception {
-        setContext(context);
+        setCamelContext(context);
         restCollection.setCamelContext(context);
         return restCollection;
     }
@@ -449,6 +521,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
         super.setErrorHandlerBuilder(errorHandlerBuilder);
         getRouteCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
+        getRouteTemplateCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
     }
 
     /**
@@ -481,10 +554,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             }
 
             configure();
-            // mark all route definitions as custom prepared because
-            // a route builder prepares the route definitions correctly already
+
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
-                route.markPrepared();
+                // ensure the route is prepared after configure method is complete
+                getRouteCollection().prepareRoute(route);
             }
 
             for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
@@ -580,20 +653,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return restCollection;
     }
 
-    public RestConfigurationDefinition getRestConfiguration() {
-        return restConfiguration;
-    }
-
     public void setRestCollection(RestsDefinition restCollection) {
         this.restCollection = restCollection;
     }
 
-    public void setRouteCollection(RoutesDefinition routeCollection) {
-        this.routeCollection = routeCollection;
+    public RestConfigurationDefinition getRestConfiguration() {
+        return restConfiguration;
     }
 
     public RoutesDefinition getRouteCollection() {
         return this.routeCollection;
+    }
+
+    public void setRouteCollection(RoutesDefinition routeCollection) {
+        this.routeCollection = routeCollection;
     }
 
     public RouteTemplatesDefinition getRouteTemplateCollection() {
@@ -616,4 +689,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         // noop
     }
 
+    protected void configureRouteConfiguration(RouteConfigurationDefinition routesConfiguration) {
+        // noop
+    }
 }

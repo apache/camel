@@ -16,15 +16,17 @@
  */
 package org.apache.camel.impl.cloud;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
+import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,9 +48,10 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
     public void testMultiServiceFilter() throws Exception {
         CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration()
                 .healthy()
-                .custom(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
+                .custom((exchange, services) -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
 
-        List<ServiceDefinition> services = conf.newInstance(context).apply(Arrays.asList(
+        Exchange exchange = new DefaultExchange(context);
+        List<ServiceDefinition> services = conf.newInstance(context).apply(exchange, Arrays.asList(
                 new DefaultServiceDefinition("no-name", "127.0.0.1", 1000),
                 new DefaultServiceDefinition("no-name", "127.0.0.1", 1001, new DefaultServiceHealth(false)),
                 new DefaultServiceDefinition("no-name", "127.0.0.1", 1002, new DefaultServiceHealth(true)),
@@ -60,5 +63,30 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
         assertFalse(services.stream().anyMatch(s -> s.getPort() > 2000));
         assertTrue(services.stream().anyMatch(s -> s.getPort() == 1000));
         assertTrue(services.stream().anyMatch(s -> s.getPort() == 1002));
+    }
+
+    @Test
+    public void testContentBasedServiceFilterCombinedWithServiceFilter() throws Exception {
+        CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration()
+                .healthy()
+                .custom((exchange, services) -> services.stream()
+                        .filter(serviceDefinition -> ofNullable(serviceDefinition.getMetadata()
+                                .get("supports"))
+                                        .orElse("")
+                                        .contains(exchange.getProperty("needs", String.class)))
+                        .collect(Collectors.toList()));
+
+        Map<String, String> metadata = Collections.singletonMap("supports", "foo,bar");
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty("needs", "foo");
+
+        List<ServiceDefinition> services = conf.newInstance(context).apply(exchange, Arrays.asList(
+                new DefaultServiceDefinition("no-name", "127.0.0.1", 2001, metadata, new DefaultServiceHealth(true)),
+                new DefaultServiceDefinition("no-name", "127.0.0.1", 2002, metadata, new DefaultServiceHealth(false))));
+
+        assertEquals(1, services.size());
+        assertFalse(services.stream().anyMatch(s -> !s.getHealth().isHealthy()));
+        assertTrue(services.stream().anyMatch(s -> s.getPort() == 2001));
     }
 }

@@ -1,0 +1,18 @@
+{
+  "id" : "6c90b04b-9872-445c-ac34-e02bfffa03a9",
+  "name" : "user_get_byId.json",
+  "request" : {
+    "url" : "/v3/users/29d5aaaa6d3b471e9c101ae470e649a6",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"user\":{\"domain_id\":\"default\",\"name\":\"foobar\",\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/users\/29d5aaaa6d3b471e9c101ae470e649a6\"},\"id\":\"29d5aaaa6d3b471e9c101ae470e649a6\",\"enabled\":true,\"email\":null,\"default_project_id\":\"123ac695d4db400a9001b91bb3b8aa46\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "6c90b04b-9872-445c-ac34-e02bfffa03a9",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

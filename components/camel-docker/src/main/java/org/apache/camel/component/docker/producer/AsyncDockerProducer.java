@@ -127,20 +127,21 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
     private void runAsyncImageBuild(Exchange exchange, Message message, DockerClient client)
             throws DockerException, InterruptedException {
         // result contain an image id value
-        BuildImageCmd cmd = executeBuildImageRequest(client, message);
+        try (BuildImageCmd cmd = executeBuildImageRequest(client, message)) {
 
-        BuildImageResultCallback item = cmd.exec(new BuildImageResultCallback() {
-            @Override
-            public void onNext(BuildResponseItem item) {
-                super.onNext(item);
+            BuildImageResultCallback item = cmd.exec(new BuildImageResultCallback() {
+                @Override
+                public void onNext(BuildResponseItem item) {
+                    super.onNext(item);
 
-                LOG.trace("build image callback {}", item);
+                    LOG.trace("build image callback {}", item);
 
-                exchange.getIn().setBody(item.getImageId());
-            }
-        });
+                    exchange.getIn().setBody(item.getImageId());
+                }
+            });
 
-        setResponse(exchange, item);
+            setResponse(exchange, item);
+        }
     }
 
     private void runAsyncWithFrameResponse(Exchange exchange, AsyncDockerCmd<?, Frame> cmd) throws InterruptedException {
@@ -157,24 +158,25 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
     }
 
     private void runAsyncExecStart(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
-        ExecStartCmd cmd = executeExecStartRequest(client, message);
-
-        runAsyncWithFrameResponse(exchange, cmd);
+        try (ExecStartCmd cmd = executeExecStartRequest(client, message)) {
+            runAsyncWithFrameResponse(exchange, cmd);
+        }
     }
 
     private void runAsyncWaitContainer(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
-        WaitContainerCmd cmd = executeWaitContainerRequest(client, message);
-        WaitContainerResultCallback item = cmd.exec(new WaitContainerResultCallback() {
-            @Override
-            public void onNext(WaitResponse item) {
-                super.onNext(item);
+        try (WaitContainerCmd cmd = executeWaitContainerRequest(client, message)) {
+            WaitContainerResultCallback item = cmd.exec(new WaitContainerResultCallback() {
+                @Override
+                public void onNext(WaitResponse item) {
+                    super.onNext(item);
 
-                LOG.trace("wait container callback {}", item);
-            }
+                    LOG.trace("wait container callback {}", item);
+                }
 
-        });
+            });
 
-        setResponse(exchange, item);
+            setResponse(exchange, item);
+        }
     }
 
     private void setResponse(Exchange exchange, ResultCallbackTemplate item) throws InterruptedException {
@@ -185,45 +187,47 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
     }
 
     private void runAsyncLogContainer(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
-        LogContainerCmd cmd = executeLogContainerRequest(client, message);
-
-        runAsyncWithFrameResponse(exchange, cmd);
-
+        try (LogContainerCmd cmd = executeLogContainerRequest(client, message)) {
+            runAsyncWithFrameResponse(exchange, cmd);
+        }
     }
 
     private void runAsyncAttachContainer(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
-        AttachContainerCmd cmd = executeAttachContainerRequest(client, message);
-        runAsyncWithFrameResponse(exchange, cmd);
+        try (AttachContainerCmd cmd = executeAttachContainerRequest(client, message)) {
+            runAsyncWithFrameResponse(exchange, cmd);
+        }
     }
 
     private void runAsyncPush(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
-        PushImageCmd cmd = executePushImageRequest(client, message);
-        Adapter<PushResponseItem> item = cmd.exec(new Adapter<PushResponseItem>() {
-            @Override
-            public void onNext(PushResponseItem item) {
-                super.onNext(item);
+        try (PushImageCmd cmd = executePushImageRequest(client, message)) {
+            Adapter<PushResponseItem> item = cmd.exec(new Adapter<PushResponseItem>() {
+                @Override
+                public void onNext(PushResponseItem item) {
+                    super.onNext(item);
 
-                LOG.trace("push image callback {}", item);
-            }
-        });
+                    LOG.trace("push image callback {}", item);
+                }
+            });
 
-        setResponse(exchange, item);
+            setResponse(exchange, item);
+        }
     }
 
     private void runAsyncPull(Message message, DockerClient client, Exchange exchange) throws InterruptedException {
-        PullImageCmd cmd = executePullImageRequest(client, message);
+        try (PullImageCmd cmd = executePullImageRequest(client, message)) {
 
-        PullImageResultCallback item = cmd.exec(new PullImageResultCallback() {
-            @Override
-            public void onNext(PullResponseItem item) {
-                super.onNext(item);
+            PullImageResultCallback item = cmd.exec(new PullImageResultCallback() {
+                @Override
+                public void onNext(PullResponseItem item) {
+                    super.onNext(item);
 
-                LOG.trace("pull image callback {}", item);
+                    LOG.trace("pull image callback {}", item);
 
-            }
-        });
+                }
+            });
 
-        setResponse(exchange, item);
+            setResponse(exchange, item);
+        }
     }
 
     /**
@@ -451,10 +455,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
-        WaitContainerCmd waitContainerCmd = client.waitContainerCmd(containerId);
-
-        return waitContainerCmd;
-
+        return client.waitContainerCmd(containerId);
     }
 
     /**

@@ -138,7 +138,7 @@ public class XmlConverter {
         }
         transformer.setOutputProperties(outputProperties);
         if (this.transformerFactory.getClass().getName().equals(XALAN_TRANSFORMER_FACTORY)
-                && (source instanceof StAXSource)) {
+                && source instanceof StAXSource) {
             //external xalan can't handle StAXSource, so convert StAXSource to SAXSource.
             source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
         }
@@ -904,7 +904,10 @@ public class XmlConverter {
     //-------------------------------------------------------------------------
 
     protected void setupFeatures(DocumentBuilderFactory factory) {
-        Properties properties = System.getProperties();
+        // must do defensive copy in case of concurrency
+        Properties properties = new Properties();
+        properties.putAll(System.getProperties());
+
         List<String> features = new ArrayList<>();
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
             String key = (String) prop.getKey();
@@ -1016,7 +1019,7 @@ public class XmlConverter {
                         "Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}",
                         e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
                 factory = TransformerFactory.newInstance(JDK_FALLBACK_TRANSFORMER_FACTORY, null);
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // okay we cannot load fallback then throw original exception
                 throw cause;
             }
@@ -1087,7 +1090,7 @@ public class XmlConverter {
             sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (Exception e) {
             LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
-                    new Object[] { "http://xml.org/sax/features/external-general-entities", false, e.getMessage() });
+                    "http://xml.org/sax/features/external-general-entities", false, e.getMessage());
         }
         sfactory.setNamespaceAware(true);
         return sfactory;

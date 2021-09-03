@@ -20,25 +20,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerProducerRouteTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file-test");
-        super.setUp();
-    }
 
     @Test
     public void testFileRoute() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(2);
 
-        template.sendBodyAndHeader("file://target/data/file-test/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/file-test/a", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri("a"), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("a"), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         result.assertIsSatisfied();
     }
@@ -47,8 +39,8 @@ public class FileConsumerProducerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:target/data/file-test/a?initialDelay=0&delay=10").to("file:target/data/file-test/b");
-                from("file:target/data/file-test/b?initialDelay=0&delay=10").to("mock:result");
+                from(fileUri("a?initialDelay=0&delay=10")).to(fileUri("b"));
+                from(fileUri("b?initialDelay=0&delay=10")).to("mock:result");
             }
         };
     }

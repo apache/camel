@@ -243,6 +243,7 @@ public final class Hl7Util {
 
         // MSH-7
         mllpSocketBuffer.write(fieldSeparator);
+        // TODO static field TIMESTAMP_FORMAT of type java.text.DateFormat isn't thread safe! Think about using ThreadLocal
         mllpSocketBuffer.write(TIMESTAMP_FORMAT.format(new Date()).getBytes());
 
         // Don't copy MSH-8

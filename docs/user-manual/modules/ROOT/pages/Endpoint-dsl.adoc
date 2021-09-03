@@ -1,9 +1,12 @@
 [[Endpoint-DSL]]
 = Endpoint DSL
 
-Endpoint-dsl is a new API that allows using type-safe endpoint URL configurations.
+Endpoint-dsl is a new API that allows using type-safe endpoint xref:uris.adoc[URL] configurations.
 
-The following is an example of an FTP route using the standard `RouteBuilder`:
+The DSL can be accessed in several ways, but the main one is to switch to using an `EndpointRouteBuilder` instead of the usual
+`RouteBuilder`.  It provides access to all endpoint builders which are defined through inheritance on the `org.apache.camel.builder.endpoint.EndpointRouteBuilder`.
+
+The following is an example of an FTP route using the standard `RouteBuilder` Java DSL:
 
 [source,java]
 ----
@@ -18,8 +21,8 @@ public class MyRoutes extends RouteBuilder {
 }
 ----
 
-The same Java statement can be rewritten in the following more readable way using
-the new `EndpointRouteBuilder` that allows using the endpoint DSL:
+The same Java statement can be rewritten in the following more type-safe and readable way using
+the new `EndpointRouteBuilder` that allows using the Endpoint DSL:
 
 [source,java]
 ----
@@ -39,7 +42,7 @@ public class MyRoutes extends EndpointRouteBuilder {
 
 The above example of endpoint-dsl uses the meta model, which is  extracted from the source using an annotation processor and
 written in various JSON files, to generate a fluent DSL for each endpoint.This fluent DSL provides type safety for parameters.
-It further allows leveraging the Java editor code completion to access the list of available parameters for the each endpoint.
+It further allows leveraging the Java editor code completion to access the list of available parameters for every endpoint.
 
 == Using custom component names
 
@@ -135,10 +138,7 @@ method where we are using `FluentProducerTemplate` that is capable of using the 
 the endpoint in shown with: `.to(mqtt)`.
 
 
-== How to use
-
-The DSL can be accessed in several ways, but the main one is to switch to using an `EndpointRouteBuilder` instead of the usual 
-`RouteBuilder`.  It provides access to all endpoint builders which are defined through inheritance on the `org.apache.camel.builder.endpoint.EndpointRouteBuilder`.
+== Dependency
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 

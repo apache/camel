@@ -40,7 +40,7 @@ public class GitBranchConsumer extends AbstractGitConsumer {
         List<Ref> call = getGit().branchList().setListMode(ListMode.ALL).call();
         for (Ref ref : call) {
             if (!branchesConsumed.contains(ref.getName())) {
-                Exchange e = getEndpoint().createExchange();
+                Exchange e = createExchange(true);
                 e.getMessage().setBody(ref.getName());
                 e.getMessage().setHeader(GitConstants.GIT_BRANCH_LEAF, ref.getLeaf().getName());
                 e.getMessage().setHeader(GitConstants.GIT_BRANCH_OBJECT_ID, ref.getObjectId().getName());

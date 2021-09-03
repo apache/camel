@@ -97,7 +97,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}/src/spec/swagger.json", required = true)
     String specificationUri;
 
-    @Parameter(defaultValue = "2.4.12")
+    @Parameter(defaultValue = "2.4.19")
     String swaggerCodegenMavenPluginVersion;
 
     // A map of the language-specific parameters passed to the swagger-codegen-maven-plugin

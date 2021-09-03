@@ -21,11 +21,12 @@ import java.util.concurrent.TimeUnit;
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -79,19 +80,21 @@ public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTe
         //wait for connection recovery before starting the broker
         Thread.sleep(recoveryInterval + 500L);
         String brokerUri = "vm://" + brokerName;
-        BrokerService broker = new BrokerService();
-        broker.setBrokerName(brokerName);
-        broker.setBrokerId(brokerName);
-        broker.setPersistent(false);
-        broker.setUseJmx(false);
-        broker.addConnector(brokerUri);
-        broker.start();
-        //wait for the next recovery attempt
-        Thread.sleep(recoveryInterval + 500L);
+
+        ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+                .bare()
+                .withBrokerName(brokerName)
+                .withPersistent(false)
+                .withUseJmx(false)
+                .withTransport(brokerUri, 0)
+                .build();
+
+        service.initialize();
+
         template.asyncRequestBody("direct:start", "ping");
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
-        broker.stop();
+        service.shutdown();
     }
 
 }

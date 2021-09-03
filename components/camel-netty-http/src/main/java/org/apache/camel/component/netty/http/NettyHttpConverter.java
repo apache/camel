@@ -27,6 +27,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.component.netty.NettyConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
@@ -96,7 +97,7 @@ public final class NettyHttpConverter {
         String contentType = response.headers().get(Exchange.CONTENT_TYPE);
         String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
         if (charset == null && exchange != null) {
-            charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
         }
         if (charset != null) {
             return response.content().toString(Charset.forName(charset));

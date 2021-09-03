@@ -113,7 +113,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         afterPropertiesSet();
 
         // you cannot use temp file and file exists append
-        if (getFileExist() == GenericFileExist.Append && ((getTempPrefix() != null) || (getTempFileName() != null))) {
+        if (getFileExist() == GenericFileExist.Append && (getTempPrefix() != null || getTempFileName() != null)) {
             throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix/tempFileName options");
         }
         // ensure fileExist and moveExisting is configured correctly if in use
@@ -181,7 +181,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      *
      * @throws Exception is thrown if endpoint is invalid configured for its mandatory options
      */
-    protected void afterPropertiesSet() throws Exception {
+    protected void afterPropertiesSet() {
         RemoteFileConfiguration config = getConfiguration();
         StringHelper.notEmpty(config.getHost(), "host");
         StringHelper.notEmpty(config.getProtocol(), "protocol");

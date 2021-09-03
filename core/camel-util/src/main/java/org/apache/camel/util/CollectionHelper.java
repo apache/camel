@@ -99,6 +99,7 @@ public final class CollectionHelper {
         }
     }
 
+    @SafeVarargs
     public static <T> Set<T> createSetContaining(T... contents) {
         return new HashSet<>(Arrays.asList(contents));
     }

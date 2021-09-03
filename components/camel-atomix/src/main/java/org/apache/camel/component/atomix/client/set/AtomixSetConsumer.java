@@ -74,7 +74,7 @@ public final class AtomixSetConsumer extends AbstractAtomixClientConsumer<Atomix
     // ********************************************
 
     private void onEvent(DistributedSet.ValueEvent<Object> event) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setHeader(AtomixClientConstants.EVENT_TYPE, event.type());
 
         if (resultHeader == null) {

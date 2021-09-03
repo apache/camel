@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
@@ -58,6 +59,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     protected ExchangePattern destinationExchangePattern;
     protected String id;
     protected String routeId;
+    protected boolean extendedStatistics;
     protected final AtomicLong counter = new AtomicLong();
 
     public SendProcessor(Endpoint destination) {
@@ -68,10 +70,10 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         ObjectHelper.notNull(destination, "destination");
         this.destination = destination;
         this.camelContext = (ExtendedCamelContext) destination.getCamelContext();
+        ObjectHelper.notNull(this.camelContext, "camelContext");
         this.pattern = pattern;
         this.destinationExchangePattern = null;
         this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
-        ObjectHelper.notNull(this.camelContext, "camelContext");
     }
 
     @Override
@@ -123,18 +125,19 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
         final ExchangePattern existingPattern = exchange.getPattern();
 
-        counter.incrementAndGet();
+        if (extendedStatistics) {
+            counter.incrementAndGet();
+        }
 
         // if we have a producer then use that as its optimized
         if (producer != null) {
-
             final Exchange target = exchange;
             // we can send with a different MEP pattern
             if (destinationExchangePattern != null || pattern != null) {
                 target.setPattern(destinationExchangePattern != null ? destinationExchangePattern : pattern);
             }
             // set property which endpoint we send to
-            target.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, destination.getEndpointUri());
 
             final boolean sending = camelContext.isEventNotificationApplicable()
                     && EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
@@ -179,7 +182,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 exchange.setPattern(destinationExchangePattern != null ? destinationExchangePattern : pattern);
             }
             // set property which endpoint we send to
-            exchange.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, destination.getEndpointUri());
 
             LOG.debug(">>>> {} {}", destination, exchange);
 
@@ -212,6 +215,14 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
     @Override
     protected void doInit() throws Exception {
+        // only if JMX is enabled
+        if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
+            this.extendedStatistics
+                    = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+        } else {
+            this.extendedStatistics = false;
+        }
+
         // if the producer is not singleton we need to use a producer cache
         if (!destination.isSingletonProducer() && producerCache == null) {
             // use a single producer cache as we need to only hold reference for one destination

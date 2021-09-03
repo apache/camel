@@ -46,13 +46,13 @@ public class CometdEndpoint extends DefaultEndpoint {
     private URI uri;
     @UriPath(description = "Hostname")
     @Metadata(required = true)
-    private String host;
+    private String host; // TODO field is reported unread
     @UriPath(description = "Host port number")
     @Metadata(required = true)
-    private int port;
+    private int port; // TODO field is reported unread
     @UriPath(description = "The channelName represents a topic that can be subscribed to by the Camel endpoints.")
     @Metadata(required = true)
-    private String channelName;
+    private String channelName; // TODO field is reported unread
     @UriParam
     private String baseResource;
     @UriParam(defaultValue = "240000")

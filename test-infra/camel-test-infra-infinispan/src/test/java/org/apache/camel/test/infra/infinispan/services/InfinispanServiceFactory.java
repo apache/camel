@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.infinispan.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class InfinispanServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(InfinispanServiceFactory.class);
-
     private InfinispanServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<InfinispanService> builder() {
+        return new SimpleTestServiceBuilder<>("infinispan");
+    }
+
     public static InfinispanService createService() {
-        String instanceType = System.getProperty("infinispan.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-infinispan-container")) {
-            return new InfinispanLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new InfinispanRemoteService();
-        }
-
-        LOG.error("Infinispan instance must be one of 'local-infinispan-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Infinispan instance type");
+        return builder()
+                .addLocalMapping(InfinispanLocalContainerService::new)
+                .addRemoteMapping(InfinispanRemoteService::new)
+                .build();
     }
 }

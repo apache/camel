@@ -323,6 +323,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Adds a component to the context.
      *
+     * Notice the component will be auto-started if Camel is already started.
+     *
      * @param componentName the name the component is registered as
      * @param component     the component
      */
@@ -383,7 +385,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return a readonly list with the names of the components
      */
-    List<String> getComponentNames();
+    Set<String> getComponentNames();
 
     /**
      * Removes a previously added component.
@@ -436,7 +438,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType);
 
     /**
-     * Returns a new {@link Collection} of all of the endpoints from the {@link org.apache.camel.spi.EndpointRegistry}
+     * Returns a read-only {@link Collection} of all of the endpoints from the
+     * {@link org.apache.camel.spi.EndpointRegistry}
      *
      * @return all endpoints
      */
@@ -570,6 +573,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void addRoutes(RoutesBuilder builder) throws Exception;
 
     /**
+     * Adds the routes configurations (global configuration for all routes) from the routes builder.
+     *
+     * @param  builder   the builder which has routes configurations
+     * @throws Exception if the routes configurations could not be created for whatever reason
+     */
+    void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception;
+
+    /**
      * Removes the given route (the route <b>must</b> be stopped before it can be removed).
      * <p/>
      * A route which is removed will be unregistered from JMX, have its services stopped/shutdown and the route
@@ -597,6 +608,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Adds a new route from a given route template.
      *
+     * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
+     * builder with more functionality than this API.
+     *
      * @param  routeId         the id of the new route to add (optional)
      * @param  routeTemplateId the id of the route template (mandatory)
      * @param  parameters      parameters to use for the route template when creating the new route
@@ -604,6 +618,21 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws Exception       is thrown if error creating and adding the new route
      */
     String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
+
+    /**
+     * Adds a new route from a given route template.
+     *
+     * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
+     * builder with more functionality than this API.
+     *
+     * @param  routeId              the id of the new route to add (optional)
+     * @param  routeTemplateId      the id of the route template (mandatory)
+     * @param  routeTemplateContext the route template context (mandatory)
+     * @return                      the id of the route added (for example when an id was auto assigned)
+     * @throws Exception            is thrown if error creating and adding the new route
+     */
+    String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
+            throws Exception;
 
     /**
      * Adds the given route policy factory
@@ -725,6 +754,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Parses the given text and resolve any property placeholders - using {{key}}.
+     * <p/>
+     * <b>Important:</b> If resolving placeholders on an endpoint uri, then you SHOULD use
+     * EndpointHelper#resolveEndpointUriPropertyPlaceholders instead.
      *
      * @param  text                     the text such as an endpoint uri or the likes
      * @return                          the text with resolved property placeholders
@@ -752,7 +784,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @deprecated not in use
      */
     @Deprecated
-    List<String> getLanguageNames();
+    Set<String> getLanguageNames();
 
     /**
      * Creates a new {@link ProducerTemplate} which is <b>started</b> and therefore ready to use right away.
@@ -1192,6 +1224,32 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param pattern the pattern
      */
     void setMDCLoggingKeysPattern(String pattern);
+
+    /**
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended to be used for production usage.
+     *
+     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     *
+     * @return <tt>true</tt> if dumping is enabled
+     */
+    Boolean isDumpRoutes();
+
+    /**
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended to be used for production usage.
+     *
+     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     *
+     * @param dumpRoutes <tt>true</tt> to enable dumping routes.
+     */
+    void setDumpRoutes(Boolean dumpRoutes);
 
     /**
      * Whether to enable using data type on Camel messages.

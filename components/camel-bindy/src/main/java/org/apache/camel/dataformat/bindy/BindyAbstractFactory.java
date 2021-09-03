@@ -31,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,24 +133,21 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     /**
      * Link objects together
      */
-    public void link(Map<String, Object> model) throws Exception {
+    public void link(Map<String, Object> model) {
 
         // Iterate class by class
-        for (String link : annotatedLinkFields.keySet()) {
-            List<Field> linkFields = annotatedLinkFields.get(link);
+        for (Map.Entry<String, List<Field>> entry : annotatedLinkFields.entrySet()) {
+            List<Field> linkFields = entry.getValue();
 
             // Iterate through Link fields list
             for (Field field : linkFields) {
-
-                // Change protection for private field
-                field.setAccessible(true);
-
                 // Retrieve linked object
                 String toClassName = field.getType().getName();
                 Object to = model.get(toClassName);
 
                 org.apache.camel.util.ObjectHelper.notNull(to, "No @link annotation has been defined for the object to link");
-                field.set(model.get(field.getDeclaringClass().getName()), to);
+
+                ReflectionHelper.setField(field, model.get(field.getDeclaringClass().getName()), to);
             }
         }
     }
@@ -195,7 +193,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         String keyGenerated;
 
         // BigIntegerFormatFactory added for ticket - camel-2773
-        if ((key1 != null) && (key2 != null)) {
+        if (key1 != null && key2 != null) {
             key2Formatted = getNumberFormat().format((long) key2);
             keyGenerated = String.valueOf(key1) + key2Formatted;
         } else {
@@ -216,7 +214,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         return nf;
     }
 
-    public static Object getDefaultValueForPrimitive(Class<?> clazz) throws Exception {
+    public static Object getDefaultValueForPrimitive(Class<?> clazz) {
         if (clazz == byte.class) {
             return Byte.MIN_VALUE;
         } else if (clazz == short.class) {

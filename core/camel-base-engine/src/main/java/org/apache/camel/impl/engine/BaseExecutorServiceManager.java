@@ -40,6 +40,7 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultThreadPoolFactory;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -61,12 +62,12 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     private static final Logger LOG = LoggerFactory.getLogger(BaseExecutorServiceManager.class);
 
     private final CamelContext camelContext;
-    private ThreadPoolFactory threadPoolFactory;
     private final List<ExecutorService> executorServices = new CopyOnWriteArrayList<>();
+    private final Map<String, ThreadPoolProfile> threadPoolProfiles = new ConcurrentHashMap<>();
+    private ThreadPoolFactory threadPoolFactory;
     private String threadNamePattern;
     private long shutdownAwaitTermination = 10000;
     private String defaultThreadPoolProfileId = "defaultThreadPoolProfile";
-    private final Map<String, ThreadPoolProfile> threadPoolProfiles = new ConcurrentHashMap<>();
     private ThreadPoolProfile defaultProfile;
 
     public BaseExecutorServiceManager(CamelContext camelContext) {
@@ -447,15 +448,14 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
         // discover thread pool factory
         if (threadPoolFactory == null) {
-            threadPoolFactory = new BaseServiceResolver<>(
-                    ThreadPoolFactory.FACTORY, ThreadPoolFactory.class,
-                    camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder())
-                            .resolve(camelContext)
-                            .orElseGet(DefaultThreadPoolFactory::new);
+            threadPoolFactory = ResolverHelper.resolveService(
+                    camelContext,
+                    camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(),
+                    ThreadPoolFactory.FACTORY,
+                    ThreadPoolFactory.class)
+                    .orElseGet(DefaultThreadPoolFactory::new);
         }
-        if (threadPoolFactory instanceof CamelContextAware) {
-            ((CamelContextAware) threadPoolFactory).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(threadPoolFactory, camelContext);
         ServiceHelper.initService(threadPoolFactory);
     }
 

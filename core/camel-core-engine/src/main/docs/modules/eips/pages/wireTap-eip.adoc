@@ -75,8 +75,6 @@ values.
 
 == Sending a Copy (traditional wiretap)
 
-* Using the xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]
-
 [source,java]
 ----
     protected RouteBuilder createRouteBuilder() {
@@ -101,8 +99,6 @@ values.
 ----
 
 == Sending a New xref:latest@manual:ROOT:exchange.adoc[Exchange]
-
-*Using the xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]*
 
 Camel supports either a processor or an
 xref:latest@manual:ROOT:expression.adoc[Expression] to populate the new
@@ -130,13 +126,10 @@ xref:latest@manual:ROOT:exchange.adoc[Exchange]
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .wireTap("direct:foo", false, new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().setBody("Bye World");
-                            exchange.getIn().setHeader("foo", "bar");
-                        }
+                    .wireTap("direct:foo").copy(false).newExchange(exchange -> {
+                        exchange.getIn().setBody("Bye World");
+                        exchange.getIn().setHeader("foo", "bar");
                     }).to("mock:result");
-
 
                 from("direct:foo").to("mock:foo");
                 // END SNIPPET: e1
@@ -209,4 +202,3 @@ The following example sends a new message which has
 
 See details at xref:multicast-eip.adoc[Multicast]
 
-xref:latest@manual:ROOT:using-this-pattern.adoc[Using This Pattern]

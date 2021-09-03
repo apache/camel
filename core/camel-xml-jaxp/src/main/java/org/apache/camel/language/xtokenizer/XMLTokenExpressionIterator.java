@@ -40,14 +40,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.xml.io.util.XmlStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,6 +111,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         return createIterator(new InputStreamReader(in, charset));
     }
 
+    protected Iterator<?> createIterator(InputStream in)
+            throws XMLStreamException, IOException {
+        return createIterator(new XmlStreamReader(in));
+    }
+
     protected Iterator<?> createIterator(Reader in) throws XMLStreamException {
         return new XMLTokenIterator(path, nsmap, mode, group, in);
     }
@@ -145,11 +149,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 reader = new StringReader(val);
             } else {
                 InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
-                String charset = ExchangeHelper.getCharsetName(exchange);
-                reader = new InputStreamReader(in, charset);
+                // use xml stream reader which is capable of handling reading the xml stream
+                // according to <xml encoding> charset
+                reader = new XmlStreamReader(in);
             }
             return createIterator(reader);
-        } catch (InvalidPayloadException | XMLStreamException | UnsupportedEncodingException e) {
+        } catch (Exception e) {
             exchange.setException(e);
             // must close input stream
             IOHelper.close(reader);
@@ -502,8 +507,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         }
                         break;
                     case XMLStreamConstants.END_ELEMENT:
-                        if ((backtrack || (trackdepth > 0 && depth == trackdepth))
-                                && (mode == 'w' && group > 1 && !tokens.isEmpty())) {
+                        if ((backtrack || trackdepth > 0 && depth == trackdepth)
+                                && mode == 'w' && group > 1 && !tokens.isEmpty()) {
                             // flush the left over using the current context
                             code = XMLStreamConstants.END_ELEMENT;
                             return getGroupedToken();
@@ -519,7 +524,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         }
 
                         int pc = 0;
-                        if (backtrack || (trackdepth > 0 && depth == trackdepth - 1)) {
+                        if (backtrack || trackdepth > 0 && depth == trackdepth - 1) {
                             // reactive backtrack if not backtracking and update the track depth
                             backtrack = true;
                             trackdepth--;
@@ -537,11 +542,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                                     popSegment();
                                 }
                             }
+                        }
 
-                            if ((ancestor() == null && !isTop())
-                                    || (ancestor() != null && ancestor().matches(endname))) {
-                                up();
-                            }
+                        if (ancestor() == null && !isTop()
+                                || ancestor() != null && ancestor().matches(endname)) {
+                            up();
                         }
                         break;
                     case XMLStreamConstants.END_DOCUMENT:

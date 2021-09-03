@@ -69,7 +69,7 @@ public final class SnmpConverters {
             }
 
             return list;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // return null if we can't convert without an error 
             // and it could let camel to choice the other converter to do the job
             // new OID(...) will throw NumberFormatException if it's not a valid OID

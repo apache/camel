@@ -21,11 +21,9 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.activemq.support.ActiveMQTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -34,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * A simple request / reply test
  */
-public class JmsSimpleRequestReplyTest extends CamelTestSupport {
+public class JmsSimpleRequestReplyTest extends ActiveMQTestSupport {
 
     protected String componentName = "activemq";
 
@@ -58,8 +56,8 @@ public class JmsSimpleRequestReplyTest extends CamelTestSupport {
         return camelContext;
     }
 
-    public static ConnectionFactory createConnectionFactory(String options) {
-        String url = "vm://test-broker?broker.persistent=false&broker.useJmx=false";
+    public ConnectionFactory createConnectionFactory(String options) {
+        String url = vmUri("?broker.persistent=false&broker.useJmx=false");
         if (options != null) {
             url = url + "&" + options;
         }
@@ -73,12 +71,10 @@ public class JmsSimpleRequestReplyTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:queue:hello").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("Bye World");
-                        assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
-                    }
+            public void configure() {
+                from("activemq:queue:hello").process(exchange -> {
+                    exchange.getIn().setBody("Bye World");
+                    assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
                 }).to("mock:result");
             }
         };

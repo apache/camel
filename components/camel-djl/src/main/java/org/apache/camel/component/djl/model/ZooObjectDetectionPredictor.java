@@ -19,16 +19,19 @@ package org.apache.camel.component.djl.model;
 import java.io.*;
 
 import ai.djl.Application;
+import ai.djl.MalformedModelException;
 import ai.djl.inference.Predictor;
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.ImageFactory;
 import ai.djl.modality.cv.output.DetectedObjects;
 import ai.djl.repository.zoo.Criteria;
+import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
 import ai.djl.training.util.ProgressBar;
 import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +41,7 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
 
     private final ZooModel<Image, DetectedObjects> model;
 
-    public ZooObjectDetectionPredictor(String artifactId) throws Exception {
+    public ZooObjectDetectionPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException, IOException {
         Criteria<Image, DetectedObjects> criteria = Criteria.builder()
                 .optApplication(Application.CV.OBJECT_DETECTION)
                 .setTypes(Image.class, DetectedObjects.class)
@@ -49,7 +52,7 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         if (exchange.getIn().getBody() instanceof byte[]) {
             byte[] bytes = exchange.getIn().getBody(byte[].class);
             DetectedObjects result = classify(new ByteArrayInputStream(bytes));
@@ -61,36 +64,36 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
             DetectedObjects result = classify(exchange.getIn().getBody(InputStream.class));
             exchange.getIn().setBody(result);
         } else {
-            throw new RuntimeException("Data type is not supported. Body should be byte[], InputStream or File");
+            throw new RuntimeCamelException("Data type is not supported. Body should be byte[], InputStream or File");
         }
     }
 
-    public DetectedObjects classify(Image image) throws Exception {
+    public DetectedObjects classify(Image image) {
         try (Predictor<Image, DetectedObjects> predictor = model.newPredictor()) {
             DetectedObjects detectedObjects = predictor.predict(image);
             return detectedObjects;
         } catch (TranslateException e) {
-            throw new RuntimeException("Could not process input or output", e);
+            throw new RuntimeCamelException("Could not process input or output", e);
         }
     }
 
-    public DetectedObjects classify(File input) throws Exception {
-        try {
-            Image image = ImageFactory.getInstance().fromInputStream(new FileInputStream(input));
+    public DetectedObjects classify(File input) {
+        try (InputStream fileInputStream = new FileInputStream(input)) {
+            Image image = ImageFactory.getInstance().fromInputStream(fileInputStream);
             return classify(image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeCamelException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
-    public DetectedObjects classify(InputStream input) throws Exception {
+    public DetectedObjects classify(InputStream input) {
         try {
             Image image = ImageFactory.getInstance().fromInputStream(input);
             return classify(image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeCamelException("Couldn't transform input into a BufferedImage", e);
         }
     }
 }

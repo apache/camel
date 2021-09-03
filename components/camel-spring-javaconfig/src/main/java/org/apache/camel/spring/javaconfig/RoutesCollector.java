@@ -31,6 +31,7 @@ import org.springframework.core.Ordered;
  * Collects routes and rests from the various sources (like Spring application context beans registry or opinionated
  * classpath locations) and injects these into the Camel context.
  */
+@Deprecated
 public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
     // Static collaborators

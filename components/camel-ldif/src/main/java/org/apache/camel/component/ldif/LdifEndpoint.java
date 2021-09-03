@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.ldif;
 
-import java.net.URISyntaxException;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -37,7 +35,7 @@ public class LdifEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String ldapConnectionName;
 
-    protected LdifEndpoint(String endpointUri, String remaining, LdifComponent component) throws URISyntaxException {
+    protected LdifEndpoint(String endpointUri, String remaining, LdifComponent component) {
         super(endpointUri, component);
         this.ldapConnectionName = remaining;
     }

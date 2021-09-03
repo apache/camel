@@ -229,38 +229,6 @@ public interface SchedulerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Number of threads used by the scheduling thread pool. Is by default
-         * using a single thread.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: scheduler
-         * 
-         * @param concurrentTasks the value to set
-         * @return the dsl builder
-         */
-        default SchedulerEndpointBuilder concurrentTasks(int concurrentTasks) {
-            doSetProperty("concurrentTasks", concurrentTasks);
-            return this;
-        }
-        /**
-         * Number of threads used by the scheduling thread pool. Is by default
-         * using a single thread.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: scheduler
-         * 
-         * @param concurrentTasks the value to set
-         * @return the dsl builder
-         */
-        default SchedulerEndpointBuilder concurrentTasks(String concurrentTasks) {
-            doSetProperty("concurrentTasks", concurrentTasks);
-            return this;
-        }
-        /**
          * Milliseconds before the next poll.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -351,6 +319,38 @@ public interface SchedulerEndpointBuilderFactory {
          */
         default SchedulerEndpointBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Number of core threads in the thread pool used by the scheduling
+         * thread pool. Is by default using a single thread.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: scheduler
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
+         */
+        default SchedulerEndpointBuilder poolSize(int poolSize) {
+            doSetProperty("poolSize", poolSize);
+            return this;
+        }
+        /**
+         * Number of core threads in the thread pool used by the scheduling
+         * thread pool. Is by default using a single thread.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: scheduler
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
+         */
+        default SchedulerEndpointBuilder poolSize(String poolSize) {
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**

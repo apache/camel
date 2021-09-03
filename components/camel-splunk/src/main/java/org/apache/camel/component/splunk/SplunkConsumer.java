@@ -22,6 +22,7 @@ import java.util.Queue;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.splunk.event.SplunkEvent;
@@ -66,28 +67,14 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
 
                     @Override
                     public void process(SplunkEvent splunkEvent) {
-                        final Exchange exchange = getEndpoint().createExchange();
+                        final Exchange exchange = createExchange(true);
                         Message message = exchange.getIn();
                         message.setBody(splunkEvent);
 
-                        try {
-                            LOG.trace("Processing exchange [{}]...", exchange);
-                            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                                @Override
-                                public void done(boolean doneSync) {
-                                    LOG.trace("Done processing exchange [{}]...", exchange);
-                                }
-                            });
-                        } catch (Exception e) {
-                            exchange.setException(e);
-                        }
-                        if (exchange.getException() != null) {
-                            getExceptionHandler().handleException("Error processing exchange", exchange,
-                                    exchange.getException());
-                        }
-
+                        // use default consumer callback
+                        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                        getAsyncProcessor().process(exchange, cb);
                     }
-
                 });
                 // Return 0: no exchanges returned by poll, as exchanges have been returned asynchronously
                 return 0;
@@ -107,7 +94,7 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
         LOG.trace("Received {} messages in this poll", splunkEvents.size());
         Queue<Exchange> answer = new LinkedList<>();
         for (SplunkEvent splunkEvent : splunkEvents) {
-            Exchange exchange = getEndpoint().createExchange();
+            Exchange exchange = createExchange(true);
             Message message = exchange.getIn();
             message.setBody(splunkEvent);
             answer.add(exchange);
@@ -121,9 +108,9 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
             try {
                 LOG.trace("Processing exchange [{}]...", exchange);
                 getProcessor().process(exchange);

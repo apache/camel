@@ -36,6 +36,13 @@ public class DescriptionDefinition {
     @XmlValue
     private String text;
 
+    public DescriptionDefinition() {
+    }
+
+    public DescriptionDefinition(String text) {
+        this.text = text;
+    }
+
     public String getLang() {
         return lang;
     }

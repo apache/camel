@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.io.File;
 import java.security.Principal;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLSession;
 
@@ -57,13 +58,13 @@ public class NettySSLTest extends BaseNettyTest {
             public void configure() {
                 // needClientAuth=true so we can get the client certificate
                 // details
-                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf&needClientAuth=true")
+                from("netty:tcp://127.0.0.1:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf&needClientAuth=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 SSLSession session
                                         = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
                                 if (session != null) {
-                                    javax.security.cert.X509Certificate cert = session.getPeerCertificateChain()[0];
+                                    X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
                                     Principal principal = cert.getSubjectDN();
                                     log.info("Client Cert SubjectDN: {}", principal.getName());
                                     exchange.getOut().setBody(

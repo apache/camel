@@ -75,6 +75,16 @@ public class DelegateAsyncProcessor extends AsyncProcessorSupport implements Del
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processor);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
     }

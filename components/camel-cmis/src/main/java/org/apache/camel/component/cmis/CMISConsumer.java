@@ -58,7 +58,7 @@ public class CMISConsumer extends ScheduledPollConsumer {
 
     int sendExchangeWithPropsAndBody(Map<String, Object> properties, InputStream inputStream)
             throws Exception {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setHeaders(properties);
         exchange.getIn().setBody(inputStream);
         LOG.debug("Polling node: {}", properties.get("cmis:name"));

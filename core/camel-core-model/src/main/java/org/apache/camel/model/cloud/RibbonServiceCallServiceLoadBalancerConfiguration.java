@@ -21,11 +21,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,load-balancing")
 @XmlRootElement(name = "ribbonLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
 public class RibbonServiceCallServiceLoadBalancerConfiguration extends ServiceCallServiceLoadBalancerConfiguration {
     @XmlAttribute
     private String namespace;

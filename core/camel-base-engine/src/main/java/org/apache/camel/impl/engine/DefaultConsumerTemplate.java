@@ -272,10 +272,15 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     }
 
     @Override
-    protected void doInit() throws Exception {
+    protected void doBuild() throws Exception {
         if (consumerCache == null) {
             consumerCache = new DefaultConsumerCache(this, camelContext, maximumCacheSize);
         }
+        ServiceHelper.buildService(consumerCache);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
         ServiceHelper.initService(consumerCache);
     }
 

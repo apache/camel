@@ -111,7 +111,7 @@ public class ClientConnection {
         }
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         this.client.close();
     }
 

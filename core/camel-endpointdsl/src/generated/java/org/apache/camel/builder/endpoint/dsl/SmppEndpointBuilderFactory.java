@@ -611,7 +611,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -630,7 +630,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -639,6 +639,74 @@ public interface SmppEndpointBuilderFactory {
         default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
             doSetProperty("enquireLinkTimer", enquireLinkTimer);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder pduProcessorDegree(
+                Integer pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder pduProcessorDegree(
+                String pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder pduProcessorQueueCapacity(
+                Integer pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder pduProcessorQueueCapacity(
+                String pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
             return this;
         }
         /**
@@ -673,6 +741,41 @@ public interface SmppEndpointBuilderFactory {
         default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
                 String sessionStateListener) {
             doSetProperty("sessionStateListener", sessionStateListener);
+            return this;
+        }
+        /**
+         * When true, the SMSC delivery receipt would be requested only for the
+         * last segment of a multi-segment (long) message. For short messages,
+         * with only 1 segment the behaviour is unchanged.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param singleDLR the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder singleDLR(boolean singleDLR) {
+            doSetProperty("singleDLR", singleDLR);
+            return this;
+        }
+        /**
+         * When true, the SMSC delivery receipt would be requested only for the
+         * last segment of a multi-segment (long) message. For short messages,
+         * with only 1 segment the behaviour is unchanged.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param singleDLR the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointConsumerBuilder singleDLR(String singleDLR) {
+            doSetProperty("singleDLR", singleDLR);
             return this;
         }
         /**
@@ -1660,7 +1763,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -1679,7 +1782,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -1688,6 +1791,74 @@ public interface SmppEndpointBuilderFactory {
         default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
             doSetProperty("enquireLinkTimer", enquireLinkTimer);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder pduProcessorDegree(
+                Integer pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder pduProcessorDegree(
+                String pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder pduProcessorQueueCapacity(
+                Integer pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder pduProcessorQueueCapacity(
+                String pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
             return this;
         }
         /**
@@ -1722,6 +1893,41 @@ public interface SmppEndpointBuilderFactory {
         default AdvancedSmppEndpointProducerBuilder sessionStateListener(
                 String sessionStateListener) {
             doSetProperty("sessionStateListener", sessionStateListener);
+            return this;
+        }
+        /**
+         * When true, the SMSC delivery receipt would be requested only for the
+         * last segment of a multi-segment (long) message. For short messages,
+         * with only 1 segment the behaviour is unchanged.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param singleDLR the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder singleDLR(boolean singleDLR) {
+            doSetProperty("singleDLR", singleDLR);
+            return this;
+        }
+        /**
+         * When true, the SMSC delivery receipt would be requested only for the
+         * last segment of a multi-segment (long) message. For short messages,
+         * with only 1 segment the behaviour is unchanged.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param singleDLR the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointProducerBuilder singleDLR(String singleDLR) {
+            doSetProperty("singleDLR", singleDLR);
             return this;
         }
         /**
@@ -2210,7 +2416,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -2229,7 +2435,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -2238,6 +2444,74 @@ public interface SmppEndpointBuilderFactory {
         default AdvancedSmppEndpointBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
             doSetProperty("enquireLinkTimer", enquireLinkTimer);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder pduProcessorDegree(
+                Integer pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the number of threads which can read PDU and process them in
+         * parallel.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 3
+         * Group: advanced
+         * 
+         * @param pduProcessorDegree the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder pduProcessorDegree(
+                String pduProcessorDegree) {
+            doSetProperty("pduProcessorDegree", pduProcessorDegree);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder pduProcessorQueueCapacity(
+                Integer pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
+            return this;
+        }
+        /**
+         * Sets the capacity of the working queue for PDU processing.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param pduProcessorQueueCapacity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder pduProcessorQueueCapacity(
+                String pduProcessorQueueCapacity) {
+            doSetProperty("pduProcessorQueueCapacity", pduProcessorQueueCapacity);
             return this;
         }
         /**
@@ -2272,6 +2546,41 @@ public interface SmppEndpointBuilderFactory {
         default AdvancedSmppEndpointBuilder sessionStateListener(
                 String sessionStateListener) {
             doSetProperty("sessionStateListener", sessionStateListener);
+            return this;
+        }
+        /**
+         * When true, the SMSC delivery receipt would be requested only for the
+         * last segment of a multi-segment (long) message. For short messages,
+         * with only 1 segment the behaviour is unchanged.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param singleDLR the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder singleDLR(boolean singleDLR) {
+            doSetProperty("singleDLR", singleDLR);
+            return this;
+        }
+        /**
+         * When true, the SMSC delivery receipt would be requested only for the
+         * last segment of a multi-segment (long) message. For short messages,
+         * with only 1 segment the behaviour is unchanged.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param singleDLR the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmppEndpointBuilder singleDLR(String singleDLR) {
+            doSetProperty("singleDLR", singleDLR);
             return this;
         }
         /**

@@ -37,6 +37,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
@@ -47,6 +48,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionComparator;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.service.ServiceHelper;
@@ -307,7 +309,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
             // out batch is disabled, so go ahead and send.
             return true;
         }
-        return collection.size() > 0 && collection.size() >= outBatchSize;
+        return !collection.isEmpty() && collection.size() >= outBatchSize;
     }
 
     /**
@@ -322,6 +324,16 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         if (exchange.getException() != null) {
             getExceptionHandler().handleException("Error processing aggregated exchange: " + exchange, exchange.getException());
         }
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processor);
     }
 
     @Override
@@ -346,7 +358,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
             // if batch consumer is enabled then we need to adjust the batch size
             // with the size from the batch consumer
             if (isBatchConsumer()) {
-                int size = exchange.getProperty(Exchange.BATCH_SIZE, Integer.class);
+                int size = exchange.getProperty(ExchangePropertyKey.BATCH_SIZE, Integer.class);
                 if (batchSize != size) {
                     batchSize = size;
                     LOG.trace("Using batch consumer completion, so setting batch size to: {}", batchSize);
@@ -454,6 +466,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
                             boolean drained = false;
                             while (isInBatchCompleted(queue.size())) {
                                 drained = true;
+                                // TODO id in this branch is 100% null
                                 drainQueueTo(collection, batchSize, id);
                             }
                             if (drained) {
@@ -529,7 +542,9 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
                         completionPredicateMatched.add(exchange.getExchangeId());
                     }
                 }
-                queue.add(exchange);
+                // need to make defensive copy that are put on the sequencer queue
+                Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true);
+                queue.add(copy);
                 exchangeEnqueued.set(true);
                 exchangeEnqueuedCondition.signal();
             } finally {

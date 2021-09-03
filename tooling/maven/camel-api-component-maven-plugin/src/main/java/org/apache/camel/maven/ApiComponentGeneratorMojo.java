@@ -17,13 +17,24 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
+import java.util.stream.Stream;
 
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -39,6 +50,9 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
 
+    /** The Constant CACHE_PROPERTIES_FILENAME. */
+    private static final String CACHE_PROPERTIES_FILENAME = "camel-api-component-maven-plugin-cache.properties";
+
     /**
      * List of API names, proxies and code generation settings.
      */
@@ -50,6 +64,23 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
      */
     @Parameter
     protected FromJavasource fromJavasource = new FromJavasource();
+
+    /**
+     * Projects cache directory.
+     *
+     * <p>
+     * This file is a hash cache of the files in the project source. It can be preserved in source code such that it
+     * ensures builds are always fast by not unnecessarily writing files constantly. It can also be added to gitignore
+     * in case startup is not necessary. It further can be redirected to another location.
+     *
+     * <p>
+     * When stored in the repository, the cache if run on cross platforms will display the files multiple times due to
+     * line ending differences on the platform.
+     *
+     * @since 2.9.0
+     */
+    @Parameter(defaultValue = "${project.build.directory}")
+    private File cachedir;
 
     /**
      * Names of options that can be set to null value if not specified.
@@ -72,6 +103,39 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         // fix apiName for single API use-case since Maven configurator sets empty parameters as null!!!
         if (apis.length == 1 && apis[0].getApiName() == null) {
             apis[0].setApiName("");
+        }
+
+        String newHash = new HashHelper()
+                .hash("ApiComponentGeneratorMojo")
+                .hash("apis", apis)
+                .hash("fromJavasource", fromJavasource)
+                .hash("nullableOptions", nullableOptions)
+                .hash("aliases", aliases)
+                .hash("substitutions", substitutions)
+                .hash("excludeConfigNames", excludeConfigNames)
+                .hash("excludeConfigTypes", excludeConfigTypes)
+                .hash("extraOptions", extraOptions)
+                .toString();
+        Instant newDate = Stream.of(generatedSrcDir, generatedTestDir)
+                .map(File::toPath)
+                .flatMap(this::walk)
+                .filter(Files::isRegularFile)
+                .map(this::lastModified)
+                .max(Comparator.naturalOrder())
+                .orElse(Instant.now());
+
+        List<String> cache = readCacheFile();
+        String prevHash = cache.stream().filter(s -> s.startsWith("hash=")).findFirst()
+                .map(s -> s.substring("hash=".length())).orElse(null);
+        Instant prevDate = cache.stream().filter(s -> s.startsWith("date=")).findFirst()
+                .map(s -> s.substring("date=".length()))
+                .map(Instant::parse)
+                .orElse(Instant.ofEpochSecond(0));
+
+        if (Objects.equals(prevHash, newHash) && !newDate.isAfter(prevDate)) {
+            getLog().info("Skipping api generation, everything is up to date.");
+            setCompileSourceRoots();
+            return;
         }
 
         // generate API methods for each API proxy
@@ -126,6 +190,34 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
         // generate ApiName
         mergeTemplate(getApiContext(), getApiNameFile(), "/api-name-enum.vm");
+
+        newDate = Stream.of(generatedSrcDir, generatedTestDir)
+                .map(File::toPath)
+                .flatMap(this::walk)
+                .filter(Files::isRegularFile)
+                .map(this::lastModified)
+                .max(Comparator.naturalOrder())
+                .orElse(Instant.now());
+        writeCacheFile(Arrays.asList(
+                "# ApiComponentGenerator cache file",
+                "hash=" + newHash,
+                "date=" + newDate.toString()));
+    }
+
+    private Instant lastModified(Path path) {
+        try {
+            return Files.getLastModifiedTime(path).toInstant();
+        } catch (IOException e) {
+            return Instant.now();
+        }
+    }
+
+    private Stream<Path> walk(Path p) {
+        try {
+            return Files.walk(p, Integer.MAX_VALUE);
+        } catch (IOException e) {
+            return Stream.empty();
+        }
     }
 
     private void configureMethodGenerator(AbstractApiMethodGeneratorMojo mojo, ApiProxy apiProxy) {
@@ -266,4 +358,50 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         }
         return builder.toString();
     }
+
+    /**
+     * Store file hash cache.
+     */
+    private void writeCacheFile(List<String> cache) {
+        if (this.cachedir != null) {
+            File cacheFile = new File(this.cachedir, CACHE_PROPERTIES_FILENAME);
+            try (OutputStream out = new FileOutputStream(cacheFile)) {
+                Files.write(cacheFile.toPath(), cache);
+            } catch (IOException e) {
+                getLog().warn("Cannot store file hash cache properties file", e);
+            }
+        }
+    }
+
+    /**
+     * Read file hash cache file.
+     */
+    private List<String> readCacheFile() {
+        Log log = getLog();
+        if (this.cachedir == null) {
+            return Collections.emptyList();
+        }
+        if (!this.cachedir.exists()) {
+            if (!this.cachedir.mkdirs()) {
+                log.warn("Unable to create cache directory '" + this.cachedir + "'.");
+            }
+        } else if (!this.cachedir.isDirectory()) {
+            log.warn("Something strange here as the '" + this.cachedir
+                     + "' supposedly cache directory is not a directory.");
+            return Collections.emptyList();
+        }
+
+        File cacheFile = new File(this.cachedir, CACHE_PROPERTIES_FILENAME);
+        if (!cacheFile.exists()) {
+            return Collections.emptyList();
+        }
+
+        try {
+            return Files.readAllLines(cacheFile.toPath());
+        } catch (IOException e) {
+            log.warn("Cannot load cache file", e);
+            return Collections.emptyList();
+        }
+    }
+
 }

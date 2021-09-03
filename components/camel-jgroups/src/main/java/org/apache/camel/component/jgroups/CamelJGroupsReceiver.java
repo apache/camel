@@ -21,12 +21,13 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 /**
  * Implementation of JGroups message receiver ({@code org.jgroups.Receiver}) wrapping incoming messages into Camel
@@ -36,13 +37,12 @@ public class CamelJGroupsReceiver extends ReceiverAdapter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelJGroupsReceiver.class);
 
+    private final JGroupsConsumer consumer;
     private final JGroupsEndpoint endpoint;
     private final AsyncProcessor processor;
 
-    public CamelJGroupsReceiver(JGroupsEndpoint endpoint, Processor processor) {
-        ObjectHelper.notNull(endpoint, "endpoint");
-        ObjectHelper.notNull(processor, "processor");
-
+    public CamelJGroupsReceiver(JGroupsConsumer consumer, JGroupsEndpoint endpoint, Processor processor) {
+        this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
@@ -50,7 +50,7 @@ public class CamelJGroupsReceiver extends ReceiverAdapter {
     @Override
     public void viewAccepted(View view) {
         if (endpoint.isEnableViewMessages()) {
-            Exchange exchange = endpoint.createExchange(view);
+            Exchange exchange = createExchange(view);
             try {
                 LOG.debug("Processing view: {}", view);
                 processor.process(exchange, new AsyncCallback() {
@@ -78,6 +78,13 @@ public class CamelJGroupsReceiver extends ReceiverAdapter {
         } catch (Exception e) {
             throw new JGroupsException("Error in consumer while dispatching exchange containing message " + message, e);
         }
+    }
+
+    public Exchange createExchange(View view) {
+        Exchange exchange = consumer.createExchange(true);
+        exchange.getIn().setHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, endpoint.getResolvedChannel().getAddress());
+        exchange.getIn().setBody(view);
+        return exchange;
     }
 
 }

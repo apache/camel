@@ -51,7 +51,10 @@ public class LuceneIndexer {
     public LuceneIndexer(File sourceDirectory, File indexDirectory, Analyzer analyzer) throws Exception {
         if (indexDirectory != null) {
             if (!indexDirectory.exists()) {
-                indexDirectory.mkdir();
+                boolean result = indexDirectory.mkdir();
+                if (!result) {
+                    LOG.error("mkdir failed for {}. Maybe this folder was created externally", indexDirectory);
+                }
             }
             this.setNiofsDirectory(new NIOFSDirectory(indexDirectory.toPath()));
         } else {
@@ -60,7 +63,7 @@ public class LuceneIndexer {
 
         this.setAnalyzer(analyzer);
 
-        if ((sourceDirectory != null) && (!sourceDirectoryIndexed)) {
+        if (sourceDirectory != null && !sourceDirectoryIndexed) {
             this.setSourceDirectory(sourceDirectory);
             add(getSourceDirectory());
             sourceDirectoryIndexed = true;

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -372,8 +373,18 @@ public final class ObjectHelper {
             return null;
         }
 
+        boolean array = false;
+
         // Try simple type first
         Class<?> clazz = loadSimpleType(name);
+        if (clazz == null) {
+            // special for array as we need to load the class and then after that instantiate an array class type
+            if (name.endsWith("[]")) {
+                name = name.substring(0, name.length() - 2);
+                array = true;
+            }
+        }
+
         if (clazz == null) {
             // try context class loader
             clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
@@ -385,6 +396,10 @@ public final class ObjectHelper {
         if (clazz == null) {
             // and fallback to the loader the loaded the ObjectHelper class
             clazz = doLoadClass(name, ObjectHelper.class.getClassLoader());
+        }
+        if (clazz != null && array) {
+            Object arr = Array.newInstance(clazz, 0);
+            clazz = arr.getClass();
         }
 
         if (clazz == null) {
@@ -876,6 +891,9 @@ public final class ObjectHelper {
         return false;
     }
 
+    /**
+     * Used by camel-bean
+     */
     public static int arrayLength(Object[] pojo) {
         return pojo.length;
     }
@@ -1133,8 +1151,7 @@ public final class ObjectHelper {
      * @return       <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
-        return (value instanceof Number)
-                && (FLOAT_NAN.equals(value) || DOUBLE_NAN.equals(value));
+        return value instanceof Number && (FLOAT_NAN.equals(value) || DOUBLE_NAN.equals(value));
     }
 
     /**

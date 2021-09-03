@@ -46,7 +46,6 @@ for this component:
 
 == URI format
 
-[source,text]
 ----
 sjms2:[queue:|topic:]destinationName[?options]
 ----
@@ -55,14 +54,12 @@ Where `destinationName` is a JMS queue or topic name. By default, the
 `destinationName` is interpreted as a queue name. For example, to
 connect to the queue, `FOO.BAR` use:
 
-[source,text]
 ----
 sjms2:FOO.BAR
 ----
 
 You can include the optional `queue:` prefix, if you prefer:
 
-[source,text]
 ----
 sjms2:queue:FOO.BAR
 ----
@@ -70,7 +67,6 @@ sjms2:queue:FOO.BAR
 To connect to a topic, you _must_ include the `topic:` prefix. For
 example, to connect to the topic, `Stocks.Prices`, use:
 
-[source,text]
 ----
 sjms2:topic:Stocks.Prices
 ----
@@ -78,9 +74,47 @@ sjms2:topic:Stocks.Prices
 You append query options to the URI using the following format,
 `?option=value&option=value&...`
 
-== Component Options and Configurations
+
+
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The Simple JMS2 component supports 11 options, which are listed below.
 
 
@@ -102,8 +136,9 @@ The Simple JMS2 component supports 11 options, which are listed below.
 |===
 // component options: END
 
-
 // endpoint options: START
+== Endpoint Options
+
 The Simple JMS2 endpoint is configured using URI syntax:
 
 ----
@@ -139,11 +174,11 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *clientId* (consumer) | Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance. It is typically only required for durable topic subscriptions. If using Apache ActiveMQ you may prefer to use Virtual Topics instead. |  | String
 | *concurrentConsumers* (consumer) | Specifies the default number of concurrent consumers when consuming from JMS (not for request/reply over JMS). See also the maxMessagesPerTask option to control dynamic scaling up/down of threads. When doing request/reply over JMS then the option replyToConcurrentConsumers is used to control number of concurrent consumers on the reply message listener. | 1 | int
-| *durable* (consumer) | Sets topic consumer to durable. | false | boolean
+| *durable* (consumer) | Sets the topic to be durable | false | boolean
 | *durableSubscriptionName* (consumer) | The durable subscriber name for specifying durable topic subscriptions. The clientId option must be configured as well. |  | String
 | *replyToDeliveryPersistent* (consumer) | Specifies whether to use persistent delivery by default for replies. | true | boolean
-| *shared* (consumer) | Sets the consumer to shared. | false | boolean
-| *subscriptionId* (consumer) | Sets the subscription Id, required for durable or shared topics. |  | String
+| *shared* (consumer) | Sets the topic to be shared | false | boolean
+| *subscriptionId* (consumer) | Sets the topic subscription id, required for durable or shared topics. |  | String
 | *eagerLoadingOfProperties* (consumer) | Enables eager loading of JMS properties and payload as soon as a message is loaded which generally is inefficient as the JMS properties may not be required but sometimes can catch early any issues with the underlying JMS provider and the use of JMS properties. See also the option eagerPoisonBody. | false | boolean
 | *eagerPoisonBody* (consumer) | If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped), then set this text as the message body instead so the message can be processed (the cause of the poison are already stored as exception on the Exchange). This can be turned off by setting eagerPoisonBody=false. See also the option eagerLoadingOfProperties. | Poison JMS message due to ${exception.message} | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -178,10 +213,6 @@ with the following path and query parameters:
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean
 |===
 // endpoint options: END
-
-
-Below is an example of how to configure the `SjmsComponent` with its
-required `ConnectionFactory` provider.
 
 
 == Reuse endpoint and send to different destinations computed at runtime
@@ -325,4 +356,4 @@ responses messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
 
 
-include::camel-spring-boot::page$sjms2-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$sjms2-starter.adoc[]

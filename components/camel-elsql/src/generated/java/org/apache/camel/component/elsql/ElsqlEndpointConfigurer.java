@@ -38,8 +38,6 @@ public class ElsqlEndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "datasource":
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
-        case "datasourceref":
-        case "dataSourceRef": target.setDataSourceRef(property(camelContext, java.lang.String.class, value)); return true;
         case "databasevendor":
         case "databaseVendor": target.setDatabaseVendor(property(camelContext, org.apache.camel.component.elsql.ElSqlDatabaseVendor.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -114,6 +112,11 @@ public class ElsqlEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"dataSource"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
@@ -133,8 +136,6 @@ public class ElsqlEndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": return boolean.class;
         case "datasource":
         case "dataSource": return javax.sql.DataSource.class;
-        case "datasourceref":
-        case "dataSourceRef": return java.lang.String.class;
         case "databasevendor":
         case "databaseVendor": return org.apache.camel.component.elsql.ElSqlDatabaseVendor.class;
         case "delay": return long.class;
@@ -229,8 +230,6 @@ public class ElsqlEndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datasource":
         case "dataSource": return target.getDataSource();
-        case "datasourceref":
-        case "dataSourceRef": return target.getDataSourceRef();
         case "databasevendor":
         case "databaseVendor": return target.getDatabaseVendor();
         case "delay": return target.getDelay();

@@ -35,8 +35,10 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "consumer,advanced")
     private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
-    @Metadata(label = "advanced")
-    private KafkaClientFactory kafkaClientFactory = new DefaultKafkaClientFactory();
+    @Metadata(autowired = true, label = "advanced")
+    private KafkaClientFactory kafkaClientFactory;
+    @Metadata(autowired = true, label = "consumer,advanced")
+    private PollExceptionStrategy pollExceptionStrategy;
 
     public KafkaComponent() {
     }
@@ -59,7 +61,6 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
 
         KafkaConfiguration copy = getConfiguration().copy();
         endpoint.setConfiguration(copy);
-        endpoint.getConfiguration().setTopic(remaining);
 
         setProperties(endpoint, parameters);
 
@@ -70,6 +71,14 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         // overwrite the additional properties from the endpoint
         if (!endpointAdditionalProperties.isEmpty()) {
             endpoint.getConfiguration().getAdditionalProperties().putAll(endpointAdditionalProperties);
+        }
+
+        // If a topic is not defined in the KafkaConfiguration (set as option parameter) but only in the uri,
+        // it can happen that it is not set correctly in the configuration of the endpoint.
+        // Therefore, the topic is added after setProperties method
+        // and an null check to avoid overwriting a value from the configuration.
+        if (endpoint.getConfiguration().getTopic() == null) {
+            endpoint.getConfiguration().setTopic(remaining);
         }
 
         return endpoint;
@@ -119,14 +128,22 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     /**
      * Factory to use for creating {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
      * {@link org.apache.kafka.clients.producer.KafkaProducer} instances. This allows to configure a custom factory to
-     * create {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
-     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances with logic that extends the vanilla Kafka
-     * clients.
-     *
-     * @param kafkaClientFactory factory instance to use.
+     * create instances with logic that extends the vanilla Kafka clients.
      */
     public void setKafkaClientFactory(KafkaClientFactory kafkaClientFactory) {
         this.kafkaClientFactory = kafkaClientFactory;
+    }
+
+    public PollExceptionStrategy getPollExceptionStrategy() {
+        return pollExceptionStrategy;
+    }
+
+    /**
+     * To use a custom strategy with the consumer to control how to handle exceptions thrown from the Kafka broker while
+     * pooling messages.
+     */
+    public void setPollExceptionStrategy(PollExceptionStrategy pollExceptionStrategy) {
+        this.pollExceptionStrategy = pollExceptionStrategy;
     }
 
 }

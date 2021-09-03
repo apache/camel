@@ -19,9 +19,14 @@ package org.apache.camel.main;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class MainPropertyPlaceholderWithSystemTest {
     @Test
     public void testCustomPropertyPlaceholderLocation() {

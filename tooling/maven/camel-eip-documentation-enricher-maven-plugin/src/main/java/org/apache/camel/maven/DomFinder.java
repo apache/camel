@@ -46,6 +46,12 @@ public class DomFinder {
                 .evaluate(document, XPathConstants.NODESET);
     }
 
+    public NodeList findElementsElements(String name) throws XPathExpressionException {
+        return (NodeList) xPath.compile(
+                "/xs:schema/xs:complexType[@name='" + name + "']//xs:element")
+                .evaluate(document, XPathConstants.NODESET);
+    }
+
     public String findBaseType(String name) throws XPathExpressionException {
         return (String) xPath.compile(
                 "/xs:schema/xs:complexType[@name='" + name + "']//xs:extension/@base")

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.parser.model;
 
+import java.util.Objects;
+
 /**
  * Details about a parsed and discovered Camel route.
  */
@@ -90,19 +92,19 @@ public class CamelRouteDetails {
         if (!fileName.equals(that.fileName)) {
             return false;
         }
-        if (lineNumber != null ? !lineNumber.equals(that.lineNumber) : that.lineNumber != null) {
+        if (!Objects.equals(lineNumber, that.lineNumber)) {
             return false;
         }
-        if (lineNumberEnd != null ? !lineNumberEnd.equals(that.lineNumberEnd) : that.lineNumberEnd != null) {
+        if (!Objects.equals(lineNumberEnd, that.lineNumberEnd)) {
             return false;
         }
-        if (className != null ? !className.equals(that.className) : that.className != null) {
+        if (!Objects.equals(className, that.className)) {
             return false;
         }
-        if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) {
+        if (!Objects.equals(methodName, that.methodName)) {
             return false;
         }
-        if (routeId != null ? !routeId.equals(that.routeId) : that.routeId != null) {
+        if (!Objects.equals(routeId, that.routeId)) {
             return false;
         }
         return true;

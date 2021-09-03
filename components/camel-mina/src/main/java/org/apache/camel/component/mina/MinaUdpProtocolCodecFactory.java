@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import java.nio.charset.CharacterCodingException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.mina.core.buffer.IoBuffer;
@@ -73,7 +71,7 @@ public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
         };
     }
 
-    private IoBuffer toIoBuffer(Object message) throws CharacterCodingException, NoTypeConversionAvailableException {
+    private IoBuffer toIoBuffer(Object message) throws NoTypeConversionAvailableException {
         //try to convert it to a byte array
         byte[] value = context.getTypeConverter().tryConvertTo(byte[].class, message);
         if (value != null) {

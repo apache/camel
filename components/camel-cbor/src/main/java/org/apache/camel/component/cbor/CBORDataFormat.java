@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -33,25 +34,29 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Dataformat("cbor")
-public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CBORDataFormat.class);
 
     private CamelContext camelContext;
     private ObjectMapper objectMapper;
+    private String unmarshalTypeName;
     private Class<?> unmarshalType;
     private boolean useDefaultObjectMapper = true;
     private boolean allowUnmarshallType;
+    private String collectionTypeName;
     private Class<? extends Collection> collectionType;
     private boolean useList;
     private boolean prettyPrint;
@@ -123,6 +128,14 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.objectMapper = objectMapper;
     }
 
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
+
     public Class<?> getUnmarshalType() {
         return unmarshalType;
     }
@@ -137,6 +150,14 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setAllowUnmarshallType(boolean allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
+    }
+
+    public String getCollectionTypeName() {
+        return collectionTypeName;
+    }
+
+    public void setCollectionTypeName(String collectionTypeName) {
+        this.collectionTypeName = collectionTypeName;
     }
 
     public Class<? extends Collection> getCollectionType() {
@@ -291,18 +312,31 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     protected void doInit() throws Exception {
         super.doInit();
 
+        if (unmarshalTypeName != null && unmarshalType == null) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
+        }
+        if (collectionTypeName != null && collectionType == null) {
+            Class<?> clazz = camelContext.getClassResolver().resolveClass(collectionTypeName);
+            collectionType = CastUtils.cast(clazz);
+        }
+
         if (objectMapper == null) {
             // lookup if there is a single default mapper we can use
             if (useDefaultObjectMapper && camelContext != null) {
                 Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
+                set = set.stream().filter(om -> om.getFactory() instanceof CBORFactory).collect(Collectors.toSet());
                 if (set.size() == 1) {
                     objectMapper = set.iterator().next();
-                    LOG.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
-                } else if (set.size() > 1) {
-                    LOG.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.",
+                    LOG.info(
+                            "Found a single ObjectMapper with a CBORFactory in the registry, so promoting it as the default ObjectMapper: {}",
+                            objectMapper);
+                } else {
+                    LOG.debug(
+                            "Found {} ObjectMapper with a CBORFactory in the registry, so cannot promote any as the default ObjectMapper.",
                             set.size());
                 }
             }
+            // use a fallback object mapper in last resort
             if (objectMapper == null) {
                 CBORFactory factory = new CBORFactory();
                 objectMapper = new ObjectMapper(factory);

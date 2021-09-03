@@ -28,6 +28,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 /**
  * The Main class which takes the spring java config parameter
  */
+@Deprecated
 public class Main extends org.apache.camel.spring.Main {
 
     private String basedPackages;

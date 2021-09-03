@@ -22,6 +22,7 @@ import java.util.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
@@ -121,18 +122,17 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
             Object data = holder.data;
 
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            // process the current exchange
-            LOG.debug("Processing exchange: {} with properties: {}", exchange, exchange.getProperties());
-            getProcessor().process(exchange);
-
+            Exception cause = null;
             try {
+                getProcessor().process(exchange);
+
                 if (onConsume != null) {
                     endpoint.getProcessingStrategy().commit(endpoint, exchange, data, onConsume);
                 }
@@ -142,12 +142,15 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
             if (getEndpoint().isTransacted() && exchange.isFailed()) {
                 // break out as we are transacted and should rollback
-                Exception cause = exchange.getException();
-                if (cause != null) {
-                    throw cause;
-                } else {
-                    throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
+                cause = exchange.getException();
+                if (cause == null) {
+                    cause = new RollbackExchangeException("Rollback transaction due error processing exchange", null);
                 }
+            }
+            releaseExchange(exchange, false);
+
+            if (cause != null) {
+                throw cause;
             }
         }
 
@@ -156,7 +159,8 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
     private Exchange createExchange(Object data) {
         final MyBatisEndpoint endpoint = getEndpoint();
-        final Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
+        final Exchange exchange = createExchange(false);
+        exchange.setPattern(ExchangePattern.InOnly);
         final String outputHeader = getEndpoint().getOutputHeader();
 
         Message msg = exchange.getIn();

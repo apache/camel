@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jms.Connection;
@@ -34,21 +35,34 @@ import org.apache.activemq.broker.ProducerBrokerExchange;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ConnectionInfo;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsBridge extends CamelSpringTestSupport {
+public class JmsBridge extends ActiveMQSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsBridge.class);
 
-    BrokerService brokerSub;
-    BrokerService brokerPub;
+    /*
+     Note: the service life-cycle is self-managed for this test. That's why both services are
+     not annotated with @RegisterExtension
+     */
+    public ActiveMQEmbeddedService serviceSub = ActiveMQEmbeddedServiceBuilder.defaultBroker()
+            .withBrokerName(JmsBridge.class, "sub")
+            .withTcpTransport()
+            .withCustomSetup(this::setupBroker)
+            .build();
+
+    public ActiveMQEmbeddedService servicePub = ActiveMQEmbeddedServiceBuilder.defaultBroker()
+            .withBrokerName(JmsBridge.class, "pub")
+            .withTcpTransport()
+            .build();
 
     int messageCount;
     final int backLog = 50;
@@ -62,13 +76,12 @@ public class JmsBridge extends CamelSpringTestSupport {
 
         consumeMessages();
 
-        LOG.info("ConnectionCount: " + connectionCount.get());
+        LOG.info("ConnectionCount: {}", connectionCount.get());
         assertEquals(5 + errorLimit, connectionCount.get(), "x connections");
     }
 
     private void consumeMessages() throws Exception {
-
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://sub");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri("sub"));
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
@@ -85,7 +98,7 @@ public class JmsBridge extends CamelSpringTestSupport {
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://pub");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri("pub"));
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
@@ -100,53 +113,51 @@ public class JmsBridge extends CamelSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker(String name, int port, boolean deleteAllMessages) throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName(name);
-        brokerService.setAdvisorySupport(false);
-        brokerService.setUseJmx(false);
-        brokerService.setDataDirectory("target/data");
-        if (port > 0) {
-            brokerService.addConnector("tcp://0.0.0.0:" + port);
-        }
-        return brokerService;
+    private void setupBroker(BrokerService brokerSub) {
+        brokerSub.setPlugins(new BrokerPlugin[] { new BrokerPluginSupport() {
+            @Override
+            public void send(
+                    ProducerBrokerExchange producerExchange,
+                    org.apache.activemq.command.Message messageSend)
+                    throws Exception {
+                if (sendCount.incrementAndGet() <= errorLimit) {
+                    throw new RuntimeException("You need to try send " + errorLimit + " times!");
+                }
+                super.send(producerExchange, messageSend);
+            }
+
+            @Override
+            public void addConnection(ConnectionContext context, ConnectionInfo info) throws Exception {
+                if (((TransportConnector) context.getConnector()).getConnectUri().getScheme().equals("tcp")
+                        && connectionCount.incrementAndGet() <= errorLimit) {
+                    throw new SecurityException("You need to try connect " + errorLimit + " times!");
+                }
+                super.addConnection(context, info);
+            }
+        } });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        serviceSub.initialize();
+        servicePub.initialize();
 
-        try {
-            brokerSub = createBroker("sub", 61617, true);
-            brokerSub.setPlugins(new BrokerPlugin[] { new BrokerPluginSupport() {
-                @Override
-                public void send(ProducerBrokerExchange producerExchange, org.apache.activemq.command.Message messageSend)
-                        throws Exception {
-                    if (sendCount.incrementAndGet() <= errorLimit) {
-                        throw new RuntimeException("You need to try send " + errorLimit + " times!");
-                    }
-                    super.send(producerExchange, messageSend);
-                }
+        return super.createApplicationContext();
+    }
 
-                @Override
-                public void addConnection(ConnectionContext context, ConnectionInfo info) throws Exception {
-                    if (((TransportConnector) context.getConnector()).getConnectUri().getScheme().equals("tcp")
-                            && connectionCount.incrementAndGet() <= errorLimit) {
-                        throw new SecurityException("You need to try connect " + errorLimit + " times!");
-                    }
-                    super.addConnection(context, info);
-                }
-            } });
-            brokerSub.start();
+    @Override
+    protected Map<String, String> getTranslationProperties() {
+        Map<String, String> map = super.getTranslationProperties();
+        map.put("subBrokerUri", serviceSub.serviceAddress());
+        map.put("pubBrokerUri", servicePub.serviceAddress());
+        return map;
+    }
 
-            brokerPub = createBroker("pub", 61616, true);
-            brokerPub.start();
+    @Override
+    public void tearDown() throws Exception {
+        servicePub.shutdown();
+        serviceSub.shutdown();
 
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to start broker", e);
-        }
-
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jmsBridge.xml");
+        super.tearDown();
     }
 }

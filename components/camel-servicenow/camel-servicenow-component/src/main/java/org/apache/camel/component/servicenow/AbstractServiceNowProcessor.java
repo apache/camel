@@ -45,7 +45,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     private final JavaTypeCache javaTypeCache;
     private final List<ServiceNowDispatcher> dispatchers;
 
-    protected AbstractServiceNowProcessor(ServiceNowEndpoint endpoint) throws Exception {
+    protected AbstractServiceNowProcessor(ServiceNowEndpoint endpoint) {
         this.javaTypeCache = new JavaTypeCache();
         this.endpoint = endpoint;
         this.config = endpoint.getConfiguration();

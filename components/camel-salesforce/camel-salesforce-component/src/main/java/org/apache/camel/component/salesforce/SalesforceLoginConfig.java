@@ -40,6 +40,7 @@ public class SalesforceLoginConfig {
     private boolean lazyLogin;
 
     private KeyStoreParameters keystore;
+    private String jwtAudience;
 
     public SalesforceLoginConfig() {
         loginUrl = DEFAULT_LOGIN_URL;
@@ -126,6 +127,17 @@ public class SalesforceLoginConfig {
 
     public KeyStoreParameters getKeystore() {
         return keystore;
+    }
+
+    /**
+     * If not null, used as Audience (aud) value for OAuth JWT flow
+     */
+    public void setJwtAudience(String jwtAudience) {
+        this.jwtAudience = jwtAudience;
+    }
+
+    public String getJwtAudience() {
+        return jwtAudience;
     }
 
     public String getRefreshToken() {
@@ -244,7 +256,7 @@ public class SalesforceLoginConfig {
         return "SalesforceLoginConfig[" + "instanceUrl= '" + instanceUrl + "', loginUrl='" + loginUrl + '\'' + ","
                + "clientId='" + clientId + '\'' + ", clientSecret='********'"
                + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\'' + ", password=********'"
-               + ", keystore=********'"
+               + ", keystore=********', audience='" + jwtAudience + '\'' + ","
                + ", lazyLogin=" + lazyLogin + ']';
     }
 }

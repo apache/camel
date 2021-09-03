@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.spi.InflightRepository;
@@ -70,7 +71,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         // the camel context id is from exchange
         MDC.put(MDC_CAMEL_CONTEXT_ID, exchange.getContext().getName());
         // and add optional correlation id
-        String corrId = exchange.getProperty(Exchange.CORRELATION_ID, String.class);
+        String corrId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
         if (corrId != null) {
             MDC.put(MDC_CORRELATION_ID, corrId);
         }
@@ -84,13 +85,6 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     @Override
     public UnitOfWork newInstance(Exchange exchange) {
         return new MDCUnitOfWork(exchange, inflightRepository, pattern, allowUseOriginalMessage, useBreadcrumb);
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
-        // and remove when stopping
-        clear();
     }
 
     @Override
@@ -139,7 +133,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
         // add optional step id
-        String stepId = exchange.getProperty(Exchange.STEP_ID, String.class);
+        String stepId = exchange.getProperty(ExchangePropertyKey.STEP_ID, String.class);
         if (stepId != null) {
             MDC.put(MDC_STEP_ID, stepId);
         }
@@ -149,7 +143,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     @Override
     public void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync) {
         // if we are no longer under step then remove it
-        String stepId = exchange.getProperty(Exchange.STEP_ID, String.class);
+        String stepId = exchange.getProperty(ExchangePropertyKey.STEP_ID, String.class);
         if (stepId == null) {
             MDC.remove(MDC_STEP_ID);
         }
@@ -202,17 +196,14 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     }
 
     @Override
-    public String toString() {
-        return "MDCUnitOfWork";
+    public void reset() {
+        super.reset();
+        clear();
     }
 
-    private static boolean matchPatterns(String value, String[] patterns) {
-        for (String pattern : patterns) {
-            if (PatternHelper.matchPattern(value, pattern)) {
-                return true;
-            }
-        }
-        return false;
+    @Override
+    public String toString() {
+        return "MDCUnitOfWork";
     }
 
     /**
@@ -247,7 +238,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
                     } else {
                         final String[] patterns = pattern.split(",");
                         mdc.forEach((k, v) -> {
-                            if (matchPatterns(k, patterns)) {
+                            if (PatternHelper.matchPatterns(k, patterns)) {
                                 custom.put(k, v);
                             }
                         });

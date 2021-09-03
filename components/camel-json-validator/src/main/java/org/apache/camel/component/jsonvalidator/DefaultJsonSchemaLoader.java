@@ -22,9 +22,14 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import org.apache.camel.CamelContext;
 
+/**
+ * @deprecated use DefaultJsonUriSchemaLoader instead
+ */
+@Deprecated
 public class DefaultJsonSchemaLoader implements JsonSchemaLoader {
 
     @Override
+    @Deprecated
     public JsonSchema createSchema(CamelContext camelContext, InputStream inputStream) throws Exception {
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
         return factory.getSchema(inputStream);

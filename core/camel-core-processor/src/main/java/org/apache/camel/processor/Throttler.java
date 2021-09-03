@@ -195,7 +195,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
 
         } catch (final InterruptedException e) {
             // determine if we can still run, or the camel context is forcing a shutdown
-            boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
+            boolean forceShutdown = exchange.getContext().getShutdownStrategy().isForceShutdown();
             if (forceShutdown) {
                 String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
                              + exchange;
@@ -375,7 +375,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     /**
      * Permit that implements the Delayed interface needed by DelayQueue.
      */
-    private class ThrottlePermit implements Delayed {
+    private static class ThrottlePermit implements Delayed {
         private volatile long scheduledTime;
 
         ThrottlePermit(final long delayMs) {

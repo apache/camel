@@ -41,7 +41,7 @@ public interface HeaderFilterStrategy {
      * @param  headerName  the header name
      * @param  headerValue the header value
      * @param  exchange    the context to perform filtering
-     * @return             <tt>true</tt> if this header should be filtered out.
+     * @return             <tt>true</tt> if this header should be filtered (skipped).
      */
     boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange);
 
@@ -55,7 +55,7 @@ public interface HeaderFilterStrategy {
      * @param  headerName  the header name
      * @param  headerValue the header value
      * @param  exchange    the context to perform filtering
-     * @return             <tt>true</tt> if this header should be filtered out.
+     * @return             <tt>true</tt> if this header should be filtered (skipped).
      */
     boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange);
 

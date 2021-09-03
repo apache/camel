@@ -35,7 +35,7 @@ public class FileAsyncStressReadLockNoneTest extends FileAsyncStressTest {
                 // this will result in polling again and potentially picking up
                 // files
                 // that already are in progress
-                from("file:target/data/filestress?maxMessagesPerPoll=50&readLock=none").routeId("foo").noAutoStartup()
+                from(fileUri("?maxMessagesPerPoll=50&readLock=none")).routeId("foo").noAutoStartup()
                         .threads(10).process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // simulate some work with random time to complete

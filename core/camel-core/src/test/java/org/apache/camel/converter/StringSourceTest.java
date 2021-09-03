@@ -40,7 +40,6 @@ public class StringSourceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-
         ServiceHelper.startService(converter);
     }
 

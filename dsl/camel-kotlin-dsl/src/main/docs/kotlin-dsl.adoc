@@ -1,0 +1,13 @@
+[[kotlin-dsl-other]]
+= Kotlin DSL
+:docTitle: Kotlin Dsl
+:artifactId: camel-kotlin-dsl
+:description: Camel DSL with Kotlin
+:supportLevel: Experimental
+:since: 3.
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kotlin-dsl.adoc[opts=optional]
+//Manually maintained attributes
+:group: DSL
+
+See https://camel.apache.org/manual/latest/dsl.html

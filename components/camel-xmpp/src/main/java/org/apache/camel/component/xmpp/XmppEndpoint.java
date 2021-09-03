@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -41,7 +40,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.packet.StanzaError.Condition;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -136,15 +134,15 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return new XmppGroupChatProducer(this);
     }
 
-    public Producer createPrivateChatProducer(String participant) throws Exception {
+    public Producer createPrivateChatProducer(String participant) {
         return new XmppPrivateChatProducer(this, participant);
     }
 
-    public Producer createDirectProducer() throws Exception {
+    public Producer createDirectProducer() {
         return new XmppDirectProducer(this);
     }
 
-    public Producer createPubSubProducer() throws Exception {
+    public Producer createPubSubProducer() {
         return new XmppPubSubProducer(this);
     }
 
@@ -153,13 +151,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         XmppConsumer answer = new XmppConsumer(this, processor);
         configureConsumer(answer);
         return answer;
-    }
-
-    public Exchange createExchange(Stanza packet) {
-        Exchange exchange = super.createExchange();
-        exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(new XmppMessage(exchange, packet));
-        return exchange;
     }
 
     @Override

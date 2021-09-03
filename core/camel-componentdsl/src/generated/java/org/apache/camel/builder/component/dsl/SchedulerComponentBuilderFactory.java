@@ -96,19 +96,19 @@ public interface SchedulerComponentBuilderFactory {
             return this;
         }
         /**
-         * Number of threads used by the scheduling thread pool. Is by default
-         * using a single thread.
+         * Number of core threads in the thread pool used by the scheduling
+         * thread pool. Is by default using a single thread.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: scheduler
          * 
-         * @param concurrentTasks the value to set
+         * @param poolSize the value to set
          * @return the dsl builder
          */
-        default SchedulerComponentBuilder concurrentTasks(int concurrentTasks) {
-            doSetProperty("concurrentTasks", concurrentTasks);
+        default SchedulerComponentBuilder poolSize(int poolSize) {
+            doSetProperty("poolSize", poolSize);
             return this;
         }
     }
@@ -130,7 +130,7 @@ public interface SchedulerComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((SchedulerComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "autowiredEnabled": ((SchedulerComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "concurrentTasks": ((SchedulerComponent) component).setConcurrentTasks((int) value); return true;
+            case "poolSize": ((SchedulerComponent) component).setPoolSize((int) value); return true;
             default: return false;
             }
         }

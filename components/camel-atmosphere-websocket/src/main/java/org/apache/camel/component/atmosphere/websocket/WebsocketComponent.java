@@ -48,11 +48,7 @@ public class WebsocketComponent extends ServletComponent {
     WebSocketStore getWebSocketStore(String name) {
         WebSocketStore store;
         synchronized (stores) {
-            store = stores.get(name);
-            if (store == null) {
-                store = new MemoryWebSocketStore();
-                stores.put(name, store);
-            }
+            store = stores.computeIfAbsent(name, k -> new MemoryWebSocketStore());
         }
         return store;
     }

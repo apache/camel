@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit tests to ensure that When the allowNullBody option is set to true it will create an empty file and not throw an
@@ -32,23 +33,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class FileProducerAllowNullBodyTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/allow");
-        super.setUp();
-    }
-
     @Test
     public void testAllowNullBodyTrue() throws Exception {
-        template.sendBody("file://target/data/allow?allowNullBody=true&fileName=allowNullBody.txt", null);
-        assertFileExists("target/data/allow/allowNullBody.txt");
+        template.sendBody(fileUri("?allowNullBody=true&fileName=allowNullBody.txt"), null);
+        assertFileExists(testFile("allowNullBody.txt"));
     }
 
     @Test
     public void testAllowNullBodyFalse() throws Exception {
         try {
-            template.sendBody("file://target/data/allow?fileName=allowNullBody.txt", null);
+            template.sendBody(fileUri("?fileName=allowNullBody.txt"), null);
             fail("Should have thrown a GenericFileOperationFailedException");
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause
@@ -56,7 +50,7 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
             assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
         }
 
-        assertFalse(new File("target/data/allow/allowNullBody.txt").exists(),
+        assertFalse(Files.exists(testFile("allowNullBody.txt")),
                 "allowNullBody set to false with null body should not create a new file");
     }
 }

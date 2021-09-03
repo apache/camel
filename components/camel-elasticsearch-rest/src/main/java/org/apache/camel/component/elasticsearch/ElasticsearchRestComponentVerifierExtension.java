@@ -67,8 +67,9 @@ public class ElasticsearchRestComponentVerifierExtension extends DefaultComponen
         try {
             ElasticsearchConfiguration configuration = setProperties(new ElasticsearchConfiguration(), parameters);
             RestClientBuilder clientBuilder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
-            RestHighLevelClient restHighLevelClient = new RestHighLevelClient(clientBuilder);
-            restHighLevelClient.ping(RequestOptions.DEFAULT);
+            try (RestHighLevelClient restHighLevelClient = new RestHighLevelClient(clientBuilder)) {
+                restHighLevelClient.ping(RequestOptions.DEFAULT);
+            }
         } catch (IOException e) {
             ResultErrorBuilder errorBuilder
                     = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())

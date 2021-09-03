@@ -30,6 +30,8 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
         case "configuration": target.setConfiguration(property(camelContext, freemarker.template.Configuration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "localizedlookup":
+        case "localizedLookup": target.setLocalizedLookup(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -46,6 +48,8 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
         case "configuration": return freemarker.template.Configuration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "localizedlookup":
+        case "localizedLookup": return boolean.class;
         default: return null;
         }
     }
@@ -63,6 +67,8 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "localizedlookup":
+        case "localizedLookup": return target.isLocalizedLookup();
         default: return null;
         }
     }

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.AvroLibrary;
 
 public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
 
@@ -30,8 +31,41 @@ public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("instanceClassName", definition.getInstanceClassName());
-        properties.put("schema", definition.getSchema());
+        if (definition.getLibrary() == AvroLibrary.ApacheAvro) {
+            if (definition.getInstanceClassName() == null) {
+                if (definition.getUnmarshalType() != null) {
+                    properties.put("instanceClassName", definition.getUnmarshalType().getName());
+                } else if (definition.getUnmarshalTypeName() != null) {
+                    properties.put("instanceClassName", definition.getUnmarshalTypeName());
+                }
+            } else {
+                properties.put("instanceClassName", definition.getInstanceClassName());
+            }
+            properties.put("schema", definition.getSchema());
+        } else if (definition.getLibrary() == AvroLibrary.Jackson) {
+            properties.put("objectMapper", asRef(definition.getObjectMapper()));
+            if (definition.getUseDefaultObjectMapper() == null) {
+                // default true
+                properties.put("useDefaultObjectMapper", "true");
+            } else {
+                properties.put("useDefaultObjectMapper", definition.getUseDefaultObjectMapper());
+            }
+            properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
+            properties.put("unmarshalType", or(
+                    or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()), definition.getInstanceClassName()));
+            properties.put("jsonView", or(definition.getJsonView(), definition.getJsonViewTypeName()));
+            properties.put("include", definition.getInclude());
+            properties.put("allowJmsType", definition.getAllowJmsType());
+            properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
+            properties.put("useList", definition.getUseList());
+            properties.put("moduleClassNames", definition.getModuleClassNames());
+            properties.put("moduleRefs", definition.getModuleRefs());
+            properties.put("enableFeatures", definition.getEnableFeatures());
+            properties.put("disableFeatures", definition.getDisableFeatures());
+            properties.put("allowUnmarshallType", definition.getAllowUnmarshallType());
+            properties.put("schemaResolver", asRef(definition.getSchemaResolver()));
+            properties.put("autoDiscoverSchemaResolver", definition.getAutoDiscoverSchemaResolver());
+        }
     }
 
 }

@@ -22,13 +22,17 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ManagementAgent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedResourceTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedResourceTest.class);
 
@@ -48,11 +52,6 @@ public class ManagedResourceTest extends ManagementTestSupport {
 
     @Test
     public void testManagedResource() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         final ManagementAgent managementAgent = context.getManagementStrategy().getManagementAgent();
         assertNotNull(managementAgent);
 
@@ -63,17 +62,15 @@ public class ManagedResourceTest extends ManagementTestSupport {
         assertEquals("org.apache.camel", mBeanServerDefaultDomain);
 
         final String managementName = context.getManagementName();
-        assertNotNull("CamelContext should have a management name if JMX is enabled", managementName);
+        assertNotNull(managementName, "CamelContext should have a management name if JMX is enabled");
         LOG.info("managementName = {}", managementName);
 
         // Get the Camel Context MBean
-        ObjectName onContext = ObjectName.getInstance(
-                mBeanServerDefaultDomain + ":context=" + managementName + ",type=context,name=\"" + context.getName() + "\"");
+        ObjectName onContext = getContextObjectName();
         assertTrue(mBeanServer.isRegistered(onContext), "Should be registered");
 
         // Get myManagedBean
-        ObjectName onManagedBean = ObjectName.getInstance(
-                mBeanServerDefaultDomain + ":context=" + managementName + ",type=processors,name=\"myManagedBean\"");
+        ObjectName onManagedBean = getCamelObjectName(TYPE_PROCESSOR, "myManagedBean");
         LOG.info("Canonical Name = {}", onManagedBean.getCanonicalName());
         assertTrue(mBeanServer.isRegistered(onManagedBean), "Should be registered");
 

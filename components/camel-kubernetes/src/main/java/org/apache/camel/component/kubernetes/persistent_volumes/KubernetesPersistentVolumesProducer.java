@@ -20,17 +20,17 @@ import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.PersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolumeList;
-import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
@@ -47,26 +47,20 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String operation;
-
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
-            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
-        } else {
-            operation = getEndpoint().getKubernetesConfiguration().getOperation();
-        }
+        String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
 
             case KubernetesOperations.LIST_PERSISTENT_VOLUMES:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_PERSISTENT_VOLUMES_BY_LABELS_OPERATION:
-                doListPersistentVolumesByLabels(exchange, operation);
+                doListPersistentVolumesByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_PERSISTENT_VOLUME_OPERATION:
-                doGetPersistentVolume(exchange, operation);
+                doGetPersistentVolume(exchange);
                 break;
 
             default:
@@ -74,29 +68,21 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange) {
         PersistentVolumeList persistentVolumeList = getEndpoint().getKubernetesClient().persistentVolumes().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(persistentVolumeList.getItems());
+        prepareOutboundMessage(exchange, persistentVolumeList.getItems());
     }
 
-    protected void doListPersistentVolumesByLabels(Exchange exchange, String operation) throws Exception {
-        PersistentVolumeList pvList = null;
+    protected void doListPersistentVolumesByLabels(Exchange exchange) {
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);
-        NonNamespaceOperation<PersistentVolume, PersistentVolumeList, Resource<PersistentVolume>> pvs
-                = getEndpoint().getKubernetesClient().persistentVolumes();
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
-            pvs.withLabel(entry.getKey(), entry.getValue());
-        }
-        pvList = pvs.list();
+        PersistentVolumeList pvList = getEndpoint().getKubernetesClient().persistentVolumes().withLabels(labels).list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(pvList.getItems());
+        prepareOutboundMessage(exchange, pvList.getItems());
     }
 
-    protected void doGetPersistentVolume(Exchange exchange, String operation) throws Exception {
+    protected void doGetPersistentVolume(Exchange exchange) {
         PersistentVolume pv = null;
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
@@ -105,7 +91,6 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         }
         pv = getEndpoint().getKubernetesClient().persistentVolumes().withName(pvName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(pv);
+        prepareOutboundMessage(exchange, pv);
     }
 }

@@ -34,6 +34,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.PredicateFactory;
+import org.apache.camel.model.HasExpressionType;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.ExpressionFactoryAware;
 import org.apache.camel.spi.Metadata;
@@ -49,7 +50,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
 public class ExpressionDefinition
-        implements Expression, Predicate, ExpressionFactory, ExpressionFactoryAware, PredicateFactory, PredicateFactoryAware {
+        implements Expression, Predicate, ExpressionFactory, ExpressionFactoryAware, PredicateFactory, PredicateFactoryAware,
+        HasExpressionType {
     @XmlAttribute
     @XmlID
     private String id;
@@ -149,8 +151,18 @@ public class ExpressionDefinition
         this.expressionValue = expressionValue;
     }
 
+    @Override
     public ExpressionDefinition getExpressionType() {
         return expressionType;
+    }
+
+    /**
+     * Allows derived classes and DSLs to set a lazily created expressionType instance such as if using the
+     * {@link org.apache.camel.builder.ExpressionClause}
+     */
+    @Override
+    public void setExpressionType(ExpressionDefinition expressionType) {
+        this.expressionType = expressionType;
     }
 
     public String getTrim() {
@@ -179,14 +191,6 @@ public class ExpressionDefinition
 
         String exp = getExpression();
         return exp != null ? exp : "";
-    }
-
-    /**
-     * Allows derived classes to set a lazily created expressionType instance such as if using the
-     * {@link org.apache.camel.builder.ExpressionClause}
-     */
-    protected void setExpressionType(ExpressionDefinition expressionType) {
-        this.expressionType = expressionType;
     }
 
     //

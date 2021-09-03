@@ -37,6 +37,7 @@ import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
 import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
@@ -143,8 +144,18 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
 
         // ensure folder is open
-        if (!folder.isOpen()) {
-            folder.open(Folder.READ_WRITE);
+        try {
+            if (!folder.isOpen()) {
+                folder.open(Folder.READ_WRITE);
+            }
+        } catch (MessagingException e) {
+            // some kind of connectivity error, so lets re-create connection
+            String msg = "Error opening mail folder due to " + e.getMessage() + ". Will re-create connection on next poll.";
+            LOG.warn(msg);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(msg, e);
+            }
+            disconnect();
         }
 
         try {
@@ -192,20 +203,24 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         // should we disconnect, the header can override the configuration
         boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
         if (disconnect) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Disconnecting from {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
-            }
-            try {
-                store.close();
-            } catch (Exception e) {
-                LOG.debug("Could not disconnect from {}. This exception is ignored.",
-                        getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
-            }
-            store = null;
-            folder = null;
+            disconnect();
         }
 
         return polledMessages;
+    }
+
+    private void disconnect() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Disconnecting from {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
+        }
+        try {
+            store.close();
+        } catch (Exception e) {
+            LOG.debug("Could not disconnect from {}. This exception is ignored.",
+                    getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
+        }
+        store = null;
+        folder = null;
     }
 
     @Override
@@ -215,9 +230,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // only loop if we are started (allowed to run)
             Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
@@ -263,7 +278,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 BeanIntrospection beanIntrospection
                         = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), mail, "peek", true);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
                 LOG.trace("Error setting peak property to true on: {}. This exception is ignored.", mail, e);
             }
@@ -385,7 +400,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 }
 
                 if (!message.getFlags().contains(Flags.Flag.DELETED)) {
-                    Exchange exchange = getEndpoint().createExchange(message);
+                    Exchange exchange = createExchange(message);
                     if (getEndpoint().getConfiguration().isMapMailMessage()) {
                         // ensure the mail message is mapped, which can be ensured by touching the body/header/attachment
                         LOG.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
@@ -399,6 +414,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                                 exchange.getIn(AttachmentMessage.class).setAttachmentObjects(att);
                             }
                         } catch (MessagingException | IOException e) {
+                            // must release exchange before throwing exception
+                            releaseExchange(exchange, true);
                             throw new RuntimeCamelException("Error accessing attachments due to: " + e.getMessage(), e);
                         }
                     }
@@ -509,6 +526,13 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         } catch (MessagingException e) {
             getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
         }
+    }
+
+    private Exchange createExchange(Message message) {
+        Exchange exchange = createExchange(true);
+        exchange.setProperty(Exchange.BINDING, getEndpoint().getBinding());
+        exchange.setIn(new MailMessage(exchange, message, getEndpoint().getConfiguration().isMapMailMessage()));
+        return exchange;
     }
 
     private void copyOrMoveMessageIfRequired(

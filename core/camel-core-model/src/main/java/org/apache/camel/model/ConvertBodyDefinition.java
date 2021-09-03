@@ -34,6 +34,9 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
     @XmlAttribute(required = true)
     private String type;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    private String mandatory;
+    @XmlAttribute
     private String charset;
     @XmlTransient
     private Class<?> typeClass;
@@ -48,6 +51,12 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
     public ConvertBodyDefinition(Class<?> typeClass) {
         setTypeClass(typeClass);
         setType(typeClass.getCanonicalName());
+    }
+
+    public ConvertBodyDefinition(Class<?> typeClass, boolean mandatory) {
+        setTypeClass(typeClass);
+        setType(typeClass.getCanonicalName());
+        setMandatory(mandatory ? "true" : "false");
     }
 
     public ConvertBodyDefinition(Class<?> typeClass, String charset) {
@@ -99,5 +108,18 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
      */
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public String getMandatory() {
+        return mandatory;
+    }
+
+    /**
+     * When mandatory then the conversion must return a value (cannot be null), if this is not possible then
+     * NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the
+     * value is null.
+     */
+    public void setMandatory(String mandatory) {
+        this.mandatory = mandatory;
     }
 }

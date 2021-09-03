@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  *
  */
+@ResourceLock("DirectVmComponent")
 public class DirectVmHeaderFilterStrategyTest extends ContextTestSupport {
 
     @Test

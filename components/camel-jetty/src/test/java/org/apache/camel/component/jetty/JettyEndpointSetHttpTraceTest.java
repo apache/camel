@@ -17,18 +17,23 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
 
-    private int portTraceOn = getNextPort();
-    private int portTraceOff = getNextPort();
+    @RegisterExtension
+    protected AvailablePortFinder.Port portTraceOn = AvailablePortFinder.find();
+
+    @RegisterExtension
+    protected AvailablePortFinder.Port portTraceOff = AvailablePortFinder.find();
 
     @Test
     public void testTraceDisabled() throws Exception {

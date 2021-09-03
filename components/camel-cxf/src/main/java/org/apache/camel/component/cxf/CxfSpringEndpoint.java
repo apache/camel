@@ -38,7 +38,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     private String beanId;
     private ApplicationContext applicationContext;
 
-    public CxfSpringEndpoint(CxfComponent component, String address) throws Exception {
+    public CxfSpringEndpoint(CxfComponent component, String address) {
         super(address, component);
     }
 
@@ -145,6 +145,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         }
 
         // setup server factory bean
+        // TODO answer may contain null
         setupServerFactoryBean(answer, cls);
 
         // fill in values that have not been filled.
@@ -155,10 +156,9 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
             answer.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
         }
 
-        if (cls == null) {
-            checkName(answer.getEndpointName(), "endpoint/port name");
-            checkName(answer.getServiceName(), "service name");
-        }
+        checkName(answer.getEndpointName(), "endpoint/port name");
+        checkName(answer.getServiceName(), "service name");
+
         return answer;
     }
 

@@ -166,7 +166,7 @@ public class MockValueBuilder implements Expression, Predicate {
         for (Object value : values) {
             Expression right = asExpression(value);
             right = ExpressionBuilder.convertToExpression(right, expression);
-            Predicate predicate = onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
+            Predicate predicate = PredicateBuilder.isEqualTo(expression, right);
             predicates.add(predicate);
         }
         return in(predicates.toArray(new Predicate[predicates.size()]));

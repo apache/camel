@@ -29,8 +29,6 @@ recover from startup issues in the `Consumer` such as failing to connect to the 
 The `SupervisingRouteController` is capable of handling this, and manage routes
 that has failed to startup, by taking over and attempt to restart these routes.
 
-=== Example
-
 Given the routes below:
 
 [source,java]
@@ -55,8 +53,6 @@ after the camel context startup and takes control of starting the routes in a sa
 This controller is able to retry starting failing routes, and have various options to configure
 settings for backoff between restarting routes.
 
-=== Example
-
 If we take the same example again:
 
 [source,java]
@@ -70,6 +66,8 @@ from("salesforce:cheese")
 
 Then we can tell Camel to use the supervising route controller to let Camel attempt to
 recover starting the salesforce route.
+
+=== Configuring Supervising Route Controller
 
 Enabling and configuring supervising route controller from Java:
 
@@ -110,7 +108,7 @@ camel.springboot.routeControllerInitialDelay = 1000
 camel.springboot.routeControllerThreadPoolSize = 2
 ----
 
-And for users with XML DSL in Spring or OSGi Blueprint, you can do as follows:
+And for users with XML DSL you can do as follows:
 
 [source,xml]
 ----
@@ -129,7 +127,7 @@ And for users with XML DSL in Spring or OSGi Blueprint, you can do as follows:
 </camelContext>
 ----
 
-=== Supervising Options
+=== Supervising Route Controller Options
 
 You can configure the `SupervisingRouteController` using the following options:
 
@@ -158,8 +156,6 @@ them in the background (with backoff).
 You may have a critical route which must always startup, and if not, cause Camel itself to fail starting.
 This can be done by filter the route from the supervising with the include/exclude options.
 
-=== Example
-
 Given the routes below:
 
 [source,java]
@@ -187,7 +183,9 @@ camel.springboot.routeControllerExcludeRoutes = aws*
 
 The route controllers are manageable in JMX, where you can find their MBean under the `routecontrollers` node.
 
-== See Also
+NOTE: To use JMX with Camel then `camel-management` JAR must be included in the classpath.
+
+== More Information
 
 When Camel is shutting down, then its xref:graceful-shutdown.adoc[Graceful Shutdown]
 that handles this to ensure all the routes are shutdown graceful and safely.

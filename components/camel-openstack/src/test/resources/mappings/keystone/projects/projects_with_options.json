@@ -1,0 +1,18 @@
+{
+  "id" : "50d2b5ce-59a2-4073-9372-337f81d13ee5",
+  "name" : "projects_with_options.json",
+  "request" : {
+    "url" : "/v3/projects",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/projects\",\"previous\":null,\"next\":null},\"projects\":[{\"is_domain\":false,\"description\":\"Tenant for the openstack services\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/projects\/10b40033bbef48f89fe838fef62398f0\"},\"tags\":[],\"enabled\":true,\"id\":\"10b40033bbef48f89fe838fef62398f0\",\"parent_id\":\"default\",\"options\":{},\"domain_id\":\"default\",\"name\":\"services\"},{\"is_domain\":false,\"description\":\"default tenant\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/projects\/600905d353a84b20b644d2fe55a21e8a\"},\"tags\":[],\"enabled\":true,\"id\":\"600905d353a84b20b644d2fe55a21e8a\",\"parent_id\":\"default\",\"options\":{},\"domain_id\":\"default\",\"name\":\"demo\"},{\"is_domain\":false,\"description\":\"admin tenant\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/projects\/8519dba9f4594f0f87071c87784a8d2c\"},\"tags\":[],\"enabled\":true,\"id\":\"8519dba9f4594f0f87071c87784a8d2c\",\"parent_id\":\"default\",\"options\":{},\"domain_id\":\"default\",\"name\":\"admin\"}]}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "50d2b5ce-59a2-4073-9372-337f81d13ee5",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

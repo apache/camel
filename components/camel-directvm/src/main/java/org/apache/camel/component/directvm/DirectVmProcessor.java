@@ -18,6 +18,7 @@ package org.apache.camel.component.directvm;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
@@ -94,8 +95,8 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
         // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).
         // Set therefore the unit of work of the  parent route as stream cache unit of work, 
         // if it is not already set.
-        if (newExchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
-            newExchange.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());
+        if (newExchange.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK) == null) {
+            newExchange.setProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());
         }
         return newExchange;
     }

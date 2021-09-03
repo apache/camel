@@ -28,6 +28,7 @@ import java.util.Map;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.IOHelper;
@@ -47,7 +48,7 @@ public final class NettyHttpHelper {
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         String charset = getCharsetFromContentType(contentType);
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.normalizeCharset(charset));
         }
     }
 
@@ -280,11 +281,11 @@ public final class NettyHttpHelper {
         for (String range : ranges) {
             boolean ok;
             if (range.contains("-")) {
-                int from = Integer.valueOf(StringHelper.before(range, "-"));
-                int to = Integer.valueOf(StringHelper.after(range, "-"));
+                int from = Integer.parseInt(StringHelper.before(range, "-"));
+                int to = Integer.parseInt(StringHelper.after(range, "-"));
                 ok = statusCode >= from && statusCode <= to;
             } else {
-                int exact = Integer.valueOf(range);
+                int exact = Integer.parseInt(range);
                 ok = exact == statusCode;
             }
             if (ok) {

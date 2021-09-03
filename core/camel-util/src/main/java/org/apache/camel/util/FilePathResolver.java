@@ -29,7 +29,7 @@ public final class FilePathResolver {
      * <p/>
      * The pattern is:
      * <ul>
-     * <li><tt>${env.key}</tt> for environment variables.</li>
+     * <li><tt>${env:key}</tt> or <tt>${env.key}</tt> for environment variables.</li>
      * <li><tt>${key}</tt> for JVM system properties.</li>
      * </ul>
      * For example: <tt>${env.KARAF_HOME}/data/logs</tt>
@@ -46,7 +46,15 @@ public final class FilePathResolver {
 
         String[] functions = StringHelper.splitOnCharacter(path, "}", count);
         for (String fun : functions) {
-            int pos = fun.indexOf("${env.");
+            int pos = fun.indexOf("${env:");
+            if (pos != -1) {
+                String key = fun.substring(pos + 6);
+                String value = System.getenv(key);
+                if (value != null) {
+                    path = path.replace("${env:" + key + "}", value);
+                }
+            }
+            pos = fun.indexOf("${env.");
             if (pos != -1) {
                 String key = fun.substring(pos + 6);
                 String value = System.getenv(key);

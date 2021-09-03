@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +37,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -54,6 +56,90 @@ public final class EndpointHelper {
 
     private EndpointHelper() {
         //Utility Class
+    }
+
+    /**
+     * Resolves the endpoint uri that may have property placeholders (supports optional property placeholders).
+     *
+     * @param  camelContext the camel context
+     * @param  uri          the endpoint uri
+     * @return              returns endpoint uri with property placeholders resolved
+     */
+    public static String resolveEndpointUriPropertyPlaceholders(CamelContext camelContext, String uri) {
+        // the uri may have optional property placeholders which is not possible to resolve
+        // so we keep the unresolved in the uri, which we then afterwards will remove
+        // which is a little complex depending on the placeholder is from context-path or query parameters
+        // in the uri string
+        try {
+            uri = camelContext.adapt(ExtendedCamelContext.class).resolvePropertyPlaceholders(uri, true);
+            if (uri == null || uri.isEmpty()) {
+                return uri;
+            }
+            String prefix = PropertiesComponent.PREFIX_OPTIONAL_TOKEN;
+            if (uri.contains(prefix)) {
+                String unresolved = uri;
+                uri = doResolveEndpointUriOptionalPropertyPlaceholders(unresolved);
+                LOG.trace("Unresolved optional placeholders removed from uri: {} -> {}", unresolved, uri);
+            }
+            LOG.trace("Resolved property placeholders with uri: {}", uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+        return uri;
+    }
+
+    private static String doResolveEndpointUriOptionalPropertyPlaceholders(String uri) throws URISyntaxException {
+        String prefix = PropertiesComponent.PREFIX_OPTIONAL_TOKEN;
+
+        // find query position which is the first question mark that is not part of the optional token prefix
+        int pos = 0;
+        for (int i = 0; i < uri.length(); i++) {
+            char ch = uri.charAt(i);
+            if (ch == '?') {
+                // ensure that its not part of property prefix
+                if (i > 2) {
+                    char ch1 = uri.charAt(i - 1);
+                    char ch2 = uri.charAt(i - 2);
+                    if (ch1 != '{' && ch2 != '{') {
+                        pos = i;
+                        break;
+                    }
+                } else {
+                    pos = i;
+                    break;
+                }
+            }
+        }
+        String base = pos > 0 ? uri.substring(0, pos) : uri;
+        String query = pos > 0 ? uri.substring(pos + 1) : null;
+
+        // the base (context path) should remove all unresolved property placeholders
+        // which is done by replacing all begin...end tokens with an empty string
+        String pattern = "\\{\\{?.*}}";
+        base = base.replaceAll(pattern, "");
+
+        // the query parameters needs to be rebuild by removing the unresolved key=value pairs
+        if (query != null && query.contains(prefix)) {
+            Map<String, Object> params = URISupport.parseQuery(query);
+            Map<String, Object> keep = new LinkedHashMap<>();
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                String key = entry.getKey();
+                if (key.startsWith(prefix)) {
+                    continue;
+                }
+                Object value = entry.getValue();
+                if (value instanceof String && ((String) value).startsWith(prefix)) {
+                    continue;
+                }
+                keep.put(key, value);
+            }
+            // rebuild query
+            query = URISupport.createQueryString(keep);
+        }
+
+        // assemble uri as answer
+        uri = query != null && !query.isEmpty() ? base + "?" + query : base;
+        return uri;
     }
 
     /**
@@ -112,7 +198,7 @@ public final class EndpointHelper {
      * Matches the endpoint with the given pattern.
      * <p/>
      * The endpoint will first resolve property placeholders using
-     * {@link CamelContext#resolvePropertyPlaceholders(String)}.
+     * {@link #resolveEndpointUriPropertyPlaceholders(CamelContext, String)}
      * <p/>
      * The match rules are applied in this order:
      * <ul>
@@ -131,7 +217,7 @@ public final class EndpointHelper {
     public static boolean matchEndpoint(CamelContext context, String uri, String pattern) {
         if (context != null) {
             try {
-                uri = context.resolvePropertyPlaceholders(uri);
+                uri = resolveEndpointUriPropertyPlaceholders(context, uri);
             } catch (Exception e) {
                 throw new ResolveEndpointFailedException(uri, e);
             }
@@ -163,7 +249,7 @@ public final class EndpointHelper {
     /**
      * Toggles // separators in the given uri. If the uri does not contain ://, the slashes are added, otherwise they
      * are removed.
-     * 
+     *
      * @param  normalizedUri The uri to add/remove separators in
      * @return               The uri with separators added or removed
      */

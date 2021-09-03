@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,12 +26,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BeanRepository;
+import org.apache.camel.spi.LocalBeanRepositoryAware;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.function.Suppliers;
 
 /**
  * The default {@link Registry} which supports using a given first-choice repository to lookup the beans, such as
@@ -40,11 +47,14 @@ import org.apache.camel.spi.Registry;
  * Notice that beans in the fallback registry are not managed by the first-choice registry, so these beans may not
  * support dependency injection and other features that the first-choice registry may offer.
  */
-public class DefaultRegistry implements Registry, CamelContextAware {
+public class DefaultRegistry extends ServiceSupport implements Registry, LocalBeanRepositoryAware, CamelContextAware {
 
     protected CamelContext camelContext;
+    protected final ThreadLocal<BeanRepository> localRepository = new ThreadLocal<>();
+    protected volatile boolean localRepositoryEnabled; // flag to keep track if local is in use or not
     protected List<BeanRepository> repositories;
     protected Registry fallbackRegistry = new SimpleRegistry();
+    protected Registry supplierRegistry = new SupplierRegistry();
 
     /**
      * Creates a default registry that uses {@link SimpleRegistry} as the fallback registry. The fallback registry can
@@ -81,6 +91,28 @@ public class DefaultRegistry implements Registry, CamelContextAware {
     }
 
     /**
+     * Sets a special local bean repository (ie thread local) that take precedence and will use first, if a bean exists.
+     */
+    public void setLocalBeanRepository(BeanRepository repository) {
+        if (repository != null) {
+            this.localRepository.set(repository);
+            this.localRepositoryEnabled = true;
+        } else {
+            BeanRepository old = this.localRepository.get();
+            if (old != null) {
+                ServiceHelper.stopService(old);
+            }
+            this.localRepository.remove();
+            this.localRepositoryEnabled = false;
+        }
+    }
+
+    @Override
+    public BeanRepository getLocalBeanRepository() {
+        return localRepositoryEnabled ? localRepository.get() : null;
+    }
+
+    /**
      * Gets the fallback {@link Registry}
      */
     public Registry getFallbackRegistry() {
@@ -92,6 +124,20 @@ public class DefaultRegistry implements Registry, CamelContextAware {
      */
     public void setFallbackRegistry(Registry fallbackRegistry) {
         this.fallbackRegistry = fallbackRegistry;
+    }
+
+    /**
+     * Gets the supplier {@link Registry}
+     */
+    public Registry getSupplierRegistry() {
+        return supplierRegistry;
+    }
+
+    /**
+     * To use a custom {@link Registry} for suppliers.
+     */
+    public void setSupplierRegistry(Registry supplierRegistry) {
+        this.supplierRegistry = supplierRegistry;
     }
 
     @Override
@@ -119,15 +165,31 @@ public class DefaultRegistry implements Registry, CamelContextAware {
 
     @Override
     public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
-        // automatic inject camel context in bean if its aware
-        if (camelContext != null && bean instanceof CamelContextAware) {
-            ((CamelContextAware) bean).setCamelContext(camelContext);
+        if (bean != null) {
+            // automatic inject camel context in bean if its aware
+            CamelContextAware.trySetCamelContext(bean, camelContext);
+            fallbackRegistry.bind(id, type, bean);
         }
-        fallbackRegistry.bind(id, type, bean);
+    }
+
+    @Override
+    public void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
+        if (bean != null) {
+            // wrap in cached supplier (memorize)
+            supplierRegistry.bind(id, type, Suppliers.memorize(bean));
+        }
+    }
+
+    @Override
+    public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
+        if (bean != null) {
+            supplierRegistry.bind(id, type, bean);
+        }
     }
 
     @Override
     public Object lookupByName(String name) {
+        Object answer;
         try {
             // Must avoid attempting placeholder resolution when looking up
             // the properties component or else we end up in an infinite loop.
@@ -138,20 +200,37 @@ public class DefaultRegistry implements Registry, CamelContextAware {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
+        // local repository takes precedence
+        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        if (local != null) {
+            answer = local.lookupByName(name);
+            if (answer != null) {
+                return unwrap(answer);
+            }
+        }
+
         if (repositories != null) {
             for (BeanRepository r : repositories) {
-                Object answer = r.lookupByName(name);
+                answer = r.lookupByName(name);
                 if (answer != null) {
                     return unwrap(answer);
                 }
             }
         }
-        return fallbackRegistry.lookupByName(name);
+        answer = supplierRegistry.lookupByName(name);
+        if (answer == null) {
+            answer = fallbackRegistry.lookupByName(name);
+        }
+        if (answer != null) {
+            answer = unwrap(answer);
+        }
+        return answer;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T lookupByNameAndType(String name, Class<T> type) {
+        T answer;
         try {
             // Must avoid attempting placeholder resolution when looking up
             // the properties component or else we end up in an infinite loop.
@@ -162,20 +241,45 @@ public class DefaultRegistry implements Registry, CamelContextAware {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
+        // local repository takes precedence
+        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        if (local != null) {
+            answer = local.lookupByNameAndType(name, type);
+            if (answer != null) {
+                return (T) unwrap(answer);
+            }
+        }
         if (repositories != null) {
             for (BeanRepository r : repositories) {
-                T answer = r.lookupByNameAndType(name, type);
+                answer = r.lookupByNameAndType(name, type);
                 if (answer != null) {
                     return (T) unwrap(answer);
                 }
             }
         }
-        return fallbackRegistry.lookupByNameAndType(name, type);
+
+        answer = supplierRegistry.lookupByNameAndType(name, type);
+        if (answer == null) {
+            answer = fallbackRegistry.lookupByNameAndType(name, type);
+        }
+        if (answer != null) {
+            answer = (T) unwrap(answer);
+        }
+        return answer;
     }
 
     @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> answer = new LinkedHashMap<>();
+
+        // local repository takes precedence
+        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        if (local != null) {
+            Map<String, T> found = local.findByTypeWithName(type);
+            if (found != null && !found.isEmpty()) {
+                answer.putAll(found);
+            }
+        }
 
         if (repositories != null) {
             for (BeanRepository r : repositories) {
@@ -186,7 +290,11 @@ public class DefaultRegistry implements Registry, CamelContextAware {
             }
         }
 
-        Map<String, T> found = fallbackRegistry.findByTypeWithName(type);
+        Map<String, T> found = supplierRegistry.findByTypeWithName(type);
+        if (found != null && !found.isEmpty()) {
+            answer.putAll(found);
+        }
+        found = fallbackRegistry.findByTypeWithName(type);
         if (found != null && !found.isEmpty()) {
             answer.putAll(found);
         }
@@ -198,6 +306,15 @@ public class DefaultRegistry implements Registry, CamelContextAware {
     public <T> Set<T> findByType(Class<T> type) {
         Set<T> answer = new LinkedHashSet<>();
 
+        // local repository takes precedence
+        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        if (local != null) {
+            Set<T> found = local.findByType(type);
+            if (found != null && !found.isEmpty()) {
+                answer.addAll(found);
+            }
+        }
+
         if (repositories != null) {
             for (BeanRepository r : repositories) {
                 Set<T> found = r.findByType(type);
@@ -207,7 +324,11 @@ public class DefaultRegistry implements Registry, CamelContextAware {
             }
         }
 
-        Set<T> found = fallbackRegistry.findByType(type);
+        Set<T> found = supplierRegistry.findByType(type);
+        if (found != null && !found.isEmpty()) {
+            answer.addAll(found);
+        }
+        found = fallbackRegistry.findByType(type);
         if (found != null && !found.isEmpty()) {
             answer.addAll(found);
         }
@@ -215,4 +336,15 @@ public class DefaultRegistry implements Registry, CamelContextAware {
         return answer;
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (supplierRegistry instanceof Closeable) {
+            IOHelper.close((Closeable) supplierRegistry);
+        }
+        if (fallbackRegistry instanceof Closeable) {
+            IOHelper.close((Closeable) fallbackRegistry);
+        }
+        ServiceHelper.stopAndShutdownServices(supplierRegistry, fallbackRegistry);
+    }
 }

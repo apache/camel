@@ -128,6 +128,7 @@ public class MicrometerModule extends Module {
             json.writeNumberField("total", snapshot.total(timeUnit));
             ValueAtPercentile[] percentiles = snapshot.percentileValues();
             for (ValueAtPercentile percentile : percentiles) {
+                // TODO format "p%0.3d" is incorrect
                 json.writeNumberField(String.format("p%0.3d", percentile.percentile()), percentile.value(timeUnit));
             }
         }

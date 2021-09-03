@@ -79,7 +79,11 @@ public class ValidateComponentMojo extends AbstractGeneratorMojo {
                 final ErrorDetail detail = new ErrorDetail();
 
                 getLog().debug("Validating file " + file);
-                ValidateHelper.validate(file.toFile(), detail);
+                try {
+                    ValidateHelper.validate(file.toFile(), detail);
+                } catch (Exception e) {
+                    // ignore as it may not be a camel component json file
+                }
 
                 if (detail.hasErrors()) {
                     failed = true;

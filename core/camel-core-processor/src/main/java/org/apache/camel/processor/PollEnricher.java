@@ -194,18 +194,6 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
-    @Override
-    protected void doInit() throws Exception {
-        if (destination != null) {
-            Endpoint endpoint = getExistingEndpoint(camelContext, destination);
-            if (endpoint == null) {
-                endpoint = resolveEndpoint(camelContext, destination, cacheSize < 0);
-            }
-        } else if (expression != null) {
-            expression.init(camelContext);
-        }
-    }
-
     /**
      * Enriches the input data (<code>exchange</code>) by first obtaining additional data from an endpoint represented
      * by an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of
@@ -279,7 +267,9 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 LOG.debug("Consumer receiveNoWait: {}", consumer);
                 resourceExchange = consumer.receiveNoWait();
             } else {
-                LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+                }
                 resourceExchange = consumer.receive(timeout);
             }
 
@@ -313,7 +303,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         }
 
         try {
-            if (!isAggregateOnException() && (resourceExchange != null && resourceExchange.isFailed())) {
+            if (!isAggregateOnException() && resourceExchange != null && resourceExchange.isFailed()) {
                 // copy resource exchange onto original exchange (preserving pattern)
                 // and preserve redelivery headers
                 copyResultsPreservePattern(exchange, resourceExchange);
@@ -438,15 +428,27 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doBuild() throws Exception {
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
             consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
             LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
         }
-        if (aggregationStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
+        CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
+        ServiceHelper.buildService(consumerCache, aggregationStrategy);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (expression != null) {
+            expression.init(camelContext);
         }
+
+        ServiceHelper.initService(consumerCache, aggregationStrategy);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(consumerCache, aggregationStrategy);
     }
 

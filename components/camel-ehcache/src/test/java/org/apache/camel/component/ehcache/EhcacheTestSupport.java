@@ -17,10 +17,10 @@
 package org.apache.camel.component.ehcache;
 
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -90,7 +90,7 @@ public class EhcacheTestSupport extends CamelTestSupport {
     }
 
     protected static int[] generateRandomArrayOfInt(int size, int lower, int upper) {
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
         int[] array = new int[size];
 
         Arrays.setAll(array, i -> random.nextInt(upper - lower) + lower);

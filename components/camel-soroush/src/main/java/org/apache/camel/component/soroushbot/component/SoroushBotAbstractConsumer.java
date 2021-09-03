@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.soroushbot.component;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,15 +64,6 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
         run();
     }
 
-    protected final void handleExceptionThrownWhileCreatingOrProcessingExchange(
-            Exchange exchange, SoroushMessage soroushMessage, Exception ex) {
-        //set originalMessage property to the created soroushMessage to let  Error Handler access the message
-        exchange.setProperty("OriginalMessage", soroushMessage);
-        //use this instead of handleException() to manually set the exchange.
-        getExceptionHandler().handleException("message can not be processed due to :" + ex.getMessage(), exchange, ex);
-
-    }
-
     /**
      * handle how processing of the exchange should be started
      *
@@ -102,12 +92,10 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                 }
                 if (!shutdown) {
                     if (connectionRetry == 0) {
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("connecting to getMessage from soroush");
-                        }
+                        LOG.info("connecting to getMessage from soroush");
                     } else {
                         if (LOG.isInfoEnabled()) {
-                            LOG.info("connection is closed. retrying for the " + ordinal(connectionRetry) + " time(s)... ");
+                            LOG.info("connection is closed. retrying for the {} time(s)... ", ordinal(connectionRetry));
                         }
                     }
                 }
@@ -142,25 +130,19 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
 
             @Override
             public void onEvent(EventSource eventSource, String id, String type, String data) {
-                Exchange exchange = endpoint.createExchange();
+                Exchange exchange = createExchange(false);
                 try {
                     SoroushMessage soroushMessage = objectMapper.readValue(data, SoroushMessage.class);
-                    try {
-                        exchange.getIn().setBody(soroushMessage);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("event data is: " + data);
-                        }
-                        // if autoDownload is true, download the resource if provided in the message
-                        if (endpoint.isAutoDownload()) {
-                            endpoint.handleDownloadFiles(soroushMessage);
-                        }
-                        //let each subclass decide how to start processing of each exchange
-                        sendExchange(exchange);
-                    } catch (Exception ex) {
-                        handleExceptionThrownWhileCreatingOrProcessingExchange(exchange, soroushMessage, ex);
+                    exchange.getIn().setBody(soroushMessage);
+                    LOG.debug("event data is: {}", data);
+                    // if autoDownload is true, download the resource if provided in the message
+                    if (endpoint.isAutoDownload()) {
+                        endpoint.handleDownloadFiles(soroushMessage);
                     }
-                } catch (IOException ex) {
-                    LOG.error("can not parse data due to following error", ex);
+                    //let each subclass decide how to start processing of each exchange
+                    sendExchange(exchange);
+                } catch (Exception ex) {
+                    getExceptionHandler().handleException(ex);
                 }
             }
 
@@ -189,7 +171,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
 
 class ReconnectableEventSourceListener extends EventSourceListener {
     private boolean manuallyClosed;
-    private OkHttpClient client;
+    //private OkHttpClient client;
     private final int maxConnectionRetry;
     private int connectionRetry;
     private Request request;
@@ -197,7 +179,7 @@ class ReconnectableEventSourceListener extends EventSourceListener {
     private EventSource eventSource;
 
     public ReconnectableEventSourceListener(OkHttpClient client, Request request, int maxConnectionRetry) {
-        this.client = client;
+        //this.client = client;
         this.maxConnectionRetry = maxConnectionRetry;
         this.request = request;
         factory = EventSources.createFactory(client);

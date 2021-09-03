@@ -2,10 +2,10 @@
   "model": {
     "kind": "model",
     "name": "security",
-    "title": "Security",
+    "title": "Rest Security",
     "description": "Rest security definition",
     "deprecated": false,
-    "label": "rest,security",
+    "label": "rest,security,configuration",
     "javaType": "org.apache.camel.model.rest.SecurityDefinition",
     "input": false,
     "output": false

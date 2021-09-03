@@ -40,13 +40,13 @@ public final class HttpMethodHelper {
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         // We need also check the HTTP_URI header query part
         String uriString = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-        // resolve placeholders in uriString
-        try {
-            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
-        } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
-        }
         if (uriString != null) {
+            // resolve placeholders in uriString
+            try {
+                uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
+            } catch (Exception e) {
+                throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
+            }
             // in case the URI string contains unsafe characters
             uriString = UnsafeUriCharactersEncoder.encodeHttpURI(uriString);
             URI uri = new URI(uriString);

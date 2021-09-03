@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
+import com.myjeeva.digitalocean.exception.DigitalOceanException;
+import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.pojo.Action;
 import com.myjeeva.digitalocean.pojo.Actions;
 import com.myjeeva.digitalocean.pojo.Delete;
@@ -66,7 +68,7 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
         }
     }
 
-    private void createFloatingIp(Exchange exchange) throws Exception {
+    private void createFloatingIp(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer dropletId = exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ID, Integer.class);
         String region = exchange.getIn().getHeader(DigitalOceanHeaders.REGION, String.class);
         FloatingIP ip;
@@ -81,18 +83,18 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
         }
 
         LOG.trace("FloatingIP [{}] ", ip);
-        exchange.getOut().setBody(ip);
+        exchange.getMessage().setBody(ip);
     }
 
-    private void getFloatingIPs(Exchange exchange) throws Exception {
+    private void getFloatingIPs(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         FloatingIPs ips = getEndpoint().getDigitalOceanClient().getAvailableFloatingIPs(configuration.getPage(),
                 configuration.getPerPage());
         LOG.trace("All Floating IPs : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
                 ips.getFloatingIPs());
-        exchange.getOut().setBody(ips.getFloatingIPs());
+        exchange.getMessage().setBody(ips.getFloatingIPs());
     }
 
-    private void getFloatingIP(Exchange exchange) throws Exception {
+    private void getFloatingIP(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         String ipAddress = exchange.getIn().getHeader(DigitalOceanHeaders.FLOATING_IP_ADDRESS, String.class);
 
         if (ObjectHelper.isEmpty(ipAddress)) {
@@ -101,10 +103,10 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
 
         FloatingIP ip = getEndpoint().getDigitalOceanClient().getFloatingIPInfo(ipAddress);
         LOG.trace("Floating IP {}", ip);
-        exchange.getOut().setBody(ip);
+        exchange.getMessage().setBody(ip);
     }
 
-    private void deleteFloatingIP(Exchange exchange) throws Exception {
+    private void deleteFloatingIP(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         String ipAddress = exchange.getIn().getHeader(DigitalOceanHeaders.FLOATING_IP_ADDRESS, String.class);
 
         if (ObjectHelper.isEmpty(ipAddress)) {
@@ -113,10 +115,10 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
 
         Delete delete = getEndpoint().getDigitalOceanClient().deleteFloatingIP(ipAddress);
         LOG.trace("Delete Floating IP {}", delete);
-        exchange.getOut().setBody(delete);
+        exchange.getMessage().setBody(delete);
     }
 
-    private void assignFloatingIPToDroplet(Exchange exchange) throws Exception {
+    private void assignFloatingIPToDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer dropletId = exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ID, Integer.class);
 
         if (ObjectHelper.isEmpty(dropletId)) {
@@ -131,10 +133,10 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
 
         Action action = getEndpoint().getDigitalOceanClient().assignFloatingIP(dropletId, ipAddress);
         LOG.trace("Assign Floating IP to Droplet {}", action);
-        exchange.getOut().setBody(action);
+        exchange.getMessage().setBody(action);
     }
 
-    private void unassignFloatingIP(Exchange exchange) throws Exception {
+    private void unassignFloatingIP(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         String ipAddress = exchange.getIn().getHeader(DigitalOceanHeaders.FLOATING_IP_ADDRESS, String.class);
 
         if (ObjectHelper.isEmpty(ipAddress)) {
@@ -143,10 +145,10 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
 
         Action action = getEndpoint().getDigitalOceanClient().unassignFloatingIP(ipAddress);
         LOG.trace("Unassign Floating IP {}", action);
-        exchange.getOut().setBody(action);
+        exchange.getMessage().setBody(action);
     }
 
-    private void getFloatingIPActions(Exchange exchange) throws Exception {
+    private void getFloatingIPActions(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         String ipAddress = exchange.getIn().getHeader(DigitalOceanHeaders.FLOATING_IP_ADDRESS, String.class);
 
         if (ObjectHelper.isEmpty(ipAddress)) {
@@ -157,7 +159,7 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
                 configuration.getPage(), configuration.getPerPage());
         LOG.trace("Actions for FloatingIP {} : page {} / {} per page [{}] ", ipAddress, configuration.getPage(),
                 configuration.getPerPage(), actions.getActions());
-        exchange.getOut().setBody(actions.getActions());
+        exchange.getMessage().setBody(actions.getActions());
     }
 
 }

@@ -38,7 +38,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 DynamoDB Streams component.
+     * Builder for endpoint for the AWS DynamoDB Streams component.
      */
     public interface Ddb2StreamEndpointBuilder
             extends
@@ -190,6 +190,41 @@ public interface Ddb2StreamEndpointBuilderFactory {
         default Ddb2StreamEndpointBuilder maxResultsPerRequest(
                 String maxResultsPerRequest) {
             doSetProperty("maxResultsPerRequest", maxResultsPerRequest);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -385,6 +420,59 @@ public interface Ddb2StreamEndpointBuilderFactory {
         default Ddb2StreamEndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the DynamoDB Streams client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the DynamoDB Streams client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -890,7 +978,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 DynamoDB Streams component.
+     * Advanced builder for endpoint for the AWS DynamoDB Streams component.
      */
     public interface AdvancedDdb2StreamEndpointBuilder
             extends
@@ -1030,7 +1118,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
 
     public interface Ddb2StreamBuilders {
         /**
-         * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+         * AWS DynamoDB Streams (camel-aws2-ddb)
          * Receive messages from AWS DynamoDB Stream service using AWS SDK
          * version 2.x.
          * 
@@ -1050,7 +1138,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return Ddb2StreamEndpointBuilderFactory.endpointBuilder("aws2-ddbstream", path);
         }
         /**
-         * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+         * AWS DynamoDB Streams (camel-aws2-ddb)
          * Receive messages from AWS DynamoDB Stream service using AWS SDK
          * version 2.x.
          * 

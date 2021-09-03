@@ -26,9 +26,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.activemq.support.ActiveMQTestSupport;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * 
  */
-public class ActiveMQJmsHeaderRouteTest extends CamelTestSupport {
+public class ActiveMQJmsHeaderRouteTest extends ActiveMQTestSupport {
+
     private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQJmsHeaderRouteTest.class);
 
     protected Object expectedBody = "<time>" + new Date() + "</time>";
@@ -66,7 +67,7 @@ public class ActiveMQJmsHeaderRouteTest extends CamelTestSupport {
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         Object replyTo = exchange.getIn().getHeader("JMSReplyTo");
-        LOG.info("Reply to is: " + replyTo);
+        LOG.info("Reply to is: {}", replyTo);
         Destination destination = assertIsInstanceOf(Destination.class, replyTo);
         assertEquals(replyQueue.toString(), destination.toString(), "ReplyTo");
     }
@@ -77,7 +78,7 @@ public class ActiveMQJmsHeaderRouteTest extends CamelTestSupport {
         camelContext.setTracing(true);
 
         // START SNIPPET: example
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+        camelContext.addComponent("activemq", activeMQComponent(vmUri("?broker.persistent=false")));
         // END SNIPPET: example
 
         return camelContext;

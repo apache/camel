@@ -66,7 +66,7 @@ public final class HL7GenericMessageConverter {
     }
 
     @Converter
-    public static GenericMessage.V21 toV21GenericMessage(String hl7String) throws HL7Exception {
+    public static GenericMessage.V21 toV21GenericMessage(String hl7String) {
         return toGenericMessage(GenericMessage.V21.class, hl7String);
     }
 
@@ -76,7 +76,7 @@ public final class HL7GenericMessageConverter {
     }
 
     @Converter
-    public static GenericMessage.V22 toV22GenericMessage(String hl7String) throws HL7Exception {
+    public static GenericMessage.V22 toV22GenericMessage(String hl7String) {
         return toGenericMessage(GenericMessage.V22.class, hl7String);
     }
 
@@ -86,7 +86,7 @@ public final class HL7GenericMessageConverter {
     }
 
     @Converter
-    public static GenericMessage.V23 toV23GenericMessage(String hl7String) throws HL7Exception {
+    public static GenericMessage.V23 toV23GenericMessage(String hl7String) {
         return toGenericMessage(GenericMessage.V23.class, hl7String);
     }
 
@@ -96,7 +96,7 @@ public final class HL7GenericMessageConverter {
     }
 
     @Converter
-    public static GenericMessage.V231 toV231GenericMessage(String hl7String) throws HL7Exception {
+    public static GenericMessage.V231 toV231GenericMessage(String hl7String) {
         return toGenericMessage(GenericMessage.V231.class, hl7String);
     }
 
@@ -106,7 +106,7 @@ public final class HL7GenericMessageConverter {
     }
 
     @Converter
-    public static GenericMessage.V24 toV24GenericMessage(String hl7String) throws HL7Exception {
+    public static GenericMessage.V24 toV24GenericMessage(String hl7String) {
         return toGenericMessage(GenericMessage.V24.class, hl7String);
     }
 
@@ -116,7 +116,7 @@ public final class HL7GenericMessageConverter {
     }
 
     @Converter
-    public static GenericMessage.V25 toV25GenericMessage(String hl7String) throws HL7Exception {
+    public static GenericMessage.V25 toV25GenericMessage(String hl7String) {
         return toGenericMessage(GenericMessage.V25.class, hl7String);
     }
 
@@ -126,7 +126,7 @@ public final class HL7GenericMessageConverter {
     }
 
     @Converter
-    public static GenericMessage.V251 toV251GenericMessage(String hl7String) throws HL7Exception {
+    public static GenericMessage.V251 toV251GenericMessage(String hl7String) {
         return toGenericMessage(GenericMessage.V251.class, hl7String);
     }
 
@@ -136,7 +136,7 @@ public final class HL7GenericMessageConverter {
     }
 
     @Converter
-    public static GenericMessage.V26 toV26GenericMessage(String hl7String) throws HL7Exception {
+    public static GenericMessage.V26 toV26GenericMessage(String hl7String) {
         return toGenericMessage(GenericMessage.V26.class, hl7String);
     }
 

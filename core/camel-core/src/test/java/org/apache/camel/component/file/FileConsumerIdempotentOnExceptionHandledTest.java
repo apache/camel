@@ -19,23 +19,15 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/messages/input");
-        super.setUp();
-    }
 
     @Test
     public void testIdempotent() throws Exception {
         getMockEndpoint("mock:invalid").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/messages/input/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         oneExchangeDone.matchesWaitTime();
 
@@ -43,8 +35,8 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
 
         // the error is handled and the file is regarded as success and
         // therefore moved to .camel
-        assertFileNotExists("target/data/messages/input/hello.txt");
-        assertFileExists("target/data/messages/input/.camel/hello.txt");
+        assertFileNotExists(testFile("hello.txt"));
+        assertFileExists(testFile(".camel/hello.txt"));
     }
 
     @Override
@@ -54,7 +46,7 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
                 onException(Exception.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/data/messages/input/?initialDelay=0&delay=10&idempotent=true").to("mock:input")
+                from(fileUri("?initialDelay=0&delay=10&idempotent=true")).to("mock:input")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         };

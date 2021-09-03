@@ -18,50 +18,27 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-azure</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>camel-azure-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>Camel :: Azure :: Parent</name>
+    <description>Camel Azure parent</description>
 
-    <name>Camel :: Azure</name>
-    <description>Camel Microsoft Azure Components</description>
-
-    <properties>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.microsoft.azure</groupId>
-            <artifactId>azure-storage</artifactId>
-            <version>${azure-storage-java-sdk-version}</version>
-        </dependency>
-
-        <!-- for testing -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>camel-azure-eventhubs</module>
+        <module>camel-azure-storage-blob</module>
+        <module>camel-azure-storage-datalake</module>
+        <module>camel-azure-storage-queue</module>
+        <module>camel-azure-cosmosdb</module>
+        <module>camel-azure-servicebus</module>
+    </modules>
 
 </project>

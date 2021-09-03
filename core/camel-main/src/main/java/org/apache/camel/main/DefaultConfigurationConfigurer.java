@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,10 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
+import org.apache.camel.impl.engine.PrototypeExchangeFactory;
+import org.apache.camel.impl.engine.PrototypeProcessorExchangeFactory;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
@@ -40,6 +45,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
@@ -66,6 +72,11 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.ClassicUuidGenerator;
+import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.support.OffUuidGenerator;
+import org.apache.camel.support.ShortUuidGenerator;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
@@ -89,7 +100,7 @@ public final class DefaultConfigurationConfigurer {
      * @param camelContext the camel context
      * @param config       the configuration
      */
-    public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
+    public static void configure(CamelContext camelContext, DefaultConfigurationProperties<?> config) throws Exception {
         ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
 
         if (config.getStartupRecorder() != null) {
@@ -119,6 +130,18 @@ public final class DefaultConfigurationConfigurer {
             ecc.getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
         }
         ecc.getBeanIntrospection().afterPropertiesConfigured(camelContext);
+
+        if ("pooled".equals(config.getExchangeFactory())) {
+            ecc.setExchangeFactory(new PooledExchangeFactory());
+            ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
+        } else if ("prototype".equals(config.getExchangeFactory())) {
+            ecc.setExchangeFactory(new PrototypeExchangeFactory());
+            ecc.setProcessorExchangeFactory(new PrototypeProcessorExchangeFactory());
+        }
+        ecc.getExchangeFactory().setCapacity(config.getExchangeFactoryCapacity());
+        ecc.getProcessorExchangeFactory().setCapacity(config.getExchangeFactoryCapacity());
+        ecc.getExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
+        ecc.getProcessorExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
@@ -176,6 +199,19 @@ public final class DefaultConfigurationConfigurer {
                     .setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
         }
 
+        if ("default".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new DefaultUuidGenerator());
+        } else if ("short".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new ShortUuidGenerator());
+        } else if ("classic".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new ClassicUuidGenerator());
+        } else if ("simple".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new SimpleUuidGenerator());
+        } else if ("off".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new OffUuidGenerator());
+            LOG.warn("Using OffUuidGenerator (Only intended for development purposes)");
+        }
+
         camelContext.setMessageHistory(config.isMessageHistory());
         camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
@@ -185,6 +221,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setAutowiredEnabled(config.isAutowiredEnabled());
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
+        camelContext.setDumpRoutes(config.isDumpRoutes());
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
@@ -196,6 +233,16 @@ public final class DefaultConfigurationConfigurer {
                     .setStatisticsLevel(config.getJmxManagementStatisticsLevel());
             camelContext.getManagementStrategy().getManagementAgent()
                     .setManagementNamePattern(config.getJmxManagementNamePattern());
+        }
+
+        // global options
+        if (config.getGlobalOptions() != null) {
+            Map<String, String> map = camelContext.getGlobalOptions();
+            if (map == null) {
+                map = new HashMap<>();
+            }
+            map.putAll(config.getGlobalOptions());
+            camelContext.setGlobalOptions(map);
         }
 
         // global endpoint configurations
@@ -357,6 +404,10 @@ public final class DefaultConfigurationConfigurer {
         if (ss != null) {
             ecc.setShutdownStrategy(ss);
         }
+        ExchangeFactory exf = getSingleBeanOfType(registry, ExchangeFactory.class);
+        if (exf != null) {
+            ecc.setExchangeFactory(exf);
+        }
         Set<TypeConverters> tcs = registry.findByType(TypeConverters.class);
         if (!tcs.isEmpty()) {
             tcs.forEach(t -> camelContext.getTypeConverterRegistry().addTypeConverters(t));
@@ -407,12 +458,10 @@ public final class DefaultConfigurationConfigurer {
         if (serviceRegistries != null && !serviceRegistries.isEmpty()) {
             for (Map.Entry<String, ServiceRegistry> entry : serviceRegistries.entrySet()) {
                 ServiceRegistry service = entry.getValue();
-
                 if (service.getId() == null) {
                     service.setGeneratedId(camelContext.getUuidGenerator().generateUuid());
                 }
-
-                LOG.info("Using ServiceRegistry with id: {} and implementation: {}", service.getId(), service);
+                LOG.info("Adding Camel Cloud ServiceRegistry with id: {} and implementation: {}", service.getId(), service);
                 camelContext.addService(service);
             }
         }
@@ -479,16 +528,6 @@ public final class DefaultConfigurationConfigurer {
                 propertySetter.accept(bean);
             }
         });
-    }
-
-    private static <T> Consumer<T> addServiceToContext(final CamelContext camelContext) {
-        return service -> {
-            try {
-                camelContext.addService(service);
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to add service to Camel context", e);
-            }
-        };
     }
 
     private static void initThreadPoolProfiles(Registry registry, CamelContext camelContext) {

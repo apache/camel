@@ -18,6 +18,7 @@ package org.apache.camel.builder.xml;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -35,15 +36,15 @@ public class XsltOutputFileTest extends ContextTestSupport {
 
     @Test
     public void testXsltOutputFile() throws Exception {
-        createDirectory("target/data/xslt");
+        Files.createDirectories(testDirectory());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
-        mock.expectedFileExists("target/data/xslt/xsltme.xml");
+        mock.expectedFileExists(testFile("xsltme.xml"));
         mock.message(0).body().isInstanceOf(File.class);
 
         template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,
-                "target/data/xslt/xsltme.xml");
+                testFile("xsltme.xml").toString());
 
         mock.assertIsSatisfied();
     }

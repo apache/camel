@@ -22,6 +22,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest
@@ -87,14 +88,14 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest
 
     @Override
     @Test
-    public void testInitialMessageWithoutEndOfDataByte() throws Exception {
+    public void testInitialMessageWithoutEndOfDataByte() {
         expectedCompleteCount = 1;
 
         setExpectedCounts();
 
         mllpClient.setSendEndOfData(false);
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage());
+        assertDoesNotThrow(() -> mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage()));
     }
 
     @Override
@@ -108,6 +109,6 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest
 
         mllpClient.setSendEndOfData(false);
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage());
+        assertDoesNotThrow(() -> mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage()));
     }
 }

@@ -12,8 +12,9 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-FROM fedora:31
-MAINTAINER Otavio Rodolfo Piske <angusyoung@gmail.com>
+ARG FROMIMAGE
+FROM $FROMIMAGE
+LABEL maintainer="orpiske@apache.org"
 EXPOSE 5672
-RUN dnf install -y qpid-dispatch-router
+RUN dnf install -y qpid-dispatch-router && dnf clean all
 CMD [ "sh", "-c", "/usr/sbin/qdrouterd" ]

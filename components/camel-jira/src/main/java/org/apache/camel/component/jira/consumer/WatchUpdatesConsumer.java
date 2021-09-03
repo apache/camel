@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jira.consumer;
 
 import java.lang.reflect.Method;
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.jira.JiraConstants;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +54,8 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
     private void initIssues() {
         watchedIssues = new HashMap<>();
-        List<Issue> issues = getIssues(((JiraEndpoint) getEndpoint()).getJql(), 0, 50,
-                ((JiraEndpoint) getEndpoint()).getMaxResults());
+        List<Issue> issues = getIssues(getEndpoint().getJql(), 0, 50,
+                getEndpoint().getMaxResults());
         issues.forEach(i -> watchedIssues.put(i.getId(), i));
         watchedIssuesKeys = issues.stream()
                 .map(Issue::getKey)
@@ -63,9 +63,9 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {
-        List<Issue> issues = getIssues(((JiraEndpoint) getEndpoint()).getJql(), 0, 50,
-                ((JiraEndpoint) getEndpoint()).getMaxResults());
+    protected int doPoll() throws Exception {
+        List<Issue> issues = getIssues(getEndpoint().getJql(), 0, 50,
+                getEndpoint().getMaxResults());
         if (watchedIssues.values().size() != issues.size()) {
             init();
         }
@@ -96,7 +96,7 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
         Object changedField = get.invoke(changed);
 
         if (!Objects.equals(originalField, changedField)) {
-            if (!((JiraEndpoint) getEndpoint()).isSendOnlyUpdatedField()) {
+            if (!getEndpoint().isSendOnlyUpdatedField()) {
                 processExchange(changed, changed.getKey(), fieldName);
             } else {
                 processExchange(changedField, changed.getKey(), fieldName);
@@ -107,11 +107,11 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     }
 
     private void processExchange(Object body, String issueKey, String changed) throws Exception {
-        Exchange e = getEndpoint().createExchange();
+        Exchange e = createExchange(true);
         e.getIn().setBody(body);
-        e.getIn().setHeader("issueKey", issueKey);
-        e.getIn().setHeader("changed", changed);
-        e.getIn().setHeader("watchedIssues", watchedIssuesKeys);
+        e.getIn().setHeader(JiraConstants.ISSUE_KEY, issueKey);
+        e.getIn().setHeader(JiraConstants.ISSUE_CHANGED, changed);
+        e.getIn().setHeader(JiraConstants.ISSUE_WATCHED_ISSUES, watchedIssuesKeys);
         LOG.debug(" {}: {} changed to {}", issueKey, changed, body);
         getProcessor().process(e);
     }

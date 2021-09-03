@@ -60,6 +60,10 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "numberingplanindicator":
         case "numberingPlanIndicator": target.getConfiguration().setNumberingPlanIndicator(property(camelContext, byte.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pduprocessordegree":
+        case "pduProcessorDegree": target.getConfiguration().setPduProcessorDegree(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pduprocessorqueuecapacity":
+        case "pduProcessorQueueCapacity": target.getConfiguration().setPduProcessorQueueCapacity(property(camelContext, java.lang.Integer.class, value)); return true;
         case "priorityflag":
         case "priorityFlag": target.getConfiguration().setPriorityFlag(property(camelContext, byte.class, value)); return true;
         case "protocolid":
@@ -76,6 +80,8 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serviceType": target.getConfiguration().setServiceType(property(camelContext, java.lang.String.class, value)); return true;
         case "sessionstatelistener":
         case "sessionStateListener": target.getConfiguration().setSessionStateListener(property(camelContext, org.jsmpp.session.SessionStateListener.class, value)); return true;
+        case "singledlr":
+        case "singleDLR": target.getConfiguration().setSingleDLR(property(camelContext, boolean.class, value)); return true;
         case "sourceaddr":
         case "sourceAddr": target.getConfiguration().setSourceAddr(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceaddrnpi":
@@ -140,6 +146,10 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "numberingplanindicator":
         case "numberingPlanIndicator": return byte.class;
         case "password": return java.lang.String.class;
+        case "pduprocessordegree":
+        case "pduProcessorDegree": return java.lang.Integer.class;
+        case "pduprocessorqueuecapacity":
+        case "pduProcessorQueueCapacity": return java.lang.Integer.class;
         case "priorityflag":
         case "priorityFlag": return byte.class;
         case "protocolid":
@@ -156,6 +166,8 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serviceType": return java.lang.String.class;
         case "sessionstatelistener":
         case "sessionStateListener": return org.jsmpp.session.SessionStateListener.class;
+        case "singledlr":
+        case "singleDLR": return boolean.class;
         case "sourceaddr":
         case "sourceAddr": return java.lang.String.class;
         case "sourceaddrnpi":
@@ -221,6 +233,10 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "numberingplanindicator":
         case "numberingPlanIndicator": return target.getConfiguration().getNumberingPlanIndicator();
         case "password": return target.getConfiguration().getPassword();
+        case "pduprocessordegree":
+        case "pduProcessorDegree": return target.getConfiguration().getPduProcessorDegree();
+        case "pduprocessorqueuecapacity":
+        case "pduProcessorQueueCapacity": return target.getConfiguration().getPduProcessorQueueCapacity();
         case "priorityflag":
         case "priorityFlag": return target.getConfiguration().getPriorityFlag();
         case "protocolid":
@@ -237,6 +253,8 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serviceType": return target.getConfiguration().getServiceType();
         case "sessionstatelistener":
         case "sessionStateListener": return target.getConfiguration().getSessionStateListener();
+        case "singledlr":
+        case "singleDLR": return target.getConfiguration().isSingleDLR();
         case "sourceaddr":
         case "sourceAddr": return target.getConfiguration().getSourceAddr();
         case "sourceaddrnpi":

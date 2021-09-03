@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
@@ -81,18 +80,6 @@ public class PahoMqtt5Endpoint extends DefaultEndpoint {
 
     public String getTopic() {
         return topic;
-    }
-
-    public Exchange createExchange(MqttMessage mqttMessage, String topic) {
-        Exchange exchange = createExchange();
-
-        PahoMqtt5Message paho = new PahoMqtt5Message(exchange.getContext(), mqttMessage);
-        paho.setBody(mqttMessage.getPayload());
-        paho.setHeader(PahoMqtt5Constants.MQTT_TOPIC, topic);
-        paho.setHeader(PahoMqtt5Constants.MQTT_QOS, mqttMessage.getQos());
-
-        exchange.setIn(paho);
-        return exchange;
     }
 
     protected MqttConnectionOptions createMqttConnectionOptions() {

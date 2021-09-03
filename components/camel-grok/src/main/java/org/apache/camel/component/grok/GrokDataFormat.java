@@ -138,7 +138,7 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
             lines.forEachOrdered(line -> processLine(line, result));
         }
 
-        if (result.size() == 0) {
+        if (result.isEmpty()) {
             return null;
         }
 

@@ -1,0 +1,20 @@
+{
+  "id" : "92c0d2c0-e157-44b6-ba35-5b0c40b415d9",
+  "name" : "domains_delete.json",
+  "request" : {
+    "url" : "/v3/domains/98c110ae41c249189c9d5c25d8377b65",
+    "method" : "DELETE"
+  },
+  "response" : {
+    "status" : 204,
+    "headers" : {
+        "Date": "Wed, 16 Mar 2016 15:01:58 GMT",
+        "Server": "Apache/2.4.7 (Ubuntu)",
+        "Vary": "X-Auth-Token",
+        "x-openstack-request-id": "req-aaaf3dea-0c0f-40ef-827b-141be2756eec"
+    }
+  },
+  "uuid" : "92c0d2c0-e157-44b6-ba35-5b0c40b415d9",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

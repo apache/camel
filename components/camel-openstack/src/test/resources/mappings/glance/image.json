@@ -1,0 +1,18 @@
+{
+  "id" : "82d0d9f5-c8fa-4256-b3dd-a606c176f0b4",
+  "name" : "image.json",
+  "request" : {
+    "url" : "/v1/images/8a2ea42d-06b5-42c2-a54d-97105420f2bb",
+    "method" : "HEAD"
+  },
+  "response" : {
+    "status" : 200,
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8",
+      "X-Image-Meta-Id" : "8a2ea42d-06b5-42c2-a54d-97105420f2bb"
+    }
+  },
+  "uuid" : "82d0d9f5-c8fa-4256-b3dd-a606c176f0b4",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

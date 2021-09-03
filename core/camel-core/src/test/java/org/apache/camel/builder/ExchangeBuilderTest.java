@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -25,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExchangeBuilderTest {
-    private static final DefaultCamelContext CONTEXT = new DefaultCamelContext();
+    private static final CamelContext CONTEXT = new DefaultCamelContext();
     private static final String BODY = "Message Body";
     private static final String KEY = "Header key";
     private static final String VALUE = "Header value";
@@ -41,7 +42,20 @@ public class ExchangeBuilderTest {
     }
 
     @Test
-    public void testBuildAnExchangeWithBodyHeaderAndPattern() throws Exception {
+    public void testBuildAnExchangeWithBodyHeaderAndPatternInOnly() throws Exception {
+
+        Exchange exchange = ExchangeBuilder.anExchange(CONTEXT).withBody(BODY).withHeader(KEY, VALUE)
+                .withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOnly)
+                .build();
+
+        assertEquals(BODY, exchange.getMessage().getBody());
+        assertEquals(VALUE, exchange.getMessage().getHeader(KEY));
+        assertEquals(ExchangePattern.InOnly, exchange.getPattern());
+        assertEquals(PROPERTY_VALUE, exchange.getProperty(PROPERTY_KEY));
+    }
+
+    @Test
+    public void testBuildAnExchangeWithBodyHeaderAndPatternInOut() throws Exception {
 
         Exchange exchange = ExchangeBuilder.anExchange(CONTEXT).withBody(BODY).withHeader(KEY, VALUE)
                 .withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOut)

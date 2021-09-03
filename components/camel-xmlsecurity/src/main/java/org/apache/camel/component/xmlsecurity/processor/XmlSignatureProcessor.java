@@ -49,7 +49,7 @@ public abstract class XmlSignatureProcessor implements Processor {
         try {
             SantuarioUtil.initializeSantuario();
             SantuarioUtil.addSantuarioJSR105Provider();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             // provider not in classpath, ignore and fall back to jre default
             LOG.info("Cannot add the SantuarioJSR105Provider due to {0}, fall back to JRE default.", t);
         }
@@ -91,9 +91,9 @@ public abstract class XmlSignatureProcessor implements Processor {
         if (props == null) {
             return;
         }
-        for (String prop : props.keySet()) {
-            Object val = props.get(prop);
-            cryptoContext.setProperty(prop, val);
+        for (Map.Entry<String, ?> prop : props.entrySet()) {
+            Object val = prop.getValue();
+            cryptoContext.setProperty(prop.getKey(), val);
             LOG.debug("Context property {} set to value {}", prop, val);
         }
     }
@@ -113,7 +113,7 @@ public abstract class XmlSignatureProcessor implements Processor {
         if (schemaResourceUri == null || schemaResourceUri.isEmpty()) {
             return null;
         }
-        InputStream is = ResourceHelper.resolveResourceAsInputStream(getCamelContext().getClassResolver(),
+        InputStream is = ResourceHelper.resolveResourceAsInputStream(getCamelContext(),
                 schemaResourceUri);
         if (is == null) {
             throw new XmlSignatureException(

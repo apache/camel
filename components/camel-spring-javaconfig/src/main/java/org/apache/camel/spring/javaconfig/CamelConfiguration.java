@@ -24,8 +24,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.xml.CamelBeanPostProcessor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -44,6 +44,7 @@ import static java.util.Collections.emptyList;
  * "http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
  * Spring annotation-based</a> configurations for working with Camel.
  */
+@Deprecated
 @Configuration
 public abstract class CamelConfiguration implements BeanFactoryAware, ApplicationContextAware {
 
@@ -129,7 +130,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
      */
     @Bean(initMethod = "", destroyMethod = "")
     // Camel handles the lifecycle of this bean
-    public ProducerTemplate producerTemplate(CamelContext camelContext) throws Exception {
+    public ProducerTemplate producerTemplate(CamelContext camelContext) {
         return camelContext.createProducerTemplate();
     }
 
@@ -138,7 +139,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
      */
     @Bean(initMethod = "", destroyMethod = "")
     // Camel handles the lifecycle of this bean
-    public ConsumerTemplate consumerTemplate(CamelContext camelContext) throws Exception {
+    public ConsumerTemplate consumerTemplate(CamelContext camelContext) {
         return camelContext.createConsumerTemplate();
     }
 
@@ -182,7 +183,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
      * @return {@link CamelContext} used by this configuration. By default {@link SpringCamelContext} instance is
      *         created, to fully integrate Spring application context and Camel registry.
      */
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         return new SpringCamelContext(getApplicationContext());
     }
 

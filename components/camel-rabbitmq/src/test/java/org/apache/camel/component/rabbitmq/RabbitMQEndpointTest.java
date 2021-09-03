@@ -18,11 +18,11 @@ package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,7 +34,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.rabbitmq.integration.RabbitMQDeadLetterRoutingKeyIntTest;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQDeadLetterRoutingKeyIT;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RabbitMQEndpointTest extends CamelTestSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQDeadLetterRoutingKeyIntTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQDeadLetterRoutingKeyIT.class);
 
     private Envelope envelope = Mockito.mock(Envelope.class);
     private AMQP.BasicProperties properties = Mockito.mock(AMQP.BasicProperties.class);
@@ -83,7 +83,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         String routingKey = UUID.randomUUID().toString();
         String exchangeName = UUID.randomUUID().toString();
         long tag = UUID.randomUUID().toString().hashCode();
-        Boolean redelivery = new Random().nextBoolean();
+        Boolean redelivery = new SecureRandom().nextBoolean();
 
         Mockito.when(envelope.getRoutingKey()).thenReturn(routingKey);
         Mockito.when(envelope.getExchange()).thenReturn(exchangeName);

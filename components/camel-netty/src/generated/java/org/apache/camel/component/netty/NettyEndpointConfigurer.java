@@ -60,6 +60,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": target.getConfiguration().setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "keepalive":
         case "keepAlive": target.getConfiguration().setKeepAlive(property(camelContext, boolean.class, value)); return true;
         case "keystorefile":
@@ -193,6 +195,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "keepalive":
         case "keepAlive": return boolean.class;
         case "keystorefile":
@@ -327,6 +331,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "hostnameverification":
+        case "hostnameVerification": return target.getConfiguration().isHostnameVerification();
         case "keepalive":
         case "keepAlive": return target.getConfiguration().isKeepAlive();
         case "keystorefile":

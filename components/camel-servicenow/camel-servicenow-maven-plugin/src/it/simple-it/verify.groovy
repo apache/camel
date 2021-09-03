@@ -19,4 +19,12 @@
 File sourceDir = new File(basedir, "target/generated-sources/camel-servicenow")
 
 assert sourceDir.isDirectory()
-assert sourceDir.listFiles().length == 1
+
+def files = sourceDir.listFiles()
+assert files.length == 1
+files[0].eachFileRecurse {file ->
+    if (file.name.endsWith(".java")) {
+        assert file.text.contains("public final class Incident")
+        assert file.text.contains("@Generated(\"org.apache.camel.maven.CamelServiceNowGenerateMojo\")")
+    }
+}

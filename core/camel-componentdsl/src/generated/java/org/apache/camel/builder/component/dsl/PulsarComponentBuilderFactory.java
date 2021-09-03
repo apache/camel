@@ -51,6 +51,38 @@ public interface PulsarComponentBuilderFactory {
             extends
                 ComponentBuilder<PulsarComponent> {
         /**
+         * The Authentication FQCN to be used while creating the client from
+         * URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationClass the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder authenticationClass(
+                java.lang.String authenticationClass) {
+            doSetProperty("authenticationClass", authenticationClass);
+            return this;
+        }
+        /**
+         * The Authentication Parameters to be used while creating the client
+         * from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authenticationParams the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder authenticationParams(
+                java.lang.String authenticationParams) {
+            doSetProperty("authenticationParams", authenticationParams);
+            return this;
+        }
+        /**
          * Allows to pre-configure the Pulsar component with common options that
          * the endpoints will reuse.
          * 
@@ -65,6 +97,20 @@ public interface PulsarComponentBuilderFactory {
         default PulsarComponentBuilder configuration(
                 org.apache.camel.component.pulsar.PulsarConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The Pulsar Service URL to point while creating the client from URI.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceUrl the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder serviceUrl(java.lang.String serviceUrl) {
+            doSetProperty("serviceUrl", serviceUrl);
             return this;
         }
         /**
@@ -226,6 +272,22 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to use the messageListener interface, or to receive messages
+         * using a separate thread pool.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param messageListener the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder messageListener(boolean messageListener) {
+            doSetProperty("messageListener", messageListener);
+            return this;
+        }
+        /**
          * Set the negative acknowledgement delay.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -254,6 +316,23 @@ public interface PulsarComponentBuilderFactory {
          */
         default PulsarComponentBuilder numberOfConsumers(int numberOfConsumers) {
             doSetProperty("numberOfConsumers", numberOfConsumers);
+            return this;
+        }
+        /**
+         * Number of threads to receive and handle messages when using a
+         * separate thread pool.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param numberOfConsumerThreads the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder numberOfConsumerThreads(
+                int numberOfConsumerThreads) {
+            doSetProperty("numberOfConsumerThreads", numberOfConsumerThreads);
             return this;
         }
         /**
@@ -693,7 +772,10 @@ public interface PulsarComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "authenticationClass": getOrCreateConfiguration((PulsarComponent) component).setAuthenticationClass((java.lang.String) value); return true;
+            case "authenticationParams": getOrCreateConfiguration((PulsarComponent) component).setAuthenticationParams((java.lang.String) value); return true;
             case "configuration": ((PulsarComponent) component).setConfiguration((org.apache.camel.component.pulsar.PulsarConfiguration) value); return true;
+            case "serviceUrl": getOrCreateConfiguration((PulsarComponent) component).setServiceUrl((java.lang.String) value); return true;
             case "ackGroupTimeMillis": getOrCreateConfiguration((PulsarComponent) component).setAckGroupTimeMillis((long) value); return true;
             case "ackTimeoutMillis": getOrCreateConfiguration((PulsarComponent) component).setAckTimeoutMillis((long) value); return true;
             case "allowManualAcknowledgement": getOrCreateConfiguration((PulsarComponent) component).setAllowManualAcknowledgement((boolean) value); return true;
@@ -703,8 +785,10 @@ public interface PulsarComponentBuilderFactory {
             case "consumerQueueSize": getOrCreateConfiguration((PulsarComponent) component).setConsumerQueueSize((int) value); return true;
             case "deadLetterTopic": getOrCreateConfiguration((PulsarComponent) component).setDeadLetterTopic((java.lang.String) value); return true;
             case "maxRedeliverCount": getOrCreateConfiguration((PulsarComponent) component).setMaxRedeliverCount((java.lang.Integer) value); return true;
+            case "messageListener": getOrCreateConfiguration((PulsarComponent) component).setMessageListener((boolean) value); return true;
             case "negativeAckRedeliveryDelayMicros": getOrCreateConfiguration((PulsarComponent) component).setNegativeAckRedeliveryDelayMicros((long) value); return true;
             case "numberOfConsumers": getOrCreateConfiguration((PulsarComponent) component).setNumberOfConsumers((int) value); return true;
+            case "numberOfConsumerThreads": getOrCreateConfiguration((PulsarComponent) component).setNumberOfConsumerThreads((int) value); return true;
             case "readCompacted": getOrCreateConfiguration((PulsarComponent) component).setReadCompacted((boolean) value); return true;
             case "subscriptionInitialPosition": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionInitialPosition((org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition) value); return true;
             case "subscriptionName": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionName((java.lang.String) value); return true;

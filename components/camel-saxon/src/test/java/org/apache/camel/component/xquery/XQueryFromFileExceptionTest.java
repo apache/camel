@@ -16,29 +16,18 @@
  */
 package org.apache.camel.component.xquery;
 
-import java.io.File;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
 
 /**
  *
  */
 public class XQueryFromFileExceptionTest extends CamelTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/xquery");
-        super.setUp();
-    }
 
     @Test
     public void testXQueryFromFileExceptionOk() throws Exception {
@@ -47,17 +36,14 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
 
         String body = "<person user='James'><firstName>James</firstName>"
                       + "<lastName>Strachan</lastName><city>London</city></person>";
-        template.sendBodyAndHeader("file:target/xquery", body, Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
 
         Thread.sleep(500);
 
-        File file = new File("target/xquery/hello.xml");
-        assertFalse(file.exists(), "File should not exists " + file);
-
-        file = new File("target/xquery/ok/hello.xml");
-        assertTrue(file.exists(), "File should exists " + file);
+        assertFileNotExists(testFile("hello.xml"));
+        assertFileExists(testFile("ok/hello.xml"));
     }
 
     @Test
@@ -68,17 +54,14 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
         // the last tag is not ended properly
         String body = "<person user='James'><firstName>James</firstName>"
                       + "<lastName>Strachan</lastName><city>London</city></person";
-        template.sendBodyAndHeader("file:target/xquery", body, Exchange.FILE_NAME, "hello2.xml");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello2.xml");
 
         assertMockEndpointsSatisfied();
 
         Thread.sleep(500);
 
-        File file = new File("target/xquery/hello2.xml");
-        assertFalse(file.exists(), "File should not exists " + file);
-
-        file = new File("target/xquery/error/hello2.xml");
-        assertTrue(file.exists(), "File should exists " + file);
+        assertFileNotExists(testFile("hello2.xml"));
+        assertFileExists(testFile("error/hello2.xml"));
     }
 
     @Override
@@ -86,7 +69,7 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/xquery?moveFailed=error&move=ok")
+                from(fileUri("?moveFailed=error&move=ok"))
                         .onException(Exception.class)
                         .to("mock:error")
                         .end()

@@ -20,6 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.MainModel;
@@ -92,13 +95,28 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private static String evaluateTemplate(final String templateName, final Object model) throws MojoExecutionException {
+    private static String evaluateTemplate(final String templateName, final MainModel model) throws MojoExecutionException {
+        StringBuilder sb = new StringBuilder();
+
         try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
             String template = PackageHelper.loadText(templateStream);
-            return (String) TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            // loop each group and eval
+            for (MainModel.MainGroupModel group : model.getGroups()) {
+                Map<String, Object> root = new HashMap<>();
+                root.put("group", group);
+                root.put("options", model.getOptions().stream()
+                        .filter(o -> o.getName().startsWith(group.getName()))
+                        .collect(Collectors.toList()));
+                String eval
+                        = (String) TemplateRuntime.eval(template, root, Collections.singletonMap("util", MvelHelper.INSTANCE));
+                sb.append(eval);
+                sb.append("\n");
+            }
         } catch (IOException e) {
             throw new MojoExecutionException("Error processing mvel template `" + templateName + "`", e);
         }
+
+        return sb.toString();
     }
 
     private boolean updateOptionsIn(final File file, final String kind, final String changed) throws MojoExecutionException {

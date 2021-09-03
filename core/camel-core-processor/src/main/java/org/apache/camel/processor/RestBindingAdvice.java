@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -114,10 +113,10 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         if (jsonUnmarshal != null) {
             camelContext.addService(jsonUnmarshal, true);
         }
-        if (xmlMarshal instanceof CamelContextAware) {
+        if (xmlMarshal != null) {
             camelContext.addService(xmlMarshal, true);
         }
-        if (xmlUnmarshal instanceof CamelContextAware) {
+        if (xmlUnmarshal != null) {
             camelContext.addService(xmlUnmarshal, true);
         }
 
@@ -268,11 +267,11 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 // so force reading the body as a String which we can work with
                 if (body == null) {
                     body = MessageHelper.extractBodyAsString(exchange.getIn());
-                    if (body != null) {
+                    if (ObjectHelper.isNotEmpty(body)) {
                         exchange.getIn().setBody(body);
                     }
                 }
-                if (body == null) {
+                if (ObjectHelper.isEmpty(body)) {
                     // this is a bad request, the client did not include a message body
                     exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
                     exchange.getMessage().setBody("The request body is missing.");

@@ -18,10 +18,9 @@ package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class SedaEnrichSimpleExpressionTest extends CamelTestSupport {
+public class SedaEnrichSimpleExpressionTest extends BaseEndpointDslTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

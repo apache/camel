@@ -162,7 +162,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      *
      * @param alias the alias used to retrieve the Certificate from the keystore.
      */
-    public PrivateKey getPrivateKey(String alias) throws Exception {
+    public PrivateKey getPrivateKey(String alias) {
         return getPrivateKey(alias, password.toCharArray());
     }
 

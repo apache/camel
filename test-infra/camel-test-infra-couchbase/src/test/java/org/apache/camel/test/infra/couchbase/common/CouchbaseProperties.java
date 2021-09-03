@@ -22,6 +22,7 @@ public final class CouchbaseProperties {
     public static final String COUCHBASE_PASSWORD = "couchbase.password";
     public static final String COUCHBASE_HOSTNAME = "couchbase.hostname";
     public static final String COUCHBASE_PORT = "couchbase.port";
+    public static final String COUCHBASE_CONTAINER = "couchbase.container";
 
     private CouchbaseProperties() {
 

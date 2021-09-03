@@ -25,13 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BackpressureStrategyTest extends CamelTestSupport {
+public class BackpressureStrategyTest extends BaseReactiveTest {
 
     @Test
     public void testBackpressureBufferStrategy() throws Exception {

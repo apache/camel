@@ -22,7 +22,7 @@ version: 1
 #   http://www.rfc-editor.org/rfc/rfc2606.txt
 #
 
-dn: uid=test5,ou=test,ou=system
+dn: uid=test5,ou=test,dc=example,dc=org
 changetype: modrdn
 newrdn: uid=test6
 deleteoldrdn: 1

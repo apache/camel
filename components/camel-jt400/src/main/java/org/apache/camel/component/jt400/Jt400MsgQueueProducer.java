@@ -20,6 +20,7 @@ import com.ibm.as400.access.MessageQueue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * {@link Producer} to send data to an IBM i message queue.
@@ -50,7 +51,12 @@ public class Jt400MsgQueueProducer extends DefaultProducer {
 
     private void process(MessageQueue queue, Exchange exchange) throws Exception {
         String msgText = exchange.getIn().getBody(String.class);
-        queue.sendInformational(msgText);
+        byte[] messageKey = exchange.getIn().getHeader(Jt400Constants.MESSAGE_REPLYTO_KEY, byte[].class);
+        if (ObjectHelper.isNotEmpty(messageKey) && ObjectHelper.isNotEmpty(msgText)) {
+            queue.reply(messageKey, msgText);
+        } else {
+            queue.sendInformational(msgText);
+        }
     }
 
 }

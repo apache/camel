@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.sts.STS2Component;
 public interface Aws2StsComponentBuilderFactory {
 
     /**
-     * AWS 2 Security Token Service (STS) (camel-aws2-sts)
+     * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -45,7 +45,7 @@ public interface Aws2StsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Security Token Service (STS) component.
+     * Builder for the AWS Security Token Service (STS) component.
      */
     interface Aws2StsComponentBuilder extends ComponentBuilder<STS2Component> {
         /**
@@ -103,6 +103,23 @@ public interface Aws2StsComponentBuilderFactory {
         default Aws2StsComponentBuilder operation(
                 org.apache.camel.component.aws2.sts.STS2Operations operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -217,6 +234,40 @@ public interface Aws2StsComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the STS client should expect to load credentials through
+         * a default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -292,6 +343,7 @@ public interface Aws2StsComponentBuilderFactory {
             case "configuration": ((STS2Component) component).setConfiguration((org.apache.camel.component.aws2.sts.STS2Configuration) value); return true;
             case "lazyStartProducer": ((STS2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((STS2Component) component).setOperation((org.apache.camel.component.aws2.sts.STS2Operations) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((STS2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((STS2Component) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((STS2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((STS2Component) component).setProxyPort((java.lang.Integer) value); return true;
@@ -299,6 +351,8 @@ public interface Aws2StsComponentBuilderFactory {
             case "region": getOrCreateConfiguration((STS2Component) component).setRegion((java.lang.String) value); return true;
             case "stsClient": getOrCreateConfiguration((STS2Component) component).setStsClient((software.amazon.awssdk.services.sts.StsClient) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((STS2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((STS2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((STS2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((STS2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((STS2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((STS2Component) component).setSecretKey((java.lang.String) value); return true;

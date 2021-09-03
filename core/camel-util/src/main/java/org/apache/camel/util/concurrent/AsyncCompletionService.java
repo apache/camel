@@ -19,30 +19,42 @@ package org.apache.camel.util.concurrent;
 import java.util.PriorityQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
+/**
+ * A completion service that orders the completed tasks in the same order as they where submitted.
+ */
 public class AsyncCompletionService<V> {
 
     private final Executor executor;
     private final boolean ordered;
-    private final PriorityQueue<Task> queue = new PriorityQueue<>();
-    private final AtomicLong nextId = new AtomicLong();
-    private final AtomicLong index = new AtomicLong();
+    private final PriorityQueue<Task> queue;
+    private final AtomicInteger nextId = new AtomicInteger();
+    private final AtomicInteger index = new AtomicInteger();
     private final ReentrantLock lock;
     private final Condition available;
 
     public AsyncCompletionService(Executor executor, boolean ordered) {
-        this(executor, ordered, null);
+        this(executor, ordered, null, 0);
     }
 
     public AsyncCompletionService(Executor executor, boolean ordered, ReentrantLock lock) {
+        this(executor, ordered, lock, 0);
+    }
+
+    public AsyncCompletionService(Executor executor, boolean ordered, ReentrantLock lock, int capacity) {
         this.executor = executor;
         this.ordered = ordered;
         this.lock = lock != null ? lock : new ReentrantLock();
         this.available = this.lock.newCondition();
+        if (capacity > 0) {
+            queue = new PriorityQueue<>(capacity);
+        } else {
+            queue = new PriorityQueue<>();
+        }
     }
 
     public ReentrantLock getLock() {
@@ -135,34 +147,35 @@ public class AsyncCompletionService<V> {
         }
     }
 
-    private class Task implements Runnable, Comparable<Task> {
-        private final long id;
+    private class Task implements Runnable, Comparable<Task>, Consumer<V> {
+        private final int id;
         private final Consumer<Consumer<V>> runner;
         private V result;
 
-        Task(long id, Consumer<Consumer<V>> runner) {
+        Task(int id, Consumer<Consumer<V>> runner) {
             this.id = id;
             this.runner = runner;
         }
 
         @Override
         public void run() {
-            runner.accept(this::setResult);
+            runner.accept(this);
         }
 
-        protected void setResult(V result) {
+        @Override
+        public void accept(V result) {
             this.result = result;
             complete(this);
         }
 
         @Override
         public int compareTo(Task other) {
-            return Long.compare(this.id, other.id);
+            return Integer.compare(this.id, other.id);
         }
 
         @Override
         public String toString() {
-            return "SubmitOrderedFutureTask[" + this.id + "]";
+            return "SubmitOrderedTask[" + this.id + "]";
         }
     }
 }

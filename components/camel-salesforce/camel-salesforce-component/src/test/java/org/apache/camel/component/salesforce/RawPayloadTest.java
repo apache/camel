@@ -252,7 +252,9 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
 
         final String[] formats = { "XML", "JSON" };
 
-        return Stream.of(formats).flatMap(f -> Stream.of(endpoints).map(e -> new String[] { f, e }))
+        return Stream.of(formats).flatMap(f -> Stream.of(endpoints)
+                .map(e -> new String[] { f, e }))
+                .filter(strings -> !(strings[0].equals("XML") && strings[1].equals("direct:composite")))
                 .collect(Collectors.toList());
     }
 }

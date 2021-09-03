@@ -24,7 +24,7 @@ public class LuceneIndexProducer extends DefaultProducer {
     LuceneConfiguration config;
     LuceneIndexer indexer;
 
-    public LuceneIndexProducer(Endpoint endpoint, LuceneConfiguration config, LuceneIndexer indexer) throws Exception {
+    public LuceneIndexProducer(Endpoint endpoint, LuceneConfiguration config, LuceneIndexer indexer) {
         super(endpoint);
         this.config = config;
         this.indexer = indexer;

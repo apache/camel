@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -35,7 +36,6 @@ import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -71,8 +71,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         this.includePattern = endpoint.getIncludePattern();
         this.excludePattern = endpoint.getExcludePattern();
-        this.includeExt = endpoint.getIncludeExt() != null ? endpoint.getIncludeExt().split(",") : null;
-        this.excludeExt = endpoint.getExcludeExt() != null ? endpoint.getExcludeExt().split(",") : null;
+        this.includeExt = endpoint.getIncludeExt() != null ? endpoint.getIncludeExt().toLowerCase().split(",") : null;
+        this.excludeExt = endpoint.getExcludeExt() != null ? endpoint.getExcludeExt().toLowerCase().split(",") : null;
     }
 
     public Processor getCustomProcessor() {
@@ -100,6 +100,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     public void setEagerLimitMaxMessagesPerPoll(boolean eagerLimitMaxMessagesPerPoll) {
         this.eagerLimitMaxMessagesPerPoll = eagerLimitMaxMessagesPerPoll;
     }
+
+    /**
+     * Creates the exchange from the polled file
+     */
+    protected abstract Exchange createExchange(GenericFile<T> file);
 
     /**
      * Poll for files
@@ -164,7 +169,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // use a linked list so we can dequeue the exchanges
         LinkedList<Exchange> exchanges = new LinkedList<>();
         for (GenericFile<T> file : files) {
-            Exchange exchange = endpoint.createExchange(file);
+            Exchange exchange = createExchange(file);
             endpoint.configureExchange(exchange);
             endpoint.configureMessage(file, exchange.getIn());
             exchanges.add(exchange);
@@ -223,9 +228,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // after we have processed it
             Exchange exchange = (Exchange) exchanges.poll();
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
@@ -267,6 +272,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             GenericFile<?> file = exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE, GenericFile.class);
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
+            releaseExchange(exchange, true);
         }
     }
 
@@ -672,9 +678,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
         if (excludeExt != null) {
-            String ext = FileUtil.onlyExt(file.getFileName());
+            String fname = file.getFileName().toLowerCase();
             for (String exclude : excludeExt) {
-                if (exclude.equalsIgnoreCase(ext)) {
+                if (fname.endsWith("." + exclude)) {
                     return false;
                 }
             }
@@ -685,10 +691,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
         if (includeExt != null) {
-            String ext = FileUtil.onlyExt(file.getFileName());
+            String fname = file.getFileName().toLowerCase();
             boolean any = false;
             for (String include : includeExt) {
-                any |= include.equalsIgnoreCase(ext);
+                any |= fname.endsWith("." + include);
             }
             if (!any) {
                 return false;

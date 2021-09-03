@@ -21,6 +21,7 @@ import java.util.Deque;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ErrorHandler;
@@ -60,10 +61,10 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
         final String id = routeIdExpression().evaluate(exchange, String.class);
 
         // prevent endless looping if we end up coming back to ourself
-        Deque<String> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Deque.class);
+        Deque<String> fatals = exchange.getProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, Deque.class);
         if (fatals == null) {
             fatals = new ArrayDeque<>();
-            exchange.setProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, fatals);
+            exchange.setProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, fatals);
         }
         if (fatals.contains(id)) {
             LOG.warn("Circular error-handler detected at route: {} - breaking out processing Exchange: {}", id, exchange);
@@ -71,7 +72,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
             // the false value mean the caught exception will be kept on the exchange, causing the
             // exception to be propagated back to the caller, and to break out routing
             exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(false);
-            exchange.setProperty(Exchange.ERRORHANDLER_CIRCUIT_DETECTED, true);
+            exchange.setProperty(ExchangePropertyKey.ERRORHANDLER_CIRCUIT_DETECTED, true);
             callback.done(true);
             return true;
         }
@@ -87,7 +88,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         // an exception occurred during processing onException
 
                         // log detailed error message with as much detail as possible
-                        Throwable previous = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+                        Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
 
                         // check if previous and this exception are set as the same exception
                         // which happens when using global scoped onException and you call a direct route that causes the 2nd exception
@@ -129,7 +130,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         // we can propagated that exception to the caught property on the exchange
                         // which will shadow any previously caught exception and cause this new exception
                         // to be visible in the error handler
-                        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
+                        exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exchange.getException());
 
                         if (deadLetterChannel) {
                             // special for dead letter channel as we want to let it determine what to do, depending how
@@ -144,7 +145,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                     }
                 } finally {
                     // no longer running under this fatal fallback error handler
-                    Deque<String> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Deque.class);
+                    Deque<String> fatals = exchange.getProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, Deque.class);
                     if (fatals != null) {
                         fatals.removeLastOccurrence(id);
                     }

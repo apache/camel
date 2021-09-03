@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.zookeeper.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class ZooKeeperServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperServiceFactory.class);
-
     private ZooKeeperServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<ZooKeeperService> builder() {
+        return new SimpleTestServiceBuilder<>("zookeeper");
+    }
+
     public static ZooKeeperService createService() {
-        String instanceType = System.getProperty("zookeeper.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-zookeeper-container")) {
-            return new ZooKeeperLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new ZooKeeperRemoteService();
-        }
-
-        LOG.error("ZooKeeper instance must be one of 'local-zookeeper-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid ZooKeeper instance type");
+        return builder()
+                .addLocalMapping(ZooKeeperLocalContainerService::new)
+                .addRemoteMapping(ZooKeeperRemoteService::new)
+                .build();
     }
 }

@@ -25,7 +25,8 @@ import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 import io.netty.handler.ssl.ClientAuth;
-import io.netty.handler.ssl.SslProvider;
+import io.netty.handler.ssl.OpenSslServerContext;
+import io.netty.handler.ssl.SslContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
 import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
@@ -61,13 +62,16 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startGrpcServer() throws Exception {
+        SslContext sslContext = GrpcSslContexts
+                .forServer(new File("src/test/resources/certs/server.pem"), new File("src/test/resources/certs/server.key"))
+                .trustManager(new File("src/test/resources/certs/ca.pem"))
+                .clientAuth(ClientAuth.REQUIRE)
+                .build();
+
+        assertTrue(sslContext instanceof OpenSslServerContext);
+
         grpcServerWithTLS = NettyServerBuilder.forPort(GRPC_TLS_TEST_PORT)
-                .sslContext(GrpcSslContexts.forServer(new File("src/test/resources/certs/server.pem"),
-                        new File("src/test/resources/certs/server.key"))
-                        .trustManager(new File("src/test/resources/certs/ca.pem"))
-                        .clientAuth(ClientAuth.REQUIRE)
-                        .sslProvider(SslProvider.OPENSSL)
-                        .build())
+                .sslContext(sslContext)
                 .addService(new PingPongImpl()).build().start();
 
         grpcServerWithJWT = NettyServerBuilder.forPort(GRPC_JWT_TEST_PORT)
@@ -84,12 +88,12 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     public static void stopGrpcServer() throws IOException {
         if (grpcServerWithTLS != null) {
             grpcServerWithTLS.shutdown();
-            LOG.info("gRPC server with TLS stoped");
+            LOG.info("gRPC server with TLS stopped");
         }
 
         if (grpcServerWithJWT != null) {
             grpcServerWithJWT.shutdown();
-            LOG.info("gRPC server with JWT stoped");
+            LOG.info("gRPC server with JWT stopped");
         }
     }
 

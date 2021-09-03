@@ -53,7 +53,8 @@ public class SjmsPollingConsumer extends PollingConsumerSupport {
     @Override
     public Exchange receive(long timeout) {
         try {
-            Message message = template.receive(jmsEndpoint.getDestinationName(), jmsEndpoint.isTopic(), timeout);
+            Message message = template.receive(jmsEndpoint.getDestinationName(), jmsEndpoint.getMessageSelector(),
+                    jmsEndpoint.isTopic(), timeout);
             if (message != null) {
                 return getEndpoint().createExchange(message, null);
             }

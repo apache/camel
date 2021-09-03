@@ -23,7 +23,45 @@ without the restart of the router.
 
 == Grape options
 
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
+
 // component options: START
+== Component Options
+
+
 The Grape component supports 3 options, which are listed below.
 
 
@@ -37,8 +75,9 @@ The Grape component supports 3 options, which are listed below.
 |===
 // component options: END
 
-
 // endpoint options: START
+== Endpoint Options
+
 The Grape endpoint is configured using URI syntax:
 
 ----
@@ -68,7 +107,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Setting up class loader
 
 Grape requires using Groovy class loader with the `CamelContext`. You
@@ -89,15 +127,6 @@ yourself:
 ------------------------------------------------------------------------------------
 camelContext.setApplicationContextClassLoader(new GroovyClassLoader(myClassLoader));
 ------------------------------------------------------------------------------------
-
-== URI format
-
-Grape component supports only producer endpoints.
-
-[source,java]
------------------------------
-grape:defaultMavenCoordinates
------------------------------
 
 For example the following snippet loads Camel FTP component:
 
@@ -145,8 +174,6 @@ But of course Camel build-in xref:manual::type-converter.adoc[type conversion
 API] can perform the automatic data type transformations for you. In the
 example below Camel automatically converts binary payload into the
 String:
-
- 
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------
@@ -200,7 +227,6 @@ installed. In order to load again the installed jars on the context
 startup, use the `GrapeEndpoint.loadPatches()` method in your route: 
 
  
-
 [source,java]
 -------------------------------------------------------------------------
 import static org.apache.camel.component.grape.GrapeEndpoint.loadPatches;
@@ -218,7 +244,6 @@ camelContext.addRoutes(
   });
 -------------------------------------------------------------------------
 
- 
 
 == Managing the installed jars
 
@@ -228,15 +253,15 @@ the `CamelGrapeCommand` header set to `GrapeCommand.listPatches`:
 
 [source,java]
 ----------------------------------------------------------------------------------------
-      from("netty-http:http://0.0.0.0:80/patches").
-        setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.listPatches)).
-        to("grape:list"); 
+from("netty-http:http://0.0.0.0:80/patches").
+    setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.listPatches)).
+    to("grape:list");
 ----------------------------------------------------------------------------------------
 
 Connecting the to the route defined above using the HTTP client returns
 the list of the jars installed by Grape component:
 
-[source,java]
+[source,bash]
 ---------------------------------------
 $ curl http://my-router.com/patches
 grape:org.apache.camel/camel-ftp/2.15.2
@@ -249,7 +274,7 @@ command:
 
 [source,java]
 -----------------------------------------------------------------------------------------
-      from("netty-http:http://0.0.0.0:80/patches").
-        setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.clearPatches)).
-        setBody().constant("Installed patches have been deleted."); 
+from("netty-http:http://0.0.0.0:80/patches").
+    setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.clearPatches)).
+    setBody().constant("Installed patches have been deleted.");
 -----------------------------------------------------------------------------------------

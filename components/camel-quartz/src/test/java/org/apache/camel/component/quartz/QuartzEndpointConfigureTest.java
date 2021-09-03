@@ -36,7 +36,7 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
     @Test
     public void testConfigureGroupAndName() throws Exception {
         QuartzEndpoint endpoint
-                = resolveMandatoryEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=1000");
+                = resolveMandatoryEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=100");
 
         Scheduler scheduler = endpoint.getComponent().getScheduler();
         TriggerKey triggerKey = endpoint.getTriggerKey();

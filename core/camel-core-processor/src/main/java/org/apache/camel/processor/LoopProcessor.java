@@ -16,9 +16,12 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -46,7 +49,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     private String id;
     private String routeId;
-    private LoopState state;
     private boolean shutdownPending;
     private final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
@@ -54,6 +56,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     private final Predicate predicate;
     private final boolean copy;
     private final boolean breakOnShutdown;
+    private final LongAdder taskCount = new LongAdder();
 
     public LoopProcessor(CamelContext camelContext, Processor processor, Expression expression, Predicate predicate,
                          boolean copy, boolean breakOnShutdown) {
@@ -69,7 +72,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            state = new LoopState(exchange, callback);
+            LoopState state = new LoopState(exchange, callback);
 
             if (exchange.isTransacted()) {
                 reactiveExecutor.scheduleSync(state);
@@ -91,7 +94,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     @Override
     public int getPendingExchangesSize() {
-        return state.getPendingSize();
+        return taskCount.intValue();
     }
 
     @Override
@@ -121,7 +124,8 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 // but evaluation result is a textual representation of a numeric value.
                 String text = expression.evaluate(exchange, String.class);
                 count = ExchangeHelper.convertToMandatoryType(exchange, Integer.class, text);
-                exchange.setProperty(Exchange.LOOP_SIZE, count);
+                taskCount.add(count);
+                exchange.setProperty(ExchangePropertyKey.LOOP_SIZE, count);
             }
         }
 
@@ -141,11 +145,12 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
                     // set current index as property
                     LOG.debug("LoopProcessor: iteration #{}", index);
-                    current.setProperty(Exchange.LOOP_INDEX, index);
+                    current.setProperty(ExchangePropertyKey.LOOP_INDEX, index);
 
                     processor.process(current, doneSync -> {
                         // increment counter after done
                         index++;
+                        taskCount.decrement();
                         reactiveExecutor.schedule(this);
                     });
                 } else {

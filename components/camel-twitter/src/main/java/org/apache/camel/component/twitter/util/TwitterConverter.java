@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.twitter.util;
 
-import java.text.ParseException;
-
 import org.apache.camel.Converter;
 import twitter4j.DirectMessage;
 import twitter4j.Status;
@@ -36,26 +34,26 @@ public final class TwitterConverter {
     }
 
     @Converter
-    public static String toString(Status status) throws ParseException {
+    public static String toString(Status status) {
         return status.getCreatedAt() + " (" +
                status.getUser().getScreenName() + ") " +
                status.getText();
     }
 
     @Converter
-    public static String toString(DirectMessage dm) throws ParseException {
+    public static String toString(DirectMessage dm) {
         return dm.getCreatedAt() +
                " (" + dm.getSenderId() + ") " +
                dm.getText();
     }
 
     @Converter
-    public static String toString(Trend trend) throws ParseException {
+    public static String toString(Trend trend) {
         return trend.getName();
     }
 
     @Converter
-    public static String toString(Trends trends) throws ParseException {
+    public static String toString(Trends trends) {
         StringBuilder s = new StringBuilder();
         s.append("(")
                 .append(trends.getTrendAt().toString())
@@ -74,7 +72,7 @@ public final class TwitterConverter {
     }
 
     @Converter
-    public static String toString(UserList userList) throws ParseException {
+    public static String toString(UserList userList) {
         return userList.getCreatedAt() +
                " (" + userList.getUser().getScreenName() + ") " +
                userList.getFullName() +

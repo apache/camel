@@ -75,7 +75,7 @@ public class SigningProcessor extends DigitalSignatureProcessor {
         return pk;
     }
 
-    protected char[] getKeyPassword(Exchange exchange) throws Exception {
+    protected char[] getKeyPassword(Exchange exchange) {
         KeyStore keystore = config.getKeystore();
         char[] password = null;
         if (keystore != null) {

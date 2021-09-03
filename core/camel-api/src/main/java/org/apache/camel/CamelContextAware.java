@@ -22,11 +22,15 @@ package org.apache.camel;
 public interface CamelContextAware {
 
     /**
-     * Injects the {@link CamelContext}
-     *
-     * @param camelContext the Camel context
+     * Set the {@link CamelContext} context if the object is an instance of {@link CamelContextAware}.
      */
-    void setCamelContext(CamelContext camelContext);
+    static <T> T trySetCamelContext(T object, CamelContext camelContext) {
+        if (camelContext != null && object instanceof CamelContextAware) {
+            ((CamelContextAware) object).setCamelContext(camelContext);
+        }
+
+        return object;
+    }
 
     /**
      * Get the {@link CamelContext}
@@ -36,14 +40,9 @@ public interface CamelContextAware {
     CamelContext getCamelContext();
 
     /**
-     * Set the {@link CamelContext} context if the object is an instance of {@link CamelContextAware}.
+     * Injects the {@link CamelContext}
+     *
+     * @param camelContext the Camel context
      */
-    static <T> T trySetCamelContext(T object, CamelContext camelContext) {
-        if (object instanceof CamelContextAware) {
-            ((CamelContextAware) object).setCamelContext(camelContext);
-        }
-
-        return object;
-    }
-
+    void setCamelContext(CamelContext camelContext);
 }

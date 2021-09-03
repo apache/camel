@@ -164,29 +164,16 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
             outDir.mkdirs();
 
             File out = new File(outDir, "archetype-catalog.xml");
-            FileOutputStream fos = new FileOutputStream(out, false);
+            try (FileOutputStream fos = new FileOutputStream(out, false)) {
+                // write top
+                writeTop(fos);
 
-            // write top
-            String top = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<archetype-catalog>\n  <archetypes>";
-            fos.write(top.getBytes());
+                // write each archetype
+                writeArchetypes(models, fos);
 
-            // write each archetype
-            for (ArchetypeModel model : models) {
-                fos.write("\n    <archetype>".getBytes());
-                fos.write(("\n      <groupId>" + model.getGroupId() + "</groupId>").getBytes());
-                fos.write(("\n      <artifactId>" + model.getArtifactId() + "</artifactId>").getBytes());
-                fos.write(("\n      <version>" + model.getVersion() + "</version>").getBytes());
-                if (model.getDescription() != null) {
-                    fos.write(("\n      <description>" + model.getDescription() + "</description>").getBytes());
-                }
-                fos.write("\n    </archetype>".getBytes());
+                // write bottom
+                writeBottom(fos);
             }
-
-            // write bottom
-            String bottom = "\n  </archetypes>\n</archetype-catalog>\n";
-            fos.write(bottom.getBytes());
-
-            fos.close();
 
             log.info("Saved archetype catalog to file " + out);
 
@@ -203,6 +190,29 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
                 throw new MojoExecutionException("Failed to attach artifact to Maven project. Reason: " + e, e);
             }
         }
+    }
+
+    private static void writeBottom(FileOutputStream fos) throws IOException {
+        String bottom = "\n  </archetypes>\n</archetype-catalog>\n";
+        fos.write(bottom.getBytes());
+    }
+
+    private static void writeArchetypes(List<ArchetypeModel> models, FileOutputStream fos) throws IOException {
+        for (ArchetypeModel model : models) {
+            fos.write("\n    <archetype>".getBytes());
+            fos.write(("\n      <groupId>" + model.getGroupId() + "</groupId>").getBytes());
+            fos.write(("\n      <artifactId>" + model.getArtifactId() + "</artifactId>").getBytes());
+            fos.write(("\n      <version>" + model.getVersion() + "</version>").getBytes());
+            if (model.getDescription() != null) {
+                fos.write(("\n      <description>" + model.getDescription() + "</description>").getBytes());
+            }
+            fos.write("\n    </archetype>".getBytes());
+        }
+    }
+
+    private static void writeTop(FileOutputStream fos) throws IOException {
+        String top = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<archetype-catalog>\n  <archetypes>";
+        fos.write(top.getBytes());
     }
 
     private static class ArchetypeModel {

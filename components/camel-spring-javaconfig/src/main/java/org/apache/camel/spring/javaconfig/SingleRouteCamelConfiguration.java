@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
  * {@link RouteBuilder} classes using this annotation and have it automatic discovered, if you are using Spring's
  * annotation scanner.
  */
+@Deprecated
 public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
 
     @Override

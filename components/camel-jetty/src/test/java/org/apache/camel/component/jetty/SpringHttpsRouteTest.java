@@ -30,11 +30,14 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Isolated;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,6 +49,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "/org/apache/camel/component/jetty/jetty-https.xml" })
+@ResourceLock(BaseJettyTest.SSL_SYSPROPS)
+@Isolated
 public class SpringHttpsRouteTest {
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
     protected String expectedBody = "<hello>world!</hello>";
@@ -124,12 +129,8 @@ public class SpringHttpsRouteTest {
         assertTrue(mockEndpoint.getExchanges().isEmpty(), "mock endpoint was not called");
     }
 
-    public Integer getPort() {
-        return port;
-    }
-
     @Resource(name = "dynaPort")
-    public void setPort(Integer port) {
-        this.port = port;
+    public void setPort(AvailablePortFinder.Port port) {
+        this.port = port.getPort();
     }
 }

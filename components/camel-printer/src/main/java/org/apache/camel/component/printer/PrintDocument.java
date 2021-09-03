@@ -61,9 +61,9 @@ class PrintDocument implements Doc {
 
             if (docFlavor.getMediaType().equalsIgnoreCase("image")) {
                 reader = null;
-            } else if ((docFlavor.getMediaType().equalsIgnoreCase("text"))
-                    || ((docFlavor.getMediaType().equalsIgnoreCase("application"))
-                            && (docFlavor.getMediaSubtype().equalsIgnoreCase("xml")))) {
+            } else if (docFlavor.getMediaType().equalsIgnoreCase("text")
+                    || docFlavor.getMediaType().equalsIgnoreCase("application")
+                            && docFlavor.getMediaSubtype().equalsIgnoreCase("xml")) {
                 buffer = new byte[stream.available()];
                 int n = stream.available();
                 for (int i = 0; i < n; i++) {

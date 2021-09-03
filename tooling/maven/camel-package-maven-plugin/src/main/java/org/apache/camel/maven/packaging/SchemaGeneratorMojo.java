@@ -1115,7 +1115,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         String getterName = "get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         for (MethodSource<JavaClassSource> setter : source.getMethods()) {
-            if (setter.getParameters().size() == 0
+            if (setter.getParameters().isEmpty()
                     && setter.getName().equals(getterName)) {
                 String doc = setter.getJavaDoc().getFullText();
                 if (!Strings.isNullOrEmpty(doc)) {
@@ -1135,7 +1135,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     }
                 }
                 for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                    if (builder.getParameters().size() == 0 && builder.getName().equals(name)) {
+                    if (builder.getParameters().isEmpty() && builder.getName().equals(name)) {
                         String doc = builder.getJavaDoc().getFullText();
                         if (!Strings.isNullOrEmpty(doc)) {
                             return doc;
@@ -1152,7 +1152,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
             }
             for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                if (builder.getParameters().size() == 0 && builder.getName().equals(fieldName)) {
+                if (builder.getParameters().isEmpty() && builder.getName().equals(fieldName)) {
                     String doc = builder.getJavaDoc().getFullText();
                     if (!Strings.isNullOrEmpty(doc)) {
                         return doc;

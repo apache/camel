@@ -40,7 +40,7 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
 
     // mark this as non managed service as its registered specially as a route controller
 
-    private CamelContext camelContext;
+    private ExtendedCamelContext camelContext;
 
     private LoggingLevel loggingLevel = LoggingLevel.DEBUG;
 
@@ -49,7 +49,7 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     public DefaultRouteController(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        this.camelContext = (ExtendedCamelContext) camelContext;
     }
 
     // ***************************************************
@@ -58,7 +58,7 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        this.camelContext = (ExtendedCamelContext) camelContext;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     // ***************************************************
 
     protected RouteController getInternalRouteController() {
-        return camelContext.adapt(ExtendedCamelContext.class).getInternalRouteController();
+        return camelContext.getInternalRouteController();
     }
 
     @Override

@@ -61,11 +61,7 @@ public class MiloClientConsumer extends DefaultConsumer {
             this.handle = null;
         }
         if (this.connection != null) {
-            try {
-                this.connection.close();
-            } catch (Exception e) {
-                // ignore
-            }
+            getEndpoint().releaseConnection(connection);
         }
         super.doStop();
     }
@@ -73,10 +69,9 @@ public class MiloClientConsumer extends DefaultConsumer {
     private void handleValueUpdate(final DataValue value) {
         LOG.debug("Handle item update - {} = {}", node, value);
 
-        final Exchange exchange = getEndpoint().createExchange();
-        mapToMessage(value, exchange.getMessage());
-
+        final Exchange exchange = createExchange(true);
         try {
+            mapToMessage(value, exchange.getMessage());
             getProcessor().process(exchange);
         } catch (final Exception e) {
             getExceptionHandler().handleException("Error processing exchange", e);

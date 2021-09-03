@@ -28,6 +28,9 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport implement
 
     private final ErrorHandlerRefConfiguration configuration = new ErrorHandlerRefConfiguration();
 
+    public ErrorHandlerBuilderRef() {
+    }
+
     public ErrorHandlerBuilderRef(String ref) {
         this.configuration.setRef(ref);
     }

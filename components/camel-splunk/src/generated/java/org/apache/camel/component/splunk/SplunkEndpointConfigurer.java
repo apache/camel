@@ -82,6 +82,8 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "streaming": target.getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
+        case "tcpreceiverlocalport":
+        case "tcpReceiverLocalPort": target.getConfiguration().setTcpReceiverLocalPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "tcpreceiverport":
         case "tcpReceiverPort": target.getConfiguration().setTcpReceiverPort(property(camelContext, int.class, value)); return true;
         case "timeunit":
@@ -159,6 +161,8 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "streaming": return boolean.class;
+        case "tcpreceiverlocalport":
+        case "tcpReceiverLocalPort": return java.lang.Integer.class;
         case "tcpreceiverport":
         case "tcpReceiverPort": return int.class;
         case "timeunit":
@@ -237,6 +241,8 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "streaming": return target.getConfiguration().isStreaming();
+        case "tcpreceiverlocalport":
+        case "tcpReceiverLocalPort": return target.getConfiguration().getTcpReceiverLocalPort();
         case "tcpreceiverport":
         case "tcpReceiverPort": return target.getConfiguration().getTcpReceiverPort();
         case "timeunit":

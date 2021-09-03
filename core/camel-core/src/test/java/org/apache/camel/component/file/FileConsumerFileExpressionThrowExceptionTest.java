@@ -26,11 +26,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for expression option for file consumer.
@@ -43,13 +44,6 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/filelanguage");
-        super.setUp();
-    }
-
-    @Override
     protected Registry createRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("counter", new MyGuidGenerator());
@@ -59,14 +53,14 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
 
     @Test
     public void testConsumeExpressionThrowException() throws Exception {
-        template.sendBodyAndHeader("file://target/data/filelanguage/bean", "Bye World", Exchange.FILE_NAME, "123.txt");
+        template.sendBodyAndHeader(fileUri("bean"), "Bye World", Exchange.FILE_NAME, "123.txt");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filelanguage/bean/"
-                     + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=next}.txt&delete=true")
-                             .to("mock:result");
+                from(fileUri("bean"
+                             + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=next}.txt&delete=true"))
+                                     .to("mock:result");
                 // specify a method name that does not exists
             }
         });

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
@@ -34,8 +35,10 @@ public class ASN1DataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String usingIterator;
-    @XmlAttribute
-    private String clazzName;
+    @XmlAttribute(name = "unmarshalType")
+    private String unmarshalTypeName;
+    @XmlTransient
+    private Class<?> unmarshalType;
 
     public ASN1DataFormat() {
         super("asn1");
@@ -46,10 +49,15 @@ public class ASN1DataFormat extends DataFormatDefinition {
         setUsingIterator(usingIterator != null ? usingIterator.toString() : null);
     }
 
-    public ASN1DataFormat(String clazzName) {
+    public ASN1DataFormat(String unmarshalTypeName) {
         this();
         setUsingIterator(Boolean.toString(true));
-        setClazzName(clazzName);
+        setUnmarshalTypeName(unmarshalTypeName);
+    }
+
+    public ASN1DataFormat(Class<?> unmarshalType) {
+        setUsingIterator(Boolean.toString(true));
+        this.unmarshalType = unmarshalType;
     }
 
     public String getUsingIterator() {
@@ -64,15 +72,25 @@ public class ASN1DataFormat extends DataFormatDefinition {
         this.usingIterator = usingIterator;
     }
 
-    public String getClazzName() {
-        return clazzName;
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
     }
 
     /**
-     * Name of class to use when unmarshalling
+     * Class to use when unmarshalling.
      */
-    public void setClazzName(String clazzName) {
-        this.clazzName = clazzName;
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
     }
 
+    public Class<?> getUnmarshalType() {
+        return unmarshalType;
+    }
+
+    /**
+     * Class to use when unmarshalling.
+     */
+    public void setUnmarshalType(Class<?> unmarshalType) {
+        this.unmarshalType = unmarshalType;
+    }
 }

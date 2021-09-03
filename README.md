@@ -1,13 +1,13 @@
 # Apache Camel
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.camel/apache-camel/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/org.apache.camel/apache-camel)
-[![Javadocs](http://www.javadoc.io/badge/org.apache.camel/apache-camel.svg?color=brightgreen)](http://www.javadoc.io/doc/org.apache.camel/camel-api)
+[![Javadocs](https://www.javadoc.io/badge/org.apache.camel/apache-camel.svg?color=brightgreen)](https://www.javadoc.io/doc/org.apache.camel/camel-api)
 [![Stack Overflow](https://img.shields.io/:stack%20overflow-apache--camel-brightgreen.svg)](http://stackoverflow.com/questions/tagged/apache-camel)
 [![Chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://camel.zulipchat.com/)
-[![Master Build](https://github.com/apache/camel/workflows/build/badge.svg)](https://github.com/apache/camel/actions?query=workflow%3A%22build%22)
 [![Twitter](https://img.shields.io/twitter/follow/ApacheCamel.svg?label=Follow&style=social)](https://twitter.com/ApacheCamel)
 
-[Apache Camel](http://camel.apache.org/) is a powerful, open-source integration framework based on prevalent 
+
+[Apache Camel](https://camel.apache.org/) is a powerful, open-source integration framework based on prevalent 
 Enterprise Integration Patterns with powerful bean integration.
 
 ### Introduction
@@ -47,7 +47,7 @@ The up to date list is available online at the Camel website:
 Apache Camel comes with many examples.
 The up to date list is available online at GitHub:
 
-* Examples: <https://github.com/apache/camel-examples/tree/master/examples#welcome-to-the-apache-camel-examples>
+* Examples: <https://github.com/apache/camel-examples/tree/main/examples#welcome-to-the-apache-camel-examples>
 
 ## Getting Started
 
@@ -55,33 +55,33 @@ To help you get started, try the following links:
 
 **Getting Started**
 
-<http://camel.apache.org/getting-started.html>
+<https://camel.apache.org/getting-started.html>
 
 The beginner examples are another powerful alternative pathway for getting started with Apache Camel.
 
-* Examples: <https://github.com/apache/camel-examples/tree/master/examples#welcome-to-the-apache-camel-examples>
+* Examples: <https://github.com/apache/camel-examples/tree/main/examples#welcome-to-the-apache-camel-examples>
 
 **Building**
 
-<http://camel.apache.org/building.html>
+<https://camel.apache.org/building.html>
 
 **Contributions**
 
 We welcome all kinds of contributions, the details of which are specified here:
 
-<https://github.com/apache/camel/blob/master/CONTRIBUTING.md>
+<https://github.com/apache/camel/blob/main/CONTRIBUTING.md>
 
 
 Please refer to the website for details of finding the issue tracker, 
 email lists, GitHub, chat
 
-Website: <http://camel.apache.org/>
+Website: <https://camel.apache.org/>
 
 Github (source): <https://github.com/apache/camel>
 
 Issue tracker: <https://issues.apache.org/jira/projects/CAMEL>
 
-Mailing-list: <http://camel.apache.org/mailing-lists.html>
+Mailing-list: <https://camel.apache.org/community/mailing-list/>
 
 Chat: <https://camel.zulipchat.com/>
 
@@ -94,7 +94,7 @@ Twitter: <https://twitter.com/ApacheCamel>
 
 For additional help, support, we recommend referencing this page first:
 
-<http://camel.apache.org/support.html>
+<https://camel.apache.org/community/support/>
 
 **Getting Help**
 

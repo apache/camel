@@ -31,7 +31,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFilePollingConsumer.class);
     private final long delay;
 
-    public GenericFilePollingConsumer(GenericFileEndpoint endpoint) throws Exception {
+    public GenericFilePollingConsumer(GenericFileEndpoint endpoint) {
         super(endpoint);
         this.delay = endpoint.getDelay() > 0 ? endpoint.getDelay() : endpoint.getDefaultDelay();
     }
@@ -146,6 +146,8 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                         if (polledMessages == 0 && sendEmptyMessageWhenIdle) {
                             // send an "empty" exchange
                             processEmptyMessage();
+                            // set polledMessages=1 since the empty message is queued
+                            polledMessages = 1;
                         } else if (polledMessages == 0 && timeout > 0) {
                             // if we did not poll a file and we are using
                             // timeout then try to poll again

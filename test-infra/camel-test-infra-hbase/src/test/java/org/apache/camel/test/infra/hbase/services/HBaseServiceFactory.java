@@ -16,24 +16,21 @@
  */
 package org.apache.camel.test.infra.hbase.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class HBaseServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(HBaseServiceFactory.class);
-
     private HBaseServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<HBaseService> builder() {
+        return new SimpleTestServiceBuilder<>("hbase");
+    }
+
     public static HBaseService createService() {
-        String instanceType = System.getProperty("hbase.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-hbase-container")) {
-            return new HBaseLocalContainerService();
-        }
-
-        LOG.error("HBase instance must be one of 'local-hbase-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid HBase instance type");
+        return builder()
+                .addLocalMapping(HBaseLocalContainerService::new)
+                .addRemoteMapping(HBaseLocalContainerService::new)
+                .build();
     }
 }

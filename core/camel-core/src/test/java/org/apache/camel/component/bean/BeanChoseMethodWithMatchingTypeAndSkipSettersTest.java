@@ -22,19 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTestSupport {
 
     private OrderServiceBean service = new OrderServiceBean();
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file/order");
-        super.setUp();
-    }
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -54,7 +46,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         MockEndpoint mock = getMockEndpoint("mock:queue:order");
         mock.expectedBodiesReceived("66554,123,456");
 
-        template.sendBodyAndHeader("file://target/data/file/order", "123,456", Exchange.FILE_NAME, "66554.csv");
+        template.sendBodyAndHeader(fileUri(), "123,456", Exchange.FILE_NAME, "66554.csv");
 
         assertMockEndpointsSatisfied();
     }
@@ -78,7 +70,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
             public void configure() throws Exception {
                 service.setConverter(context.getTypeConverter());
 
-                from("file://target/data/file/order?initialDelay=0&delay=10").bean("orderService").to("mock:queue:order");
+                from(fileUri("?initialDelay=0&delay=10")).bean("orderService").to("mock:queue:order");
 
                 from("seda:xml").bean("orderService").to("mock:queue:order");
             }

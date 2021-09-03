@@ -16,11 +16,10 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class LanguageHeaderRouteTest extends ContextTestSupport {
+public class LanguageHeaderRouteTest extends BaseEndpointDslTest {
 
     @Test
     public void testLanguage() throws Exception {

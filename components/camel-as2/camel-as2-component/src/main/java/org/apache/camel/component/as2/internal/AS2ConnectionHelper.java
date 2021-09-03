@@ -24,11 +24,15 @@ import java.util.Map;
 import org.apache.camel.component.as2.AS2Configuration;
 import org.apache.camel.component.as2.api.AS2ClientConnection;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for creating AS2 connections.
  */
 public final class AS2ConnectionHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AS2ConnectionHelper.class);
 
     private static Map<Integer, AS2ServerConnection> serverConnections = new HashMap<>();
 
@@ -46,8 +50,7 @@ public final class AS2ConnectionHelper {
      * @throws UnknownHostException Failed to establish connection due to unknown host.
      * @throws IOException          - Failed to establish connection.
      */
-    public static AS2ClientConnection createAS2ClientConnection(AS2Configuration configuration)
-            throws UnknownHostException, IOException {
+    public static AS2ClientConnection createAS2ClientConnection(AS2Configuration configuration) throws IOException {
         return new AS2ClientConnection(
                 configuration.getAs2Version(), configuration.getUserAgent(), configuration.getClientFqdn(),
                 configuration.getTargetHostname(), configuration.getTargetPortNumber());
@@ -68,10 +71,29 @@ public final class AS2ConnectionHelper {
                         configuration.getAs2Version(), configuration.getServer(),
                         configuration.getServerFqdn(), configuration.getServerPortNumber(), configuration.getSigningAlgorithm(),
                         configuration.getSigningCertificateChain(), configuration.getSigningPrivateKey(),
-                        configuration.getDecryptingPrivateKey());
+                        configuration.getDecryptingPrivateKey(), configuration.getMdnMessageTemplate());
                 serverConnections.put(configuration.getServerPortNumber(), serverConnection);
             }
             return serverConnection;
         }
+    }
+
+    public static void closeAllServerConnections() {
+        synchronized (serverConnections) {
+            for (Map.Entry<Integer, AS2ServerConnection> entry : serverConnections.entrySet()) {
+                try {
+                    int port = entry.getKey();
+                    LOG.debug("Stopping and closing AS2ServerConnection on port: {}", port);
+                    AS2ServerConnection conn = entry.getValue();
+                    conn.close();
+                } catch (Exception e) {
+                    // ignore
+                    LOG.debug("Error stopping and closing AS2ServerConnection due to " + e.getMessage()
+                              + ". This exception is ignored",
+                            e);
+                }
+            }
+        }
+        serverConnections.clear();
     }
 }

@@ -53,7 +53,6 @@ xref:{eip-vc}:eips:transactional-client.adoc[Transactional Client].
 
 The SQL component uses the following endpoint URI notation:
 
-[source,text]
 ----
 sql:select * from table where id=# order by name[?options]
 ----
@@ -61,7 +60,6 @@ sql:select * from table where id=# order by name[?options]
 You can use named parameters by using
 :`#name_of_the_parameter` style as shown:
 
-[source,text]
 ----
 sql:select * from table where id=:#myId order by name[?options]
 ----
@@ -77,7 +75,6 @@ If a named parameter cannot be resolved, then an exception is thrown.
 You can use Simple expressions as parameters as
 shown:
 
-[source,text]
 ----
 sql:select * from table where id=:#${exchangeProperty.myId} order by name[?options]
 ----
@@ -90,7 +87,6 @@ be configured on endpoint basis.
 You can externalize your SQL queries to files
 in the classpath or file system as shown:
 
-[source,text]
 ----
 sql:classpath:sql/myquery.sql[?options]
 ----
@@ -111,14 +107,47 @@ order by
 In the file you can use multilines and format the SQL as you wish. And
 also use comments such as the – dash line.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
-== Options
 
 
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The SQL component supports 5 options, which are listed below.
 
 
@@ -126,7 +155,7 @@ The SQL component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *dataSource* (common) | Sets the DataSource to use to communicate with the database. |  | DataSource
+| *dataSource* (common) | *Autowired* Sets the DataSource to use to communicate with the database. |  | DataSource
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
@@ -134,10 +163,9 @@ The SQL component supports 5 options, which are listed below.
 |===
 // component options: END
 
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SQL endpoint is configured using URI syntax:
 
 ----
@@ -156,15 +184,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (46 parameters):
+=== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *allowNamedParameters* (common) | Whether to allow using named parameters in the queries. | true | boolean
-| *dataSource* (common) | Sets the DataSource to use to communicate with the databaset at endpoint level. |  | DataSource
-| *dataSourceRef* (common) | *Deprecated* Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database. |  | String
+| *dataSource* (common) | *Autowired* Sets the DataSource to use to communicate with the database at endpoint level. |  | DataSource
 | *outputClass* (common) | Specify the full package and class name to use as conversion when outputType=SelectOne. |  | String
 | *outputHeader* (common) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. |  | String
 | *outputType* (common) | Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way: a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long object. b) If the query has more than one column, then it will return a Map of that result. c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names. It will assume your class has a default constructor to create instance with. d) If the query resulted in more than one rows, it throws an non-unique result exception. StreamList streams the result of the query using an Iterator. This can be used with the Splitter EIP in streaming mode to process the ResultSet in streaming fashion. There are 3 enums and the value can be one of: SelectOne, SelectList, StreamList | SelectList | SqlOutputType
@@ -212,7 +239,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Treatment of the message body
 
 The SQL component tries to convert the message body to an object of
@@ -236,8 +262,8 @@ You can use the option `useMessageBodyForSql` that
 allows to use the message body as the SQL statement, and then the SQL
 parameters must be provided in a header with the
 key `SqlConstants.SQL_PARAMETERS`. This allows the SQL component to work
-more dynamically as the SQL query is from the message body. Use
-xref:manual::templating.adoc[Camel templating]
+more dynamically as the SQL query is from the message body. Use templating
+(such as xref:components::velocity-component.adoc[Velocity], xref:components::freemarker-component.adoc[Freemarker])
 for conditional processing, e.g. to include or exclude `where` clauses
 depending on the presence of query parameters.
 
@@ -333,16 +359,21 @@ generated keys in headers. +
 the generated keys will be provided as headers with the keys listed in
 the table above.
 
+To specify which generated columns should be retrieved, set the header `CamelSqlGeneratedColumns`
+to a `String[]` or `int[]`, indicating the column names or indexes, respectively. Some databases
+requires this, such as Oracle. It may also be necessary to use the `parametersCount` option if the
+driver cannot correctly determine the number of parameters.
+
 You can see more details in this
 https://gitbox.apache.org/repos/asf?p=camel.git;a=blob;f=components/camel-sql/src/test/java/org/apache/camel/component/sql/SqlGeneratedKeysTest.java;h=54c19b7332bb0aa81ee24ff3d3a66885a6b9e9aa;hb=HEAD[unit test].
 
 == DataSource
 
-You can now set a reference to a `DataSource` in the URI directly:
+You can set a reference to a `DataSource` in the URI directly:
 
 [source,text]
 ----
-sql:select * from table where id=# order by name?dataSource=myDS
+sql:select * from table where id=# order by name?dataSource=#myDS
 ----
 
 == Using named parameters
@@ -392,8 +423,6 @@ from("direct:projects")
 
 === Using expression parameters in consumers
 
-*Since Camel 2.23*
-
 When using the SQL component as consumer, you can now also use expression parameters (simple language)
 to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.
 
@@ -423,8 +452,6 @@ the simple expression you can use in the consumer are most useable for calling
 bean methods as in this example.
 
 == Using IN queries with dynamic values
-
-*Since Camel 2.17*
 
 The SQL producer allows to use SQL queries with
 IN statements where the IN values is dynamic computed. For example from
@@ -489,8 +516,6 @@ from("direct:query")
 
 
 == Using the JDBC based idempotent repository
-
-*Since Camel 2.7*
 
 In this section we will use the JDBC based
 idempotent repository.
@@ -571,10 +596,39 @@ the second one is the message id (`String`).
 The option `tableName` can be used to use the default SQL queries but with a different table name.
 However if you want to customize the SQL queries then you can configure each of them individually.
 
+=== Orphan Lock aware Jdbc IdempotentRepository 
+
+One of the limitations of `org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository` is that it does not handle orphan locks resulting from JVM crash or non graceful shutdown. This can result in unprocessed files/messages if this is implementation is used with camel-file, camel-ftp etc. if you need to address orphan locks processing then use
+`org.apache.camel.processor.idempotent.jdbc.JdbcOrphanLockAwareIdempotentRepository`.  This repository keeps track of the locks held by an instance of the application. For each lock held, the application will send keep alive signals to the lock repository resulting in updating the createdAt column with the current Timestamp. When an application instance tries to acquire a lock if the, then there are three possibilities exist : 
+
+* lock entry does not exist then the lock is provided using the base implementation of `JdbcMessageIdRepository`. 
+
+* lock already exists and the createdAt < System.currentTimeMillis() - lockMaxAgeMillis. In this case it is assumed that an active instance has the lock and the lock is not provided to the new instance requesting the lock
+
+* lock already exists and the createdAt > = System.currentTimeMillis() - lockMaxAgeMillis. In this case it is assumed that there is no active instance which has the lock and the lock is provided to the requesting instance. The reason behind is that if the original instance which had the lock, if it was still running, it would have updated the Timestamp on createdAt using its keepAlive mechanism
+
+This repository has two additional configuration parameters 
+
+[cols="1,1"]
+|===
+|Parameter | Description
+|lockMaxAgeMillis | This refers to the duration after which the lock is considered orphaned i.e. if the currentTimestamp - createdAt >= lockMaxAgeMillis then lock is orphaned.
+|lockKeepAliveIntervalMillis | The frequency at which keep alive updates are done to createdAt Timestamp column.
+|===
+
+=== Caching Jdbc IdempotentRepository 
+
+Some SQL implementations are not fast on a per query basis.  The 
+`JdbcMessageIdRepository` implementation does its idempotent checks
+individually within SQL transactions.  Checking a mere 100 keys can 
+take minutes.  The `JdbcCachedMessageIdRepository` preloads an in-memory 
+cache on start with the entire list of keys.  This cache is then 
+checked first before passing through to the original implementation.
+
+As with all cache implementations, there are considerations that should
+be made with regard to stale data and your specific usage.
 
 == Using the JDBC based aggregation repository
-
-*Since Camel 2.6*
 
 `JdbcAggregationRepository` is an `AggregationRepository` which on the
 fly persists the aggregated messages. This ensures that you will not
@@ -634,8 +688,6 @@ CREATE TABLE aggregation_completed (
 
 
 == Storing body and headers as text
-
-*Since Camel 2.11*
 
 You can configure the `JdbcAggregationRepository` to store message body
 and select(ed) headers as String in separate columns. For example to
@@ -869,4 +921,4 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 You should also include the specific database driver, if needed.
 
 
-include::camel-spring-boot::page$sql-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$sql-starter.adoc[]

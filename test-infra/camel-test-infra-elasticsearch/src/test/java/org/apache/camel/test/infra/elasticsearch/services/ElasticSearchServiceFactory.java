@@ -17,28 +17,21 @@
 
 package org.apache.camel.test.infra.elasticsearch.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class ElasticSearchServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchServiceFactory.class);
-
     private ElasticSearchServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<ElasticSearchService> builder() {
+        return new SimpleTestServiceBuilder<>("elasticsearch");
+    }
+
     public static ElasticSearchService createService() {
-        String instanceType = System.getProperty("elasticsearch.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-elasticsearch-container")) {
-            return new ElasticSearchLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new RemoteElasticSearchService();
-        }
-
-        LOG.error("ElasticSearch instance must be one of 'local-elasticsearch-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid ElasticSearch instance type");
+        return builder()
+                .addLocalMapping(ElasticSearchLocalContainerService::new)
+                .addRemoteMapping(RemoteElasticSearchService::new)
+                .build();
     }
 }

@@ -24,9 +24,6 @@ import org.apache.camel.Message;
 
 public class ASN1Splitter implements Expression {
 
-    public ASN1Splitter() {
-    }
-
     public Object evaluate(Exchange exchange) {
         Message inputMessage = exchange.getIn();
         InputStream inputStream = inputMessage.getBody(InputStream.class);

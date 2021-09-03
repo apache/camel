@@ -137,7 +137,7 @@ public class GenerateMojo extends AbstractExecMojo {
         doExecuteRoutes(generator);
     }
 
-    protected void doExecuteRoutes(CSimpleCodeGenerator generator) throws MojoExecutionException, MojoFailureException {
+    protected void doExecuteRoutes(CSimpleCodeGenerator generator) {
         List<CamelCSimpleExpressionDetails> csimpleExpressions = new ArrayList<>();
         Set<File> javaFiles = new LinkedHashSet<>();
         Set<File> xmlFiles = new LinkedHashSet<>();

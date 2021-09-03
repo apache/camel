@@ -104,9 +104,7 @@ public final class SObjectBatchResult implements Serializable {
     private final int statusCode;
 
     @JsonCreator
-    public SObjectBatchResult(@JsonProperty("statusCode")
-    final int statusCode, @JsonProperty("result")
-    final Object result) {
+    public SObjectBatchResult(@JsonProperty("statusCode") final int statusCode, @JsonProperty("result") final Object result) {
         this.statusCode = statusCode;
         this.result = result;
     }

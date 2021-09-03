@@ -140,10 +140,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                             ExchangeProperty ep = (ExchangeProperty) ann;
                             String name = ep.value();
                             exchange.setProperty(name, value);
-                        } else if (ann.annotationType().isAssignableFrom(Body.class)) {
-                            exchange.getIn().setBody(value);
                         } else {
-                            // assume its message body when there is no annotations
                             exchange.getIn().setBody(value);
                         }
                     }
@@ -218,7 +215,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
 
     protected Object afterInvoke(Method method, Exchange exchange, ExchangePattern pattern, boolean isFuture) throws Exception {
         // check if we had an exception
-        Throwable cause = exchange.getException();
+        Exception cause = exchange.getException();
         if (cause != null) {
             Throwable found = findSuitableException(cause, method);
             if (found != null) {
@@ -234,17 +231,12 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                 // if the inner cause is a runtime exception we can throw it
                 // directly
                 if (cause.getCause() instanceof RuntimeException) {
-                    throw (RuntimeException) ((RuntimeCamelException) cause).getCause();
+                    throw (RuntimeException) cause.getCause();
                 }
-                throw (RuntimeCamelException) cause;
+                throw cause;
             }
             // okay just throw the exception as is
-            if (cause instanceof Exception) {
-                throw (Exception) cause;
-            } else {
-                // wrap as exception
-                throw new CamelExchangeException("Error processing exchange", exchange, cause);
-            }
+            throw cause;
         }
 
         Class<?> to = isFuture ? getGenericType(exchange.getContext(), method.getGenericReturnType()) : method.getReturnType();

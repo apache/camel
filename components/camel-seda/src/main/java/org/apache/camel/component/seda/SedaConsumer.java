@@ -181,19 +181,14 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                 }
                 if (exchange != null) {
                     try {
-                        // send a new copied exchange with new camel context
+                        // prepare the exchange before sending to consumer
                         Exchange newExchange = prepareExchange(exchange);
                         // process the exchange
                         sendToConsumers(newExchange);
-                        // copy the message back
-                        if (newExchange.hasOut()) {
-                            exchange.setOut(newExchange.getOut().copy());
-                        } else {
-                            exchange.setIn(newExchange.getIn());
-                        }
+                        // copy result back
+                        ExchangeHelper.copyResults(exchange, newExchange);
                         // log exception if an exception occurred and was not handled
-                        if (newExchange.getException() != null) {
-                            exchange.setException(newExchange.getException());
+                        if (exchange.getException() != null) {
                             getExceptionHandler().handleException("Error processing exchange", exchange,
                                     exchange.getException());
                         }
@@ -225,11 +220,11 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
      * @return          the exchange to process by this consumer.
      */
     protected Exchange prepareExchange(Exchange exchange) {
-        // send a new copied exchange with new camel context
-        Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, getEndpoint().getCamelContext());
-        // set the from endpoint
-        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(getEndpoint());
-        return newExchange;
+        // this consumer grabbed the exchange so mark its from this route/endpoint
+        ExtendedExchange ee = exchange.adapt(ExtendedExchange.class);
+        ee.setFromEndpoint(getEndpoint());
+        ee.setFromRouteId(getRouteId());
+        return exchange;
     }
 
     /**

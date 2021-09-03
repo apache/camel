@@ -31,7 +31,7 @@ public final class CommonCreationStrategyImpl {
     private CommonCreationStrategyImpl() {
     }
 
-    public static ConsumerBuilder<byte[]> create(
+    protected static ConsumerBuilder<byte[]> getBuilder(
             final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
         final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
@@ -51,8 +51,11 @@ public final class CommonCreationStrategyImpl {
                         endpointConfiguration.getSubscriptionInitialPosition().toPulsarSubscriptionInitialPosition())
                 .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
                 .negativeAckRedeliveryDelay(endpointConfiguration.getNegativeAckRedeliveryDelayMicros(), TimeUnit.MICROSECONDS)
-                .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer))
                 .readCompacted(endpointConfiguration.isReadCompacted());
+
+        if (endpointConfiguration.isMessageListener()) {
+            builder.messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer));
+        }
 
         if (endpointConfiguration.getMaxRedeliverCount() != null) {
             DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()

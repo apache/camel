@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class EndpointUriEncodingTest extends CamelTestSupport {
 
     @Test
-    public void test() throws InterruptedException {
+    public void test() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header("foo").isEqualTo("hello} world");
@@ -85,8 +85,9 @@ public class EndpointUriEncodingTest extends CamelTestSupport {
                 public Consumer createConsumer(Processor processor) {
                     return new DefaultConsumer(this, processor) {
                         @Override
-                        public void start() {
-                            Exchange exchange = createExchange();
+                        protected void doStart() throws Exception {
+                            super.doStart();
+                            Exchange exchange = createExchange(true);
                             exchange.getMessage().setHeader("foo", foo);
                             exchange.getMessage().setHeader("bar", bar);
                             try {

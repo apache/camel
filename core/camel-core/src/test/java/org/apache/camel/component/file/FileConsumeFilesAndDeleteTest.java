@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,35 +31,28 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/files");
-        super.setUp();
-    }
-
     @Test
     public void testConsumeAndDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/data/files", "Bye World", Exchange.FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("file://target/data/files/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri() + "/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
 
         // file should not exists
-        assertFalse(new File("target/data/files/report.txt").exists(), "File should been deleted");
+        assertFalse(Files.exists(testFile("report.txt")), "File should been deleted");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/files/?initialDelay=0&delay=10&fileName=report.txt&delete=true")
+                from(fileUri("?initialDelay=0&delay=10&fileName=report.txt&delete=true"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

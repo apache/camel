@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -100,6 +101,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     private Class<?> outputDefinitionClass;
     private Class<?> expressionDefinitionClass;
     private Class<?> routesDefinitionClass;
+    private Class<?> routeConfigurationsDefinitionClass;
     private Class<?> routeTemplatesDefinitionClass;
     private Class<?> restsDefinitionClass;
     private Class<?> processorDefinitionClass;
@@ -133,6 +135,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
         outputDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".OutputDefinition");
         routesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RoutesDefinition");
+        routeConfigurationsDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RouteConfigurationsDefinition");
         routeTemplatesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RouteTemplatesDefinition");
         dataFormatDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".DataFormatDefinition");
         processorDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".ProcessorDefinition");
@@ -214,6 +217,8 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         parser.addImport(IOException.class);
         parser.addImport(XML_PULL_PARSER_EXCEPTION);
         parser.addImport(Array.class);
+        parser.addImport(List.class);
+        parser.addImport(ArrayList.class);
         parser.addAnnotation(SuppressWarnings.class).setLiteralValue("\"unused\"");
         parser.addAnnotation(Generated.class).setLiteralValue("\"" + getClass().getName() + "\"");
         parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(InputStream.class, "input").addThrows(IOException.class)
@@ -267,7 +272,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                         an = member instanceof Method ? propname(mn) : mn;
                     }
                     String sn = member instanceof Method ? mn : "set" + uppercase(mn);
-                    cases.put(an, "def." + sn + "(" + conversion(parser, type, "val") + ");");
+                    cases.put(an, "def." + sn + "(" + conversion(parser, type, "val", clazz.getName()) + ");");
                 }
                 String defaultCase = baseAttributeHandler != null ? baseAttributeHandler + ".accept(def, key, val)" : "false";
                 if (attributeMembers.size() == 1) {
@@ -473,11 +478,46 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 }
                 return " noValueHandler()";
             });
-            if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass || clazz == restsDefinitionClass) {
+            if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass || clazz == restsDefinitionClass || clazz == routeConfigurationsDefinitionClass) {
+
+                // for routes/rests/routeTemplates we want to support single-mode as well, this means
+                // we check that the tag name is either plural or singular and parse accordingly
+
                 String element = clazz.getAnnotation(XmlRootElement.class).name();
-                parser.addMethod().setPublic().setReturnType(clazz).setName("parse" + name).addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION)
-                    .setBody("expectTag(\"" + element + "\");\nreturn doParse" + name + "();");
+                String capitalElement = Character.toUpperCase(element.charAt(0)) + element.substring(1);
+                String singleElement = element.endsWith("s") ? element.substring(0, element.length() - 1) : element;
+                String singleName = name.replace("sDefinition", "Definition");
+
+                parser.addMethod().setPublic()
+                    .setReturnType(new GenericType(Optional.class, new GenericType(clazz)))
+                    .setName("parse" + name)
+                    .addThrows(IOException.class)
+                    .addThrows(XML_PULL_PARSER_EXCEPTION)
+                    .setBody(String.format("String tag = getNextTag(\"%s\", \"%s\");", element, singleElement),
+                            "if (tag != null) {",
+                            "    switch (tag) {",
+                            String.format("        case \"%s\" : return Optional.of(doParse%s());", element, name),
+                            String.format("        case \"%s\" : return parseSingle%s();", singleElement, name),
+                            "    }",
+                            "}",
+                            "return Optional.empty();");
+
+                parser.addMethod().setPrivate()
+                        .setReturnType(new GenericType(Optional.class, new GenericType(clazz)))
+                        .setName("parseSingle" + name)
+                        .addThrows(IOException.class)
+                        .addThrows(XML_PULL_PARSER_EXCEPTION)
+                        .setBody(String.format("Optional<%s> single = Optional.of(doParse%s());", singleName, singleName),
+                                "if (single.isPresent()) {",
+                                String.format("    List<%s> list = new ArrayList<>();", singleName),
+                                "    list.add(single.get());",
+                                String.format("    %s def = new %s();", name, name),
+                                String.format("    def.set%s(list);", capitalElement),
+                                "    return Optional.of(def);",
+                                "}",
+                                "return Optional.empty();");
             }
+
             if (hasDerived) {
                 if (!attributeMembers.isEmpty()) {
                     parser.addMethod().setSignature("protected <T extends " + qname + "> AttributeHandler<T> " + lowercase(name) + "AttributeHandler()")
@@ -514,7 +554,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     }
     // CHECKSTYLE:ON
 
-    private String conversion(JavaClass parser, GenericType type, String val) {
+    private String conversion(JavaClass parser, GenericType type, String val, String clazzName) {
         Class<?> rawClass = type.getRawClass();
         if (rawClass == String.class) {
             return val;
@@ -533,7 +573,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         } else if (rawClass == byte[].class) {
             return "asByteArray(" + val + ")";
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Unsupported type " + rawClass.getSimpleName() + " in class " + clazzName);
         }
     }
 

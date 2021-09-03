@@ -178,7 +178,7 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
             LOG.debug("SipPresenceAgentListener response: {}", response);
             sendNotification(eventHeader, isInitial, request.getContent());
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.error("Exception thrown during Notify processing in the SipPresenceAgentListener.", e);
         }
     }

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-corda</artifactId>
@@ -41,12 +41,6 @@
             <groupId>net.corda</groupId>
             <artifactId>corda-rpc</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
 
         <!-- for testing -->
         <dependency>
@@ -60,31 +54,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>corda-integration</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <failIfNoTests>false</failIfNoTests>
-                            <runOrder>alphabetical</runOrder>
-                            <includes>
-                                <include>**/*IntegrationTest.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*XXXTest.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

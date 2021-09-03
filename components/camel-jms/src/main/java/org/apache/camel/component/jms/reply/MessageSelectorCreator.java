@@ -51,7 +51,7 @@ public class MessageSelectorCreator {
 
         expression = new StringBuilder("JMSCorrelationID='");
 
-        if (correlationIds.size() == 0) {
+        if (correlationIds.isEmpty()) {
             // no id's so use a dummy to select nothing
             expression.append("CamelDummyJmsMessageSelector'");
         } else {

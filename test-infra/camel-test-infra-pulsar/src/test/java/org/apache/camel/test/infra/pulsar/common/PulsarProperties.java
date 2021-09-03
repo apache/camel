@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.pulsar.common;
 public final class PulsarProperties {
     public static final String PULSAR_BROKER_URL = "pulsar.broker.url";
     public static final String PULSAR_ADMIN_URL = "pulsar.admin.url";
+    public static final String PULSAR_CONTAINER = "pulsar.container";
 
     private PulsarProperties() {
 

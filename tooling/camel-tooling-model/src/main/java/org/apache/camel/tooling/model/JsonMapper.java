@@ -385,6 +385,9 @@ public final class JsonMapper {
         if (model.isNativeSupported()) {
             obj.put("nativeSupported", model.isNativeSupported());
         }
+        if (!model.getMetadata().isEmpty()) {
+            obj.put("metadata", model.getMetadata());
+        }
     }
 
     private static void artifactToJson(ArtifactModel<?> model, JsonObject obj) {
@@ -405,6 +408,7 @@ public final class JsonMapper {
         model.setJavaType(mobj.getString("javaType"));
         model.setSupportLevel(SupportLevel.safeValueOf(mobj.getString("supportLevel")));
         model.setNativeSupported(mobj.getBooleanOrDefault("nativeSupported", false));
+        model.setMetadata(mobj.getMapOrDefault("metadata", new JsonObject()));
     }
 
     private static void parseOption(JsonObject mp, BaseOptionModel option, String name) {

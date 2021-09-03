@@ -16,42 +16,32 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileProducerNoForcedWritesTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file");
-        super.setUp();
-    }
-
     @Test
     public void testNoForcedWrites() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/data/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
-        assertFileExists("target/data/file/output.txt");
+        assertFileExists(testFile("output.txt"));
         assertEquals("Hello World",
-                context.getTypeConverter().convertTo(String.class, new File("target/data/file/output.txt")));
+                context.getTypeConverter().convertTo(String.class, testFile("output.txt").toFile()));
 
-        assertFileExists("target/data/file/output2.txt");
+        assertFileExists(testFile("output2.txt"));
         assertEquals("Hello World",
-                context.getTypeConverter().convertTo(String.class, new File("target/data/file/output2.txt")));
+                context.getTypeConverter().convertTo(String.class, testFile("output2.txt").toFile()));
     }
 
     @Override
@@ -59,9 +49,9 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/file?initialDelay=0&delay=10&noop=true").multicast()
-                        .to("file:target/data/file/?fileName=output.txt&forceWrites=false",
-                                "file:target/data/file/?fileName=output2.txt&charset=iso-8859-1&forceWrites=false")
+                from(fileUri("?initialDelay=0&delay=10&noop=true")).multicast()
+                        .to(fileUri("?fileName=output.txt&forceWrites=false"),
+                                fileUri("?fileName=output2.txt&charset=iso-8859-1&forceWrites=false"))
                         .to("mock:result");
             }
         };

@@ -20,7 +20,7 @@ public class MyBean {
 
     private boolean invoked;
 
-    public void doSomething(Object body) throws Exception {
+    public void doSomething(Object body) {
         invoked = true;
     }
 

@@ -28,7 +28,6 @@ import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -39,9 +38,9 @@ import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Socket level networking using TCP or UDP with the Netty 4.x.
+ * Socket level networking using TCP or UDP with Netty 4.x.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "netty", title = "Netty", syntax = "netty:protocol:host:port",
+@UriEndpoint(firstVersion = "2.14.0", scheme = "netty", title = "Netty", syntax = "netty:protocol://host:port",
              category = { Category.NETWORKING, Category.TCP, Category.UDP })
 public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam
@@ -83,13 +82,6 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         }
     }
 
-    public Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
-        Exchange exchange = createExchange();
-        updateMessageHeader(exchange.getIn(), ctx);
-        NettyPayloadHelper.setIn(exchange, message);
-        return exchange;
-    }
-
     @Override
     public NettyComponent getComponent() {
         return (NettyComponent) super.getComponent();
@@ -119,7 +111,7 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return sslSession;
     }
 
-    protected void updateMessageHeader(Message in, ChannelHandlerContext ctx) {
+    public void updateMessageHeader(Message in, ChannelHandlerContext ctx) {
         in.setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
         in.setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, ctx.channel().remoteAddress());
         in.setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, ctx.channel().localAddress());

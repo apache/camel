@@ -123,11 +123,6 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
     }
 
     private List<FormatFactoryInterface> getByClass(Class<?> clazz) {
-        List<FormatFactoryInterface> result = classBasedFactories.get(clazz);
-        if (result == null) {
-            result = new ArrayList<>();
-            classBasedFactories.put(clazz, result);
-        }
-        return result;
+        return classBasedFactories.computeIfAbsent(clazz, k -> new ArrayList<>());
     }
 }

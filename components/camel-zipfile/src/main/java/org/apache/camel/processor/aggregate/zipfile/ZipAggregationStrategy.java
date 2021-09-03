@@ -234,8 +234,13 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         env.put("useTempFile", this.useTempFile); //Intentionally boolean, it is implemented this way in ZipFileSystem
         try (FileSystem fs = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             Path dest = fs.getPath("/", entryName);
-            Files.createDirectories(dest.getParent());
-            Files.copy(file.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
+            Path parent = dest.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+                Files.copy(file.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                // TODO do some logging
+            }
         }
     }
 
@@ -246,8 +251,13 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         env.put("useTempFile", this.useTempFile); //Intentionally boolean, it is implemented this way in ZipFileSystem
         try (FileSystem fs = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             Path dest = fs.getPath("/", entryName);
-            Files.createDirectories(dest.getParent());
-            Files.write(dest, buffer, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Path parent = dest.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+                Files.write(dest, buffer, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            } else {
+                // TODO do some logging
+            }
         }
     }
 
@@ -258,7 +268,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     /**
      * This callback class is used to clean up the temporary ZIP file once the exchange has completed.
      */
-    private class DeleteZipFileOnCompletion implements Synchronization {
+    private static class DeleteZipFileOnCompletion implements Synchronization {
 
         private final File fileToDelete;
 

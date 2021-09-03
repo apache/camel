@@ -28,6 +28,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfProducerSoapActionTest extends CamelTestSupport {
@@ -44,7 +45,7 @@ public class CxfProducerSoapActionTest extends CamelTestSupport {
 
     @Test
     public void testSendSoapRequestWithoutSoapActionSet() {
-        template.requestBody(DIRECT_START, REQUEST_MESSAGE, String.class);
+        assertDoesNotThrow(() -> template.requestBody(DIRECT_START, REQUEST_MESSAGE, String.class));
     }
 
     @Override

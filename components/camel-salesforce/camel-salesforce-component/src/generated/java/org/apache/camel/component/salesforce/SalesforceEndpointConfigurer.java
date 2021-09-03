@@ -21,6 +21,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SalesforceEndpoint target = (SalesforceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": target.getConfiguration().setAllOrNone(property(camelContext, boolean.class, value)); return true;
         case "apexmethod":
         case "apexMethod": target.getConfiguration().setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "apexqueryparams":
@@ -77,10 +79,26 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperations": target.getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "objectmapper":
         case "objectMapper": target.getConfiguration().setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "pkchunking":
+        case "pkChunking": target.getConfiguration().setPkChunking(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": target.getConfiguration().setPkChunkingChunkSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pkchunkingparent":
+        case "pkChunkingParent": target.getConfiguration().setPkChunkingParent(property(camelContext, java.lang.String.class, value)); return true;
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": target.getConfiguration().setPkChunkingStartRow(property(camelContext, java.lang.String.class, value)); return true;
         case "querylocator":
         case "queryLocator": target.getConfiguration().setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": target.getConfiguration().setRawHttpHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawmethod":
+        case "rawMethod": target.getConfiguration().setRawMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawpath":
+        case "rawPath": target.getConfiguration().setRawPath(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
         case "rawPayload": target.getConfiguration().setRawPayload(property(camelContext, boolean.class, value)); return true;
+        case "rawqueryparameters":
+        case "rawQueryParameters": target.getConfiguration().setRawQueryParameters(property(camelContext, java.lang.String.class, value)); return true;
         case "replayid":
         case "replayId": target.setReplayId(property(camelContext, java.lang.Long.class, value)); return true;
         case "reportid":
@@ -116,6 +134,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return boolean.class;
         case "apexmethod":
         case "apexMethod": return java.lang.String.class;
         case "apexqueryparams":
@@ -172,10 +192,26 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperations": return org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class;
         case "objectmapper":
         case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "pkchunking":
+        case "pkChunking": return java.lang.Boolean.class;
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": return java.lang.Integer.class;
+        case "pkchunkingparent":
+        case "pkChunkingParent": return java.lang.String.class;
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": return java.lang.String.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return java.lang.String.class;
+        case "rawmethod":
+        case "rawMethod": return java.lang.String.class;
+        case "rawpath":
+        case "rawPath": return java.lang.String.class;
         case "rawpayload":
         case "rawPayload": return boolean.class;
+        case "rawqueryparameters":
+        case "rawQueryParameters": return java.lang.String.class;
         case "replayid":
         case "replayId": return java.lang.Long.class;
         case "reportid":
@@ -212,6 +248,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SalesforceEndpoint target = (SalesforceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return target.getConfiguration().isAllOrNone();
         case "apexmethod":
         case "apexMethod": return target.getConfiguration().getApexMethod();
         case "apexqueryparams":
@@ -268,10 +306,26 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperations": return target.getConfiguration().getNotifyForOperations();
         case "objectmapper":
         case "objectMapper": return target.getConfiguration().getObjectMapper();
+        case "pkchunking":
+        case "pkChunking": return target.getConfiguration().getPkChunking();
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": return target.getConfiguration().getPkChunkingChunkSize();
+        case "pkchunkingparent":
+        case "pkChunkingParent": return target.getConfiguration().getPkChunkingParent();
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": return target.getConfiguration().getPkChunkingStartRow();
         case "querylocator":
         case "queryLocator": return target.getConfiguration().getQueryLocator();
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return target.getConfiguration().getRawHttpHeaders();
+        case "rawmethod":
+        case "rawMethod": return target.getConfiguration().getRawMethod();
+        case "rawpath":
+        case "rawPath": return target.getConfiguration().getRawPath();
         case "rawpayload":
         case "rawPayload": return target.getConfiguration().isRawPayload();
+        case "rawqueryparameters":
+        case "rawQueryParameters": return target.getConfiguration().getRawQueryParameters();
         case "replayid":
         case "replayId": return target.getReplayId();
         case "reportid":

@@ -24,8 +24,6 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Proces
 defined in the Camel xref:latest@manual:ROOT:registry.adoc[Registry] which is
 invoked when an event occurs from a xref:components::jms-component.adoc[JMS] queue.
 
-*Using the xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]*
-
 [source,java]
 ----
 from("jms:queue:foo")

@@ -26,6 +26,11 @@ public enum WebhookNotificationGatewayApiMethod implements ApiMethod {
         arg("signature", String.class),
         arg("payload", String.class)),
 
+    PARSE_WITHOUT_SIGNATURE_VERIFICATION(
+        com.braintreegateway.WebhookNotification.class,
+        "parseWithoutSignatureVerification",
+        arg("payload", String.class)),
+
     VERIFY(
         String.class,
         "verify",

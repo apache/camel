@@ -21,6 +21,7 @@ import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionAdapter;
 
@@ -46,7 +47,7 @@ public class AckExpression extends ExpressionAdapter {
 
     @Override
     public Object evaluate(Exchange exchange) {
-        Throwable t = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        Throwable t = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
         Message msg = exchange.getIn().getBody(Message.class);
         try {
             HL7Exception hl7e = generateHL7Exception(t);

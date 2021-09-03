@@ -20,6 +20,7 @@ import java.net.URI;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.http.HttpEntity;
@@ -46,8 +47,8 @@ public class GraphqlProducer extends DefaultAsyncProducer {
         try {
             CloseableHttpClient httpClient = getEndpoint().getHttpclient();
             URI httpUri = getEndpoint().getHttpUri();
-            String requestBody = buildRequestBody(getEndpoint().getQuery(), getEndpoint().getOperationName(),
-                    getEndpoint().getVariables());
+            String requestBody = buildRequestBody(getQuery(exchange), getEndpoint().getOperationName(),
+                    getVariables(exchange));
             HttpEntity requestEntity = new StringEntity(requestBody, ContentType.create("application/json", "UTF-8"));
 
             HttpPost httpPost = new HttpPost(httpUri);
@@ -73,5 +74,29 @@ public class GraphqlProducer extends DefaultAsyncProducer {
         jsonObject.put("operationName", operationName);
         jsonObject.put("variables", variables != null ? variables : new JsonObject());
         return jsonObject.toJson();
+    }
+
+    private String getQuery(Exchange exchange) throws InvalidPayloadException {
+        String query = null;
+        if (getEndpoint().getQuery() != null) {
+            query = getEndpoint().getQuery();
+        } else if (getEndpoint().getQueryHeader() != null) {
+            query = exchange.getIn().getHeader(getEndpoint().getQueryHeader(), String.class);
+        } else {
+            query = exchange.getIn().getMandatoryBody(String.class);
+        }
+        return query;
+    }
+
+    private JsonObject getVariables(Exchange exchange) {
+        JsonObject variables = null;
+        if (getEndpoint().getVariables() != null) {
+            variables = getEndpoint().getVariables();
+        } else if (getEndpoint().getVariablesHeader() != null) {
+            variables = exchange.getIn().getHeader(getEndpoint().getVariablesHeader(), JsonObject.class);
+        } else if (exchange.getIn().getBody() instanceof JsonObject) {
+            variables = exchange.getIn().getBody(JsonObject.class);
+        }
+        return variables;
     }
 }

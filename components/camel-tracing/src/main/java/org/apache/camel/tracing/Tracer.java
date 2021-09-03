@@ -268,7 +268,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                         LOG.warn("Tracing: could not find managed span for exchange={}", ese.getExchange());
                     }
                 }
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // This exception is ignored
                 LOG.warn("Tracing: Failed to capture tracing data", t);
             }
@@ -293,7 +293,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Tracing: start server span={}", span);
                 }
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // This exception is ignored
                 LOG.warn("Tracing: Failed to capture tracing data", t);
             }
@@ -317,14 +317,14 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 } else {
                     LOG.warn("Tracing: could not find managed span for exchange={}", exchange);
                 }
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // This exception is ignored
                 LOG.warn("Tracing: Failed to capture tracing data", t);
             }
         }
     }
 
-    private final class TracingLogListener implements LogListener {
+    private static final class TracingLogListener implements LogListener {
 
         @Override
         public String onLog(Exchange exchange, CamelLogger camelLogger, String message) {
@@ -335,7 +335,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                     fields.put("message", message);
                     span.log(fields);
                 }
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // This exception is ignored
                 LOG.warn("Tracing: Failed to capture tracing data", t);
             }

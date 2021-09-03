@@ -57,12 +57,7 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
 
     protected Solver<Object> getOrCreateSolver(String solverId) {
         synchronized (SOLVERS) {
-            Solver<Object> solver = SOLVERS.get(solverId);
-            if (solver == null) {
-                solver = createSolver();
-                SOLVERS.put(solverId, solver);
-            }
-            return solver;
+            return SOLVERS.computeIfAbsent(solverId, k -> createSolver());
         }
     }
 

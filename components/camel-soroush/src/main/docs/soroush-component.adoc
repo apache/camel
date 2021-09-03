@@ -57,9 +57,47 @@ attachments if provided in the message  (`SoroushMessage.file`, `SoroushMessage.
 and store the urls in the message (`SoroushMessage.fileUrl`, `SoroushMessage.thumbnailUrl`).
 |===
 
-== Options
+
+
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The Soroush component supports 4 options, which are listed below.
 
 
@@ -73,7 +111,10 @@ The Soroush component supports 4 options, which are listed below.
 | *authorizationToken* (global) | The default Soroush authorization token to be used when the information is not provided in the endpoints. |  | String
 |===
 // component options: END
+
 // endpoint options: START
+== Endpoint Options
+
 The Soroush endpoint is configured using URI syntax:
 
 ----
@@ -120,7 +161,6 @@ with the following path and query parameters:
 | *authorizationToken* (security) | The authorization token for using the bot. if uri path does not contain authorization token, this token will be used. |  | String
 |===
 // endpoint options: END
-
 
 
 == Usage
@@ -260,6 +300,4 @@ One way to handle these exceptions is by using `onException` route definition:
 onException(CongestionException.class).log("Failed to processing ${id}")
 -------------
 
-_Donated by https://www.mohaymen.ir[Mohaymen ICT] to ASF_
-
-include::camel-spring-boot::page$soroush-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$soroush-starter.adoc[]

@@ -25,6 +25,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.support.DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
@@ -133,6 +134,45 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
 
         assertTrue(comp.applyFilterToCamelHeaders("content-type", "application/xml", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("Content-Type", "application/json", exchange));
+    }
+
+    @Test
+    public void testOutStartsWith() {
+        DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
+
+        comp.setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("bar", 123);
+        exchange.getIn().setHeader("foo", "cheese");
+        exchange.getIn().setHeader("CamelName", "Apache Camel");
+        exchange.getIn().setHeader("camelVersion", "3.7");
+        exchange.getIn().setHeader("org.apache.camel.id", "foo");
+
+        assertFalse(comp.applyFilterToCamelHeaders("bar", 123, exchange));
+        assertFalse(comp.applyFilterToCamelHeaders("foo", "cheese", exchange));
+        assertTrue(comp.applyFilterToCamelHeaders("CamelName", "Apache Camel", exchange));
+        assertTrue(comp.applyFilterToCamelHeaders("camelVersion", "3.7", exchange));
+        assertTrue(comp.applyFilterToCamelHeaders("camelNextVersion", "3.8", exchange));
+        assertTrue(comp.applyFilterToCamelHeaders("org.apache.camel.component.seda.queueSize", "123", exchange));
+    }
+
+    @Test
+    public void testInStartsWith() {
+        DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
+
+        comp.setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("bar", 123);
+        exchange.getIn().setHeader("foo", "cheese");
+        exchange.getIn().setHeader("CamelVersion", "3.7");
+        exchange.getIn().setHeader("org.apache.camel.component.jetty.session", "true");
+
+        assertFalse(comp.applyFilterToExternalHeaders("bar", 123, exchange));
+        assertFalse(comp.applyFilterToExternalHeaders("foo", "cheese", exchange));
+        assertTrue(comp.applyFilterToExternalHeaders("CamelVersion", "3.7", exchange));
+        assertTrue(comp.applyFilterToExternalHeaders("org.apache.camel.component.jetty.session", "true", exchange));
     }
 
 }

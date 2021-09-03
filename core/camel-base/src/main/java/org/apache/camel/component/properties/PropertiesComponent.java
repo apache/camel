@@ -98,6 +98,8 @@ public class PropertiesComponent extends ServiceSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
+    private static final String NEGATE_PREFIX = PREFIX_TOKEN + "!";
+
     private CamelContext camelContext;
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
@@ -111,6 +113,7 @@ public class PropertiesComponent extends ServiceSupport
     private Properties initialProperties;
     private Properties overrideProperties;
     private final ThreadLocal<Properties> localProperties = new ThreadLocal<>();
+    private volatile boolean localPropertiesEnabled;
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
@@ -152,13 +155,18 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     public String parseUri(String uri) {
-        return parseUri(uri, propertiesLookup);
+        return parseUri(uri, false);
+    }
+
+    @Override
+    public String parseUri(String uri, boolean keepUnresolvedOptional) {
+        return parseUri(uri, propertiesLookup, keepUnresolvedOptional);
     }
 
     @Override
     public Optional<String> resolveProperty(String key) {
         try {
-            String value = parseUri(key, propertiesLookup);
+            String value = parseUri(key, propertiesLookup, false);
             return Optional.of(value);
         } catch (IllegalArgumentException e) {
             // property not found
@@ -243,17 +251,34 @@ public class PropertiesComponent extends ServiceSupport
         return prop;
     }
 
-    protected String parseUri(String uri, PropertiesLookup properties) {
+    protected String parseUri(final String uri, PropertiesLookup properties, boolean keepUnresolvedOptional) {
+        LOG.trace("Parsing uri {}", uri);
+
+        String key = uri;
         // enclose tokens if missing
-        if (!uri.contains(PREFIX_TOKEN) && !uri.startsWith(PREFIX_TOKEN)) {
-            uri = PREFIX_TOKEN + uri;
+        if (!key.contains(PREFIX_TOKEN) && !key.startsWith(PREFIX_TOKEN)) {
+            key = PREFIX_TOKEN + key;
         }
-        if (!uri.contains(SUFFIX_TOKEN) && !uri.endsWith(SUFFIX_TOKEN)) {
-            uri = uri + SUFFIX_TOKEN;
+        if (!key.contains(SUFFIX_TOKEN) && !key.endsWith(SUFFIX_TOKEN)) {
+            key = key + SUFFIX_TOKEN;
         }
 
-        LOG.trace("Parsing uri {}", uri);
-        return propertiesParser.parseUri(uri, properties, defaultFallbackEnabled);
+        // if key starts with a ! then negate a boolean response
+        boolean negate = key.startsWith(NEGATE_PREFIX);
+        if (negate) {
+            key = PREFIX_TOKEN + key.substring(NEGATE_PREFIX.length());
+        }
+
+        String answer = propertiesParser.parseUri(key, properties, defaultFallbackEnabled, keepUnresolvedOptional);
+        if (negate) {
+            if ("true".equalsIgnoreCase(answer)) {
+                answer = "false";
+            } else if ("false".equalsIgnoreCase(answer)) {
+                answer = "true";
+            }
+        }
+        LOG.trace("Parsed uri {} -> {}", uri, answer);
+        return answer;
     }
 
     @Override
@@ -445,16 +470,19 @@ public class PropertiesComponent extends ServiceSupport
     public void setLocalProperties(Properties localProperties) {
         if (localProperties != null) {
             this.localProperties.set(localProperties);
+            this.localPropertiesEnabled = true;
         } else {
             this.localProperties.remove();
+            this.localPropertiesEnabled = false;
         }
     }
 
     /**
-     * Gets a list of properties that are local for the current thread only (ie thread local)
+     * Gets a list of properties that are local for the current thread only (ie thread local), or <tt>null</tt> if not
+     * currently in use.
      */
     public Properties getLocalProperties() {
-        return localProperties.get();
+        return localPropertiesEnabled ? localProperties.get() : null;
     }
 
     /**
@@ -488,7 +516,7 @@ public class PropertiesComponent extends ServiceSupport
      *
      * The default mode (override) is to use system properties if present, and override any existing properties.
      *
-     * OS environment variable mode is checked before JVM system property mode
+     * OS environment variable mode is checked before JVM system property mode.
      *
      * @see #SYSTEM_PROPERTIES_MODE_NEVER
      * @see #SYSTEM_PROPERTIES_MODE_FALLBACK
@@ -508,7 +536,7 @@ public class PropertiesComponent extends ServiceSupport
      *
      * The default mode (override) is to use OS environment variables if present, and override any existing properties.
      *
-     * OS environment variable mode is checked before JVM system property mode
+     * OS environment variable mode is checked before JVM system property mode.
      *
      * @see #ENVIRONMENT_VARIABLES_MODE_NEVER
      * @see #ENVIRONMENT_VARIABLES_MODE_FALLBACK
@@ -531,9 +559,7 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     public void addPropertiesSource(PropertiesSource propertiesSource) {
-        if (propertiesSource instanceof CamelContextAware) {
-            ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(propertiesSource, getCamelContext());
         synchronized (lock) {
             sources.add(propertiesSource);
             if (!isNew()) {
@@ -591,19 +617,23 @@ public class PropertiesComponent extends ServiceSupport
                         LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
                     } else if (obj != null) {
                         LOG.warn(
-                                "PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: "
-                                 + type.getName());
+                                "PropertiesComponent cannot add custom PropertiesSource as the type is not a {} but: {}",
+                                PropertiesSource.class.getName(), type.getName());
                     }
                 }
             } catch (Exception e) {
-                LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage()
-                          + ". This exception is ignored",
-                        e);
+                LOG.debug("Error discovering and using custom PropertiesSource due to {}. This exception is ignored",
+                        e.getMessage(), e);
             }
         }
 
         sources.sort(OrderedComparator.get());
         ServiceHelper.initService(sources);
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(sources);
     }
 
     @Override

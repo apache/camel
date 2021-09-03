@@ -20,11 +20,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,service-filter")
 @XmlRootElement(name = "healthyServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
 public class HealthyServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     public HealthyServiceCallServiceFilterConfiguration() {
         this(null);

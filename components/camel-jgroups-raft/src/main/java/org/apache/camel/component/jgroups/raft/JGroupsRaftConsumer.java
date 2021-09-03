@@ -42,7 +42,7 @@ public class JGroupsRaftConsumer extends DefaultConsumer {
         this.clusterName = clusterName;
         this.enableRoleChangeEvents = enableRoleChangeEvents;
 
-        this.roleListener = new CamelRoleChangeListener(endpoint, processor);
+        this.roleListener = new CamelRoleChangeListener(this, endpoint, processor);
     }
 
     @Override

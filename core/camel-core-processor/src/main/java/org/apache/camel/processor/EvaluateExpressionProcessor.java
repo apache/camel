@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -40,7 +41,7 @@ public class EvaluateExpressionProcessor extends AsyncProcessorSupport implement
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Object result = expression.evaluate(exchange, Object.class);
-            exchange.setProperty(Exchange.EVALUATE_EXPRESSION_RESULT, result);
+            exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, result);
         } catch (Throwable e) {
             exchange.setException(e);
         } finally {

@@ -60,6 +60,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
         Registry reg = new SimpleRegistry();
 
         db = new EmbeddedDatabaseBuilder()
+                .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY).build();
         reg.bind("testdb", db);
 

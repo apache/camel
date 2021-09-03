@@ -16,36 +16,46 @@
  */
 package org.apache.camel.routepolicy.quartz;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
-public class SpringSimpleScheduledRoutePolicyTest extends SpringScheduledRoutePolicyTest {
+public abstract class SpringSimpleScheduledRoutePolicyTest extends SpringScheduledRoutePolicyTest {
 
-    @BeforeEach
     public void setUp() {
-        setApplicationContext(new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/SimplePolicies.xml"));
+        setApplicationContext(newAppContext("SimplePolicies.xml"));
         setTestType(TestType.SIMPLE);
     }
 
+    private AbstractXmlApplicationContext newAppContext(String config) {
+        return CamelSpringTestSupport.newAppContext(config, getClass());
+    }
+}
+
+class Test1SpringScheduledRoutePolicyTest extends SpringSimpleScheduledRoutePolicyTest {
     @Test
     public void testScheduledStartRoutePolicy() throws Exception {
         startTest();
     }
+}
 
+class Test2SpringScheduledRoutePolicyTest extends SpringSimpleScheduledRoutePolicyTest {
     @Test
     public void testScheduledStopRoutePolicy() throws Exception {
         stopTest();
     }
+}
 
+class Test3SpringScheduledRoutePolicyTest extends SpringSimpleScheduledRoutePolicyTest {
     @Test
     public void testScheduledSuspendRoutePolicy() throws Exception {
         suspendTest();
     }
+}
 
+class Test4SpringScheduledRoutePolicyTest extends SpringSimpleScheduledRoutePolicyTest {
     @Test
     public void testScheduledResumeRoutePolicy() throws Exception {
         resumeTest();
     }
-
 }

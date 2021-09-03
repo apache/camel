@@ -16,80 +16,35 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class FileProducerCharsetUTFtoISOTest extends ContextTestSupport {
 
-    private byte[] utf;
-    private byte[] iso;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        // use utf-8 as original payload with 00e6 which is a danish ae letter
-        utf = "ABC\u00e6".getBytes("utf-8");
-        iso = "ABC\u00e6".getBytes("iso-8859-1");
-
-        deleteDirectory("target/data/charset");
-        createDirectory("target/data/charset/input");
-
-        log.debug("utf: {}", new String(utf, Charset.forName("utf-8")));
-        log.debug("iso: {}", new String(iso, Charset.forName("iso-8859-1")));
-
-        for (byte b : utf) {
-            log.debug("utf byte: {}", b);
-        }
-        for (byte b : iso) {
-            log.debug("iso byte: {}", b);
-        }
-
-        // write the byte array to a file using plain API
-        OutputStream fos = Files.newOutputStream(Paths.get("target/data/charset/input/input.txt"));
-        fos.write(utf);
-        fos.close();
-
-        super.setUp();
-    }
+    private static final String DATA = "ABC\u00e6";
 
     @Test
     public void testFileProducerCharsetUTFtoISO() throws Exception {
+        try (OutputStream fos = Files.newOutputStream(testFile("input.txt"))) {
+            fos.write(DATA.getBytes(StandardCharsets.UTF_8));
+        }
+
         oneExchangeDone.matchesWaitTime();
 
-        File file = new File("target/data/charset/output.txt");
-        assertTrue(file.exists(), "File should exist");
+        assertFileExists(testFile("output.txt"));
+        byte[] data = Files.readAllBytes(testFile("output.txt"));
 
-        InputStream fis = Files.newInputStream(Paths.get(file.getAbsolutePath()));
-        byte[] buffer = new byte[100];
-
-        int len = fis.read(buffer);
-        assertNotEquals(-1, len, "Should read data: " + len);
-        byte[] data = new byte[len];
-        System.arraycopy(buffer, 0, data, 0, len);
-        fis.close();
-
-        // data should be in iso, where the danish ae is -26
-        assertEquals(4, data.length);
-        assertEquals(65, data[0]);
-        assertEquals(66, data[1]);
-        assertEquals(67, data[2]);
-        assertEquals(-26, data[3]);
+        assertEquals(DATA, new String(data, StandardCharsets.ISO_8859_1));
     }
 
     @Override
@@ -97,8 +52,8 @@ public class FileProducerCharsetUTFtoISOTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true")
-                        .to("file:target/data/charset/?fileName=output.txt&charset=iso-8859-1");
+                from(fileUri("?initialDelay=0&delay=10&noop=true"))
+                        .to(fileUri("?fileName=output.txt&charset=iso-8859-1"));
             }
         };
     }

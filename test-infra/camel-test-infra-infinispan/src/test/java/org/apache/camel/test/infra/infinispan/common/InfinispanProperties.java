@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.infinispan.common;
 
 public final class InfinispanProperties {
+    public static final String INFINISPAN_CONTAINER = "infinispan.container";
     public static final String SERVICE_ADDRESS = "infinispan.service.address";
     public static final String SERVICE_HOST = "infinispan.service.host";
     public static final String SERVICE_PORT = "infinispan.service.port";

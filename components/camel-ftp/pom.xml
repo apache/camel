@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ftp</artifactId>
@@ -35,6 +35,15 @@
         <camel.osgi.import.before.defaults>
             com.jcraft.jsch.*;version="[0.1.5,0.2)"
         </camel.osgi.import.before.defaults>
+
+        <camel.surefire.forkCount>4</camel.surefire.forkCount>
+        <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
+        <camel.surefire.parallel>false</camel.surefire.parallel>
+
+        <!-- This one can run in parallel rather safely-->
+        <camel.failsafe.forkCount>${camel.surefire.forkCount}</camel.failsafe.forkCount>
+        <camel.failsafe.forkTimeout>${camel.surefire.forkTimeout}</camel.failsafe.forkTimeout>
+        <camel.failsafe.parallel>${camel.surefire.parallel}</camel.failsafe.parallel>
     </properties>
 
     <dependencies>
@@ -73,6 +82,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ssh</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.sshd</groupId>
+                    <artifactId>sshd-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -88,7 +103,7 @@
         <!-- for unit testing AntPathMatcher -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
+            <artifactId>camel-spring-xml</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -188,16 +203,16 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <!-- The default timeout of 5 minutes through the parent pom is not long enough -->
-                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
+                    <!-- This one can run in parallel rather safely-->
+                    <forkCount>${camel.failsafe.forkCount}</forkCount>
+                    <parallel>${camel.failsafe.parallel}</parallel>
+                    <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 

@@ -487,8 +487,8 @@ public class MllpSocketBuffer {
     public synchronized boolean hasEndOfData() {
         if (hasEndOfBlock()) {
             int potentialEndOfDataIndex = endOfBlockIndex + 1;
-            if ((potentialEndOfDataIndex < availableByteCount)
-                    && (buffer[potentialEndOfDataIndex] == MllpProtocolConstants.END_OF_DATA)) {
+            if (potentialEndOfDataIndex < availableByteCount
+                    && buffer[potentialEndOfDataIndex] == MllpProtocolConstants.END_OF_DATA) {
                 return true;
             }
         }

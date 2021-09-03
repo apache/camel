@@ -72,7 +72,6 @@ endpoints keep in memory.
 
 == URI format
 
-[source]
 ----
 mock:someName[?options]
 ----
@@ -80,16 +79,46 @@ mock:someName[?options]
 Where `someName` can be any string that uniquely identifies the
 endpoint.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
+// component-configure options: START
+== Configuring Options
 
-== Options
+Camel components are configured on two separate levels:
 
+- component level
+- endpoint level
 
+=== Configuring Component Options
 
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
-The Mock component supports 2 options, which are listed below.
+== Component Options
+
+
+The Mock component supports 4 options, which are listed below.
 
 
 
@@ -97,16 +126,15 @@ The Mock component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *log* (producer) | To turn on logging when the mock receives an incoming message. This will log only one time at INFO level for the incoming message. For more detailed logging then set the logger to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *exchangeFormatter* (advanced) | *Autowired* Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter. |  | ExchangeFormatter
 |===
 // component options: END
 
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Mock endpoint is configured using URI syntax:
 
 ----
@@ -125,7 +153,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (11 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -135,6 +163,7 @@ with the following path and query parameters:
 | *expectedCount* (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use setAssertPeriod(long). An alternative is to use NotifyBuilder, and use the notifier to know when Camel is done routing some messages, before you call the assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period, to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint, then see also the setAssertPeriod(long) method for further details. | -1 | int
 | *failFast* (producer) | Sets whether assertIsSatisfied() should fail fast at the first detected failed expectation while it may otherwise wait for all expected messages to arrive before performing expectations verifications. Is by default true. Set to false to use behavior as in Camel 2.x. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *log* (producer) | To turn on logging when the mock receives an incoming message. This will log only one time at INFO level for the incoming message. For more detailed logging then set the logger to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class. | false | boolean
 | *reportGroup* (producer) | A number that is used to turn on throughput logging based on groups of the size. |  | int
 | *resultMinimumWaitTime* (producer) | Sets the minimum expected amount of time (in millis) the assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
 | *resultWaitTime* (producer) | Sets the maximum amount of time (in millis) the assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
@@ -144,6 +173,7 @@ with the following path and query parameters:
 | *copyOnExchange* (producer) | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true. | true | boolean
 |===
 // endpoint options: END
+
 
 
 == Simple Example
@@ -255,7 +285,7 @@ resultEndpoint.message(0).header("foo").isEqualTo("bar");
 ----
 
 There are some examples of the Mock endpoint in use in the
-https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/camel/processor/[`camel-core`
+https://github.com/apache/camel/tree/main/camel-core/src/test/java/org/apache/camel/processor/[`camel-core`
 processor tests].
 
 == Mocking existing endpoints
@@ -290,7 +320,6 @@ Notice that the mock endpoints is given the URI `mock:<endpoint>`, for
 example `mock:direct:foo`. Camel logs at `INFO` level the endpoints
 being mocked:
 
-[source]
 ----
 INFO  Adviced endpoint [direct://foo] with mock endpoint [mock:direct:foo]
 ----
@@ -338,7 +367,7 @@ instead.
 [source,java]
 .*`isMockEndpoints` using camel-test kit*
 ----
-include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsJUnit4Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsJUnit4Test.java[tags=e1]
 ----
 
 
@@ -355,7 +384,7 @@ Suppose we have the route in the `camel-route.xml` file:
 [source,xml]
 .*camel-route.xml*
 ----
-include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/camel-route.xml[tags=e1]
+include::{examplesdir}/components/camel-spring-xml/src/test/resources/org/apache/camel/spring/mock/camel-route.xml[tags=e1]
 ----
 
 Then we create a new XML file as follows, where we include the
@@ -366,7 +395,7 @@ Camel to mock all endpoints:
 [source,xml]
 .*test-camel-route.xml*
 ----
-include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[tags=e1]
+include::{examplesdir}/components/camel-spring-xml/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[tags=e1]
 ----
 
 Then in your unit test you load the new XML file
@@ -401,7 +430,7 @@ The same example using the Test Kit
 [source,java]
 .*isMockEndpointsAndSkip using camel-test kit*
 ----
-include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
 ----
 
 == Limiting the number of messages to keep
@@ -494,5 +523,4 @@ In the example above we use `seconds` as the time unit, but Camel offers
 ====
 
 
-
-include::camel-spring-boot::page$mock-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$mock-starter.adoc[]

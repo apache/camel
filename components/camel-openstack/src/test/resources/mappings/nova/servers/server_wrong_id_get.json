@@ -1,0 +1,18 @@
+{
+  "id" : "fdf3d230-fab3-402f-98a0-394506bb8502",
+  "name" : "server_wrong_id_get.json.json",
+  "request" : {
+    "url" : "/v2/123ac695d4db400a9001b91bb3b8aa46/servers/05184ba3-00ba-4fbc-b7a2-03b62b884931",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"computeFault\":{\"message\":\"The server has either erred or is incapable of performing the requested operation.\",\"code\":500}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 500
+  },
+  "uuid" : "fdf3d230-fab3-402f-98a0-394506bb8502",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

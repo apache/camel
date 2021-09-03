@@ -41,7 +41,7 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>simple</id>
+            <id>simple-xml</id>
             <goals>
               <goal>generate-xml</goal>
             </goals>
@@ -56,7 +56,7 @@
   </build>
   <profiles>
     <profile>
-      <id>jdk9+-build</id>
+      <id>jdk9s-build</id>
       <activation>
         <jdk>[9,)</jdk>
       </activation>

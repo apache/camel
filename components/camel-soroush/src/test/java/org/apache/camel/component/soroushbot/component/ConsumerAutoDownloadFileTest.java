@@ -25,11 +25,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled("Flaky test")
 public class ConsumerAutoDownloadFileTest extends SoroushBotTestSupport {
     @Override
     public RouteBuilder createRouteBuilder() {
@@ -48,7 +50,7 @@ public class ConsumerAutoDownloadFileTest extends SoroushBotTestSupport {
         mockEndpoint.setExpectedCount(4);
         mockEndpoint.assertIsSatisfied();
         List<Exchange> exchanges = mockEndpoint.getExchanges();
-        assertEquals(exchanges.size(), 4);
+        assertEquals(4, exchanges.size());
         exchanges.forEach(exchange -> {
             SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
             assertTrue(body.getFile() == null ^ body.getFileUrl() != null,

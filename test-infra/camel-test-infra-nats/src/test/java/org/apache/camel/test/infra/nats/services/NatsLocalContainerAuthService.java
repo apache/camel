@@ -17,18 +17,21 @@
 package org.apache.camel.test.infra.nats.services;
 
 import org.apache.camel.test.infra.nats.common.NatsProperties;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class NatsLocalContainerAuthService extends NatsLocalContainerService {
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "password";
 
-    protected void initContainer(String imageName) {
-        super.initContainer(imageName);
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        GenericContainer container = super.initContainer(imageName, containerName);
 
-        getContainer()
+        container
                 .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
                 .withCommand("-DV", "--user", USERNAME, "--pass", PASSWORD);
+
+        return container;
     }
 
     @Override

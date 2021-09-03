@@ -143,19 +143,19 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         return dnsActivation.getResolvesTo();
     }
 
-    public void setTtl(long ttl) throws Exception {
+    public void setTtl(long ttl) {
         this.ttl = ttl;
     }
 
-    public void setTtl(String ttl) throws Exception {
+    public void setTtl(String ttl) {
         this.ttl = Long.parseLong(ttl);
     }
 
-    public long getTtl() throws Exception {
+    public long getTtl() {
         return ttl;
     }
 
-    public void setStopRoutesOnException(String stopRoutesOnException) throws Exception {
+    public void setStopRoutesOnException(String stopRoutesOnException) {
         this.stopRoutesOnException = Boolean.parseBoolean(stopRoutesOnException);
     }
 
@@ -174,12 +174,11 @@ public class DnsActivationPolicy extends RoutePolicySupport {
     }
 
     private void startRoutes() {
-        for (String routeId : routes.keySet()) {
+        for (Map.Entry<String, Route> entry : routes.entrySet()) {
             try {
-                Route route = routes.get(routeId);
-                startRouteImpl(route);
+                startRouteImpl(entry.getValue());
             } catch (Exception e) {
-                LOG.warn(routeId, e);
+                LOG.warn(entry.getKey(), e);
             }
         }
     }
@@ -196,12 +195,11 @@ public class DnsActivationPolicy extends RoutePolicySupport {
     }
 
     private void stopRoutes() {
-        for (String routeId : routes.keySet()) {
+        for (Map.Entry<String, Route> routeEntry : routes.entrySet()) {
             try {
-                Route route = routes.get(routeId);
-                stopRouteImpl(route);
+                stopRouteImpl(routeEntry.getValue());
             } catch (Exception e) {
-                LOG.warn(routeId, e);
+                LOG.warn(routeEntry.getKey(), e);
             }
         }
     }

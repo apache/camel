@@ -30,7 +30,6 @@ import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -303,7 +302,7 @@ public final class GenericsUtil {
     }
 
     private static boolean isNotBound(final Type... bounds) {
-        return bounds == null || bounds.length == 0 || (bounds.length == 1 && Object.class == bounds[0]);
+        return bounds == null || bounds.length == 0 || bounds.length == 1 && Object.class == bounds[0];
     }
 
     private static boolean isAssignableFrom(boolean isDelegateOrEvent, TypeVariable<?> injectionPointType, Type beanType) {
@@ -344,8 +343,8 @@ public final class GenericsUtil {
             boolean isAssignable = false;
             for (Type beanSupertype : beanTypeClosure) {
                 if (isAssignableFrom(isDelegateOrEvent, false, bounds, beanSupertype)
-                        || (Class.class.isInstance(bounds) && ParameterizedType.class.isInstance(beanSupertype)
-                                && bounds == ParameterizedType.class.cast(beanSupertype).getRawType())) {
+                        || Class.class.isInstance(bounds) && ParameterizedType.class.isInstance(beanSupertype)
+                                && bounds == ParameterizedType.class.cast(beanSupertype).getRawType()) {
                     isAssignable = true;
                     break;
                 }
@@ -694,16 +693,6 @@ public final class GenericsUtil {
             }
         }
         return genericTypes[mostSpecificIndex];
-    }
-
-    private static Class<?>[] getClassTypes(Class<?>[] rawTypes) {
-        List<Class<?>> classTypes = new ArrayList<>();
-        for (Class<?> rawType : rawTypes) {
-            if (!rawType.isInterface()) {
-                classTypes.add(rawType);
-            }
-        }
-        return classTypes.toArray(new Class[classTypes.size()]);
     }
 
     private static Type resolveTypeVariable(TypeVariable<?> variable, Type actualType, Collection<TypeVariable<?>> seen) {

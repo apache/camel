@@ -111,7 +111,7 @@ public final class JcloudsBlobStoreHelper {
     /**
      * Remove a specific blob from a {@link BlobStore}
      */
-    public static void removeBlob(BlobStore blobStore, String container, String blobName) throws IOException {
+    public static void removeBlob(BlobStore blobStore, String container, String blobName) {
         if (!Strings.isNullOrEmpty(blobName)) {
             blobStore.removeBlob(container, blobName);
         }
@@ -120,21 +120,21 @@ public final class JcloudsBlobStoreHelper {
     /**
      * Clear a {@link BlobStore} specific container
      */
-    public static void clearContainer(BlobStore blobStore, String container) throws IOException {
+    public static void clearContainer(BlobStore blobStore, String container) {
         blobStore.clearContainer(container);
     }
 
     /**
      * Delete a {@link BlobStore} specific container
      */
-    public static void deleteContainer(BlobStore blobStore, String container) throws IOException {
+    public static void deleteContainer(BlobStore blobStore, String container) {
         blobStore.deleteContainer(container);
     }
 
     /**
      * Check if a {@link BlobStore} specific container exists or not
      */
-    public static boolean containerExists(BlobStore blobStore, String container) throws IOException {
+    public static boolean containerExists(BlobStore blobStore, String container) {
         boolean result = blobStore.containerExists(container);
         return result;
     }
@@ -142,7 +142,7 @@ public final class JcloudsBlobStoreHelper {
     /**
      * Delete a list of {@link BlobStore} blob
      */
-    public static void removeBlobs(BlobStore blobStore, String container, List blobNames) throws IOException {
+    public static void removeBlobs(BlobStore blobStore, String container, List blobNames) {
         blobStore.removeBlobs(container, blobNames);
     }
 }

@@ -32,7 +32,7 @@ public class LuceneQueryProducer extends DefaultProducer {
     int maxNumberOfHits;
     int totalHitsThreshold;
 
-    public LuceneQueryProducer(Endpoint endpoint, LuceneConfiguration config) throws Exception {
+    public LuceneQueryProducer(Endpoint endpoint, LuceneConfiguration config) {
         super(endpoint);
         this.config = config;
         indexDirectory = config.getIndexDir();

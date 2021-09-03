@@ -114,16 +114,6 @@ public class Web3jProducer extends HeaderSelectorProducer {
         return (Web3jEndpoint) super.getEndpoint();
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
     @InvokeOnHeader(Web3jConstants.WEB3_CLIENT_VERSION)
     void web3ClientVersion(Message message) throws IOException {
         Request<?, Web3ClientVersion> web3ClientVersionRequest = web3j.web3ClientVersion();

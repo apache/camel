@@ -22,6 +22,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
+/**
+ * Interface for the compiled joor method when evaluating as Camel {@link org.apache.camel.Expression}.
+ */
 public interface JoorMethod {
 
     Object evaluate(CamelContext context, Exchange exchange, Message message, Object body, Optional<?> optionalBody)

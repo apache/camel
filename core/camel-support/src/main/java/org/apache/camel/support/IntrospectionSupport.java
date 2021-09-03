@@ -830,10 +830,9 @@ public final class IntrospectionSupport {
             } catch (IllegalArgumentException e) {
                 typeConversionFailed = e;
             }
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Setter \"{}\" with parameter type \"{}\" could not be used for type conversions of {}",
-                        new Object[] { setter, parameterType, ref });
-            }
+
+            LOG.trace("Setter \"{}\" with parameter type \"{}\" could not be used for type conversions of {}",
+                    setter, parameterType, ref);
         }
 
         if (typeConversionFailed != null && !isPropertyPlaceholder(context, value)) {

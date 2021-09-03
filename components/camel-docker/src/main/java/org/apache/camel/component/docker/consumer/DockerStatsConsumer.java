@@ -43,7 +43,7 @@ public class DockerStatsConsumer extends DefaultConsumer {
     private DockerComponent component;
     private StatsCmd statsCmd;
 
-    public DockerStatsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
+    public DockerStatsConsumer(DockerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.component = (DockerComponent) endpoint.getComponent();
@@ -78,24 +78,13 @@ public class DockerStatsConsumer extends DefaultConsumer {
         public void onNext(Statistics statistics) {
             LOGGER.debug("Received Docker Statistics Event: {}", statistics);
 
-            final Exchange exchange = getEndpoint().createExchange();
+            final Exchange exchange = createExchange(true);
             Message message = exchange.getIn();
             message.setBody(statistics);
 
-            try {
-                LOGGER.trace("Processing exchange [{}]...", exchange);
-                getAsyncProcessor().process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        LOGGER.trace("Done processing exchange [{}]...", exchange);
-                    }
-                });
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-            }
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
         }
     }
 }

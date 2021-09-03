@@ -22,6 +22,7 @@ import java.util.List;
 import io.netty.channel.ChannelHandler;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty.NettyConfiguration;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -31,6 +32,7 @@ import org.apache.camel.spi.UriPath;
  * Extended configuration for using HTTP with Netty.
  */
 @UriParams
+@Configurer
 public class NettyHttpConfiguration extends NettyConfiguration {
 
     @UriPath(enums = "http,https")

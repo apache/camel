@@ -16,32 +16,20 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSupport {
 
     private String body = "Hello World this file will NOT be deleted";
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/deletefile");
-        super.setUp();
-    }
-
     @Test
     public void testPollFileAndShouldNotBeDeleted() throws Exception {
-        template.sendBodyAndHeader("file://target/data/deletefile", body, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");
         // it could potentially retry the file on the 2nd poll and then fail
@@ -53,8 +41,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
         oneExchangeDone.matchesWaitTime();
 
         // assert the file is deleted
-        File file = new File("target/data/deletefile/hello.txt");
-        assertTrue(file.exists(), "The file should NOT have been deleted");
+        assertFileExists(testFile("hello.txt"));
     }
 
     @Override
@@ -63,7 +50,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).to("mock:error");
 
-                from("file://target/data/deletefile?initialDelay=0&delay=10&delete=true").process(new Processor() {
+                from(fileUri("?initialDelay=0&delay=10&delete=true")).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalArgumentException("Forced by unittest");
                     }

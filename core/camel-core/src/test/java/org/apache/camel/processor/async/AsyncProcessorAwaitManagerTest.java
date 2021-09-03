@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
@@ -76,7 +77,7 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
 
                                 assertEquals("myRoute", thread.getRouteId());
                                 // assertEquals("myAsync", thread.getNodeId());
-                                assertEquals("process1", thread.getNodeId());
+                                assertThat(thread.getNodeId()).matches("process[0-9]+");
                             }
                         }).to("mock:result");
             }

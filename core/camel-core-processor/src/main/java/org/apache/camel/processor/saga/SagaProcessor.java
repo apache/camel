@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class SagaProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
 
-    protected CamelContext camelContext;
+    //protected CamelContext camelContext; // unread field
 
     protected CamelSagaService sagaService;
 
@@ -50,7 +50,7 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
     public SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
                          SagaCompletionMode completionMode, CamelSagaStep step) {
         super(ObjectHelper.notNull(childProcessor, "childProcessor"));
-        this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
+        //this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
         this.sagaService = ObjectHelper.notNull(sagaService, "sagaService");
         this.completionMode = ObjectHelper.notNull(completionMode, "completionMode");
         this.step = ObjectHelper.notNull(step, "step");

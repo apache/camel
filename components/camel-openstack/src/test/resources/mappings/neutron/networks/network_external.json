@@ -1,0 +1,18 @@
+{
+  "id" : "d8c54bc8-ddc6-4c93-80ee-f474581a62ac",
+  "name" : "network_external.json",
+  "request" : {
+    "url" : "/v2.0/networks",
+    "method" : "POST"
+  },
+  "response" : {
+    "body" : "{\"network\":{\"status\":\"ACTIVE\",\"subnets\":[],\"name\":\"net1\",\"admin_state_up\":true,\"tenant_id\":\"9bacb3c5d39d41a79512987f338cf177\",\"segments\":[{\"provider:segmentation_id\":2,\"provider:physical_network\":\"8bab8453-1bc9-45af-8c70-f83aa9b50453\",\"provider:network_type\":\"vlan\"},{\"provider:segmentation_id\":null,\"provider:physical_network\":\"8bab8453-1bc9-45af-8c70-f83aa9b50453\",\"provider:network_type\":\"stt\"}],\"router:external\":true,\"shared\":false,\"port_security_enabled\":true,\"id\":\"4e8e5957-649f-477b-9e5b-f1f75b21c03c\",\"created_at\":\"2016-03-08T20:19:41\",\"updated_at\":\"2016-03-08T20:19:41\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 201
+  },
+  "uuid" : "d8c54bc8-ddc6-4c93-80ee-f474581a62ac",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

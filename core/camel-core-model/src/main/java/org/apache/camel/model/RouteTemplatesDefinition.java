@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -35,11 +37,13 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "routeTemplates")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition>
-        implements RouteTemplateContainer {
+        implements RouteTemplateContainer, CamelContextAware {
     @XmlElementRef
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private ErrorHandlerFactory errorHandlerFactory;
 
     public RouteTemplatesDefinition() {
     }
@@ -68,7 +72,7 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
     }
 
     /**
-     * The rest services
+     * The route templates
      */
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
@@ -80,6 +84,14 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public ErrorHandlerFactory getErrorHandlerFactory() {
+        return errorHandlerFactory;
+    }
+
+    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
+        this.errorHandlerFactory = errorHandlerFactory;
     }
 
     // Fluent API
@@ -99,9 +111,9 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
     /**
      * Adds the {@link RouteTemplatesDefinition}
      */
-    public RouteTemplateDefinition routeTemplate(RouteTemplateDefinition rest) {
-        getRouteTemplates().add(rest);
-        return rest;
+    public RouteTemplateDefinition routeTemplate(RouteTemplateDefinition template) {
+        getRouteTemplates().add(template);
+        return template;
     }
 
     // Implementation methods
@@ -109,6 +121,11 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
 
     protected RouteTemplateDefinition createRouteTemplate() {
         RouteTemplateDefinition template = new RouteTemplateDefinition();
+        ErrorHandlerFactory handler = getErrorHandlerFactory();
+        if (handler != null) {
+            template.getRoute().setErrorHandlerFactoryIfNull(handler);
+        }
+
         return template;
     }
 

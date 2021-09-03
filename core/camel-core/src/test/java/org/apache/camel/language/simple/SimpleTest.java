@@ -43,6 +43,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.InetAddressUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -262,6 +264,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    @ResourceLock(Resources.SYSTEM_PROPERTIES)
     public void testSimpleSystemPropertyExpressions() throws Exception {
         System.setProperty("who", "I was here");
         assertExpression("${sys.who}", "I was here");
@@ -637,7 +640,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${id}", exchange.getIn().getMessageId());
 
         assertEquals(1, context.getLanguageNames().size());
-        assertEquals("simple", context.getLanguageNames().get(0));
+        assertEquals("simple", context.getLanguageNames().iterator().next());
     }
 
     @Test
@@ -1946,6 +1949,12 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression(exp, "1");
         exchange.setProperty(Exchange.LOOP_INDEX, 1);
         assertExpression(exp, "99");
+    }
+
+    @Test
+    public void testMessageTimestamp() throws Exception {
+        exchange.getIn().setHeader(Exchange.MESSAGE_TIMESTAMP, 1234L);
+        assertExpression("${messageTimestamp}", 1234L);
     }
 
     @Override

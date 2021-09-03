@@ -25,17 +25,9 @@ import javax.management.ObjectName;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/script");
-        super.setUp();
-    }
 
     @Override
     public boolean useJmx() {
@@ -45,14 +37,14 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
     @Test
     public void testLanguage() throws Exception {
         // create script to start with
-        template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello World");
 
         template.sendBody("direct:start", "World");
 
         // even if we update the file the content is cached
-        template.sendBodyAndHeader("file:target/data/script", "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
         template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
@@ -61,14 +53,14 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
     @Test
     public void testClearCachedScriptViaJmx() throws Exception {
         // create script to start with
-        template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello World", "Bye World");
 
         template.sendBody("direct:start", "World");
 
         // even if we update the file the content is cached
-        template.sendBodyAndHeader("file:target/data/script", "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
         template.sendBody("direct:start", "World");
 
         // now clear the cache via the mbean server
@@ -91,7 +83,7 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                         // use content cache to load the script once and cache it (content cache and script cache both enabled)
-                        .to("language:simple:file:target/data/script/myscript.txt?contentCache=true&cacheScript=true")
+                        .to("language:simple:" + fileUri("myscript.txt?contentCache=true&cacheScript=true"))
                         .to("mock:result");
                 // END SNIPPET: e1
             }

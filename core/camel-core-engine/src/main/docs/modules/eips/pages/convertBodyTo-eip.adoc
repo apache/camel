@@ -8,12 +8,13 @@
 The ConvertBodyTo EIP allows you to transform your body to a different type.
 
 // eip options: START
-The Convert Body To EIP supports 2 options which are listed below:
+The Convert Body To EIP supports 3 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *type* | *Required* The java type to convert to |  | String
+| *mandatory* | When mandatory then the conversion must return a value (cannot be null), if this is not possible then NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the value is null. | true | Boolean
 | *charset* | To use a specific charset when converting |  | String
 |===
 // eip options: END

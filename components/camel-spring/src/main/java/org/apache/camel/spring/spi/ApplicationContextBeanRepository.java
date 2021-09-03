@@ -54,7 +54,7 @@ public class ApplicationContextBeanRepository implements BeanRepository {
 
         try {
             return type.cast(answer);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             String msg = "Found bean: " + name + " in ApplicationContext: " + applicationContext
                          + " of type: " + answer.getClass().getName() + " expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);

@@ -17,16 +17,22 @@
 
 package org.apache.camel.test.infra.hdfs.v2.services;
 
+import org.apache.camel.test.infra.common.TestUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 
 abstract class HadoopBaseContainer<T extends GenericContainer<T>> extends GenericContainer<T> {
+    private static final String FROM_IMAGE_NAME = "fedora:33";
+    private static final String FROM_IMAGE_BUILDER_ARG = "FROMIMAGE_BUILDER";
+    private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public HadoopBaseContainer(Network network, String name) {
-        super(new ImageFromDockerfile("hadoop-2x:ckc", false)
+        super(new ImageFromDockerfile("localhost/hadoop-2x:camel", false)
                 .withFileFromClasspath(".",
-                        "org/apache/camel/test/infra/hdfs/v2/services/"));
+                        "org/apache/camel/test/infra/hdfs/v2/services/")
+                .withBuildArg(FROM_IMAGE_BUILDER_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME))
+                .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME)));
 
         withNetwork(network);
 

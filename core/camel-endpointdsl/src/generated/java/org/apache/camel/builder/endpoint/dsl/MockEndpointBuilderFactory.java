@@ -220,6 +220,43 @@ public interface MockEndpointBuilderFactory {
             return this;
         }
         /**
+         * To turn on logging when the mock receives an incoming message. This
+         * will log only one time at INFO level for the incoming message. For
+         * more detailed logging then set the logger to DEBUG level for the
+         * org.apache.camel.component.mock.MockEndpoint class.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param log the value to set
+         * @return the dsl builder
+         */
+        default MockEndpointBuilder log(boolean log) {
+            doSetProperty("log", log);
+            return this;
+        }
+        /**
+         * To turn on logging when the mock receives an incoming message. This
+         * will log only one time at INFO level for the incoming message. For
+         * more detailed logging then set the logger to DEBUG level for the
+         * org.apache.camel.component.mock.MockEndpoint class.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param log the value to set
+         * @return the dsl builder
+         */
+        default MockEndpointBuilder log(String log) {
+            doSetProperty("log", log);
+            return this;
+        }
+        /**
          * A number that is used to turn on throughput logging based on groups
          * of the size.
          * 

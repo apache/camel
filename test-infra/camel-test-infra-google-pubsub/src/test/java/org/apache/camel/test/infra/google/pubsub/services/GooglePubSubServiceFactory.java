@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.google.pubsub.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class GooglePubSubServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(GooglePubSubServiceFactory.class);
-
     private GooglePubSubServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<GooglePubSubService> builder() {
+        return new SimpleTestServiceBuilder<>("google");
+    }
+
     public static GooglePubSubService createService() {
-        String instanceType = System.getProperty("googlepubsub.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-googlepubsub-container")) {
-            return new GooglePubSubLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new GooglePubSubRemoteService();
-        }
-
-        LOG.error("GooglePubSub instance must be one of 'local-googlepubsub-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid GooglePubSub instance type");
+        return builder()
+                .addLocalMapping(GooglePubSubLocalContainerService::new)
+                .addRemoteMapping(GooglePubSubRemoteService::new)
+                .build();
     }
 }

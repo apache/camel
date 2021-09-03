@@ -41,7 +41,7 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>simple</id>
+            <id>expanded-v3-yaml</id>
             <goals>
               <goal>generate</goal>
             </goals>

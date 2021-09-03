@@ -35,6 +35,7 @@ import com.netflix.loadbalancer.ServerList;
 import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryAware;
@@ -43,6 +44,7 @@ import org.apache.camel.cloud.ServiceFilterAware;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.cloud.ServiceLoadBalancerFunction;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -128,7 +130,7 @@ public class RibbonServiceLoadBalancer
     // ************************
 
     @Override
-    public <T> T process(String serviceName, ServiceLoadBalancerFunction<T> request) throws Exception {
+    public <T> T process(Exchange exchange, String serviceName, ServiceLoadBalancerFunction<T> request) throws Exception {
         ILoadBalancer loadBalancer = loadBalancers.computeIfAbsent(serviceName, key -> createLoadBalancer(key));
         Server server = loadBalancer.chooseServer(serviceName);
 
@@ -187,7 +189,7 @@ public class RibbonServiceLoadBalancer
                     config,
                     configuration.getRuleOrDefault(RoundRobinRule::new),
                     configuration.getPingOrDefault(DummyPing::new),
-                    new RibbonServerList(serviceName, serviceDiscovery, serviceFilter),
+                    new RibbonServerList(camelContext, serviceName, serviceDiscovery, serviceFilter),
                     null,
                     new PollingServerListUpdater(config));
         } else {
@@ -201,18 +203,21 @@ public class RibbonServiceLoadBalancer
         private final String serviceName;
         private final ServiceDiscovery serviceDiscovery;
         private final ServiceFilter serviceFilter;
+        private final DefaultExchange dummyExchange;
 
-        RibbonServerList(String serviceName, ServiceDiscovery serviceDiscovery, ServiceFilter serviceFilter) {
+        RibbonServerList(CamelContext camelContext, String serviceName, ServiceDiscovery serviceDiscovery,
+                         ServiceFilter serviceFilter) {
             this.serviceName = serviceName;
             this.serviceDiscovery = serviceDiscovery;
             this.serviceFilter = serviceFilter;
+            this.dummyExchange = new DefaultExchange(camelContext); // ServerList doesn't support current exchange
         }
 
         @Override
         public List<RibbonServiceDefinition> getInitialListOfServers() {
             List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
             if (serviceFilter != null) {
-                services = serviceFilter.apply(services);
+                services = serviceFilter.apply(dummyExchange, services);
             }
 
             return asRibbonServerList(services);
@@ -222,7 +227,7 @@ public class RibbonServiceLoadBalancer
         public List<RibbonServiceDefinition> getUpdatedListOfServers() {
             List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
             if (serviceFilter != null) {
-                services = serviceFilter.apply(services);
+                services = serviceFilter.apply(dummyExchange, services);
             }
 
             return asRibbonServerList(services);

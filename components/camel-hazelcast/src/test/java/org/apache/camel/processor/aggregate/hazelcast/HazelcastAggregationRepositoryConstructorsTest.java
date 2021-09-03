@@ -17,11 +17,13 @@
 package org.apache.camel.processor.aggregate.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSupport {
@@ -33,11 +35,13 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
         repo.doStart();
 
         try {
-            Exchange oldOne = new DefaultExchange(context());
-            Exchange newOne = new DefaultExchange(context());
+            final CamelContext context = context();
+            Exchange oldOne = new DefaultExchange(context);
+            Exchange newOne = new DefaultExchange(context);
             final String key = "abrakadabra";
+
             assertThrows(UnsupportedOperationException.class,
-                    () -> repo.add(context(), key, oldOne, newOne));
+                    () -> repo.add(context, key, oldOne, newOne));
         } finally {
             repo.doStop();
         }
@@ -50,10 +54,11 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
         repo.doStart();
 
         try {
-            Exchange ex = new DefaultExchange(context());
+            final CamelContext context = context();
+            Exchange ex = new DefaultExchange(context);
             final String key = "abrakadabra";
             assertThrows(UnsupportedOperationException.class,
-                    () -> repo.add(context(), key, ex));
+                    () -> repo.add(context, key, ex));
         } finally {
             repo.doStop();
         }
@@ -68,14 +73,16 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
     }
 
     @Test
-    public void locallyInitializedHazelcastInstanceAdd() throws Exception {
+    public void locallyInitializedHazelcastInstanceAdd() {
+        assertDoesNotThrow(() -> runLocallyInitializedHazelcastInstanceAdd());
+    }
+
+    private void runLocallyInitializedHazelcastInstanceAdd() throws Exception {
         HazelcastAggregationRepository repo = new HazelcastAggregationRepository("hzRepoMap");
         try {
             repo.doStart();
             Exchange ex = new DefaultExchange(context());
             repo.add(context(), "somedefaultkey", ex);
-            //} catch (Throwable e) {
-            //fail(e.getMessage());
         } finally {
             repo.doStop();
         }

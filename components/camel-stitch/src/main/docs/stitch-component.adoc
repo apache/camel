@@ -4,7 +4,7 @@
 :artifactId: camel-stitch
 :description: Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various integrations.
 :since: 3.8
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stitch.adoc[opts=optional]
 
@@ -40,71 +40,52 @@ for this component:
 
 == URI format
 
-[source,text]
 ------------------------------
 stitch:[tableName]//[?options]
 ------------------------------
 
-For example in order to produce data to Stitch from a custom processor:
-[source,java]
---------------------------------------------------------------------------------
-from("direct:sendStitch")
-     .process(exchange -> {
-         final StitchMessage stitchMessage = StitchMessage.builder()
-               .withData("field_1", "stitchMessage2-1")
-               .build();
-
-         final StitchRequestBody stitchRequestBody = StitchRequestBody.builder()
-                .addMessage(stitchMessage)
-                .withSchema(StitchSchema.builder().addKeyword("field_1", "string").build())
-                .withTableName("table_1")
-                .withKeyNames(Collections.singleton("field_1"))
-                .build();
-
-                exchange.getMessage().setBody(stitchRequestBody);
-     })
-.to("stitch:table_1?token=RAW({{token}})");
---------------------------------------------------------------------------------
-
-== URI Options
-// endpoint options: START
-The Stitch endpoint is configured using URI syntax:
-
-----
-stitch:tableName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
 
 
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *tableName* | The name of the destination table the data is being pushed to. Table names must be unique in each destination schema, or loading issues will occur. Note: The number of characters in the table name should be within the destinations allowed limits or data will rejected. |  | String
-|===
 
+// component-configure options: START
+== Configuring Options
 
-=== Query Parameters (8 parameters):
+Camel components are configured on two separate levels:
 
+- component level
+- endpoint level
 
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *keyNames* (producer) | A collection of comma separated strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | EUROPE | StitchRegion
-| *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
-| *connectionProvider* (producer) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
-| *httpClient* (producer) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
-| *stitchClient* (advanced) | *Autowired* Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface |  | StitchClient
-| *token* (security) | *Required* Stitch access token for the Stitch Import API |  | String
-|===
-// endpoint options: END
+=== Configuring Component Options
 
-== Component Options
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
+
 // component options: START
+== Component Options
+
+
 The Stitch component supports 10 options, which are listed below.
 
 
@@ -125,6 +106,44 @@ The Stitch component supports 10 options, which are listed below.
 |===
 // component options: END
 
+// endpoint options: START
+== Endpoint Options
+
+The Stitch endpoint is configured using URI syntax:
+
+----
+stitch:tableName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *tableName* | The name of the destination table the data is being pushed to. Table names must be unique in each destination schema, or loading issues will occur. Note: The number of characters in the table name should be within the destination's allowed limits or data will rejected. |  | String
+|===
+
+
+=== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *keyNames* (producer) | A collection of comma separated strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | EUROPE | StitchRegion
+| *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
+| *connectionProvider* (producer) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
+| *httpClient* (producer) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
+| *stitchClient* (advanced) | *Autowired* Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface |  | StitchClient
+| *token* (security) | *Required* Stitch access token for the Stitch Import API |  | String
+|===
+// endpoint options: END
+
 
 == Async Producer
 
@@ -133,6 +152,28 @@ This component implements the async Consumer and producer.
 This allows camel route to consume and produce events asynchronously without blocking any threads.
 
 == Usage
+
+For example in order to produce data to Stitch from a custom processor:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:sendStitch")
+     .process(exchange -> {
+         final StitchMessage stitchMessage = StitchMessage.builder()
+               .withData("field_1", "stitchMessage2-1")
+               .build();
+
+         final StitchRequestBody stitchRequestBody = StitchRequestBody.builder()
+                .addMessage(stitchMessage)
+                .withSchema(StitchSchema.builder().addKeyword("field_1", "string").build())
+                .withTableName("table_1")
+                .withKeyNames(Collections.singleton("field_1"))
+                .build();
+
+                exchange.getMessage().setBody(stitchRequestBody);
+     })
+.to("stitch:table_1?token=RAW({{token}})");
+--------------------------------------------------------------------------------
 
 === Message headers evaluated by the component producer
 Before sending a message to Stitch component you can configure the following headers.
@@ -180,7 +221,7 @@ can be type of `StitchMessage`, `StitchRequestBody` or `Map` but this Map here i
 
 Here are list of examples of data that can be proceeded to Stitch:
 
-===== Input body type `org.apache.camel.component.stitch.client.models.StitchRequestBody`:
+==== Input body type `org.apache.camel.component.stitch.client.models.StitchRequestBody`:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:sendStitch")
@@ -202,7 +243,8 @@ from("direct:sendStitch")
 --------------------------------------------------------------------------------
 
 
-===== Input body type `org.apache.camel.component.stitch.client.models.StitchMessage`:
+==== Input body type `org.apache.camel.component.stitch.client.models.StitchMessage`:
+
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:sendStitch")
@@ -221,7 +263,7 @@ from("direct:sendStitch")
 --------------------------------------------------------------------------------
 
 
-===== Input body type `Map`:
+==== Input body type `Map`:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:sendStitch")
@@ -246,7 +288,7 @@ from("direct:sendStitch")
 
 
 
-===== Input body type `Iterable`:
+==== Input body type `Iterable`:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:sendStitch")
@@ -300,13 +342,17 @@ from("direct:sendStitch")
 --------------------------------------------------------------------------------
 
 === Development Notes (Important)
+
 When developing on this component, you will need to obtain your Stitch token in order to run the integration tests. In addition to the mocked unit tests
 you *will need to run the integration tests with every change you make*
 To run the integration tests, on this component directory, run the following maven command:
+
+[source,bash]
 ----
 mvn verify -PfullTests -Dtoken=stitchToken
 ----
+
 Whereby `token` is your Stitch token that is generated for Stitch Import API integration.
 
 
-include::camel-spring-boot::page$stitch-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$stitch-starter.adoc[]

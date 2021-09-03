@@ -83,7 +83,7 @@ public final class AtomixMapConsumer extends AbstractAtomixClientConsumer<Atomix
     // ********************************************
 
     private void onEvent(DistributedMap.EntryEvent<Object, Object> event) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setHeader(AtomixClientConstants.EVENT_TYPE, event.type());
         exchange.getIn().setHeader(AtomixClientConstants.RESOURCE_KEY, event.entry().getKey());
 

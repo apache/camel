@@ -21,9 +21,11 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterFactory;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
 @CloudServiceFactory("blacklist-service-filter")
+@Configurer
 public class BlacklistServiceFilterFactory implements ServiceFilterFactory {
     private List<String> servers;
 

@@ -350,7 +350,7 @@ public final class DSAnnotationProcessor {
             Class<?> clazz,
             DirectoryService service, String[] ldifFiles)
             throws Exception {
-        if ((ldifFiles != null) && (ldifFiles.length > 0)) {
+        if (ldifFiles != null && ldifFiles.length > 0) {
             for (String ldifFile : ldifFiles) {
                 InputStream is = clazz.getClassLoader().getResourceAsStream(
                         ldifFile);
@@ -438,7 +438,7 @@ public final class DSAnnotationProcessor {
 
         ApplyLdifs applyLdifs = desc.getAnnotation(ApplyLdifs.class);
 
-        if ((applyLdifs != null) && (applyLdifs.value() != null)) {
+        if (applyLdifs != null && applyLdifs.value() != null) {
             String[] ldifs = applyLdifs.value();
 
             String dnStart = "dn:";

@@ -286,9 +286,10 @@ public class DelayedMonoPublisherTest {
     @Test
     public void testOnlyOneExceptionAllowed() throws Exception {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
-        pub.setException(new RuntimeException("An exception"));
+        final RuntimeException runtimeException = new RuntimeException("An exception");
+        pub.setException(runtimeException);
         assertThrows(IllegalStateException.class,
-                () -> pub.setException(new RuntimeException("An exception")));
+                () -> pub.setException(runtimeException));
     }
 
 }

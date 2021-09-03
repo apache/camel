@@ -1,8 +1,6 @@
 [[BacklogDebugger-BacklogDebugger]]
 = BacklogDebugger
 
-*Since Camel 2.12*
-
 Camel supports a backlog debugger that is used for live debugging of
 messages that are routed in Camel. 
 The backlog debugger has additional functionality for easier debugging
@@ -14,6 +12,8 @@ interface.
 
 You can enable or disable the BacklogDebugger dynamically, by calling
 `enableDebugger` or `disableDebugger` methods.
+
+NOTE: This requires to enabled JMX by including `camel-management` JAR in the classpath.
 
 [[BacklogDebugger-Options]]
 == Options
@@ -86,6 +86,9 @@ at the node.
 
 |`setMessageHeaderOnBreakpoint(nodeId,headerName,value)` |`void` |To update/add the message header on the suspended
 Exchange at the node.
+
+| `setFallbackTimeout(value)` |`long` |Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel.
+A timeout used for waiting for a message to arrive at a given breakpoint. `
 |=======================================================================
 
 [[BacklogDebugger-Enabling]]

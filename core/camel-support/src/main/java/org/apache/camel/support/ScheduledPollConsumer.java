@@ -33,6 +33,7 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +135,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         // should we backoff if its enabled, and either the idle or error counter is > the threshold
         if (backoffMultiplier > 0
                 // either idle or error threshold could be not in use, so check for that and use MAX_VALUE if not in use
-                && (idleCounter >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE))
+                && idleCounter >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE)
                 || errorCounter >= (backoffErrorThreshold > 0 ? backoffErrorThreshold : Integer.MAX_VALUE)) {
             if (backoffCounter++ < backoffMultiplier) {
                 // yes we should backoff
@@ -465,6 +466,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             // need to use a copy in case the consumer is restarted so we keep the properties
             Map<String, Object> copy = new LinkedHashMap<>(schedulerProperties);
             PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, copy);
+            // special for trigger and job parameters
+            Map<String, Object> triggerParameters = PropertiesHelper.extractProperties(copy, "trigger.");
+            Map<String, Object> jobParameters = PropertiesHelper.extractProperties(copy, "job.");
+            PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, "triggerParameters",
+                    triggerParameters);
+            PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, "jobParameters", jobParameters);
             if (copy.size() > 0) {
                 throw new FailedToCreateConsumerException(
                         getEndpoint(), "There are " + copy.size()

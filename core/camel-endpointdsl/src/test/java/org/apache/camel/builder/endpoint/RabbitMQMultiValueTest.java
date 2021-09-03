@@ -19,16 +19,16 @@ package org.apache.camel.builder.endpoint;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class RabbitMQMultiValueTest extends ContextTestSupport {
+public class RabbitMQMultiValueTest extends BaseEndpointDslTest {
 
     @Override
     public boolean isUseRouteBuilder() {

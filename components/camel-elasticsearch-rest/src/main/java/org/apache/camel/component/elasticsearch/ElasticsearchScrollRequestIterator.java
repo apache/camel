@@ -44,7 +44,7 @@ public class ElasticsearchScrollRequestIterator implements Iterator<SearchHit>, 
     private int requestCount;
 
     public ElasticsearchScrollRequestIterator(SearchRequest searchRequest, RestHighLevelClient restHighLevelClient,
-                                              int scrollKeepAliveMs, Exchange exchange) throws IOException {
+                                              int scrollKeepAliveMs, Exchange exchange) {
         this.searchRequest = searchRequest;
         this.restHighLevelClient = restHighLevelClient;
         this.scrollKeepAliveMs = scrollKeepAliveMs;

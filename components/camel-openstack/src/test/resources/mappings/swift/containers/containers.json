@@ -1,0 +1,22 @@
+{
+  "id" : "f4cf104c-a8b7-41a8-b571-d53d7391f9c2",
+  "name" : "containers.json",
+  "request" : {
+    "url" : "/12345321ae80457abc3728fa1e6feb78/?format=json",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "[{\"count\":2,\"bytes\":100,\"name\":\"Test\"},{\"count\":1,\"bytes\":14,\"name\":\"marktwain\"}]",
+    "headers" : {
+        "Content-Type": "application/json",
+        "Date": "Wed, 16 Mar 2016 15:01:58 GMT",
+        "Server": "Apache/2.4.7 (Ubuntu)",
+        "Vary": "X-Auth-Token",
+        "x-openstack-request-id": "req-9b8d6e0d-8d2c-4ebc-b26b-7c0de628723a"
+    },
+    "status" : 200
+  },
+  "uuid" : "f4cf104c-a8b7-41a8-b571-d53d7391f9c2",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

@@ -17,7 +17,9 @@
 package org.apache.camel.component.salesforce;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.BatchStateEnum;
@@ -25,6 +27,7 @@ import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -83,4 +86,42 @@ public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
         template().requestBody("direct:closeJob", jobInfo, JobInfo.class);
     }
 
+    @Test
+    public void testPkChunking() throws Exception {
+        // create a QUERY test Job
+        JobInfo jobInfo = new JobInfo();
+        jobInfo.setOperation(OperationEnum.QUERY);
+        jobInfo.setContentType(ContentType.CSV);
+        jobInfo.setObject(Merchandise__c.class.getSimpleName());
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(SalesforceEndpointConfig.PK_CHUNKING, true);
+        headers.put(SalesforceEndpointConfig.PK_CHUNKING_CHUNK_SIZE, 1000);
+        jobInfo = template().requestBodyAndHeaders(
+                "direct:createJob", jobInfo, headers, JobInfo.class);
+        assertNotNull(jobInfo.getId(), "Missing JobId");
+
+        // test createQuery
+        BatchInfo batchInfo = template().requestBody("direct:createBatchQuery", jobInfo, BatchInfo.class);
+        assertNotNull(batchInfo, "Null batch query");
+        assertNotNull(batchInfo.getId(), "Null batch query id");
+
+        // test getRequest
+        InputStream requestStream = template().requestBody("direct:getRequest", batchInfo, InputStream.class);
+        assertNotNull(requestStream, "Null batch request");
+
+        // wait for batch to finish
+        log.info("Waiting for query batch to finish...");
+        while (!batchProcessed(batchInfo)) {
+            // sleep 5 seconds
+            Thread.sleep(5000);
+            // check again
+            batchInfo = getBatchInfo(batchInfo);
+        }
+        log.info("Query finished with state " + batchInfo.getState());
+        // Because PK chunking is enabled, the original batch is given a state of Not Processed.
+        assertEquals(BatchStateEnum.NOT_PROCESSED, batchInfo.getState(), "Query did not succeed");
+
+        // close the test job
+        template().requestBody("direct:closeJob", jobInfo, JobInfo.class);
+    }
 }

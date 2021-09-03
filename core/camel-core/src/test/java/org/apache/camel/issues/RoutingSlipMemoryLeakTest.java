@@ -19,19 +19,11 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.RoutingSlip;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/output");
-        super.setUp();
-    }
 
     /**
      * Reproducer for the memory leak: CAMEL-10048
@@ -58,7 +50,7 @@ public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
         };
     }
 
-    public static class SlipProvider {
+    public class SlipProvider {
 
         public String computeSlip(String body) {
             /*
@@ -70,7 +62,7 @@ public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
              * MockEndpoint.createProducer() creates an implementation of
              * AsyncProcessor.
              */
-            return "file:target/data/output";
+            return fileUri();
         }
     }
 }

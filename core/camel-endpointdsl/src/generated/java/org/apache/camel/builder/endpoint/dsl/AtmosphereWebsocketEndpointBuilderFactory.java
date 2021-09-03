@@ -717,6 +717,117 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * If this option is true then IN exchange Body of the exchange will be
+         * mapped to HTTP body. Setting this to false will avoid the HTTP
+         * mapping.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
+                boolean mapHttpMessageBody) {
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Body of the exchange will be
+         * mapped to HTTP body. Setting this to false will avoid the HTTP
+         * mapping.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
+                String mapHttpMessageBody) {
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Form Encoded body of the
+         * exchange will be mapped to HTTP. Setting this to false will avoid the
+         * HTTP Form Encoded body mapping.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
+                boolean mapHttpMessageFormUrlEncodedBody) {
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Form Encoded body of the
+         * exchange will be mapped to HTTP. Setting this to false will avoid the
+         * HTTP Form Encoded body mapping.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
+                String mapHttpMessageFormUrlEncodedBody) {
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Headers of the exchange will
+         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
+         * Headers mapping.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
+                boolean mapHttpMessageHeaders) {
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Headers of the exchange will
+         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
+         * Headers mapping.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
+                String mapHttpMessageHeaders) {
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            return this;
+        }
+        /**
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
@@ -784,117 +895,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder traceEnabled(
                 String traceEnabled) {
             doSetProperty("traceEnabled", traceEnabled);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
-                boolean mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
-                String mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
-                boolean mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
-                String mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
-                boolean mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
-                String mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
     }
@@ -1293,117 +1293,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             doSetProperty("httpBinding", httpBinding);
             return this;
         }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageBody(
-                boolean mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageBody(
-                String mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
-                boolean mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
-                String mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageHeaders(
-                boolean mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageHeaders(
-                String mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
     }
 
     /**
@@ -1707,117 +1596,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
         default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(
                 String httpBinding) {
             doSetProperty("httpBinding", httpBinding);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageBody(
-                boolean mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageBody(
-                String mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageFormUrlEncodedBody(
-                boolean mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageFormUrlEncodedBody(
-                String mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageHeaders(
-                boolean mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageHeaders(
-                String mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
     }

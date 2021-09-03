@@ -156,7 +156,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     /**
      * Represents a rest service
      */
-    private final class RestServiceEntry implements RestService {
+    private static final class RestServiceEntry implements RestService {
 
         private final Consumer consumer;
         private final String url;

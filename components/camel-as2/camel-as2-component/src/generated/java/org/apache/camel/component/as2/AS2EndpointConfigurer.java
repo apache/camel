@@ -26,6 +26,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("as2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class);
         map.put("as2To", java.lang.String.class);
         map.put("as2Version", java.lang.String.class);
+        map.put("attachedFileName", java.lang.String.class);
         map.put("clientFqdn", java.lang.String.class);
         map.put("compressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
         map.put("decryptingPrivateKey", java.security.PrivateKey.class);
@@ -67,6 +68,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": target.getConfiguration().setAs2To(property(camelContext, java.lang.String.class, value)); return true;
         case "as2version":
         case "as2Version": target.getConfiguration().setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
+        case "attachedfilename":
+        case "attachedFileName": target.getConfiguration().setAttachedFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientfqdn":
         case "clientFqdn": target.getConfiguration().setClientFqdn(property(camelContext, java.lang.String.class, value)); return true;
         case "compressionalgorithm":
@@ -136,6 +139,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": return java.lang.String.class;
         case "as2version":
         case "as2Version": return java.lang.String.class;
+        case "attachedfilename":
+        case "attachedFileName": return java.lang.String.class;
         case "clientfqdn":
         case "clientFqdn": return java.lang.String.class;
         case "compressionalgorithm":
@@ -201,6 +206,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": return target.getConfiguration().getAs2To();
         case "as2version":
         case "as2Version": return target.getConfiguration().getAs2Version();
+        case "attachedfilename":
+        case "attachedFileName": return target.getConfiguration().getAttachedFileName();
         case "clientfqdn":
         case "clientFqdn": return target.getConfiguration().getClientFqdn();
         case "compressionalgorithm":

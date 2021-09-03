@@ -33,6 +33,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.Message;
@@ -132,11 +133,18 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) throws Exception {
         if (this.sessionID == null || isMatching(sessionID)) {
             for (QuickfixjConsumer consumer : consumers) {
+                // ensure consumer is started
+                ServiceHelper.startService(consumer);
                 Exchange exchange
-                        = QuickfixjConverters.toExchange(this, sessionID, message, eventCategory, getExchangePattern());
-                consumer.onExchange(exchange);
-                if (exchange.getException() != null) {
-                    throw exchange.getException();
+                        = QuickfixjConverters.toExchange(consumer, sessionID, message, eventCategory, getExchangePattern());
+                try {
+                    consumer.onExchange(exchange);
+                    Exception cause = exchange.getException();
+                    if (cause != null) {
+                        throw cause;
+                    }
+                } finally {
+                    consumer.releaseExchange(exchange, false);
                 }
             }
         }

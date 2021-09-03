@@ -16,12 +16,11 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class ProcessorDefinitionDslTest extends ContextTestSupport {
+public class ProcessorDefinitionDslTest extends BaseEndpointDslTest {
 
     @Test
     public void testFlow() throws Exception {

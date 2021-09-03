@@ -17,44 +17,43 @@
 package org.apache.camel.component.hdfs.kerberos;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.hdfs.HdfsTestSupport.CWD;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class KerberosAuthenticationTest {
 
     private KerberosAuthentication underTest;
 
-    @Test
-    public void loginWithKeytabFile() throws IOException {
-        // given
+    private void doLogin(String s) {
         Configuration configuration = new Configuration();
 
         String username = "test_user";
-        String keyTabFileLocation = CWD.getAbsolutePath() + "/src/test/resources/kerberos/test-keytab.bin";
+        String keyTabFileLocation = CWD.getAbsolutePath() + s;
 
         underTest = new KerberosAuthentication(configuration, username, keyTabFileLocation);
+    }
+
+    @Test
+    public void loginWithKeytabFile() {
+        // given
+        doLogin("/src/test/resources/kerberos/test-keytab.bin");
 
         // when
-        underTest.loginWithKeytab();
+        assertDoesNotThrow(() -> underTest.loginWithKeytab());
 
         // then
         /* message is printed in the logs */
     }
 
     @Test
-    public void loginWithMissingKeytabFile() throws IOException {
+    public void loginWithMissingKeytabFile() {
         // given
-        Configuration configuration = new Configuration();
-
-        String username = "test_user";
-        String keyTabFileLocation = CWD.getAbsolutePath() + "/src/test/resources/kerberos/missing.bin";
-
-        underTest = new KerberosAuthentication(configuration, username, keyTabFileLocation);
+        doLogin("/src/test/resources/kerberos/missing.bin");
 
         // when
         assertThrows(FileNotFoundException.class,

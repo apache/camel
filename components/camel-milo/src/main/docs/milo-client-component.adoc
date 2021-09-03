@@ -15,7 +15,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-clien
 The Milo Client component provides access to OPC UA servers using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
 
-*Java 9+*: This component requires Java 9+ at runtime.
+*Java 11+*: This component requires Java 11+ at runtime.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -31,9 +31,71 @@ for this component:
 ------------------------------------------------------------
 
 
+== URI format
+
+The URI syntax of the endpoint is:
+
+------------------------
+milo-client:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
+------------------------
+
+If the server does not use a path, then it is possible to simply omit it:
+
+------------------------
+milo-client:opc.tcp://[user:password@]host:port?node=RAW(nsu=urn:foo:bar;s=item-1)
+------------------------
+
+If no user credentials are provided the client will switch to anonymous mode.
+
+All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
+will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
+made, the options of the +client+ group are applied. All further instances will be ignored.
+
+If you need alternate options for the same endpoint URI it is possible though to set the +clientId+ option
+which will by added internally to the endpoint URI in order to select a different shared connection instance.
+In other words, shared connections located by the combination of endpoint URI and client id.
+
+
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
-The OPC UA Client component supports 24 options, which are listed below.
+== Component Options
+
+
+The OPC UA Client component supports 25 options, which are listed below.
 
 
 
@@ -58,6 +120,7 @@ The OPC UA Client component supports 24 options, which are listed below.
 | *keyStoreUrl* (client) | The URL where the key should be loaded from |  | String
 | *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
 | *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
+| *miloClientConnectionManager* (client) | *Autowired* Instance for managing client connections |  | MiloClientConnectionManager
 | *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
 | *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
 | *requestedPublishingInterval* (client) | The requested publishing interval in milliseconds | 1_000.0 | Double
@@ -67,47 +130,9 @@ The OPC UA Client component supports 24 options, which are listed below.
 |===
 // component options: END
 
-
-
-== URI format
-
-The URI syntax of the endpoint is: 
-
-[source]
-------------------------
-milo-client:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
-------------------------
-
-If the server does not use a path, then it is possible to simply omit it:
-
-------------------------
-milo-client:opc.tcp://[user:password@]host:port?node=RAW(nsu=urn:foo:bar;s=item-1)
-------------------------
-
-If no user credentials are provided the client will switch to anonymous mode.
-
-== URI options
-
-All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
-will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
-made, the options of the +client+ group are applied. All further instances will be ignored.
-
-If you need alternate options for the same endpoint URI it is possible though to set the +clientId+ option
-which will by added internally to the endpoint URI in order to select a different shared connection instance.
-In other words, shared connections located by the combination of endpoint URI and client id.
-
-
-
-
-
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The OPC UA Client endpoint is configured using URI syntax:
 
 ----
@@ -168,9 +193,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-
 === Discovery
 
 If the server uses a dedicated discovery endpoint (e.g. `/discovery`), which may support different (less secure) security policies,
@@ -187,7 +209,6 @@ but override the host information with the value of the original URI.
 
 [[nodeid]]
 === Node ID
-
 
 In order to define a target node a namespace and node id is required. In previous versions this was possible by
 specifying `nodeId` and either `namespaceUri` or `namespaceIndex`. However this only allowed for using
@@ -234,7 +255,9 @@ Input parameters are taken from the body:
 The component provide a producer to read values from multiple opc-ua nodes. The Node-IDs will be defined in the header `CamelMiloNodeIds` as list of strings. (see <<nodeid, Node-ID>> for the ID format).
 
 Example:
-```java
+
+[source,java]
+----
 from("direct:start")
     .setHeader("CamelMiloNodeIds", constant(Arrays.asList("nsu=urn:org:apache:camel;s=myitem1")))
     .setHeader("await", constant(true)) // await: parameter "defaultAwaitWrites"
@@ -245,7 +268,7 @@ from("direct:start")
                 return newExchange;
             }
         }).to("mock:test1");
-```
+----
 
 === Security policies
 
@@ -254,7 +277,6 @@ or to use the Milo enum literals (e.g. `None`). Specifying an unknown security p
 
 The known security policy URIs and enum literals are can be seen here: https://github.com/eclipse/milo/blob/master/opc-ua-stack/stack-core/src/main/java/org/eclipse/milo/opcua/stack/core/security/SecurityPolicy.java[SecurityPolicy.java] 
 
-**Note:** In any case security policies are considered case sensitive.
+NOTE: In any case security policies are considered case sensitive.
 
-
-include::camel-spring-boot::page$milo-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$milo-starter.adoc[]

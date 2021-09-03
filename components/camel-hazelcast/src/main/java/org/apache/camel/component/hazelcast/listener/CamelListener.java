@@ -32,7 +32,7 @@ public class CamelListener {
     }
 
     protected void sendExchange(String operation, Object key, Object value) {
-        Exchange exchange = consumer.getEndpoint().createExchange();
+        Exchange exchange = consumer.createExchange(false);
 
         // set object to body
         exchange.getIn().setBody(value);
@@ -57,6 +57,8 @@ public class CamelListener {
                     exchange,
                     exchange.getException());
         }
+
+        consumer.releaseExchange(exchange, false);
     }
 
     public String getCacheName() {

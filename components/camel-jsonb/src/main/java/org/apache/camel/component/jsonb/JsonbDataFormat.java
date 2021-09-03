@@ -40,12 +40,13 @@ import org.apache.camel.support.service.ServiceSupport;
  * Marshal POJOs to JSON and back using JSON-B.
  */
 @Dataformat("json-jsonb")
-@Metadata(includeProperties = "unmarshalTypeName,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyamingStrategy,skipNull")
+@Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyamingStrategy,skipNull")
 public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
     private CamelContext camelContext;
     private Jsonb objectMapper;
     private String unmarshalTypeName;
-    private Type unmarshalType;
+    private Class<?> unmarshalType;
+    private Type customType;
     private boolean prettyPrint;
     private String encoding = "UTF-8";
     private String binaryStrategy = BinaryDataStrategy.BASE_64;
@@ -60,10 +61,18 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
     /**
      * Use the default JSON-B {@link Jsonb} and with a custom unmarshal type
      *
-     * @param unmarshalType the custom unmarshal type
+     * @param customType the custom unmarshal type
      */
-    public JsonbDataFormat(Type unmarshalType) {
+    public JsonbDataFormat(Type customType) {
+        this.customType = customType;
+    }
+
+    public JsonbDataFormat(Class<?> unmarshalType) {
         this(null, unmarshalType);
+    }
+
+    public JsonbDataFormat(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
     }
 
     /**
@@ -72,7 +81,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
      */
-    public JsonbDataFormat(Jsonb mapper, Type unmarshalType) {
+    public JsonbDataFormat(Jsonb mapper, Class<?> unmarshalType) {
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
     }
@@ -105,11 +114,11 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
         this.objectMapper = objectMapper;
     }
 
-    public Type getUnmarshalType() {
+    public Class<?> getUnmarshalType() {
         return unmarshalType;
     }
 
-    public void setUnmarshalType(Type unmarshalType) {
+    public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
 
@@ -177,12 +186,16 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         // is there a header with the unmarshal type?
-        Type expectedType = unmarshalType;
+        Class<?> expectedType = unmarshalType;
         String type = exchange.getIn().getHeader("CamelJsonbUnmarshallType", String.class);
         if (type != null) {
             expectedType = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
         }
-        return objectMapper.fromJson(stream, expectedType);
+        if (expectedType == null && customType != null) {
+            return objectMapper.fromJson(stream, customType);
+        } else {
+            return objectMapper.fromJson(stream, expectedType);
+        }
     }
 
     @Override

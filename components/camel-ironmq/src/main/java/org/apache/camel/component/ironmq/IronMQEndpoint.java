@@ -22,9 +22,6 @@ import io.iron.ironmq.Client;
 import io.iron.ironmq.Cloud;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
@@ -69,27 +66,9 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
         scheduler.setUseFixedDelay(ironMQConsumer.isUseFixedDelay());
         scheduler.setInitialDelay(ironMQConsumer.getInitialDelay());
         scheduler.setTimeUnit(ironMQConsumer.getTimeUnit());
-        scheduler.setConcurrentTasks(configuration.getConcurrentConsumers());
+        scheduler.setConcurrentConsumers(configuration.getConcurrentConsumers());
         ironMQConsumer.setScheduler(scheduler);
         return ironMQConsumer;
-    }
-
-    public Exchange createExchange(io.iron.ironmq.Message msg) {
-        return createExchange(getExchangePattern(), msg);
-    }
-
-    private Exchange createExchange(ExchangePattern pattern, io.iron.ironmq.Message msg) {
-        Exchange exchange = super.createExchange(pattern);
-        Message message = exchange.getIn();
-        if (configuration.isPreserveHeaders()) {
-            GsonUtil.copyFrom(msg, message);
-        } else {
-            message.setBody(msg.getBody());
-        }
-        message.setHeader(IronMQConstants.MESSAGE_ID, msg.getId());
-        message.setHeader(IronMQConstants.MESSAGE_RESERVATION_ID, msg.getReservationId());
-        message.setHeader(IronMQConstants.MESSAGE_RESERVED_COUNT, msg.getReservedCount());
-        return exchange;
     }
 
     @Override

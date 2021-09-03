@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-catalog</artifactId>
@@ -62,6 +62,7 @@
             <artifactId>camel-allcomponents</artifactId>
             <version>${project.version}</version>
             <type>pom</type>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.camel</groupId>
@@ -126,8 +127,12 @@
                             <goal>prepare-catalog</goal>
                             <!-- prepare apache-camel assembly -->
                             <goal>prepare-assembly</goal>
+                            <!-- update secrets in camel-util -->
+                            <goal>update-sensitive-helper</goal>
+                            <!-- update names in camel-main -->
+                            <goal>update-main-helper</goal>
                         </goals>
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                     </execution>
                 </executions>
             </plugin>

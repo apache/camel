@@ -23,7 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -37,8 +36,8 @@ public class FileProduceOverruleOnlyOnceTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.message(0).header(Exchange.OVERRULE_FILE_NAME).isNull();
-        mock.expectedFileExists("target/data/write/ruled.txt", "Hello World");
-        mock.expectedFileExists("target/data/again/hello.txt", "Hello World");
+        mock.expectedFileExists(testFile("write/ruled.txt"), "Hello World");
+        mock.expectedFileExists(testFile("again/hello.txt"), "Hello World");
 
         Map<String, Object> map = new HashMap<>();
         map.put(Exchange.FILE_NAME, "hello.txt");
@@ -51,18 +50,10 @@ public class FileProduceOverruleOnlyOnceTest extends ContextTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/write");
-        deleteDirectory("target/data/again");
-        super.setUp();
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("file://target/data/write").to("file://target/data/again", "mock:result");
+                from("direct:start").to(fileUri("write")).to(fileUri("again"), "mock:result");
             }
         };
     }

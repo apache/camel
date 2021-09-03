@@ -452,6 +452,39 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointConsumerBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointConsumerBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
          * Just remember to prefix the value with # so Camel knows it should
@@ -2752,6 +2785,39 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointProducerBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointProducerBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
          * Just remember to prefix the value with # so Camel knows it should
@@ -4317,6 +4383,39 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
          * Just remember to prefix the value with # so Camel knows it should
@@ -5316,7 +5415,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-netty-http
          * 
-         * Syntax: <code>netty-http:protocol:host:port/path</code>
+         * Syntax: <code>netty-http:protocol://host:port/path</code>
          * 
          * Path parameter: protocol (required)
          * The protocol to use which is either http, https or proxy - a consumer
@@ -5333,7 +5432,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Path parameter: path
          * Resource path
          * 
-         * @param path protocol:host:port/path
+         * @param path protocol://host:port/path
          * @return the dsl builder
          */
         default NettyHttpEndpointBuilder nettyHttp(String path) {
@@ -5347,7 +5446,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-netty-http
          * 
-         * Syntax: <code>netty-http:protocol:host:port/path</code>
+         * Syntax: <code>netty-http:protocol://host:port/path</code>
          * 
          * Path parameter: protocol (required)
          * The protocol to use which is either http, https or proxy - a consumer
@@ -5366,7 +5465,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path protocol:host:port/path
+         * @param path protocol://host:port/path
          * @return the dsl builder
          */
         default NettyHttpEndpointBuilder nettyHttp(

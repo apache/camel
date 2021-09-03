@@ -117,6 +117,7 @@ public class KafkaComponentTest extends CamelTestSupport {
         assertEquals(Integer.valueOf(1), endpoint.getConfiguration().getLingerMs());
         assertEquals(Integer.valueOf(100), endpoint.getConfiguration().getMaxRequestSize());
         assertEquals(100, endpoint.getConfiguration().getRequestTimeoutMs().intValue());
+        assertEquals(200, endpoint.getConfiguration().getDeliveryTimeoutMs().intValue());
         assertEquals(Integer.valueOf(1029), endpoint.getConfiguration().getMetadataMaxAgeMs());
         assertEquals(Integer.valueOf(23), endpoint.getConfiguration().getReceiveBufferBytes());
         assertEquals(Integer.valueOf(234), endpoint.getConfiguration().getReconnectBackoffMs());
@@ -178,6 +179,7 @@ public class KafkaComponentTest extends CamelTestSupport {
         props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
         props.put(ProducerConfig.RECEIVE_BUFFER_CONFIG, "32768");
         props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, "30000");
+        props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "120000");
         props.put(ProducerConfig.SEND_BUFFER_CONFIG, "131072");
         props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "5");
         props.put(ProducerConfig.METADATA_MAX_AGE_CONFIG, "300000");
@@ -218,6 +220,7 @@ public class KafkaComponentTest extends CamelTestSupport {
         params.put("maxRequestSize", 100);
         params.put("receiveBufferBytes", 23);
         params.put("requestTimeoutMs", 100);
+        params.put("deliveryTimeoutMs", 200);
         params.put("sendBufferBytes", 765);
         params.put("maxInFlightRequest", 1);
         params.put("metadataMaxAgeMs", 1029);

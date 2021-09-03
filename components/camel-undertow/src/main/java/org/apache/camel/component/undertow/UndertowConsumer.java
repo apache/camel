@@ -42,6 +42,8 @@ import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -109,7 +111,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             // allow for HTTP 1.1 continue
             HttpHandler httpHandler = new EagerFormParsingHandler().setNext(UndertowConsumer.this);
             if (endpoint.getAccessLog()) {
-                AccessLogReceiver accessLogReceiver = null;
+                AccessLogReceiver accessLogReceiver;
                 if (endpoint.getAccessLogReceiver() != null) {
                     accessLogReceiver = endpoint.getAccessLogReceiver();
                 } else {
@@ -225,17 +227,17 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
 
         //create new Exchange
         //binding is used to extract header and payload(if available)
-        Exchange camelExchange = getEndpoint().createExchange(httpExchange);
-
-        //Unit of Work to process the Exchange
-        createUoW(camelExchange);
+        Exchange camelExchange = createExchange(httpExchange);
         try {
+            //Unit of Work to process the Exchange
+            createUoW(camelExchange);
             getProcessor().process(camelExchange);
             sendResponse(httpExchange, camelExchange);
         } catch (Exception e) {
             getExceptionHandler().handleException(e);
         } finally {
             doneUoW(camelExchange);
+            releaseExchange(camelExchange, false);
         }
     }
 
@@ -254,7 +256,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             return;
         }
 
-        if (getEndpoint().isUseStreaming() && (body instanceof InputStream)) {
+        if (getEndpoint().isUseStreaming() && body instanceof InputStream) {
             httpExchange.startBlocking();
             try (InputStream input = (InputStream) body;
                  OutputStream output = httpExchange.getOutputStream()) {
@@ -279,7 +281,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
      */
     public void sendMessage(final String connectionKey, WebSocketChannel channel, final Object message) {
 
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         // set header and body
         exchange.getIn().setHeader(UndertowConstants.CONNECTION_KEY, connectionKey);
@@ -288,15 +290,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         }
         exchange.getIn().setBody(message);
 
-        // send exchange using the async routing engine
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange,
-                            exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     /**
@@ -309,7 +305,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
      */
     public void sendEventNotification(
             String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         final Message in = exchange.getIn();
         in.setHeader(UndertowConstants.CONNECTION_KEY, connectionKey);
@@ -321,14 +317,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         if (transportExchange != null) {
             in.setHeader(UndertowConstants.EXCHANGE, transportExchange);
         }
-        // send exchange using the async routing engine
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException {
@@ -348,6 +339,24 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             nextHandler = h;
         }
         return nextHandler;
+    }
+
+    private Exchange createExchange(HttpServerExchange httpExchange) throws Exception {
+        Exchange exchange = createExchange(false);
+        exchange.setPattern(ExchangePattern.InOut);
+
+        Message in = getEndpoint().getUndertowHttpBinding().toCamelMessage(httpExchange, exchange);
+
+        //securityProvider could add its own header into result exchange
+        if (getEndpoint().getSecurityProvider() != null) {
+            getEndpoint().getSecurityProvider().addHeader((key, value) -> in.setHeader(key, value), httpExchange);
+        }
+
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, httpExchange.getRequestCharset());
+        in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, httpExchange.getRequestCharset());
+
+        exchange.setIn(in);
+        return exchange;
     }
 
 }

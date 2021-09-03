@@ -36,6 +36,8 @@ import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
+import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
@@ -52,13 +54,16 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
@@ -99,13 +104,14 @@ public interface ExtendedCamelContext extends CamelContext {
     void setupRoutes(boolean done);
 
     /**
-     * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
+     * Indicates whether current thread is setting up route(s) as part of starting Camel.
      * <p/>
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      * <p/>
-     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus Spring or
-     * Blueprint, then we need to know when Spring/Blueprint is setting up the routes, which can happen after the
-     * {@link CamelContext} itself is in started state, due the asynchronous event nature of especially Blueprint.
+     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus
+     * camel-spring-xml or camel-blueprint, then we need to know when spring/blueprint are setting up the routes, which
+     * can happen after the {@link CamelContext} itself is in started state, due the asynchronous event nature of
+     * especially blueprint.
      *
      * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
      */
@@ -213,6 +219,36 @@ public interface ExtendedCamelContext extends CamelContext {
     List<Service> getServices();
 
     /**
+     * Gets the exchange factory to use.
+     */
+    ExchangeFactory getExchangeFactory();
+
+    /**
+     * Sets a custom exchange factory to use.
+     */
+    void setExchangeFactory(ExchangeFactory exchangeFactory);
+
+    /**
+     * Gets the exchange factory manager to use.
+     */
+    ExchangeFactoryManager getExchangeFactoryManager();
+
+    /**
+     * Sets a custom exchange factory manager to use.
+     */
+    void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager);
+
+    /**
+     * Gets the processor exchange factory to use.
+     */
+    ProcessorExchangeFactory getProcessorExchangeFactory();
+
+    /**
+     * Sets a custom processor exchange factory to use.
+     */
+    void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory);
+
+    /**
      * Returns the bean post processor used to do any bean customization.
      *
      * @return the bean post processor.
@@ -241,18 +277,18 @@ public interface ExtendedCamelContext extends CamelContext {
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
 
     /**
-     * Uses a custom node id factory when generating auto assigned ids to the nodes in the route definitions
-     *
-     * @param factory custom factory to use
-     */
-    void setNodeIdFactory(NodeIdFactory factory);
-
-    /**
      * Gets the node id factory
      *
      * @return the node id factory
      */
     NodeIdFactory getNodeIdFactory();
+
+    /**
+     * Uses a custom node id factory when generating auto assigned ids to the nodes in the route definitions
+     *
+     * @param factory custom factory to use
+     */
+    void setNodeIdFactory(NodeIdFactory factory);
 
     /**
      * Gets the {@link ComponentResolver} to use.
@@ -352,6 +388,16 @@ public interface ExtendedCamelContext extends CamelContext {
     void setBootstrapFactoryFinder(FactoryFinder factoryFinder);
 
     /**
+     * Gets the bootstrap FactoryFinder which will be used for the loading the factory class from META-INF in the given
+     * path. This bootstrap factory finder is only intended to be used during bootstrap (starting) CamelContext.
+     *
+     * @param  path the META-INF path
+     * @return      the bootstrap factory finder
+     * @see         #getDefaultFactoryFinder()
+     */
+    FactoryFinder getBootstrapFactoryFinder(String path);
+
+    /**
      * Gets the bootstrap {@link ConfigurerResolver} to use. This bootstrap resolver is only intended to be used during
      * bootstrap (starting) CamelContext.
      */
@@ -372,18 +418,18 @@ public interface ExtendedCamelContext extends CamelContext {
     FactoryFinder getFactoryFinder(String path);
 
     /**
-     * Sets the factory finder resolver to use.
-     *
-     * @param resolver the factory finder resolver
-     */
-    void setFactoryFinderResolver(FactoryFinderResolver resolver);
-
-    /**
      * Gets the factory finder resolver to use
      *
      * @return the factory finder resolver
      */
     FactoryFinderResolver getFactoryFinderResolver();
+
+    /**
+     * Sets the factory finder resolver to use.
+     *
+     * @param resolver the factory finder resolver
+     */
+    void setFactoryFinderResolver(FactoryFinderResolver resolver);
 
     /**
      * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
@@ -593,19 +639,37 @@ public interface ExtendedCamelContext extends CamelContext {
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
 
     /**
+     * Gets the {@link XMLRoutesDefinitionLoader} to be used.
+     *
+     * @deprecated use {@link #getRoutesLoader()}
+     */
+    @Deprecated
+    XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader();
+
+    /**
      * Sets a custom {@link XMLRoutesDefinitionLoader} to be used.
      */
     void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader);
 
     /**
-     * Gets the {@link XMLRoutesDefinitionLoader} to be used.
+     * Gets the {@link RoutesLoader} to be used.
      */
-    XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader();
+    RoutesLoader getRoutesLoader();
 
     /**
-     * Sets a custom {@link ModelToXMLDumper} to be used.
+     * Sets a custom {@link RoutesLoader} to be used.
      */
-    void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper);
+    void setRoutesLoader(RoutesLoader routesLoader);
+
+    /**
+     * Gets the {@link ResourceLoader} to be used.
+     */
+    ResourceLoader getResourceLoader();
+
+    /**
+     * Sets a custom {@link ResourceLoader} to be used.
+     */
+    void setResourceLoader(ResourceLoader resourceLoader);
 
     /**
      * Gets the {@link ModelToXMLDumper} to be used.
@@ -613,14 +677,19 @@ public interface ExtendedCamelContext extends CamelContext {
     ModelToXMLDumper getModelToXMLDumper();
 
     /**
-     * Sets a custom {@link RestBindingJaxbDataFormatFactory} to be used.
+     * Sets a custom {@link ModelToXMLDumper} to be used.
      */
-    void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory);
+    void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper);
 
     /**
      * Gets the {@link RestBindingJaxbDataFormatFactory} to be used.
      */
     RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory();
+
+    /**
+     * Sets a custom {@link RestBindingJaxbDataFormatFactory} to be used.
+     */
+    void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory);
 
     /**
      * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
@@ -692,13 +761,13 @@ public interface ExtendedCamelContext extends CamelContext {
      * Whether to run in lightweight mode which triggers some optimizations and memory reduction. Danger this causes
      * Camel to be less dynamic such as adding new route after Camel is started would not be possible.
      */
-    void setLightweight(boolean lightweight);
+    boolean isLightweight();
 
     /**
      * Whether to run in lightweight mode which triggers some optimizations and memory reduction. Danger this causes
      * Camel to be less dynamic such as adding new route after Camel is started would not be possible.
      */
-    boolean isLightweight();
+    void setLightweight(boolean lightweight);
 
     /**
      * Danger!!! This will dispose the route model from the {@link CamelContext} which is used for lightweight mode.
@@ -706,5 +775,24 @@ public interface ExtendedCamelContext extends CamelContext {
      * org.apache.camel.model.ModelCamelContext will return null or be a noop operation.
      */
     void disposeModel();
+
+    /**
+     * Used during unit-testing where its possible to specify a set of routes to exclude from discovery
+     */
+    String getTestExcludeRoutes();
+
+    /**
+     * Parses the given text and resolve any property placeholders - using {{key}}.
+     * <p/>
+     * <b>Important:</b> If resolving placeholders on an endpoint uri, then you SHOULD use
+     * EndpointHelper#resolveEndpointUriPropertyPlaceholders instead.
+     *
+     * @param  text                     the text such as an endpoint uri or the likes
+     * @param  keepUnresolvedOptional   whether to keep placeholders that are optional and was unresolved
+     * @return                          the text with resolved property placeholders
+     * @throws IllegalArgumentException is thrown if property placeholders was used and there was an error resolving
+     *                                  them
+     */
+    String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional);
 
 }

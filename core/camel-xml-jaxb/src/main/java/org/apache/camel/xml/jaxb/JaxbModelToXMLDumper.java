@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,29 +33,28 @@ import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
-import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.xml.XmlLineNumberParser;
 
-import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
+import static org.apache.camel.xml.jaxb.JaxbHelper.extractNamespaces;
+import static org.apache.camel.xml.jaxb.JaxbHelper.getJAXBContext;
+import static org.apache.camel.xml.jaxb.JaxbHelper.modelToXml;
+import static org.apache.camel.xml.jaxb.JaxbHelper.newXmlConverter;
 
 /**
  * JAXB based {@link ModelToXMLDumper}.
@@ -66,7 +64,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
-        JAXBContext jaxbContext = getJAXBContext(context);
+        final JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
 
         // gather all namespaces from the routes or route which is stored on the
@@ -104,18 +102,20 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             throw new TypeConversionException(xml, Document.class, e);
         }
 
+        sanitizeXml(dom);
+
         // Add additional namespaces to the document root element
         Element documentElement = dom.getDocumentElement();
-        for (String nsPrefix : namespaces.keySet()) {
+        for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+            String nsPrefix = entry.getKey();
             String prefix = nsPrefix.equals("xmlns") ? nsPrefix : "xmlns:" + nsPrefix;
-            documentElement.setAttribute(prefix, namespaces.get(nsPrefix));
+            documentElement.setAttribute(prefix, entry.getValue());
         }
 
         // We invoke the type converter directly because we need to pass some
         // custom XML output options
         Properties outputProperties = new Properties();
-        outputProperties.put(OutputKeys.INDENT, "yes");
-        outputProperties.put(OutputKeys.STANDALONE, "yes");
+        outputProperties.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
         outputProperties.put(OutputKeys.ENCODING, "UTF-8");
         try {
             return xmlConverter.toStringFromDocument(dom, outputProperties);
@@ -134,9 +134,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         // placeholders during parsing
         if (resolvePlaceholders || resolveDelegateEndpoints) {
             final AtomicBoolean changed = new AtomicBoolean();
-            InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-            Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-
+            final InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+            final Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
                 private String prev;
 
                 @Override
@@ -158,10 +157,24 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                     }
 
                     if (resolvePlaceholders) {
+                        PropertiesComponent pc = context.getPropertiesComponent();
+                        if (definition instanceof RouteDefinition) {
+                            RouteDefinition routeDefinition = (RouteDefinition) definition;
+                            // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
+                            if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
+                                    && routeDefinition.getTemplateParameters() != null) {
+                                Properties prop = new Properties();
+                                prop.putAll(routeDefinition.getTemplateParameters());
+                                pc.setLocalProperties(prop);
+                            }
+                        }
                         try {
                             after = context.resolvePropertyPlaceholders(after);
                         } catch (Exception e) {
                             // ignore
+                        } finally {
+                            // clear local after the route is dumped
+                            pc.setLocalProperties(null);
                         }
                     }
 
@@ -182,7 +195,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-                NamedNode copy = ecc.getXMLRoutesDefinitionLoader().createModelFromXml(context, xml, NamedNode.class);
+                NamedNode copy = modelToXml(context, xml, NamedNode.class);
                 xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, copy);
             }
         }
@@ -190,60 +203,20 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         return xml;
     }
 
-    private static JAXBContext getJAXBContext(CamelContext context) throws Exception {
-        ModelJAXBContextFactory factory = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory();
-        return (JAXBContext) factory.newJAXBContext();
-    }
-
-    /**
-     * Extract all XML namespaces from the expressions in the route
-     *
-     * @param route      the route
-     * @param namespaces the map of namespaces to add discovered XML namespaces into
-     */
-    private static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
-        Iterator<ExpressionNode> it = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
-        while (it.hasNext()) {
-            NamespaceAware na = getNamespaceAwareFromExpression(it.next());
-
-            if (na != null) {
-                Map<String, String> map = na.getNamespaces();
-                if (map != null && !map.isEmpty()) {
-                    namespaces.putAll(map);
-                }
+    private static void sanitizeXml(Node node) {
+        // we want to remove all customId="false" attributes as they are noisy
+        if (node.hasAttributes()) {
+            Node att = node.getAttributes().getNamedItem("customId");
+            if (att != null && "false".equals(att.getNodeValue())) {
+                node.getAttributes().removeNamedItem("customId");
             }
         }
-    }
-
-    private static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {
-        ExpressionDefinition ed = expressionNode.getExpression();
-
-        NamespaceAware na = null;
-        Expression exp = ed.getExpressionValue();
-        if (exp instanceof NamespaceAware) {
-            na = (NamespaceAware) exp;
-        } else if (ed instanceof NamespaceAware) {
-            na = (NamespaceAware) ed;
+        if (node.hasChildNodes()) {
+            for (int i = 0; i < node.getChildNodes().getLength(); i++) {
+                Node child = node.getChildNodes().item(i);
+                sanitizeXml(child);
+            }
         }
-
-        return na;
-    }
-
-    /**
-     * Creates a new {@link XmlConverter}
-     *
-     * @param  context CamelContext if provided
-     * @return         a new XmlConverter instance
-     */
-    private static XmlConverter newXmlConverter(CamelContext context) {
-        XmlConverter xmlConverter;
-        if (context != null) {
-            TypeConverterRegistry registry = context.getTypeConverterRegistry();
-            xmlConverter = registry.getInjector().newInstance(XmlConverter.class, false);
-        } else {
-            xmlConverter = new XmlConverter();
-        }
-        return xmlConverter;
     }
 
 }

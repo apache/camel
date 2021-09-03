@@ -92,7 +92,7 @@ public class KeyManagersParameters extends JsseParameters {
         }
 
         LOG.debug("KeyManagerFactory [{}], initialized from [{}], is using provider [{}] and algorithm [{}].",
-                new Object[] { kmf, this, kmf.getProvider(), kmf.getAlgorithm() });
+                kmf, this, kmf.getProvider(), kmf.getAlgorithm());
 
         char[] kmfPassword = null;
         if (this.getKeyPassword() != null) {

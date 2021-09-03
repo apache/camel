@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.atmosphere.websocket;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,18 +39,21 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
     private static String[] broadcastMessageTo = {};
     private static Map<String, String> connectionKeyUserMap = new HashMap<>();
 
-    @Test
-    void testWebsocketEventsResendingEnabled() throws Exception {
-        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola");
+    private void runtTest(String s) throws InterruptedException, ExecutionException, IOException {
+        TestClient wsclient = new TestClient("ws://localhost:" + PORT + s);
         wsclient.connect();
         wsclient.close();
     }
 
     @Test
-    void testPassParametersWebsocketOnOpen() throws Exception {
-        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola1?param1=value1&param2=value2");
-        wsclient.connect();
-        wsclient.close();
+    void testWebsocketEventsResendingEnabled() {
+        assertDoesNotThrow(() -> runtTest("/hola"));
+
+    }
+
+    @Test
+    void testPassParametersWebsocketOnOpen() {
+        assertDoesNotThrow(() -> runtTest("/hola1?param1=value1&param2=value2"));
     }
 
     @Test
@@ -290,7 +296,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         assertEquals(null, msg);
         assertNotNull(connectionKey);
 
-        if ((eventType instanceof Integer) && eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)) {
+        if (eventType instanceof Integer && eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)) {
 
             String param1 = (String) exchange.getIn().getHeader("param1");
             String param2 = (String) exchange.getIn().getHeader("param2");

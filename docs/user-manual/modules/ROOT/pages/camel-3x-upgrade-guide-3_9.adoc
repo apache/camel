@@ -1,0 +1,166 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.8 to 3.9
+
+=== API changes
+
+The `Consumer` API in `camel-api` has been enhanced to help support Camel reducing the footprint during routing.
+One aspect is that we allow recycling `Exchange` instances created by the consumers. This avoids creating new `Exchange`
+instances in the memory for each incoming message consumers process. By recycling `Exchange`s we reduce the overhead
+on the JVM garbage collector. This requires Camel to know if the `Exchange` should be recycled or not,
+and some API changes took place.
+
+The `Consumer` API has two new methods which a consumer must use to create an `Exchange` with `createExchange`.
+Default the exchange is auto released when its complete in use, but some consumers needs custom control,
+and can turn off auto release, which then requires the consumer to manually release the exchange by calling `releaseExchange`
+when the consumer is done with the exchange.
+
+The default implementations in `DefaultConsumer` has adapted this API and 3rd party components can continue as is, by using
+the older APIs. For these 3rd party components to support recycling exchanges, then they must be updated to use this new API.
+
+A new `org.apache.camel.spi.ResourceLoader` has been introduced as part of https://issues.apache.org/jira/browse/CAMEL-16285[CAMEL-16285] which provide a way to support additional schemas to resolve resources. As a consequece:
+
+- `org.apache.camel.support.ResourceHelper` has been updated to use such mechanism instead fo the old one.
+- it is not more possible to provide support for additional schemas using the URL protocol handler mechanism but instead, custom schemas can be added by implementing `org.apache.camel.spi.ResourceResolver` and either bind an instance to the Camel Registry (using `resource-loader-` as a prefix) or using the Service Factory mechanism (under the path `META-INF/services/org/apache/camel/resource-resolver/`)
+
+As example, assuming you want to provide a support for the schema `foo`, then you either have to binbd your instance to the Camel Registry with `resource-loader-foo` as a key, or create a factory finder file with path `META-INF/services/org/apache/camel/resource-resolver/foo`
+The method for retrieving a resource URL provided by the `org.apache.camel.support.ResourceHelper` class, i.e. `resolveMandatoryResourceAsUrl` ad ` resolveResourceAsUr` have been amended to accept a `CamelContext` instance instead of a `ClassResolver`.
+
+=== Exchange properties
+
+The properties on `Exchange` have been optimized to separate into two: internal state vs user properties.
+
+The method `getProperties()` now only returns user properties. To include internal properties as well,
+then use `getAllProperties()`.
+
+The other APIs such as `getProperty(String)` works the same way as before, being able to lookup a property
+regardless if its internal or custom.
+
+The internal properties is a fixed set of known keys defined in the `ExchangePropertyKey` enum class.
+These keys are used in camel-core such as the routing engine, EIPs and others that needs to store internal
+state on the `Exchange` which is done as exchange properties. Because Camel end users can also store
+exchange properties then before they would get mixed together. What we have done now is to separate them.
+
+=== Choice and Filter EIP
+
+The `choice` and `filter` EIPs no longer store exchange property `Exchange.FILTER_MATCHED`.
+The reason is the information is seldom in use, and by removing we were able to optimize camel-core.
+
+=== OnCompletion EIP
+
+Camel now validates that a route has only 1 onCompletion. Previously users could have code such as:
+
+[source,java]
+----
+from("direct:start")
+        .onCompletion().onCompleteOnly().to("mock:ok").end()
+        .onCompletion().onFailureOnly().to("mock:error").end()
+        .to("mock:result");
+----
+
+Which would lead to the last onCompletion override the first, meaning that only `onCompletion().onFailureOnly()`
+would be active. Now this is checked on startup and Camel reports an error.
+
+=== Modularized camel-spring
+
+The `camel-spring` component has been modularized into:
+
+- `camel-spring` - Core module for Camel Spring support
+- `camel-spring-xml` - XML DSL when using Spring XML (eg `<beans>`)
+
+Also for Camel on Spring Boot:
+
+- `camel-spring-boot-starter` - Camel with Spring Boot
+- `camel-spring-boot-xml-starter` - XML DSL when using Spring XML (eg `<beans>`) with Spring Boot
+
+The motivation is to move out the XML DSL from `camel-spring` which reduces the number of dependencies and makes
+the module lighter.
+
+Users that use the Spring XML DSL (eg the top XML tag is Spring `<beans>`) should migrate from using `camel-spring`
+to `camel-spring-xml` as dependency.
+
+Users that do not use Spring XML should not be affected.
+
+In Spring XML `<proxy>` and <remote>` have been removed. They were only available in Spring XML
+and not in the other XML DSLs (Blueprint and CDI).
+
+=== camel-spring-boot-starter vs camel-spring-boot-engine-starter
+
+Based on the modularization of camel-spring we have made two starters available when using Camel on Spring Boot
+
+- camel-spring-boot-starter - The regular starter that includes all the core components (similar to camel-core)
+- camel-spring-boot-engine-starter - A minimal starter with just Camel core engine (similar to camel-core-engine)
+
+We also made all the component -starter JARs not depend on any of the above starters, which means you must pick
+the one to use above, and then add which -starter JARs you want to use in your Camel spring boot applications.
+
+=== Camel-AWS components removed
+
+- Camel-AWS-SDB has been removed. There will be no substitution for this, because there isn't a SDK v2 client for this and furthermore the service is not listed in the AWS console anymore.
+- Camel-AWS-Translate has been removed. Please switch to Camel-AWS2-Translate.
+- Camel-AWS-SQS has been removed. Please switch to Camel-AWS2-SQS.
+- Camel-AWS-SNS has been removed. Please switch to Camel-AWS2-SNS.
+- Camel-AWS-MSK has been removed. Please switch to Camel-AWS2-MSK.
+- Camel-AWS-MQ has been removed. Please switch to Camel-AWS2-MQ.
+- Camel-AWS-KMS has been removed. Please switch to Camel-AWS2-KMS.
+- Camel-AWS-Kinesis has been removed. Please switch to Camel-AWS2-Kinesis.
+- Camel-AWS-Kinesis Firehose has been removed. Please switch to Camel-AWS2-Kinesis-firehose.
+- Camel-AWS-IAM has been removed. Please switch to Camel-AWS2-IAM.
+- Camel-AWS-EKS has been removed. Please switch to Camel-AWS2-EKS.
+- Camel-AWS-ECS has been removed. Please switch to Camel-AWS2-ECS.
+- Camel-AWS-EC2 has been removed. Please switch to Camel-AWS2-EC2.
+- Camel-AWS-DDB has been removed. Please switch to Camel-AWS2-DDB.
+- Camel-AWS-DDB Streams has been removed. Please switch to Camel-AWS2-DDB Streams.
+- Camel-AWS-CW has been removed. Please switch to Camel-AWS2-CW.
+- Camel-AWS-S3 has been removed. Please switch to Camel-AWS2-S3.
+- Camel-AWS-SWF has been removed. There won't be a replacement for it.
+
+=== camel-aws2-sqs
+
+The option `deleteIfFiltered` has been changed to use a different exchange property with key `Sqs2Constants.SQS_DELETE_FILTERED`
+which must be set. Beforehand a property by Filter EIP was being used, however this property has been removed due
+to optimizing core Camel.
+
+=== Camel-Azure component
+
+- Camel-Azure has been removed. Please switch to Camel-Azure-Storage-Blob and Camel-Azure-Storage-Queue.
+
+=== camel-freemarker component
+
+The freemarker component now has turned off localized lookup for templates.
+This can be turned back on by setting `localizedLookup=true` on the component.
+
+=== Camel-AWS2 components
+
+- Camel-AWS2-sqs has now the autoCreateQueue option set to false as default, so you'll need to create entities before or set the option explicitly to true
+- Camel-AWS2-sns has now the autoCreateTopic option set to false as default, so you'll need to create entities before or set the option explicitly to true
+- Camel-AWS2-s3 has now the autoCreateBucket option set to false as default, so you'll need to create entities before or set the option explicitly to true
+
+=== Camel-jmh, camel-performance and camel-itest-performance
+
+Camel-jmh, camel-performance and camel-itest-performance have been moved to a new repository https://github.com/apache/camel-performance-tests
+
+=== Camel-Debezium
+
+The camel-debezium-parent module has been renamed to camel-debezium-common-parent, while the old the name is now used as parent name for the middle folder. This is an internal change that shouldn't affect end users, added here for tracking purpose anyway.
+
+=== camel-jclouds
+
+The camel-jclouds feature for Camel on Karaf has been removed.
+
+=== camel-kafka
+
+The camel-kafka consumer has been improved to be more roboust and have more confirations how to deal with exceptions while polling from Kafka Brokers.
+In case of any exception thrown, then previously the consumer will re-connect and therefore try again. This leads to Kafka broker would reasign the partions,
+but it may assign back the same consumer again, or another standby consumer.
+
+The new behavior is to only retry certain kind of exceptions which Kafka has marked as retryable. Any other exceptions is now
+causing Camel error handler to handle the caused exception (will log by default but you can use onException etc), and then
+skip to next offset so the next message can be polled and processed by Camel.
+
+See the updated camel-kafka documentation for more details.
+

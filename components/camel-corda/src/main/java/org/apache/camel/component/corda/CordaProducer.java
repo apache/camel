@@ -17,7 +17,9 @@
 package org.apache.camel.component.corda;
 
 import java.io.InputStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.security.PublicKey;
+import java.util.concurrent.ExecutionException;
 
 import net.corda.core.contracts.ContractState;
 import net.corda.core.crypto.SecureHash;
@@ -49,12 +51,12 @@ import static org.apache.camel.component.corda.CordaConstants.SORT;
  */
 
 public class CordaProducer extends HeaderSelectorProducer {
-    private CordaConfiguration configuration;
+    //private CordaConfiguration configuration;
     private CordaRPCOps cordaRPCOps;
 
     public CordaProducer(CordaEndpoint endpoint, final CordaConfiguration configuration, CordaRPCOps cordaRPCOps) {
         super(endpoint, CordaConstants.OPERATION, () -> configuration.getOperation(), false);
-        this.configuration = configuration;
+        //this.configuration = configuration;
         this.cordaRPCOps = cordaRPCOps;
     }
 
@@ -64,152 +66,152 @@ public class CordaProducer extends HeaderSelectorProducer {
     }
 
     @InvokeOnHeader(CordaConstants.CURRENT_NODE_TIME)
-    void currentNodeTime(Message message) throws Exception {
+    void currentNodeTime(Message message) {
         message.setBody(cordaRPCOps.currentNodeTime());
     }
 
     @InvokeOnHeader(CordaConstants.GET_PROTOCOL_VERSION)
-    void getProtocolVersion(Message message) throws Exception {
+    void getProtocolVersion(Message message) {
         message.setBody(cordaRPCOps.getProtocolVersion());
     }
 
     @InvokeOnHeader(CordaConstants.NETWORK_MAP_SNAPSHOT)
-    void networkMapSnapshot(Message message) throws Exception {
+    void networkMapSnapshot(Message message) {
         message.setBody(cordaRPCOps.networkMapSnapshot());
     }
 
     @InvokeOnHeader(CordaConstants.STATE_MACHINE_SNAPSHOT)
-    void stateMachinesSnapshot(Message message) throws Exception {
+    void stateMachinesSnapshot(Message message) {
         message.setBody(cordaRPCOps.stateMachinesSnapshot());
     }
 
     @InvokeOnHeader(CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_SNAPSHOT)
-    void stateMachineRecordedTransactionMappingSnapshot(Message message) throws Exception {
+    void stateMachineRecordedTransactionMappingSnapshot(Message message) {
         message.setBody(cordaRPCOps.stateMachineRecordedTransactionMappingSnapshot());
     }
 
     @InvokeOnHeader(CordaConstants.REGISTERED_FLOWS)
-    void registeredFlows(Message message) throws Exception {
+    void registeredFlows(Message message) {
         message.setBody(cordaRPCOps.registeredFlows());
     }
 
     @InvokeOnHeader(CordaConstants.CLEAR_NETWORK_MAP_CACHE)
-    void clearNetworkMapCache(Message message) throws Exception {
+    void clearNetworkMapCache(Message message) {
         cordaRPCOps.clearNetworkMapCache();
     }
 
     @InvokeOnHeader(CordaConstants.IS_FLOWS_DRAINING_MODE_ENABLED)
-    void isFlowsDrainingModeEnabled(Message message) throws Exception {
+    void isFlowsDrainingModeEnabled(Message message) {
         message.setBody(cordaRPCOps.isFlowsDrainingModeEnabled());
     }
 
     @InvokeOnHeader(CordaConstants.SET_FLOWS_DRAINING_MODE_ENABLED)
-    void setFlowsDrainingModeEnabled(Message message) throws Exception {
+    void setFlowsDrainingModeEnabled(Message message) {
         Boolean mode = message.getHeader(DRAINING_MODE, Boolean.class);
         cordaRPCOps.setFlowsDrainingModeEnabled(mode);
     }
 
     @InvokeOnHeader(CordaConstants.NOTARY_IDENTITIES)
-    void notaryIdentities(Message message) throws Exception {
+    void notaryIdentities(Message message) {
         message.setBody(cordaRPCOps.notaryIdentities());
     }
 
     @InvokeOnHeader(CordaConstants.NODE_INFO)
-    void nodeInfo(Message message) throws Exception {
+    void nodeInfo(Message message) {
         message.setBody(cordaRPCOps.nodeInfo());
     }
 
     @InvokeOnHeader(CordaConstants.ADD_VAULT_TRANSACTION_NOTE)
-    void addVaultTransactionNote(Message message) throws Exception {
+    void addVaultTransactionNote(Message message) {
         SecureHash secureHash = message.getHeader(SECURE_HASH, SecureHash.class);
         String note = message.getBody(String.class);
         cordaRPCOps.addVaultTransactionNote(secureHash, note);
     }
 
     @InvokeOnHeader(CordaConstants.GET_VAULT_TRANSACTION_NOTES)
-    void getVaultTransactionNotes(Message message) throws Exception {
+    void getVaultTransactionNotes(Message message) {
         SecureHash secureHash = message.getHeader(SECURE_HASH, SecureHash.class);
         message.setBody(cordaRPCOps.getVaultTransactionNotes(secureHash));
     }
 
     @InvokeOnHeader(CordaConstants.UPLOAD_ATTACHMENT)
-    void uploadAttachment(Message message) throws Exception {
+    void uploadAttachment(Message message) throws FileAlreadyExistsException {
         InputStream inputStream = message.getBody(InputStream.class);
         SecureHash secureHash = cordaRPCOps.uploadAttachment(inputStream);
         message.setHeader(SECURE_HASH, secureHash);
     }
 
     @InvokeOnHeader(CordaConstants.ATTACHMENT_EXISTS)
-    void attachmentExists(Message message) throws Exception {
+    void attachmentExists(Message message) {
         SecureHash secureHash = message.getHeader(SECURE_HASH, SecureHash.class);
         message.setBody(cordaRPCOps.attachmentExists(secureHash));
     }
 
     @InvokeOnHeader(CordaConstants.OPEN_ATTACHMENT)
-    void openAttachment(Message message) throws Exception {
+    void openAttachment(Message message) {
         SecureHash secureHash = message.getHeader(SECURE_HASH, SecureHash.class);
         message.setBody(cordaRPCOps.openAttachment(secureHash));
     }
 
     @InvokeOnHeader(CordaConstants.QUERY_ATTACHMENTS)
-    void queryAttachments(Message message) throws Exception {
+    void queryAttachments(Message message) {
         AttachmentQueryCriteria queryCriteria = message.getHeader(ATTACHMENT_QUERY_CRITERIA, AttachmentQueryCriteria.class);
         AttachmentSort attachmentSort = message.getHeader(SORT, AttachmentSort.class);
         message.setBody(cordaRPCOps.queryAttachments(queryCriteria, attachmentSort));
     }
 
     @InvokeOnHeader(CordaConstants.NODE_INFO_FROM_PARTY)
-    void nodeInfoFromParty(Message message) throws Exception {
+    void nodeInfoFromParty(Message message) {
         AbstractParty party = message.getBody(AbstractParty.class);
         message.setBody(cordaRPCOps.nodeInfoFromParty(party));
     }
 
     @InvokeOnHeader(CordaConstants.NOTARY_PARTY_FROM_X500_NAME)
-    void notaryPartyFromX500Name(Message message) throws Exception {
+    void notaryPartyFromX500Name(Message message) {
         CordaX500Name x500Name = message.getBody(CordaX500Name.class);
         message.setBody(cordaRPCOps.notaryPartyFromX500Name(x500Name));
     }
 
     @InvokeOnHeader(CordaConstants.PARTIES_FROM_NAME)
-    void partiesFromName(Message message) throws Exception {
+    void partiesFromName(Message message) {
         String query = message.getBody(String.class);
         Boolean exactMatch = message.getHeader(EXACT_MATCH, Boolean.class);
         message.setBody(cordaRPCOps.partiesFromName(query, exactMatch));
     }
 
     @InvokeOnHeader(CordaConstants.PARTIES_FROM_KEY)
-    void partyFromKey(Message message) throws Exception {
+    void partyFromKey(Message message) {
         PublicKey key = message.getBody(PublicKey.class);
         message.setBody(cordaRPCOps.partyFromKey(key));
     }
 
     @InvokeOnHeader(CordaConstants.WELL_KNOWN_PARTY_FROM_X500_NAME)
-    void wellKnownPartyFromX500Name(Message message) throws Exception {
+    void wellKnownPartyFromX500Name(Message message) {
         CordaX500Name x500Name = message.getBody(CordaX500Name.class);
         message.setBody(cordaRPCOps.wellKnownPartyFromX500Name(x500Name));
     }
 
     @InvokeOnHeader(CordaConstants.WELL_KNOWN_PARTY_FROM_ANONYMOUS)
-    void wellKnownPartyFromAnonymous(Message message) throws Exception {
+    void wellKnownPartyFromAnonymous(Message message) {
         AbstractParty party = message.getBody(AbstractParty.class);
         message.setBody(cordaRPCOps.wellKnownPartyFromAnonymous(party));
     }
 
     @InvokeOnHeader(CordaConstants.START_FLOW_DYNAMIC)
-    void startFlowDynamic(Message message) throws Exception {
+    void startFlowDynamic(Message message) throws ExecutionException, InterruptedException {
         Object[] args = message.getHeader(ARGUMENTS, Object[].class);
         Class<FlowLogic<?>> aClass = message.getBody(Class.class);
         message.setBody(cordaRPCOps.startFlowDynamic(aClass, args).getReturnValue().get());
     }
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY)
-    void vaultQuery(Message message) throws Exception {
+    void vaultQuery(Message message) {
         Class<ContractState> contractStateClass = message.getBody(Class.class);
         message.setBody(cordaRPCOps.vaultQuery(contractStateClass));
     }
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY)
-    void vaultQueryBy(Message message) throws Exception {
+    void vaultQueryBy(Message message) {
         Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         PageSpecification pageSpec = message.getHeader(PAGE_SPECIFICATION, PageSpecification.class);
@@ -218,14 +220,14 @@ public class CordaProducer extends HeaderSelectorProducer {
     }
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY_CRITERIA)
-    void vaultQueryByCriteria(Message message) throws Exception {
+    void vaultQueryByCriteria(Message message) {
         Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         message.setBody(cordaRPCOps.vaultQueryByCriteria(criteria, contractStateClass));
     }
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY_WITH_PAGING_SPEC)
-    void vaultQueryByWithPagingSpec(Message message) throws Exception {
+    void vaultQueryByWithPagingSpec(Message message) {
         Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         PageSpecification pageSpec = message.getHeader(PAGE_SPECIFICATION, PageSpecification.class);
@@ -233,7 +235,7 @@ public class CordaProducer extends HeaderSelectorProducer {
     }
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY_WITH_SORTING)
-    void vaultQueryByWithSorting(Message message) throws Exception {
+    void vaultQueryByWithSorting(Message message) {
         Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         Sort sorting = message.getHeader(SORT, Sort.class);
@@ -241,49 +243,49 @@ public class CordaProducer extends HeaderSelectorProducer {
     }
 
     @InvokeOnHeader(CordaConstants.TERMINATE)
-    void terminate(Message message) throws Exception {
+    void terminate(Message message) {
         cordaRPCOps.terminate(true);
     }
 
     @InvokeOnHeader(CordaConstants.IS_WAITING_FOR_SHUTDOWN)
-    void isWaitingForShutdown(Message message) throws Exception {
+    void isWaitingForShutdown(Message message) {
         message.setBody(cordaRPCOps.isWaitingForShutdown());
     }
 
     @InvokeOnHeader(CordaConstants.REFRESH_NETWORK_MAP_CACHE)
-    void refreshNetworkMapCache(Message message) throws Exception {
+    void refreshNetworkMapCache(Message message) {
         cordaRPCOps.refreshNetworkMapCache();
     }
 
     @InvokeOnHeader(CordaConstants.SHUTDOWN)
-    void shutdown(Message message) throws Exception {
+    void shutdown(Message message) {
         cordaRPCOps.shutdown();
     }
 
     @InvokeOnHeader(CordaConstants.WAIT_UNTIL_NETWORK_READY)
-    void waitUntilNetworkReady(Message message) throws Exception {
+    void waitUntilNetworkReady(Message message) {
         message.setBody(cordaRPCOps.waitUntilNetworkReady());
     }
 
     @InvokeOnHeader(CordaConstants.ACCEPT_NEWNETWORK_PARAMETERS)
-    void acceptNewNetworkParameters(Message message) throws Exception {
+    void acceptNewNetworkParameters(Message message) {
         SecureHash secureHash = message.getHeader(SECURE_HASH, SecureHash.class);
         cordaRPCOps.acceptNewNetworkParameters(secureHash);
     }
 
     @InvokeOnHeader(CordaConstants.KILL_FLOW)
-    void killFlow(Message message) throws Exception {
+    void killFlow(Message message) {
         StateMachineRunId stateMachineRunId = message.getBody(StateMachineRunId.class);
         cordaRPCOps.killFlow(stateMachineRunId);
     }
 
     @InvokeOnHeader(CordaConstants.NETWORK_PARAMETERS_FEED)
-    void networkParametersFeed(Message message) throws Exception {
+    void networkParametersFeed(Message message) {
         message.setBody(cordaRPCOps.networkParametersFeed());
     }
 
     @InvokeOnHeader(CordaConstants.UPLOAD_ATTACHMENT_WITH_META_DATA)
-    void uploadAttachmentWithMetadata(Message message) throws Exception {
+    void uploadAttachmentWithMetadata(Message message) throws FileAlreadyExistsException {
         InputStream inputStream = message.getBody(InputStream.class);
         String uploader = message.getBody(String.class);
         String filename = message.getBody(String.class);

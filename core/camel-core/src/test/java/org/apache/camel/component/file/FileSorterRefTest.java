@@ -23,15 +23,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for the file sorter ref option
  */
 public class FileSorterRefTest extends ContextTestSupport {
-
-    private String fileUrl = "file://target/data/filesorter/?initialDelay=0&delay=10&sorter=#mySorter";
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -40,26 +37,18 @@ public class FileSorterRefTest extends ContextTestSupport {
         return jndi;
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/filesorter");
-        super.setUp();
-
-    }
-
     @Test
     public void testSortFiles() throws Exception {
-        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello London", Exchange.FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello Copenhagen", Exchange.FILE_NAME, "copenhagen.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello Copenhagen", Exchange.FILE_NAME, "copenhagen.txt");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10&sorter=#mySorter")).convertBodyTo(String.class).to("mock:result");
             }
         });
 

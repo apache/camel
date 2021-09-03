@@ -18,7 +18,7 @@
  */
 
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
-def JDK_NAME = env.JDK_NAME ?: 'jdk_1.8_latest'
+def JDK_NAME = env.JDK_NAME ?: 'adoptopenjdk_hotspot_8u282'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
@@ -48,9 +48,9 @@ pipeline {
         stage('Camel full pipeline') {
 
             steps {
-                build job: 'Camel/Apache Camel/master/', wait: true
-                build job: 'Camel/Camel-Karaf Daily/master/', wait: true
-                build job: 'Camel/Camel-Spring-Boot Daily/master', wait: true
+                build job: 'Camel/Apache Camel/main/', wait: true
+                build job: 'Camel/Camel-Karaf Daily/main/', wait: true
+                build job: 'Camel/Camel-Spring-Boot Daily/main', wait: true
             }
         }
 

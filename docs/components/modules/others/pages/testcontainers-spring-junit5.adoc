@@ -1,7 +1,7 @@
 [[testcontainers-spring-junit5-other]]
 = Testcontainers Spring Junit5 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-testcontainers-spring-junit5/src/main/docs/testcontainers-spring-junit5.adoc
+:page-source: components/camel-test/camel-testcontainers-spring-junit5/src/main/docs/testcontainers-spring-junit5.adoc
 :docTitle: Testcontainers Spring Junit5
 :artifactId: camel-testcontainers-spring-junit5
 :description: Camel unit testing with Spring, testcontainers and JUnit 5

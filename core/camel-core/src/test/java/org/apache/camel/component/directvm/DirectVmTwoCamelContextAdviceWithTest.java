@@ -21,10 +21,12 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 /**
  *
  */
+@ResourceLock("DirectVmComponent")
 public class DirectVmTwoCamelContextAdviceWithTest extends AbstractDirectVmTestSupport {
 
     @Override

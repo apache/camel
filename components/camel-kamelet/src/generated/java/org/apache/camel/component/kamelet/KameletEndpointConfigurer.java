@@ -32,6 +32,7 @@ public class KameletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "failIfNoConsumers": target.setFailIfNoConsumers(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "location": target.setLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
         }
@@ -51,6 +52,7 @@ public class KameletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "failIfNoConsumers": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "location": return java.lang.String.class;
         case "timeout": return long.class;
         default: return null;
         }
@@ -71,6 +73,7 @@ public class KameletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "failIfNoConsumers": return target.isFailIfNoConsumers();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "location": return target.getLocation();
         case "timeout": return target.getTimeout();
         default: return null;
         }

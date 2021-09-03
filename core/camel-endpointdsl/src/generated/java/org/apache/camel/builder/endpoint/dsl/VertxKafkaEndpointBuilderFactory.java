@@ -656,7 +656,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2m7s
+         * Default: 30s
          * Group: common
          * 
          * @param socketConnectionSetupTimeoutMaxMs the value to set
@@ -677,7 +677,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2m7s
+         * Default: 30s
          * Group: common
          * 
          * @param socketConnectionSetupTimeoutMaxMs the value to set
@@ -763,6 +763,55 @@ public interface VertxKafkaEndpointBuilderFactory {
         default VertxKafkaEndpointConsumerBuilder allowAutoCreateTopics(
                 String allowAutoCreateTopics) {
             doSetProperty("allowAutoCreateTopics", allowAutoCreateTopics);
+            return this;
+        }
+        /**
+         * Whether to allow doing manual commits via
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit.
+         * If this option is enabled then an instance of
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * is stored on the Exchange message header, which allows end users to
+         * access this API and perform manual offset commits via the Kafka
+         * consumer. Note: To take full control of the offset committing, you
+         * may need to disable the Kafka Consumer default auto commit behavior
+         * by setting 'enableAutoCommit' to 'false'.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param allowManualCommit the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder allowManualCommit(
+                boolean allowManualCommit) {
+            doSetProperty("allowManualCommit", allowManualCommit);
+            return this;
+        }
+        /**
+         * Whether to allow doing manual commits via
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit.
+         * If this option is enabled then an instance of
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * is stored on the Exchange message header, which allows end users to
+         * access this API and perform manual offset commits via the Kafka
+         * consumer. Note: To take full control of the offset committing, you
+         * may need to disable the Kafka Consumer default auto commit behavior
+         * by setting 'enableAutoCommit' to 'false'.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param allowManualCommit the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder allowManualCommit(
+                String allowManualCommit) {
+            doSetProperty("allowManualCommit", allowManualCommit);
             return this;
         }
         /**
@@ -1245,7 +1294,7 @@ public interface VertxKafkaEndpointBuilderFactory {
         /**
          * Controls how to read messages written transactionally. If set to
          * read_committed, consumer.poll() will only return transactional
-         * messages which have been committed. If set to read_uncommitted' (the
+         * messages which have been committed. If set to read_uncommitted (the
          * default), consumer.poll() will return all messages, even
          * transactional messages which have been aborted. Non-transactional
          * messages will be returned unconditionally in either mode. Messages
@@ -1389,6 +1438,9 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The maximum number of records returned in a single call to poll().
+         * Note, that max.poll.records does not impact the underlying fetching
+         * behavior. The consumer will cache the records from each fetch request
+         * and returns them incrementally from each poll.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1405,6 +1457,9 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The maximum number of records returned in a single call to poll().
+         * Note, that max.poll.records does not impact the underlying fetching
+         * behavior. The consumer will cache the records from each fetch request
+         * and returns them incrementally from each poll.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1423,12 +1478,19 @@ public interface VertxKafkaEndpointBuilderFactory {
          * A list of class names or class types, ordered by preference, of
          * supported partition assignment strategies that the client will use to
          * distribute partition ownership amongst consumer instances when group
-         * management is used.In addition to the default class specified below,
-         * you can use the
-         * org.apache.kafka.clients.consumer.RoundRobinAssignorclass for round
-         * robin assignments of partitions to consumers. Implementing the
+         * management is used. Available options
+         * are:org.apache.kafka.clients.consumer.RangeAssignor: The default
+         * assignor, which works on a per-topic
+         * basis.org.apache.kafka.clients.consumer.RoundRobinAssignor: Assigns
+         * partitions to consumers in a round-robin
+         * fashion.org.apache.kafka.clients.consumer.StickyAssignor: Guarantees
+         * an assignment that is maximally balanced while preserving as many
+         * existing partition assignments as
+         * possible.org.apache.kafka.clients.consumer.CooperativeStickyAssignor:
+         * Follows the same StickyAssignor logic, but allows for cooperative
+         * rebalancing.Implementing the
          * org.apache.kafka.clients.consumer.ConsumerPartitionAssignor interface
-         * allows you to plug in a custom assignmentstrategy.
+         * allows you to plug in a custom assignment strategy.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1573,8 +1635,8 @@ public interface VertxKafkaEndpointBuilderFactory {
         /**
          * JAAS login context parameters for SASL connections in the format used
          * by JAAS configuration files. JAAS configuration file format is
-         * described here. The format for the value is: 'loginModuleClass
-         * controlFlag (optionName=optionValue);'. For brokers, the config must
+         * described here. The format for the value is: loginModuleClass
+         * controlFlag (optionName=optionValue);. For brokers, the config must
          * be prefixed with listener prefix and SASL mechanism name in
          * lower-case. For example,
          * listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;.
@@ -2405,48 +2467,6 @@ public interface VertxKafkaEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointConsumerBuilder vertxKafkaClientFactory(
-                Object vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointConsumerBuilder vertxKafkaClientFactory(
-                String vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
     }
 
     /**
@@ -3070,7 +3090,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2m7s
+         * Default: 30s
          * Group: common
          * 
          * @param socketConnectionSetupTimeoutMaxMs the value to set
@@ -3091,7 +3111,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2m7s
+         * Default: 30s
          * Group: common
          * 
          * @param socketConnectionSetupTimeoutMaxMs the value to set
@@ -3857,8 +3877,8 @@ public interface VertxKafkaEndpointBuilderFactory {
         /**
          * JAAS login context parameters for SASL connections in the format used
          * by JAAS configuration files. JAAS configuration file format is
-         * described here. The format for the value is: 'loginModuleClass
-         * controlFlag (optionName=optionValue);'. For brokers, the config must
+         * described here. The format for the value is: loginModuleClass
+         * controlFlag (optionName=optionValue);. For brokers, the config must
          * be prefixed with listener prefix and SASL mechanism name in
          * lower-case. For example,
          * listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;.
@@ -4619,48 +4639,6 @@ public interface VertxKafkaEndpointBuilderFactory {
         default VertxKafkaEndpointProducerBuilder basic() {
             return (VertxKafkaEndpointProducerBuilder) this;
         }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointProducerBuilder vertxKafkaClientFactory(
-                Object vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointProducerBuilder vertxKafkaClientFactory(
-                String vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
     }
 
     /**
@@ -5275,7 +5253,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2m7s
+         * Default: 30s
          * Group: common
          * 
          * @param socketConnectionSetupTimeoutMaxMs the value to set
@@ -5296,7 +5274,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 2m7s
+         * Default: 30s
          * Group: common
          * 
          * @param socketConnectionSetupTimeoutMaxMs the value to set
@@ -5362,8 +5340,8 @@ public interface VertxKafkaEndpointBuilderFactory {
         /**
          * JAAS login context parameters for SASL connections in the format used
          * by JAAS configuration files. JAAS configuration file format is
-         * described here. The format for the value is: 'loginModuleClass
-         * controlFlag (optionName=optionValue);'. For brokers, the config must
+         * described here. The format for the value is: loginModuleClass
+         * controlFlag (optionName=optionValue);. For brokers, the config must
          * be prefixed with listener prefix and SASL mechanism name in
          * lower-case. For example,
          * listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;.
@@ -6117,48 +6095,6 @@ public interface VertxKafkaEndpointBuilderFactory {
                 AdvancedVertxKafkaEndpointProducerBuilder {
         default VertxKafkaEndpointBuilder basic() {
             return (VertxKafkaEndpointBuilder) this;
-        }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointBuilder vertxKafkaClientFactory(
-                Object vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointBuilder vertxKafkaClientFactory(
-                String vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
         }
     }
 

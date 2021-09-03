@@ -39,10 +39,6 @@ public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
 
     @Test
     public void testConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         context.addRoutes(createRouteBuilder());
         context.start();
 
@@ -67,9 +63,10 @@ public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("stomp:test?brokerURL=tcp://localhost:%s&headerFilterStrategy=#customHeaderFilterStrategy", getPort())
-                        .transform(body().convertToString())
-                        .to("mock:result");
+                fromF("stomp:test?brokerURL=tcp://localhost:%s&headerFilterStrategy=#customHeaderFilterStrategy",
+                        service.getPort())
+                                .transform(body().convertToString())
+                                .to("mock:result");
             }
         };
     }

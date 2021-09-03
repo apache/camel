@@ -93,8 +93,9 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
             return sagaService;
         }
 
-        if (definition.getSagaServiceRef() != null) {
-            return mandatoryLookup(parseString(definition.getSagaServiceRef()), CamelSagaService.class);
+        String ref = parseString(definition.getSagaServiceRef());
+        if (ref != null) {
+            return mandatoryLookup(ref, CamelSagaService.class);
         }
 
         sagaService = camelContext.hasService(CamelSagaService.class);

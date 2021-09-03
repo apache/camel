@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -26,8 +27,6 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * {@link String} as the message body.
  *
  * This aggregation strategy can used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
- * 
- * @since 3.0.0
  */
 public class StringAggregationStrategy implements AggregationStrategy {
 
@@ -37,8 +36,7 @@ public class StringAggregationStrategy implements AggregationStrategy {
     /**
      * Set delimiter used for joining aggregated String
      * 
-     * @param  delimiter The delimiter to join with. Default empty String
-     * @return
+     * @param delimiter The delimiter to join with. Default empty String
      */
     public StringAggregationStrategy delimiter(String delimiter) {
         this.delimiter = delimiter;
@@ -58,9 +56,6 @@ public class StringAggregationStrategy implements AggregationStrategy {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         StringBuffer result; // Aggregate in StringBuffer instead of StringBuilder, to make it thread safe
@@ -86,7 +81,7 @@ public class StringAggregationStrategy implements AggregationStrategy {
     @Override
     public void onCompletion(Exchange exchange) {
         if (exchange != null) {
-            StringBuffer stringBuffer = (StringBuffer) exchange.removeProperty(Exchange.GROUPED_EXCHANGE);
+            StringBuffer stringBuffer = (StringBuffer) exchange.removeProperty(ExchangePropertyKey.GROUPED_EXCHANGE);
             if (stringBuffer != null) {
                 exchange.getIn().setBody(stringBuffer.toString());
             }
@@ -94,10 +89,10 @@ public class StringAggregationStrategy implements AggregationStrategy {
     }
 
     private static StringBuffer getStringBuffer(Exchange exchange) {
-        StringBuffer stringBuffer = exchange.getProperty(Exchange.GROUPED_EXCHANGE, StringBuffer.class);
+        StringBuffer stringBuffer = exchange.getProperty(ExchangePropertyKey.GROUPED_EXCHANGE, StringBuffer.class);
         if (stringBuffer == null) {
             stringBuffer = new StringBuffer();
-            exchange.setProperty(Exchange.GROUPED_EXCHANGE, stringBuffer);
+            exchange.setProperty(ExchangePropertyKey.GROUPED_EXCHANGE, stringBuffer);
         }
         return stringBuffer;
     }

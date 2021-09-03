@@ -19,7 +19,9 @@ package org.apache.camel.component.stub;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
+@ResourceLock("VmComponent")
 public class StubInOutTest extends AbstractVmTestSupport {
 
     @Test

@@ -18,6 +18,7 @@ package org.apache.camel.component.activemq;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 import javax.jms.Connection;
@@ -34,30 +35,30 @@ import org.apache.activemq.broker.ConnectionContext;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.TransactionId;
 import org.apache.activemq.util.Wait;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * shows broker 'once only delivery' and recovery with XA
  */
-public class JmsJdbcXATest extends CamelSpringTestSupport {
+public class JmsJdbcXATest extends ActiveMQSpringTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsJdbcXATest.class);
     BrokerService broker;
     int messageCount;
 
     public java.sql.Connection initDb() throws Exception {
         String createStatement = "CREATE TABLE SCP_INPUT_MESSAGES (" + "id int NOT NULL GENERATED ALWAYS AS IDENTITY, "
-                                 + "messageId varchar(96) NOT NULL, "
-                                 + "messageCorrelationId varchar(96) NOT NULL, " + "messageContent varchar(2048) NOT NULL, "
-                                 + "PRIMARY KEY (id) )";
+                                 + "messageId varchar(96) NOT NULL, " + "messageCorrelationId varchar(96) NOT NULL, "
+                                 + "messageContent varchar(2048) NOT NULL, " + "PRIMARY KEY (id) )";
 
         java.sql.Connection conn = getJDBCConnection();
         try {
@@ -85,8 +86,8 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         ResultSet resultSet = jdbcConn.createStatement().executeQuery("SELECT * FROM SCP_INPUT_MESSAGES");
         while (resultSet.next()) {
             count++;
-            LOG.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: "
-                     + resultSet.getString(3) + ", content: " + resultSet.getString(4));
+            LOG.info("message - seq: {}, id: {}, corr: {}, content: {}", resultSet.getInt(1), resultSet.getString(2),
+                    resultSet.getString(3), resultSet.getString(4));
         }
         return count;
     }
@@ -102,7 +103,17 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         assertEquals(1, dumpDb(jdbcConn), "message in db, commit to db worked");
 
         LOG.info("Broker stopped, restarting...");
-        broker = createBroker(false);
+        BrokerService oldBroker = broker;
+
+        broker = ActiveMQEmbeddedServiceBuilder
+                .defaultBroker()
+                .withDeleteAllMessagesOnStartup(false)
+                .withBrokerName(JmsJdbcXATest.class)
+                .withDataDirectory(testDirectory().toString())
+                .build()
+                .getBrokerService();
+
+        broker.addConnector(ActiveMQEmbeddedService.getBrokerUri(oldBroker, 0));
         broker.start();
         broker.waitUntilStarted();
         assertEquals(1, broker.getBroker().getPreparedTransactions(null).length, "pending transactions");
@@ -141,7 +152,7 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://testXA");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
@@ -153,29 +164,30 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker(boolean deleteAllMessages) throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName("testXA");
-        brokerService.setAdvisorySupport(false);
-        brokerService.setUseJmx(false);
-        brokerService.setDataDirectory("target/data");
-        brokerService.addConnector("tcp://0.0.0.0:61616");
-        return brokerService;
+    @Override
+    protected Map<String, String> getTranslationProperties() {
+        Map<String, String> map = super.getTranslationProperties();
+        map.put("brokerUri", ActiveMQEmbeddedService.getBrokerUri(broker, 0));
+        return map;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-
-        deleteDirectory("target/data/howl");
-
         // make broker available to recovery processing on app context start
         try {
-            broker = createBroker(true);
+            broker = ActiveMQEmbeddedServiceBuilder
+                    .defaultBroker()
+                    .withBrokerName(JmsJdbcXATest.class)
+                    .withTcpTransport()
+                    .withDataDirectory(testDirectory().toString())
+                    .build()
+                    .getBrokerService();
+
             broker.setPlugins(new BrokerPlugin[] { new BrokerPluginSupport() {
                 @Override
-                public void commitTransaction(ConnectionContext context, TransactionId xid, boolean onePhase) throws Exception {
+                public void commitTransaction(ConnectionContext context, TransactionId xid, boolean onePhase)
+                        throws Exception {
                     if (onePhase) {
                         super.commitTransaction(context, xid, onePhase);
                     } else {
@@ -201,6 +213,6 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
             throw new RuntimeException("Failed to start broker", e);
         }
 
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jmsXajdbc.xml");
+        return super.createApplicationContext();
     }
 }

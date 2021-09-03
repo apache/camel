@@ -68,6 +68,9 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
             if (messageProperties.getContentType() != null) {
                 answer.put(Exchange.CONTENT_TYPE, messageProperties.getContentType());
             }
+            if (messageProperties.getTimestamp() != null) {
+                answer.put(Exchange.MESSAGE_TIMESTAMP, messageProperties.getTimestamp().getTime());
+            }
         }
 
         return answer;

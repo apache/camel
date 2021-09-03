@@ -46,9 +46,8 @@ public final class SObjectTreeResponse implements Serializable {
     private final List<ReferenceId> results;
 
     @JsonCreator
-    public SObjectTreeResponse(@JsonProperty("hasErrors")
-    final boolean hasErrors, @JsonProperty("results")
-    final List<ReferenceId> results) {
+    public SObjectTreeResponse(@JsonProperty("hasErrors") final boolean hasErrors,
+                               @JsonProperty("results") final List<ReferenceId> results) {
         this.hasErrors = hasErrors;
         this.results = Optional.ofNullable(results).orElse(Collections.emptyList());
     }

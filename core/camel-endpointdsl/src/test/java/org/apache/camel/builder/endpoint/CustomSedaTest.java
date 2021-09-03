@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
@@ -24,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CustomSedaTest extends ContextTestSupport {
+public class CustomSedaTest extends BaseEndpointDslTest {
 
     @Test
     public void testCustomSeda() throws Exception {

@@ -19,10 +19,12 @@ package org.apache.camel.jsonpath;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
@@ -143,6 +145,20 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
         }
         answer.init(getCamelContext());
         return answer;
+    }
+
+    // use by tooling
+    public boolean validateExpression(String expression) {
+        JsonPath.compile(expression);
+        return true;
+    }
+
+    // use by tooling
+    public boolean validatePredicate(String expression) {
+        EasyPredicateParser parser = new EasyPredicateParser();
+        String exp = parser.parse(expression);
+        JsonPath.compile(exp);
+        return true;
     }
 
     @Override

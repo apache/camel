@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,12 +57,13 @@ public class HttpProducerJMXBeansIssueTest extends BaseJettyTest {
     }
 
     @Test
+    @Disabled("disabled as this is a manual test")
     public void testNothing() {
         // do nothing as this test is manual
     }
 
-    // @Test
-    // TODO: disabled as this is a manual test
+    @Test
+    @Disabled("disabled as this is a manual test")
     public void testSendAlot() throws Exception {
         Endpoint ep = context.getEndpoint("direct:leak");
         Producer p = ep.createProducer();

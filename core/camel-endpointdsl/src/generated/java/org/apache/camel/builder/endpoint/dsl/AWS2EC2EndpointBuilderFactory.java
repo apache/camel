@@ -31,7 +31,7 @@ public interface AWS2EC2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Elastic Compute Cloud (EC2) component.
+     * Builder for endpoint for the AWS Elastic Compute Cloud (EC2) component.
      */
     public interface AWS2EC2EndpointBuilder extends EndpointProducerBuilder {
         /**
@@ -163,6 +163,39 @@ public interface AWS2EC2EndpointBuilderFactory {
          */
         default AWS2EC2EndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default AWS2EC2EndpointBuilder overrideEndpoint(boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default AWS2EC2EndpointBuilder overrideEndpoint(String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -337,6 +370,59 @@ public interface AWS2EC2EndpointBuilderFactory {
             doSetProperty("trustAllCertificates", trustAllCertificates);
             return this;
         }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default AWS2EC2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the EC2 client should expect to load credentials through
+         * a default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2EC2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the EC2 client should expect to load credentials through
+         * a default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2EC2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
     }
 
     /**
@@ -367,7 +453,7 @@ public interface AWS2EC2EndpointBuilderFactory {
 
     public interface AWS2EC2Builders {
         /**
-         * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
+         * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
          * Manage AWS EC2 instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -386,7 +472,7 @@ public interface AWS2EC2EndpointBuilderFactory {
             return AWS2EC2EndpointBuilderFactory.endpointBuilder("aws2-ec2", path);
         }
         /**
-         * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
+         * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
          * Manage AWS EC2 instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management

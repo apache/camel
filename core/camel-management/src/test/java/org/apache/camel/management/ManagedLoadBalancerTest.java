@@ -21,18 +21,18 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedLoadBalancerTest extends ManagementTestSupport {
 
     @Test
     public void testLoadBalancer() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World", "Hi World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
@@ -44,15 +44,15 @@ public class ManagedLoadBalancerTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://a\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://a");
         Long queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(2, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://b\"");
+        name = getCamelObjectName(TYPE_ENDPOINT, "mock://b");
         queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(1, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myBalancer\"");
+        name = getCamelObjectName(TYPE_PROCESSOR, "myBalancer");
         mbeanServer.isRegistered(name);
 
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");

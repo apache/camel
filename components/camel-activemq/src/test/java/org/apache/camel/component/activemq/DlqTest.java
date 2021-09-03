@@ -22,40 +22,40 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.util.Wait;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DlqTest extends CamelSpringTestSupport {
+public class DlqTest extends ActiveMQSpringTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DlqTest.class);
-    BrokerService broker;
-    int messageCount;
+
+    @RegisterExtension
+    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder.defaultBroker()
+            .withBrokerName(DlqTest.class.getSimpleName())
+            .withUseJmx(true)
+            .build();
+
+    private int messageCount;
 
     @Test
     public void testSendToDlq() throws Exception {
         sendJMSMessageToKickOffRoute();
 
         LOG.info("Wait for dlq message...");
-
-        assertTrue(Wait.waitFor(new Wait.Condition() {
-            @Override
-            public boolean isSatisified() throws Exception {
-                return broker.getAdminView().getTotalEnqueueCount() == 2;
-            }
-        }));
+        assertTrue(Wait.waitFor(() -> service.getBrokerService().getAdminView().getTotalEnqueueCount() == 2));
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://testDlq");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
@@ -67,33 +67,14 @@ public class DlqTest extends CamelSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker(boolean deleteAllMessages) throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName("testDlq");
-        brokerService.setAdvisorySupport(false);
-        brokerService.setDataDirectory("target/data");
-        return brokerService;
-    }
-
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-
-        deleteDirectory("target/data");
-
-        // make broker available to recovery processing on app context start
-        try {
-            broker = createBroker(true);
-            broker.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to start broker", e);
-        }
-
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/dlq.xml");
+        service.initialize();
+        return super.createApplicationContext();
     }
 
     public static class CanError {
-        public String enrich(String body) throws Exception {
+        public String enrich(String body) {
             LOG.info("Got body: " + body);
             throw new RuntimeException("won't enrich today!");
         }

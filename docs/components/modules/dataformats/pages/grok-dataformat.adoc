@@ -112,4 +112,4 @@ The Grok dataformat supports 4 options, which are listed below.
 |===
 // dataformat options: END
 
-include::camel-spring-boot::page$grok-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$grok-starter.adoc[]

@@ -29,8 +29,6 @@
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <import resource="JdbcSpringDataSource.xml" />
-
     <bean id="repoQuickRecovery" parent="repo1">
         <!-- scan 2 times per second -->
         <property name="recoveryInterval" value="500"/>

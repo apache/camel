@@ -19,17 +19,9 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileLanguageCBRTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/cbr");
-        super.setUp();
-    }
 
     @Test
     public void testTxt() throws Exception {
@@ -37,7 +29,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         getMockEndpoint("mock:dat").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file://target/data/cbr", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,7 +40,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         getMockEndpoint("mock:dat").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file://target/data/cbr", "Bye World", Exchange.FILE_NAME, "bye.dat");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.dat");
 
         assertMockEndpointsSatisfied();
     }
@@ -59,7 +51,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         getMockEndpoint("mock:dat").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/data/cbr", "Hi World", Exchange.FILE_NAME, "hi.foo");
+        template.sendBodyAndHeader(fileUri(), "Hi World", Exchange.FILE_NAME, "hi.foo");
 
         assertMockEndpointsSatisfied();
     }
@@ -69,7 +61,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/cbr?delete=true&initialDelay=0&delay=10").convertBodyTo(String.class).choice().when()
+                from(fileUri("?delete=true&initialDelay=0&delay=10")).convertBodyTo(String.class).choice().when()
                         .simple("${file:ext} == 'txt'").to("mock:txt").when()
                         .simple("${file:ext} == 'dat'").to("mock:dat").otherwise().to("mock:other");
             }

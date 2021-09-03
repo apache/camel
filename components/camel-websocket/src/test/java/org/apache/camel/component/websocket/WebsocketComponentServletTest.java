@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.WebSocketConstants;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -55,6 +57,8 @@ public class WebsocketComponentServletTest {
     private NodeSynchronization sync;
     @Mock
     private ServletUpgradeRequest request;
+    @Mock
+    private ServletUpgradeResponse response;
 
     private WebsocketComponentServlet websocketComponentServlet;
 
@@ -83,7 +87,7 @@ public class WebsocketComponentServletTest {
     @Test
     public void testDoWebSocketConnect() {
         websocketComponentServlet.setConsumer(consumer);
-        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
+        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, response);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
         DefaultWebsocket defaultWebsocket = webSocket;
@@ -91,19 +95,20 @@ public class WebsocketComponentServletTest {
         defaultWebsocket.setSession(session);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);
-        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
+        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS, null, null);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testDoWebSocketConnectConsumerIsNull() {
-        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
+        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, response);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
         DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);
+        inOrder.verify(request).getHeaders(WebSocketConstants.SEC_WEBSOCKET_PROTOCOL);
         inOrder.verifyNoMoreInteractions();
     }
 

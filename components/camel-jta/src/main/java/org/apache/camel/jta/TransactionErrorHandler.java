@@ -124,7 +124,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         return callback.getFuture();
     }
 
-    protected void processInTransaction(final Exchange exchange) throws Exception {
+    protected void processInTransaction(final Exchange exchange) {
         // is the exchange redelivered, for example JMS brokers support such details
         final String redelivered = Boolean.toString(exchange.isExternalRedelivered());
         final String ids = ExchangeHelper.logIds(exchange);

@@ -26,25 +26,27 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
 
     private HazelcastInstance hazelcastInstance;
     private ReplicatedMap<Object, Object> map;
 
-    @BeforeEach
+    @BeforeAll
     public void beforeEach() {
         hazelcastInstance = Hazelcast.newHazelcastInstance();
         map = hazelcastInstance.getReplicatedMap("rm");
     }
 
-    @AfterEach
+    @AfterAll
     public void afterEach() {
         if (hazelcastInstance != null) {
             hazelcastInstance.shutdown();

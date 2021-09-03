@@ -36,6 +36,13 @@ import org.springframework.ws.soap.SoapMessage;
  */
 public class BasicMessageFilter implements MessageFilter {
 
+    /**
+     * Whether a header is valid
+     */
+    protected boolean validHeaderName(String name) {
+        return !"Content-Type".equalsIgnoreCase(name);
+    }
+
     @Override
     public void filterProducer(Exchange exchange, WebServiceMessage response) {
         if (exchange != null) {
@@ -110,8 +117,11 @@ public class BasicMessageFilter implements MessageFilter {
         headerKeySet.remove(Exchange.BREADCRUMB_ID);
 
         for (String name : headerKeySet) {
-            Object value = headers.get(name);
+            if (!validHeaderName(name)) {
+                continue;
+            }
 
+            Object value = headers.get(name);
             if (value instanceof QName) {
                 soapHeader.addHeaderElement((QName) value);
             } else {

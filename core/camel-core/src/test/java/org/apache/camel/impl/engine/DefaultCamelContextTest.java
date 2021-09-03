@@ -18,8 +18,8 @@ package org.apache.camel.impl.engine;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -109,9 +109,9 @@ public class DefaultCamelContextTest extends TestSupport {
         Component component = ctx.getComponent("bean");
         assertNotNull(component);
 
-        List<String> list = ctx.getComponentNames();
-        assertEquals(1, list.size());
-        assertEquals("bean", list.get(0));
+        Set<String> names = ctx.getComponentNames();
+        assertEquals(1, names.size());
+        assertEquals("bean", names.iterator().next());
     }
 
     @Test

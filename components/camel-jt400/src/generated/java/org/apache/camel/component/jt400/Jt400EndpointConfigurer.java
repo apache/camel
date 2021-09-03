@@ -72,6 +72,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "secured": target.getConfiguration().setSecured(property(camelContext, boolean.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "sendingreply":
+        case "sendingReply": target.getConfiguration().setSendingReply(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -136,6 +138,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "secured": return boolean.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "sendingreply":
+        case "sendingReply": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "timeunit":
@@ -201,6 +205,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "secured": return target.getConfiguration().isSecured();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "sendingreply":
+        case "sendingReply": return target.getConfiguration().isSendingReply();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "timeunit":

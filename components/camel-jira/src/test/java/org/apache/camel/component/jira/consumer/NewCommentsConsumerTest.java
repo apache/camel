@@ -129,27 +129,35 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
 
     @Test
     public void singleIssueCommentsTest() throws Exception {
-        // create issue with 3 comments
-        Issue issue = createIssueWithComments(11, 3);
+        Issue issueWithCommends = createIssueWithComments(11L, 3000);
+        Issue issueWithNoComments = createIssue(51L);
+
         reset(issueRestClient);
-        Promise<Issue> promiseIssue = Promises.promise(issue);
-        when(issueRestClient.getIssue(anyString())).thenReturn(promiseIssue);
+        AtomicInteger regulator = new AtomicInteger();
+        when(issueRestClient.getIssue(anyString())).then(inv -> {
+            int idx = regulator.getAndIncrement();
+            Issue issue = issueWithNoComments;
+            if (idx < 1) {
+                issue = issueWithCommends;
+            }
+            return Promises.promise(issue);
+        });
         List<Comment> comments = new ArrayList<>();
-        for (Comment c : issue.getComments()) {
+        for (Comment c : issueWithCommends.getComments()) {
             comments.add(c);
         }
         // reverse the order, from oldest comment to recent
         Collections.reverse(comments);
-        // expect 3 comments
+        // expect 3000 comments
         mockResult.expectedBodiesReceived(comments);
         mockResult.assertIsSatisfied();
     }
 
     @Test
     public void multipleIssuesTest() throws Exception {
-        Issue issue1 = createIssueWithComments(20L, 2);
-        Issue issue2 = createIssueWithComments(21L, 3);
-        Issue issue3 = createIssueWithComments(22L, 1);
+        Issue issue1 = createIssueWithComments(20L, 2000);
+        Issue issue2 = createIssueWithComments(21L, 3000);
+        Issue issue3 = createIssueWithComments(22L, 1000);
         List<Issue> newIssues = new ArrayList<>();
         newIssues.add(issue1);
         newIssues.add(issue2);
@@ -178,7 +186,7 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         }
         // reverse the order, from oldest comment to recent
         Collections.reverse(comments);
-        // expect 6 comments
+        // expect 6000 comments
         mockResult.expectedBodiesReceived(comments);
         mockResult.assertIsSatisfied();
     }

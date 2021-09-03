@@ -28,12 +28,14 @@ import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
@@ -50,34 +52,28 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String operation;
-
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
-            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
-        } else {
-            operation = getEndpoint().getKubernetesConfiguration().getOperation();
-        }
+        String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
 
             case KubernetesOperations.LIST_RESOURCES_QUOTA:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
-                doListResourceQuotasByLabels(exchange, operation);
+                doListResourceQuotasByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_RESOURCE_QUOTA_OPERATION:
-                doGetResourceQuota(exchange, operation);
+                doGetResourceQuota(exchange);
                 break;
 
             case KubernetesOperations.CREATE_RESOURCE_QUOTA_OPERATION:
-                doCreateResourceQuota(exchange, operation);
+                doCreateResourceQuota(exchange);
                 break;
 
             case KubernetesOperations.DELETE_RESOURCE_QUOTA_OPERATION:
-                doDeleteResourceQuota(exchange, operation);
+                doDeleteResourceQuota(exchange);
                 break;
 
             default:
@@ -85,14 +81,13 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange) {
         ResourceQuotaList resList = getEndpoint().getKubernetesClient().resourceQuotas().inAnyNamespace().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(resList.getItems());
+        prepareOutboundMessage(exchange, resList.getItems());
     }
 
-    protected void doListResourceQuotasByLabels(Exchange exchange, String operation) throws Exception {
+    protected void doListResourceQuotasByLabels(Exchange exchange) {
         ResourceQuotaList resList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
@@ -113,11 +108,10 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
             resList = resQuota.list();
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(resList.getItems());
+        prepareOutboundMessage(exchange, resList.getItems());
     }
 
-    protected void doGetResourceQuota(Exchange exchange, String operation) throws Exception {
+    protected void doGetResourceQuota(Exchange exchange) {
         ResourceQuota rq = null;
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -131,11 +125,10 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         }
         rq = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withName(rqName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(rq);
+        prepareOutboundMessage(exchange, rq);
     }
 
-    protected void doCreateResourceQuota(Exchange exchange, String operation) throws Exception {
+    protected void doCreateResourceQuota(Exchange exchange) {
         ResourceQuota rq = null;
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -159,11 +152,10 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
                 .endMetadata().withSpec(rqSpec).build();
         rq = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).create(rqCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(rq);
+        prepareOutboundMessage(exchange, rq);
     }
 
-    protected void doDeleteResourceQuota(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteResourceQuota(Exchange exchange) {
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(rqName)) {
@@ -177,7 +169,6 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         boolean rqDeleted
                 = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withName(rqName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(rqDeleted);
+        prepareOutboundMessage(exchange, rqDeleted);
     }
 }

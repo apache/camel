@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.dozer;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +23,11 @@ import java.util.Map;
 import com.github.dozermapper.core.Mapper;
 import com.github.dozermapper.core.metadata.ClassMappingMetadata;
 import com.github.dozermapper.core.metadata.MappingMetadata;
-import com.github.dozermapper.core.util.DozerClassLoader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +43,7 @@ import static com.github.dozermapper.core.classmap.MappingDirection.ONE_WAY;
  * mapper is queried for the types it converts. The queried types are used to register the {@link TypeConverter} with
  * the context via its {@link TypeConverterRegistry}.
  */
+@Deprecated
 public class DozerTypeConverterLoader extends ServiceSupport implements CamelContextAware {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -218,9 +214,9 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
             String dozerId, Class<?> to, Class<?> from) {
         if (log.isInfoEnabled()) {
             if (dozerId != null) {
-                log.info("Added Dozer: {} as Camel type converter: {} -> {}", new Object[] { dozerId, from, to });
+                log.info("Added Dozer: {} as Camel type converter: {} -> {}", dozerId, from, to);
             } else {
-                log.info("Added Dozer as Camel type converter: {} -> {}", new Object[] { from, to });
+                log.info("Added Dozer as Camel type converter: {} -> {}", from, to);
             }
         }
 
@@ -258,20 +254,6 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
 
     public void setMapper(Mapper mapper) {
         this.mapper = mapper;
-    }
-
-    protected static URL loadMappingFile(ClassResolver classResolver, String mappingFile) {
-        URL url = null;
-        try {
-            url = ResourceHelper.resolveResourceAsUrl(classResolver, mappingFile);
-        } catch (MalformedURLException e) {
-            // ignore
-        }
-        if (url == null) {
-            // using the classloader of DozerClassLoader as a fallback
-            url = DozerClassLoader.class.getClassLoader().getResource(mappingFile);
-        }
-        return url;
     }
 
     @Override

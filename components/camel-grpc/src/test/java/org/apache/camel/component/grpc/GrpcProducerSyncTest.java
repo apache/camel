@@ -61,7 +61,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     public static void stopGrpcServer() throws IOException {
         if (grpcServer != null) {
             grpcServer.shutdown();
-            LOG.info("gRPC server stoped");
+            LOG.info("gRPC server stopped");
         }
     }
 
@@ -82,7 +82,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
         pongResponse = template.requestBody("direct:grpc-sync-proto-method-name", pingRequest);
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof PongResponse);
-        assertEquals(((PongResponse) pongResponse).getPongId(), GRPC_TEST_PING_ID);
+        assertEquals(GRPC_TEST_PING_ID, ((PongResponse) pongResponse).getPongId());
     }
 
     @Test

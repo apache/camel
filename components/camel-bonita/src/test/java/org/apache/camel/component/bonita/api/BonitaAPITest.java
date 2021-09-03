@@ -18,6 +18,7 @@ package org.apache.camel.component.bonita.api;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
@@ -38,8 +39,11 @@ public class BonitaAPITest {
     public void testStartCaseEmptyProcessDefinitionId() throws Exception {
         BonitaAPI bonitaApi = BonitaAPIBuilder
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
+
+        Map<String, Serializable> map = new HashMap<>();
+
         assertThrows(IllegalArgumentException.class,
-                () -> bonitaApi.startCase(null, new HashMap<String, Serializable>()));
+                () -> bonitaApi.startCase(null, map));
     }
 
     @Test

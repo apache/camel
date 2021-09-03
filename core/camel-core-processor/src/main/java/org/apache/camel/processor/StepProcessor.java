@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.support.EventHelper;
 import org.slf4j.Logger;
@@ -50,8 +51,8 @@ public class StepProcessor extends Pipeline {
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         // setup step id on exchange
-        final Object oldStepId = exchange.removeProperty(Exchange.STEP_ID);
-        exchange.setProperty(Exchange.STEP_ID, stepId);
+        final Object oldStepId = exchange.removeProperty(ExchangePropertyKey.STEP_ID);
+        exchange.setProperty(ExchangePropertyKey.STEP_ID, stepId);
 
         EventHelper.notifyStepStarted(exchange.getContext(), exchange, stepId);
 
@@ -70,10 +71,10 @@ public class StepProcessor extends Pipeline {
             } finally {
                 if (oldStepId != null) {
                     // restore step id
-                    exchange.setProperty(Exchange.STEP_ID, oldStepId);
+                    exchange.setProperty(ExchangePropertyKey.STEP_ID, oldStepId);
                 } else {
                     // clear step id
-                    exchange.removeProperty(Exchange.STEP_ID);
+                    exchange.removeProperty(ExchangePropertyKey.STEP_ID);
                 }
                 callback.done(sync);
             }

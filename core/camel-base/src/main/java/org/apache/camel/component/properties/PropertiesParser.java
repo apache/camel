@@ -27,10 +27,12 @@ public interface PropertiesParser {
      * @param  text                     the text to be parsed
      * @param  properties               the properties resolved which values should be looked up
      * @param  fallback                 whether to support using fallback values if a property cannot be found
+     * @param  keepUnresolvedOptional   whether to keep placeholders that are optional and was unresolved
      * @return                          the parsed text with replaced placeholders
      * @throws IllegalArgumentException if uri syntax is not valid or a property is not found
      */
-    String parseUri(String text, PropertiesLookup properties, boolean fallback) throws IllegalArgumentException;
+    String parseUri(String text, PropertiesLookup properties, boolean fallback, boolean keepUnresolvedOptional)
+            throws IllegalArgumentException;
 
     /**
      * While parsing the uri using parseUri method each parsed property found invokes this callback.

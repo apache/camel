@@ -28,7 +28,6 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,7 +70,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
-        String response = template.requestBodyAndHeaders("freemarker://http://localhost:" + port + "/test?name=header.ftl", "",
+        String response = template.requestBodyAndHeaders("freemarker://http://localhost:" + port + "/test?name=header", "",
                 map, String.class);
 
         assertEquals("Dear Doe, John", response);
@@ -89,9 +88,6 @@ public class JettyFreemarkerTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 String name = exchange.getIn().getHeader("name", String.class);
                                 ObjectHelper.notNull(name, "name");
-
-                                // strip off the locale
-                                name = StringHelper.before(name, "_");
 
                                 name = "org/apache/camel/itest/jetty/" + name + ".ftl";
                                 InputStream is

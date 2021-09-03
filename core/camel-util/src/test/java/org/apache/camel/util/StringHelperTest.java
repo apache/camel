@@ -16,10 +16,15 @@
  */
 package org.apache.camel.util;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.StringHelper.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StringHelperTest {
 
@@ -55,6 +60,50 @@ public class StringHelperTest {
         assertEquals("available-phone-number-country", camelCaseToDash("AvailablePhoneNumberCountry"));
     }
 
+    @Nested
+    class DashToCamelCase {
+
+        @Test
+        void testDashToCamelCaseWithNull() throws Exception {
+            assertThat(dashToCamelCase(null)).isNull();
+        }
+
+        @Test
+        void testDashToCamelCaseWithEmptyValue() throws Exception {
+            assertThat(dashToCamelCase("")).isEmpty();
+        }
+
+        @Test
+        void testDashToCamelCaseWithNoDash() throws Exception {
+            assertThat(dashToCamelCase("a")).isEqualTo("a");
+        }
+
+        @Test
+        void testDashToCamelCaseWithOneDash() throws Exception {
+            assertThat(dashToCamelCase("a-b")).isEqualTo("aB");
+        }
+
+        @Test
+        void testDashToCamelCaseWithSeveralDashes() throws Exception {
+            assertThat(dashToCamelCase("a-bb-cc-dd")).isEqualTo("aBbCcDd");
+        }
+
+        @Test
+        void testDashToCamelCaseWithEndDash() throws Exception {
+            assertThat(dashToCamelCase("a-")).isEqualTo("a");
+        }
+
+        @Test
+        void testDashToCamelCaseWithEndDashes() throws Exception {
+            assertThat(dashToCamelCase("a----")).isEqualTo("a");
+        }
+
+        @Test
+        void testDashToCamelCaseWithSeceralDashesGrouped() throws Exception {
+            assertThat(dashToCamelCase("a--b")).isEqualTo("aB");
+        }
+    }
+
     @Test
     public void testSplitWords() throws Exception {
         String[] arr = splitWords("apiName/methodName");
@@ -85,4 +134,84 @@ public class StringHelperTest {
         assertEquals("'", removeLeadingAndEndingQuotes("'"));
     }
 
+    public void testSplitOnCharacterAsList() throws Exception {
+        List<String> list = splitOnCharacterAsList("foo", ',', 1);
+        assertEquals(1, list.size());
+        assertEquals("foo", list.get(0));
+
+        list = splitOnCharacterAsList("foo,bar", ',', 2);
+        assertEquals(2, list.size());
+        assertEquals("foo", list.get(0));
+        assertEquals("bar", list.get(1));
+
+        list = splitOnCharacterAsList("foo,bar,", ',', 3);
+        assertEquals(2, list.size());
+        assertEquals("foo", list.get(0));
+        assertEquals("bar", list.get(1));
+
+        list = splitOnCharacterAsList(",foo,bar", ',', 3);
+        assertEquals(2, list.size());
+        assertEquals("foo", list.get(0));
+        assertEquals("bar", list.get(1));
+
+        list = splitOnCharacterAsList(",foo,bar,", ',', 4);
+        assertEquals(2, list.size());
+        assertEquals("foo", list.get(0));
+        assertEquals("bar", list.get(1));
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 100; i++) {
+            sb.append(i);
+            sb.append(",");
+        }
+        String value = sb.toString();
+
+        int count = StringHelper.countChar(value, ',') + 1;
+        list = splitOnCharacterAsList(value, ',', count);
+        assertEquals(100, list.size());
+        assertEquals("0", list.get(0));
+        assertEquals("50", list.get(50));
+        assertEquals("99", list.get(99));
+    }
+
+    @Test
+    public void testSplitOnCharacterAsIterator() throws Exception {
+        Iterator<String> it = splitOnCharacterAsIterator("foo", ',', 1);
+        assertEquals("foo", it.next());
+        assertFalse(it.hasNext());
+
+        it = splitOnCharacterAsIterator("foo,bar", ',', 2);
+        assertEquals("foo", it.next());
+        assertEquals("bar", it.next());
+        assertFalse(it.hasNext());
+
+        it = splitOnCharacterAsIterator("foo,bar,", ',', 3);
+        assertEquals("foo", it.next());
+        assertEquals("bar", it.next());
+        assertFalse(it.hasNext());
+
+        it = splitOnCharacterAsIterator(",foo,bar", ',', 3);
+        assertEquals("foo", it.next());
+        assertEquals("bar", it.next());
+        assertFalse(it.hasNext());
+
+        it = splitOnCharacterAsIterator(",foo,bar,", ',', 4);
+        assertEquals("foo", it.next());
+        assertEquals("bar", it.next());
+        assertFalse(it.hasNext());
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 100; i++) {
+            sb.append(i);
+            sb.append(",");
+        }
+        String value = sb.toString();
+
+        int count = StringHelper.countChar(value, ',') + 1;
+        it = splitOnCharacterAsIterator(value, ',', count);
+        for (int i = 0; i < 100; i++) {
+            assertEquals("" + i, it.next());
+        }
+        assertFalse(it.hasNext());
+    }
 }

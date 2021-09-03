@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,13 +29,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
 
 @XmlType(name = "serviceCallConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer
 public abstract class ServiceCallConfiguration extends IdentifiedType {
     @XmlElement(name = "properties")
     @Metadata(label = "advanced")
@@ -88,6 +94,31 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
                 String value = CamelContextHelper.parseText(camelContext, prop.getValue());
                 answer.put(key, value);
             }
+        }
+
+        return answer;
+    }
+
+    protected Map<String, Object> getConfiguredOptions(CamelContext context, Object target) {
+        Map<String, Object> answer = new HashMap<>();
+
+        PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                .resolvePropertyConfigurer(target.getClass().getName(), context);
+        // use reflection free configurer (if possible)
+        if (configurer instanceof ExtendedPropertyConfigurerGetter) {
+            ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
+            Set<String> all = getter.getAllOptions(target).keySet();
+            for (String name : all) {
+                Object value = getter.getOptionValue(target, name, true);
+                if (value != null) {
+                    // lower case the first letter which is what the properties map expects
+                    String key = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+                    answer.put(key, value);
+                }
+            }
+        } else {
+            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(target, answer,
+                    null, false);
         }
 
         return answer;

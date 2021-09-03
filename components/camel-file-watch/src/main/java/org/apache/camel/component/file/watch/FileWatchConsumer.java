@@ -139,7 +139,7 @@ public class FileWatchConsumer extends DefaultConsumer {
     }
 
     private Exchange prepareExchange(FileEvent event) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         File file = event.getEventPath().toFile();
         Message message = exchange.getIn();
         message.setBody(file);
@@ -158,6 +158,7 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         message.setHeader(Exchange.FILE_PARENT, PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
         message.setHeader(Exchange.FILE_LAST_MODIFIED, event.getEventDate());
+        message.setHeader(Exchange.MESSAGE_TIMESTAMP, event.getEventDate());
 
         return exchange;
     }

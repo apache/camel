@@ -42,9 +42,6 @@ public class HazelcastListConsumer extends HazelcastDefaultConsumer {
         queue = hazelcastInstance.getList(cacheName);
     }
 
-    /**
-     * @see org.apache.camel.support.DefaultConsumer#doStart()
-     */
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -52,9 +49,6 @@ public class HazelcastListConsumer extends HazelcastDefaultConsumer {
         listener = queue.addItemListener(new CamelItemListener(this, cacheName), true);
     }
 
-    /**
-     * @see org.apache.camel.support.DefaultConsumer#doStop()
-     */
     @Override
     protected void doStop() throws Exception {
         queue.removeItemListener(listener);

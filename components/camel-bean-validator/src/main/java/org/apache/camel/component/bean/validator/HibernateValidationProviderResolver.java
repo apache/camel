@@ -24,10 +24,6 @@ import org.hibernate.validator.HibernateValidator;
 
 import static java.util.Collections.singletonList;
 
-/**
- * OSGi-friendly implementation of {@code javax.validation.ValidationProviderResolver} returning
- * {@code org.hibernate.validator.HibernateValidator} instance.
- */
 public class HibernateValidationProviderResolver implements ValidationProviderResolver {
 
     @Override

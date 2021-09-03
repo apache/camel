@@ -17,6 +17,8 @@
 package org.apache.camel.component.digitalocean.producer;
 
 import com.myjeeva.digitalocean.common.ActionType;
+import com.myjeeva.digitalocean.exception.DigitalOceanException;
+import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.pojo.Action;
 import com.myjeeva.digitalocean.pojo.Actions;
 import com.myjeeva.digitalocean.pojo.Delete;
@@ -39,7 +41,7 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
 
         switch (determineOperation(exchange)) {
 
@@ -72,15 +74,15 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
         }
     }
 
-    private void getUserImages(Exchange exchange) throws Exception {
+    private void getUserImages(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Images images
                 = getEndpoint().getDigitalOceanClient().getUserImages(configuration.getPage(), configuration.getPerPage());
         LOG.trace("User images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
                 images.getImages());
-        exchange.getOut().setBody(images.getImages());
+        exchange.getMessage().setBody(images.getImages());
     }
 
-    private void getImages(Exchange exchange) throws Exception {
+    private void getImages(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         DigitalOceanImageTypes type = exchange.getIn().getHeader(DigitalOceanHeaders.TYPE, DigitalOceanImageTypes.class);
         Images images;
 
@@ -93,10 +95,10 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
         }
         LOG.trace("All Images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
                 images.getImages());
-        exchange.getOut().setBody(images.getImages());
+        exchange.getMessage().setBody(images.getImages());
     }
 
-    private void getImage(Exchange exchange) throws Exception {
+    private void getImage(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
 
         Integer imageId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
         String slug = exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_IMAGE, String.class);
@@ -112,10 +114,10 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
         }
 
         LOG.trace("Image [{}] ", image);
-        exchange.getOut().setBody(image);
+        exchange.getMessage().setBody(image);
     }
 
-    private void getImageActions(Exchange exchange) throws Exception {
+    private void getImageActions(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer imageId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
 
         if (ObjectHelper.isEmpty(imageId)) {
@@ -126,10 +128,10 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
                 configuration.getPerPage());
         LOG.trace("Actions for Image {} : page {} / {} per page [{}] ", imageId, configuration.getPage(),
                 configuration.getPerPage(), actions.getActions());
-        exchange.getOut().setBody(actions.getActions());
+        exchange.getMessage().setBody(actions.getActions());
     }
 
-    private void updateImage(Exchange exchange) throws Exception {
+    private void updateImage(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer imageId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
 
         if (ObjectHelper.isEmpty(imageId)) {
@@ -146,10 +148,10 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
         image.setName(name);
         image = getEndpoint().getDigitalOceanClient().updateImage(image);
         LOG.trace("Update Image {} [{}] ", imageId, image);
-        exchange.getOut().setBody(image);
+        exchange.getMessage().setBody(image);
     }
 
-    private void deleteImage(Exchange exchange) throws Exception {
+    private void deleteImage(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer imageId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
 
         if (ObjectHelper.isEmpty(imageId)) {
@@ -158,10 +160,10 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
 
         Delete delete = getEndpoint().getDigitalOceanClient().deleteImage(imageId);
         LOG.trace("Delete  Image {} [{}] ", imageId, delete);
-        exchange.getOut().setBody(delete);
+        exchange.getMessage().setBody(delete);
     }
 
-    private void transferImage(Exchange exchange) throws Exception {
+    private void transferImage(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer imageId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
 
         if (ObjectHelper.isEmpty(imageId)) {
@@ -176,10 +178,10 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
 
         Action action = getEndpoint().getDigitalOceanClient().transferImage(imageId, region);
         LOG.trace("Transfer  Image {} to Region {} [{}] ", imageId, region, action);
-        exchange.getOut().setBody(action);
+        exchange.getMessage().setBody(action);
     }
 
-    private void convertImageToSnapshot(Exchange exchange) throws Exception {
+    private void convertImageToSnapshot(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
         Integer imageId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
 
         if (ObjectHelper.isEmpty(imageId)) {
@@ -188,6 +190,6 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
 
         Action action = getEndpoint().getDigitalOceanClient().convertImage(imageId);
         LOG.trace("Convert Image {} [{}] ", imageId, action);
-        exchange.getOut().setBody(action);
+        exchange.getMessage().setBody(action);
     }
 }

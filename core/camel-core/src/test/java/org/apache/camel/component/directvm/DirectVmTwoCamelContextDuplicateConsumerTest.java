@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -38,9 +38,8 @@ public class DirectVmTwoCamelContextDuplicateConsumerTest extends AbstractDirect
             third.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertEquals(
-                    "A consumer Consumer[direct-vm://foo] already exists from CamelContext: camel-1. Multiple consumers not supported",
-                    e.getMessage());
+            assertTrue(e.getMessage().matches(
+                    "A consumer Consumer\\[direct-vm://foo\\] already exists from CamelContext: camel-[0-9]+. Multiple consumers not supported"));
         }
 
         // stop first camel context then

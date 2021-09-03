@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -126,8 +125,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
     }
 
-    protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to)
-            throws IOException {
+    protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) {
         // deleting any existing files before renaming
         try {
             operations.deleteFile(to.getAbsoluteFilePath());

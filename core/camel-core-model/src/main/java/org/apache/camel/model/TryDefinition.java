@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslProperty;
 
 /**
  * Marks the beginning of a try, catch, finally block
@@ -38,14 +39,18 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryDefinition extends OutputDefinition<TryDefinition> {
+    @DslProperty
     @XmlTransient
     private List<CatchDefinition> catchClauses;
+    @DslProperty
     @XmlTransient
     private FinallyDefinition finallyClause;
     @XmlTransient
     private boolean initialized;
     @XmlTransient
     private List<ProcessorDefinition<?>> outputsWithoutCatches;
+    @XmlTransient
+    private int endCounter; // used for detecting multiple nested doTry blocks
 
     public TryDefinition() {
     }
@@ -125,9 +130,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         // TryDefinition
         // to configure all with try .. catch .. finally
         // set the onWhen predicate on all the catch definitions
-        Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
-        while (it.hasNext()) {
-            CatchDefinition doCatch = it.next();
+        Collection<CatchDefinition> col = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
+        for (CatchDefinition doCatch : col) {
             doCatch.setOnWhen(new WhenDefinition(predicate));
         }
         return this;
@@ -136,11 +140,21 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     // Properties
     // -------------------------------------------------------------------------
 
+    @XmlTransient
+    public void setCatchClauses(List<CatchDefinition> catchClauses) {
+        this.catchClauses = catchClauses;
+    }
+
     public List<CatchDefinition> getCatchClauses() {
         if (catchClauses == null) {
             checkInitialized();
         }
         return catchClauses;
+    }
+
+    @XmlTransient
+    public void setFinallyClause(FinallyDefinition finallyClause) {
+        this.finallyClause = finallyClause;
     }
 
     public FinallyDefinition getFinallyClause() {
@@ -172,7 +186,18 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
         initialized = false;
+        // reset end counter as we are adding some outputs
+        endCounter = 0;
         super.addOutput(output);
+    }
+
+    protected ProcessorDefinition<?> onEndDoTry() {
+        if (endCounter > 0) {
+            return end();
+        } else {
+            endCounter++;
+        }
+        return this;
     }
 
     @Override

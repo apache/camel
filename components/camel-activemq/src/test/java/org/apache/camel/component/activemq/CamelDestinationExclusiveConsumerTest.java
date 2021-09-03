@@ -19,17 +19,14 @@ package org.apache.camel.component.activemq;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * 
  */
-@ContextConfiguration
-@ExtendWith(SpringExtension.class)
+@CamelSpringTest
 public class CamelDestinationExclusiveConsumerTest {
 
     @Autowired

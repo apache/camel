@@ -24,7 +24,6 @@ import com.surftools.BeanstalkClient.BeanstalkException;
 import com.surftools.BeanstalkClient.Client;
 import com.surftools.BeanstalkClient.Job;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -92,7 +91,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
                     LOG.debug(String.format("Received job ID %d (data length %d)", job.getJobId(), job.getData().length));
                 }
 
-                final Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
+                final Exchange exchange = createExchange(true);
                 exchange.getIn().setHeader(Headers.JOB_ID, job.getJobId());
                 exchange.getIn().setBody(job.getData(), byte[].class);
 

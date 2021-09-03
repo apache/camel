@@ -44,14 +44,16 @@ public class OrderTest extends CamelSpringTestSupport {
     public void testCamelWsdl() throws Exception {
         Object body = template.sendBody("http://localhost:" + CXFTestSupport.getPort1() + "/camel-order/?wsdl",
                 ExchangePattern.InOut, null);
-        checkWsdl(InputStream.class.cast(body));
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, body);
+        checkWsdl(is);
     }
 
     @Test
     public void testCxfWsdl() throws Exception {
         Object body = template.sendBody("http://localhost:" + CXFTestSupport.getPort1() + "/cxf-order/?wsdl",
                 ExchangePattern.InOut, null);
-        checkWsdl(InputStream.class.cast(body));
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, body);
+        checkWsdl(is);
     }
 
     public void checkWsdl(InputStream in) throws Exception {

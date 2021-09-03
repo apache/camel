@@ -59,7 +59,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
     }
 
     public PrinterOperations(PrintService printService, DocFlavor flavor,
-                             PrintRequestAttributeSet printRequestAttributeSet) throws PrintException {
+                             PrintRequestAttributeSet printRequestAttributeSet) {
         this.setPrintService(printService);
         this.setFlavor(flavor);
         this.setPrintRequestAttributeSet(printRequestAttributeSet);

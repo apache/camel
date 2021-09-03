@@ -19,16 +19,18 @@ package org.apache.camel.component.mllp;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mllp.support.EmbeddedActiveMQBroker;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
@@ -40,7 +42,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
 
     @RegisterExtension
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker("broker");
+    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .bare()
+            .withBrokerId("broker")
+            .withPersistent(false)
+            .withUseJmx(false)
+            .withPersistenceAdapter(new MemoryPersistenceAdapter())
+            .withTcpTransport()
+            .buildWithRecycle();
 
     @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
@@ -68,7 +77,7 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
     public SjmsComponent addTargetComponent() throws Exception {
 
         SjmsComponent target = new SjmsComponent();
-        target.setConnectionFactory(new ActiveMQConnectionFactory(broker.getVmURL()));
+        target.setConnectionFactory(new ActiveMQConnectionFactory(service.getVmURL()));
 
         return target;
     }

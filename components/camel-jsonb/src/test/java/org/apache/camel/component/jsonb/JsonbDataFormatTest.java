@@ -61,7 +61,7 @@ public class JsonbDataFormatTest {
                 new ArrayList<>(Collections.singletonList(Collections.emptyList())), null, type);
     }
 
-    private void testJson(String json, Object expected, Class<?> unmarshalType, JohnzonParameterizedType parameterizedType)
+    private void testJson(String json, Object expected, Class<?> unmarshalType, JohnzonParameterizedType customType)
             throws Exception {
         Object unmarshalled;
         JsonbDataFormat jsonbDataFormat = null;
@@ -70,7 +70,7 @@ public class JsonbDataFormatTest {
             if (unmarshalType != null) {
                 jsonbDataFormat = new JsonbDataFormat(unmarshalType);
             } else {
-                jsonbDataFormat = new JsonbDataFormat(parameterizedType);
+                jsonbDataFormat = new JsonbDataFormat(customType);
             }
             jsonbDataFormat.doStart();
             try (InputStream in = new ByteArrayInputStream(json.getBytes())) {

@@ -51,6 +51,7 @@ public class FtpsEmbeddedService extends FtpEmbeddedService {
         FtpServerFactory serverFactory = super.createFtpServerFactory();
 
         ListenerFactory listenerFactory = new ListenerFactory(serverFactory.getListener(DEFAULT_LISTENER));
+        listenerFactory.setPort(port);
         listenerFactory.setImplicitSsl(useImplicit);
         listenerFactory.setSslConfiguration(createSslConfiguration().createSslConfiguration());
 

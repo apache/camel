@@ -24,10 +24,10 @@ public class SchedulerEndpointUriFactory extends org.apache.camel.support.compon
         props.add("backoffMultiplier");
         props.add("synchronous");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("poolSize");
         props.add("schedulerProperties");
         props.add("exchangePattern");
         props.add("initialDelay");
-        props.add("concurrentTasks");
         props.add("backoffIdleThreshold");
         props.add("scheduler");
         props.add("bridgeErrorHandler");

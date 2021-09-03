@@ -81,7 +81,7 @@ public class CamelPathTemplateHandler implements HttpHandler {
         return handlerString;
     }
 
-    class Wrapper implements HttpHandler {
+    static class Wrapper implements HttpHandler {
         private CamelMethodHandler handler;
 
         public void set(CamelMethodHandler handler) {

@@ -18,8 +18,6 @@ A common way to filter messages is to use an
 xref:latest@manual:ROOT:expression.adoc[Expression] in the xref:latest@manual:ROOT:dsl.adoc[DSL] like
 xref:components:languages:xquery-language.adoc[XQuery].
 
-== Using the xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]
-
 Here is a simple example using the xref:latest@manual:ROOT:dsl.adoc[DSL] directly
 
 In this example we add our own xref:latest@manual:ROOT:processor.adoc[Processor]
@@ -27,8 +25,8 @@ In this example we add our own xref:latest@manual:ROOT:processor.adoc[Processor]
 For further examples of this pattern in use you could look at one of the
 JUnit tests
 
-* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
-* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
+* https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
+* https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
 
 == Using Spring XML
 

@@ -297,7 +297,16 @@ public class FileOperations implements GenericFileOperations<File> {
                 // using file directly (optimized)
                 Object body = exchange.getIn().getBody();
                 if (body instanceof WrappedFile) {
-                    body = ((WrappedFile<?>) body).getFile();
+                    WrappedFile wrapped = (WrappedFile) body;
+                    body = wrapped.getFile();
+                    if (!(body instanceof File)) {
+                        // the wrapped file may be from remote (FTP) which then can store
+                        // a local java.io.File handle if storing to local work-dir so check for that
+                        Object maybeFile = wrapped.getBody();
+                        if (maybeFile instanceof File) {
+                            body = maybeFile;
+                        }
+                    }
                 }
                 if (body instanceof File) {
                     source = (File) body;
@@ -443,7 +452,6 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     private void writeFileByStream(InputStream in, File target) throws IOException {
-        boolean exists = target.exists();
         try (SeekableByteChannel out = prepareOutputFileChannel(target)) {
 
             LOG.debug("Using InputStream to write file: {}", target);
@@ -464,7 +472,7 @@ public class FileOperations implements GenericFileOperations<File> {
             }
 
             boolean append = endpoint.getFileExist() == GenericFileExist.Append;
-            if (append && exists && endpoint.getAppendChars() != null) {
+            if (append && endpoint.getAppendChars() != null) {
                 byteBuffer = ByteBuffer.wrap(endpoint.getAppendChars().getBytes());
                 out.write(byteBuffer);
                 // to be compatible with java 8
@@ -478,7 +486,6 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
-        boolean exists = target.exists();
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
         try (Writer out = Files.newBufferedWriter(target.toPath(), Charset.forName(charset), StandardOpenOption.WRITE,
                 append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
@@ -486,7 +493,7 @@ public class FileOperations implements GenericFileOperations<File> {
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);
 
-            if (append && exists && endpoint.getAppendChars() != null) {
+            if (append && endpoint.getAppendChars() != null) {
                 out.write(endpoint.getAppendChars());
             }
         } finally {

@@ -24,18 +24,23 @@ import java.net.URL;
 import java.util.Enumeration;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InterfacesTest extends BaseJettyTest {
-    private static boolean isMacOS = System.getProperty("os.name").startsWith("Mac");
-    private String remoteInterfaceAddress;
 
-    private int port1;
-    private int port2;
-    private int port3;
-    private int port4;
+    private static boolean isMacOS = System.getProperty("os.name").startsWith("Mac");
+
+    @RegisterExtension
+    protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+
+    @RegisterExtension
+    protected AvailablePortFinder.Port port4 = AvailablePortFinder.find();
+
+    private String remoteInterfaceAddress;
 
     public InterfacesTest() throws IOException {
         // Retrieve an address of some remote network interface
@@ -112,11 +117,6 @@ public class InterfacesTest extends BaseJettyTest {
 
             @Override
             public void configure() throws Exception {
-                port1 = getNextPort();
-                port2 = getNextPort();
-                port3 = getNextPort();
-                port4 = getNextPort();
-
                 from("jetty:http://localhost:" + port1 + "/testRoute").setBody().constant("local").to("mock:endpoint");
 
                 from("jetty:http://localhost:" + port2 + "/testRoute").setBody().constant("local-differentPort")

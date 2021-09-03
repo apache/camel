@@ -62,6 +62,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replyToDisabled": target.getConfiguration().setReplyToDisabled(property(camelContext, boolean.class, value)); return true;
         case "requestcleanupinterval":
         case "requestCleanupInterval": target.getConfiguration().setRequestCleanupInterval(property(camelContext, int.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
         case "servers": target.getConfiguration().setServers(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
@@ -117,6 +119,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replyToDisabled": return boolean.class;
         case "requestcleanupinterval":
         case "requestCleanupInterval": return int.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
         case "secure": return boolean.class;
         case "servers": return java.lang.String.class;
         case "sslcontextparameters":
@@ -173,6 +177,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replyToDisabled": return target.getConfiguration().isReplyToDisabled();
         case "requestcleanupinterval":
         case "requestCleanupInterval": return target.getConfiguration().getRequestCleanupInterval();
+        case "requesttimeout":
+        case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "secure": return target.getConfiguration().isSecure();
         case "servers": return target.getConfiguration().getServers();
         case "sslcontextparameters":

@@ -23,11 +23,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
-import org.optaplanner.core.api.domain.solution.Solution;
+import org.optaplanner.core.api.solver.ProblemFactChange;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverJob;
 import org.optaplanner.core.api.solver.SolverManager;
-import org.optaplanner.core.impl.solver.ProblemFactChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,19 +86,13 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
     }
 
     /**
-     *
      * @param  exchange
      * @param  body
      * @throws Exception
      */
     private void processWithXmlFile(Exchange exchange, Object body) throws Exception {
         final String solverId = getSolverId(exchange);
-        /*
-         * Keep for backward compatibility untill optaplanner version 8.0.0 not
-         * released After that the code '|| body instanceof Solution' need to be
-         * removed
-         */
-        if (body.getClass().isAnnotationPresent(PlanningSolution.class) || body instanceof Solution) {
+        if (body.getClass().isAnnotationPresent(PlanningSolution.class)) {
             if (isAsync(exchange)) {
                 LOGGER.debug("Asynchronously solving problem: [{}] with id [{}]", body, solverId);
                 final Solver<Object> solver = endpoint.getOrCreateSolver(solverId);
@@ -108,7 +101,7 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                     public void run() {
                         try {
                             solver.solve(body);
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             exchange.setException(new Exception("Asynchronously solving failed for solverId " + solverId, e));
                         }
                     }
@@ -119,8 +112,8 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                 if (solver == null) {
                     solver = endpoint.createSolver();
                 }
-                solver.solve(body);
-                populateResult(exchange, solver);
+                Object solution = solver.solve(body);
+                populateResult(exchange, solver, solution);
             }
         } else if (body instanceof ProblemFactChange) {
             LOGGER.debug("Adding ProblemFactChange to solver: [{}] with id [{}]", body, solverId);
@@ -131,14 +124,12 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                     Thread.sleep(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_DELAY);
                 }
             }
-            populateResult(exchange, solver);
+            populateResult(exchange, solver, null);
         } else {
-            LOGGER.debug("Retrieving best score for solver: [{}]", solverId);
-            Solver<Object> solver = endpoint.getSolver(solverId);
-            if (solver == null) {
-                throw new RuntimeException("Solver not found: " + solverId);
-            }
-            populateResult(exchange, solver);
+            exchange.setException(new Exception(
+                    "Unsuported type. Body must be of Type PlanningSolution or ProblemFactChange. To get the Best Result from the async Solver,"
+                                                +
+                                                " use the camel optaplanner consumer"));
         }
     }
 
@@ -193,16 +184,15 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
         exchange.getIn().setHeader(OptaPlannerConstants.IS_SOLVING, false);
     }
 
-    private void populateResult(Exchange exchange, Solver<Object> solver) {
-        exchange.getIn().setBody(solver.getBestSolution());
-        exchange.getIn().setHeader(OptaPlannerConstants.TIME_SPENT, solver.getTimeMillisSpent());
+    private void populateResult(Exchange exchange, Solver<Object> solver, Object solution) {
+        exchange.getIn().setBody(solution);
         exchange.getIn().setHeader(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_PROCESSED,
                 solver.isEveryProblemFactChangeProcessed());
         exchange.getIn().setHeader(OptaPlannerConstants.IS_TERMINATE_EARLY, solver.isTerminateEarly());
         exchange.getIn().setHeader(OptaPlannerConstants.IS_SOLVING, solver.isSolving());
     }
 
-    private String getSolverId(Exchange exchange) throws Exception {
+    private String getSolverId(Exchange exchange) {
         String solverId = exchange.getIn().getHeader(OptaPlannerConstants.SOLVER_ID, String.class);
         if (solverId == null) {
             solverId = configuration.getSolverId();

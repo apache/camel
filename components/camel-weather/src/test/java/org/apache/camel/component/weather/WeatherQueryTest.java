@@ -20,6 +20,7 @@ import org.apache.camel.component.weather.geolocation.GeoLocation;
 import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -29,6 +30,8 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
+@EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
+                         disabledReason = "Disabled to avoid hitting API limits")
 public class WeatherQueryTest {
 
     private static final String LONGITUDE = "4.13";

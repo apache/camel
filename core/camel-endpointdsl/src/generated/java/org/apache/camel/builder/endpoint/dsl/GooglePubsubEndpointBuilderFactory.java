@@ -76,6 +76,41 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param authenticate the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder authenticate(
+                boolean authenticate) {
+            doSetProperty("authenticate", authenticate);
+            return this;
+        }
+        /**
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param authenticate the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder authenticate(
+                String authenticate) {
+            doSetProperty("authenticate", authenticate);
+            return this;
+        }
+        /**
          * The number of parallel streams consuming from the subscription.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -155,6 +190,24 @@ public interface GooglePubsubEndpointBuilderFactory {
         default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * The Service account key that can be used as credentials for the
+         * PubSub publisher/subscriber. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**
@@ -362,6 +415,41 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param authenticate the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointProducerBuilder authenticate(
+                boolean authenticate) {
+            doSetProperty("authenticate", authenticate);
+            return this;
+        }
+        /**
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param authenticate the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointProducerBuilder authenticate(
+                String authenticate) {
+            doSetProperty("authenticate", authenticate);
+            return this;
+        }
+        /**
          * The number of parallel streams consuming from the subscription.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -441,6 +529,24 @@ public interface GooglePubsubEndpointBuilderFactory {
         default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * The Service account key that can be used as credentials for the
+         * PubSub publisher/subscriber. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointProducerBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**
@@ -667,6 +773,39 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param authenticate the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointBuilder authenticate(boolean authenticate) {
+            doSetProperty("authenticate", authenticate);
+            return this;
+        }
+        /**
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param authenticate the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointBuilder authenticate(String authenticate) {
+            doSetProperty("authenticate", authenticate);
+            return this;
+        }
+        /**
          * The number of parallel streams consuming from the subscription.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -749,6 +888,24 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Service account key that can be used as credentials for the
+         * PubSub publisher/subscriber. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
+            return this;
+        }
+        /**
          * Synchronously pull batches of messages.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -817,10 +974,11 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Syntax: <code>google-pubsub:projectId:destinationName</code>
          * 
          * Path parameter: projectId (required)
-         * Project Id
+         * The Google Cloud PubSub Project Id
          * 
          * Path parameter: destinationName (required)
-         * Destination Name
+         * The Destination Name. For the consumer this will be the subscription
+         * name, while for the producer this will be the topic name.
          * 
          * @param path projectId:destinationName
          * @return the dsl builder
@@ -840,10 +998,11 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Syntax: <code>google-pubsub:projectId:destinationName</code>
          * 
          * Path parameter: projectId (required)
-         * Project Id
+         * The Google Cloud PubSub Project Id
          * 
          * Path parameter: destinationName (required)
-         * Destination Name
+         * The Destination Name. For the consumer this will be the subscription
+         * name, while for the producer this will be the topic name.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

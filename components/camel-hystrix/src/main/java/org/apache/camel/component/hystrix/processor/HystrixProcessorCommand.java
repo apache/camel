@@ -22,10 +22,15 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,12 +85,12 @@ public class HystrixProcessorCommand extends HystrixCommand {
             LOG.debug("Error occurred processing. Will now run fallback.");
         }
         // store the last to endpoint as the failure endpoint
-        if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
-            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+        if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
+            exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
         }
         // give the rest of the pipeline another chance
-        exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
-        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
+        exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, true);
+        exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exception);
         exchange.setRouteStop(false);
         exchange.setException(null);
         // and we should not be regarded as exhausted as we are in a try .. catch block
@@ -111,11 +116,23 @@ public class HystrixProcessorCommand extends HystrixCommand {
 
     @Override
     protected Message run() throws Exception {
+        Exchange copy = null;
+        UnitOfWork uow = null;
+
         LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
 
         // prepare a copy of exchange so downstream processors don't cause side-effects if they mutate the exchange
         // in case Hystrix timeout processing and continue with the fallback etc
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false, false);
+        copy = ExchangeHelper.createCorrelatedCopy(exchange, false, false);
+
+        // prepare uow on copy
+        uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
+        copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+        // the copy must be starting from the route where its copied from
+        Route route = ExchangeHelper.getRoute(exchange);
+        if (route != null) {
+            uow.pushRoute(route);
+        }
         try {
             // process the processor until its fully done
             // (we do not hav any hystrix callback to leverage so we need to complete all work in this run method)
@@ -130,6 +147,8 @@ public class HystrixProcessorCommand extends HystrixCommand {
                 && getProperties().fallbackEnabled().get()
                 && isCommandTimedOut.get() == TimedOutStatus.TIMED_OUT) {
             LOG.debug("Exiting run command due to a hystrix execution timeout in processing exchange: {}", exchange);
+            // must done uow
+            UnitOfWorkHelper.doneUow(uow, copy);
             return null;
         }
 
@@ -137,6 +156,8 @@ public class HystrixProcessorCommand extends HystrixCommand {
         // and therefore we need this thread to not do anymore if fallback is already in process
         if (fallbackInUse.get()) {
             LOG.debug("Exiting run command as fallback is already in use processing exchange: {}", exchange);
+            // must done uow
+            UnitOfWorkHelper.doneUow(uow, copy);
             return null;
         }
 
@@ -149,6 +170,8 @@ public class HystrixProcessorCommand extends HystrixCommand {
             // and therefore we need this thread to not do anymore if fallback is already in process
             if (fallbackInUse.get()) {
                 LOG.debug("Exiting run command as fallback is already in use processing exchange: {}", exchange);
+                // must done uow
+                UnitOfWorkHelper.doneUow(uow, copy);
                 return null;
             }
 
@@ -163,11 +186,16 @@ public class HystrixProcessorCommand extends HystrixCommand {
             if (camelExchangeException instanceof HystrixBadRequestException) {
                 LOG.debug("Running processor: {} with exchange: {} done as bad request", processor, exchange);
                 exchange.setException(camelExchangeException);
+                // must done uow
+                UnitOfWorkHelper.doneUow(uow, copy);
                 throw camelExchangeException;
             }
 
             // copy the result before its regarded as success
             ExchangeHelper.copyResults(exchange, copy);
+
+            // must done uow
+            UnitOfWorkHelper.doneUow(uow, copy);
 
             // in case of an exception in the exchange
             // we need to trigger this by throwing the exception so hystrix will execute the fallback

@@ -19,9 +19,9 @@ package org.apache.camel.model;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -89,9 +89,10 @@ public final class RouteDefinitionHelper {
         }
 
         if (includeOutputs) {
-            Iterator<EndpointRequiredDefinition> it = filterTypeInOutputs(route.getOutputs(), EndpointRequiredDefinition.class);
-            while (it.hasNext()) {
-                String uri = normalizeUri(it.next().getEndpointUri());
+            Collection<EndpointRequiredDefinition> col
+                    = filterTypeInOutputs(route.getOutputs(), EndpointRequiredDefinition.class);
+            for (EndpointRequiredDefinition erd : col) {
+                String uri = normalizeUri(erd.getEndpointUri());
                 if (uri != null) {
                     answer.add(uri);
                 }

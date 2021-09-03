@@ -190,6 +190,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public void mockEndpoints(String... pattern) throws Exception {
         for (String s : pattern) {
+            // the text based input may be property placeholders
+            s = getContext().resolvePropertyPlaceholders(s);
             getContext().adapt(ExtendedCamelContext.class).registerEndpointCallback(createMockEndpointStrategy(s, false));
         }
     }
@@ -204,6 +206,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public void mockEndpointsAndSkip(String... pattern) throws Exception {
         for (String s : pattern) {
+            // the text based input may be property placeholders
+            s = getContext().resolvePropertyPlaceholders(s);
             getContext().adapt(ExtendedCamelContext.class)
                     .registerEndpointCallback(createMockEndpointStrategy(s, true));
         }
@@ -216,6 +220,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public void replaceFromWith(String uri) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        // the text based input may be property placeholders
+        uri = getContext().resolvePropertyPlaceholders(uri);
         getAdviceWithTasks().add(AdviceWithTasks.replaceFromWith(originalRoute, uri));
     }
 
@@ -240,6 +246,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        // the text based input may be property placeholders
+        pattern = getContext().resolvePropertyPlaceholders(pattern);
         return new AdviceWithBuilder<>(this, pattern, null, null, null);
     }
 
@@ -254,6 +262,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        // the text based input may be property placeholders
+        pattern = getContext().resolvePropertyPlaceholders(pattern);
         return new AdviceWithBuilder<>(this, null, pattern, null, null);
     }
 
@@ -268,6 +278,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToUri(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        // the text based input may be property placeholders
+        pattern = getContext().resolvePropertyPlaceholders(pattern);
         return new AdviceWithBuilder<>(this, null, null, pattern, null);
     }
 
@@ -303,6 +315,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     private EndpointStrategy createMockEndpointStrategy(String pattern, boolean skip) {
+        // the text based input may be property placeholders
+        pattern = getContext().resolvePropertyPlaceholders(pattern);
         MockSendToEndpointStrategyFactory factory = getContext().adapt(ExtendedCamelContext.class)
                 .getFactoryFinder(DEFAULT_PATH)
                 .newInstance(MockSendToEndpointStrategyFactory.FACTORY, MockSendToEndpointStrategyFactory.class)

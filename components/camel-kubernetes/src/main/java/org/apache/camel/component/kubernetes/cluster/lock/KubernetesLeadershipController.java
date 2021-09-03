@@ -17,6 +17,7 @@
 package org.apache.camel.component.kubernetes.cluster.lock;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +31,7 @@ import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,7 +142,7 @@ public class KubernetesLeadershipController implements Service {
                 refreshStatusLeadershipLost();
                 break;
             default:
-                throw new RuntimeException("Unsupported state " + currentState);
+                throw new RuntimeCamelException("Unsupported state " + currentState);
         }
     }
 
@@ -205,7 +207,7 @@ public class KubernetesLeadershipController implements Service {
         // old version of the pod to shut down
         long delay = this.lockConfiguration.getLeaseDurationMillis();
         LOG.info("{} Current pod owns the leadership, but it will be effective in {} seconds...", logPrefix(),
-                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, BigDecimal.ROUND_HALF_UP));
+                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP));
 
         try {
             Thread.sleep(delay);
@@ -226,7 +228,7 @@ public class KubernetesLeadershipController implements Service {
         // Wait always the same amount of time before giving up the leadership
         long delay = this.lockConfiguration.getLeaseDurationMillis();
         LOG.info("{} Current pod owns the leadership, but it will be lost in {} seconds...", logPrefix(),
-                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, BigDecimal.ROUND_HALF_UP));
+                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP));
 
         try {
             Thread.sleep(delay);
@@ -315,20 +317,19 @@ public class KubernetesLeadershipController implements Service {
                     this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient),
                     this.lockConfiguration.getKubernetesResourceName(),
                     this.lockConfiguration.getGroupName());
-        } catch (Throwable e) {
-            LOG.warn(logPrefix() + " Unable to retrieve the current lease resource "
-                     + this.lockConfiguration.getKubernetesResourceName()
-                     + " for group " + this.lockConfiguration.getGroupName() + " from Kubernetes");
-            LOG.debug(logPrefix() + " Exception thrown during lease resource lookup", e);
+        } catch (Exception e) {
+            LOG.warn("{} Unable to retrieve the current lease resource {} for group {} from Kubernetes",
+                    logPrefix(), this.lockConfiguration.getKubernetesResourceName(), this.lockConfiguration.getGroupName());
+            LOG.debug("{} Exception thrown during lease resource lookup", logPrefix(), e);
             return false;
         }
 
         Set<String> members;
         try {
             members = Objects.requireNonNull(pullClusterMembers(), "Retrieved a null set of members");
-        } catch (Throwable e) {
-            LOG.warn(logPrefix() + " Unable to retrieve the list of cluster members from Kubernetes");
-            LOG.debug(logPrefix() + " Exception thrown during Pod list lookup", e);
+        } catch (Exception e) {
+            LOG.warn("{} Unable to retrieve the list of cluster members from Kubernetes", logPrefix());
+            LOG.debug("{} Exception thrown during Pod list lookup", logPrefix(), e);
             return false;
         }
 
@@ -344,11 +345,11 @@ public class KubernetesLeadershipController implements Service {
         LeaderInfo latestLeaderInfo = this.latestLeaderInfo;
 
         if (latestLeaderInfo == null || members == null) {
-            LOG.warn(logPrefix() + " Unexpected condition. Latest leader info or list of members is empty.");
+            LOG.warn("{} Unexpected condition. Latest leader info or list of members is empty.", logPrefix());
             return false;
         } else if (!members.contains(this.lockConfiguration.getPodName())) {
-            LOG.warn(logPrefix() + " The list of cluster members " + latestLeaderInfo.getMembers()
-                     + " does not contain the current Pod. Cannot yield the leadership.");
+            LOG.warn("{} The list of cluster members {} does not contain the current Pod. Cannot yield the leadership.",
+                    logPrefix(), latestLeaderInfo.getMembers());
             return false;
         }
 
@@ -373,8 +374,8 @@ public class KubernetesLeadershipController implements Service {
             updateLatestLeaderInfo(updatedLeaseResource, members);
             return true;
         } catch (Exception ex) {
-            LOG.warn(logPrefix() + " Unable to update the lock on the lease resource to remove leadership information");
-            LOG.debug(logPrefix() + " Error received during resource lock replace", ex);
+            LOG.warn("{} Unable to update the lock on the lease resource to remove leadership information", logPrefix());
+            LOG.debug("{} Error received during resource lock replace", logPrefix(), ex);
             return false;
         }
     }
@@ -392,11 +393,11 @@ public class KubernetesLeadershipController implements Service {
         LeaderInfo latestLeaderInfo = this.latestLeaderInfo;
 
         if (latestLeaderInfo == null || members == null) {
-            LOG.warn(logPrefix() + " Unexpected condition. Latest leader info or list of members is empty.");
+            LOG.warn("{} Unexpected condition. Latest leader info or list of members is empty.", logPrefix());
             return false;
         } else if (!members.contains(this.lockConfiguration.getPodName())) {
-            LOG.warn(logPrefix() + " The list of cluster members " + latestLeaderInfo.getMembers()
-                     + " does not contain the current Pod. Cannot acquire" + " leadership.");
+            LOG.warn("{} The list of cluster members {} does not contain the current Pod. Cannot acquire leadership.",
+                    logPrefix(), latestLeaderInfo.getMembers());
             return false;
         }
 
@@ -422,10 +423,11 @@ public class KubernetesLeadershipController implements Service {
                 return true;
             } catch (Exception ex) {
                 // Suppress exception
-                LOG.warn(logPrefix()
-                         + " Unable to create the lease resource, it may have been created by other cluster members concurrently. If the problem persists, check if the service account has "
-                         + "the right " + "permissions to create it");
-                LOG.debug(logPrefix() + " Exception while trying to create the lease resource", ex);
+                LOG.warn("{} Unable to create the lease resource, it may have been created by other cluster members "
+                         + "concurrently. If the problem persists, check if the service account has the right permissions"
+                         + " to create it",
+                        logPrefix());
+                LOG.debug("{} Exception while trying to create the lease resource", logPrefix(), ex);
                 return false;
             }
         } else {
@@ -445,8 +447,8 @@ public class KubernetesLeadershipController implements Service {
                     updateLatestLeaderInfo(updatedLeaseResource, members);
                     return true;
                 } catch (Exception ex) {
-                    LOG.warn(logPrefix() + " Unable to update the lock lease resource to set leadership information");
-                    LOG.debug(logPrefix() + " Error received during lease resource lock replace", ex);
+                    LOG.warn("{} Unable to update the lock lease resource to set leadership information", logPrefix());
+                    LOG.debug("{} Error received during lease resource lock replace", logPrefix(), ex);
                     return false;
                 }
             } else {

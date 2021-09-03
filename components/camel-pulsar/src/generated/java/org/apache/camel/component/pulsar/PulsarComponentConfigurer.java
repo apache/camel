@@ -34,6 +34,10 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "ackTimeoutMillis": getOrCreateConfiguration(target).setAckTimeoutMillis(property(camelContext, long.class, value)); return true;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": getOrCreateConfiguration(target).setAllowManualAcknowledgement(property(camelContext, boolean.class, value)); return true;
+        case "authenticationclass":
+        case "authenticationClass": getOrCreateConfiguration(target).setAuthenticationClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticationparams":
+        case "authenticationParams": getOrCreateConfiguration(target).setAuthenticationParams(property(camelContext, java.lang.String.class, value)); return true;
         case "autoconfiguration":
         case "autoConfiguration": target.setAutoConfiguration(property(camelContext, org.apache.camel.component.pulsar.utils.AutoConfiguration.class, value)); return true;
         case "autowiredenabled":
@@ -71,12 +75,16 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "maxPendingMessagesAcrossPartitions": getOrCreateConfiguration(target).setMaxPendingMessagesAcrossPartitions(property(camelContext, int.class, value)); return true;
         case "maxredelivercount":
         case "maxRedeliverCount": getOrCreateConfiguration(target).setMaxRedeliverCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "messagelistener":
+        case "messageListener": getOrCreateConfiguration(target).setMessageListener(property(camelContext, boolean.class, value)); return true;
         case "messagerouter":
         case "messageRouter": getOrCreateConfiguration(target).setMessageRouter(property(camelContext, org.apache.pulsar.client.api.MessageRouter.class, value)); return true;
         case "messageroutingmode":
         case "messageRoutingMode": getOrCreateConfiguration(target).setMessageRoutingMode(property(camelContext, org.apache.pulsar.client.api.MessageRoutingMode.class, value)); return true;
         case "negativeackredeliverydelaymicros":
         case "negativeAckRedeliveryDelayMicros": getOrCreateConfiguration(target).setNegativeAckRedeliveryDelayMicros(property(camelContext, long.class, value)); return true;
+        case "numberofconsumerthreads":
+        case "numberOfConsumerThreads": getOrCreateConfiguration(target).setNumberOfConsumerThreads(property(camelContext, int.class, value)); return true;
         case "numberofconsumers":
         case "numberOfConsumers": getOrCreateConfiguration(target).setNumberOfConsumers(property(camelContext, int.class, value)); return true;
         case "producername":
@@ -89,6 +97,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readCompacted": getOrCreateConfiguration(target).setReadCompacted(property(camelContext, boolean.class, value)); return true;
         case "sendtimeoutms":
         case "sendTimeoutMs": getOrCreateConfiguration(target).setSendTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "serviceurl":
+        case "serviceUrl": getOrCreateConfiguration(target).setServiceUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "subscriptioninitialposition":
         case "subscriptionInitialPosition": getOrCreateConfiguration(target).setSubscriptionInitialPosition(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class, value)); return true;
         case "subscriptionname":
@@ -117,6 +127,10 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "ackTimeoutMillis": return long.class;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return boolean.class;
+        case "authenticationclass":
+        case "authenticationClass": return java.lang.String.class;
+        case "authenticationparams":
+        case "authenticationParams": return java.lang.String.class;
         case "autoconfiguration":
         case "autoConfiguration": return org.apache.camel.component.pulsar.utils.AutoConfiguration.class;
         case "autowiredenabled":
@@ -154,12 +168,16 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "maxPendingMessagesAcrossPartitions": return int.class;
         case "maxredelivercount":
         case "maxRedeliverCount": return java.lang.Integer.class;
+        case "messagelistener":
+        case "messageListener": return boolean.class;
         case "messagerouter":
         case "messageRouter": return org.apache.pulsar.client.api.MessageRouter.class;
         case "messageroutingmode":
         case "messageRoutingMode": return org.apache.pulsar.client.api.MessageRoutingMode.class;
         case "negativeackredeliverydelaymicros":
         case "negativeAckRedeliveryDelayMicros": return long.class;
+        case "numberofconsumerthreads":
+        case "numberOfConsumerThreads": return int.class;
         case "numberofconsumers":
         case "numberOfConsumers": return int.class;
         case "producername":
@@ -172,6 +190,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readCompacted": return boolean.class;
         case "sendtimeoutms":
         case "sendTimeoutMs": return int.class;
+        case "serviceurl":
+        case "serviceUrl": return java.lang.String.class;
         case "subscriptioninitialposition":
         case "subscriptionInitialPosition": return org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class;
         case "subscriptionname":
@@ -196,6 +216,10 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "ackTimeoutMillis": return getOrCreateConfiguration(target).getAckTimeoutMillis();
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return getOrCreateConfiguration(target).isAllowManualAcknowledgement();
+        case "authenticationclass":
+        case "authenticationClass": return getOrCreateConfiguration(target).getAuthenticationClass();
+        case "authenticationparams":
+        case "authenticationParams": return getOrCreateConfiguration(target).getAuthenticationParams();
         case "autoconfiguration":
         case "autoConfiguration": return target.getAutoConfiguration();
         case "autowiredenabled":
@@ -233,12 +257,16 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "maxPendingMessagesAcrossPartitions": return getOrCreateConfiguration(target).getMaxPendingMessagesAcrossPartitions();
         case "maxredelivercount":
         case "maxRedeliverCount": return getOrCreateConfiguration(target).getMaxRedeliverCount();
+        case "messagelistener":
+        case "messageListener": return getOrCreateConfiguration(target).isMessageListener();
         case "messagerouter":
         case "messageRouter": return getOrCreateConfiguration(target).getMessageRouter();
         case "messageroutingmode":
         case "messageRoutingMode": return getOrCreateConfiguration(target).getMessageRoutingMode();
         case "negativeackredeliverydelaymicros":
         case "negativeAckRedeliveryDelayMicros": return getOrCreateConfiguration(target).getNegativeAckRedeliveryDelayMicros();
+        case "numberofconsumerthreads":
+        case "numberOfConsumerThreads": return getOrCreateConfiguration(target).getNumberOfConsumerThreads();
         case "numberofconsumers":
         case "numberOfConsumers": return getOrCreateConfiguration(target).getNumberOfConsumers();
         case "producername":
@@ -251,6 +279,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readCompacted": return getOrCreateConfiguration(target).isReadCompacted();
         case "sendtimeoutms":
         case "sendTimeoutMs": return getOrCreateConfiguration(target).getSendTimeoutMs();
+        case "serviceurl":
+        case "serviceUrl": return getOrCreateConfiguration(target).getServiceUrl();
         case "subscriptioninitialposition":
         case "subscriptionInitialPosition": return getOrCreateConfiguration(target).getSubscriptionInitialPosition();
         case "subscriptionname":

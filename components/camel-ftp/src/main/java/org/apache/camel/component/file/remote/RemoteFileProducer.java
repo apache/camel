@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.URISupport;
@@ -82,20 +83,15 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     @Override
     public void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
         loggedIn = false;
-        if (isStopping() || isStopped()) {
-            // if we are stopping then ignore any exception during a poll
-            LOG.debug("Exception occurred during stopping: {}", exception.getMessage());
-        } else {
-            LOG.warn("Writing file failed with: {}", exception.getMessage());
-            try {
-                disconnect();
-            } catch (Exception e) {
-                // ignore exception
-                LOG.debug("Ignored exception during disconnect: {}", e.getMessage());
-            }
-            // rethrow the original exception*/
-            throw exception;
+        LOG.warn("Writing file failed with: {}", exception.getMessage());
+        try {
+            disconnect();
+        } catch (Exception e) {
+            // ignore exception
+            LOG.debug("Ignored exception during disconnect: {}", e.getMessage());
         }
+        // rethrow the original exception
+        throw exception;
     }
 
     public void disconnect() throws GenericFileOperationFailedException {
@@ -146,7 +142,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     @Override
     public void postWriteCheck(Exchange exchange) {
         try {
-            boolean isLast = exchange.getProperty(Exchange.BATCH_COMPLETE, false, Boolean.class);
+            boolean isLast = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, false, Boolean.class);
             if (isLast && getEndpoint().isDisconnectOnBatchComplete()) {
                 LOG.trace("postWriteCheck disconnect on batch complete from: {}", getEndpoint());
                 disconnect();

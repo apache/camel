@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +102,7 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
     }
 
     private void registerAdditionalConverter(FormatFactory formatFactory)
-            throws IllegalAccessException, InstantiationException {
+            throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Function<Class<?>, FormatFactories> g = aClass -> aClass.getAnnotation(FormatFactories.class);
         Function<FormatFactories, List<Class<? extends FormatFactoryInterface>>> h
                 = formatFactories -> Arrays.asList(formatFactories.value());
@@ -110,7 +112,7 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
                 .map(h)
                 .orElse(Collections.emptyList());
         for (Class<? extends FormatFactoryInterface> l : array) {
-            formatFactory.getFactoryRegistry().register(l.newInstance());
+            formatFactory.getFactoryRegistry().register(l.getDeclaredConstructor().newInstance());
         }
     }
 
@@ -152,22 +154,18 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
         this.modelFactory = modelFactory;
     }
 
-    protected Map<String, Object> createLinkedFieldsModel(Object model) throws IllegalAccessException {
+    protected Map<String, Object> createLinkedFieldsModel(Object model) {
         Map<String, Object> row = new HashMap<>();
         createLinkedFieldsModel(model, row);
         return row;
     }
 
-    protected void createLinkedFieldsModel(Object model, Map<String, Object> row) throws IllegalAccessException {
+    protected void createLinkedFieldsModel(Object model, Map<String, Object> row) {
         for (Field field : model.getClass().getDeclaredFields()) {
             Link linkField = field.getAnnotation(Link.class);
             if (linkField != null) {
-                boolean accessible = field.isAccessible();
-                field.setAccessible(true);
-                if (!row.containsKey(field.getType().getName())) {
-                    row.put(field.getType().getName(), field.get(model));
-                }
-                field.setAccessible(accessible);
+                row.putIfAbsent(field.getType().getName(),
+                        ReflectionHelper.getField(field, model));
             }
         }
     }
@@ -184,7 +182,7 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
                     answer.add(data);
                 }
             }
-            // if there is only 1 then dont return a list
+            // if there is only 1 then don't return a list
             if (isUnwrapSingleInstance() && answer.size() == 1) {
                 return answer.get(0);
             } else {

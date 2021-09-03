@@ -16,18 +16,17 @@
  */
 package org.apache.camel.processor;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -36,27 +35,17 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
 
     private int lines = 20000;
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/split");
-        createDirectory("target/split");
-        createBigFile();
-        super.setUp();
-    }
-
-    private void createBigFile() throws Exception {
-        File file = new File("target/split/bigfile.txt");
-        FileOutputStream fos = new FileOutputStream(file);
-        for (int i = 0; i < lines; i++) {
-            String line = "line-" + i + LS;
-            fos.write(line.getBytes());
-        }
-        IOHelper.close(fos);
-    }
-
     @Test
     public void testSplitParallelBigFile() throws Exception {
+        Path dir = testDirectory();
+        Files.createDirectories(dir);
+        try (OutputStream fos = Files.newOutputStream(testFile("bigfile.txt"))) {
+            for (int i = 0; i < lines; i++) {
+                String line = "line-" + i + LS;
+                fos.write(line.getBytes());
+            }
+        }
+
         StopWatch watch = new StopWatch();
 
         NotifyBuilder builder = new NotifyBuilder(context).whenDone(lines + 1).create();
@@ -80,7 +69,7 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
                 // lower max pool to 10 for less number of concurrent threads
                 // context.getExecutorServiceStrategy().getDefaultThreadPoolProfile().setMaxPoolSize(10);
 
-                from("file:target/data/split?initialDelay=0&delay=10").split(body().tokenize(LS)).streaming()
+                from(fileUri("?initialDelay=0&delay=10")).split(body().tokenize(LS)).streaming()
                         .parallelProcessing().to("log:split?groupSize=1000").end()
                         .log("Done splitting ${file:name}");
             }

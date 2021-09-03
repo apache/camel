@@ -28,9 +28,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.activemq.converter.ActiveMQConverter;
+import org.apache.camel.component.activemq.support.ActiveMQTestSupport;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * 
  */
-public class ActiveMQReplyToHeaderUsingConverterTest extends CamelTestSupport {
+public class ActiveMQReplyToHeaderUsingConverterTest extends ActiveMQTestSupport {
+
     private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQReplyToHeaderUsingConverterTest.class);
     protected Object expectedBody = "<time>" + new Date() + "</time>";
     protected String replyQueueName = "queue://test.my.reply.queue";
@@ -99,7 +100,7 @@ public class ActiveMQReplyToHeaderUsingConverterTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // START SNIPPET: example
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+        camelContext.addComponent("activemq", activeMQComponent(vmUri("?broker.persistent=false")));
         // END SNIPPET: example
 
         return camelContext;

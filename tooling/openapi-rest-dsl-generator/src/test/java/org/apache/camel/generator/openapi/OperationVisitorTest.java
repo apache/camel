@@ -60,7 +60,7 @@ public class OperationVisitorTest {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
         final OperationVisitor<?> visitor
-                = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DirectToOperationId());
+                = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DefaultDestinationGenerator());
 
         final Oas20Document document = new Oas20Document();
         final OasPaths paths = document.createPaths();
@@ -87,7 +87,7 @@ public class OperationVisitorTest {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
         final OperationVisitor<?> visitor
-                = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DirectToOperationId());
+                = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DefaultDestinationGenerator());
 
         final Oas30Document document = new Oas30Document();
         final OasPaths paths = document.createPaths();
@@ -219,4 +219,36 @@ public class OperationVisitorTest {
                                                         + "        .required(false)\n"
                                                         + "      .endParam()}\n");
     }
+
+    @Test
+    public void testDestinationToSyntax() {
+        final Builder method = MethodSpec.methodBuilder("configure");
+        final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
+        final OperationVisitor<?> visitor
+                = new OperationVisitor<>(
+                        emitter, new OperationFilter(), "/path/{param}",
+                        new DefaultDestinationGenerator("seda:${operationId}"));
+
+        final Oas30Document document = new Oas30Document();
+        final OasPaths paths = document.createPaths();
+        final OasPathItem path = paths.addPathItem("", paths.createPathItem("/path/{param}"));
+        final OasOperation operation = path.createOperation("get");
+        operation.operationId = "my-operation";
+        final Oas30Parameter parameter = new Oas30Parameter("param");
+        parameter.in = "path";
+        path.addParameter(parameter);
+
+        visitor.visit(HttpMethod.GET, operation);
+
+        assertThat(method.build().toString()).isEqualTo("void configure() {\n"
+                                                        + "    get(\"/path/{param}\")\n"
+                                                        + "      .id(\"my-operation\")\n"
+                                                        + "      .param()\n"
+                                                        + "        .name(\"param\")\n"
+                                                        + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
+                                                        + "        .required(false)\n"
+                                                        + "      .endParam()\n"
+                                                        + "      .to(\"seda:my-operation\")}\n");
+    }
+
 }

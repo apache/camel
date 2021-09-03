@@ -22,19 +22,10 @@ register with a `CamelContext` or users can use a URI which auto-creates your co
 
 [NOTE]
 ====
-
 It is recommended to bootstrap your initial component using xref:camel-maven-archetypes.adoc[Camel Maven Archetypes], as it will give you all the necessary bits to start developing your component with ease.
-
-====
-
-[NOTE]
-====
-
 You will need as well to make sure to have xref:camel-component-maven-plugin.adoc[Camel Component Maven Plugin] included in your component's `pom.xml` file, order to generate all the necessary metadata and Java files for your component.
-
 ====
 
-[[WritingComponents-WritingEndpoints]]
 == Writing Endpoints
 
 When implementing an xref:endpoint.adoc[Endpoint] you typically may
@@ -44,9 +35,8 @@ implement one or more of the following methods:
 * `createConsumer` implements the xref:{eip-vc}:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer]
 pattern for consuming message exchanges from the endpoint.
 
-Typically you just derive from `DefaultEndpoint`
+Typically, you just derive from `DefaultEndpoint`
 
-[[WritingComponents-AnnotatingyourEndpoint]]
 == Annotating your Endpoint
 
 If you want to benefit from the automatic generation
@@ -62,35 +52,20 @@ configuration objects).
 Refer to the xref:endpoint-annotations.adoc[Endpoint Annotations guide
 for details].
 
-[[WritingComponents-Dependencyinjectionandauto-discovery]]
-== Dependency injection and auto-discovery
 
-When using auto-discovery the CamelContext will default to its
-xref:injector.adoc[Injector] implementation to inject any required or
-optional dependencies on the component. This allows you to use
-auto-discovery of components via xref:uris.adoc[URIs] while still
-getting the benefits of dependency injection.
-
-For example your component can depend on a JDBC DataSource or JMS
-ConnectionFactory which can be provided in the ApplicationContext in
-Spring.
-
-So you can if you prefer configure your Component using an IoC framework
-like Spring; then add it to the CamelContext. Or you can let
-the Component auto-inject itself as the endpoints are auto-discovered.
-
-[[WritingComponents-Options]]
 == Options
 
 If your component has options you can let it have public getters/setters
 and Camel will automatically set the properties when the endpoint is
-created. If you however want to take the matter in your own hands, then
+created.
+
+If you however want to take the matter in your own hands, then
 you must remove the option from the given parameter list as Camel will
 validate that all options are used. If not Camel will throw a
-ResolveEndpointFailedException stating some of the options are unknown.
+`ResolveEndpointFailedException` stating which options are unknown.
 
-The parameters is provided by Camel in the createEndpoint method from
-DefaultComponent:
+The parameters are provided by Camel in the `createEndpoint` method from
+`DefaultComponent` class:
 
 [source,java]
 ----

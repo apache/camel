@@ -26,7 +26,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 
@@ -66,33 +65,6 @@ public class SmppEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return new SmppProducer(this, configuration);
-    }
-
-    /**
-     * Create a new exchange for communicating with this endpoint from a SMSC
-     *
-     * @param  alertNotification the received message from the SMSC
-     * @return                   a new exchange
-     */
-    public Exchange createOnAcceptAlertNotificationExchange(AlertNotification alertNotification) {
-        return createOnAcceptAlertNotificationExchange(getExchangePattern(), alertNotification);
-    }
-
-    /**
-     * Create a new exchange for communicating with this endpoint from a SMSC with the specified {@link ExchangePattern}
-     * such as whether its going to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
-     *
-     * @param  exchangePattern   the message exchange pattern for the exchange
-     * @param  alertNotification the received message from the SMSC
-     * @return                   a new exchange
-     */
-    public Exchange createOnAcceptAlertNotificationExchange(
-            ExchangePattern exchangePattern,
-            AlertNotification alertNotification) {
-        Exchange exchange = createExchange(exchangePattern);
-        exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(getBinding().createSmppMessage(getCamelContext(), alertNotification));
-        return exchange;
     }
 
     /**

@@ -156,7 +156,7 @@ public final class AtmosAPIFacade {
         }
     }
 
-    private ObjectId putSingleFile(File inputFile, String atmosPath) throws Exception {
+    private ObjectId putSingleFile(File inputFile, String atmosPath) throws IOException {
         FileInputStream inputStream = new FileInputStream(inputFile);
         ObjectId uploadedFile = null;
         try {
@@ -178,7 +178,7 @@ public final class AtmosAPIFacade {
      * @return                a AtmosResult object with the result of the delete operation.
      * @throws AtmosException
      */
-    public AtmosResult del(String remotePath) throws AtmosException {
+    public AtmosResult del(String remotePath) {
         AtmosResult result = null;
         ObjectPath op = new ObjectPath(remotePath);
         AtmosAPIFacade.client.delete(op);
@@ -195,7 +195,7 @@ public final class AtmosAPIFacade {
      * @return                a AtmosResult object with the result of the move operation.
      * @throws AtmosException
      */
-    public AtmosResult move(String remotePath, String newRemotePath) throws AtmosException {
+    public AtmosResult move(String remotePath, String newRemotePath) {
         AtmosResult result = null;
         AtmosAPIFacade.client.move(new ObjectPath(remotePath), new ObjectPath(newRemotePath), true);
         result = new AtmosMoveResult();

@@ -17,7 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -25,21 +25,30 @@ import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.server.Server;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class BaseJettyTest extends CamelTestSupport {
 
-    private static volatile int port;
+    public static final String SSL_SYSPROPS = "SslSystemProperties";
 
-    private static volatile int port2;
+    static CopyOnWriteArrayList<String> runningTests = new CopyOnWriteArrayList<>();
 
-    private final AtomicInteger counter = new AtomicInteger(1);
+    @RegisterExtension
+    protected AvailablePortFinder.Port port1 = AvailablePortFinder.find();
 
-    @BeforeAll
-    public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
-        // find another ports for proxy route test
-        port2 = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    protected AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+
+    @BeforeEach
+    void addRunningTest() {
+        runningTests.add(getClass().getName());
+    }
+
+    @AfterEach
+    void remRunningTest() {
+        runningTests.remove(getClass().getName());
     }
 
     @Override
@@ -51,15 +60,10 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
     @BindToRegistry("prop")
     public Properties loadProp() throws Exception {
-
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
         prop.setProperty("port2", "" + getPort2());
         return prop;
-    }
-
-    protected int getNextPort() {
-        return AvailablePortFinder.getNextAvailable();
     }
 
     public void setSSLProps(JettyHttpComponent jetty, String path, String keyStorePasswd, String keyPasswd) {
@@ -78,12 +82,12 @@ public abstract class BaseJettyTest extends CamelTestSupport {
         }
     }
 
-    protected static int getPort() {
-        return port;
+    protected int getPort() {
+        return port1.getPort();
     }
 
-    protected static int getPort2() {
-        return port2;
+    protected int getPort2() {
+        return port2.getPort();
     }
 
     public int jettyVersion() {

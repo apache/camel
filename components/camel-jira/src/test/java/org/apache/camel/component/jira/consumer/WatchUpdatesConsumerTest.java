@@ -33,6 +33,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
+import org.apache.camel.component.jira.JiraConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -132,8 +133,8 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
         });
 
         mockResult.expectedBodiesReceived(issue.getPriority());
-        mockResult.expectedHeaderReceived("changed", "Priority");
-        mockResult.expectedHeaderReceived("issueKey", "TST-1");
+        mockResult.expectedHeaderReceived(JiraConstants.ISSUE_CHANGED, "Priority");
+        mockResult.expectedHeaderReceived(JiraConstants.ISSUE_KEY, "TST-1");
         mockResult.expectedMessageCount(1);
         mockResult.assertIsSatisfied(0);
     }

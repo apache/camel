@@ -75,41 +75,6 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable/Disable the buffering of HL7 payloads before writing to the
-         * socket.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param bufferWrites the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default MllpEndpointConsumerBuilder bufferWrites(boolean bufferWrites) {
-            doSetProperty("bufferWrites", bufferWrites);
-            return this;
-        }
-        /**
-         * Enable/Disable the buffering of HL7 payloads before writing to the
-         * socket.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param bufferWrites the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default MllpEndpointConsumerBuilder bufferWrites(String bufferWrites) {
-            doSetProperty("bufferWrites", bufferWrites);
-            return this;
-        }
-        /**
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
@@ -755,41 +720,6 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum number of timeouts (specified by receiveTimeout) allowed
-         * before the TCP Connection will be reset.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: timeout
-         * 
-         * @param maxReceiveTimeouts the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
-                Integer maxReceiveTimeouts) {
-            doSetProperty("maxReceiveTimeouts", maxReceiveTimeouts);
-            return this;
-        }
-        /**
-         * The maximum number of timeouts (specified by receiveTimeout) allowed
-         * before the TCP Connection will be reset.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: timeout
-         * 
-         * @param maxReceiveTimeouts the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
-                String maxReceiveTimeouts) {
-            doSetProperty("maxReceiveTimeouts", maxReceiveTimeouts);
-            return this;
-        }
-        /**
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
@@ -898,41 +828,6 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointProducerBuilder autoAck(String autoAck) {
             doSetProperty("autoAck", autoAck);
-            return this;
-        }
-        /**
-         * Enable/Disable the buffering of HL7 payloads before writing to the
-         * socket.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param bufferWrites the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default MllpEndpointProducerBuilder bufferWrites(boolean bufferWrites) {
-            doSetProperty("bufferWrites", bufferWrites);
-            return this;
-        }
-        /**
-         * Enable/Disable the buffering of HL7 payloads before writing to the
-         * socket.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param bufferWrites the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default MllpEndpointProducerBuilder bufferWrites(String bufferWrites) {
-            doSetProperty("bufferWrites", bufferWrites);
             return this;
         }
         /**
@@ -1477,41 +1372,6 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointBuilder autoAck(String autoAck) {
             doSetProperty("autoAck", autoAck);
-            return this;
-        }
-        /**
-         * Enable/Disable the buffering of HL7 payloads before writing to the
-         * socket.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param bufferWrites the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default MllpEndpointBuilder bufferWrites(boolean bufferWrites) {
-            doSetProperty("bufferWrites", bufferWrites);
-            return this;
-        }
-        /**
-         * Enable/Disable the buffering of HL7 payloads before writing to the
-         * socket.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param bufferWrites the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default MllpEndpointBuilder bufferWrites(String bufferWrites) {
-            doSetProperty("bufferWrites", bufferWrites);
             return this;
         }
         /**

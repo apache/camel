@@ -332,6 +332,9 @@ public class RabbitMQMessageConverter {
                 }
             }
         }
+        if (properties.getTimestamp() != null) {
+            message.setHeader(Exchange.MESSAGE_TIMESTAMP, properties.getTimestamp().getTime());
+        }
     }
 
     private void populateMessageBody(

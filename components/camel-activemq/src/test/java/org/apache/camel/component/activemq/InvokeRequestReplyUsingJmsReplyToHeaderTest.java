@@ -27,7 +27,7 @@ import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +43,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * 
  */
-public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(InvokeRequestReplyUsingJmsReplyToHeaderTest.class);
+public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends ActiveMQTestSupport {
+
+    private static final transient Logger LOG = LoggerFactory
+            .getLogger(InvokeRequestReplyUsingJmsReplyToHeaderTest.class);
+
     protected String replyQueueName = "queue://test.reply";
     protected Object correlationID = "ABC-123";
     protected Object groupID = "GROUP-XYZ";
@@ -72,9 +75,9 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
 
         Message in = reply.getIn();
         Object replyTo = in.getHeader("JMSReplyTo");
-        LOG.info("Reply to is: " + replyTo);
-        LOG.info("Received headers: " + in.getHeaders());
-        LOG.info("Received body: " + in.getBody());
+        LOG.info("Reply to is: {}", replyTo);
+        LOG.info("Received headers: {}", in.getHeaders());
+        LOG.info("Received body: {}", in.getBody());
 
         assertMessageHeader(in, "JMSCorrelationID", correlationID);
 
@@ -84,7 +87,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
         assertThat(receivedHeaders, hasEntry("JMSCorrelationID", correlationID));
 
         replyTo = receivedHeaders.get("JMSReplyTo");
-        LOG.info("Reply to is: " + replyTo);
+        LOG.info("Reply to is: {}", replyTo);
         Destination destination = assertIsInstanceOf(Destination.class, replyTo);
         assertEquals(replyQueueName, destination.toString(), "ReplyTo");
     }
@@ -94,7 +97,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
         CamelContext camelContext = super.createCamelContext();
 
         // START SNIPPET: example
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+        camelContext.addComponent("activemq", activeMQComponent(vmUri("?broker.persistent=false")));
         // END SNIPPET: example
 
         return camelContext;
@@ -103,7 +106,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:test.server").bean(myBean);
             }
         };
@@ -114,7 +117,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
 
         public String process(@Headers Map<String, Object> headers, String body) {
             this.headers = headers;
-            LOG.info("process() invoked with headers: " + headers);
+            LOG.info("process() invoked with headers: {}", headers);
             return "Hello " + body;
         }
 

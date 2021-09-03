@@ -53,9 +53,21 @@ public class WrapProcessor extends DelegateAsyncProcessor implements WrapAwarePr
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        ServiceHelper.buildService(wrapped);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceHelper.initService(wrapped);
+    }
+
+    @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(wrapped);
         super.doStart();
+        ServiceHelper.startService(wrapped);
     }
 
     @Override

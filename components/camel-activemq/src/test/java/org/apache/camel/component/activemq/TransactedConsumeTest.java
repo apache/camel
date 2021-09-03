@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.jms.Connection;
@@ -34,42 +36,57 @@ import org.apache.activemq.store.kahadb.disk.journal.Journal;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.component.jms.JmsMessage;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class TransactedConsumeTest extends CamelSpringTestSupport {
+public class TransactedConsumeTest extends ActiveMQSpringTestSupport {
+
+    @RegisterExtension
+    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .defaultBroker()
+            .withTcpTransport()
+            .withUseJmx(true)
+            .withBrokerName(TransactedConsumeTest.class)
+            .withTcpTransport()
+            .withCustomSetup(TransactedConsumeTest::setupBroker)
+            .build();
+
     static AtomicLong firstConsumed = new AtomicLong();
     static AtomicLong consumed = new AtomicLong();
+
     private static final Logger LOG = LoggerFactory.getLogger(TransactedConsumeTest.class);
-    BrokerService broker;
-    int messageCount = 100000;
+
+    int messageCount = 10000;
 
     @Test
     public void testConsume() throws Exception {
-
         LOG.info("Wait for dequeue message...");
 
         assertTrue(Wait.waitFor(new Wait.Condition() {
             @Override
             public boolean isSatisified() throws Exception {
-                return broker.getAdminView().getTotalDequeueCount() >= messageCount;
+                return service.getBrokerService().getAdminView().getTotalDequeueCount() >= messageCount;
             }
         }, 20 * 60 * 1000));
         long duration = System.currentTimeMillis() - firstConsumed.get();
-        LOG.info("Done message consumption in " + duration + "millis");
+        LOG.info("Done message consumption in {} millis", duration);
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://test");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
+        factory.setUseAsyncSend(true);
         factory.setWatchTopicAdvisories(false);
+        factory.setObjectMessageSerializationDefered(true);
         Connection connection = factory.createConnection();
         connection.start();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -83,39 +100,27 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker(boolean deleteAllMessages) throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName("test");
-
+    private static void setupBroker(BrokerService brokerService) {
         PolicyMap policyMap = new PolicyMap();
         PolicyEntry defaultPolicy = new PolicyEntry();
         policyMap.setDefaultEntry(defaultPolicy);
-        brokerService.setDestinationPolicy(policyMap);
 
-        brokerService.setAdvisorySupport(false);
-        brokerService.setDataDirectory("target/data");
-        // AMQPersistenceAdapter amq = new AMQPersistenceAdapter();
-        // amq.setDirectory(new File("target/data"));
-        // brokerService.setPersistenceAdapter(amq);
-        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService.getPersistenceAdapter();
-        kahaDBPersistenceAdapter.setJournalDiskSyncStrategy(Journal.JournalDiskSyncStrategy.NEVER.toString());
-        brokerService.addConnector("tcp://localhost:61616");
-        return brokerService;
+        brokerService.getManagementContext().setUseMBeanServer(false);
+
+        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = null;
+        try {
+            kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService
+                    .getPersistenceAdapter();
+            kahaDBPersistenceAdapter.setJournalDiskSyncStrategy(Journal.JournalDiskSyncStrategy.NEVER.toString());
+        } catch (IOException e) {
+            LOG.error("Unable to setup the persistence adapter: {}", e.getMessage(), e);
+            fail("Unable to setup the persistence adapter");
+        }
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-
-        deleteDirectory("target/data");
-
         // make broker available to recovery processing on app context start
-        try {
-            broker = createBroker(true);
-            broker.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to start broker", e);
-        }
 
         try {
             sendJMSMessageToKickOffRoute();
@@ -123,7 +128,14 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
             throw new RuntimeException("Failed to fill q", e);
         }
 
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/transactedconsume.xml");
+        return super.createApplicationContext();
+    }
+
+    @Override
+    protected Map<String, String> getTranslationProperties() {
+        Map<String, String> map = super.getTranslationProperties();
+        map.put("brokerUri", service.serviceAddress());
+        return map;
     }
 
     static class ConnectionLog implements Processor {
@@ -136,7 +148,7 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
             ActiveMQTextMessage m = (ActiveMQTextMessage) ((JmsMessage) exchange.getIn()).getJmsMessage();
             // Thread.currentThread().sleep(500);
             if (consumed.get() % 500 == 0) {
-                LOG.info("received on " + m.getConnection().toString());
+                LOG.info("received on {}", m.getConnection());
             }
         }
     }

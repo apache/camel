@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOError;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -41,7 +42,6 @@ public class FilePatchesRepository implements PatchesRepository {
                 if (repository.getParentFile() != null) {
                     repository.getParentFile().mkdirs();
                 }
-
                 repository.createNewFile();
             }
         } catch (IOException e) {
@@ -54,7 +54,7 @@ public class FilePatchesRepository implements PatchesRepository {
     @Override
     public void install(String coordinates) {
         try {
-            FileUtils.writeStringToFile(repository, coordinates + "\n", true);
+            FileUtils.writeStringToFile(repository, coordinates + "\n", StandardCharsets.UTF_8.name(), true);
         } catch (IOException e) {
             throw new IOError(e);
         }
@@ -62,8 +62,8 @@ public class FilePatchesRepository implements PatchesRepository {
 
     @Override
     public List<String> listPatches() {
-        try {
-            return IOUtils.readLines(new FileReader(repository));
+        try (FileReader reader = new FileReader(repository)) {
+            return IOUtils.readLines(reader);
         } catch (IOException e) {
             throw new IOError(e);
         }

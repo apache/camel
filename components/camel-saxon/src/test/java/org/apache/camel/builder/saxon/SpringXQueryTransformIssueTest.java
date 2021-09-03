@@ -22,7 +22,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringXQueryTransformIssueTest extends CamelSpringTestSupport {
 
@@ -39,6 +38,6 @@ public class SpringXQueryTransformIssueTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/builder/saxon/SpringXQueryTransformIssueTest.xml");
+        return newAppContext("SpringXQueryTransformIssueTest.xml");
     }
 }

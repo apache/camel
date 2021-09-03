@@ -34,6 +34,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     private boolean autoConfigurationEnabled = true;
     private boolean autoConfigurationEnvironmentVariablesEnabled = true;
+    private boolean autoConfigurationSystemPropertiesEnabled = true;
     private boolean autoConfigurationFailFast = true;
     private boolean autoConfigurationLogSummary = true;
     private int durationHitExitCode;
@@ -48,7 +49,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     // extended configuration
     private HealthConfigurationProperties healthConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
-    private ThreadPoolConfigurationProperties threadPool;
+    private ThreadPoolConfigurationProperties threadPoolProperties;
     private HystrixConfigurationProperties hystrixConfigurationProperties;
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
     private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
@@ -64,9 +65,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             lraConfigurationProperties.close();
             lraConfigurationProperties = null;
         }
-        if (threadPool != null) {
-            threadPool.close();
-            threadPool = null;
+        if (threadPoolProperties != null) {
+            threadPoolProperties.close();
+            threadPoolProperties = null;
         }
         if (hystrixConfigurationProperties != null) {
             hystrixConfigurationProperties.close();
@@ -84,10 +85,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             restConfigurationProperties.close();
             restConfigurationProperties = null;
         }
-        routesBuilders.clear();
-        routesBuilders = null;
-        configurations.clear();
-        configurations = null;
+        if (routesBuilders != null) {
+            routesBuilders.clear();
+            routesBuilders = null;
+        }
+        if (configurations != null) {
+            configurations.clear();
+            configurations = null;
+        }
     }
 
     // extended
@@ -104,6 +109,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any health check configuration specified
+     */
+    public boolean hasHealthCheckConfiguration() {
+        return healthConfigurationProperties != null;
+    }
+
+    /**
      * To configure Saga LRA
      */
     public LraConfigurationProperties lra() {
@@ -114,13 +126,27 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any Saga LRA configuration specified
+     */
+    public boolean hasLraConfiguration() {
+        return lraConfigurationProperties != null;
+    }
+
+    /**
      * To configure thread pools
      */
     public ThreadPoolConfigurationProperties threadPool() {
-        if (threadPool == null) {
-            threadPool = new ThreadPoolConfigurationProperties(this);
+        if (threadPoolProperties == null) {
+            threadPoolProperties = new ThreadPoolConfigurationProperties(this);
         }
-        return threadPool;
+        return threadPoolProperties;
+    }
+
+    /**
+     * Whether there has been any thread pool configuration specified
+     */
+    public boolean hasThreadPoolConfiguration() {
+        return threadPoolProperties != null;
     }
 
     /**
@@ -135,6 +161,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any Hystrix EIP configuration specified
+     */
+    public boolean hasHystrixConfiguration() {
+        return hystrixConfigurationProperties != null;
+    }
+
+    /**
      * To configure Circuit Breaker EIP with Resilience4j
      */
     public Resilience4jConfigurationProperties resilience4j() {
@@ -142,6 +175,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
         }
         return resilience4jConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Resilience4j EIP configuration specified
+     */
+    public boolean hasResilience4jConfiguration() {
+        return resilience4jConfigurationProperties != null;
     }
 
     /**
@@ -155,6 +195,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any MicroProfile Fault Tolerance EIP configuration specified
+     */
+    public boolean hasFaultToleranceConfiguration() {
+        return faultToleranceConfigurationProperties != null;
+    }
+
+    /**
      * To configure Rest DSL
      */
     public RestConfigurationProperties rest() {
@@ -162,6 +209,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             restConfigurationProperties = new RestConfigurationProperties(this);
         }
         return restConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any rest configuration specified
+     */
+    public boolean hasRestConfiguration() {
+        return restConfigurationProperties != null;
     }
 
     // getter and setters
@@ -173,9 +227,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     /**
      * Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the
-     * configuration parameters are loaded from the properties component and optionally from the classpath file
-     * META-INF/services/org/apache/camel/autowire.properties. You can prefix the parameters in the properties file
-     * with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 -
+     * configuration parameters are loaded from the properties component. You can prefix the parameters in the
+     * properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 -
      * camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1
      * - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as
      * seda,direct,jaxb.
@@ -204,6 +257,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setAutoConfigurationEnvironmentVariablesEnabled(boolean autoConfigurationEnvironmentVariablesEnabled) {
         this.autoConfigurationEnvironmentVariablesEnabled = autoConfigurationEnvironmentVariablesEnabled;
+    }
+
+    public boolean isAutoConfigurationSystemPropertiesEnabled() {
+        return autoConfigurationSystemPropertiesEnabled;
+    }
+
+    /**
+     * Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any
+     * configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D
+     * camel.main.shutdown-timeout=5.
+     * <p/>
+     * Note that JVM system properties take precedence over OS environment variables.
+     * <p/>
+     * This option is default enabled.
+     */
+    public void setAutoConfigurationSystemPropertiesEnabled(boolean autoConfigurationSystemPropertiesEnabled) {
+        this.autoConfigurationSystemPropertiesEnabled = autoConfigurationSystemPropertiesEnabled;
     }
 
     public boolean isAutoConfigurationFailFast() {
@@ -406,6 +476,21 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     public MainConfigurationProperties withAutoConfigurationEnvironmentVariablesEnabled(
             boolean autoConfigurationEnvironmentVariablesEnabled) {
         this.autoConfigurationEnvironmentVariablesEnabled = autoConfigurationEnvironmentVariablesEnabled;
+        return this;
+    }
+
+    /**
+     * Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any
+     * configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D
+     * camel.main.shutdown-timeout=5.
+     * <p/>
+     * Note that JVM system properties take precedence over OS environment variables.
+     * <p/>
+     * This option is default enabled.
+     */
+    public MainConfigurationProperties withAutoConfigurationSystemPropertiesEnabled(
+            boolean autoConfigurationSystemPropertiesEnabled) {
+        this.autoConfigurationSystemPropertiesEnabled = autoConfigurationSystemPropertiesEnabled;
         return this;
     }
 

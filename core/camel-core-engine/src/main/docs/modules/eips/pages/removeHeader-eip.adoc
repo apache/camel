@@ -8,12 +8,13 @@
 == Options
 
 // eip options: START
-The Remove Header EIP supports 1 options which are listed below:
+The Remove Header EIP supports 2 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *headerName* | *Required* Name of header to remove |  | String
+| *name* | Name of header to remove |  | String
+| *headerName* | *Deprecated* Name of header to remove (deprecated use name instead) |  | String
 |===
 // eip options: END
 

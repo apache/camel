@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Bin4;
+import com.ibm.as400.access.AS400Bin8;
 import com.ibm.as400.access.AS400ByteArray;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Message;
@@ -72,7 +74,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.trace(
                         "Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
-                        new Object[] { commandStr, iSeries.getSystemName(), iSeries.getUserId() });
+                        commandStr, iSeries.getSystemName(), iSeries.getUserId());
             }
 
             boolean result = pgmCall.run();
@@ -123,9 +125,20 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (input) {
                 if (param != null) {
                     AS400DataType typeConverter;
-                    if (getISeriesEndpoint().getFormat() == Jt400Configuration.Format.binary) {
+                    if (param instanceof CharSequence) {
+                        param = param.toString();
+                        typeConverter = new AS400Text(length, iSeries);
+                    } else if (param instanceof char[]) {
+                        param = new String((char[]) param);
+                        typeConverter = new AS400Text(length, iSeries);
+                    } else if (param instanceof Integer) {
+                        typeConverter = new AS400Bin4();
+                    } else if (param instanceof Long) {
+                        typeConverter = new AS400Bin8();
+                    } else if (param instanceof byte[]) {
                         typeConverter = new AS400ByteArray(length);
                     } else {
+                        param = param.toString(); // must be a String for AS400Text class
                         typeConverter = new AS400Text(length, iSeries);
                     }
                     inputData = typeConverter.toBytes(param);
@@ -219,7 +232,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         return iSeries;
     }
 
-    private void release(AS400 iSeries) throws Exception {
+    private void release(AS400 iSeries) {
         if (iSeries != null) {
             LOG.debug("Releasing connection to {}", getISeriesEndpoint());
             getISeriesEndpoint().releaseSystem(iSeries);

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class VmDiscardIfNoConsumerTest extends ContextTestSupport {
+public class VmDiscardIfNoConsumerTest extends AbstractVmTestSupport {
 
     @Test
     public void testDiscard() throws Exception {

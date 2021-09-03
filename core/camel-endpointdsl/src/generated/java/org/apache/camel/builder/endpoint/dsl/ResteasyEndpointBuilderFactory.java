@@ -573,6 +573,117 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
+         * If this option is true then IN exchange Body of the exchange will be
+         * mapped to HTTP body. Setting this to false will avoid the HTTP
+         * mapping.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageBody(
+                boolean mapHttpMessageBody) {
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Body of the exchange will be
+         * mapped to HTTP body. Setting this to false will avoid the HTTP
+         * mapping.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageBody(
+                String mapHttpMessageBody) {
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Form Encoded body of the
+         * exchange will be mapped to HTTP. Setting this to false will avoid the
+         * HTTP Form Encoded body mapping.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
+                boolean mapHttpMessageFormUrlEncodedBody) {
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Form Encoded body of the
+         * exchange will be mapped to HTTP. Setting this to false will avoid the
+         * HTTP Form Encoded body mapping.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
+                String mapHttpMessageFormUrlEncodedBody) {
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Headers of the exchange will
+         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
+         * Headers mapping.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageHeaders(
+                boolean mapHttpMessageHeaders) {
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Headers of the exchange will
+         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
+         * Headers mapping.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageHeaders(
+                String mapHttpMessageHeaders) {
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            return this;
+        }
+        /**
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
@@ -676,117 +787,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageBody(
-                boolean mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageBody(
-                String mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
-                boolean mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
-                String mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageHeaders(
-                boolean mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageHeaders(
-                String mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -1118,7 +1118,9 @@ public interface ResteasyEndpointBuilderFactory {
         /**
          * Whether to clear expired cookies before sending the HTTP request.
          * This ensures the cookies store does not keep growing by adding new
-         * cookies which is newer removed when they are expired.
+         * cookies which is newer removed when they are expired. If the
+         * component has disabled cookie management then this option is disabled
+         * too.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1136,7 +1138,9 @@ public interface ResteasyEndpointBuilderFactory {
         /**
          * Whether to clear expired cookies before sending the HTTP request.
          * This ensures the cookies store does not keep growing by adding new
-         * cookies which is newer removed when they are expired.
+         * cookies which is newer removed when they are expired. If the
+         * component has disabled cookie management then this option is disabled
+         * too.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1619,6 +1623,99 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to skip mapping all the Camel headers as HTTP request
+         * headers. If there are no data from Camel headers needed to be
+         * included in the HTTP request then this can avoid parsing overhead
+         * with many object allocations for the JVM garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointProducerBuilder skipRequestHeaders(
+                boolean skipRequestHeaders) {
+            doSetProperty("skipRequestHeaders", skipRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the Camel headers as HTTP request
+         * headers. If there are no data from Camel headers needed to be
+         * included in the HTTP request then this can avoid parsing overhead
+         * with many object allocations for the JVM garbage collector.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointProducerBuilder skipRequestHeaders(
+                String skipRequestHeaders) {
+            doSetProperty("skipRequestHeaders", skipRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the HTTP response headers to Camel
+         * headers. If there are no data needed from HTTP headers then this can
+         * avoid parsing overhead with many object allocations for the JVM
+         * garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipResponseHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointProducerBuilder skipResponseHeaders(
+                boolean skipResponseHeaders) {
+            doSetProperty("skipResponseHeaders", skipResponseHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the HTTP response headers to Camel
+         * headers. If there are no data needed from HTTP headers then this can
+         * avoid parsing overhead with many object allocations for the JVM
+         * garbage collector.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipResponseHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointProducerBuilder skipResponseHeaders(
+                String skipResponseHeaders) {
+            doSetProperty("skipResponseHeaders", skipResponseHeaders);
+            return this;
+        }
+        /**
+         * To set a custom HTTP User-Agent request header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param userAgent the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointProducerBuilder userAgent(
+                String userAgent) {
+            doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -1652,117 +1749,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointProducerBuilder mapHttpMessageBody(
-                boolean mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointProducerBuilder mapHttpMessageBody(
-                String mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
-                boolean mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
-                String mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointProducerBuilder mapHttpMessageHeaders(
-                boolean mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointProducerBuilder mapHttpMessageHeaders(
-                String mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -2140,117 +2126,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointBuilder mapHttpMessageBody(
-                boolean mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointBuilder mapHttpMessageBody(
-                String mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointBuilder mapHttpMessageFormUrlEncodedBody(
-                boolean mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointBuilder mapHttpMessageFormUrlEncodedBody(
-                String mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointBuilder mapHttpMessageHeaders(
-                boolean mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedResteasyEndpointBuilder mapHttpMessageHeaders(
-                String mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**

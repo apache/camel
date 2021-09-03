@@ -64,26 +64,23 @@ public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
      * @param configuration the endpoint configuration
      */
     protected void configureService(WordpressConfiguration configuration) {
-
+        // noop
     }
 
     @Override
     protected abstract int poll() throws Exception;
 
-    /**
-     * Message processor
-     * 
-     * @param result
-     */
     protected final void process(final Object result) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(false);
         try {
             exchange.getIn().setBody(result);
             getProcessor().process(exchange);
         } catch (Exception e) {
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-            }
+            exchange.setException(e);
         }
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+        }
+        releaseExchange(exchange, false);
     }
 }

@@ -25,9 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 import org.apache.camel.component.hazelcast.listener.CamelMessageListener;
 
-/**
- *
- */
 public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
 
     private ITopic<Object> topic;
@@ -44,9 +41,6 @@ public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
         }
     }
 
-    /**
-     * @see org.apache.camel.support.DefaultConsumer#doStart()
-     */
     @Override
     protected void doStart() throws Exception {
         super.doStart();

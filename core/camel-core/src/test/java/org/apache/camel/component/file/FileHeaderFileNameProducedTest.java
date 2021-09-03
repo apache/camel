@@ -44,7 +44,7 @@ public class FileHeaderFileNameProducedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in").to("file://target/data/?fileExist=Override").to("mock:result");
+                from("direct:in").to(fileUri("?fileExist=Override")).to("mock:result");
             }
         };
     }

@@ -174,15 +174,21 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
 
         //Build message entity
-        Entity<Object> entity = binding.bindCamelMessageToRequestEntity(body, inMessage, exchange);
+        Entity<Object> entity = binding.bindCamelMessageToRequestEntity(body, inMessage, exchange, client);
 
         // handle cookies
         CookieHandler cookieHandler = ((CxfRsEndpoint) getEndpoint()).getCookieHandler();
         loadCookies(exchange, client, cookieHandler);
 
         // invoke the client
-        client.async().method(httpMethod, entity,
-                new CxfInvocationCallback(client, exchange, cxfRsEndpoint, responseClass, callback, genericType));
+        if (responseClass == null || Response.class.equals(responseClass)) {
+            client.async().method(httpMethod, entity,
+                    new CxfInvocationCallback(client, exchange, cxfRsEndpoint, null, callback, null));
+        } else {
+            client.async().method(httpMethod, entity,
+                    new CxfInvocationCallback(client, exchange, cxfRsEndpoint, responseClass, callback, genericType));
+        }
+
     }
 
     protected void invokeAsyncProxyClient(Exchange exchange, final AsyncCallback callback) throws Exception {
@@ -270,11 +276,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             int matrixStart = requestURL.indexOf(';');
             int matrixEnd = requestURL.indexOf('?') > -1 ? requestURL.indexOf('?') : requestURL.length();
             Map<String, String> maps = null;
-            if (requestURL != null && matrixStart > 0) {
+            if (matrixStart > 0) {
                 matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
-                if (matrixParam != null) {
-                    maps = getMatrixParametersFromMatrixString(matrixParam, ExchangeHelper.getCharsetName(exchange));
-                }
+                maps = getMatrixParametersFromMatrixString(matrixParam, ExchangeHelper.getCharsetName(exchange));
             }
             if (maps != null) {
                 for (Map.Entry<String, String> entry : maps.entrySet()) {
@@ -866,17 +870,17 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             this.cache = LRUCacheFactory.newLRUSoftCache(maxCacheSize);
         }
 
-        public void start() throws Exception {
+        public void start() {
             if (cache instanceof LRUCache) {
                 ((LRUCache) cache).resetStatistics();
             }
         }
 
-        public void stop() throws Exception {
+        public void stop() {
             cache.clear();
         }
 
-        public JAXRSClientFactoryBean get(String address) throws Exception {
+        public JAXRSClientFactoryBean get(String address) {
             JAXRSClientFactoryBean retVal = null;
             synchronized (cache) {
                 retVal = cache.get(address);

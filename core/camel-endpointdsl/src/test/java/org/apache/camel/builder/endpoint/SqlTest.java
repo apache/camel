@@ -18,16 +18,16 @@ package org.apache.camel.builder.endpoint;
 
 import javax.sql.DataSource;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.SqlEndpointBuilderFactory;
 import org.apache.camel.component.sql.SqlEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SqlTest extends ContextTestSupport {
+public class SqlTest extends BaseEndpointDslTest {
 
     @Override
     public boolean isUseRouteBuilder() {

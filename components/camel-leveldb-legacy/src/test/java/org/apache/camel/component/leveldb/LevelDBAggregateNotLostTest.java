@@ -25,12 +25,15 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.fusesource.hawtbuf.Buffer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.component.leveldb.LevelDBAggregationRepository.keyBuilder;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateNotLostTest extends CamelTestSupport {
 
     private LevelDBAggregationRepository repo;

@@ -21,15 +21,14 @@ Templating to generate responses for requests.
 
 == URI format
 
-[source]
 ----
 xslt-saxon:templateName[?options]
 ----
+
 The URI format contains *templateName*, which can be one of the following:
 
 * the classpath-local URI of the template to invoke
-
-* the complete URL of the remote template. 
+* the complete URL of the remote template.
 
 You can append query options to the URI in the following format:
 
@@ -44,9 +43,47 @@ You can append query options to the URI in the following format:
 |xslt-saxon:http://acme.com/cheese/foo.xsl|Refers to the remote http resource
 |=================================================================
 
-== Options
+
+
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The XSLT Saxon component supports 10 options, which are listed below.
 
 
@@ -67,8 +104,9 @@ The XSLT Saxon component supports 10 options, which are listed below.
 |===
 // component options: END
 
-
 // endpoint options: START
+== Endpoint Options
+
 The XSLT Saxon endpoint is configured using URI syntax:
 
 ----
@@ -131,7 +169,7 @@ destination you could use the following route:
 [source,java]
 ----
 from("activemq:My.Queue").
-  to("xslt:com/acme/mytransform.xsl").
+  to("xslt-saxon:com/acme/mytransform.xsl").
   to("activemq:Another.Queue");
 ----
 
@@ -261,7 +299,7 @@ keys `Exchange.XSLT_ERROR`, `Exchange.XSLT_FATAL_ERROR`,
 or `Exchange.XSLT_WARNING` which allows end users to get hold of any
 errors happening during transformation.
 
-For example in the stylesheet below, we want to terminate if a staff has
+For example in the stylesheet below, we want to determinate whether a staff has
 an empty dob field. And to include a custom error message using
 xsl:message.
 
@@ -285,4 +323,4 @@ xsl:message.
 The exception is stored on the Exchange as a warning with the
 key `Exchange.XSLT_WARNING.`
 
-include::camel-spring-boot::page$xslt-saxon-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$xslt-saxon-starter.adoc[]

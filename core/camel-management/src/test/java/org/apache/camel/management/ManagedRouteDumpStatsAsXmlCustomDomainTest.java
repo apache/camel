@@ -23,24 +23,23 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedRouteDumpStatsAsXmlCustomDomainTest extends ManagementTestSupport {
 
     private static final String CUSTOM_DOMAIN_NAME = "custom";
 
     @Test
     public void testPerformanceCounterStats() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance(CUSTOM_DOMAIN_NAME + ":context=camel-1,type=routes,name=\"foo\"");
+        ObjectName on = ObjectName
+                .getInstance(CUSTOM_DOMAIN_NAME + ":context=" + context.getManagementName() + ",type=routes,name=\"foo\"");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

@@ -31,7 +31,7 @@ public interface EventbridgeEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Eventbridge component.
+     * Builder for endpoint for the AWS Eventbridge component.
      */
     public interface EventbridgeEndpointBuilder
             extends
@@ -165,6 +165,41 @@ public interface EventbridgeEndpointBuilderFactory {
          */
         default EventbridgeEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default EventbridgeEndpointBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default EventbridgeEndpointBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -326,6 +361,59 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default EventbridgeEndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the Eventbridge client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default EventbridgeEndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Eventbridge client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default EventbridgeEndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -382,7 +470,7 @@ public interface EventbridgeEndpointBuilderFactory {
 
     public interface EventbridgeBuilders {
         /**
-         * AWS 2 Eventbridge (camel-aws2-eventbridge)
+         * AWS Eventbridge (camel-aws2-eventbridge)
          * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -401,7 +489,7 @@ public interface EventbridgeEndpointBuilderFactory {
             return EventbridgeEndpointBuilderFactory.endpointBuilder("aws2-eventbridge", path);
         }
         /**
-         * AWS 2 Eventbridge (camel-aws2-eventbridge)
+         * AWS Eventbridge (camel-aws2-eventbridge)
          * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management

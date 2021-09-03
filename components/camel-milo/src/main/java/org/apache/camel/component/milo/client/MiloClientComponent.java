@@ -29,6 +29,9 @@ public class MiloClientComponent extends DefaultComponent {
     @Metadata
     private MiloClientConfiguration configuration = new MiloClientConfiguration();
 
+    @Metadata(autowired = true, label = "client", description = "Instance for managing client connections")
+    private MiloClientConnectionManager miloClientConnectionManager = new MiloClientCachingConnectionManager();
+
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
             throws Exception {
@@ -36,7 +39,8 @@ public class MiloClientComponent extends DefaultComponent {
         final MiloClientConfiguration configuration = new MiloClientConfiguration(this.configuration);
         configuration.setEndpointUri(remaining);
 
-        final MiloClientEndpoint endpoint = new MiloClientEndpoint(uri, this, configuration.getEndpointUri());
+        final MiloClientEndpoint endpoint
+                = new MiloClientEndpoint(uri, this, configuration.getEndpointUri(), miloClientConnectionManager);
         endpoint.setConfiguration(configuration);
         setProperties(endpoint, parameters);
 
@@ -82,4 +86,11 @@ public class MiloClientComponent extends DefaultComponent {
         this.configuration.setRequestTimeout(reconnectTimeout);
     }
 
+    public MiloClientConnectionManager getMiloClientConnectionManager() {
+        return miloClientConnectionManager;
+    }
+
+    public void setMiloClientConnectionManager(MiloClientConnectionManager miloClientConnectionManager) {
+        this.miloClientConnectionManager = miloClientConnectionManager;
+    }
 }

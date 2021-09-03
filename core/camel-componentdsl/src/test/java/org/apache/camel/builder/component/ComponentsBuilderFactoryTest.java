@@ -16,19 +16,19 @@
  */
 package org.apache.camel.builder.component;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.timer.TimerComponent;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ComponentsBuilderFactoryTest extends ContextTestSupport {
+public class ComponentsBuilderFactoryTest extends CamelTestSupport {
 
     @Test
     public void testIfCreateComponentCorrectlyWithoutContextProvided() {

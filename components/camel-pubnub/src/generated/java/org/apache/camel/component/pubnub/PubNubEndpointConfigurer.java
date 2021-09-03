@@ -50,6 +50,11 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"pubnub"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authkey":

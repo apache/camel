@@ -32,7 +32,7 @@
             <!-- this uses the default unmarshal type that is a Map based -->
             <json id="jsonb" library="Jsonb"/>
             <!-- and this one uses our own TestPojo class as unmarshal type -->
-            <json id="pojo" library="Jsonb" unmarshalTypeName="org.apache.camel.component.jsonb.TestPojo"/>
+            <json id="pojo" library="Jsonb" unmarshalType="org.apache.camel.component.jsonb.TestPojo"/>
         </dataFormats>
 
         <route>

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -91,7 +90,7 @@ public class ElasticsearchComponent extends DefaultComponent {
         return endpoint;
     }
 
-    private List<HttpHost> parseHostAddresses(String ipsString, ElasticsearchConfiguration config) throws UnknownHostException {
+    private List<HttpHost> parseHostAddresses(String ipsString, ElasticsearchConfiguration config) {
         if (ipsString == null || ipsString.isEmpty()) {
             return null;
         }

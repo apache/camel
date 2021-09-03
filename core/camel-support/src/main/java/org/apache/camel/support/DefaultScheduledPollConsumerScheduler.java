@@ -47,7 +47,8 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
     private boolean shutdownExecutor;
     private volatile List<ScheduledFuture<?>> futures = new ArrayList<>();
     private Runnable task;
-    private int concurrentTasks = 1;
+    private int poolSize = 1;
+    private int concurrentConsumers = 1;
 
     private long initialDelay = -1;
     private long delay = -1;
@@ -111,12 +112,20 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
         this.scheduledExecutorService = scheduledExecutorService;
     }
 
-    public int getConcurrentTasks() {
-        return concurrentTasks;
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
     }
 
-    public void setConcurrentTasks(int concurrentTasks) {
-        this.concurrentTasks = concurrentTasks;
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public int getPoolSize() {
+        return poolSize;
+    }
+
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
     }
 
     @Override
@@ -170,7 +179,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
                             currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
                             consumer.getEndpoint());
                 }
-                for (int i = 0; i < concurrentTasks; i++) {
+                for (int i = 0; i < concurrentConsumers; i++) {
                     futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, currentInitialDelay, currentDelay,
                             getTimeUnit()));
                 }
@@ -180,7 +189,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
                             currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
                             consumer.getEndpoint());
                 }
-                for (int i = 0; i < concurrentTasks; i++) {
+                for (int i = 0; i < concurrentConsumers; i++) {
                     futures.add(scheduledExecutorService.scheduleAtFixedRate(task, currentInitialDelay, currentDelay,
                             getTimeUnit()));
                 }
@@ -203,7 +212,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
         if (scheduledExecutorService == null) {
             // we only need one thread in the pool to schedule this task
             this.scheduledExecutorService = getCamelContext().getExecutorServiceManager()
-                    .newScheduledThreadPool(consumer, consumer.getEndpoint().getEndpointUri(), concurrentTasks);
+                    .newScheduledThreadPool(consumer, consumer.getEndpoint().getEndpointUri(), poolSize);
             // and we should shutdown the thread pool when no longer needed
             this.shutdownExecutor = true;
         }

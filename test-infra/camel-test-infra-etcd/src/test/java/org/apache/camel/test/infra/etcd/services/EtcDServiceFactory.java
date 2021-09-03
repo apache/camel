@@ -16,28 +16,22 @@
  */
 package org.apache.camel.test.infra.etcd.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class EtcDServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(EtcDServiceFactory.class);
 
     private EtcDServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<EtcDService> builder() {
+        return new SimpleTestServiceBuilder<>("etcd");
+    }
+
     public static EtcDService createService() {
-        String instanceType = System.getProperty("etcd.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-etcd-container")) {
-            return new EtcDLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new EtcDRemoteService();
-        }
-
-        LOG.error("EtcD instance must be one of 'local-etcd-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid EtcD instance type");
+        return builder()
+                .addLocalMapping(EtcDLocalContainerService::new)
+                .addRemoteMapping(EtcDRemoteService::new)
+                .build();
     }
 }

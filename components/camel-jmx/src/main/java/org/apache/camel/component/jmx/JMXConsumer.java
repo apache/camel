@@ -166,7 +166,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     /**
      * Schedules execution of the doStart() operation to occur again after the reconnect delay
      */
-    protected void scheduleDelayedStart() throws Exception {
+    protected void scheduleDelayedStart() {
         Runnable startRunnable = new Runnable() {
             @Override
             public void run() {
@@ -319,7 +319,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     @Override
     public void handleNotification(Notification aNotification, Object aHandback) {
         JMXEndpoint ep = getEndpoint();
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         Message message = exchange.getIn();
         message.setHeader("jmx.handback", aHandback);
         try {
@@ -329,7 +329,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
                 message.setBody(aNotification);
             }
 
-            // process the notification from thred pool to not block this notification callback thread from the JVM
+            // process the notification from thread pool to not block this notification callback thread from the JVM
             executorService.submit(() -> {
                 try {
                     getProcessor().process(exchange);

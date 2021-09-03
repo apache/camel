@@ -26,23 +26,25 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -54,19 +56,15 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
     private static final AntPathMatcher PATH_MATCHER = AntPathMatcher.INSTANCE;
 
     @Override
-    public Set<String> findResourceNames(String location) throws Exception {
-        Set<KeyValueHolder<String, InputStream>> answer = new LinkedHashSet<>();
+    public Collection<Resource> findResources(String location) throws Exception {
+        Set<Resource> answer = new HashSet<>();
         doFindResources(location, answer);
-        return answer.stream().map(KeyValueHolder::getKey).collect(Collectors.toSet());
+
+        return answer;
     }
 
-    public Set<InputStream> findResources(String location) throws Exception {
-        Set<KeyValueHolder<String, InputStream>> answer = new LinkedHashSet<>();
-        doFindResources(location, answer);
-        return answer.stream().map(KeyValueHolder::getValue).collect(Collectors.toSet());
-    }
-
-    protected void doFindResources(String location, Set<KeyValueHolder<String, InputStream>> resources) throws Exception {
+    protected void doFindResources(String location, Set<Resource> resources)
+            throws Exception {
         // if its a pattern then we need to scan its root path and find
         // all matching resources using the sub pattern
         if (PATH_MATCHER.isPattern(location)) {
@@ -86,25 +84,33 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 findInClasspath(root, resources, subPattern);
             }
         } else {
+            final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+            final ResourceLoader loader = ecc.getResourceLoader();
+
             // its a single resource so load it directly
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), location);
-            resources.add(new KeyValueHolder<>(location, is));
+            resources.add(loader.resolveResource(location));
         }
     }
 
-    protected void findInFileSystem(File dir, Set<KeyValueHolder<String, InputStream>> resources, String subPattern)
+    protected void findInFileSystem(
+            File dir,
+            Set<Resource> resources,
+            String subPattern)
             throws Exception {
-        ResourceHelper.findInFileSystem(dir.toPath(), subPattern).forEach(f -> {
-            try {
-                String location = f.toString();
-                resources.add(new KeyValueHolder<>(location, Files.newInputStream(f)));
-            } catch (IOException e) {
-                // ignore
-            }
-        });
+
+        final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+        final ResourceLoader loader = ecc.getResourceLoader();
+
+        for (Path path : ResourceHelper.findInFileSystem(dir.toPath(), subPattern)) {
+            resources.add(loader.resolveResource("file:" + path.toString()));
+        }
     }
 
-    protected void findInClasspath(String packageName, Set<KeyValueHolder<String, InputStream>> resources, String subPattern) {
+    protected void findInClasspath(
+            String packageName,
+            Set<Resource> resources,
+            String subPattern) {
+
         packageName = packageName.replace('.', '/');
         // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.
         // The trailing slash is harmless for other URLs
@@ -120,8 +126,11 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
     }
 
     protected void doFind(
-            String packageName, ClassLoader classLoader, Set<KeyValueHolder<String, InputStream>> resources,
+            String packageName,
+            ClassLoader classLoader,
+            Set<Resource> resources,
             String subPattern) {
+
         Enumeration<URL> urls;
         try {
             urls = getResources(classLoader, packageName);
@@ -218,12 +227,38 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
      * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the
      * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.
      *
-     * @param stream  the inputstream of the jar file to be examined for classes
-     * @param urlPath the url of the jar file to be examined for classes
+     * @param packageName the root package name
+     * @param subPattern  optional pattern to use for matching resource names
+     * @param stream      the inputstream of the jar file to be examined for classes
+     * @param urlPath     the url of the jar file to be examined for classes
+     * @param resources   the list to add loaded resources
      */
-    private void loadImplementationsInJar(
-            String packageName, String subPattern, InputStream stream,
-            String urlPath, Set<KeyValueHolder<String, InputStream>> resources) {
+    protected void loadImplementationsInJar(
+            String packageName,
+            String subPattern,
+            InputStream stream,
+            String urlPath,
+            Set<Resource> resources) {
+
+        List<String> entries = doLoadImplementationsInJar(packageName, stream, urlPath);
+        for (String name : entries) {
+            String shortName = name.substring(packageName.length());
+            boolean match = PATH_MATCHER.match(subPattern, shortName);
+            log.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
+            if (match) {
+                final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+                final ResourceLoader loader = ecc.getResourceLoader();
+
+                resources.add(loader.resolveResource(name));
+            }
+        }
+    }
+
+    protected List<String> doLoadImplementationsInJar(
+            String packageName,
+            InputStream stream,
+            String urlPath) {
+
         List<String> entries = new ArrayList<>();
 
         JarInputStream jarStream = null;
@@ -249,18 +284,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             IOHelper.close(jarStream, urlPath, log);
         }
 
-        for (String name : entries) {
-            String shortName = name.substring(packageName.length());
-            boolean match = PATH_MATCHER.match(subPattern, shortName);
-            log.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
-            if (match) {
-                // use fqn name to load resource
-                InputStream is = getCamelContext().getClassResolver().loadResourceAsStream(name);
-                if (is != null) {
-                    resources.add(new KeyValueHolder<>(name, is));
-                }
-            }
-        }
+        return entries;
     }
 
     /**
@@ -275,7 +299,10 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
      * @param location a File object representing a directory
      */
     private void loadImplementationsInDirectory(
-            String subPattern, String parent, File location, Set<KeyValueHolder<String, InputStream>> resources)
+            String subPattern,
+            String parent,
+            File location,
+            Set<Resource> resources)
             throws FileNotFoundException {
         File[] files = location.listFiles();
         if (files == null || files.length == 0) {
@@ -296,8 +323,10 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 boolean match = PATH_MATCHER.match(subPattern, name);
                 log.debug("Found resource: {} matching pattern: {} -> {}", name, subPattern, match);
                 if (match) {
-                    InputStream is = new FileInputStream(file);
-                    resources.add(new KeyValueHolder<>(name, is));
+                    final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+                    final ResourceLoader loader = ecc.getResourceLoader();
+
+                    resources.add(loader.resolveResource("file:" + file.getPath()));
                 }
             }
         }

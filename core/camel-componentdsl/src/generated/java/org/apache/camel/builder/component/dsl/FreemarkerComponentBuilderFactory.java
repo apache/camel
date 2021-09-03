@@ -115,6 +115,22 @@ public interface FreemarkerComponentBuilderFactory {
             return this;
         }
         /**
+         * Enables/disables localized template lookup. Disabled by default.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param localizedLookup the value to set
+         * @return the dsl builder
+         */
+        default FreemarkerComponentBuilder localizedLookup(
+                boolean localizedLookup) {
+            doSetProperty("localizedLookup", localizedLookup);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -172,6 +188,7 @@ public interface FreemarkerComponentBuilderFactory {
             case "allowContextMapAll": ((FreemarkerComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((FreemarkerComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             case "lazyStartProducer": ((FreemarkerComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "localizedLookup": ((FreemarkerComponent) component).setLocalizedLookup((boolean) value); return true;
             case "autowiredEnabled": ((FreemarkerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((FreemarkerComponent) component).setConfiguration((freemarker.template.Configuration) value); return true;
             default: return false;

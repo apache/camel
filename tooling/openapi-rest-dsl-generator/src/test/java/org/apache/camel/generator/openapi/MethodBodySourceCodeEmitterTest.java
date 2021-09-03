@@ -40,8 +40,10 @@ public class MethodBodySourceCodeEmitterTest {
         emitter.emit("type", RestParamType.body);
         emitter.emit("required", true);
         emitter.emit("endParam");
+        emitter.endEmit();
 
         assertThat(emitter.result().toString()).isEqualTo("void configure() {\n"//
+                                                          + "\n"//
                                                           + "  rest()\n"//
                                                           + "    .put(\"/pet\")\n"//
                                                           + "      .consumes(\"application/json,application/xml\")\n"//
@@ -51,6 +53,7 @@ public class MethodBodySourceCodeEmitterTest {
                                                           + "        .type(org.apache.camel.model.rest.RestParamType.body)\n"//
                                                           + "        .required(true)\n"//
                                                           + "      .endParam();\n"//
+                                                          + "\n"//
                                                           + "}\n");
     }
 }

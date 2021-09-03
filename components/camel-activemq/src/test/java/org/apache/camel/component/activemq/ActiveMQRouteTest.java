@@ -18,9 +18,9 @@ package org.apache.camel.component.activemq;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.activemq.support.ActiveMQTestSupport;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jms.connection.JmsTransactionManager;
@@ -30,7 +30,8 @@ import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComp
 /**
  *
  */
-public class ActiveMQRouteTest extends CamelTestSupport {
+public class ActiveMQRouteTest extends ActiveMQTestSupport {
+
     private static final String EXPECTED_BODY = "Hello there!";
     protected MockEndpoint resultEndpoint;
     protected String startEndpointUri = "activemq:queue:test.a";
@@ -62,7 +63,7 @@ public class ActiveMQRouteTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // START SNIPPET: example
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+        camelContext.addComponent("activemq", activeMQComponent(vmUri("?broker.persistent=false")));
         // END SNIPPET: example
 
         return camelContext;

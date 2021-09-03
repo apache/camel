@@ -49,7 +49,7 @@ public class HazelcastInstanceConsumer extends DefaultConsumer {
         }
 
         private void sendExchange(MembershipEvent event, String action) {
-            Exchange exchange = getEndpoint().createExchange();
+            Exchange exchange = createExchange(false);
 
             HazelcastComponentHelper.setListenerHeaders(exchange, HazelcastConstants.INSTANCE_LISTENER, action);
 
@@ -71,6 +71,8 @@ public class HazelcastInstanceConsumer extends DefaultConsumer {
                         "Error processing exchange for Hazelcast consumer on your Hazelcast cluster.", exchange,
                         exchange.getException());
             }
+
+            releaseExchange(exchange, false);
         }
 
     }

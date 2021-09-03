@@ -647,7 +647,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
 
     protected String addSignedDataObjectProperties(Document doc, Element signedProperties, Input input)
             throws XmlSignatureException,
-            SAXException, IOException, ParserConfigurationException {
+            IOException, ParserConfigurationException {
         if (isAddSignedDataObjectPropeties()) {
             Element signedDataObjectProperties = createElement("SignedDataObjectProperties", doc, input);
             setIdAttributeFromHeader(XmlSignatureConstants.HEADER_XADES_SIGNED_DATA_OBJECT_PROPERTIES_ID,
@@ -666,8 +666,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected void addCommitmentTypeIndication(Element signedDataObjectProperties, Document doc, Input input)
-            throws SAXException,
-            IOException, ParserConfigurationException, XmlSignatureException {
+            throws IOException, ParserConfigurationException, XmlSignatureException {
         if (!isAddCommitmentType()) {
             return;
         }
@@ -718,8 +717,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         return getCommitmentTypeId() != null && !getCommitmentTypeId().isEmpty();
     }
 
-    protected String addDataObjectFormat(Element signedDataObjectProperties, Document doc, Input input)
-            throws XmlSignatureException {
+    protected String addDataObjectFormat(Element signedDataObjectProperties, Document doc, Input input) {
         if (!isAddDataObjectFormat()) {
             return null;
         }
@@ -776,9 +774,9 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected boolean isAddDataObjectFormat() {
-        return (getDataObjectFormatIdentifier() != null && !getDataObjectFormatIdentifier().isEmpty())
-                || (getDataObjectFormatDescription() != null && !getDataObjectFormatDescription().isEmpty())
-                || (getDataObjectFormatMimeType() != null && !getDataObjectFormatMimeType().isEmpty());
+        return getDataObjectFormatIdentifier() != null && !getDataObjectFormatIdentifier().isEmpty()
+                || getDataObjectFormatDescription() != null && !getDataObjectFormatDescription().isEmpty()
+                || getDataObjectFormatMimeType() != null && !getDataObjectFormatMimeType().isEmpty();
     }
 
     protected void addSignedSignatureProperties(Document doc, Element signedProperties, Input input) throws Exception {
@@ -798,7 +796,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
 
     protected boolean isAddSignedSignatureProperties() throws Exception {
         return isAddSigningTime() || getSigningCertificate() != null
-                || (getSigningCertificateChain() != null && getSigningCertificateChain().length > 0) || isAddSignaturePolicy()
+                || getSigningCertificateChain() != null && getSigningCertificateChain().length > 0 || isAddSignaturePolicy()
                 || isAddSignatureProductionPlace() || isAddSignerRole();
     }
 
@@ -845,8 +843,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected void addSignerRole(Document doc, Element signedSignatureProperties, Input input)
-            throws XmlSignatureException, SAXException,
-            IOException, ParserConfigurationException {
+            throws XmlSignatureException, IOException, ParserConfigurationException {
         if (!isAddSignerRole()) {
             return;
         }
@@ -887,8 +884,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected void addSignaturePolicyIdentifier(Document doc, Element signedProperties, Input input)
-            throws XmlSignatureException,
-            SAXException, IOException, ParserConfigurationException {
+            throws XmlSignatureException, IOException, ParserConfigurationException {
         if (!isAddSignaturePolicy()) {
             return;
         }
@@ -1181,7 +1177,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected String calculateDigest(String algorithm, byte[] bytes)
-            throws NoSuchAlgorithmException, CertificateEncodingException {
+            throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance(algorithm);
         byte[] digestBytes = digest.digest(bytes);
         return new Base64().encodeAsString(digestBytes);

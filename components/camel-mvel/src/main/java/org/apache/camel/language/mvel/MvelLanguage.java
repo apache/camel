@@ -16,8 +16,13 @@
  */
 package org.apache.camel.language.mvel;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
 
@@ -25,7 +30,7 @@ import org.apache.camel.support.LanguageSupport;
  * An <a href="http://mvel.codehaus.org/">MVEL</a> {@link org.apache.camel.spi.Language} plugin
  */
 @Language("mvel")
-public class MvelLanguage extends LanguageSupport {
+public class MvelLanguage extends LanguageSupport implements ScriptingLanguage {
 
     @Override
     public Predicate createPredicate(String expression) {
@@ -39,4 +44,15 @@ public class MvelLanguage extends LanguageSupport {
         return new MvelExpression(this, expression, Object.class);
     }
 
+    @Override
+    public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
+        script = loadResource(script);
+        try {
+            Serializable compiled = org.mvel2.MVEL.compileExpression(script);
+            Object value = org.mvel2.MVEL.executeExpression(compiled, bindings);
+            return getCamelContext().getTypeConverter().convertTo(resultType, value);
+        } catch (Exception e) {
+            throw new ExpressionIllegalSyntaxException(script, e);
+        }
+    }
 }

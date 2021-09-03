@@ -30,6 +30,7 @@ Camel provides the following Idempotent Consumer implementations:
 * xref:latest@manual:ROOT:spring.adoc[SpringCacheIdempotentRepository]
 * xref:components::ehcache-component.adoc[EhcacheIdempotentRepository]
 * xref:components::kafka-component.adoc[KafkaIdempotentRepository]
+* xref:components::hbase-component.adoc[HbaseIdempotentRepository]
 
 == Options
 

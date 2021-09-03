@@ -92,7 +92,9 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new FlatpackConsumer(this, processor, loadBalancer);
+        FlatpackConsumer consumer = new FlatpackConsumer(this, processor, loadBalancer);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public void processDataSet(Exchange originalExchange, DataSet dataSet, int counter) throws Exception {

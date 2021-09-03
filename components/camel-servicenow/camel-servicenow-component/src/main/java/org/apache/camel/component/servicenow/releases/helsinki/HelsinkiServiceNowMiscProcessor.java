@@ -52,7 +52,6 @@ class HelsinkiServiceNowMiscProcessor extends AbstractServiceNowProcessor {
     private void retrieveUserRoleInheritance(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)

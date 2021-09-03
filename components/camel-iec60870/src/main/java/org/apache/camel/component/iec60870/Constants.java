@@ -22,4 +22,9 @@ public interface Constants {
     String PARAM_PROTOCOL_OPTIONS = "protocolOptions";
 
     String PARAM_CONNECTION_OPTIONS = "connectionOptions";
+
+    String IEC60870_VALUE = "CamelIec60870Value";
+    String IEC60870_TIMESTAMP = "CamelIec60870Timestamp";
+    String IEC60870_QUALITY = "CamelIec60870Quality";
+    String IEC60870_OVERFLOW = "CamelIec60870Overflow";
 }

@@ -18,18 +18,24 @@ package org.apache.camel.component.netty;
 
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test ensures LogCaptureAppender is configured properly
  */
+@Isolated
 public class LogCaptureTest {
     @Test
     public void testCapture() {
         InternalLoggerFactory.getInstance(ResourceLeakDetector.class).error("testError");
-        assertFalse(LogCaptureAppender.getEvents().isEmpty());
+        assertFalse(LogCaptureAppender.getEvents(ResourceLeakDetector.class).isEmpty());
+        assertTrue(LogCaptureAppender.hasEventsFor(ResourceLeakDetector.class));
+        assertTrue(LogCaptureAppender.getEvents(DefaultErrorHandler.class).isEmpty());
         LogCaptureAppender.reset();
     }
 }

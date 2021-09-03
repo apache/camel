@@ -24,19 +24,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-docker</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Docker</name>
     <description>Camel Docker Support</description>
-
-
-    <properties>
-        <jffi.version>1.2.7</jffi.version>
-        <jnr-x86asm.version>1.0.2</jnr-x86asm.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -49,27 +43,6 @@
             <groupId>com.github.docker-java</groupId>
             <artifactId>docker-java</artifactId>
             <version>${docker-java-version}</version>
-        </dependency>
-
-        <!-- need to avoid the snapshot dependency -->
-        <dependency>
-            <groupId>com.github.jnr</groupId>
-            <artifactId>jffi</artifactId>
-            <version>${jffi.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.jnr</groupId>
-            <artifactId>jffi</artifactId>
-            <version>${jffi.version}</version>
-            <scope>runtime</scope>
-            <classifier>native</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.jnr</groupId>
-            <artifactId>jnr-x86asm</artifactId>
-            <version>${jnr-x86asm.version}</version>
         </dependency>
 
         <!-- logging -->

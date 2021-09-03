@@ -196,8 +196,8 @@ public final class OgnlHelper {
         for (int i = 0; i < ognl.length(); i++) {
             char ch = ognl.charAt(i);
             // special for starting a new method
-            if (j == 0 || (j == 1 && ognl.charAt(i - 1) == '?')
-                    || (ch != '.' && ch != '?' && ch != ']')) {
+            if (j == 0 || j == 1 && ognl.charAt(i - 1) == '?'
+                    || ch != '.' && ch != '?' && ch != ']') {
                 sb.append(ch);
                 // special if we are doing square bracket
                 if (ch == '[' && parenthesisBracketCnt == 0) {

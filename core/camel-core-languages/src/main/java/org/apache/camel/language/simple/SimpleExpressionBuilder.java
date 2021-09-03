@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
@@ -190,7 +191,7 @@ public final class SimpleExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 int num1 = exp1.evaluate(exchange, Integer.class);
                 int num2 = exp2.evaluate(exchange, Integer.class);
-                Random random = new Random();
+                Random random = new Random(); // NOSONAR
                 int randomNum = random.nextInt(num2 - num1) + num1;
                 return randomNum;
             }
@@ -223,7 +224,7 @@ public final class SimpleExpressionBuilder {
     public static Expression randomExpression(final int min, final int max) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Random random = new Random();
+                Random random = new Random(); // NOSONAR
                 int randomNum = random.nextInt(max - min) + min;
                 return randomNum;
             }
@@ -869,7 +870,7 @@ public final class SimpleExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Object exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                    exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
                 }
 
                 if (exception == null) {

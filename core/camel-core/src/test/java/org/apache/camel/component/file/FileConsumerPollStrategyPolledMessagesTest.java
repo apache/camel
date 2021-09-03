@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,8 +40,6 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
     private static int maxPolls;
     private final CountDownLatch latch = new CountDownLatch(1);
 
-    private String fileUrl = "file://target/data/pollstrategy/?pollStrategy=#myPoll&initialDelay=0&delay=10";
-
     @Override
     protected Registry createRegistry() throws Exception {
         Registry jndi = super.createRegistry();
@@ -51,16 +48,19 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/pollstrategy");
-        super.setUp();
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
+                        .convertBodyTo(String.class).to("mock:result");
+            }
+        };
     }
 
     @Test
     public void testPolledMessages() throws Exception {
-        template.sendBodyAndHeader("file:target/data/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/data/pollstrategy/", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start route now files have been created
         context.getRouteController().startRoute("foo");
@@ -74,15 +74,6 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
         assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         assertEquals(2, maxPolls);
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(fileUrl).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
-            }
-        };
     }
 
     private class MyPollStrategy implements PollingConsumerPollStrategy {

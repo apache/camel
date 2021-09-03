@@ -26,7 +26,6 @@ import org.apache.camel.component.atomix.client.AbstractAtomixClientProducer;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_OLD_VALUE;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_READ_CONSISTENCY;
@@ -37,7 +36,7 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
     private final AtomixValueConfiguration configuration;
 
     protected AtomixValueProducer(AtomixValueEndpoint endpoint) {
-        super(endpoint);
+        super(endpoint, endpoint.getConfiguration().getDefaultAction().name());
         this.configuration = endpoint.getConfiguration();
     }
 
@@ -51,7 +50,7 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
     }
 
     @InvokeOnHeader("SET")
-    boolean onSet(Message message, AsyncCallback callback) throws Exception {
+    void onSet(Message message, AsyncCallback callback) {
         final DistributedValue<Object> value = getResource(message);
         final long ttl = getResourceTtl(message);
         final Object val = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
@@ -65,12 +64,10 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
             value.set(val).thenAccept(
                     result -> processResult(message, callback, result));
         }
-
-        return false;
     }
 
     @InvokeOnHeader("GET")
-    boolean onGet(Message message, AsyncCallback callback) throws Exception {
+    void onGet(Message message, AsyncCallback callback) {
         final DistributedValue<Object> value = getResource(message);
         final ReadConsistency consistency
                 = message.getHeader(RESOURCE_READ_CONSISTENCY, configuration::getReadConsistency, ReadConsistency.class);
@@ -82,12 +79,10 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
             value.get().thenAccept(
                     result -> processResult(message, callback, result));
         }
-
-        return false;
     }
 
     @InvokeOnHeader("GET_AND_SET")
-    boolean onGetAndSet(Message message, AsyncCallback callback) throws Exception {
+    void onGetAndSet(Message message, AsyncCallback callback) {
         final DistributedValue<Object> value = getResource(message);
         final long ttl = getResourceTtl(message);
         final Object val = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
@@ -101,12 +96,10 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
             value.getAndSet(val).thenAccept(
                     result -> processResult(message, callback, result));
         }
-
-        return false;
     }
 
     @InvokeOnHeader("COMPARE_AND_SET")
-    boolean onCompareAndSet(Message message, AsyncCallback callback) throws Exception {
+    void onCompareAndSet(Message message, AsyncCallback callback) {
         final DistributedValue<Object> value = getResource(message);
         final long ttl = getResourceTtl(message);
         final Object newVal = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
@@ -122,18 +115,11 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
             value.compareAndSet(oldVal, newVal).thenAccept(
                     result -> processResult(message, callback, result));
         }
-
-        return false;
     }
 
     // *********************************
     // Implementation
     // *********************************
-
-    @Override
-    protected String getProcessorKey(Message message) {
-        return message.getHeader(RESOURCE_ACTION, configuration::getDefaultAction, String.class);
-    }
 
     @Override
     protected String getResourceName(Message message) {

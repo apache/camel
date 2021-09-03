@@ -266,7 +266,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // enrich the component model with additional configurations for api components
-        enhanceComponentModelWithApiModel(componentModel);
+        if (componentModel.isApi()) {
+            enhanceComponentModelWithApiModel(componentModel);
+        }
 
         String json = JsonMapper.createParameterJsonSchema(componentModel);
 
@@ -458,10 +460,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         String pfqn;
         boolean hasSuper;
-        if (parentData != null) {
+        if (parentData != null
+                && loadClass(componentModel.getJavaType()).getSuperclass() == loadClass(parentData.getJavaType())) {
             try {
                 pfqn = classElement.getSuperclass().getName() + "Configurer";
-                loadClass(pfqn);
                 hasSuper = true;
             } catch (NoClassDefFoundError e) {
                 pfqn = "org.apache.camel.support.component.PropertyConfigurerSupport";
@@ -650,7 +652,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             boolean annotationBasedOptions = fields.stream().anyMatch(f -> f.getAnnotation(Metadata.class) != null)
                     || methods.stream().anyMatch(m -> m.getAnnotation(Metadata.class) != null);
 
-            if (methods.size() > 0 && !annotationBasedOptions) {
+            if (!methods.isEmpty() && !annotationBasedOptions) {
                 getLog().warn("Component class " + classElement.getName() + " has not been marked up with @Metadata for "
                               + methods.size() + " options.");
             }
@@ -863,10 +865,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         while (true) {
             String apiName = null;
             boolean apiOption = false;
-            ApiParams apiParams = classElement.getAnnotation(ApiParams.class);
-            if (apiParams != null) {
-                apiName = apiParams.apiName();
-                apiOption = !Strings.isNullOrEmpty(apiName);
+            // only check for api if component is API based
+            ApiParams apiParams = null;
+            if (componentModel.isApi()) {
+                apiParams = classElement.getAnnotation(ApiParams.class);
+                if (apiParams != null) {
+                    apiName = apiParams.apiName();
+                    apiOption = !Strings.isNullOrEmpty(apiName);
+                }
             }
 
             String excludedProperties = "";
@@ -1019,9 +1025,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
 
                 UriParam param = fieldElement.getAnnotation(UriParam.class);
-                ApiParam apiParam = fieldElement.getAnnotation(ApiParam.class);
-                fieldName = fieldElement.getName();
                 if (param != null) {
+                    ApiParam apiParam = fieldElement.getAnnotation(ApiParam.class);
+                    fieldName = fieldElement.getName();
                     String name = prefix + (Strings.isNullOrEmpty(param.name()) ? fieldName : param.name());
 
                     // should we exclude the name?
@@ -1376,7 +1382,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         String propName = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         for (MethodSource<JavaClassSource> getter : source.getMethods()) {
-            if (getter.getParameters().size() == 0
+            if (getter.getParameters().isEmpty()
                     && (getter.getName().equals("get" + propName) || getter.getName().equals("is" + propName))) {
                 String doc = getJavaDocText(loadJavaSource(classElement.getName()), getter);
                 if (!Strings.isNullOrEmpty(doc)) {
@@ -1396,7 +1402,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     }
                 }
                 for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                    if (builder.getParameters().size() == 0 && builder.getName().equals(name)) {
+                    if (builder.getParameters().isEmpty() && builder.getName().equals(name)) {
                         String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
                         if (!Strings.isNullOrEmpty(doc)) {
                             return doc;
@@ -1413,7 +1419,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
             }
             for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                if (builder.getParameters().size() == 0 && builder.getName().equals(fieldName)) {
+                if (builder.getParameters().isEmpty() && builder.getName().equals(fieldName)) {
                     String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
                     if (!Strings.isNullOrEmpty(doc)) {
                         return doc;
@@ -1431,7 +1437,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         JavaDoc<?> javaDoc = member.getJavaDoc();
         Javadoc jd = (Javadoc) javaDoc.getInternal();
-        if (source != null && jd.tags().size() > 0) {
+        if (source != null && !jd.tags().isEmpty()) {
             ASTNode n = (ASTNode) jd.tags().get(0);
             String txt = source.substring(n.getStartPosition(), n.getStartPosition() + n.getLength());
             return txt

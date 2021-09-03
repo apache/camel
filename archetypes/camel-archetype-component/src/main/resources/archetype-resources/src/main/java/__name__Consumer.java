@@ -57,7 +57,7 @@ public class ${name}Consumer extends DefaultConsumer {
     }
 
     private void onEventListener(final Object event) {
-        final Exchange exchange = endpoint.createExchange();
+        final Exchange exchange = createExchange(false);
 
         exchange.getIn().setBody("Hello World! The time is " + event);
 
@@ -70,6 +70,7 @@ public class ${name}Consumer extends DefaultConsumer {
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
+            releaseExchange(exchange, false);
         }
     }
 }

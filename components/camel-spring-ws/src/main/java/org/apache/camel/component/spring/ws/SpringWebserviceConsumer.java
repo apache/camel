@@ -27,10 +27,9 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.support.DefaultConsumer;
 import org.springframework.ws.WebServiceMessage;
@@ -61,25 +60,31 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
      */
     @Override
     public void invoke(MessageContext messageContext) throws Exception {
-        Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOptionalOut);
-        populateExchangeFromMessageContext(messageContext, exchange);
+        Exchange exchange = createExchange(false);
+        try {
+            populateExchangeFromMessageContext(messageContext, exchange);
 
-        // populate camel exchange with breadcrumb from transport header        
-        populateExchangeWithBreadcrumbFromMessageContext(messageContext, exchange);
-
-        // start message processing
-        getProcessor().process(exchange);
-
-        if (exchange.getException() != null) {
-            throw exchange.getException();
-        } else if (exchange.getPattern().isOutCapable()) {
-            Message responseMessage = exchange.getMessage(Message.class);
-            if (responseMessage != null) {
-                Source responseBody = responseMessage.getBody(Source.class);
-                WebServiceMessage response = messageContext.getResponse();
-                configuration.getMessageFilter().filterConsumer(exchange, response);
-                toResult(responseBody, response.getPayloadResult());
+            // populate camel exchange with breadcrumb from transport header
+            if (getEndpoint().getCamelContext().isUseBreadcrumb()) {
+                populateExchangeWithBreadcrumbFromMessageContext(messageContext, exchange);
             }
+
+            // start message processing
+            getProcessor().process(exchange);
+
+            if (exchange.getException() != null) {
+                throw exchange.getException();
+            } else if (exchange.getPattern().isOutCapable()) {
+                Message responseMessage = exchange.getMessage(Message.class);
+                if (responseMessage != null) {
+                    Source responseBody = responseMessage.getBody(Source.class);
+                    WebServiceMessage response = messageContext.getResponse();
+                    configuration.getMessageFilter().filterConsumer(exchange, response);
+                    toResult(responseBody, response.getPayloadResult());
+                }
+            }
+        } finally {
+            releaseExchange(exchange, false);
         }
     }
 
@@ -116,7 +121,9 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         if (messageContext != null) {
             HttpServletRequest obj = (HttpServletRequest) messageContext.getProperty("transport.http.servletRequest");
             String breadcrumbId = obj.getHeader(Exchange.BREADCRUMB_ID);
-            exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
+            if (breadcrumbId != null) {
+                exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
+            }
         }
     }
 
@@ -125,10 +132,17 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
 
         // create inbound message
         WebServiceMessage request = messageContext.getRequest();
-        SpringWebserviceMessage inMessage = new SpringWebserviceMessage(exchange.getContext(), request);
-        exchange.setIn(inMessage);
-        extractSourceFromSoapHeader(inMessage.getHeaders(), request);
-        extractAttachmentsFromRequest(request, new DefaultAttachmentMessage(inMessage));
+
+        SpringWebserviceMessage swm = exchange.adapt(ExtendedExchange.class).getInOrNull(SpringWebserviceMessage.class);
+        if (swm == null) {
+            swm = new SpringWebserviceMessage(exchange.getContext(), request);
+            exchange.setIn(swm);
+        } else {
+            swm.setWebServiceMessage(request);
+        }
+
+        extractSourceFromSoapHeader(exchange.getIn().getHeaders(), request);
+        extractAttachmentsFromRequest(request, exchange);
     }
 
     private void populateExchangeWithPropertiesFromMessageContext(
@@ -173,7 +187,6 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                     SoapHeaderElement element = elementIter.next();
                     QName name = element.getName();
                     headers.put(name.getLocalPart(), element);
-
                 }
             }
         }
@@ -181,12 +194,19 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
 
     private void extractAttachmentsFromRequest(
             final WebServiceMessage request,
-            final AttachmentMessage inMessage) {
+            final Exchange exchange) {
+
+        DefaultAttachmentMessage dam = null;
+
         if (request instanceof MimeMessage) {
             Iterator<Attachment> attachmentsIterator = ((MimeMessage) request).getAttachments();
             while (attachmentsIterator.hasNext()) {
                 Attachment attachment = attachmentsIterator.next();
-                inMessage.addAttachment(attachment.getContentId(), attachment.getDataHandler());
+                if (dam == null) {
+                    // this is just a wrapper which will set data on the IN
+                    dam = new DefaultAttachmentMessage(exchange.getIn());
+                }
+                dam.addAttachment(attachment.getContentId(), attachment.getDataHandler());
             }
         }
     }

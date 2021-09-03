@@ -16,6 +16,8 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.function.BiFunction;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -27,6 +29,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.support.DefaultExchange;
 
 public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
@@ -39,7 +42,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
     public Processor createProcessor() throws Exception {
 
         // if no timeout then we should block, and there use a negative timeout
-        long time = definition.getTimeout() != null ? parseDuration(definition.getTimeout()) : -1;
+        long time = parseDuration(definition.getTimeout(), -1);
         boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
 
         PollEnricher enricher;
@@ -62,8 +65,9 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         if (definition.getAggregateOnException() != null) {
             enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         }
-        if (definition.getCacheSize() != null) {
-            enricher.setCacheSize(parseInt(definition.getCacheSize()));
+        Integer num = parseInt(definition.getCacheSize());
+        if (num != null) {
+            enricher.setCacheSize(num);
         }
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
 
@@ -72,10 +76,19 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
+        String ref = parseString(definition.getAggregationStrategyRef());
+        if (strategy == null && ref != null) {
+            Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy instanceof BiFunction) {
+                AggregationStrategyBiFunctionAdapter adapter
+                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                if (definition.getAggregationStrategyMethodName() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                }
+                strategy = adapter;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(
                         aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
@@ -90,10 +103,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
             }
         }
 
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
-
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
         return strategy;
     }
 

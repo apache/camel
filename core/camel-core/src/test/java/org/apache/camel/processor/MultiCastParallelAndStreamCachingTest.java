@@ -46,7 +46,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory("target/camel/cache");
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(5L);
 
                 from("direct:start").multicast().parallelProcessing().stopOnException().to("direct:a", "direct:b").end()

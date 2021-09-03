@@ -20,13 +20,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Helper class to help wrapping content into GZIP input and output streams.
@@ -106,6 +106,6 @@ public final class GZIPHelper {
     }
 
     public static boolean isGzip(String header) {
-        return header != null && header.toLowerCase(Locale.ENGLISH).contains("gzip");
+        return StringHelper.containsIgnoreCase(header, "gzip");
     }
 }

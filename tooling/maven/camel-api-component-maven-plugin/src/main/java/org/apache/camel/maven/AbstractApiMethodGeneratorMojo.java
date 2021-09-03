@@ -201,7 +201,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
-               + "IntegrationTest";
+               + "IT";
     }
 
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
@@ -257,15 +257,6 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
         context.put("parameters", parameters);
         return context;
-    }
-
-    private String replaceAlias(String name) {
-        for (ApiMethodAlias alias : aliases) {
-            if (name.matches(alias.getMethodPattern())) {
-                return alias.getMethodAlias();
-            }
-        }
-        return name;
     }
 
     private File getConfigurationFile() throws MojoExecutionException {

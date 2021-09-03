@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -59,16 +59,9 @@
 
         <!-- we want to test these modules first to catch any errors early as possible -->
         <module>camel-test</module>
-        <module>camel-test-cdi</module>
-        <module>camel-test-spring</module>
-        <module>camel-testcontainers</module>
-        <module>camel-testcontainers-spring</module>
-        <module>camel-test-junit5</module>
-        <module>camel-test-spring-junit5</module>
-        <module>camel-testcontainers-junit5</module>
-        <module>camel-testcontainers-spring-junit5</module>
         <module>camel-spring</module>
         <module>camel-spring-main</module>
+        <module>camel-spring-xml</module>
         <module>camel-groovy</module>
         <module>camel-attachments</module>
         <module>camel-http-base</module>
@@ -94,7 +87,6 @@
         <module>camel-ahc</module>
         <module>camel-amqp</module>
         <module>camel-any23</module>
-        <module>camel-apns</module>
         <module>camel-arangodb</module>
         <module>camel-as2</module>
         <module>camel-asn1</module>
@@ -106,49 +98,8 @@
         <module>camel-atomix</module>
         <module>camel-avro</module>
         <module>camel-avro-rpc</module>
-        <module>camel-aws-cw</module>
-        <module>camel-aws-ddb</module>
-        <module>camel-aws-ec2</module>
-        <module>camel-aws-ecs</module>
-        <module>camel-aws-eks</module>
-        <module>camel-aws-iam</module>
-        <module>camel-aws-kinesis</module>
-        <module>camel-aws-kms</module>
-        <module>camel-aws-lambda</module>
-        <module>camel-aws-mq</module>
-        <module>camel-aws-msk</module>
-        <module>camel-aws-s3</module>
-        <module>camel-aws-sdb</module>
-        <module>camel-aws-ses</module>
-        <module>camel-aws-sns</module>
-        <module>camel-aws-sqs</module>
-        <module>camel-aws-swf</module>
-        <module>camel-aws-translate</module>
-        <module>camel-aws2-athena</module>
-        <module>camel-aws2-cw</module>
-        <module>camel-aws2-ddb</module>
-        <module>camel-aws2-ec2</module>
-        <module>camel-aws2-ecs</module>
-        <module>camel-aws2-eks</module>
-        <module>camel-aws2-eventbridge</module>
-        <module>camel-aws2-iam</module>
-        <module>camel-aws2-kinesis</module>
-        <module>camel-aws2-kms</module>
-        <module>camel-aws2-lambda</module>
-        <module>camel-aws2-msk</module>
-        <module>camel-aws2-mq</module>
-        <module>camel-aws2-s3</module>
-        <module>camel-aws2-ses</module>
-        <module>camel-aws2-sns</module>
-        <module>camel-aws2-sqs</module>
-        <module>camel-aws2-sts</module>
-        <module>camel-aws2-translate</module>
-        <module>camel-aws-xray</module>
+        <module>camel-aws</module>
         <module>camel-azure</module>
-        <module>camel-azure-storage-blob</module>
-        <module>camel-azure-storage-datalake</module>
-        <module>camel-azure-storage-queue</module>
-        <module>camel-azure-eventhubs</module>
         <module>camel-barcode</module>
         <module>camel-base64</module>
         <module>camel-bean-validator</module>
@@ -173,16 +124,11 @@
         <module>camel-corda</module>
         <module>camel-couchbase</module>
         <module>camel-couchdb</module>
-        <module>camel-crypto-cms</module>
         <module>camel-crypto</module>
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
         <module>camel-datasonnet</module>
-        <module>camel-debezium-common</module>
-        <module>camel-debezium-mongodb</module>
-        <module>camel-debezium-mysql</module>
-        <module>camel-debezium-postgres</module>
-        <module>camel-debezium-sqlserver</module>
+        <module>camel-debezium</module>
         <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
         <module>camel-djl</module>
@@ -211,12 +157,7 @@
         <module>camel-geocoder</module>
         <module>camel-git</module>
         <module>camel-github</module>
-        <module>camel-google-bigquery</module>
-        <module>camel-google-calendar</module>
-        <module>camel-google-drive</module>
-        <module>camel-google-mail</module>
-        <module>camel-google-pubsub</module>
-        <module>camel-google-sheets</module>
+        <module>camel-google</module>
         <module>camel-gora</module>
         <module>camel-grape</module>
         <module>camel-graphql</module>
@@ -229,7 +170,7 @@
         <module>camel-hdfs</module>
         <module>camel-headersmap</module>
         <module>camel-hl7</module>
-        <module>camel-huaweicloud-smn</module>
+        <module>camel-huawei</module>
         <module>camel-ical</module>
         <module>camel-iec60870</module>
         <module>camel-ignite</module>
@@ -239,6 +180,8 @@
         <module>camel-irc</module>
         <module>camel-ironmq</module>
         <module>camel-jackson</module>
+        <module>camel-jackson-avro</module>
+        <module>camel-jackson-protobuf</module>
         <module>camel-jacksonxml</module>
         <module>camel-jasypt</module>
         <module>camel-jaxb</module>
@@ -266,10 +209,12 @@
         <module>camel-jsonata</module>
         <module>camel-jsonb</module>
         <module>camel-jsonpath</module>
+        <module>camel-json-patch</module>
         <module>camel-jt400</module>
         <module>camel-jta</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
+        <module>camel-kamelet-reify</module>
         <module>camel-kubernetes</module>
         <module>camel-kudu</module>
         <module>camel-ldap</module>
@@ -283,10 +228,7 @@
         <module>camel-mail</module>
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
-        <module>camel-microprofile-config</module>
-        <module>camel-microprofile-fault-tolerance</module>
-        <module>camel-microprofile-health</module>
-        <module>camel-microprofile-metrics</module>
+        <module>camel-microprofile</module>
         <module>camel-milo</module>
         <module>camel-mina</module>
         <module>camel-minio</module>
@@ -330,6 +272,7 @@
         <module>camel-reactor</module>
         <module>camel-redis</module>
         <module>camel-resilience4j</module>
+        <module>camel-resourceresolver-github</module>
         <module>camel-resteasy</module>
         <module>camel-rest-swagger</module>
         <module>camel-rest-openapi</module>
@@ -361,6 +304,7 @@
         <module>camel-spring-batch</module>
         <module>camel-spring-integration</module>
         <module>camel-spring-javaconfig</module>
+        <module>camel-spring-jdbc</module>
         <module>camel-spring-ldap</module>
         <module>camel-spring-rabbitmq</module>
         <module>camel-spring-redis</module>
@@ -388,9 +332,6 @@
         <module>camel-univocity-parsers</module>
         <module>camel-velocity</module>
         <module>camel-vertx</module>
-        <module>camel-vertx-http</module>
-        <module>camel-vertx-websocket</module>
-        <module>camel-vertx-kafka</module>
         <module>camel-weather</module>
         <module>camel-web3j</module>
         <module>camel-webhook</module>
@@ -421,6 +362,33 @@
     </properties>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin-version}</version>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <reuseForks>true</reuseForks>
+                        <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                        <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                        <systemPropertyVariables>
+                            <visibleassertions.silence>true</visibleassertions.silence>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -445,6 +413,14 @@
                         <phase>prepare-package</phase>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-core-model</artifactId>
+                        <version>${project.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -496,6 +472,8 @@
                         <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
                         <Import-Package>${camel.osgi.import}</Import-Package>
                         <Export-Package>${camel.osgi.export}</Export-Package>
+                        <!-- do not include any resources as not needed-->
+                        <Include-Resource></Include-Resource>
                         <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
                         <Private-Package>${camel.osgi.private.pkg}</Private-Package>
                         <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
@@ -537,8 +515,12 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-format-plugin</artifactId>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

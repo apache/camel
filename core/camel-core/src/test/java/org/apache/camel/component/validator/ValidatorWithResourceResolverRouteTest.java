@@ -77,7 +77,7 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
         // we have to do it here, because we need the context created first
         CatalogManager.getStaticManager().setIgnoreMissingProperties(true);
         CatalogResolver catalogResolver = new CatalogResolver(true);
-        URL catalogUrl = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(),
+        URL catalogUrl = ResourceHelper.resolveMandatoryResourceAsUrl(context,
                 "org/apache/camel/component/validator/catalog.cat");
         catalogResolver.getCatalog().parseCatalog(catalogUrl);
         LSResourceResolver resourceResolver = new CatalogLSResourceResolver(catalogResolver);

@@ -24,13 +24,15 @@ import java.util.concurrent.TimeUnit;
 
 import javax.activation.DataHandler;
 
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.vertx.core.VertxOptions;
-import io.vertx.ext.web.handler.BodyHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -87,14 +89,8 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testEngineSetup() throws Exception {
-        final int port = AvailablePortFinder.getNextAvailable();
-        final CamelContext context = new DefaultCamelContext();
-
+        final CamelContext context = createCamelContext();
         try {
-            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-            conf.setBindPort(port);
-
-            context.addService(new VertxPlatformHttpServer(conf));
             context.start();
 
             assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
@@ -109,14 +105,9 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testEngine() throws Exception {
-        final int port = AvailablePortFinder.getNextAvailable();
-        final CamelContext context = new DefaultCamelContext();
+        final CamelContext context = createCamelContext();
 
         try {
-            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-            conf.setBindPort(port);
-
-            context.addService(new VertxPlatformHttpServer(conf));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -132,7 +123,6 @@ public class VertxPlatformHttpEngineTest {
             context.start();
 
             given()
-                    .port(conf.getBindPort())
                     .when()
                     .get("/get")
                     .then()
@@ -140,7 +130,6 @@ public class VertxPlatformHttpEngineTest {
                     .body(equalTo("get"));
 
             given()
-                    .port(conf.getBindPort())
                     .body("post")
                     .when()
                     .post("/post")
@@ -155,20 +144,15 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testSlowConsumer() throws Exception {
-        final int port = AvailablePortFinder.getNextAvailable();
-        final CamelContext context = new DefaultCamelContext();
+        final CamelContext context = createCamelContext();
 
         try {
-            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-            conf.setBindPort(port);
-
             context.getRegistry().bind(
                     "vertx-options",
                     new VertxOptions()
                             .setMaxEventLoopExecuteTime(2)
                             .setMaxEventLoopExecuteTimeUnit(TimeUnit.SECONDS));
 
-            context.addService(new VertxPlatformHttpServer(conf));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -182,7 +166,6 @@ public class VertxPlatformHttpEngineTest {
             context.start();
 
             given()
-                    .port(conf.getBindPort())
                     .when()
                     .get("/get")
                     .then()
@@ -196,14 +179,9 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testFailingConsumer() throws Exception {
-        final int port = AvailablePortFinder.getNextAvailable();
-        final CamelContext context = new DefaultCamelContext();
+        final CamelContext context = createCamelContext();
 
         try {
-            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-            conf.setBindPort(port);
-
-            context.addService(new VertxPlatformHttpServer(conf));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -218,7 +196,6 @@ public class VertxPlatformHttpEngineTest {
             context.start();
 
             given()
-                    .port(conf.getBindPort())
                     .when()
                     .get("/get")
                     .then()
@@ -231,16 +208,11 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testEngineSSL() throws Exception {
-        VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setSslContextParameters(serverSSLParameters);
-        conf.setBindPort(AvailablePortFinder.getNextAvailable());
-
-        CamelContext context = new DefaultCamelContext();
+        final CamelContext context
+                = createCamelContext(configuration -> configuration.setSslContextParameters(serverSSLParameters));
 
         try {
-            context.addService(new VertxPlatformHttpServer(conf));
             context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
-
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -252,7 +224,7 @@ public class VertxPlatformHttpEngineTest {
             context.start();
 
             String result = context.createFluentProducerTemplate()
-                    .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", conf.getBindPort())
+                    .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", RestAssured.port)
                     .withBody("test")
                     .request(String.class);
 
@@ -264,15 +236,10 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testEngineGlobalSSL() throws Exception {
-        VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setUseGlobalSslContextParameters(true);
-        conf.setBindPort(AvailablePortFinder.getNextAvailable());
-
-        CamelContext context = new DefaultCamelContext();
+        final CamelContext context = createCamelContext(configuration -> configuration.setUseGlobalSslContextParameters(true));
 
         try {
             context.setSSLContextParameters(serverSSLParameters);
-            context.addService(new VertxPlatformHttpServer(conf));
             context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
 
             context.addRoutes(new RouteBuilder() {
@@ -286,7 +253,7 @@ public class VertxPlatformHttpEngineTest {
             context.start();
 
             String result = context.createFluentProducerTemplate()
-                    .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", conf.getBindPort())
+                    .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", RestAssured.port)
                     .withBody("test")
                     .request(String.class);
 
@@ -298,15 +265,12 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testEngineCORS() throws Exception {
-        VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(AvailablePortFinder.getNextAvailable());
-        conf.getCors().setEnabled(true);
-        conf.getCors().setMethods(Arrays.asList("GET", "POST"));
-
-        CamelContext context = new DefaultCamelContext();
+        final CamelContext context = createCamelContext(configuration -> {
+            configuration.getCors().setEnabled(true);
+            configuration.getCors().setMethods(Arrays.asList("GET", "POST"));
+        });
 
         try {
-            context.addService(new VertxPlatformHttpServer(conf));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -322,7 +286,6 @@ public class VertxPlatformHttpEngineTest {
             final String headers = "X-Custom";
 
             given()
-                    .port(conf.getBindPort())
                     .header("Origin", origin)
                     .header("Access-Control-Request-Method", methods)
                     .header("Access-Control-Request-Headers", headers)
@@ -340,13 +303,9 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testMatchOnUriPrefix() throws Exception {
-        VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(AvailablePortFinder.getNextAvailable());
-
-        CamelContext context = new DefaultCamelContext();
+        final CamelContext context = createCamelContext();
         try {
             final String greeting = "Hello Camel";
-            context.addService(new VertxPlatformHttpServer(conf));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -358,14 +317,12 @@ public class VertxPlatformHttpEngineTest {
             context.start();
 
             given()
-                    .port(conf.getBindPort())
                     .when()
                     .get("/greeting")
                     .then()
                     .statusCode(404);
 
             given()
-                    .port(conf.getBindPort())
                     .when()
                     .get("/greeting/Camel")
                     .then()
@@ -373,7 +330,6 @@ public class VertxPlatformHttpEngineTest {
                     .body(equalTo(greeting));
 
             given()
-                    .port(conf.getBindPort())
                     .when()
                     .get("/greeting/Camel/other/path/")
                     .then()
@@ -386,23 +342,18 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testFileUpload() throws Exception {
-        final int port = AvailablePortFinder.getNextAvailable();
         final String fileContent = "Test multipart upload content";
         final File tempFile = File.createTempFile("platform-http", ".txt");
-        final CamelContext context = new DefaultCamelContext();
-
-        try {
-            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-            conf.setBindPort(port);
-
+        final CamelContext context = createCamelContext(configuration -> {
             VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler
                     = new VertxPlatformHttpServerConfiguration.BodyHandler();
             bodyHandler.setUploadsDirectory(tempFile.getParent());
-            conf.setBodyHandler(bodyHandler);
+            configuration.setBodyHandler(bodyHandler);
+        });
 
+        try {
             Files.write(tempFile.toPath(), fileContent.getBytes(StandardCharsets.UTF_8));
 
-            context.addService(new VertxPlatformHttpServer(conf));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -418,7 +369,6 @@ public class VertxPlatformHttpEngineTest {
             context.start();
 
             given()
-                    .port(conf.getBindPort())
                     .multiPart(tempFile)
                     .when()
                     .post("/upload")
@@ -428,5 +378,135 @@ public class VertxPlatformHttpEngineTest {
         } finally {
             context.stop();
         }
+    }
+
+    @Test
+    public void testFormPost() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("platform-http:/form/post")
+                            .convertBodyTo(String.class);
+                }
+            });
+
+            context.start();
+
+            given()
+                    .formParam("foo", "bar")
+                    .formParam("cheese", "wine")
+                    .when()
+                    .post("/form/post")
+                    .then()
+                    .statusCode(200)
+                    .body(is("{foo=bar, cheese=wine}"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testTextContentPost() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("platform-http:/text/post")
+                            .log("POST:/test/post has body ${body}");
+                }
+            });
+
+            context.start();
+
+            String payload = "Hello World";
+            given()
+                    .contentType(ContentType.TEXT)
+                    .body(payload)
+                    .when()
+                    .post("/text/post")
+                    .then()
+                    .statusCode(200)
+                    .body(is(payload));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testBodyClientRequestValidation() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    restConfiguration().component("platform-http");
+
+                    rest("/rest")
+                            .post("/validate/body")
+                            .clientRequestValidation(true)
+                            .param().name("body").type(RestParamType.body).required(true).endParam()
+                            .route()
+                            .setBody(simple("Hello ${body}"))
+                            .endRest();
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .post("/rest/validate/body")
+                    .then()
+                    .statusCode(400)
+                    .body(is("The request body is missing."));
+
+            given()
+                    .body(" ")
+                    .when()
+                    .post("/rest/validate/body")
+                    .then()
+                    .statusCode(400)
+                    .body(is("The request body is missing."));
+
+            given()
+                    .body("Camel Platform HTTP Vert.x")
+                    .when()
+                    .post("/rest/validate/body")
+                    .then()
+                    .statusCode(200)
+                    .body(is("Hello Camel Platform HTTP Vert.x"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    private CamelContext createCamelContext() throws Exception {
+        return createCamelContext(null);
+    }
+
+    private CamelContext createCamelContext(ServerConfigurationCustomizer customizer) throws Exception {
+        int port = AvailablePortFinder.getNextAvailable();
+        VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+        conf.setBindPort(port);
+
+        RestAssured.port = port;
+
+        if (customizer != null) {
+            customizer.customize(conf);
+        }
+
+        CamelContext context = new DefaultCamelContext();
+        context.addService(new VertxPlatformHttpServer(conf));
+        return context;
+    }
+
+    interface ServerConfigurationCustomizer {
+        void customize(VertxPlatformHttpServerConfiguration configuration);
     }
 }

@@ -1,0 +1,60 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.spring;
+
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * Test that verifies JMX is enabled by default.
+ */
+public class DefaultJMXAgentTest extends SpringTestSupport {
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Test
+    public void testQueryMbeans() throws Exception {
+        // whats the numbers before, because the JVM can have left overs when unit testing
+        int before = getMBeanConnection().queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+
+        // start route should enlist the consumer to JMX
+        context.getRouteController().startRoute("foo");
+
+        int after = getMBeanConnection().queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+
+        assertTrue(after > before, "Should have added consumer to JMX, before: " + before + ", after: " + after);
+    }
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/defaultJmxConfig.xml");
+    }
+
+    protected MBeanServerConnection getMBeanConnection() throws Exception {
+        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
+    }
+
+}

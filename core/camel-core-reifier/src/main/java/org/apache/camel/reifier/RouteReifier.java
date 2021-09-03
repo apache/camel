@@ -58,7 +58,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     private static final String[] RESERVED_PROPERTIES = new String[] {
             Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
             Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY,
-            Route.REST_PROPERTY };
+            Route.REST_PROPERTY, Route.CONFIGURATION_ID_PROPERTY };
 
     public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
         super(camelContext, (RouteDefinition) definition);
@@ -343,8 +343,10 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 builder, null);
         prepareErrorHandlerAware(route, errorHandler);
 
-        // okay route has been created from the model, then the model is no longer needed and we can de-reference
-        route.clearRouteModel();
+        camelContext.adapt(ExtendedCamelContext.class).addBootstrap(() -> {
+            // okay route has been created from the model, then the model is no longer needed and we can de-reference
+            route.clearRouteModel();
+        });
 
         return route;
     }
@@ -371,6 +373,10 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         routeProperties.put(Route.REST_PROPERTY, rest);
         String template = Boolean.toString(definition.isTemplate() != null && definition.isTemplate());
         routeProperties.put(Route.TEMPLATE_PROPERTY, template);
+        if (definition.getAppliedRouteConfigurationIds() != null) {
+            routeProperties.put(Route.CONFIGURATION_ID_PROPERTY,
+                    String.join(",", definition.getAppliedRouteConfigurationIds()));
+        }
 
         List<PropertyDefinition> properties = definition.getRouteProperties();
         if (properties != null) {

@@ -55,4 +55,5 @@ public interface ConsulConstants {
     String CONSUL_HEALTHY_ONLY = "CamelConsulHealthyOnly";
     String CONSUL_HEALTHY_STATE = "CamelConsulHealthyState";
     String CONSUL_PREPARED_QUERY_ID = "CamelConsulPreparedQueryID";
+    String CONSUL_SERVICE_ID = "CamelConsulServiceId";
 }

@@ -72,4 +72,4 @@ substituting the version number for the latest & greatest release.
 </dependency>
 ----------------------------------------------------------
 
-include::camel-spring-boot::page$lzf-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$lzf-starter.adoc[]

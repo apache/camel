@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.zookeepermaster;
 
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.component.zookeepermaster.group.DefaultGroupFactoryStrategy;
 import org.apache.camel.component.zookeepermaster.group.Group;
-import org.apache.camel.component.zookeepermaster.group.internal.ManagedGroupFactory;
-import org.apache.camel.component.zookeepermaster.group.internal.ManagedGroupFactoryBuilder;
+import org.apache.camel.component.zookeepermaster.group.ManagedGroupFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -46,8 +47,11 @@ public class ZookeeperGroupSupport extends ServiceSupport
     private static final String ZOOKEEPER_PORT_ENV = "ZK_CLIENT_SERVICE_PORT";
 
     private CamelContext camelContext;
-    private ManagedGroupFactory managedGroupFactory;
 
+    @Metadata(label = "advanced", autowired = true)
+    private ManagedGroupFactory managedGroupFactory;
+    @Metadata(label = "advanced", autowired = true)
+    private ManagedGroupFactoryStrategy managedGroupFactoryStrategy;
     @Metadata(label = "advanced")
     private CuratorFramework curator;
     @Metadata(defaultValue = "10000")
@@ -122,6 +126,23 @@ public class ZookeeperGroupSupport extends ServiceSupport
         this.zooKeeperPassword = zooKeeperPassword;
     }
 
+    public ManagedGroupFactory getManagedGroupFactory() {
+        return managedGroupFactory;
+    }
+
+    public void setManagedGroupFactory(ManagedGroupFactory managedGroupFactory) {
+        this.managedGroupFactory = managedGroupFactory;
+        this.managedGroupFactory.setClassLoader(this.getClass().getClassLoader());
+    }
+
+    public ManagedGroupFactoryStrategy getManagedGroupFactoryStrategy() {
+        return managedGroupFactoryStrategy;
+    }
+
+    public void setManagedGroupFactoryStrategy(ManagedGroupFactoryStrategy managedGroupFactoryStrategy) {
+        this.managedGroupFactoryStrategy = managedGroupFactoryStrategy;
+    }
+
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
@@ -140,8 +161,32 @@ public class ZookeeperGroupSupport extends ServiceSupport
             }
         }
 
-        // will auto create curator if needed
-        managedGroupFactory = ManagedGroupFactoryBuilder.create(curator, getClass().getClassLoader(), getCamelContext(), this);
+        if (managedGroupFactoryStrategy == null) {
+            Set<ManagedGroupFactoryStrategy> set
+                    = getCamelContext().getRegistry().findByType(ManagedGroupFactoryStrategy.class);
+            if (set.size() == 1) {
+                setManagedGroupFactoryStrategy(set.iterator().next());
+            }
+        }
+        if (managedGroupFactory == null) {
+            Set<ManagedGroupFactory> set = getCamelContext().getRegistry().findByType(ManagedGroupFactory.class);
+            if (set.size() == 1) {
+                setManagedGroupFactory(set.iterator().next());
+            }
+        }
+        if (managedGroupFactory == null) {
+            Set<ManagedGroupFactoryStrategy> set
+                    = getCamelContext().getRegistry().findByType(ManagedGroupFactoryStrategy.class);
+            if (set.size() == 1) {
+                setManagedGroupFactoryStrategy(set.iterator().next());
+            } else {
+                setManagedGroupFactoryStrategy(new DefaultGroupFactoryStrategy());
+            }
+        }
+        if (managedGroupFactory == null) {
+            setManagedGroupFactory(getManagedGroupFactoryStrategy().createGroupFactory(curator, getClass().getClassLoader(),
+                    getCamelContext(), this));
+        }
     }
 
     @Override

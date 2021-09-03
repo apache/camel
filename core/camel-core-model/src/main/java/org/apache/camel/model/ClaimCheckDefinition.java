@@ -169,6 +169,21 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     /**
      * To use a custom {@link AggregationStrategy} instead of the default implementation. Notice you cannot use both
      * custom aggregation strategy and configure data at the same time.
+     * <p/>
+     * The value can either refer to a bean to lookup, or to lookup a singleton bean by its type, or to create a new
+     * bean:
+     * <ul>
+     * <li>Lookup bean - This is the default behavior to lookup an existing bean by the bean id (value)</li>
+     * <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with
+     * #type: syntax, eg #type:com.foo.MyClassType</li>
+     * <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg
+     * #class:com.foo.MyClassType. The class is created using a default no-arg constructor, however if you need to
+     * create the instance via a factory method then you specify the method as shown:
+     * #class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires parameters they can be specified
+     * as follows: #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the
+     * instance via constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello
+     * World', 5, true)</li>.
+     * </ul>
      */
     public ClaimCheckDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setAggregationStrategyRef(aggregationStrategyRef);

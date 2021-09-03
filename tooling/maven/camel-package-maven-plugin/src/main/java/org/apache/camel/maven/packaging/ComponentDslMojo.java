@@ -28,15 +28,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.maven.packaging.dsl.component.ComponentDslBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentsBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegistry;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -56,6 +59,9 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 @Mojo(name = "generate-component-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ComponentDslMojo extends AbstractGeneratorMojo {
+
+    private static final Map<Path, Lock> LOCKS = new ConcurrentHashMap<>();
+
     /**
      * The project build directory
      */
@@ -136,16 +142,19 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
         Map<File, Supplier<String>> files;
 
-        try {
-            files = Files
-                    .find(buildDir.toPath(), Integer.MAX_VALUE,
-                            (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
-                    .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
+        try (Stream<Path> pathStream = Files.find(buildDir.toPath(), Integer.MAX_VALUE, super::isJsonFile)) {
+            files = pathStream.collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
 
-        executeComponent(files);
+        Lock lock = LOCKS.computeIfAbsent(root, d -> new ReentrantLock());
+        lock.lock();
+        try {
+            executeComponent(files);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
@@ -169,8 +178,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels
                     = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
-            for (String componentClass : grModels.keySet()) {
-                List<ComponentModel> compModels = grModels.get(componentClass);
+            for (List<ComponentModel> compModels : grModels.values()) {
                 for (ComponentModel model : compModels) {
                     // if more than one, we have a component class with multiple components aliases
                     createComponentDsl(model);

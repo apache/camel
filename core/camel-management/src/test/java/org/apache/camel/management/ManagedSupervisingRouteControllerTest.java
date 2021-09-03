@@ -34,12 +34,16 @@ import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.engine.DefaultSupervisingRouteController;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE_CONTROLLER;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport {
 
     @Override
@@ -55,17 +59,11 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
 
     @Test
     public void testSupervisingRouteController() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=camel-1,type=routecontrollers,name=DefaultSupervisingRouteController");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE_CONTROLLER, "DefaultSupervisingRouteController");
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");

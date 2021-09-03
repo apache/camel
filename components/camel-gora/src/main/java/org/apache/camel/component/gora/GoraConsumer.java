@@ -76,7 +76,7 @@ public class GoraConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-        final Exchange exchange = this.getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         // compute time (approx) since last update
         if (firstRun) {
@@ -88,13 +88,7 @@ public class GoraConsumer extends ScheduledPollConsumer {
         //proceed with query
         final Result result = query.execute();
 
-        try {
-            getProcessor().process(exchange);
-        } finally {
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-            }
-        }
+        getProcessor().process(exchange);
 
         return Long.valueOf(result.getOffset()).intValue();
     }

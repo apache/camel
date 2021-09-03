@@ -12,21 +12,24 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-FROM centos:8 as artemis-base
-MAINTAINER Otavio Rodolfo Piske <angusyoung@gmail.com>
+ARG FROMIMAGE
+FROM $FROMIMAGE as artemis-base
+LABEL maintainer="orpiske@apache.org"
 ARG ARTEMIS_VERSION
-ENV ARTEMIS_VERSION ${ARTEMIS_VERSION:-2.7.0}
+ENV ARTEMIS_VERSION ${ARTEMIS_VERSION:-2.18.0}
 ARG ARTEMIS_JOURNAL
 ENV ARTEMIS_JOURNAL ${ARTEMIS_JOURNAL:-aio}
 ENV JMS_BROKER_ROOT /opt/camel-kafka-connector/artemis/
 EXPOSE 1883 5672 8161 61616
-RUN dnf install -y java-1.8.0-openjdk-headless libaio tar gzip && dnf clean all
-ENV JAVA_HOME /etc/alternatives/jre
-RUN mkdir -p ${JMS_BROKER_ROOT}
-WORKDIR ${JMS_BROKER_ROOT}
-RUN curl https://archive.apache.org/dist/activemq/activemq-artemis/${ARTEMIS_VERSION}/apache-artemis-${ARTEMIS_VERSION}-bin.tar.gz -o apache-artemis.tar.gz && \
-    mkdir -p apache-artemis && tar --strip-components=1 -xvf apache-artemis.tar.gz -C apache-artemis && \
+RUN dnf install -y java-11-openjdk-headless libaio tar gzip && \
+    dnf clean all && \
+    mkdir -p ${JMS_BROKER_ROOT} && \
+    cd ${JMS_BROKER_ROOT} && \
+    curl --retry 3 --retry-connrefused https://archive.apache.org/dist/activemq/activemq-artemis/${ARTEMIS_VERSION}/apache-artemis-${ARTEMIS_VERSION}-bin.tar.gz -o apache-artemis.tar.gz && \
+    mkdir -p apache-artemis && tar --strip-components=1 --exclude=examples/* -xvf apache-artemis.tar.gz -C apache-artemis && \
     rm -f apache-artemis.tar.gz
+WORKDIR ${JMS_BROKER_ROOT}
+ENV JAVA_HOME /etc/alternatives/jre
 
 FROM artemis-base as artemis
 RUN ${JMS_BROKER_ROOT}/apache-artemis/bin/artemis create --${ARTEMIS_JOURNAL} --relax-jolokia --allow-anonymous --http-host 0.0.0.0 --user admin --password "admin" --role amq --data /artemis-storage ${JMS_BROKER_ROOT}/apache-artemis-instance

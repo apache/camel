@@ -18,8 +18,10 @@ package org.apache.camel.main;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
+@Configurer(bootstrap = true)
 public class ThreadPoolProfileConfigurationProperties {
 
     private String id;

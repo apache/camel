@@ -16,8 +16,13 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import java.io.Reader;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.util.function.ThrowingBiConsumer;
 import org.apache.camel.util.function.ThrowingConsumer;
 
 /**
@@ -34,17 +39,17 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
 
     /**
      * Add routes to a context using a lambda expression. It can be used as following:
-     * 
+     *
      * <pre>
-     * RouteBuilder.addRoutes(context, rb -&gt;
-     *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
+     * EndpointRouteBuilder.addEndpointRoutes(context, rb -&gt;
+     *     rb.from(rb.direct("inbound")).bean(MyBean.class)));
      * </pre>
      *
      * @param  context   the camel context to add routes
      * @param  rbc       a lambda expression receiving the {@code RouteBuilder} to use for creating routes
      * @throws Exception if an error occurs
      */
-    public static void addEndpointRoutes(CamelContext context, ThrowingConsumer<EndpointRouteBuilder, Exception> rbc)
+    public static void addEndpointRoutes(CamelContext context, LambdaEndpointRouteBuilder rbc)
             throws Exception {
         context.addRoutes(new EndpointRouteBuilder(context) {
             @Override
@@ -52,6 +57,44 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
                 rbc.accept(this);
             }
         });
+    }
+
+    /**
+     * Loads {@link EndpointRouteBuilder} from {@link Resource} using the given consumer to create an
+     * {@link EndpointRouteBuilder} instance.
+     *
+     * @param  resource the resource to be loaded.
+     * @param  consumer the function used to create a {@link EndpointRouteBuilder}
+     * @return          a {@link EndpointRouteBuilder}
+     */
+    public static EndpointRouteBuilder loadEndpointRoutesBuilder(
+            Resource resource, ThrowingBiConsumer<Reader, EndpointRouteBuilder, Exception> consumer) {
+        return new EndpointRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                CamelContextAware.trySetCamelContext(resource, getContext());
+
+                try (Reader reader = resource.getReader()) {
+                    consumer.accept(reader, this);
+                }
+            }
+        };
+    }
+
+    /**
+     * Loads {@link EndpointRouteBuilder} from {@link Resource} using the given consumer to create an
+     * {@link EndpointRouteBuilder} instance.
+     *
+     * @param  consumer the function used to create a {@link EndpointRouteBuilder}
+     * @return          a {@link EndpointRouteBuilder}
+     */
+    public static EndpointRouteBuilder loadEndpointRoutesBuilder(ThrowingConsumer<EndpointRouteBuilder, Exception> consumer) {
+        return new EndpointRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                consumer.accept(this);
+            }
+        };
     }
 
 }

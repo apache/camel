@@ -34,15 +34,23 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
         Network network = Network.newNetwork();
 
         String zookeeperInstanceName = "zookeeper-" + TestUtils.randomWithRange(1, 100);
-        zookeeperContainer = new ZookeeperContainer(network, zookeeperInstanceName);
+        zookeeperContainer = initZookeeperContainer(network, zookeeperInstanceName);
 
         String strimziInstanceName = "strimzi-" + TestUtils.randomWithRange(1, 100);
-        strimziContainer = new StrimziContainer(network, strimziInstanceName, zookeeperInstanceName);
+        strimziContainer = initStrimziContainer(network, strimziInstanceName, zookeeperInstanceName);
     }
 
     public StrimziService(ZookeeperContainer zookeeperContainer, StrimziContainer strimziContainer) {
         this.zookeeperContainer = zookeeperContainer;
         this.strimziContainer = strimziContainer;
+    }
+
+    protected StrimziContainer initStrimziContainer(Network network, String instanceName, String zookeeperInstanceName) {
+        return new StrimziContainer(network, instanceName, zookeeperInstanceName);
+    }
+
+    protected ZookeeperContainer initZookeeperContainer(Network network, String instanceName) {
+        return new ZookeeperContainer(network, instanceName);
     }
 
     protected Integer getKafkaPort() {

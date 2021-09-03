@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.http;
 
+import java.net.URI;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -65,6 +67,29 @@ public enum HttpMethods implements Expression {
                 return new HttpOptions(url);
             case TRACE:
                 return new HttpTrace(url);
+            default:
+                throw new RuntimeException("no such method " + this);
+        }
+    }
+
+    public HttpRequestBase createMethod(final URI uri) {
+        switch (this) {
+            case GET:
+                return new HttpGet(uri);
+            case PATCH:
+                return new HttpPatch(uri);
+            case POST:
+                return new HttpPost(uri);
+            case PUT:
+                return new HttpPut(uri);
+            case DELETE:
+                return new HttpDelete(uri);
+            case HEAD:
+                return new HttpHead(uri);
+            case OPTIONS:
+                return new HttpOptions(uri);
+            case TRACE:
+                return new HttpTrace(uri);
             default:
                 throw new RuntimeException("no such method " + this);
         }

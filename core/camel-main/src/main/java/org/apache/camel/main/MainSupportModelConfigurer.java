@@ -54,7 +54,7 @@ public final class MainSupportModelConfigurer {
 
         ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
 
-        if (!hystrixProperties.isEmpty()) {
+        if (!hystrixProperties.isEmpty() || mainConfigurationProperties.hasHystrixConfiguration()) {
             HystrixConfigurationProperties hystrix = mainConfigurationProperties.hystrix();
             LOG.debug("Auto-configuring Hystrix Circuit Breaker EIP from loaded properties: {}", hystrixProperties.size());
             setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, "camel.hystrix.",
@@ -69,7 +69,7 @@ public final class MainSupportModelConfigurer {
             }
         }
 
-        if (!resilience4jProperties.isEmpty()) {
+        if (!resilience4jProperties.isEmpty() || mainConfigurationProperties.hasResilience4jConfiguration()) {
             Resilience4jConfigurationProperties resilience4j = mainConfigurationProperties.resilience4j();
             LOG.debug("Auto-configuring Resilience4j Circuit Breaker EIP from loaded properties: {}",
                     resilience4jProperties.size());
@@ -83,7 +83,7 @@ public final class MainSupportModelConfigurer {
             setPropertiesOnTarget(camelContext, resilience4jModel, resilience4j);
         }
 
-        if (!faultToleranceProperties.isEmpty()) {
+        if (!faultToleranceProperties.isEmpty() || mainConfigurationProperties.hasFaultToleranceConfiguration()) {
             FaultToleranceConfigurationProperties faultTolerance = mainConfigurationProperties.faultTolerance();
             LOG.debug("Auto-configuring MicroProfile Fault Tolerance Circuit Breaker EIP from loaded properties: {}",
                     faultToleranceProperties.size());

@@ -230,6 +230,11 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(consumers);
+    }
+
+    @Override
     protected void doInit() throws Exception {
         if (extendedStatistics) {
             int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;

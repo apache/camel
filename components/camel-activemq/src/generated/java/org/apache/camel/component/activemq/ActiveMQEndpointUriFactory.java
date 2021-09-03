@@ -20,7 +20,7 @@ public class ActiveMQEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(97);
+        Set<String> props = new HashSet<>(98);
         props.add("includeSentJMSMessageID");
         props.add("asyncConsumer");
         props.add("mapJmsMessage");
@@ -89,6 +89,7 @@ public class ActiveMQEndpointUriFactory extends org.apache.camel.support.compone
         props.add("destinationResolver");
         props.add("exceptionHandler");
         props.add("idleConsumerLimit");
+        props.add("destinationOptions");
         props.add("explicitQosEnabled");
         props.add("transacted");
         props.add("transactionName");

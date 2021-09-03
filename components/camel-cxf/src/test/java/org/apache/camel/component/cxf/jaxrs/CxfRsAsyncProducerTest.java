@@ -45,6 +45,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -377,7 +378,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         // get the response message 
         Customer response = (Customer) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
-        assertTrue(response.getId() != 8888, "Get a wrong customer id");
+        assertNotEquals(response.getId(), 8888, "Get a wrong customer id");
         assertEquals("Willem", response.getName(), "Get a wrong customer name");
         assertEquals(201, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }

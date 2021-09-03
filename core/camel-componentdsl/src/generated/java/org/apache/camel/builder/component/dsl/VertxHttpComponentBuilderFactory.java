@@ -75,6 +75,23 @@ public interface VertxHttpComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the response body should be byte or as
+         * io.vertx.core.buffer.Buffer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param responsePayloadAsByteArray the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpComponentBuilder responsePayloadAsByteArray(
+                boolean responsePayloadAsByteArray) {
+            doSetProperty("responsePayloadAsByteArray", responsePayloadAsByteArray);
+            return this;
+        }
+        /**
          * Whether to allow java serialization when a request has the
          * Content-Type application/x-java-serialized-object This is disabled by
          * default. If you enable this, be aware that Java will deserialize the
@@ -349,6 +366,7 @@ public interface VertxHttpComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((VertxHttpComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "responsePayloadAsByteArray": ((VertxHttpComponent) component).setResponsePayloadAsByteArray((boolean) value); return true;
             case "allowJavaSerializedObject": ((VertxHttpComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "autowiredEnabled": ((VertxHttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "vertx": ((VertxHttpComponent) component).setVertx((io.vertx.core.Vertx) value); return true;

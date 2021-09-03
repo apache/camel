@@ -22,7 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,16 +35,9 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
         dead.message(0).body().isInstanceOf(GenericFile.class);
         dead.message(0).body(String.class).isEqualTo("Hello");
 
-        template.sendBodyAndHeader("file://target/data/originalexchange", "Hello", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/originalexchange");
-        super.setUp();
     }
 
     @Override
@@ -55,7 +47,7 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalMessage());
 
-                from("file://target/data/originalexchange?initialDelay=0&delay=10&noop=true").transform(body().append(" World"))
+                from(fileUri("?initialDelay=0&delay=10&noop=true")).transform(body().append(" World"))
                         .process(new MyThrowProcessor());
             }
         };

@@ -432,7 +432,7 @@ final class XmlCdiBeanFactory {
         }
 
         if (isNotEmpty(definition.getRollbackLoggingLevel())
-                && (!type.equals(ErrorHandlerType.TransactionErrorHandler))) {
+                && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
             throw attributeNotSupported("rollbackLoggingLevel", type, definition.getId());
         }
 

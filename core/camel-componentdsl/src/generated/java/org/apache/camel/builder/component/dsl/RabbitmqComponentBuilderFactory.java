@@ -443,6 +443,27 @@ public interface RabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * Decides whether an exception during declaration of exchanges or
+         * queues is recoverable or not. If the option is false, camel will
+         * throw an exception when starting the consumer, which will interrupt
+         * application startup (e.g. in the case when the exchange / queue is
+         * already declared in RabbitMQ and has incompatible configuration). If
+         * set to true, the consumer will try to reconnect periodically.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param recoverFromDeclareException the value to set
+         * @return the dsl builder
+         */
+        default RabbitmqComponentBuilder recoverFromDeclareException(
+                boolean recoverFromDeclareException) {
+            doSetProperty("recoverFromDeclareException", recoverFromDeclareException);
+            return this;
+        }
+        /**
          * The consumer uses a Thread Pool Executor with a fixed number of
          * threads. This setting allows you to set that number of threads.
          * 
@@ -1018,6 +1039,7 @@ public interface RabbitmqComponentBuilderFactory {
             case "prefetchEnabled": ((RabbitMQComponent) component).setPrefetchEnabled((boolean) value); return true;
             case "prefetchGlobal": ((RabbitMQComponent) component).setPrefetchGlobal((boolean) value); return true;
             case "prefetchSize": ((RabbitMQComponent) component).setPrefetchSize((int) value); return true;
+            case "recoverFromDeclareException": ((RabbitMQComponent) component).setRecoverFromDeclareException((boolean) value); return true;
             case "threadPoolSize": ((RabbitMQComponent) component).setThreadPoolSize((int) value); return true;
             case "additionalHeaders": ((RabbitMQComponent) component).setAdditionalHeaders((java.util.Map) value); return true;
             case "additionalProperties": ((RabbitMQComponent) component).setAdditionalProperties((java.util.Map) value); return true;

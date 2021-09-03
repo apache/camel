@@ -47,17 +47,50 @@ a `String` which is safe to be read multiple times.
 
 == URI format
 
-[source,java]
 ---------------------------------
 servlet://relative_path[?options]
 ---------------------------------
 
-You can append query options to the URI in the following format:
-`?option=value&option=value&...`
 
-== Options
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The Servlet component supports 10 options, which are listed below.
 
 
@@ -79,6 +112,8 @@ The Servlet component supports 10 options, which are listed below.
 // component options: END
 
 // endpoint options: START
+== Endpoint Options
+
 The Servlet endpoint is configured using URI syntax:
 
 ----
@@ -120,13 +155,14 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+| *mapHttpMessageBody* (consumer) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
+| *mapHttpMessageFormUrlEncoded{zwsp}Body* (consumer) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
+| *mapHttpMessageHeaders* (consumer) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 | *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
-| *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
-| *mapHttpMessageFormUrlEncoded{zwsp}Body* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
-| *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 |===
 // endpoint options: END
+
 
 
 == Message Headers
@@ -235,7 +271,6 @@ Sample async configuration:
 -----------------------------------------------------------------------------------------------
 
 
-
 == Sample
 
 Use xref:servlet-component.adoc[Servlet] in Spring web applications for simplicity's sake.
@@ -243,9 +278,9 @@ In this sample, we define a route that exposes a HTTP service at
 http://localhost:8080/camel/services/hello.
 
 First, you need to publish the
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 through the normal Web Container, or OSGi Service. Use the `Web.xml` file to publish the
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 as follows:
 
 [source,xml]
@@ -308,7 +343,7 @@ often required to load the Spring ApplicationContext _after_ the Servlet
 component has started. This can be accomplished by using Spring's
 `ContextLoaderServlet` instead of `ContextLoaderListener`. In that case
 you'll need to start `ContextLoaderServlet` after
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 like this:
 
 [source,xml]
@@ -334,7 +369,7 @@ like this:
 === Sample when using OSGi
 
 You can publish the
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 as an OSGi service with Blueprint like this:
 
 [source,xml]
@@ -404,7 +439,7 @@ Then use this service in your Camel route like this:
 
 You can use an `Activator` to publish
 the
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 on the OSGi platform:
 
 [source,java]
@@ -482,18 +517,5 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
 }
 -------------------------------------------------------------------------
 
-=== Usage with Spring-Boot
-The _camel-servlet-starter_ library binds automatically all the rest endpoints under the `/camel/*` context path.
-The following table summarizes the additional configuration properties available in the _camel-servlet-starter_ library.
-The automatic mapping of the Camel servlet can also be disabled.
 
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Spring-Boot Property | Default | Description
-| camel.component.servlet.mapping.enabled | true | Enables the automatic mapping of the servlet component into the Spring web context
-| camel.component.servlet.mapping.context-path | /camel/* | Context path used by the servlet component for automatic mapping
-| camel.component.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
-|=======================================================================
-
-
-include::camel-spring-boot::page$servlet-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$servlet-starter.adoc[]

@@ -30,6 +30,7 @@ import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.core.SdkClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.iam.IamClient;
@@ -37,6 +38,7 @@ import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sts.StsClient;
@@ -166,7 +168,15 @@ public final class AWSSDKClientUtils {
         return newClient("Lambda", LambdaClient::builder, LambdaClient.class);
     }
 
+    public static SecretsManagerClient newSecretsManagerClient() {
+        return newClient("SecretsManager", SecretsManagerClient::builder, SecretsManagerClient.class);
+    }
+
     public static StsClient newSTSClient() {
         return newClient("STS", StsClient::builder, StsClient.class);
+    }
+
+    public static DynamoDbClient newDynamoDBClient() {
+        return newClient("DynamoDB", DynamoDbClient::builder, DynamoDbClient.class);
     }
 }

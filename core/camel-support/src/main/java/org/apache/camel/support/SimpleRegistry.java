@@ -16,10 +16,13 @@
  */
 package org.apache.camel.support;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
@@ -31,7 +34,7 @@ import org.apache.camel.spi.Registry;
  *
  * @see DefaultRegistry
  */
-public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>> implements Registry {
+public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>> implements Registry, Closeable {
 
     @Override
     public Object lookupByName(String name) {
@@ -98,7 +101,23 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
 
     @Override
     public void bind(String id, Class type, Object bean) {
-        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+        if (bean != null) {
+            computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+        }
     }
 
+    @Override
+    public void bind(String id, Class<?> type, Supplier<Object> bean) {
+        throw new UnsupportedOperationException("Use SupplierRegistry");
+    }
+
+    @Override
+    public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) {
+        throw new UnsupportedOperationException("Use SupplierRegistry");
+    }
+
+    @Override
+    public void close() throws IOException {
+        clear();
+    }
 }

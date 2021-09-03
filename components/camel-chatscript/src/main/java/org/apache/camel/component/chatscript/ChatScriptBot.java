@@ -62,16 +62,15 @@ public class ChatScriptBot {
     }
 
     private String doMessage(String msg) throws Exception {
-        Socket echoSocket;
         String resp = "";
 
-        try {
-            echoSocket = new Socket(this.host, this.port);
-            PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-            out.println(msg);
-            resp = in.readLine();
-            echoSocket.close();
+        try (Socket echoSocket = new Socket(this.host, this.port)) {
+            try (PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true)) {
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()))) {
+                    out.println(msg);
+                    resp = in.readLine();
+                }
+            }
         } catch (IOException e) {
             throw new Exception("Unable to send message to ChatScript Server. Reason:" + e.getMessage(), e);
         }

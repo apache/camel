@@ -30,21 +30,23 @@ public class RedisLocalContainerService implements RedisService, ContainerServic
 
     private static final Logger LOG = LoggerFactory.getLogger(RedisLocalContainerService.class);
 
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public RedisLocalContainerService() {
-        String containerName = System.getProperty("redis.container", CONTAINER_IMAGE);
-
-        initContainer(containerName);
+        this(System.getProperty(RedisProperties.REDIS_CONTAINER, CONTAINER_IMAGE));
     }
 
     public RedisLocalContainerService(String imageName) {
-        initContainer(imageName);
+        container = initContainer(imageName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String imageName) {
-        container = new GenericContainer<>(DockerImageName.parse(imageName))
-                .withNetworkAliases(CONTAINER_NAME)
+    public RedisLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    public GenericContainer initContainer(String imageName, String networkAlias) {
+        return new GenericContainer<>(DockerImageName.parse(imageName))
+                .withNetworkAliases(networkAlias)
                 .withExposedPorts(RedisProperties.DEFAULT_PORT)
                 .waitingFor(Wait.forListeningPort());
     }

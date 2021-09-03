@@ -195,7 +195,7 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
     /**
      * Create the tagSoup Parser
      */
-    protected XMLReader createTagSoupParser() throws CamelException {
+    protected XMLReader createTagSoupParser() {
         XMLReader reader = new Parser();
         try {
             reader.setFeature(Parser.namespacesFeature, false);

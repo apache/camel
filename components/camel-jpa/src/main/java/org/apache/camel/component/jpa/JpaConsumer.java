@@ -34,6 +34,7 @@ import javax.persistence.PessimisticLockException;
 import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -144,7 +145,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                                     "Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.",
                                     cause.getMessage(), cause);
                         } else {
-                            // rollback all by throwning exception
+                            // rollback all by throwing exception
                             throw cause;
                         }
                     }
@@ -188,9 +189,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             Object result = holder.result;
 
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
@@ -200,14 +201,23 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
                 // process the current exchange
                 LOG.debug("Processing exchange: {}", exchange);
-                getProcessor().process(exchange);
-                if (exchange.getException() != null) {
-                    // if we failed then throw exception
-                    throw exchange.getException();
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
                 }
 
-                // Run the @Consumed callback
-                getDeleteHandler().deleteObject(entityManager, result, exchange);
+                try {
+                    if (exchange.getException() != null) {
+                        // if we failed then throw exception
+                        throw exchange.getException();
+                    } else {
+                        // Run the @Consumed callback
+                        getDeleteHandler().deleteObject(entityManager, result, exchange);
+                    }
+                } finally {
+                    releaseExchange(exchange, false);
+                }
             }
         }
 
@@ -514,7 +524,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Exchange createExchange(Object result, EntityManager entityManager) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(false);
         exchange.getIn().setBody(result);
         exchange.getIn().setHeader(JpaConstants.ENTITY_MANAGER, entityManager);
         return exchange;

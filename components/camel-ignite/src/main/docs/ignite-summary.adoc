@@ -107,4 +107,4 @@ When installing on Apache Karaf:
 Please refer to the OSGi section in the Ignite documentation for more information.
 
 
-include::camel-spring-boot::page$ignite-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$ignite-starter.adoc[]

@@ -78,7 +78,7 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Exchange createExchange(Object result) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setBody(result);
         return exchange;
     }

@@ -154,36 +154,48 @@ public class GangliaProtocolV31CamelTest extends CamelGangliaTestSupport {
 
     @Test
     public void sendWrongMetricTypeShouldThrow() throws Exception {
+        final String testUri = getTestUri();
+
         assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_TYPE, "NotAGMetricType");
+            template.sendBodyAndHeader(testUri, "28.0", METRIC_TYPE, "NotAGMetricType");
         });
     }
 
     @Test
     public void sendWrongMetricSlopeShouldThrow() throws Exception {
+        final String testUri = getTestUri();
+
         assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_SLOPE, "NotAGMetricSlope");
+            template.sendBodyAndHeader(testUri, "28.0", METRIC_SLOPE, "NotAGMetricSlope");
         });
     }
 
     @Test
     public void sendWrongMetricTMaxShouldThrow() throws Exception {
+        final String testUri = getTestUri();
+        final Object headerValue = new Object();
+
         assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_TMAX, new Object());
+            template.sendBodyAndHeader(testUri, "28.0", METRIC_TMAX, headerValue);
         });
     }
 
     @Test
     public void sendWrongMetricDMaxShouldThrow() throws Exception {
+        final String testUri = getTestUri();
+        final Object headerValue = new Object();
+
         assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_DMAX, new Object());
+            template.sendBodyAndHeader(testUri, "28.0", METRIC_DMAX, headerValue);
         });
     }
 
     @Test
     public void sendWithWrongTypeShouldThrow() throws Exception {
+        final String endpointUri = getTestUri() + "&type=wrong";
+
         assertThrows(ResolveEndpointFailedException.class, () -> {
-            template.sendBody(getTestUri() + "&type=wrong", "");
+            template.sendBody(endpointUri, "");
         });
     }
 

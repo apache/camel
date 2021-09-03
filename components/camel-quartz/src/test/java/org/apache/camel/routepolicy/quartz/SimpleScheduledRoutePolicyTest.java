@@ -26,23 +26,16 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(SimpleScheduledRoutePolicyTest.class);
+public class SimpleScheduledRoutePolicyTest {
+}
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
+class SimpleTest1 extends NoBuilderTest {
     @Test
     public void testScheduledStartRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -75,7 +68,9 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }
+}
 
+class SimpleTest2 extends NoBuilderTest {
     @Test
     public void testScheduledStopRoutePolicy() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
@@ -110,7 +105,9 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         assertTrue(consumerStopped);
         context.getComponent("quartz", QuartzComponent.class).stop();
     }
+}
 
+class SimpleTest3 extends NoBuilderTest {
     @Test
     public void testScheduledSuspendRoutePolicy() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
@@ -143,7 +140,9 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         assertTrue(consumerSuspended);
         context.getComponent("quartz", QuartzComponent.class).stop();
     }
+}
 
+class SimpleTest4 extends NoBuilderTest {
     @Test
     public void testScheduledResumeRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -182,7 +181,9 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }
+}
 
+class SimpleTest5 extends NoBuilderTest {
     @Test
     public void testScheduledSuspendAndResumeRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -225,7 +226,9 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }
+}
 
+class SimpleTest6 extends NoBuilderTest {
     @Test
     public void testScheduledSuspendAndRestartPolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -267,5 +270,4 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }
-
 }

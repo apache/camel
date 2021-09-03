@@ -17,16 +17,39 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class PubNubComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private org.apache.camel.component.pubnub.PubNubConfiguration getOrCreateConfiguration(PubNubComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.pubnub.PubNubConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PubNubComponent target = (PubNubComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authkey":
+        case "authKey": getOrCreateConfiguration(target).setAuthKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "cipherkey":
+        case "cipherKey": getOrCreateConfiguration(target).setCipherKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.pubnub.PubNubConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "publishkey":
+        case "publishKey": getOrCreateConfiguration(target).setPublishKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secure": getOrCreateConfiguration(target).setSecure(property(camelContext, boolean.class, value)); return true;
+        case "subscribekey":
+        case "subscribeKey": getOrCreateConfiguration(target).setSubscribeKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "uuid": getOrCreateConfiguration(target).setUuid(property(camelContext, java.lang.String.class, value)); return true;
+        case "withpresence":
+        case "withPresence": getOrCreateConfiguration(target).setWithPresence(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -34,12 +57,28 @@ public class PubNubComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authkey":
+        case "authKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "cipherkey":
+        case "cipherKey": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.pubnub.PubNubConfiguration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "publishkey":
+        case "publishKey": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "secure": return boolean.class;
+        case "subscribekey":
+        case "subscribeKey": return java.lang.String.class;
+        case "uuid": return java.lang.String.class;
+        case "withpresence":
+        case "withPresence": return boolean.class;
         default: return null;
         }
     }
@@ -48,12 +87,28 @@ public class PubNubComponentConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PubNubComponent target = (PubNubComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authkey":
+        case "authKey": return getOrCreateConfiguration(target).getAuthKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "cipherkey":
+        case "cipherKey": return getOrCreateConfiguration(target).getCipherKey();
+        case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "publishkey":
+        case "publishKey": return getOrCreateConfiguration(target).getPublishKey();
+        case "secretkey":
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
+        case "secure": return getOrCreateConfiguration(target).isSecure();
+        case "subscribekey":
+        case "subscribeKey": return getOrCreateConfiguration(target).getSubscribeKey();
+        case "uuid": return getOrCreateConfiguration(target).getUuid();
+        case "withpresence":
+        case "withPresence": return getOrCreateConfiguration(target).isWithPresence();
         default: return null;
         }
     }

@@ -33,6 +33,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.Args;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.operator.OutputEncryptor;
@@ -107,7 +108,7 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
 
     private byte[] createEncryptedData(
             MimeEntity entity2Encrypt, CMSEnvelopedDataGenerator envelopedDataGenerator, OutputEncryptor encryptor)
-            throws Exception {
+            throws IOException, CMSException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             entity2Encrypt.writeTo(bos);
             bos.flush();
@@ -115,8 +116,6 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
             CMSTypedData contentData = new CMSProcessableByteArray(bos.toByteArray());
             CMSEnvelopedData envelopedData = envelopedDataGenerator.generate(contentData, encryptor);
             return envelopedData.getEncoded();
-        } catch (Exception e) {
-            throw new Exception("", e);
         }
     }
 

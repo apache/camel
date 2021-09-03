@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.Scanner;
 
 /**
  * Group based {@link Iterator} which groups the given {@link Iterator} a number of times and then return a combined
@@ -64,7 +65,13 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
         this.exchange = exchange;
         this.camelContext = exchange.getContext();
         this.it = it;
-        this.token = token;
+        // if the iterator is a scanner then it may have a dynamic delimiter
+        // so we need to use the actual evaluated delimiter as token
+        if (LanguageSupport.hasSimpleFunction(token) && it instanceof Scanner) {
+            this.token = ((Scanner) it).getDelim();
+        } else {
+            this.token = token;
+        }
         this.group = group;
         if (group <= 0) {
             throw new IllegalArgumentException("Group must be a positive number, was: " + group);

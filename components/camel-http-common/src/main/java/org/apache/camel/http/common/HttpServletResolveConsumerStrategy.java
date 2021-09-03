@@ -64,10 +64,10 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
         String path = request.getPathInfo();
 
         List<HttpConsumer> candidates = new ArrayList<>();
-        for (String key : consumers.keySet()) {
+        for (Map.Entry<String, HttpConsumer> entry : consumers.entrySet()) {
             //We need to look up the consumer path here
-            String consumerPath = consumers.get(key).getPath();
-            HttpConsumer consumer = consumers.get(key);
+            String consumerPath = entry.getValue().getPath();
+            HttpConsumer consumer = entry.getValue();
             boolean matchOnUriPrefix = consumer.getEndpoint().isMatchOnUriPrefix();
             // Just make sure the we get the right consumer path first
             if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {

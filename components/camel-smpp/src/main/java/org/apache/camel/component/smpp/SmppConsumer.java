@@ -72,7 +72,8 @@ public class SmppConsumer extends DefaultConsumer {
                 }
             }
         };
-        this.messageReceiverListener = new MessageReceiverListenerImpl(getEndpoint(), getProcessor(), getExceptionHandler());
+        this.messageReceiverListener
+                = new MessageReceiverListenerImpl(this, getEndpoint(), getProcessor(), getExceptionHandler());
     }
 
     @Override
@@ -89,6 +90,8 @@ public class SmppConsumer extends DefaultConsumer {
         SMPPSession session = createSMPPSession();
         session.setEnquireLinkTimer(configuration.getEnquireLinkTimer());
         session.setTransactionTimer(configuration.getTransactionTimer());
+        session.setPduProcessorDegree(this.configuration.getPduProcessorDegree());
+        session.setQueueCapacity(this.configuration.getPduProcessorQueueCapacity());
         session.addSessionStateListener(internalSessionStateListener);
         session.setMessageReceiverListener(messageReceiverListener);
         session.connectAndBind(this.configuration.getHost(), this.configuration.getPort(),
@@ -102,7 +105,7 @@ public class SmppConsumer extends DefaultConsumer {
     }
 
     /**
-     * Factory method to easily instantiate a mock SMPPSession
+     * Factory method to easily instantiate a SMPPSession
      * 
      * @return the SMPPSession
      */

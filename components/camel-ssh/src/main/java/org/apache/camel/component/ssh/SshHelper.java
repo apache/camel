@@ -105,12 +105,12 @@ public final class SshHelper {
                 KeyPair pair = null;
                 // If we have no configured key type then just use the first keypair
                 if (configuration.getKeyType() == null) {
-                    Iterator<KeyPair> iterator = keyPairProvider.loadKeys().iterator();
+                    Iterator<KeyPair> iterator = keyPairProvider.loadKeys(session).iterator();
                     if (iterator.hasNext()) {
                         pair = iterator.next();
                     }
                 } else {
-                    pair = keyPairProvider.loadKey(configuration.getKeyType());
+                    pair = keyPairProvider.loadKey(session, configuration.getKeyType());
                 }
 
                 session.addPublicKeyIdentity(pair);

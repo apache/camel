@@ -70,6 +70,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean topicIsPattern;
     @UriParam(label = "consumer")
     private String groupId;
+    @UriParam(label = "consumer")
+    private String groupInstanceId;
     @UriParam(label = "consumer", defaultValue = "10")
     private int consumerStreams = 10;
     @UriParam(label = "consumer", defaultValue = "1")
@@ -140,6 +142,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean breakOnFirstError;
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
+    @UriParam(label = "consumer", defaultValue = "ERROR_HANDLER")
+    private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
 
     // Producer configuration properties
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -198,6 +202,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // request.timeout.ms
     @UriParam(label = "producer", defaultValue = "30000")
     private Integer requestTimeoutMs = 30000;
+    // delivery.timeout.ms
+    @UriParam(label = "producer", defaultValue = "120000")
+    private Integer deliveryTimeoutMs = 120000;
     // send.buffer.bytes
     @UriParam(label = "producer", defaultValue = "131072")
     private Integer sendBufferBytes = 131072;
@@ -289,7 +296,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common,security", defaultValue = CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL)
     private String securityProtocol = CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL;
     // SASL
-    // sasl.kerberos.kinit.cmd
+    // sasl.mechanism
     @UriParam(label = "common,security", defaultValue = SaslConfigs.DEFAULT_SASL_MECHANISM)
     private String saslMechanism = SaslConfigs.DEFAULT_SASL_MECHANISM;
     // sasl.kerberos.kinit.cmd
@@ -336,6 +343,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     public KafkaConfiguration copy() {
         try {
             KafkaConfiguration copy = (KafkaConfiguration) clone();
+            copy.additionalProperties = new HashMap<>(this.additionalProperties);
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -360,6 +368,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, getPartitioner());
         addPropertyIfNotNull(props, ProducerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotNull(props, ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, getRequestTimeoutMs());
+        addPropertyIfNotNull(props, ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, getDeliveryTimeoutMs());
         addPropertyIfNotNull(props, ProducerConfig.SEND_BUFFER_CONFIG, getSendBufferBytes());
         addPropertyIfNotNull(props, ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, getMaxInFlightRequest());
         addPropertyIfNotNull(props, ProducerConfig.METADATA_MAX_AGE_CONFIG, getMetadataMaxAgeMs());
@@ -573,6 +582,21 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getGroupInstanceId() {
+        return groupInstanceId;
+    }
+
+    /**
+     * A unique identifier of the consumer instance provided by the end user. Only non-empty strings are permitted. If
+     * set, the consumer is treated as a static member, which means that only one instance with this ID is allowed in
+     * the consumer group at any time. This can be used in combination with a larger session timeout to avoid group
+     * rebalances caused by transient unavailability (e.g. process restarts). If not set, the consumer will join the
+     * group as a dynamic member, which is the traditional behavior.
+     */
+    public void setGroupInstanceId(String groupInstanceId) {
+        this.groupInstanceId = groupInstanceId;
     }
 
     public String getPartitioner() {
@@ -867,6 +891,19 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.requestTimeoutMs = requestTimeoutMs;
     }
 
+    public Integer getDeliveryTimeoutMs() {
+        return deliveryTimeoutMs;
+    }
+
+    /**
+     * An upper bound on the time to report success or failure after a call to send() returns. This limits the total
+     * time that a record will be delayed prior to sending, the time to await acknowledgement from the broker (if
+     * expected), and the time allowed for retriable send failures.
+     */
+    public void setDeliveryTimeoutMs(Integer deliveryTimeoutMs) {
+        this.deliveryTimeoutMs = deliveryTimeoutMs;
+    }
+
     public Integer getQueueBufferingMaxMessages() {
         return queueBufferingMaxMessages;
     }
@@ -1101,8 +1138,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * Expose the kafka sasl.jaas.config parameter Example: org.apache.kafka.common.security.plain.PlainLoginModule
      * required username="USERNAME" password="PASSWORD";
      */
-    public void setSaslJaasConfig(String saslMechanism) {
-        this.saslJaasConfig = saslMechanism;
+    public void setSaslJaasConfig(String saslJaasConfig) {
+        this.saslJaasConfig = saslJaasConfig;
     }
 
     public String getSecurityProtocol() {
@@ -1724,5 +1761,24 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public PollOnError getPollOnError() {
+        return pollOnError;
+    }
+
+    /**
+     * What to do if kafka threw an exception while polling for new messages.
+     *
+     * Will by default use the value from the component configuration unless an explicit value has been configured on
+     * the endpoint level.
+     *
+     * DISCARD will discard the message and continue to poll next message. ERROR_HANDLER will use Camel's error handler
+     * to process the exception, and afterwards continue to poll next message. RECONNECT will re-connect the consumer
+     * and try poll the message again RETRY will let the consumer retry polling the same message again STOP will stop
+     * the consumer (have to be manually started/restarted if the consumer should be able to consume messages again)
+     */
+    public void setPollOnError(PollOnError pollOnError) {
+        this.pollOnError = pollOnError;
     }
 }

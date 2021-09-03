@@ -23,6 +23,7 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.activation.DataHandler;
 import javax.security.auth.Subject;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -45,6 +47,8 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
@@ -53,6 +57,8 @@ import org.apache.camel.component.cxf.util.ReaderInputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.binding.soap.Soap11;
@@ -176,7 +182,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
 
         // propagate body
-        String encoding = (String) camelExchange.getProperty(Exchange.CHARSET_NAME);
+        String encoding = (String) camelExchange.getProperty(ExchangePropertyKey.CHARSET_NAME);
         camelExchange.getOut().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage,
                 camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class), encoding));
 
@@ -200,6 +206,36 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                         createCamelAttachment(attachment));
             }
         }
+        addAttachmentFileCloseUoW(camelExchange, cxfExchange);
+    }
+
+    /**
+     * CXF may cache attachments in the filesystem temp folder. The files may leak if they were not used. Add a cleanup
+     * handler to remove the attachments after message processing.
+     *
+     * @param camelExchange
+     * @param cxfExchange
+     */
+    private void addAttachmentFileCloseUoW(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
+        camelExchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(org.apache.camel.Exchange exchange) {
+                Collection<Attachment> atts = cxfExchange.getInMessage().getAttachments();
+                if (atts != null) {
+                    for (Attachment att : atts) {
+                        DataHandler dh = att.getDataHandler();
+                        if (dh != null) {
+                            try {
+                                InputStream is = dh.getInputStream();
+                                IOHelper.close(is);
+                            } catch (Exception e) {
+                                // ignore
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private DefaultAttachment createCamelAttachment(Attachment attachment) {
@@ -303,7 +339,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         setCharsetWithContentType(camelExchange);
 
         // set body
-        String encoding = (String) camelExchange.getProperty(Exchange.CHARSET_NAME);
+        String encoding = (String) camelExchange.getProperty(ExchangePropertyKey.CHARSET_NAME);
         Object body = DefaultCxfBinding.getContentFromCxf(cxfMessage,
                 camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class), encoding);
         if (body != null) {
@@ -318,6 +354,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                         createCamelAttachment(attachment));
             }
         }
+        addAttachmentFileCloseUoW(camelExchange, cxfExchange);
     }
 
     /**
@@ -496,7 +533,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             String charset = HttpHeaderHelper.findCharset(contentTypeHeader);
             String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, Charset.forName("UTF-8").name());
             if (normalizedEncoding != null) {
-                camelExchange.setProperty(Exchange.CHARSET_NAME, normalizedEncoding);
+                camelExchange.setProperty(ExchangePropertyKey.CHARSET_NAME, normalizedEncoding);
             }
         }
     }
@@ -729,6 +766,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             transportHeaders.putAll(headers);
         }
 
+        // TODO camelExchange may be null
         DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class);
 
         for (Map.Entry<String, Object> entry : camelHeaders.entrySet()) {

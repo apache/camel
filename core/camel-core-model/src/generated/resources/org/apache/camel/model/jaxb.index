@@ -29,6 +29,7 @@ InputTypeDefinition
 InterceptDefinition
 InterceptFromDefinition
 InterceptSendToEndpointDefinition
+KameletDefinition
 LoadBalanceDefinition
 LoadBalancerDefinition
 LogDefinition
@@ -62,11 +63,15 @@ Resilience4jConfigurationDefinition
 RestContextRefDefinition
 RollbackDefinition
 RouteBuilderDefinition
+RouteConfigurationDefinition
+RouteConfigurationsDefinition
 RouteContextRefDefinition
 RouteDefinition
+RouteTemplateBeanDefinition
 RouteTemplateContextRefDefinition
 RouteTemplateDefinition
 RouteTemplateParameterDefinition
+RouteTemplateScriptDefinition
 RouteTemplatesDefinition
 RoutesDefinition
 RoutingSlipDefinition

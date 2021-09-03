@@ -61,7 +61,7 @@ public class NitriteConsumer extends DefaultConsumer {
         @Override
         public void onChange(ChangeInfo changeInfo) {
             for (ChangedItem changedItem : changeInfo.getChangedItems()) {
-                Exchange exchange = endpoint.createExchange();
+                Exchange exchange = createExchange(false);
                 Message message = exchange.getMessage();
                 message.setHeader(NitriteConstants.CHANGE_TIMESTAMP, changedItem.getChangeTimestamp());
                 message.setHeader(NitriteConstants.CHANGE_TYPE, changedItem.getChangeType());
@@ -75,6 +75,7 @@ public class NitriteConsumer extends DefaultConsumer {
                     if (exchange.getException() != null) {
                         getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                     }
+                    releaseExchange(exchange, false);
                 }
             }
         }

@@ -46,8 +46,8 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
                 Map<Integer, Connector> connectors = new HashMap<>();
-                connectors.put(port1, createSslSocketConnector(port1));
-                connectors.put(port2, createSslSocketConnector(port2));
+                connectors.put(port1.getPort(), createSslSocketConnector(port1.getPort()));
+                connectors.put(port2.getPort(), createSslSocketConnector(port2.getPort()));
 
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 jetty.setSslSocketConnectors(connectors);

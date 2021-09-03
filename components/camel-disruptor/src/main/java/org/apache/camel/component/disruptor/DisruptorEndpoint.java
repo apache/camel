@@ -103,7 +103,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     @ManagedAttribute(description = "Amount of pending exchanges waiting for consumption in ring buffer")
-    public long getPendingExchangeCount() throws DisruptorNotStartedException {
+    public long getPendingExchangeCount() {
         return getDisruptor().getPendingExchangeCount();
     }
 

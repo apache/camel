@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.fhir.services;
 
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,18 +27,14 @@ public final class FhirServiceFactory {
 
     }
 
+    public static SimpleTestServiceBuilder<FhirService> builder() {
+        return new SimpleTestServiceBuilder<>("fhir");
+    }
+
     public static FhirService createService() {
-        String instanceType = System.getProperty("fhir.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-fhir-container")) {
-            return new FhirLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new FhirRemoteService();
-        }
-
-        LOG.error("FHIR instance must be one of 'local-fhir-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid FHIR instance type");
+        return builder()
+                .addLocalMapping(FhirLocalContainerService::new)
+                .addRemoteMapping(FhirRemoteService::new)
+                .build();
     }
 }

@@ -125,7 +125,7 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
             throw e;
         }
 
-        Exchange exchange = this.endpoint.createExchange();
+        Exchange exchange = createExchange(true);
         exchange.setExchangeId(stream.getLastReceiveLSN().asString());
 
         Message message = exchange.getIn();

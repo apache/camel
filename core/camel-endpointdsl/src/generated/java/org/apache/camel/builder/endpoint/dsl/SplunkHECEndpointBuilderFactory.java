@@ -36,6 +36,68 @@ public interface SplunkHECEndpointBuilderFactory {
      */
     public interface SplunkHECEndpointBuilder extends EndpointProducerBuilder {
         /**
+         * Send only the message body.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param bodyOnly the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder bodyOnly(boolean bodyOnly) {
+            doSetProperty("bodyOnly", bodyOnly);
+            return this;
+        }
+        /**
+         * Send only the message body.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param bodyOnly the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder bodyOnly(String bodyOnly) {
+            doSetProperty("bodyOnly", bodyOnly);
+            return this;
+        }
+        /**
+         * Send only message headers.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param headersOnly the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder headersOnly(boolean headersOnly) {
+            doSetProperty("headersOnly", headersOnly);
+            return this;
+        }
+        /**
+         * Send only message headers.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param headersOnly the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder headersOnly(String headersOnly) {
+            doSetProperty("headersOnly", headersOnly);
+            return this;
+        }
+        /**
          * Splunk host.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -141,6 +203,37 @@ public interface SplunkHECEndpointBuilderFactory {
          */
         default SplunkHECEndpointBuilder sourceType(String sourceType) {
             doSetProperty("sourceType", sourceType);
+            return this;
+        }
+        /**
+         * Time this even occurred. By default, the time will be when this event
+         * hits the splunk server.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param time the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder time(Long time) {
+            doSetProperty("time", time);
+            return this;
+        }
+        /**
+         * Time this even occurred. By default, the time will be when this event
+         * hits the splunk server.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param time the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder time(String time) {
+            doSetProperty("time", time);
             return this;
         }
         /**

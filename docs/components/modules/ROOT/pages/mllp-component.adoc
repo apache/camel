@@ -47,11 +47,46 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-== MLLP Options
 
+// component-configure options: START
+== Configuring Options
 
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The MLLP component supports 6 options, which are listed below.
 
 
@@ -68,14 +103,9 @@ The MLLP component supports 6 options, which are listed below.
 |===
 // component options: END
 
-
-
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The MLLP endpoint is configured using URI syntax:
 
 ----
@@ -95,14 +125,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (27 parameters):
+=== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *autoAck* (common) | Enable/Disable the automatic generation of a MLLP Acknowledgement MLLP Consumers only | true | boolean
-| *bufferWrites* (common) | *Deprecated* Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | boolean
 | *hl7Headers* (common) | Enable/Disable the automatic generation of message headers from the HL7 Message MLLP Consumers only | true | boolean
 | *requireEndOfData* (common) | Enable/Disable strict compliance to the MLLP standard. The MLLP standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA, however, some systems do not send the final END_OF_DATA byte. This setting controls whether or not the final END_OF_DATA byte is required or optional. | true | boolean
 | *stringPayload* (common) | Enable/Disable converting the payload to a String. If enabled, HL7 Payloads received from external systems will be validated converted to a String. If the charsetName property is set, that character set will be used for the conversion. If the charsetName property is not set, the value of MSH-18 will be used to determine th appropriate character set. If MSH-18 is not set, then the default ISO-8859-1 character set will be use. | true | boolean
@@ -125,17 +154,10 @@ with the following path and query parameters:
 | *bindTimeout* (timeout) | TCP Server Only - The number of milliseconds to retry binding to a server port | 30000 | int
 | *connectTimeout* (timeout) | Timeout (in milliseconds) for establishing for a TCP connection TCP Client only | 30000 | int
 | *idleTimeout* (timeout) | The approximate idle time allowed before the Client TCP Connection will be reset. A null value or a value less than or equal to zero will disable the idle timeout. |  | Integer
-| *maxReceiveTimeouts* (timeout) | *Deprecated* The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
 | *readTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received | 5000 | int
 | *receiveTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame | 15000 | int
 |===
 // endpoint options: END
-
-
-
-
-
-
 
 
 == MLLP Consumer
@@ -150,7 +172,7 @@ the CamelMllpAcknowledgementType exchange property. The MLLP Consumer
 can read messages without sending any HL7 Acknowledgement if the
 automatic acknowledgement is disabled and exchange pattern is InOnly.
 
-== *Message Headers*
+=== Message Headers
 
 The MLLP Consumer adds these headers on the Camel message:
 
@@ -177,7 +199,7 @@ The MLLP Consumer adds these headers on the Camel message:
 All headers are String types. If a header value is missing, its value
 is null.
 
-== *Exchange Properties*
+=== Exchange Properties
 
 The type of acknowledgment the MLLP Consumer generates and state of the TCP Socket can be controlled
 by these properties on the Camel exchange:
@@ -197,9 +219,6 @@ by these properties on the Camel exchange:
 |CamelMllpResetConnectionAfterSend | Boolean | If true, the Socket will be reset immediately after sending any data
 |====================================
 
-// REVISIT - Empty section is bad for AsciiDoc build
-//=== Consumer Configuration
-
 == MLLP Producer
 
 The MLLP Producer supports sending MLLP-framed messages and receiving
@@ -209,7 +228,7 @@ received.  The received acknowledgement is interrogated and an exception
 is raised in the event of a negative acknowledgement. The MLLP Producer
 can ignore acknowledgements when configured with InOnly exchange pattern.
 
-== *Message Headers*
+=== Message Headers
 
 The MLLP Producer adds these headers on the Camel message:
 
@@ -223,7 +242,7 @@ The MLLP Producer adds these headers on the Camel message:
 |CamelMllpAcknowledgementType | The HL7 acknowledgement type (AA, AE, AR, etc)
 |===================================
 
-== *Exchange Properties*
+=== Exchange Properties
 
 The state of the TCP Socket can be controlled by these properties on the Camel exchange:
 
@@ -236,4 +255,4 @@ The state of the TCP Socket can be controlled by these properties on the Camel e
 |CamelMllpResetConnectionAfterSend | Boolean | If true, the Socket will be reset immediately after sending any data
 |====================================
 
-include::camel-spring-boot::page$mllp-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$mllp-starter.adoc[]

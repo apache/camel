@@ -18,28 +18,21 @@
 package org.apache.camel.test.infra.azure.storage.blob.services;
 
 import org.apache.camel.test.infra.azure.common.services.AzureService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class AzureStorageBlobServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(AzureStorageBlobServiceFactory.class);
-
     private AzureStorageBlobServiceFactory() {
 
     }
 
-    public static AzureService createAzureService() {
-        String instanceType = System.getProperty("azure.instance.type");
+    public static SimpleTestServiceBuilder<AzureService> builder() {
+        return new SimpleTestServiceBuilder<>("azure");
+    }
 
-        if (instanceType == null || instanceType.equals("local-azure-container")) {
-            return new AzureStorageBlobLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new AzureStorageBlobRemoteService();
-        }
-
-        LOG.error("Azure instance must be one of 'local-azure-container' or 'remote");
-        throw new UnsupportedOperationException(String.format("Invalid Azure instance type: %s", instanceType));
+    public static AzureService createService() {
+        return builder()
+                .addLocalMapping(AzureStorageBlobLocalContainerService::new)
+                .addRemoteMapping(AzureStorageBlobRemoteService::new)
+                .build();
     }
 }

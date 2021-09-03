@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.reactive.streams.support;
 
+import org.apache.camel.component.reactive.streams.BaseReactiveTest;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 
-public class ReactiveStreamsTestSupport extends CamelTestSupport {
+public class ReactiveStreamsTestSupport extends BaseReactiveTest {
 
     protected CamelReactiveStreamsService camel;
 

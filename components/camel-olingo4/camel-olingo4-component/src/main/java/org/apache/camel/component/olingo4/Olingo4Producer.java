@@ -105,8 +105,8 @@ public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4
 
         try {
             doInvokeMethod(method, properties);
-        } catch (Throwable t) {
-            exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
+        } catch (Exception e) {
+            exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(e));
             callback.done(true);
             return true;
         }

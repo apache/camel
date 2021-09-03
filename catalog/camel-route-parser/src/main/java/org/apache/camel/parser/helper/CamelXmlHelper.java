@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -197,9 +198,8 @@ public final class CamelXmlHelper {
 
     private static Document loadCamelXmlFileAsDom(InputStream resourceInputStream) throws Exception {
         // must enforce the namespace to be http://camel.apache.org/schema/spring which is what the camel-core JAXB model uses
-        Document root = XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests",
+        return XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests",
                 "http://camel.apache.org/schema/spring");
-        return root;
     }
 
     private static Node findCamelNodeInDocument(Document root, String key) {
@@ -232,6 +232,7 @@ public final class CamelXmlHelper {
                 }
             }
         }
+        //FIXME : selectedNode is always null
         return selectedNode;
     }
 
@@ -295,7 +296,7 @@ public final class CamelXmlHelper {
     }
 
     private static boolean equal(Object a, Object b) {
-        return a == b || a != null && a.equals(b);
+        return Objects.equals(a, b);
     }
 
 }

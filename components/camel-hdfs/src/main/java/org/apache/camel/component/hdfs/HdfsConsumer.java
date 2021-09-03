@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -179,36 +180,40 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private void processHdfsInputStream(
             HdfsInputStream hdfsFile, Holder<Object> key, Holder<Object> value, AtomicInteger messageCount,
             AtomicInteger totalMessageCount) {
-        Exchange exchange = this.getEndpoint().createExchange();
-        Message message = exchange.getIn();
-        String fileName = StringUtils.substringAfterLast(hdfsFile.getActualPath(), "/");
-        message.setHeader(Exchange.FILE_NAME, fileName);
-        message.setHeader(Exchange.FILE_NAME_CONSUMED, fileName);
-        message.setHeader("CamelFileAbsolutePath", hdfsFile.getActualPath());
-        if (key.getValue() != null) {
-            message.setHeader(HdfsHeader.KEY.name(), key.getValue());
-        }
-
-        if (hdfsFile.getNumOfReadBytes() >= 0) {
-            message.setHeader(Exchange.FILE_LENGTH, hdfsFile.getNumOfReadBytes());
-        }
-
-        message.setBody(value.getValue());
-
-        updateNewExchange(exchange, messageCount.get(), hdfsFile);
-
-        LOG.debug("Processing file [{}]", fileName);
+        Exchange exchange = createExchange(false);
         try {
+            Message message = exchange.getIn();
+            String fileName = StringUtils.substringAfterLast(hdfsFile.getActualPath(), "/");
+            message.setHeader(Exchange.FILE_NAME, fileName);
+            message.setHeader(Exchange.FILE_NAME_CONSUMED, fileName);
+            message.setHeader("CamelFileAbsolutePath", hdfsFile.getActualPath());
+            if (key.getValue() != null) {
+                message.setHeader(HdfsHeader.KEY.name(), key.getValue());
+            }
+
+            if (hdfsFile.getNumOfReadBytes() >= 0) {
+                message.setHeader(Exchange.FILE_LENGTH, hdfsFile.getNumOfReadBytes());
+            }
+
+            message.setBody(value.getValue());
+
+            updateNewExchange(exchange, messageCount.get(), hdfsFile);
+
+            LOG.debug("Processing file [{}]", fileName);
+
             processor.process(exchange);
             totalMessageCount.incrementAndGet();
+
         } catch (Exception e) {
             exchange.setException(e);
+        } finally {
+            // in case of unhandled exceptions then let the exception handler handle them
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException(exchange.getException());
+            }
+            releaseExchange(exchange, false);
         }
 
-        // in case of unhandled exceptions then let the exception handler handle them
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException(exchange.getException());
-        }
     }
 
     private boolean normalFileIsDirectoryHasSuccessFile(FileStatus fileStatus, HdfsInfo info) {
@@ -248,14 +253,14 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         // do not share unit of work
         exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
 
-        exchange.setProperty(Exchange.SPLIT_INDEX, index);
+        exchange.setProperty(ExchangePropertyKey.SPLIT_INDEX, index);
 
         if (hdfsFile.hasNext()) {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.FALSE);
         } else {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.TRUE);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.TRUE);
             // streaming mode, so set total size when we are complete based on the index
-            exchange.setProperty(Exchange.SPLIT_SIZE, index + 1);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_SIZE, index + 1);
         }
     }
 

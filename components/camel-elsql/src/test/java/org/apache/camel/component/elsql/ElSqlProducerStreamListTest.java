@@ -35,7 +35,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ElSqlProducerStreamListTest extends CamelTestSupport {
 
     @BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY)
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
+            .setName(getClass().getSimpleName())
+            .setType(EmbeddedDatabaseType.DERBY)
             .addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Test

@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-zipkin</artifactId>
@@ -33,6 +33,7 @@
     <description>Distributed message tracing using Zipkin</description>
 
     <properties>
+    	<camel.surefire.parallel>true</camel.surefire.parallel>
         <firstVersion>2.18.0</firstVersion>
         <label>monitoring,microservice</label>
     </properties>
@@ -115,27 +116,6 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>scribe-test</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <forkCount>1</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <includes>
-                                <include>**/*Scribe.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+
 
 </project>

@@ -4,7 +4,7 @@
 :artifactId: camel-spring-rabbitmq
 :description: Send and receive messages from RabbitMQ using Spring RabbitMQ client.
 :since: 3.8
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-rabbitmq.adoc[opts=optional]
 
@@ -31,7 +31,6 @@ for this component:
 
 == URI format
 
-[source,text]
 ----
 spring-rabbitmq:exchangeName?[options]
 ----
@@ -40,10 +39,48 @@ The exchange name determines the exchange to which the produced
 messages will be sent to. In the case of consumers, the exchange name 
 determines the exchange the queue will be bound to.
 
-== Options
+
+
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
-The Spring RabbitMQ component supports 20 options, which are listed below.
+== Component Options
+
+
+The Spring RabbitMQ component supports 29 options, which are listed below.
 
 
 
@@ -60,11 +97,20 @@ The Spring RabbitMQ component supports 20 options, which are listed below.
 | *deadLetterExchangeType* (consumer) | The type of the dead letter exchange. There are 4 enums and the value can be one of: direct, fanout, headers, topic | direct | String
 | *deadLetterQueue* (consumer) | The name of the dead letter queue |  | String
 | *deadLetterRoutingKey* (consumer) | The routing key for the dead letter exchange |  | String
+| *maximumRetryAttempts* (consumer) | How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message | 5 | int
+| *rejectAndDontRequeue* (consumer) | Whether a Rabbitmq consumer should reject the message without requeuing. This enables failed messages to be sent to a Dead Letter Exchange/Queue, if the broker is so configured. | true | boolean
+| *retryDelay* (consumer) | Delay in msec a Rabbitmq consumer will wait before redelivering a message that Camel failed to process | 1000 | int
+| *concurrentConsumers* (consumer) | The number of consumers | 1 | int
 | *errorHandler* (consumer) | To use a custom ErrorHandler for handling exceptions from the message listener (consumer) |  | ErrorHandler
 | *listenerContainerFactory* (consumer) | To use a custom factory for creating and configuring ListenerContainer to be used by the consumer for receiving messages |  | ListenerContainerFactory
+| *maxConcurrentConsumers* (consumer) | The maximum number of consumers (available only with SMLC) |  | Integer
+| *messageListenerContainerType* (consumer) | The type of the MessageListenerContainer. There are 2 enums and the value can be one of: DMLC, SMLC | DMLC | String
 | *prefetchCount* (consumer) | Tell the broker how many messages to send to each consumer in a single request. Often this can be set quite high to improve throughput. | 250 | int
+| *retry* (consumer) | Custom retry configuration to use. If this is configured then the other settings such as maximumRetryAttempts for retry are not in use. |  | RetryOperationsInterceptor
 | *shutdownTimeout* (consumer) | The time to wait for workers in milliseconds after the container is stopped. If any workers are active when the shutdown signal comes they will be allowed to finish processing as long as they can finish within this timeout. | 5000 | long
+| *allowNullBody* (producer) | Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *replyTimeout* (producer) | Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging. The default value is 5 seconds. A negative value indicates an indefinite timeout. | 5000 | long
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *ignoreDeclarationExceptions* (advanced) | Switch on ignore exceptions such as mismatched properties when declaring | false | boolean
 | *messageConverter* (advanced) | To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message. |  | MessageConverter
@@ -73,8 +119,9 @@ The Spring RabbitMQ component supports 20 options, which are listed below.
 |===
 // component options: END
 
-
 // endpoint options: START
+== Endpoint Options
+
 The Spring RabbitMQ endpoint is configured using URI syntax:
 
 ----
@@ -93,7 +140,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (26 parameters):
+=== Query Parameters (34 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,10 +161,18 @@ with the following path and query parameters:
 | *deadLetterRoutingKey* (consumer) | The routing key for the dead letter exchange |  | String
 | *exchangeType* (consumer) | The type of the exchange. There are 4 enums and the value can be one of: direct, fanout, headers, topic | direct | String
 | *exclusive* (consumer) | Set to true for an exclusive consumer | false | boolean
+| *maximumRetryAttempts* (consumer) | How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message | 5 | int
 | *noLocal* (consumer) | Set to true for an no-local consumer | false | boolean
 | *queues* (consumer) | The queue(s) to use for consuming messages. Multiple queue names can be separated by comma. If none has been configured then Camel will generate an unique id as the queue name for the consumer. |  | String
+| *rejectAndDontRequeue* (consumer) | Whether a Rabbitmq consumer should reject the message without requeuing. This enables failed messages to be sent to a Dead Letter Exchange/Queue, if the broker is so configured. | true | boolean
+| *retryDelay* (consumer) | Delay in msec a Rabbitmq consumer will wait before redelivering a message that Camel failed to process | 1000 | int
+| *concurrentConsumers* (consumer) | The number of consumers |  | Integer
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *maxConcurrentConsumers* (consumer) | The maximum number of consumers (available only with SMLC) |  | Integer
+| *messageListenerContainerType* (consumer) | The type of the MessageListenerContainer. There are 2 enums and the value can be one of: DMLC, SMLC | DMLC | String
+| *prefetchCount* (consumer) | Tell the broker how many messages to send in a single request. Often this can be set quite high to improve throughput. |  | Integer
+| *retry* (consumer) | Custom retry configuration to use. If this is configured then the other settings such as maximumRetryAttempts for retry are not in use. |  | RetryOperationsInterceptor
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *replyTimeout* (producer) | Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging. The default value is 5 seconds. A negative value indicates an indefinite timeout. | 5000 | long
 | *usePublisherConnection* (producer) | Use a separate connection for publishers and consumers | false | boolean
@@ -127,6 +182,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used | false | boolean
 |===
 // endpoint options: END
+
 
 == Using a connection factory
 
@@ -309,4 +365,4 @@ from("direct:order")
   .toD("spring-rabbit:order-${header.orderType}");
 ----
 
-include::camel-spring-boot::page$spring-rabbitmq-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$spring-rabbitmq-starter.adoc[]

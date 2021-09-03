@@ -24,6 +24,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +33,8 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Resilience using timeout and custom thread pool with Java DSL
@@ -65,13 +66,10 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
     public void testSlow() throws Exception {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
-        try {
-            template.requestBody("direct:start", "slow");
-            fail("Should fail due to timeout");
-        } catch (Exception e) {
-            // expected a timeout
-            assertIsInstanceOf(TimeoutException.class, e.getCause());
-        }
+        Exception exception = assertThrows(Exception.class,
+                () -> template.requestBody("direct:start", "slow"),
+                "Should fail due to timeout");
+        assertIsInstanceOf(TimeoutException.class, exception.getCause());
 
         ThreadPoolExecutor pte = context().getRegistry().lookupByNameAndType("myThreadPool", ThreadPoolExecutor.class);
         assertNotNull(pte);
@@ -86,18 +84,16 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
     }
 
     @Test
+    @Disabled("manual testing")
     public void testSlowLoop() throws Exception {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
         for (int i = 0; i < 10; i++) {
-            try {
-                log.info(">>> test run " + i + " <<<");
-                template.requestBody("direct:start", "slow");
-                fail("Should fail due to timeout");
-            } catch (Exception e) {
-                // expected a timeout
-                assertIsInstanceOf(TimeoutException.class, e.getCause());
-            }
+            log.info(">>> test run " + i + " <<<");
+            Exception exception = assertThrows(Exception.class,
+                    () -> template.requestBody("direct:start", "slow"),
+                    "Should fail due to timeout");
+            assertIsInstanceOf(TimeoutException.class, exception.getCause());
         }
     }
 

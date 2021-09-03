@@ -18,17 +18,18 @@ package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class SedaPollEnrichSimpleExpressionTest extends CamelTestSupport {
+public class SedaPollEnrichSimpleExpressionTest extends BaseEndpointDslTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).pollEnrich(seda("${exchangeProperty.whereFrom}").timeout(1000)).to("mock:result");
+                from(direct("start"))
+                        .pollEnrich(seda("${exchangeProperty.whereFrom}").concurrentConsumers(1), 1000)
+                        .to("mock:result");
             }
         };
     }

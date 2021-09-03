@@ -40,6 +40,39 @@ public interface HttpEndpointBuilderFactory {
             return (AdvancedHttpEndpointBuilder) this;
         }
         /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder chunked(boolean chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder chunked(String chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
          * Determines whether or not the raw input stream from Servlet is cached
          * or not (Camel will read the stream into a in memory/overflow to file,
          * Stream caching) cache. By default Camel will cache the Servlet input
@@ -175,42 +208,11 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder chunked(boolean chunked) {
-            doSetProperty("chunked", chunked);
-            return this;
-        }
-        /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder chunked(String chunked) {
-            doSetProperty("chunked", chunked);
-            return this;
-        }
-        /**
          * Whether to clear expired cookies before sending the HTTP request.
          * This ensures the cookies store does not keep growing by adding new
-         * cookies which is newer removed when they are expired.
+         * cookies which is newer removed when they are expired. If the
+         * component has disabled cookie management then this option is disabled
+         * too.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -228,7 +230,9 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Whether to clear expired cookies before sending the HTTP request.
          * This ensures the cookies store does not keep growing by adding new
-         * cookies which is newer removed when they are expired.
+         * cookies which is newer removed when they are expired. If the
+         * component has disabled cookie management then this option is disabled
+         * too.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1142,6 +1146,98 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to skip mapping all the Camel headers as HTTP request
+         * headers. If there are no data from Camel headers needed to be
+         * included in the HTTP request then this can avoid parsing overhead
+         * with many object allocations for the JVM garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder skipRequestHeaders(
+                boolean skipRequestHeaders) {
+            doSetProperty("skipRequestHeaders", skipRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the Camel headers as HTTP request
+         * headers. If there are no data from Camel headers needed to be
+         * included in the HTTP request then this can avoid parsing overhead
+         * with many object allocations for the JVM garbage collector.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder skipRequestHeaders(
+                String skipRequestHeaders) {
+            doSetProperty("skipRequestHeaders", skipRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the HTTP response headers to Camel
+         * headers. If there are no data needed from HTTP headers then this can
+         * avoid parsing overhead with many object allocations for the JVM
+         * garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipResponseHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder skipResponseHeaders(
+                boolean skipResponseHeaders) {
+            doSetProperty("skipResponseHeaders", skipResponseHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the HTTP response headers to Camel
+         * headers. If there are no data needed from HTTP headers then this can
+         * avoid parsing overhead with many object allocations for the JVM
+         * garbage collector.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipResponseHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder skipResponseHeaders(
+                String skipResponseHeaders) {
+            doSetProperty("skipResponseHeaders", skipResponseHeaders);
+            return this;
+        }
+        /**
+         * To set a custom HTTP User-Agent request header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param userAgent the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder userAgent(String userAgent) {
+            doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
          * Provide access to the http client request parameters used on new
          * RequestConfig instances used by producers or consumers of this
          * endpoint.
@@ -1375,117 +1471,6 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder mapHttpMessageBody(
-                boolean mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder mapHttpMessageBody(
-                String mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
-                boolean mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
-                String mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
-                boolean mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
-                String mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
          * The maximum number of connections.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -1576,12 +1561,12 @@ public interface HttpEndpointBuilderFactory {
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-http
          * 
-         * Syntax: <code>http:httpUri</code>
+         * Syntax: <code>http://httpUri</code>
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
-         * @param path httpUri
+         * @param path //httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder http(String path) {
@@ -1595,14 +1580,14 @@ public interface HttpEndpointBuilderFactory {
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-http
          * 
-         * Syntax: <code>http:httpUri</code>
+         * Syntax: <code>http://httpUri</code>
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path httpUri
+         * @param path //httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder http(String componentName, String path) {
@@ -1616,12 +1601,12 @@ public interface HttpEndpointBuilderFactory {
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-http
          * 
-         * Syntax: <code>https:httpUri</code>
+         * Syntax: <code>https://httpUri</code>
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
-         * @param path httpUri
+         * @param path //httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder https(String path) {

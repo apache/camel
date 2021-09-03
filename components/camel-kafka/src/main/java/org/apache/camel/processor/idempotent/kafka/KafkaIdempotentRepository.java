@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.idempotent.kafka;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -39,6 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -46,6 +48,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -426,9 +429,27 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         @Override
         public void run() {
             log.debug("Subscribing consumer to {}", topic);
-            consumer.subscribe(Collections.singleton(topic));
-            log.debug("Seeking to beginning");
-            consumer.seekToBeginning(consumer.assignment());
+            consumer.subscribe(Collections.singleton(topic), new ConsumerRebalanceListener() {
+                @Override
+                public void onPartitionsRevoked(Collection<TopicPartition> collection) {
+                }
+
+                @Override
+                public void onPartitionsAssigned(Collection<TopicPartition> collection) {
+                    // Whenever a partition is assigned, we want to consume from the beginning to guarantee all the
+                    // existing entries in the topic/partition are added to the cache
+                    log.debug("Seeking to beginning");
+                    consumer.seekToBeginning(collection);
+                }
+            });
+
+            // According to the Kafka documentation: "Rebalances will only occur during an active call to poll, so
+            // callbacks will also only be invoked during that time".
+            // We can safely trigger a poll(0) because the consumer doesn't have any record pre-fetched.
+            log.debug("Forcing rebalance to get partitions assigned");
+            if (!consumer.poll(0).isEmpty()) {
+                throw new IllegalStateException("Firts call to Kafka consumer.poll(0) should never return any record");
+            }
 
             POLL_LOOP: while (running.get()) {
                 log.trace("Polling");

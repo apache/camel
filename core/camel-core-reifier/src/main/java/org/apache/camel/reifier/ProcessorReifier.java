@@ -51,6 +51,7 @@ import org.apache.camel.model.InOutDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.LoopDefinition;
@@ -207,6 +208,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new InterceptReifier<>(route, definition);
         } else if (definition instanceof InterceptSendToEndpointDefinition) {
             return new InterceptSendToEndpointReifier(route, definition);
+        } else if (definition instanceof KameletDefinition) {
+            return new KameletReifier(route, definition);
         } else if (definition instanceof LoadBalanceDefinition) {
             return new LoadBalanceReifier(route, definition);
         } else if (definition instanceof LogDefinition) {
@@ -362,12 +365,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
 
         // prefer to use explicit configured executor on the definition
+        String ref = parseString(definition.getExecutorServiceRef());
         if (definition.getExecutorService() != null) {
             return definition.getExecutorService();
-        } else if (definition.getExecutorServiceRef() != null) {
+        } else if (ref != null) {
             // lookup in registry first and use existing thread pool if exists
-            ExecutorService answer
-                    = lookupExecutorServiceRef(name, definition, parseString(definition.getExecutorServiceRef()));
+            ExecutorService answer = lookupExecutorServiceRef(name, definition, ref);
             if (answer == null) {
                 throw new IllegalArgumentException(
                         "ExecutorServiceRef " + definition.getExecutorServiceRef()

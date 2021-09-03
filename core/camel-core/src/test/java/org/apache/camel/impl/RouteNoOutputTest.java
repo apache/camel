@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class RouteNoOutputTest extends ContextTestSupport {
@@ -35,10 +35,10 @@ public class RouteNoOutputTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (Exception e) {
             FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            assertEquals("route1", failed.getRouteId());
+            assertTrue(failed.getRouteId().matches("route[0-9]+"));
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Route route1 has no output processors. You need to add outputs to the route such as to(\"log:foo\").",
-                    e.getCause().getMessage());
+            assertTrue(e.getCause().getMessage().matches(
+                    "Route route[0-9]+\\Q has no output processors. You need to add outputs to the route such as to(\"log:foo\").\\E"));
         }
     }
 

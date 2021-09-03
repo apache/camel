@@ -231,7 +231,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkXpath(doc, pathToSignatureProperties + "etsi:SignatureProductionPlace/etsi:CountryName/text()", prefix2Namespace,
                 "Germany");
 
-        // signer role 
+        // signer role
         checkXpath(doc, pathToSignatureProperties + "etsi:SignerRole/etsi:ClaimedRoles/etsi:ClaimedRole[1]/text()",
                 prefix2Namespace,
                 "test");
@@ -268,7 +268,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
                         + "etsi:DataObjectFormat/etsi:ObjectIdentifier/etsi:DocumentationReferences/etsi:DocumentationReference[2]/text()",
                 prefix2Namespace, "http://test.com/dataobject.format.doc.ref2.txt");
 
-        //commitment 
+        //commitment
         checkXpath(doc,
                 pathToDataObjectProperties + "etsi:CommitmentTypeIndication/etsi:CommitmentTypeId/etsi:Identifier/text()",
                 prefix2Namespace, "1.2.840.113549.1.9.16.6.4");
@@ -668,129 +668,169 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
     @Test
     public void namespaceNull() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setNamespace(null));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties.setNamespace(null));
     }
 
     @Test
     public void signingCertificateURIsNull() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setSigningCertificateURIs(null));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties.setSigningCertificateURIs(null));
     }
 
     @Test
     public void sigPolicyInvalid() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setSignaturePolicy("invalid"));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties.setSignaturePolicy("invalid"));
     }
 
     @Test
     public void sigPolicyIdDocumentationReferencesNull() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setSigPolicyIdDocumentationReferences(null));
+                () -> xAdESSignatureProperties.setSigPolicyIdDocumentationReferences(null));
     }
 
     @Test
     public void sigPolicyIdDocumentationReferencesNullEntry() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties()
-                        .setSigPolicyIdDocumentationReferences(Collections.<String> singletonList(null)));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> sigPolicyIdDocumentationReferences = Collections.<String> singletonList(null);
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties
+                .setSigPolicyIdDocumentationReferences(sigPolicyIdDocumentationReferences));
     }
 
     @Test
     public void sigPolicyIdDocumentationReferencesEmptyEntry() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties()
-                        .setSigPolicyIdDocumentationReferences(Collections.<String> singletonList("")));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> sigPolicyIdDocumentationReferences = Collections.singletonList("");
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties
+                .setSigPolicyIdDocumentationReferences(sigPolicyIdDocumentationReferences));
     }
 
     @Test
     public void dataObjectFormatIdentifierDocumentationReferencesNull() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setDataObjectFormatIdentifierDocumentationReferences(null));
+                () -> xAdESSignatureProperties.setDataObjectFormatIdentifierDocumentationReferences(null));
     }
 
     @Test
     public void dataObjectFormatIdentifierDocumentationReferencesNullEntry() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> dataObjectFormatIdentifierDocumentationReferences = Collections.singletonList(null);
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties()
-                        .setDataObjectFormatIdentifierDocumentationReferences(Collections.<String> singletonList(null)));
+                () -> xAdESSignatureProperties.setDataObjectFormatIdentifierDocumentationReferences(
+                        dataObjectFormatIdentifierDocumentationReferences));
     }
 
     @Test
     public void dataObjectFormatIdentifierDocumentationReferencesEmptyEntry() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> dataObjectFormatIdentifierDocumentationReferences = Collections.singletonList("");
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties()
-                        .setDataObjectFormatIdentifierDocumentationReferences(Collections.<String> singletonList("")));
+                () -> xAdESSignatureProperties.setDataObjectFormatIdentifierDocumentationReferences(
+                        dataObjectFormatIdentifierDocumentationReferences));
     }
 
     @Test
     public void signerClaimedRolesNull() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setSignerClaimedRoles(null));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties.setSignerClaimedRoles(null));
     }
 
     @Test
     public void signerClaimedRolesNullEntry() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> signerClaimedRoles = Collections.singletonList(null);
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setSignerClaimedRoles(Collections.<String> singletonList(null)));
+                () -> xAdESSignatureProperties.setSignerClaimedRoles(signerClaimedRoles));
     }
 
     @Test
     public void signerClaimedRolesEmptyEntry() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> signerClaimedRoles = Collections.singletonList("");
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setSignerClaimedRoles(Collections.<String> singletonList("")));
+                () -> xAdESSignatureProperties.setSignerClaimedRoles(signerClaimedRoles));
     }
 
     @Test
     public void signerCertifiedRolesNull() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setSignerCertifiedRoles(null));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties.setSignerCertifiedRoles(null));
     }
 
     @Test
     public void signerCertifiedRolesNullEntry() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<XAdESEncapsulatedPKIData> signerCertifiedRoles = Collections.singletonList(null);
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties()
-                        .setSignerCertifiedRoles(Collections.<XAdESEncapsulatedPKIData> singletonList(null)));
+                () -> xAdESSignatureProperties.setSignerCertifiedRoles(signerCertifiedRoles));
     }
 
     @Test
     public void commitmentTypeIdDocumentationReferencesNull() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setCommitmentTypeIdDocumentationReferences(null));
+                () -> xAdESSignatureProperties.setCommitmentTypeIdDocumentationReferences(null));
     }
 
     @Test
     public void commitmentTypeIdDocumentationReferencesNullEntry() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties()
-                        .setCommitmentTypeIdDocumentationReferences(Collections.<String> singletonList(null)));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> commitmentTypeIdDocumentationReferences = Collections.singletonList(null);
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties
+                .setCommitmentTypeIdDocumentationReferences(commitmentTypeIdDocumentationReferences));
     }
 
     @Test
     public void commitmentTypeIdDocumentationReferencesEmptyEntry() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties()
-                        .setCommitmentTypeIdDocumentationReferences(Collections.<String> singletonList("")));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> commitmentTypeIdDocumentationReferences = Collections.singletonList("");
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties
+                .setCommitmentTypeIdDocumentationReferences(commitmentTypeIdDocumentationReferences));
     }
 
     @Test
     public void commitmentTypeQualifiersNull() throws Exception {
-        assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setCommitmentTypeQualifiers(null));
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+
+        assertThrows(IllegalArgumentException.class, () -> xAdESSignatureProperties.setCommitmentTypeQualifiers(null));
     }
 
     @Test
     public void commitmentTypeQualifiersNullEntry() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> commitmentTypeQualifiers = Collections.singletonList(null);
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setCommitmentTypeQualifiers(Collections.<String> singletonList(null)));
+                () -> xAdESSignatureProperties.setCommitmentTypeQualifiers(commitmentTypeQualifiers));
     }
 
     @Test
     public void commitmentTypeQualifiersEmptyEntry() throws Exception {
+        final XAdESSignatureProperties xAdESSignatureProperties = new XAdESSignatureProperties();
+        final List<String> commitmentTypeQualifiers = Collections.singletonList("");
+
         assertThrows(IllegalArgumentException.class,
-                () -> new XAdESSignatureProperties().setCommitmentTypeQualifiers(Collections.<String> singletonList("")));
+                () -> xAdESSignatureProperties.setCommitmentTypeQualifiers(commitmentTypeQualifiers));
     }
 
     //

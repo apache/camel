@@ -45,6 +45,7 @@ public class TwitterTimelineComponent extends AbstractTwitterComponent {
             TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
         String user = getAndRemoveParameter(parameters, "user", String.class);
-        return new TwitterTimelineEndpoint(uri, remaining, user, this, properties);
+        String list = getAndRemoveParameter(parameters, "list", String.class);
+        return new TwitterTimelineEndpoint(uri, remaining, user, list, this, properties);
     }
 }

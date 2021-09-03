@@ -15,12 +15,12 @@
 # limitations under the License.
 #
 
-name: master pr build
+name: main pr build
 
 on:
   pull_request:
     branches:
-      - master
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,7 +28,9 @@ jobs:
       matrix:
         java: [ '1.8' ]
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
     - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v1
       with:

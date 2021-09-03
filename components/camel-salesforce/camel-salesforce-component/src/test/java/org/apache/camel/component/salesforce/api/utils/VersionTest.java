@@ -67,8 +67,8 @@ public class VersionTest {
         assertTrue(V35_0.compareTo(V34_0) > 0);
         assertTrue(V35_0.compareTo(V34_3) > 0);
 
-        assertTrue(V34_0.compareTo(V34_0) == 0);
-        assertTrue(V34_3.compareTo(V34_3) == 0);
-        assertTrue(V35_0.compareTo(V35_0) == 0);
+        assertEquals(0, V34_0.compareTo(V34_0));
+        assertEquals(0, V34_3.compareTo(V34_3));
+        assertEquals(0, V35_0.compareTo(V35_0));
     }
 }

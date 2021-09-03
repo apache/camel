@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -157,6 +158,11 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(true);
+            if (producer.getConfiguration().isHostnameVerification()) {
+                SSLParameters sslParams = engine.getSSLParameters();
+                sslParams.setEndpointIdentificationAlgorithm("HTTPS");
+                engine.setSSLParameters(sslParams);
+            }
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));

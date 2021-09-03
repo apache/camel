@@ -17,17 +17,20 @@
 package org.apache.camel.test.infra.nats.services;
 
 import org.apache.camel.test.infra.nats.common.NatsProperties;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class NatsLocalContainerAuthTokenService extends NatsLocalContainerService {
     public static final String TOKEN = "!admin23456";
 
-    protected void initContainer(String imageName) {
-        super.initContainer(imageName);
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        GenericContainer container = super.initContainer(imageName, containerName);
 
-        getContainer()
+        container
                 .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
                 .withCommand("-DV", "-auth", TOKEN);
+
+        return container;
     }
 
     @Override

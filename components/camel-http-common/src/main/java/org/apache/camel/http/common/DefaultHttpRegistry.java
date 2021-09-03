@@ -46,12 +46,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
      * Lookup or create a new registry if none exists with the given name
      */
     public static synchronized HttpRegistry getHttpRegistry(String name) {
-        HttpRegistry answer = registries.get(name);
-        if (answer == null) {
-            answer = new DefaultHttpRegistry();
-            registries.put(name, answer);
-        }
-        return answer;
+        return registries.computeIfAbsent(name, k -> new DefaultHttpRegistry());
     }
 
     /**

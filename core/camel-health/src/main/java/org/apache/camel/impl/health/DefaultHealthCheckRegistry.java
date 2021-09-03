@@ -86,15 +86,11 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         super.doInit();
 
         for (HealthCheck check : checks) {
-            if (check instanceof CamelContextAware) {
-                ((CamelContextAware) check).setCamelContext(camelContext);
-            }
+            CamelContextAware.trySetCamelContext(check, camelContext);
         }
 
         for (HealthCheckRepository repository : repositories) {
-            if (repository instanceof CamelContextAware) {
-                ((CamelContextAware) repository).setCamelContext(camelContext);
-            }
+            CamelContextAware.trySetCamelContext(repository, camelContext);
         }
     }
 
@@ -118,9 +114,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         if (answer == null) {
             answer = resolveHealthCheckRepositoryById(id);
         }
-        if (answer instanceof CamelContextAware) {
-            ((CamelContextAware) answer).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(answer, camelContext);
         return answer;
     }
 
@@ -178,10 +172,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             }
             result = checks.add(healthCheck);
             if (result) {
-                if (obj instanceof CamelContextAware) {
-                    ((CamelContextAware) obj).setCamelContext(camelContext);
-                }
-
+                CamelContextAware.trySetCamelContext(obj, camelContext);
                 LOG.debug("HealthCheck with id {} successfully registered", healthCheck.getId());
             }
         } else {
@@ -192,10 +183,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             }
             result = this.repositories.add(repository);
             if (result) {
-                if (repository instanceof CamelContextAware) {
-                    ((CamelContextAware) repository).setCamelContext(camelContext);
-                }
-
+                CamelContextAware.trySetCamelContext(repository, camelContext);
                 LOG.debug("HealthCheckRepository with id {} successfully registered", repository.getId());
             }
         }

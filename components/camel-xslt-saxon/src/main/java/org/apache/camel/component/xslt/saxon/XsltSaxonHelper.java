@@ -33,8 +33,7 @@ final class XsltSaxonHelper {
     private XsltSaxonHelper() {
     }
 
-    public static void registerSaxonConfiguration(TransformerFactoryImpl factory, Configuration saxonConfiguration)
-            throws Exception {
+    public static void registerSaxonConfiguration(TransformerFactoryImpl factory, Configuration saxonConfiguration) {
         if (saxonConfiguration != null) {
             factory.setConfiguration(saxonConfiguration);
         }
@@ -42,8 +41,7 @@ final class XsltSaxonHelper {
 
     public static void registerSaxonConfigurationProperties(
             TransformerFactoryImpl factory,
-            Map<String, Object> saxonConfigurationProperties)
-            throws Exception {
+            Map<String, Object> saxonConfigurationProperties) {
         if (saxonConfigurationProperties != null && !saxonConfigurationProperties.isEmpty()) {
             for (Map.Entry<String, Object> entry : saxonConfigurationProperties.entrySet()) {
                 factory.getConfiguration().setConfigurationProperty(entry.getKey(), entry.getValue());

@@ -93,6 +93,11 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     }
 
     @Override
+    public ExchangePattern getExchangePattern() {
+        return delegate.getExchangePattern();
+    }
+
+    @Override
     public String getEndpointBaseUri() {
         return delegate.getEndpointBaseUri();
     }
@@ -110,6 +115,11 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
         return delegate.createExchange(pattern);
+    }
+
+    @Override
+    public void configureExchange(Exchange exchange) {
+        delegate.configureExchange(exchange);
     }
 
     @Override

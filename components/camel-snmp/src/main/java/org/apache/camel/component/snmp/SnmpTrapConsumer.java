@@ -104,8 +104,8 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         if (pdu != null) {
             // check for INFORM
             // code take from the book "Essential SNMP"
-            if ((pdu.getType() != PDU.TRAP) && (pdu.getType() != PDU.V1TRAP) && (pdu.getType() != PDU.REPORT)
-                    && (pdu.getType() != PDU.RESPONSE)) {
+            if (pdu.getType() != PDU.TRAP && pdu.getType() != PDU.V1TRAP && pdu.getType() != PDU.REPORT
+                    && pdu.getType() != PDU.RESPONSE) {
                 // first response the inform-message and then process the
                 // message
                 pdu.setErrorIndex(0);
@@ -137,7 +137,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received trap event for {} : {}", this.endpoint.getAddress(), pdu);
         }
-        Exchange exchange = endpoint.createExchange(pdu, event);
+        Exchange exchange = createExchange(pdu, event);
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
@@ -146,5 +146,20 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         if (exchange.getException() != null) {
             getExceptionHandler().handleException(exchange.getException());
         }
+        releaseExchange(exchange, false);
     }
+
+    /**
+     * creates an exchange for the given message
+     *
+     * @param  pdu   the pdu
+     * @param  event a snmp4j CommandResponderEvent
+     * @return       an exchange
+     */
+    public Exchange createExchange(PDU pdu, CommandResponderEvent event) {
+        Exchange exchange = createExchange(false);
+        exchange.setIn(new SnmpMessage(getEndpoint().getCamelContext(), pdu, event));
+        return exchange;
+    }
+
 }

@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,13 +33,8 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
     private String base = "/tmp/mytemp";
 
     @Test
-    public void testDummy() {
-        // noop
-    }
-
-    public void xxxTestConsumeFromAbsolutePath() throws Exception {
-        deleteDirectory(base);
-
+    @Disabled
+    public void testConsumeFromAbsolutePath() throws Exception {
         context.getRouteController().startRoute("foo");
 
         MockEndpoint mock = getMockEndpoint("mock:report");

@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.arangodb.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class ArangoDBServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(ArangoDBServiceFactory.class);
-
     private ArangoDBServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<ArangoDBService> builder() {
+        return new SimpleTestServiceBuilder<>("arangodb");
+    }
+
     public static ArangoDBService createService() {
-        String instanceType = System.getProperty("arangodb.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-arangodb-container")) {
-            return new ArangoDBLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new ArangoDBRemoteService();
-        }
-
-        LOG.error("ArangoDB instance must be one of 'local-arangodb-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid ArangoDB instance type");
+        return builder()
+                .addLocalMapping(ArangoDBLocalContainerService::new)
+                .addRemoteMapping(ArangoDBRemoteService::new)
+                .build();
     }
 }

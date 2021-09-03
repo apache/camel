@@ -88,9 +88,7 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
 
         if (tracer != null) {
             try { // Take care NOT to import GlobalTracer as it is an optional dependency and may not be on the classpath.
-                if (!io.opentracing.util.GlobalTracer.isRegistered()) {
-                    io.opentracing.util.GlobalTracer.register(tracer);
-                }
+                io.opentracing.util.GlobalTracer.registerIfAbsent(tracer);
             } catch (NoClassDefFoundError globalTracerNotInClasspath) {
                 LOG.trace("GlobalTracer is not found on the classpath.");
             }

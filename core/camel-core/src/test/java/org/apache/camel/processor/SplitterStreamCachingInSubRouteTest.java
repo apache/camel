@@ -38,7 +38,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory("target/camel/cache");
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(1L);
 
                 from("direct:startIterable").split(body().tokenize(",")).streaming()

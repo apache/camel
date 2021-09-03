@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -100,9 +99,7 @@ public class EhcacheComponent extends DefaultComponent {
         // Check if a configuration file has been provided
         if (configuration.hasConfigurationUri()) {
             String configurationUri = configuration.getConfigurationUri();
-            ClassResolver classResolver = getCamelContext().getClassResolver();
-
-            URL url = ResourceHelper.resolveMandatoryResourceAsUrl(classResolver, configurationUri);
+            URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext(), configurationUri);
 
             LOGGER.info("EhcacheManager configured with supplied URI {}", url);
 

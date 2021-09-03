@@ -13,11 +13,12 @@ You need to specify a Splitter as `split()`. In earlier versions of Camel, you n
 
 
 // eip options: START
-The Split EIP supports 12 options which are listed below:
+The Split EIP supports 13 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *delimiter* | Delimiter used in splitting messages. Can be turned off using the value false. The default value is , | , | String
 | *parallelProcessing* | If enabled then processing each splitted messages occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. Its only processing the sub messages from the splitter which happens concurrently. | false | Boolean
 | *strategyRef* | Sets a reference to the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single outgoing message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy |  | String
 | *strategyMethodName* | This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy. |  | String

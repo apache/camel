@@ -43,6 +43,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     private boolean allowEmptyDirectory;
     private volatile ZipInputStream zipInputStream;
     private volatile Message parent;
+    private volatile boolean first;
 
     public ZipIterator(Exchange exchange, InputStream inputStream) {
         this.exchange = exchange;
@@ -53,6 +54,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream));
         }
         parent = null;
+        first = true;
     }
 
     @Override
@@ -71,6 +73,9 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                 } else {
                     availableDataInCurrentEntry = true;
                 }
+                if (first && parent == null) {
+                    throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
+                }
             }
             return availableDataInCurrentEntry;
         } catch (IOException exception) {
@@ -85,6 +90,12 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         }
         Message answer = parent;
         parent = null;
+
+        if (first && answer == null) {
+            throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
+        }
+
+        first = false;
         checkNullAnswer(answer);
 
         return answer;

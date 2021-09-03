@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.facebook;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -33,12 +34,7 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
     protected FacebookConfiguration configuration;
 
     protected void loadProperties(CamelContext context) throws Exception {
-        URL url = getClass().getResource("/test-options.properties");
-
-        InputStream inStream = url.openStream();
-
-        properties = new Properties();
-        properties.load(inStream);
+        loadProperties();
 
         Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
@@ -47,6 +43,29 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
 
         configuration = new FacebookConfiguration();
         PropertyBindingSupport.bindProperties(context, configuration, options);
+    }
+
+    private static Properties loadProperties() {
+        URL url = CamelFacebookTestSupport.class.getResource("/test-options.properties");
+
+        InputStream inStream = null;
+        try {
+            inStream = url.openStream();
+
+            Properties properties = new Properties();
+            properties.load(inStream);
+            return properties;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Used by JUnit to determine whether to run the integration tests
+    @SuppressWarnings("unused")
+    private static boolean hasCredentials() {
+        Properties properties = loadProperties();
+
+        return !properties.getProperty("oAuthAccessToken", "").isEmpty();
     }
 
     @Override

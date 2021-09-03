@@ -20,6 +20,7 @@ import com.mongodb.CursorType;
 import com.mongodb.MongoCursorNotFoundException;
 import com.mongodb.client.MongoCursor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.bson.Document;
 
 import static com.mongodb.client.model.Filters.gt;
@@ -110,7 +111,7 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
         try {
             while (cursor.hasNext() && keepRunning) {
                 Document dbObj = (Document) cursor.next();
-                Exchange exchange = endpoint.createMongoDbExchange(dbObj);
+                Exchange exchange = createMongoDbExchange(dbObj);
                 try {
                     if (log.isTraceEnabled()) {
                         log.trace("Sending exchange: {}, ObjectId: {}", exchange, dbObj.get(MONGO_ID));
@@ -145,4 +146,15 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
             tailTracking.persistToStore();
         }
     }
+
+    Exchange createMongoDbExchange(Document dbObj) {
+        Exchange exchange = consumer.createExchange(true);
+        Message message = exchange.getIn();
+        message.setHeader(MongoDbConstants.DATABASE, endpoint.getDatabase());
+        message.setHeader(MongoDbConstants.COLLECTION, endpoint.getCollection());
+        message.setHeader(MongoDbConstants.FROM_TAILABLE, true);
+        message.setBody(dbObj);
+        return exchange;
+    }
+
 }

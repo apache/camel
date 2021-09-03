@@ -29,7 +29,7 @@ public class AtmosDelProducer extends AtmosProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         AtmosResult result = AtmosAPIFacade.getInstance(configuration.getClient())
                 .del(configuration.getRemotePath());
         result.populateExchange(exchange);

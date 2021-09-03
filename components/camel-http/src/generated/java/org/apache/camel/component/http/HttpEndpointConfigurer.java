@@ -80,12 +80,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": target.setIgnoreResponseBody(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maphttpmessagebody":
-        case "mapHttpMessageBody": target.setMapHttpMessageBody(property(camelContext, boolean.class, value)); return true;
-        case "maphttpmessageformurlencodedbody":
-        case "mapHttpMessageFormUrlEncodedBody": target.setMapHttpMessageFormUrlEncodedBody(property(camelContext, boolean.class, value)); return true;
-        case "maphttpmessageheaders":
-        case "mapHttpMessageHeaders": target.setMapHttpMessageHeaders(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
         case "okstatuscoderange":
@@ -112,6 +106,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
         case "proxyPort": target.setProxyPort(property(camelContext, int.class, value)); return true;
+        case "skiprequestheaders":
+        case "skipRequestHeaders": target.setSkipRequestHeaders(property(camelContext, boolean.class, value)); return true;
+        case "skipresponseheaders":
+        case "skipResponseHeaders": target.setSkipResponseHeaders(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "throwexceptiononfailure":
@@ -120,6 +118,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
         case "usesystemproperties":
         case "useSystemProperties": target.setUseSystemProperties(property(camelContext, boolean.class, value)); return true;
+        case "useragent":
+        case "userAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         case "x509hostnameverifier":
         case "x509HostnameVerifier": target.setX509HostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         default: return false;
@@ -188,12 +188,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "maphttpmessagebody":
-        case "mapHttpMessageBody": return boolean.class;
-        case "maphttpmessageformurlencodedbody":
-        case "mapHttpMessageFormUrlEncodedBody": return boolean.class;
-        case "maphttpmessageheaders":
-        case "mapHttpMessageHeaders": return boolean.class;
         case "maxtotalconnections":
         case "maxTotalConnections": return int.class;
         case "okstatuscoderange":
@@ -220,6 +214,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
         case "proxyPort": return int.class;
+        case "skiprequestheaders":
+        case "skipRequestHeaders": return boolean.class;
+        case "skipresponseheaders":
+        case "skipResponseHeaders": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "throwexceptiononfailure":
@@ -228,6 +226,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transferException": return boolean.class;
         case "usesystemproperties":
         case "useSystemProperties": return boolean.class;
+        case "useragent":
+        case "userAgent": return java.lang.String.class;
         case "x509hostnameverifier":
         case "x509HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
         default: return null;
@@ -297,12 +297,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": return target.isIgnoreResponseBody();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "maphttpmessagebody":
-        case "mapHttpMessageBody": return target.isMapHttpMessageBody();
-        case "maphttpmessageformurlencodedbody":
-        case "mapHttpMessageFormUrlEncodedBody": return target.isMapHttpMessageFormUrlEncodedBody();
-        case "maphttpmessageheaders":
-        case "mapHttpMessageHeaders": return target.isMapHttpMessageHeaders();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
         case "okstatuscoderange":
@@ -329,6 +323,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": return target.getProxyHost();
         case "proxyport":
         case "proxyPort": return target.getProxyPort();
+        case "skiprequestheaders":
+        case "skipRequestHeaders": return target.isSkipRequestHeaders();
+        case "skipresponseheaders":
+        case "skipResponseHeaders": return target.isSkipResponseHeaders();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
         case "throwexceptiononfailure":
@@ -337,6 +335,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transferException": return target.isTransferException();
         case "usesystemproperties":
         case "useSystemProperties": return target.isUseSystemProperties();
+        case "useragent":
+        case "userAgent": return target.getUserAgent();
         case "x509hostnameverifier":
         case "x509HostnameVerifier": return target.getX509HostnameVerifier();
         default: return null;

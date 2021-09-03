@@ -17,28 +17,21 @@
 
 package org.apache.camel.test.infra.mongodb.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class MongoDBServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDBServiceFactory.class);
-
     private MongoDBServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<MongoDBService> builder() {
+        return new SimpleTestServiceBuilder<>("mongodb");
+    }
+
     public static MongoDBService createService() {
-        String instanceType = System.getProperty("mongodb.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-mongodb-container")) {
-            return new MongoDBLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new MongoDBRemoteService();
-        }
-
-        LOG.error("MongoDB instance must be one of 'local-mongodb-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid MongoDB instance type");
+        return builder()
+                .addLocalMapping(MongoDBLocalContainerService::new)
+                .addRemoteMapping(MongoDBRemoteService::new)
+                .build();
     }
 }

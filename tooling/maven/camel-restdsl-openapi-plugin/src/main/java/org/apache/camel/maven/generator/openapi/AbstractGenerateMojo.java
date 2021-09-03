@@ -82,6 +82,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     String destinationGenerator;
 
     @Parameter
+    String destinationToSyntax;
+
+    @Parameter
     String filterOperation;
 
     @Parameter
@@ -114,7 +117,10 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(name = "auth")
     String auth;
 
-    @Parameter(defaultValue = "3.0.19")
+    @Parameter
+    String basePath;
+
+    @Parameter(defaultValue = "3.0.25")
     String swaggerCodegenMavenPluginVersion;
 
     @Parameter(defaultValue = "${project}", readonly = true)

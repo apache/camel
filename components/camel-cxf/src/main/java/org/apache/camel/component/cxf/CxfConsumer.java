@@ -31,7 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
-import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.continuations.Continuation;
@@ -63,7 +62,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
     private Server server;
     private CxfEndpoint cxfEndpoint;
 
-    public CxfConsumer(final CxfEndpoint endpoint, Processor processor) throws Exception {
+    public CxfConsumer(final CxfEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         cxfEndpoint = endpoint;
     }
@@ -84,7 +83,6 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         final MessageObserver originalOutFaultObserver = server.getEndpoint().getOutFaultObserver();
         server.getEndpoint().setOutFaultObserver(message -> {
             originalOutFaultObserver.onMessage(message);
-            CxfUtils.closeCamelUnitOfWork(message);
         });
 
         // setup the UnitOfWorkCloserInterceptor for OneWayMessageProcessor
@@ -202,7 +200,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                         throw ex;
                     }
 
-                } else if (continuation.isTimeout() || (!continuation.isResumed() && !continuation.isPending())) {
+                } else if (continuation.isTimeout() || !continuation.isResumed() && !continuation.isPending()) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
                     try {
                         if (!continuation.isPending()) {

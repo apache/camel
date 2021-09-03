@@ -17,6 +17,7 @@
 package org.apache.camel.component.box;
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.box.sdk.EncryptionAlgorithm;
 import com.box.sdk.IAccessTokenCache;
@@ -458,5 +459,50 @@ public class BoxConfiguration {
      */
     public void setAccessTokenCache(IAccessTokenCache accessTokenCache) {
         this.accessTokenCache = accessTokenCache;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        BoxConfiguration that = (BoxConfiguration) o;
+
+        return maxCacheEntries == that.maxCacheEntries
+                && Objects.equals(enterpriseId, that.enterpriseId)
+                && Objects.equals(userId, that.userId)
+                && Objects.equals(clientId, that.clientId)
+                && Objects.equals(publicKeyId, that.publicKeyId)
+                && Objects.equals(privateKeyFile, that.privateKeyFile)
+                && Objects.equals(privateKeyPassword, that.privateKeyPassword)
+                && Objects.equals(clientSecret, that.clientSecret)
+                && Objects.equals(userName, that.userName)
+                && Objects.equals(userPassword, that.userPassword)
+                && Objects.equals(accessTokenCache, that.accessTokenCache)
+                && encryptionAlgorithm == that.encryptionAlgorithm
+                && Objects.equals(authenticationType, that.authenticationType)
+                && Objects.equals(httpParams, that.httpParams)
+                && Objects.equals(sslContextParameters, that.sslContextParameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                enterpriseId,
+                userId,
+                clientId,
+                publicKeyId,
+                privateKeyFile,
+                privateKeyPassword,
+                clientSecret,
+                userName,
+                userPassword,
+                accessTokenCache,
+                maxCacheEntries,
+                encryptionAlgorithm,
+                authenticationType,
+                httpParams,
+                sslContextParameters);
     }
 }

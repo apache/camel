@@ -53,8 +53,8 @@ public class RestOpenApiSupportTest {
         headers.put(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, "http, HTTPS ");
         RestOpenApiSupport.setupXForwardedHeaders(openApi, headers);
 
-        assertEquals(openApi.basePath, "/prefix/base");
-        assertEquals(openApi.host, "host");
+        assertEquals("/prefix/base", openApi.basePath);
+        assertEquals("host", openApi.host);
         assertTrue(openApi.schemes.contains("http"));
         assertTrue(openApi.schemes.contains("https"));
 
@@ -72,8 +72,8 @@ public class RestOpenApiSupportTest {
         headers.put(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, "http, HTTPS ");
         RestOpenApiSupport.setupXForwardedHeaders(openApi, headers);
 
-        assertEquals(openApi.getServers().get(0).url, "http://host/prefix/base");
-        assertEquals(openApi.getServers().get(1).url, "https://host/prefix/base");
+        assertEquals("http://host/prefix/base", openApi.getServers().get(0).url);
+        assertEquals("https://host/prefix/base", openApi.getServers().get(1).url);
 
     }
 

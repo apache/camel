@@ -98,17 +98,21 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
 
             Message message = binding.createCamelMessage(endpoint.getCamelContext(), remote, cometdMessage, data);
 
-            Exchange exchange = endpoint.createExchange();
-            exchange.setIn(message);
+            Exchange exchange = consumer.createExchange(false);
+            try {
+                exchange.setIn(message);
 
-            consumer.getProcessor().process(exchange);
+                consumer.getProcessor().process(exchange);
 
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                ServerChannel channel = getBayeux().getChannel(channelName);
-                ServerSession serverSession = getServerSession();
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    ServerChannel channel = getBayeux().getChannel(channelName);
+                    ServerSession serverSession = getServerSession();
 
-                ServerMessage.Mutable outMessage = binding.createCometdMessage(channel, serverSession, exchange.getOut());
-                remote.deliver(serverSession, outMessage);
+                    ServerMessage.Mutable outMessage = binding.createCometdMessage(channel, serverSession, exchange.getOut());
+                    remote.deliver(serverSession, outMessage);
+                }
+            } finally {
+                consumer.releaseExchange(exchange, false);
             }
         }
 

@@ -91,8 +91,12 @@ public class LogComponent extends DefaultComponent {
      * Gets the logging level, will default to use INFO if no level parameter provided.
      */
     protected LoggingLevel getLoggingLevel(Map<String, Object> parameters) {
-        String levelText = getAndRemoveParameter(parameters, "level", String.class, "INFO");
-        return LoggingLevel.valueOf(levelText.toUpperCase(Locale.ENGLISH));
+        String levelText = getAndRemoveParameter(parameters, "level", String.class);
+        if (levelText != null) {
+            return LoggingLevel.valueOf(levelText.toUpperCase(Locale.ENGLISH));
+        } else {
+            return LoggingLevel.INFO;
+        }
     }
 
     /**

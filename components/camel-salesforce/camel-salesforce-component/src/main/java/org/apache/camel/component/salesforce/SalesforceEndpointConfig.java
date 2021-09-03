@@ -52,6 +52,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public static final String SOBJECT_NAME = "sObjectName";
     public static final String SOBJECT_ID = "sObjectId";
+    public static final String SOBJECT_IDS = "sObjectIds";
     public static final String SOBJECT_FIELDS = "sObjectFields";
     public static final String SOBJECT_EXT_ID_NAME = "sObjectIdName";
     public static final String SOBJECT_EXT_ID_VALUE = "sObjectIdValue";
@@ -63,6 +64,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String APEX_URL = "apexUrl";
     public static final String COMPOSITE_METHOD = "compositeMethod";
     public static final String LIMIT = "limit";
+    public static final String ALL_OR_NONE = "allOrNone";
 
     // prefix for parameters in headers
     public static final String APEX_QUERY_PARAM_PREFIX = "apexQueryParam.";
@@ -73,6 +75,10 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String BATCH_ID = "batchId";
     public static final String RESULT_ID = "resultId";
     public static final String QUERY_LOCATOR = "queryLocator";
+    public static final String PK_CHUNKING = "pkChunking";
+    public static final String PK_CHUNKING_CHUNK_SIZE = "pkChunkingChunkSize";
+    public static final String PK_CHUNKING_PARENT = "pkChunkingParent";
+    public static final String PK_CHUNKING_START_ROW = "pkChunkingStartRow";
 
     // parameters for Analytics API
     public static final String REPORT_ID = "reportId";
@@ -87,6 +93,12 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // parameters for Approval API
     public static final String APPROVAL = "approval";
+
+    // parameters for the RAW operation
+    public static final String RAW_PATH = "rawPath";
+    public static final String RAW_METHOD = "rawMethod";
+    public static final String RAW_QUERY_PARAMETERS = "rawQueryParameters";
+    public static final String RAW_HTTP_HEADERS = "rawHttpHeaders";
 
     // default maximum authentication retries on failed authentication or
     // expired session
@@ -129,6 +141,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String apexMethod;
     @UriParam(label = "producer")
     private String compositeMethod;
+    @UriParam(label = "producer", defaultValue = "false", description = "Composite API option to indicate" +
+                                                                        " to rollback all records if any are not successful.")
+    private boolean allOrNone;
     @UriParam(label = "producer")
     private String apexUrl;
     @UriParam
@@ -145,6 +160,14 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String resultId;
     @UriParam
     private String queryLocator;
+    @UriParam
+    private Boolean pkChunking;
+    @UriParam
+    private Integer pkChunkingChunkSize;
+    @UriParam
+    private String pkChunkingParent;
+    @UriParam
+    private String pkChunkingStartRow;
 
     // Streaming API properties
     @UriParam
@@ -181,6 +204,16 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // Approval API properties
     private ApprovalRequest approval;
+
+    // RAW operation properties
+    @UriParam(label = "producer")
+    private String rawPath;
+    @UriParam(label = "producer")
+    private String rawMethod;
+    @UriParam(label = "producer")
+    private String rawQueryParameters;
+    @UriParam(label = "producer")
+    private String rawHttpHeaders;
 
     // Salesforce Jetty9 HttpClient, set using reference
     @UriParam
@@ -394,6 +427,14 @@ public class SalesforceEndpointConfig implements Cloneable {
         this.compositeMethod = compositeMethod;
     }
 
+    public boolean isAllOrNone() {
+        return allOrNone;
+    }
+
+    public void setAllOrNone(boolean allOrNone) {
+        this.allOrNone = allOrNone;
+    }
+
     public ApprovalRequest getApproval() {
         return approval;
     }
@@ -465,6 +506,55 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setQueryLocator(String queryLocator) {
         this.queryLocator = queryLocator;
+    }
+
+    public Boolean getPkChunking() {
+        return pkChunking;
+    }
+
+    /**
+     * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API performs PK chunking automatically, if
+     * necessary.
+     */
+    public void setPkChunking(Boolean pkChunking) {
+        this.pkChunking = pkChunking;
+    }
+
+    public Integer getPkChunkingChunkSize() {
+        return pkChunkingChunkSize;
+    }
+
+    /**
+     * Chunk size for use with PK Chunking. If unspecified, salesforce default is 100,000. Maximum size is 250,000.
+     */
+    public void setPkChunkingChunkSize(Integer pkChunkingChunkSize) {
+        this.pkChunkingChunkSize = pkChunkingChunkSize;
+    }
+
+    public String getPkChunkingParent() {
+        return pkChunkingParent;
+    }
+
+    /**
+     * Specifies the parent object when you're enabling PK chunking for queries on sharing objects. The chunks are based
+     * on the parent object's records rather than the sharing object's records. For example, when querying on
+     * AccountShare, specify Account as the parent object. PK chunking is supported for sharing objects as long as the
+     * parent object is supported.
+     */
+    public void setPkChunkingParent(String pkChunkingParent) {
+        this.pkChunkingParent = pkChunkingParent;
+    }
+
+    public String getPkChunkingStartRow() {
+        return pkChunkingStartRow;
+    }
+
+    /**
+     * Specifies the 15-character or 18-character record ID to be used as the lower boundary for the first chunk. Use
+     * this parameter to specify a starting ID when restarting a job that failed between batches.
+     */
+    public void setPkChunkingStartRow(String pkChunkingStartRow) {
+        this.pkChunkingStartRow = pkChunkingStartRow;
     }
 
     /**
@@ -669,6 +759,11 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(INITIAL_REPLAY_ID_MAP, initialReplayIdMap);
 
         valueMap.put(NOT_FOUND_BEHAVIOUR, notFoundBehaviour);
+
+        valueMap.put(RAW_PATH, rawPath);
+        valueMap.put(RAW_METHOD, rawMethod);
+        valueMap.put(RAW_HTTP_HEADERS, rawHttpHeaders);
+        valueMap.put(RAW_QUERY_PARAMETERS, rawQueryParameters);
 
         return Collections.unmodifiableMap(valueMap);
     }
@@ -884,5 +979,58 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setNotFoundBehaviour(final NotFoundBehaviour notFoundBehaviour) {
         this.notFoundBehaviour = notFoundBehaviour;
+    }
+
+    public String getRawPath() {
+        return rawPath;
+    }
+
+    /**
+     * The portion of the endpoint URL after the domain name. E.g., " + "'/services/data/v52.0/sobjects/Account/'
+     * 
+     * @param rawPath the path
+     */
+    public void setRawPath(String rawPath) {
+        this.rawPath = rawPath;
+    }
+
+    public String getRawMethod() {
+        return rawMethod;
+    }
+
+    /**
+     * HTTP method to use for the Raw operation
+     * 
+     * @param rawMethod http method
+     */
+    public void setRawMethod(String rawMethod) {
+        this.rawMethod = rawMethod;
+    }
+
+    public String getRawQueryParameters() {
+        return rawQueryParameters;
+    }
+
+    /**
+     * Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode
+     * values as this will be done automatically.
+     * 
+     * @param rawQueryParameters
+     */
+    public void setRawQueryParameters(String rawQueryParameters) {
+        this.rawQueryParameters = rawQueryParameters;
+    }
+
+    public String getRawHttpHeaders() {
+        return rawHttpHeaders;
+    }
+
+    /**
+     * Comma separated list of message headers to include as HTTP parameters for Raw operation.
+     * 
+     * @param
+     */
+    public void setRawHttpHeaders(String rawHttpHeaders) {
+        this.rawHttpHeaders = rawHttpHeaders;
     }
 }

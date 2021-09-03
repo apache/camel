@@ -24,8 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * Marks methods as being {@link ExchangePattern#InOnly} for one way asynchronous invocation when using
- * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a> or
- * <a href="http://camel.apache.org/spring-remoting.html">Spring Remoting</a> to overload the default value which is
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a> to overload the default value which is
  * {@link ExchangePattern#InOut} for request/reply if no annotations are used.
  *
  * This annotation can be added to individual methods or added to a class or interface to act as a default for all

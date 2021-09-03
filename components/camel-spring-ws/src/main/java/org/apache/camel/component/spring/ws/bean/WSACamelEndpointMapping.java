@@ -54,7 +54,8 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     @Override
     protected Object getEndpointInternal(MessageAddressingProperties map) {
         // search the endpoint with compositeKeyFirst
-        for (EndpointMappingKey key : endpoints.keySet()) {
+        for (Map.Entry<EndpointMappingKey, MessageEndpoint> endpointEntry : endpoints.entrySet()) {
+            EndpointMappingKey key = endpointEntry.getKey();
             String compositeOrSimpleKey = null;
             switch (key.getType()) {
                 case ACTION:
@@ -71,12 +72,13 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
             // lookup for specific endpoint
             if (compositeOrSimpleKey != null && key.getLookupKey().equals(compositeOrSimpleKey)) {
                 LOG.debug("Found mapping for key {}", key);
-                return endpoints.get(key);
+                return endpointEntry.getValue();
             }
         }
 
         // look up for the simple key
-        for (EndpointMappingKey key : endpoints.keySet()) {
+        for (Map.Entry<EndpointMappingKey, MessageEndpoint> endpointEntry : endpoints.entrySet()) {
+            EndpointMappingKey key = endpointEntry.getKey();
             String simpleKey = null;
             switch (key.getType()) {
                 case ACTION:
@@ -97,7 +99,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
             // look up for less specific endpoint
             if (simpleKey != null && key.getLookupKey().equals(simpleKey)) {
                 LOG.debug("Found mapping for key {}", key);
-                return endpoints.get(key);
+                return endpointEntry.getValue();
             }
         }
         return null;

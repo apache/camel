@@ -27,6 +27,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
@@ -122,7 +123,7 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
                 LOGGER.warn("Could not find any service for name={}, query={}", name, query);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Could not resolve services via DNSSRV", e);
+            throw new RuntimeCamelException("Could not resolve services via DNSSRV", e);
         }
 
         return Collections.emptyList();

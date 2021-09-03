@@ -17,10 +17,12 @@
 package org.apache.camel.component.rxjava.engine;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -30,6 +32,9 @@ class RxJavaStreamsServiceTestSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+
+        // camel-rxjava does not work with pooled exchanges
+        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PrototypeExchangeFactory());
 
         context.addComponent(
                 ReactiveStreamsConstants.SCHEME,

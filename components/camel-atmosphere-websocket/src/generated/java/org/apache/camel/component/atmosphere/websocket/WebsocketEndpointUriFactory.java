@@ -44,8 +44,8 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
         props.add("lazyStartProducer");
         props.add("disableStreamCache");
         props.add("servicePath");
-        props.add("optionsEnabled");
         props.add("mapHttpMessageHeaders");
+        props.add("optionsEnabled");
         props.add("traceEnabled");
         props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

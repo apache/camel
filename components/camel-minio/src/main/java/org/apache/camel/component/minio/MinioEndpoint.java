@@ -32,17 +32,12 @@ import io.minio.StatObjectResponse;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
-import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,37 +118,6 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
-    public Exchange createExchange(InputStream minioObject, String objectName) throws Exception {
-        return createExchange(getExchangePattern(), minioObject, objectName);
-    }
-
-    public Exchange createExchange(ExchangePattern pattern, InputStream minioObject, String objectName) throws Exception {
-        LOG.trace("Getting object with objectName {} from bucket {}...", objectName, getConfiguration().getBucketName());
-
-        Exchange exchange = super.createExchange(pattern);
-        Message message = exchange.getIn();
-        LOG.trace("Got object!");
-
-        getObjectStat(objectName, message);
-
-        if (getConfiguration().isIncludeBody()) {
-            message.setBody(readInputStream(minioObject));
-            if (getConfiguration().isAutoCloseBody()) {
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
-                    @Override
-                    public void onDone(Exchange exchange) {
-                        IOHelper.close(minioObject);
-                    }
-                });
-            }
-        } else {
-            message.setBody(null);
-            IOHelper.close(minioObject);
-        }
-
-        return exchange;
-    }
-
     public MinioConfiguration getConfiguration() {
         return configuration;
     }
@@ -196,7 +160,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    private String readInputStream(InputStream minioObject) throws IOException {
+    String readInputStream(InputStream minioObject) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
         try (Reader reader = new BufferedReader(new InputStreamReader(minioObject, StandardCharsets.UTF_8))) {
             int c;
@@ -227,7 +191,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         LOG.trace("Bucket policy updated");
     }
 
-    private void getObjectStat(String objectName, Message message) throws Exception {
+    void getObjectStat(String objectName, Message message) throws Exception {
 
         String bucketName = getConfiguration().getBucketName();
         StatObjectArgs.Builder statObjectRequest = StatObjectArgs.builder().bucket(bucketName).object(objectName);

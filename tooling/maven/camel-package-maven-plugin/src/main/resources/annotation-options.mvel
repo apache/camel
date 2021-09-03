@@ -1,0 +1,9 @@
+@if{!options.isEmpty()}
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
+|===
+| Parameter name | Type | Required | Default value | Info
+@foreach{row : sortedOptions}
+| @{row.name} | @{row.type} | @if{!row.optional}&#10003;@end{} | @if{row.defaultValue != null}${row.defaultValue}@end{} @{row.description.?contains("\n") ? "a" : ""}| @{util.escape(row.description)}
+@end{}
+|===
+@end{}

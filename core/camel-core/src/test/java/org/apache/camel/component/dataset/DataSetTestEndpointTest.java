@@ -81,9 +81,19 @@ public class DataSetTestEndpointTest extends ContextTestSupport {
                 }
 
                 @Override
+                public Exchange createExchange(boolean autoRelease) {
+                    return new DefaultExchange(getEndpoint());
+                }
+
+                @Override
+                public void releaseExchange(Exchange exchange, boolean autoRelease) {
+                    // noop
+                }
+
+                @Override
                 public void start() {
                     // when starting then send a message to the processor
-                    Exchange exchange = new DefaultExchange(getEndpoint());
+                    Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(expectedBody);
                     try {
                         processor.process(exchange);

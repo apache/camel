@@ -199,42 +199,42 @@ public class CordaConsumer extends DefaultConsumer {
 
     private void processFlowProcess(String x) {
         LOG.debug("processFlowProcess {}", x);
-        Exchange exchange = this.getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setBody(x);
         processEvent(exchange);
     }
 
     private void processTransactionMappingFeed(StateMachineTransactionMapping x) {
         LOG.debug("processTransactionMappingFeed {}", x);
-        Exchange exchange = this.getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setBody(x);
         processEvent(exchange);
     }
 
     private void proceedNetworkMapFeed(NetworkMapCache.MapChange x) {
         LOG.debug("proceedNetworkMapFeed {}", x);
-        Exchange exchange = this.getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setBody(x);
         processEvent(exchange);
     }
 
     private void processStateMachineUpdate(StateMachineUpdate x) {
         LOG.debug("processStateMachineUpdate {}", x);
-        Exchange exchange = this.getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setBody(x);
         processEvent(exchange);
     }
 
     private void processContractStateUpdate(Vault.Update<ContractState> x) {
         LOG.debug("processContractStateUpdate {}", x);
-        Exchange exchange = this.getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setBody(x);
         processEvent(exchange);
     }
 
     private void processError(Throwable throwable, String operation) {
-        LOG.debug("processError for operation: " + operation + " " + throwable);
-        Exchange exchange = this.getEndpoint().createExchange();
+        LOG.debug("processError for operation: {} {}", operation, throwable);
+        Exchange exchange = createExchange(true);
         exchange.setException(throwable);
         processEvent(exchange);
     }
@@ -244,7 +244,7 @@ public class CordaConsumer extends DefaultConsumer {
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            LOG.error("Error processing event ", e);
+            getExceptionHandler().handleException("Error processing event", e);
         }
     }
 

@@ -20,12 +20,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.optaplanner.core.impl.score.director.ScoreDirector;
-import org.optaplanner.core.impl.solver.ProblemFactChange;
+import org.optaplanner.core.api.score.director.ScoreDirector;
+import org.optaplanner.core.api.solver.ProblemFactChange;
 import org.optaplanner.examples.cloudbalancing.domain.CloudBalance;
 import org.optaplanner.examples.cloudbalancing.domain.CloudComputer;
 import org.optaplanner.examples.cloudbalancing.domain.CloudProcess;
@@ -59,7 +60,8 @@ public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
         template.requestBody("direct:in", new RemoveComputerChange(firstComputer));
 
         mockEndpoint.assertIsSatisfied();
-        CloudBalance bestSolution = (CloudBalance) template.requestBody("direct:in", "foo");
+        Exchange exchange = mockEndpoint.getReceivedExchanges().get(0);
+        CloudBalance bestSolution = exchange.getMessage().getHeader(OptaPlannerConstants.BEST_SOLUTION, CloudBalance.class);
         assertEquals(3, bestSolution.getComputerList().size());
     }
 

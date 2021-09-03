@@ -76,11 +76,11 @@ public class AddIssueProducer extends DefaultProducer {
         }
         if (issueTypeId == null) {
             throw new IllegalArgumentException(
-                    "A valid issue type id is required, actual: id(" + issueTypeId + "), name(" + issueTypeName + ")");
+                    "A valid issue type id is required, actual: id(" + null + "), name(" + issueTypeName + ")");
         }
 
         if (summary == null) {
-            throw new IllegalArgumentException("A summary field is required, actual value: " + summary);
+            throw new IllegalArgumentException("A summary field is required.");
         }
 
         IssueInputBuilder builder = new IssueInputBuilder(projectKey, issueTypeId);

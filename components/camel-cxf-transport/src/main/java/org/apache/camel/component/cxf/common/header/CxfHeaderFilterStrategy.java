@@ -140,8 +140,7 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     private void addToMessageHeaderFilterMap(MessageHeaderFilter filter) {
         for (String ns : filter.getActivationNamespaces()) {
-            if (messageHeaderFiltersMap.containsKey(ns) && messageHeaderFiltersMap.get(ns)
-                                                           != messageHeaderFiltersMap
+            if (messageHeaderFiltersMap.containsKey(ns)
                     && !allowFilterNamespaceClash) {
                 throw new IllegalArgumentException(
                         "More then one MessageHeaderRelay activates "

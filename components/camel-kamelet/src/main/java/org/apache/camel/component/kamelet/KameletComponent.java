@@ -22,36 +22,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_ROUTE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
 
 /**
- * The Kamelet Component provides support for materializing routes templates.
+ * Materialize route templates
  */
 @Component(Kamelet.SCHEME)
 public class KameletComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(KameletComponent.class);
 
+    private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
+
     // active consumers
     private final Map<String, KameletConsumer> consumers = new HashMap<>();
-    private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
+    // active kamelet EIPs
+    private final Map<String, Processor> kameletEips = new ConcurrentHashMap<>();
+
+    @Metadata(label = "advanced", autowired = true)
+    private RouteTemplateLoaderListener routeTemplateLoaderListener;
 
     // counter that is used for producers to keep track if any consumer was added/removed since they last checked
     // this is used for optimization to avoid each producer to get consumer for each message processed
@@ -68,17 +79,33 @@ public class KameletComponent extends DefaultComponent {
     private Map<String, Properties> templateProperties;
     @Metadata
     private Map<String, Properties> routeProperties;
+    @Metadata(defaultValue = Kamelet.DEFAULT_LOCATION)
+    private String location = Kamelet.DEFAULT_LOCATION;
 
     public KameletComponent() {
+    }
+
+    public void addKameletEip(String key, Processor callback) {
+        kameletEips.put(key, callback);
+    }
+
+    public Processor removeKameletEip(String key) {
+        return kameletEips.remove(key);
+    }
+
+    public Processor getKameletEip(String key) {
+        return kameletEips.get(key);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final String templateId = Kamelet.extractTemplateId(getCamelContext(), remaining, parameters);
         final String routeId = Kamelet.extractRouteId(getCamelContext(), remaining, parameters);
+        final String loc = Kamelet.extractLocation(getCamelContext(), parameters);
 
         parameters.remove(PARAM_TEMPLATE_ID);
         parameters.remove(PARAM_ROUTE_ID);
+        parameters.remove(PARAM_LOCATION);
 
         final KameletEndpoint endpoint;
 
@@ -108,6 +135,8 @@ public class KameletComponent extends DefaultComponent {
             // forward component properties
             endpoint.setBlock(block);
             endpoint.setTimeout(timeout);
+            // endpoint specific location
+            endpoint.setLocation(loc);
 
             // set endpoint specific properties
             setProperties(endpoint, parameters);
@@ -127,6 +156,8 @@ public class KameletComponent extends DefaultComponent {
             // forward component properties
             endpoint.setBlock(block);
             endpoint.setTimeout(timeout);
+            // endpoint specific location
+            endpoint.setLocation(loc);
 
             // set and remove endpoint specific properties
             setProperties(endpoint, parameters);
@@ -135,13 +166,13 @@ public class KameletComponent extends DefaultComponent {
 
             //
             // Load properties from the component configuration. Template and route specific properties
-            // can be set through properties, as example:
+            // can be set through properties, as an example:
             //
             //     camel.component.kamelet.template-properties[templateId].key = val
-            //     camel.component.kamelet.route-properties[templateId].key = val
+            //     camel.component.kamelet.route-properties[routeId].key = val
             //
             if (templateProperties != null) {
-                Properties props = templateProperties.get(routeId);
+                Properties props = templateProperties.get(templateId);
                 if (props != null) {
                     props.stringPropertyNames().forEach(name -> kameletProperties.put(name, props.get(name)));
                 }
@@ -246,6 +277,28 @@ public class KameletComponent extends DefaultComponent {
         this.routeProperties = routeProperties;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * The location(s) of the Kamelets on the file system. Multiple locations can be set separated by comma.
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public RouteTemplateLoaderListener getRouteTemplateLoaderListener() {
+        return routeTemplateLoaderListener;
+    }
+
+    /**
+     * To plugin a custom listener for when the Kamelet component is loading Kamelets from external resources.
+     */
+    public void setRouteTemplateLoaderListener(RouteTemplateLoaderListener routeTemplateLoaderListener) {
+        this.routeTemplateLoaderListener = routeTemplateLoaderListener;
+    }
+
     int getStateCounter() {
         return stateCounter;
     }
@@ -310,6 +363,7 @@ public class KameletComponent extends DefaultComponent {
 
         ServiceHelper.stopAndShutdownService(consumers);
         consumers.clear();
+        kameletEips.clear();
         super.doShutdown();
     }
 
@@ -321,7 +375,7 @@ public class KameletComponent extends DefaultComponent {
      * Once the camel context is initialized all the endpoint tracked by this LifecycleHandler will
      * be used to create routes from templates.
      */
-    private static class LifecycleHandler extends LifecycleStrategySupport {
+    private class LifecycleHandler extends LifecycleStrategySupport {
         private final List<KameletEndpoint> endpoints;
         private final AtomicBoolean initialized;
 
@@ -330,19 +384,31 @@ public class KameletComponent extends DefaultComponent {
             this.initialized = new AtomicBoolean();
         }
 
-        public static void createRouteForEndpoint(KameletEndpoint endpoint) throws Exception {
-            LOGGER.debug("Creating route from template={} and id={}", endpoint.getTemplateId(), endpoint.getRouteId());
+        public void createRouteForEndpoint(KameletEndpoint endpoint) throws Exception {
+            final ModelCamelContext context = getCamelContext().adapt(ModelCamelContext.class);
+            final String templateId = endpoint.getTemplateId();
+            final String routeId = endpoint.getRouteId();
+            final String loc = endpoint.getLocation() != null ? endpoint.getLocation() : getLocation();
 
-            final ModelCamelContext context = endpoint.getCamelContext().adapt(ModelCamelContext.class);
-            final String id = context.addRouteFromTemplate(endpoint.getRouteId(), endpoint.getTemplateId(),
-                    endpoint.getKameletProperties());
-            final RouteDefinition def = context.getRouteDefinition(id);
-
-            if (!def.isPrepared()) {
-                context.startRouteDefinitions(Collections.singletonList(def));
+            if (context.getRouteTemplateDefinition(templateId) == null && loc != null) {
+                LOGGER.debug("Loading route template={} from {}", templateId, loc);
+                RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), routeTemplateLoaderListener, templateId,
+                        loc);
             }
 
-            LOGGER.debug("Route with id={} created from template={}", id, endpoint.getTemplateId());
+            LOGGER.debug("Creating route from template={} and id={}", templateId, routeId);
+            try {
+                String id = context.addRouteFromTemplate(routeId, templateId, endpoint.getKameletProperties());
+                RouteDefinition def = context.getRouteDefinition(id);
+
+                if (!def.isPrepared()) {
+                    context.startRouteDefinitions(Collections.singletonList(def));
+                }
+
+                LOGGER.debug("Route with id={} created from template={}", id, templateId);
+            } catch (Exception e) {
+                throw new KameletNotFoundException(templateId, loc, e);
+            }
         }
 
         @Override

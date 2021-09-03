@@ -119,7 +119,7 @@ public class RuntimeCamelCatalogTest {
     public void testAsEndpointUriSecrets() throws Exception {
         // create a custom instance of the catalog to hack the model to post
         // process options.
-        catalog = new DefaultRuntimeCamelCatalog() {
+        RuntimeCamelCatalog catalog = new DefaultRuntimeCamelCatalog() {
             @Override
             public ComponentModel componentModel(String name) {
                 ComponentModel model = super.componentModel(name);

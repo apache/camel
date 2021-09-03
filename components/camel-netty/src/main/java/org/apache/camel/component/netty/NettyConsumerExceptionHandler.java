@@ -58,7 +58,7 @@ public class NettyConsumerExceptionHandler implements ExceptionHandler {
             } else {
                 logger.log(msg, exception);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // the logging exception handler must not cause new exceptions to occur
         }
     }

@@ -42,5 +42,6 @@ public class SoroushBotSingleThreadConsumer extends SoroushBotAbstractConsumer {
             getExceptionHandler().handleException("Error processing exchange",
                     exchange, exchange.getException());
         }
+        releaseExchange(exchange, false);
     }
 }

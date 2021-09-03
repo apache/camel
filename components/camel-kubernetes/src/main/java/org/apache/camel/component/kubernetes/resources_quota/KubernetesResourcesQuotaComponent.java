@@ -24,9 +24,7 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesResourcesQuotaComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesResourcesQuotaEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config)
-            throws Exception {
-        KubernetesResourcesQuotaEndpoint endpoint = new KubernetesResourcesQuotaEndpoint(uri, this, config);
-        return endpoint;
+    protected KubernetesResourcesQuotaEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) {
+        return new KubernetesResourcesQuotaEndpoint(uri, this, config);
     }
 }

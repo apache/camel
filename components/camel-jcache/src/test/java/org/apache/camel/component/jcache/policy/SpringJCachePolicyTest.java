@@ -18,35 +18,24 @@ package org.apache.camel.component.jcache.policy;
 
 import javax.cache.Cache;
 
+import org.apache.camel.component.jcache.support.HazelcastTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.generateValue;
 import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.lookupCache;
 import static org.apache.camel.component.jcache.policy.JCachePolicyTestBase.randomString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@HazelcastTest
 public class SpringJCachePolicyTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jcache/policy/SpringJCachePolicyTest.xml");
-    }
-
-    @BeforeAll
-    public static void beforeAll() {
-        System.setProperty("hazelcast.config", "classpath:org/apache/camel/component/jcache/policy/hazelcast-spring.xml");
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        System.clearProperty("hazelcast.config");
+        return newAppContext("/org/apache/camel/component/jcache/policy/SpringJCachePolicyTest.xml");
     }
 
     @BeforeEach

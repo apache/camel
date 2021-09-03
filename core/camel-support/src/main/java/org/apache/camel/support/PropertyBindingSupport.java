@@ -313,6 +313,11 @@ public final class PropertyBindingSupport {
                 newTarget = prop;
                 newClass = newTarget.getClass();
                 newName = parts[i + 1];
+
+                // if we have not yet found a configurer for the new target
+                if (configurer == null) {
+                    configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, newTarget);
+                }
             }
         }
 
@@ -794,7 +799,7 @@ public final class PropertyBindingSupport {
                 value = resolveAutowired(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter,
                         reflection, configurer);
             } else {
-                value = resolveBean(context, name, value);
+                value = resolveBean(context, value);
             }
         }
         return value;
@@ -1147,32 +1152,6 @@ public final class PropertyBindingSupport {
         return null;
     }
 
-    private static Class getGetterType(CamelContext context, Object target, String name, boolean ignoreCase) {
-        try {
-            if (ignoreCase) {
-                Method getter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection()
-                        .getPropertyGetter(target.getClass(), name, true);
-                if (getter != null) {
-                    return getter.getReturnType();
-                }
-            } else {
-                Method getter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection()
-                        .getPropertyGetter(target.getClass(), name, false);
-                if (getter != null) {
-                    return getter.getReturnType();
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            // ignore
-        }
-        return null;
-    }
-
-    private static boolean isComplexUserType(Class type) {
-        // lets consider all non java, as complex types
-        return type != null && !type.isPrimitive() && !type.getName().startsWith("java.");
-    }
-
     /**
      * Is the given parameter a reference parameter (starting with a # char)
      *
@@ -1202,7 +1181,17 @@ public final class PropertyBindingSupport {
         return true;
     }
 
-    private static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
+    /**
+     * Creates a new bean instance using the constructor that takes the given set of parameters.
+     *
+     * @param  camelContext the camel context
+     * @param  type         the class type of the bean to create
+     * @param  parameters   the parameters for the constructor
+     * @return              the created bean, or null if there was no constructor that matched the given set of
+     *                      parameters
+     * @throws Exception    is thrown if error creating the bean
+     */
+    public static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
             throws Exception {
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');
         Constructor found = findMatchingConstructor(type.getConstructors(), params);
@@ -1276,7 +1265,17 @@ public final class PropertyBindingSupport {
         return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
     }
 
-    private static Object newInstanceFactoryParameters(
+    /**
+     * Creates a new bean instance using a public static factory method from the given class
+     *
+     * @param  camelContext the camel context
+     * @param  type         the class with the public static factory method
+     * @param  parameters   optional parameters for the factory method
+     * @return              the created bean, or null if there was no factory method (optionally matched the given set
+     *                      of parameters)
+     * @throws Exception    is thrown if error creating the bean
+     */
+    public static Object newInstanceFactoryParameters(
             CamelContext camelContext, Class<?> type, String factoryMethod, String parameters)
             throws Exception {
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');
@@ -1442,19 +1441,24 @@ public final class PropertyBindingSupport {
      * Resolves the value as either a class, type or bean.
      *
      * @param  camelContext the camel context
-     * @param  name         the name of the bean
      * @param  value        how to resolve the bean with a prefix of either #class:, #type: or #bean:
      * @return              the resolve bean
      * @throws Exception    is thrown if error resolving the bean, or if the value is invalid.
      */
-    public static Object resolveBean(CamelContext camelContext, String name, Object value) throws Exception {
-        // resolve placeholders
-        if (value != null) {
-            value = camelContext.resolvePropertyPlaceholders(value.toString());
+    public static Object resolveBean(CamelContext camelContext, Object value) throws Exception {
+        if (!(value instanceof String)) {
+            return value;
         }
-        if (value.toString().startsWith("#class:")) {
+
+        String strval = (String) value;
+        Object answer = value;
+
+        // resolve placeholders
+        strval = camelContext.resolvePropertyPlaceholders(strval);
+
+        if (strval.startsWith("#class:")) {
             // its a new class to be created
-            String className = value.toString().substring(7);
+            String className = strval.substring(7);
             String factoryMethod = null;
             String parameters = null;
             if (className.endsWith(")") && className.indexOf('(') != -1) {
@@ -1470,30 +1474,30 @@ public final class PropertyBindingSupport {
             if (factoryMethod != null) {
                 if (parameters != null) {
                     // special to support factory method parameters
-                    value = newInstanceFactoryParameters(camelContext, type, factoryMethod, parameters);
+                    answer = newInstanceFactoryParameters(camelContext, type, factoryMethod, parameters);
                 } else {
-                    value = camelContext.getInjector().newInstance(type, factoryMethod);
+                    answer = camelContext.getInjector().newInstance(type, factoryMethod);
                 }
-                if (value == null) {
+                if (answer == null) {
                     throw new IllegalStateException(
                             "Cannot create bean instance using factory method: " + className + "#" + factoryMethod);
                 }
             } else if (parameters != null) {
                 // special to support constructor parameters
-                value = newInstanceConstructorParameters(camelContext, type, parameters);
+                answer = newInstanceConstructorParameters(camelContext, type, parameters);
             } else {
-                value = camelContext.getInjector().newInstance(type);
+                answer = camelContext.getInjector().newInstance(type);
             }
-            if (value == null) {
+            if (answer == null) {
                 throw new IllegalStateException("Cannot create instance of class: " + className);
             }
-        } else if (value.toString().startsWith("#type:")) {
+        } else if (strval.startsWith("#type:")) {
             // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
-            String typeName = value.toString().substring(6);
+            String typeName = strval.substring(6);
             Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(typeName);
             Set<?> types = camelContext.getRegistry().findByType(type);
             if (types.size() == 1) {
-                value = types.iterator().next();
+                answer = types.iterator().next();
             } else if (types.size() > 1) {
                 throw new IllegalStateException(
                         "Cannot select single type: " + typeName + " as there are " + types.size()
@@ -1502,12 +1506,12 @@ public final class PropertyBindingSupport {
                 throw new IllegalStateException(
                         "Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
             }
-        } else if (value.toString().startsWith("#bean:")) {
-            String key = value.toString().substring(6);
-            value = camelContext.getRegistry().lookupByName(key);
+        } else if (strval.startsWith("#bean:")) {
+            String key = strval.substring(6);
+            answer = camelContext.getRegistry().lookupByName(key);
         }
 
-        return value;
+        return answer;
     }
 
     private static String undashKey(String key) {

@@ -23,6 +23,7 @@ import javax.websocket.ClientEndpointConfig;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpointConfig;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
@@ -34,14 +35,12 @@ public class JSR356Consumer extends DefaultConsumer {
     private Runnable closeTask;
 
     private final BiConsumer<Session, Object> onMessage = (session, message) -> {
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
         exchange.getIn().setHeader(JSR356Constants.SESSION, session);
         exchange.getIn().setBody(message);
-        getAsyncProcessor().process(exchange, doneSync -> {
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     };
 
     JSR356Consumer(final JSR356Endpoint jsr356Endpoint, final Processor processor) {

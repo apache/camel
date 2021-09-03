@@ -34,20 +34,51 @@ for this component:
 
 == URI format
 
-[source,java]
 ----------
 rss:rssUri
 ----------
 
 Where `rssUri` is the URI to the RSS feed to poll.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
+// component-configure options: START
+== Configuring Options
 
-== Options
+Camel components are configured on two separate levels:
 
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The RSS component supports 2 options, which are listed below.
 
 
@@ -60,9 +91,9 @@ The RSS component supports 2 options, which are listed below.
 |===
 // component options: END
 
-
-
 // endpoint options: START
+== Endpoint Options
+
 The RSS endpoint is configured using URI syntax:
 
 ----
@@ -118,7 +149,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
 == Exchange data types
 
 Camel initializes the In body on the Exchange with a ROME `SyndFeed`.
@@ -143,36 +173,9 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 |`CamelRssFeed` |The entire `SyncFeed` object.
 |=======================================================================
 
-== RSS Dataformat
 
-The RSS component ships with an RSS dataformat that can be used to
-convert between String (as XML) and ROME RSS model objects.
+== Example
 
-* marshal = from ROME `SyndFeed` to XML `String`
-* unmarshal = from XML `String` to ROME `SyndFeed`
-
-A route using the RSS dataformat will look like this:
-
-[source,java]
-----
-from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1000")
-  .marshal().rss()
-  .to("mock:marshal");
-----
-
-The purpose of this feature is to make it possible to use Camel's built-in expressions for manipulating RSS messages. As shown below, an
-XPath expression can be used to filter the RSS message. In the following example, on ly entries with Camel in the title will get through the filter.
-
-[source,java]
-----
-from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
-  .marshal().rss()
-  .filter().xpath("//item/title[contains(.,'Camel')]")
-    .to("mock:result");
-----
-
-[TIP]
-====
 If the URL for the RSS feed uses query parameters, this component will
 resolve them. For example if the feed uses `alt=rss`, then the following example will be resolved:
 
@@ -181,7 +184,6 @@ resolve them. For example if the feed uses `alt=rss`, then the following example
 from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&delay=1000")
     .to("bean:rss");
 ----
-====
 
 == Filtering entries
 
@@ -212,4 +214,4 @@ public static class FilterBean {
 ----
 
 
-include::camel-spring-boot::page$rss-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$rss-starter.adoc[]

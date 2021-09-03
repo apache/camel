@@ -103,7 +103,7 @@ public class WekaProducer extends DefaultProducer {
         }
     }
 
-    Dataset handlePushCmd(Exchange exchange) throws Exception {
+    Dataset handlePushCmd(Exchange exchange) {
 
         String dsname = getConfiguration().getDsname();
 
@@ -117,7 +117,7 @@ public class WekaProducer extends DefaultProducer {
         return dataset;
     }
 
-    Dataset handlePopCmd(Exchange exchange) throws Exception {
+    Dataset handlePopCmd(Exchange exchange) {
 
         String dsname = getConfiguration().getDsname();
 
@@ -131,7 +131,7 @@ public class WekaProducer extends DefaultProducer {
         return dataset;
     }
 
-    Dataset handleReadCmd(Exchange exchange) throws Exception {
+    Dataset handleReadCmd(Exchange exchange) {
 
         String fpath = getConfiguration().getPath();
 
@@ -144,7 +144,7 @@ public class WekaProducer extends DefaultProducer {
         return dataset;
     }
 
-    Object handleWriteCmd(Exchange exchange) throws Exception {
+    Object handleWriteCmd(Exchange exchange) {
 
         Dataset dataset = assertDatasetBody(exchange);
         String fpath = getConfiguration().getPath();
@@ -168,7 +168,7 @@ public class WekaProducer extends DefaultProducer {
         }
     }
 
-    Dataset handleFilterCmd(Exchange exchange) throws Exception {
+    Dataset handleFilterCmd(Exchange exchange) {
 
         String applyValue = getConfiguration().getApply();
 
@@ -178,7 +178,7 @@ public class WekaProducer extends DefaultProducer {
         return dataset;
     }
 
-    Dataset handleModelCmd(Exchange exchange) throws Exception {
+    Dataset handleModelCmd(Exchange exchange) {
 
         Dataset dataset = assertDatasetBody(exchange);
 
@@ -244,7 +244,7 @@ public class WekaProducer extends DefaultProducer {
         return dataset;
     }
 
-    private Dataset assertDatasetBody(Exchange exchange) throws Exception {
+    private Dataset assertDatasetBody(Exchange exchange) {
 
         Message msg = exchange.getMessage();
         Dataset dataset = msg.getBody(Dataset.class);

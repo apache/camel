@@ -17,9 +17,11 @@
 package org.apache.camel.spring.spi;
 
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.component.properties.PropertiesParser;
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesSource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -33,7 +35,7 @@ import org.springframework.util.PropertyPlaceholderHelper;
  * placeholder mechanism.
  */
 public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer
-        implements PropertiesParser, PropertiesSource {
+        implements PropertiesParser, PropertiesSource, LoadablePropertiesSource {
 
     // NOTE: this class must be in the spi package as if its in the root package, then Spring fails to parse the XML
     // files due some weird spring issue. But that is okay as having this class in the spi package is fine anyway.
@@ -83,9 +85,10 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     }
 
     @Override
-    public String parseUri(String text, PropertiesLookup properties, boolean fallback) throws IllegalArgumentException {
+    public String parseUri(String text, PropertiesLookup properties, boolean fallback, boolean keepUnresolvedOptional)
+            throws IllegalArgumentException {
         // first let Camel parse the text as it may contain Camel placeholders
-        String answer = parser.parseUri(text, properties, fallback);
+        String answer = parser.parseUri(text, properties, fallback, keepUnresolvedOptional);
 
         // then let Spring parse it to resolve any Spring placeholders
         if (answer != null) {
@@ -137,6 +140,24 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         return properties.getProperty(name);
     }
 
+    @Override
+    public Properties loadProperties() {
+        return properties;
+    }
+
+    @Override
+    public Properties loadProperties(Predicate<String> filter) {
+        Properties props = new Properties();
+
+        for (String name : properties.stringPropertyNames()) {
+            if (filter.test(name)) {
+                props.put(name, properties.get(name));
+            }
+        }
+
+        return props;
+    }
+
     private class BridgePropertyPlaceholderResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
 
         private final PropertiesLookup properties;
@@ -161,7 +182,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
     }
 
-    private final class BridgePropertiesParser implements PropertiesParser {
+    private static final class BridgePropertiesParser implements PropertiesParser {
 
         private final PropertiesParser delegate;
         private final PropertiesParser parser;
@@ -172,15 +193,16 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
 
         @Override
-        public String parseUri(String text, PropertiesLookup properties, boolean fallback) throws IllegalArgumentException {
+        public String parseUri(String text, PropertiesLookup properties, boolean fallback, boolean keepUnresolvedOptional)
+                throws IllegalArgumentException {
             String answer = null;
             if (delegate != null) {
-                answer = delegate.parseUri(text, properties, fallback);
+                answer = delegate.parseUri(text, properties, fallback, keepUnresolvedOptional);
             }
             if (answer != null) {
                 text = answer;
             }
-            return parser.parseUri(text, properties, fallback);
+            return parser.parseUri(text, properties, fallback, keepUnresolvedOptional);
         }
 
         @Override

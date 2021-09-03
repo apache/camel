@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,22 +27,14 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/singledirectoryonly");
-        super.setUp();
-    }
-
     @Test
     public void testConsumeFileOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader("file://target/data/singledirectoryonly/2008", "2008 Report", Exchange.FILE_NAME,
-                "report2008.txt");
-        template.sendBodyAndHeader("file://target/data/singledirectoryonly", "Hello World", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("file://target/data/singledirectoryonly", "Bye World", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(fileUri("2008"), "2008 Report", Exchange.FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "report2.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,7 +43,7 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/singledirectoryonly/?recursive=false&delete=true&initialDelay=0&delay=10")
+                from(fileUri("?recursive=false&delete=true&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

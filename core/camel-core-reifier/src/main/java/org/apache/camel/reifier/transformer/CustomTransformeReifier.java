@@ -33,8 +33,9 @@ public class CustomTransformeReifier extends TransformerReifier<CustomTransforme
             throw new IllegalArgumentException("'ref' or 'className' must be specified for customTransformer");
         }
         Transformer transformer;
-        if (definition.getRef() != null) {
-            transformer = lookup(parseString(definition.getRef()), Transformer.class);
+        String ref = parseString(definition.getRef());
+        if (ref != null) {
+            transformer = lookup(ref, Transformer.class);
             if (transformer == null) {
                 throw new IllegalArgumentException("Cannot find transformer with ref:" + definition.getRef());
             }

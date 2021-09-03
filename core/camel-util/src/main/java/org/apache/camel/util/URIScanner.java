@@ -171,6 +171,7 @@ class URIScanner {
         if (isRaw) {
             text = value.toString();
         } else {
+            // need to replace % with %25 to avoid losing "%" when decoding
             String s = StringHelper.replaceAll(value.toString(), "%", "%25");
             text = URLDecoder.decode(s, CHARSET);
         }

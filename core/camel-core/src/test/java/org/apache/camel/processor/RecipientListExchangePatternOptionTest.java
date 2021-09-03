@@ -17,7 +17,9 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
+@ResourceLock("VmComponent")
 public class RecipientListExchangePatternOptionTest extends SendExchangePatternOptionTest {
 
     @Override

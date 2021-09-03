@@ -31,12 +31,16 @@ their `pom.xml` for this component:
 == Options
 
 
+// component-configure options: START
+// component-configure options: END
+
 // component options: START
 // component options: END
+
 
 
 
 // endpoint options: START
 // endpoint options: END
 
-include::camel-spring-boot::page$caffeine-lrucache-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$caffeine-lrucache-starter.adoc[]

@@ -342,7 +342,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      *                   otherwise <code>false</code>
      * @throws Exception
      */
-    protected boolean isEnveloping(Input input) throws Exception {
+    protected boolean isEnveloping(Input input) {
         Element el = input.getMessageBodyDocument().getDocumentElement();
         if ("Signature".equals(el.getLocalName()) && XMLSignature.XMLNS.equals(el.getNamespaceURI())) {
             return true;

@@ -52,6 +52,14 @@ public class DefaultMessage extends MessageSupport {
     }
 
     @Override
+    public void reset() {
+        super.reset();
+        if (headers != null) {
+            headers.clear();
+        }
+    }
+
+    @Override
     public Object getHeader(String name) {
         if (headers == null) {
             // force creating headers
@@ -229,22 +237,38 @@ public class DefaultMessage extends MessageSupport {
             return false;
         }
 
+        // special optimized
+        if (excludePatterns == null && "*".equals(pattern)) {
+            headers.clear();
+            return true;
+        }
+
         boolean matches = false;
         // must use a set to store the keys to remove as we cannot walk using entrySet and remove at the same time
         // due concurrent modification error
-        Set<String> toRemove = new HashSet<>();
-        for (Map.Entry<String, Object> entry : headers.entrySet()) {
-            String key = entry.getKey();
+        Set<String> toBeRemoved = null;
+        for (String key : headers.keySet()) {
             if (PatternHelper.matchPattern(key, pattern)) {
                 if (excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns)) {
                     continue;
                 }
                 matches = true;
-                toRemove.add(entry.getKey());
+                if (toBeRemoved == null) {
+                    toBeRemoved = new HashSet<>();
+                }
+                toBeRemoved.add(key);
             }
         }
-        for (String key : toRemove) {
-            headers.remove(key);
+
+        if (matches) {
+            if (toBeRemoved.size() == headers.size()) {
+                // special optimization when all should be removed
+                headers.clear();
+            } else {
+                for (String key : toBeRemoved) {
+                    headers.remove(key);
+                }
+            }
         }
 
         return matches;

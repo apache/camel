@@ -27,7 +27,6 @@ import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyServerBuilder;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -36,7 +35,6 @@ import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
 import org.apache.camel.component.grpc.server.BindableServiceFactory;
 import org.apache.camel.component.grpc.server.DefaultBindableServiceFactory;
 import org.apache.camel.component.grpc.server.GrpcHeaderInterceptor;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ResourceHelper;
@@ -113,21 +111,20 @@ public class GrpcConsumer extends DefaultConsumer {
             ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
 
-            ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
-
             SslContextBuilder sslContextBuilder
                     = SslContextBuilder
                             .forServer(
-                                    ResourceHelper.resolveResourceAsInputStream(classResolver,
+                                    ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
                                             configuration.getKeyCertChainResource()),
-                                    ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyResource()),
+                                    ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
+                                            configuration.getKeyResource()),
                                     configuration.getKeyPassword())
-                            .clientAuth(ClientAuth.REQUIRE)
-                            .sslProvider(SslProvider.OPENSSL);
+                            .clientAuth(ClientAuth.REQUIRE);
 
             if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
-                sslContextBuilder = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(classResolver,
-                        configuration.getTrustCertCollectionResource()));
+                sslContextBuilder
+                        = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
+                                configuration.getTrustCertCollectionResource()));
             }
 
             serverBuilder = serverBuilder.sslContext(GrpcSslContexts.configure(sslContextBuilder).build());

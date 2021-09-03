@@ -47,6 +47,20 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return (AdvancedTwitterTimelineEndpointConsumerBuilder) this;
         }
         /**
+         * The list name when using timelineType=list.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param list the value to set
+         * @return the dsl builder
+         */
+        default TwitterTimelineEndpointConsumerBuilder list(String list) {
+            doSetProperty("list", list);
+            return this;
+        }
+        /**
          * The username when using timelineType=user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1301,6 +1315,20 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return (AdvancedTwitterTimelineEndpointProducerBuilder) this;
         }
         /**
+         * The list name when using timelineType=list.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param list the value to set
+         * @return the dsl builder
+         */
+        default TwitterTimelineEndpointProducerBuilder list(String list) {
+            doSetProperty("list", list);
+            return this;
+        }
+        /**
          * The username when using timelineType=user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1533,6 +1561,20 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return (AdvancedTwitterTimelineEndpointBuilder) this;
         }
         /**
+         * The list name when using timelineType=list.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param list the value to set
+         * @return the dsl builder
+         */
+        default TwitterTimelineEndpointBuilder list(String list) {
+            doSetProperty("list", list);
+            return this;
+        }
+        /**
          * The username when using timelineType=user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1725,8 +1767,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * Path parameter: timelineType (required)
          * The timeline type to produce/consume.
-         * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
-         * MENTIONS, RETWEETSOFME, UNKNOWN
+         * There are 7 enums and the value can be one of: PUBLIC, HOME, USER,
+         * MENTIONS, RETWEETSOFME, LIST, UNKNOWN
          * 
          * @param path timelineType
          * @return the dsl builder
@@ -1746,8 +1788,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * Path parameter: timelineType (required)
          * The timeline type to produce/consume.
-         * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
-         * MENTIONS, RETWEETSOFME, UNKNOWN
+         * There are 7 enums and the value can be one of: PUBLIC, HOME, USER,
+         * MENTIONS, RETWEETSOFME, LIST, UNKNOWN
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

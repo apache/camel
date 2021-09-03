@@ -74,7 +74,7 @@ public final class AtomixQueueConsumer extends AbstractAtomixClientConsumer<Atom
     // ********************************************
 
     private void onEvent(DistributedQueue.ValueEvent<Object> event) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setHeader(AtomixClientConstants.EVENT_TYPE, event.type());
 
         if (resultHeader == null) {

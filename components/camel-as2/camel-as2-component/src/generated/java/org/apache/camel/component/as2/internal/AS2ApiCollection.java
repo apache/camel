@@ -33,7 +33,7 @@ public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configu
         List<String> nullableArgs;
 
         aliases.clear();
-        nullableArgs = Arrays.asList("ediMessageTransferEncoding", "signingAlgorithm", "signingCertificateChain", "signingPrivateKey", "compressionAlgorithm", "dispositionNotificationTo", "signedReceiptMicAlgorithms", "encryptingAlgorithm", "encryptingCertificateChain");
+        nullableArgs = Arrays.asList("ediMessageTransferEncoding", "signingAlgorithm", "signingCertificateChain", "signingPrivateKey", "compressionAlgorithm", "dispositionNotificationTo", "signedReceiptMicAlgorithms", "encryptingAlgorithm", "encryptingCertificateChain", "attachedFileName");
         apiHelpers.put(AS2ApiName.CLIENT, new ApiMethodHelper<AS2ClientManagerApiMethod>(AS2ClientManagerApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AS2ClientManagerApiMethod.class, AS2ApiName.CLIENT);
 

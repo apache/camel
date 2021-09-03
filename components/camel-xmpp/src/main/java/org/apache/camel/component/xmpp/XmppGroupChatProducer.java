@@ -41,7 +41,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
     private MultiUserChat chat;
     private String room;
 
-    public XmppGroupChatProducer(XmppEndpoint endpoint) throws XMPPException {
+    public XmppGroupChatProducer(XmppEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }

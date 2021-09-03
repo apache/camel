@@ -18,6 +18,7 @@ package org.apache.camel.component.activemq;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import javax.jms.Connection;
 import javax.jms.Message;
@@ -29,38 +30,44 @@ import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.policy.SharedDeadLetterStrategy;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.component.jms.JmsMessage;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * shows rollback and redelivery dlq respected with external tm
  */
-public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
-    static TransactionManager[] transactionManager = new TransactionManager[1];
+public class JmsJdbcXARollbackTest extends ActiveMQSpringTestSupport {
+
+    static TransactionManager transactionManager;
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsJdbcXARollbackTest.class);
-    BrokerService broker;
+
+    @RegisterExtension
+    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .defaultBroker()
+            .withTcpTransport()
+            .build();
+
     int messageCount;
 
     public java.sql.Connection initDb() throws Exception {
         String createStatement = "CREATE TABLE SCP_INPUT_MESSAGES (" + "id int NOT NULL GENERATED ALWAYS AS IDENTITY, "
-                                 + "messageId varchar(96) NOT NULL, "
-                                 + "messageCorrelationId varchar(96) NOT NULL, " + "messageContent varchar(2048) NOT NULL, "
-                                 + "PRIMARY KEY (id) )";
+                                 + "messageId varchar(96) NOT NULL, " + "messageCorrelationId varchar(96) NOT NULL, "
+                                 + "messageContent varchar(2048) NOT NULL, " + "PRIMARY KEY (id) )";
 
         java.sql.Connection conn = getJDBCConnection();
         try {
@@ -88,8 +95,8 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
         ResultSet resultSet = jdbcConn.createStatement().executeQuery("SELECT * FROM SCP_INPUT_MESSAGES");
         while (resultSet.next()) {
             count++;
-            LOG.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: "
-                     + resultSet.getString(3) + ", content: " + resultSet.getString(4));
+            LOG.info("message - seq: {}, id: {}, corr: {}, content: {}", resultSet.getInt(1), resultSet.getString(2),
+                    resultSet.getString(3), resultSet.getString(4));
         }
         return count;
     }
@@ -114,7 +121,7 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
     }
 
     private boolean consumedFrom(String qName) throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://testXA");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
@@ -127,12 +134,12 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
     }
 
     private void initTMRef() {
-        transactionManager[0] = getMandatoryBean(JtaTransactionManager.class, "jtaTransactionManager").getTransactionManager();
-
+        transactionManager = getMandatoryBean(JtaTransactionManager.class, "jtaTransactionManager")
+                .getTransactionManager();
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://testXA");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
@@ -144,42 +151,21 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker(boolean deleteAllMessages) throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName("testXA");
-        brokerService.setAdvisorySupport(false);
-        brokerService.setUseJmx(false);
-        brokerService.setDataDirectory("target/data");
-        brokerService.addConnector("tcp://0.0.0.0:61616");
-        return brokerService;
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-
-        deleteDirectory("target/data/howl");
-
-        // make broker available to recovery processing on app context start
-        try {
-            broker = createBroker(true);
-            broker.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to start broker", e);
-        }
-
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jmsXajdbcRollback.xml");
+    protected Map<String, String> getTranslationProperties() {
+        Map<String, String> map = super.getTranslationProperties();
+        map.put("brokerUri", service.serviceAddress());
+        return map;
     }
 
     public static class MarkRollbackOnly {
         public String enrich(Exchange exchange) throws Exception {
-            LOG.info("Got exchange: " + exchange);
-            LOG.info("Got message: " + ((JmsMessage) exchange.getIn()).getJmsMessage());
+            LOG.info("Got exchange: {}", exchange);
+            LOG.info("Got message: {}", ((JmsMessage) exchange.getIn()).getJmsMessage());
 
-            LOG.info("Current tx: " + transactionManager[0].getTransaction());
+            LOG.info("Current tx: {}", transactionManager.getTransaction());
             LOG.info("Marking rollback only...");
-            transactionManager[0].getTransaction().setRollbackOnly();
+            transactionManager.getTransaction().setRollbackOnly();
             return "Some Text";
         }
     }

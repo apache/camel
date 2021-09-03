@@ -19,8 +19,6 @@ http://infinispan.org/[Infinispan] distributed data grid / cache.
 Infinispan is an extremely scalable, highly available key/value data
 store and data grid platform written in Java.
 
-Infinispan requires at least Java 8.
-
 The `camel-infinispan-embedded` component includes the following features:
 
 * *Local Camel Consumer* - Receives cache change notifications and sends them to be processed.
@@ -46,19 +44,54 @@ If you use Maven, you must add the following dependency to your `pom.xml`:
 
 == URI format
 
-[source,java]
 -------------------------------
 infinispan-embedded://cacheName?[options]
 -------------------------------
-
-== URI Options
 
 The producer allows sending messages to a local infinispan cache.
 The consumer allows listening for events from local infinispan cache.
 
 If no cache configuration is provided, embedded cacheContainer is created directly in the component.
 
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
+
 // component options: START
+== Component Options
+
+
 The Infinispan Embedded component supports 20 options, which are listed below.
 
 
@@ -89,10 +122,9 @@ The Infinispan Embedded component supports 20 options, which are listed below.
 |===
 // component options: END
 
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Infinispan Embedded endpoint is configured using URI syntax:
 
 ----
@@ -489,4 +521,4 @@ With the release of Infinispan 11, it is required to set the encoding configurat
 For more information have a look at https://infinispan.org/docs/stable/titles/developing/developing.html#data_encoding[Data Encoding and MediaTypes] in the official Infinispan documentation.
 ====
 
-include::camel-spring-boot::page$infinispan-embedded-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$infinispan-embedded-starter.adoc[]

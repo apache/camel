@@ -18,7 +18,9 @@ package org.apache.camel.component.pulsar.utils;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
@@ -31,20 +33,25 @@ public final class PulsarUtils {
     private PulsarUtils() {
     }
 
+    public static Queue<ExecutorService> stopExecutors(
+            final ExecutorServiceManager executorServiceManager, final Queue<ExecutorService> executors) {
+        for (ExecutorService executor : executors) {
+            executorServiceManager.shutdownGraceful(executor, 500);
+        }
+        return new ConcurrentLinkedQueue<>();
+    }
+
     public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers) throws PulsarClientException {
         while (!consumers.isEmpty()) {
             Consumer<byte[]> consumer = consumers.poll();
             if (consumer != null) {
                 try {
                     consumer.close();
-                } catch (Exception e) {
+                } catch (PulsarClientException.AlreadyClosedException e) {
                     // ignore during stopping
-                    if (e instanceof PulsarClientException.AlreadyClosedException) {
-                        // ignore
-                    } else {
-                        LOG.debug("Error stopping consumer: {} due to {}. This exception is ignored", consumer,
-                                e.getMessage(), e);
-                    }
+                } catch (Exception e) {
+                    LOG.debug("Error stopping consumer: {} due to {}. This exception is ignored", consumer,
+                            e.getMessage(), e);
                 }
             }
         }

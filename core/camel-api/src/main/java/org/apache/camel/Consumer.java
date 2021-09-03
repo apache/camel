@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.UnitOfWork;
+
 /**
  * A consumer of message exchanges from an {@link Endpoint}.
  * <p/>
@@ -25,6 +27,43 @@ package org.apache.camel;
  */
 public interface Consumer extends Service, EndpointAware {
 
+    /**
+     * The processor that will process the {@link Exchange} that was consumed.
+     */
     Processor getProcessor();
+
+    /**
+     * Creates an {@link Exchange} that was consumed.
+     * <p/>
+     * <b>Important:</b> If the auto release parameter is set to <tt>false</tt> then the consumer is responsible for
+     * calling the {@link #releaseExchange(Exchange, boolean)} when the {@link Exchange} is done being routed. This is
+     * for advanced consumers that need to have this control in their own hands. For normal use-cases then a consumer
+     * can use autoRelease <tt>true</tt> and then Camel will automatic release the exchange after routing.
+     *
+     * @param autoRelease whether to auto release the exchange when routing is complete via {@link UnitOfWork}
+     */
+    Exchange createExchange(boolean autoRelease);
+
+    /**
+     * Releases the {@link Exchange} when its completed processing and no longer needed.
+     *
+     * @param exchange    the exchange
+     * @param autoRelease whether the exchange was created with auto release
+     */
+    void releaseExchange(Exchange exchange, boolean autoRelease);
+
+    /**
+     * The default callback to use with the consumer when calling the processor using asynchronous routing.
+     *
+     * This implementation will use {@link org.apache.camel.spi.ExceptionHandler} to handle any exception on the
+     * exchange and afterwards release the exchange.
+     *
+     * @param  exchange    the exchange
+     * @param  autoRelease whether the exchange was created with auto release
+     * @return             the default callback
+     */
+    default AsyncCallback defaultConsumerCallback(Exchange exchange, boolean autoRelease) {
+        return null;
+    }
 
 }

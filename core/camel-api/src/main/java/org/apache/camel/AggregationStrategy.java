@@ -72,8 +72,8 @@ public interface AggregationStrategy {
      * Important: In the aggregate method, do not create a new exchange instance to return, instead return either the
      * old or new exchange from the input parameters; favor returning the old exchange whenever possible.
      * <p/>
-     * Important: Only Multicast and Recipient List EIP supports this method with access to the input exchange. All
-     * other EIPs does not and uses the {@link #aggregate(Exchange, Exchange)} method instead.
+     * Important: Only Multicast, Recipient List, and Splitter EIP supports this method with access to the input
+     * exchange. All other EIPs does not and uses the {@link #aggregate(Exchange, Exchange)} method instead.
      *
      * @param  oldExchange   the oldest exchange (is <tt>null</tt> on first aggregation as we only have the new
      *                       exchange)

@@ -416,6 +416,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.bodyOneLine();
         } else if (ObjectHelper.equal(expression, "id")) {
             return ExpressionBuilder.messageIdExpression();
+        } else if (ObjectHelper.equal(expression, "messageTimestamp")) {
+            return ExpressionBuilder.messageTimestampExpression();
         } else if (ObjectHelper.equal(expression, "exchangeId")) {
             return ExpressionBuilder.exchangeIdExpression();
         } else if (ObjectHelper.equal(expression, "exchange")) {
@@ -774,6 +776,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "bodyOneLine(exchange)";
         } else if (ObjectHelper.equal(expression, "id")) {
             return "message.getMessageId()";
+        } else if (ObjectHelper.equal(expression, "messageTimestamp")) {
+            return "message.getMessageTimestamp()";
         } else if (ObjectHelper.equal(expression, "exchangeId")) {
             return "exchange.getExchangeId()";
         } else if (ObjectHelper.equal(expression, "exchange")) {
@@ -1091,7 +1095,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             // and the key can also be OGNL (eg if there is a dot)
             boolean index = false;
             List<String> parts = splitOgnl(key);
-            if (parts.size() > 0) {
+            if (!parts.isEmpty()) {
                 String s = parts.get(0);
                 int pos = s.indexOf('[');
                 if (pos != -1) {

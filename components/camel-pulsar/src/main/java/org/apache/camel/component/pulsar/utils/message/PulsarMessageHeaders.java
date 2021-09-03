@@ -31,4 +31,5 @@ public interface PulsarMessageHeaders {
     String KEY_OUT = "CamelPulsarProducerMessageKey";
     String PROPERTIES_OUT = "CamelPulsarProducerMessageProperties";
     String EVENT_TIME_OUT = "CamelPulsarProducerMessageEventTime";
+    String PULSAR_REDELIVERY_COUNT = "CamelPulsarRedeliveryCount";
 }

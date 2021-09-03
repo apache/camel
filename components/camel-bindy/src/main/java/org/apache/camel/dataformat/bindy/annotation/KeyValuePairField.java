@@ -34,7 +34,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface KeyValuePairField {
 
     /**
-     * tag identifying the field in the message (mandatory)
+     * tag identifying the field in the message (mandatory) - must be unique
      * 
      * @return int
      */
@@ -55,12 +55,15 @@ public @interface KeyValuePairField {
     String pattern() default "";
 
     /**
+     * Timezone to be used.
+     *
      * @return String timezone ID
      */
     String timezone() default "";
 
     /**
-     * Position of the field in the message generated
+     * Position of the field in the message generated - must be used when the position of the key/tag in the FIX message
+     * must be different
      * 
      * @return int
      */
@@ -79,7 +82,7 @@ public @interface KeyValuePairField {
     boolean required() default false;
 
     /**
-     * Indicates if there is a decimal point implied at a specified location
+     * <b>Camel 2.11:</b> Indicates if there is a decimal point implied at a specified location
      */
     boolean impliedDecimalSeparator() default false;
 }

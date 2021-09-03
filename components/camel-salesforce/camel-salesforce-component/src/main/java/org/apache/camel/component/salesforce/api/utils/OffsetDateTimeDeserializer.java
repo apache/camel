@@ -21,7 +21,6 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
@@ -34,7 +33,7 @@ final class OffsetDateTimeDeserializer extends JsonDeserializer<OffsetDateTime> 
 
     @Override
     public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
 
         return zonedDateTime.toOffsetDateTime();

@@ -385,6 +385,22 @@ public final class JmsMessageHelper {
     }
 
     /**
+     * Gets the JMSCorrelationID from the message.
+     *
+     * @param  message the message
+     * @return         the JMSCorrelationID, or <tt>null</tt> if not able to get
+     */
+    public static String getJMSCorrelationID(Message message) {
+        try {
+            return message.getJMSCorrelationID();
+        } catch (JMSException e) {
+            // ignore
+        }
+
+        return null;
+    }
+
+    /**
      * Gets the JMSCorrelationIDAsBytes from the message.
      *
      * @param  message the message

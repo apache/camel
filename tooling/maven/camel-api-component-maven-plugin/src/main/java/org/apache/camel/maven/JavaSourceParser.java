@@ -103,7 +103,7 @@ public class JavaSourceParser {
 
             // should not be constructor and must not be private
             boolean isInterface = clazz instanceof JavaInterfaceSource;
-            boolean accept = isInterface || (!ms.isConstructor() && ms.isPublic());
+            boolean accept = isInterface || !ms.isConstructor() && ms.isPublic();
             if (!accept) {
                 continue;
             }
@@ -211,7 +211,7 @@ public class JavaSourceParser {
             // what base class that is
             answer = resolveTypeVariable(ms, clazz, answer);
         }
-        if ((ps != null && ps.isVarArgs()) || type.isArray()) {
+        if (ps != null && ps.isVarArgs() || type.isArray()) {
             // the old way with javadoc did not use varargs in the signature, so lets transform this to an array style
             answer = answer + "[]";
         }

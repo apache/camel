@@ -36,30 +36,23 @@ public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTest
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        File file1 = new File("./target/noAccess");
-        if (file1.exists()) {
-            file1.setReadable(true);
-        }
-        deleteDirectory(file1);
-        Assumptions.assumeTrue(file1.mkdirs());
-        Assumptions.assumeTrue(file1.setReadable(false));
         super.setUp();
+        File file1 = testDirectory("noAccess", true).toFile();
+        Assumptions.assumeTrue(file1.setReadable(false));
     }
 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        File file1 = new File("./target/noAccess");
-        if (file1.exists()) {
-            file1.setReadable(true);
-        }
+        File file1 = testDirectory("noAccess").toFile();
+        file1.setReadable(true);
         super.tearDown();
     }
 
     @Test
     public void testStartingDirectoryMustHaveAccess() throws Exception {
         Endpoint endpoint = context.getEndpoint(
-                "file://target/noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true");
+                fileUri("noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true"));
         try {
             endpoint.createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
@@ -68,7 +61,7 @@ public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTest
             });
             fail("Should have thrown an exception");
         } catch (IOException e) {
-            assertTrue(e.getMessage().startsWith("Starting directory permission denied"));
+            assertTrue(e.getMessage().startsWith("Starting directory permission denied"), e.getMessage());
         }
     }
 }

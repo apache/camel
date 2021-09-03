@@ -45,18 +45,20 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute
     @Metadata(defaultValue = "Jackson")
     private JsonLibrary library = JsonLibrary.Jackson;
-    @XmlAttribute
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
-    @XmlAttribute
+    @XmlAttribute(name = "jsonView")
+    private String jsonViewTypeName;
+    @XmlTransient
     private Class<?> jsonView;
     @XmlAttribute
     private String include;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowJmsType;
-    @XmlAttribute
+    @XmlAttribute(name = "collectionType")
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;
@@ -89,6 +91,11 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
               description = "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
+    @XmlAttribute
+    private String schemaResolver;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    private String autoDiscoverSchemaResolver;
 
     public JsonDataFormat() {
         super("json");
@@ -172,6 +179,18 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
      */
     public void setLibrary(JsonLibrary library) {
         this.library = library;
+    }
+
+    public String getJsonViewTypeName() {
+        return jsonViewTypeName;
+    }
+
+    /**
+     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you
+     * can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations
+     */
+    public void setJsonViewTypeName(String jsonViewTypeName) {
+        this.jsonViewTypeName = jsonViewTypeName;
     }
 
     public Class<?> getJsonView() {
@@ -389,6 +408,28 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
         return "json-" + library.name().toLowerCase();
+    }
+
+    /**
+     * Optional schema resolver used to lookup schemas for the data in transit.
+     */
+    public void setSchemaResolver(String schemaResolver) {
+        this.schemaResolver = schemaResolver;
+    }
+
+    public String getSchemaResolver() {
+        return schemaResolver;
+    }
+
+    public String getAutoDiscoverSchemaResolver() {
+        return autoDiscoverSchemaResolver;
+    }
+
+    /**
+     * When not disabled, the SchemaResolver will be looked up into the registry
+     */
+    public void setAutoDiscoverSchemaResolver(String autoDiscoverSchemaResolver) {
+        this.autoDiscoverSchemaResolver = autoDiscoverSchemaResolver;
     }
 
     //

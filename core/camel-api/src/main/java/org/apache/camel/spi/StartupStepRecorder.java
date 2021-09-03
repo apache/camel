@@ -59,7 +59,7 @@ public interface StartupStepRecorder extends StaticService {
     String getRecordingDir();
 
     /**
-     * Directory to store the recording. By default the user home directory will be used.
+     * Directory to store the recording. By default the current directory will be used.
      */
     void setRecordingDir(String recordingDir);
 

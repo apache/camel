@@ -18,8 +18,7 @@ provide a way to bind the message exchange to a Java interface/service where the
 endpoints and wires it up to the bean.
 
 In addition you can use the xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to wire messages
-to a bean using annotation, or even xref:latest@manual:ROOT:hiding-middleware.adoc[hide all the middleware]
-behind a plain Java interface.
+to a bean using annotation.
 
 == Sample
 

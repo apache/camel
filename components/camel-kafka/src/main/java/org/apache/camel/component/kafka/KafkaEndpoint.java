@@ -21,8 +21,6 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,9 +31,9 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.security.auth.AuthenticateCallbackHandler;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.slf4j.Logger;
@@ -49,6 +47,10 @@ import org.slf4j.LoggerFactory;
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
+
+    private static final String CALLBACK_HANDLER_CLASS_CONFIG = "sasl.login.callback.handler.class";
+
+    private KafkaClientFactory kafkaClientFactory;
 
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
@@ -71,6 +73,20 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public void setConfiguration(KafkaConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public KafkaClientFactory getKafkaClientFactory() {
+        return this.kafkaClientFactory;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+
+        kafkaClientFactory = getComponent().getKafkaClientFactory();
+        if (kafkaClientFactory == null) {
+            kafkaClientFactory = new DefaultKafkaClientFactory();
+        }
     }
 
     @Override
@@ -126,8 +142,11 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
                 replaceWithClass(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, resolver, Partitioner.class);
                 replaceWithClass(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
                 replaceWithClass(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
+
+                // because he property is not available in Kafka client, use a static string
+                replaceWithClass(props, CALLBACK_HANDLER_CLASS_CONFIG, resolver, AuthenticateCallbackHandler.class);
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             // can ignore and Kafka itself might be able to handle it, if not,
             // it will throw an exception
             LOG.debug("Problem loading classes for Serializers", t);
@@ -144,24 +163,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         int max = getConfiguration().getWorkerPoolMaxSize();
         return getCamelContext().getExecutorServiceManager().newThreadPool(this,
                 "KafkaProducer[" + configuration.getTopic() + "]", core, max);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public Exchange createKafkaExchange(ConsumerRecord record) {
-        Exchange exchange = super.createExchange();
-
-        Message message = exchange.getIn();
-        message.setHeader(KafkaConstants.PARTITION, record.partition());
-        message.setHeader(KafkaConstants.TOPIC, record.topic());
-        message.setHeader(KafkaConstants.OFFSET, record.offset());
-        message.setHeader(KafkaConstants.HEADERS, record.headers());
-        message.setHeader(KafkaConstants.TIMESTAMP, record.timestamp());
-        if (record.key() != null) {
-            message.setHeader(KafkaConstants.KEY, record.key());
-        }
-        message.setBody(record.value());
-
-        return exchange;
     }
 
     protected KafkaProducer createProducer(KafkaEndpoint endpoint) {

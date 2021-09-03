@@ -106,6 +106,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jschLoggingLevel": target.getConfiguration().setJschLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "keeplastmodified":
         case "keepLastModified": target.setKeepLastModified(property(camelContext, boolean.class, value)); return true;
+        case "keyexchangeprotocols":
+        case "keyExchangeProtocols": target.getConfiguration().setKeyExchangeProtocols(property(camelContext, java.lang.String.class, value)); return true;
         case "keypair":
         case "keyPair": target.getConfiguration().setKeyPair(property(camelContext, java.security.KeyPair.class, value)); return true;
         case "knownhosts":
@@ -329,6 +331,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jschLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "keeplastmodified":
         case "keepLastModified": return boolean.class;
+        case "keyexchangeprotocols":
+        case "keyExchangeProtocols": return java.lang.String.class;
         case "keypair":
         case "keyPair": return java.security.KeyPair.class;
         case "knownhosts":
@@ -553,6 +557,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jschLoggingLevel": return target.getConfiguration().getJschLoggingLevel();
         case "keeplastmodified":
         case "keepLastModified": return target.isKeepLastModified();
+        case "keyexchangeprotocols":
+        case "keyExchangeProtocols": return target.getConfiguration().getKeyExchangeProtocols();
         case "keypair":
         case "keyPair": return target.getConfiguration().getKeyPair();
         case "knownhosts":

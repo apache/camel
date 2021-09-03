@@ -214,50 +214,18 @@ public class JmsBinding {
      */
     public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, Exception cause)
             throws JMSException {
-        Message answer = null;
+        Message answer;
 
-        // TODO: look at supporting some of these options
-
-        /*        boolean alwaysCopy = endpoint != null && endpoint.getConfiguration().isAlwaysCopyMessage();
-        boolean force = endpoint != null && endpoint.getConfiguration().isForceSendOriginalMessage();
-        if (!alwaysCopy && camelMessage instanceof JmsMessage) {
-            JmsMessage jmsMessage = (JmsMessage)camelMessage;
-            if (!jmsMessage.shouldCreateNewMessage() || force) {
-                answer = jmsMessage.getJmsMessage();
-        
-                if (!force) {
-                    // answer must match endpoint type
-                    JmsMessageType type = endpoint != null ? endpoint.getConfiguration().getJmsMessageType() : null;
-                    if (type != null && answer != null) {
-                        if (type == JmsMessageType.Text) {
-                            answer = answer instanceof TextMessage ? answer : null;
-                        } else if (type == JmsMessageType.Bytes) {
-                            answer = answer instanceof BytesMessage ? answer : null;
-                        } else if (type == JmsMessageType.Map) {
-                            answer = answer instanceof MapMessage ? answer : null;
-                        } else if (type == JmsMessageType.Object) {
-                            answer = answer instanceof ObjectMessage ? answer : null;
-                        } else if (type == JmsMessageType.Stream) {
-                            answer = answer instanceof StreamMessage ? answer : null;
-                        }
-                    }
-                }
-            }
-        }
-        */
-
-        if (answer == null) {
-            if (cause != null) {
-                // an exception occurred so send it as response
-                LOG.debug("Will create JmsMessage with caused exception: {}", cause.getMessage(), cause);
-                // create jms message containing the caused exception
-                answer = createJmsMessage(cause, session);
-            } else {
-                // create regular jms message using the camel message body
-                answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session,
-                        exchange.getContext());
-                appendJmsProperties(answer, exchange, camelMessage.getHeaders());
-            }
+        if (cause != null) {
+            // an exception occurred so send it as response
+            LOG.debug("Will create JmsMessage with caused exception: {}", cause.getMessage(), cause);
+            // create jms message containing the caused exception
+            answer = createJmsMessage(cause, session);
+        } else {
+            // create regular jms message using the camel message body
+            answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session,
+                    exchange.getContext());
+            appendJmsProperties(answer, exchange, camelMessage.getHeaders());
         }
 
         if (answer != null && messageCreatedStrategy != null) {
@@ -321,7 +289,7 @@ public class JmsBinding {
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
                 LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",
-                        new Object[] { headerName, headerValue.getClass().getName(), headerValue });
+                        headerName, headerValue.getClass().getName(), headerValue);
             }
         }
     }
@@ -404,9 +372,8 @@ public class JmsBinding {
     protected Message createJmsMessage(
             Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context)
             throws JMSException {
-        JmsMessageType type = null;
 
-        type = getJMSMessageTypeForBody(exchange, body, headers, session, context);
+        JmsMessageType type = getJMSMessageTypeForBody(exchange, body, headers, session, context);
 
         // create the JmsMessage based on the type
         if (type != null) {

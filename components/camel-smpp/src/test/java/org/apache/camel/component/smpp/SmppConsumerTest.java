@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.smpp;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ExchangeFactory;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
@@ -28,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -39,6 +42,8 @@ import static org.mockito.Mockito.when;
  */
 public class SmppConsumerTest {
 
+    private ExchangeFactory exchangeFactory;
+    private ExtendedCamelContext context;
     private SmppConsumer consumer;
     private SmppEndpoint endpoint;
     private SmppConfiguration configuration;
@@ -51,9 +56,16 @@ public class SmppConsumerTest {
         configuration.setServiceType("CMT");
         configuration.setSystemType("cp");
         configuration.setPassword("password");
+        context = mock(ExtendedCamelContext.class);
+        exchangeFactory = mock(ExchangeFactory.class);
         endpoint = mock(SmppEndpoint.class);
         processor = mock(Processor.class);
         session = mock(SMPPSession.class);
+
+        when(endpoint.getCamelContext()).thenReturn(context);
+        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
+        when(context.getExchangeFactory()).thenReturn(exchangeFactory);
+        when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
 
         // the construction of SmppConsumer will trigger the getCamelContext call
         consumer = new SmppConsumer(
@@ -84,7 +96,7 @@ public class SmppConsumerTest {
 
         consumer.doStart();
 
-        verify(session).setEnquireLinkTimer(5000);
+        verify(session).setEnquireLinkTimer(60000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
         verify(session).setMessageReceiverListener(isA(MessageReceiverListener.class));

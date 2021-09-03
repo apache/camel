@@ -27,14 +27,19 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedCamelContextTest extends ManagementTestSupport {
 
     @Override
@@ -42,40 +47,31 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         CamelContext context = super.createCamelContext();
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
+        context.setNameStrategy(new ExplicitCamelContextNameStrategy("my-camel-context"));
         return context;
     }
 
     @Test
     public void testManagedCamelContextClient() throws Exception {
-        // JMX tests don't work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         ManagedCamelContextMBean client = context.getExtension(ManagedCamelContext.class).getManagedCamelContext();
         assertNotNull(client);
 
-        assertEquals("camel-1", client.getCamelId());
+        assertEquals("my-camel-context", client.getCamelId());
         assertEquals("Started", client.getState());
     }
 
     @Test
     public void testManagedCamelContext() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", name);
+        assertEquals("my-camel-context", name);
 
         String managementName = (String) mbeanServer.getAttribute(on, "ManagementName");
-        assertEquals("19-camel-1", managementName);
+        assertEquals("19-my-camel-context", managementName);
 
         String level = (String) mbeanServer.getAttribute(on, "ManagementStatisticsLevel");
         assertEquals("Default", level);
@@ -144,10 +140,10 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         // test can send
         Boolean can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[] { "direct:start" },
                 new String[] { "java.lang.String" });
-        assertEquals(true, can.booleanValue());
+        assertTrue(can);
         can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[] { "timer:foo" },
                 new String[] { "java.lang.String" });
-        assertEquals(false, can.booleanValue());
+        assertFalse(can);
 
         // stop Camel
         mbeanServer.invoke(on, "stop", null, null);
@@ -155,14 +151,9 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
     @Test
     public void testManagedCamelContextCreateEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         assertNull(context.hasEndpoint("seda:bar"));
 
@@ -173,7 +164,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertNotNull(context.hasEndpoint("seda:bar"));
 
-        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=endpoints,name=\"seda://bar\"");
+        ObjectName seda = getCamelObjectName(TYPE_ENDPOINT, "seda://bar");
         boolean registered = mbeanServer.isRegistered(seda);
         assertTrue(registered, "Should be registered " + seda);
 
@@ -187,14 +178,9 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
     @Test
     public void testManagedCamelContextRemoveEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         assertNull(context.hasEndpoint("seda:bar"));
 
@@ -205,7 +191,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertNotNull(context.hasEndpoint("seda:bar"));
 
-        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=endpoints,name=\"seda://bar\"");
+        ObjectName seda = getCamelObjectName(TYPE_ENDPOINT, "seda://bar");
         boolean registered = mbeanServer.isRegistered(seda);
         assertTrue(registered, "Should be registered " + seda);
 

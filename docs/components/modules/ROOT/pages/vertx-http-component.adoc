@@ -1,7 +1,7 @@
 [[vertx-http-component]]
 = Vert.x HTTP Client Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-vertx-http/src/main/docs/vertx-http-component.adoc
+:page-source: components/camel-vertx/camel-vertx-http/src/main/docs/vertx-http-component.adoc
 :docTitle: Vert.x HTTP Client
 :artifactId: camel-vertx-http
 :description: Send requests to external HTTP servers using Vert.x
@@ -31,15 +31,52 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------
 vertx-http:hostname[:port][/resourceUri][?options]
 ---------------------------
 
-== Options
+
+
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
-The Vert.x HTTP Client component supports 17 options, which are listed below.
+== Component Options
+
+
+The Vert.x HTTP Client component supports 18 options, which are listed below.
 
 
 
@@ -47,6 +84,7 @@ The Vert.x HTTP Client component supports 17 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *responsePayloadAsByteArray* (producer) | Whether the response body should be byte or as io.vertx.core.buffer.Buffer | true | boolean
 | *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request has the Content-Type application/x-java-serialized-object This is disabled by default. If you enable this, be aware that Java will deserialize the incoming data from the request. This can be a potential security risk. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *vertx* (advanced) | To use an existing vertx instead of creating a new instance |  | Vertx
@@ -67,6 +105,8 @@ The Vert.x HTTP Client component supports 17 options, which are listed below.
 // component options: END
 
 // endpoint options: START
+== Endpoint Options
+
 The Vert.x HTTP Client endpoint is configured using URI syntax:
 
 ----
@@ -85,7 +125,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (22 parameters):
+=== Query Parameters (23 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,9 +134,10 @@ with the following path and query parameters:
 | *connectTimeout* (producer) | The amount of time in milliseconds until a connection is established. A timeout value of zero is interpreted as an infinite timeout. | 60000 | int
 | *cookieStore* (producer) | A custom CookieStore to use when session management is enabled. If this option is not set then an in-memory CookieStore is used | InMemoryCookieStore | CookieStore
 | *headerFilterStrategy* (producer) | A custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. | VertxHttpHeaderFilterStrategy | HeaderFilterStrategy
-| *httpMethod* (producer) | The HTTP method to use. The HttpMethod header cannot override this option if set. There are 10 enums and the value can be one of: OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT, PATCH, OTHER |  | HttpMethod
+| *httpMethod* (producer) | The HTTP method to use. The HttpMethod header cannot override this option if set |  | HttpMethod
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included | 200-299 | String
+| *responsePayloadAsByteArray* (producer) | Whether the response body should be byte or as io.vertx.core.buffer.Buffer | true | boolean
 | *sessionManagement* (producer) | Enables session management via WebClientSession. By default the client is configured to use an in-memory CookieStore. The cookieStore option can be used to override this | false | boolean
 | *throwExceptionOnFailure* (producer) | Disable throwing HttpOperationFailedException in case of failed responses from the remote server | true | boolean
 | *timeout* (producer) | The amount of time in milliseconds after which if the request does not return any data within the timeout period a TimeoutException fails the request. Setting zero or a negative value disables the timeout. | -1 | long
@@ -116,7 +157,8 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-=== Message Headers
+
+== Message Headers
 
 [width="100%",cols="10%,20%,70%",options="header",]
 |=======================================================================
@@ -144,7 +186,7 @@ a content type, such as `text/html`.
 |`Exchange.CONTENT_ENCODING` |`String` |The HTTP content encoding. Is set to provide a content encoding, such as `gzip`.
 |=======================================================================
 
-=== Usage
+== Usage
 The following example shows how to send a request to an HTTP endpoint.
 
 You can override the URI configured on the `vertx-http` producer via headers `Exchange.HTTP_URI` and `Exchange.HTTP_PATH`.
@@ -155,13 +197,13 @@ from("direct:start")
     .to("vertx-http:https://camel.apache.org");
 ----
 
-==== URI Parameters
+== URI Parameters
 
 The `vertx-http` producer supports URI parameters to be sent to the HTTP
 server. The URI parameters can either be set directly on the endpoint
 URI, or as a header with the key `Exchange.HTTP_QUERY` on the message.
 
-==== Response code
+== Response code
 
 Camel will handle according to the HTTP response code:
 
@@ -173,13 +215,13 @@ with the information.
 * Response code is 400+, Camel regards it as an external server failure
 and will throw a `HttpOperationFailedException` with the information.
 
-==== throwExceptionOnFailure
+== throwExceptionOnFailure
 
 The option, `throwExceptionOnFailure`, can be set to `false` to prevent
 the `HttpOperationFailedException` from being thrown for failed response
 codes. This allows you to get any response from the remote server.
 
-==== Exceptions
+== Exceptions
 
 `HttpOperationFailedException` exception contains the following information:
 
@@ -189,7 +231,7 @@ codes. This allows you to get any response from the remote server.
 * Response body as a `java.lang.String`, if server provided a body as
 response
 
-==== HTTP method
+== HTTP method
 
 The following algorithm determines the HTTP method to be used: +
 1. Use method provided as endpoint configuration (`httpMethod`). +
@@ -199,7 +241,7 @@ The following algorithm determines the HTTP method to be used: +
 5. `POST` if there is data to send (body is not `null`). +
 6. `GET` otherwise.
 
-==== HTTP form parameters
+== HTTP form parameters
 
 You can send HTTP form parameters in one of two ways.
 
@@ -209,11 +251,11 @@ body is a `String` formatted as form variables. For example `param1=value1&param
 2. Set the message body as a https://vertx.io/docs/apidocs/io/vertx/core/MultiMap.html[MultiMap] which allows you to
 configure form parameter names and values.
 
-==== Multipart form data
+== Multipart form data
 
 You can upload text or binary files by setting the message body as a https://vertx.io/docs/apidocs/io/vertx/ext/web/multipart/MultipartForm.html[MultipartForm].
 
-==== Customizing Vert.x Web Client options
+== Customizing Vert.x Web Client options
 
 When finer control of the Vert.x Web Client configuration is required, you can bind a custom https://vertx.io/docs/apidocs/io/vertx/ext/web/client/WebClientOptions.html[WebClientOptions]
 instance to the registry.
@@ -235,15 +277,15 @@ from("direct:start")
     .to("vertx-http:http://localhost:8080?webClientOptions=#options")
 ---------------------------
 
-==== SSL
+== SSL
 
 The Vert.x HTTP component supports SSL/TLS configuration through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility].
 
 It is also possible to configure SSL options by providing a custom `WebClientOptions`.
 
-==== Session Management
+== Session Management
 
 Session management can be enabled via the `sessionManagement` URI option. When enabled, an in-memory cookie store is used to track cookies.
 This can be overridden by providing a custom `CookieStore` via the `cookieStore` URI option.
 
-include::camel-spring-boot::page$vertx-http-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$vertx-http-starter.adoc[]

@@ -16,7 +16,7 @@ using Expression or Predicate
 on json messages.
 
 [source,java]
------------------------------------------------------
+----
 from("queue:books.new")
   .choice()
     .when().jsonpath("$.store.book[?(@.price < 10)]")
@@ -24,8 +24,8 @@ from("queue:books.new")
     .when().jsonpath("$.store.book[?(@.price < 30)]")
       .to("jms:queue:book.average")
     .otherwise()
-      .to("jms:queue:book.expensive")
------------------------------------------------------
+      .to("jms:queue:book.expensive");
+----
 
 == JSonPath Options
 
@@ -82,7 +82,7 @@ follows
 
 == Syntax
 
-See the https://code.google.com/p/json-path/[JSonPath] project page for
+See the https://github.com/json-path/JsonPath[JSonPath] project page for
 further examples.
 
 == Easy Syntax
@@ -136,8 +136,8 @@ Camel JSonPath supports message body using the following types:
 | List | Message bodies as `java.util.List` types
 | POJO | *Optional* If Jackson is on the classpath, then camel-jsonpath
   is able to use Jackson to read the message body as POJO and convert to `java.util.Map`
-  which is supported by JSonPath. For example you can add `camel-jackson` as dependency to include Jackson.
-| InputStream | If none of the above types matches, then Camel will attempt to read the message body as an `java.io.InputStream`.
+  which is supported by JSonPath. For example, you can add `camel-jackson` as dependency to include Jackson.
+| InputStream | If none of the above types matches, then Camel will attempt to read the message body as a `java.io.InputStream`.
 |===
 
 If a message body is of unsupported type then an exception is thrown by default, however you
@@ -328,22 +328,4 @@ The same example in XML DSL would be:
 </route>
 ----
 
-== Dependencies
-
-To use JSonPath in your camel routes you need to add the a dependency on
-*camel-jsonpath* which implements the JSonPath language.
-
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-jsonpath</artifactId>
-  <version>x.x.x</version>
-</dependency>
-----
-
-include::camel-spring-boot::page$jsonpath-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$jsonpath-starter.adoc[]

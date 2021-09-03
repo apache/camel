@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.optaplanner;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.optaplanner.examples.cloudbalancing.domain.CloudBalance;
@@ -34,7 +36,8 @@ public class OptaPlannerAsyncSolverTest extends CamelTestSupport {
 
     @Test
     public void testAsynchronousProblemSolving() throws Exception {
-        getMockEndpoint("mock:result").setExpectedCount(1);
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.setExpectedCount(1);
         CloudBalancingGenerator generator = new CloudBalancingGenerator(true);
         final CloudBalance planningProblem = generator.createCloudBalance(4, 12);
         assertNull(planningProblem.getScore());
@@ -43,7 +46,8 @@ public class OptaPlannerAsyncSolverTest extends CamelTestSupport {
         template.requestBody("direct:in", planningProblem);
         getMockEndpoint("mock:result").assertIsSatisfied();
 
-        CloudBalance bestSolution = (CloudBalance) template.requestBody("direct:in", "foo");
+        Exchange exchange = mockEndpoint.getReceivedExchanges().get(0);
+        CloudBalance bestSolution = exchange.getMessage().getHeader(OptaPlannerConstants.BEST_SOLUTION, CloudBalance.class);
 
         assertEquals(4, bestSolution.getComputerList().size());
         assertEquals(12, bestSolution.getProcessList().size());

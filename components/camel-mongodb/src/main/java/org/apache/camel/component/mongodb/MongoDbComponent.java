@@ -40,7 +40,7 @@ public class MongoDbComponent extends DefaultComponent {
                     MongoDbOperation.update,
                     MongoDbOperation.remove));
 
-    @Metadata
+    @Metadata(autowired = true)
     private MongoClient mongoConnection;
 
     public MongoDbComponent() {

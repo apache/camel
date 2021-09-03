@@ -449,7 +449,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Resolvable hostname or IP address of the Postgres database server.
+         * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -484,8 +484,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Password of the Postgres database user to be used when connecting to
-         * the database.
+         * Password of the database user to be used when connecting to the
+         * database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -500,7 +500,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Port of the Postgres database server.
+         * Port of the database server.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -655,8 +655,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Name of the Postgres database user to be used when connecting to the
-         * database.
+         * Name of the database user to be used when connecting to the database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -820,6 +819,22 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * The maximum size of chunk for incremental snapshotting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1024
+         * Group: postgres
+         * 
+         * @param incrementalSnapshotChunkSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder incrementalSnapshotChunkSize(
+                int incrementalSnapshotChunkSize) {
+            doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+        /**
          * Specify how INTERVAL columns should be represented in change events,
          * including:'string' represents values as an exact ISO formatted
          * string'numeric' (default) represents values using the inexact
@@ -931,8 +946,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds to wait for new change events to appear
-         * after receiving no events. Defaults to 500ms.
+         * Time to wait for new change events to appear after receiving no
+         * events, given in milliseconds. Defaults to 500 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1149,9 +1164,25 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * The name of the data collection that is used to send signals/commands
+         * to Debezium. Signaling is disabled when not set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param signalDataCollection the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder signalDataCollection(
+                java.lang.String signalDataCollection) {
+            doSetProperty("signalDataCollection", signalDataCollection);
+            return this;
+        }
+        /**
          * The comma-separated list of operations to skip during streaming,
-         * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
-         * default, no operations will be skipped.
+         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
+         * By default, no operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1218,8 +1249,9 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * The number of milli-seconds to wait between retry attempts when the
-         * connector fails to connect to a replication slot.
+         * Time to wait between retry attempts when the connector fails to
+         * connect to a replication slot, given in milliseconds. Defaults to 10
+         * seconds (10,000 ms).
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1271,7 +1303,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * The number of milliseconds to delay before a snapshot will begin.
+         * A delay period before a snapshot will begin, given in milliseconds.
+         * Defaults to 0 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1363,9 +1396,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * would normally start emitting changes;'never' to specify the
          * connector should never run a snapshot and that upon first startup the
          * connector should read from the last position (LSN) recorded by the
-         * server; and'exported' to specify the connector should run a snapshot
-         * based on the position when the replication slot was created; 'custom'
-         * to specify a custom class with 'snapshot.custom_class' which will be
+         * server; and'exported' deprecated, use 'initial' instead; 'custom' to
+         * specify a custom class with 'snapshot.custom_class' which will be
          * loaded and used to determine the snapshot, see docs for more details.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1384,7 +1416,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
         /**
          * This property contains a comma-separated list of fully-qualified
          * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
-         * thespecific connectors . Select statements for the individual tables
+         * thespecific connectors. Select statements for the individual tables
          * are specified in further configuration properties, one for each
          * table, identified by the id
          * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
@@ -1425,8 +1457,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds for sending replication connection status
-         * updates to the server. Defaults to 10 seconds (10000 ms).
+         * Frequency for sending replication connection status updates to the
+         * server, given in milliseconds. Defaults to 10 seconds (10,000 ms).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1674,6 +1706,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "hstoreHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHstoreHandlingMode((java.lang.String) value); return true;
             case "includeUnknownDatatypes": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncludeUnknownDatatypes((boolean) value); return true;
+            case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxQueueSize((int) value); return true;
@@ -1692,6 +1725,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "schemaIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaIncludeList((java.lang.String) value); return true;
             case "schemaRefreshMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaRefreshMode((java.lang.String) value); return true;
             case "schemaWhitelist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaWhitelist((java.lang.String) value); return true;
+            case "signalDataCollection": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSignalDataCollection((java.lang.String) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "slotDropOnStop": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotDropOnStop((boolean) value); return true;
             case "slotMaxRetries": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotMaxRetries((int) value); return true;

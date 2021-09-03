@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -263,9 +264,12 @@ public class CMISProducerTest extends CMISTestSupport {
         List<String> unsuccessfullyDeletedObjects = exchange.getMessage().getBody(List.class);
         assertTrue(unsuccessfullyDeletedObjects.isEmpty());
 
+        final Session session = createSession();
+        final String id = folder.getId();
+
         assertThrows(CmisObjectNotFoundException.class, () -> {
             // Try to get already deleted object by id should throw
-            createSession().getObject(folder.getId());
+            session.getObject(id);
         });
     }
 
@@ -281,7 +285,8 @@ public class CMISProducerTest extends CMISTestSupport {
 
         template.send(exchange);
 
-        createSession().getObject(document.getId());
+        CmisObject obj = createSession().getObject(document.getId());
+        assertNotNull(obj, "Could not get the object");
     }
 
     @Test
@@ -361,8 +366,8 @@ public class CMISProducerTest extends CMISTestSupport {
 
         assertNotNull(copy);
         assertNotEquals(document.getName(), copy.getName());
-        assertEquals(document.getName(), "document.txt");
-        assertEquals(copy.getName(), "renamedDocument.txt");
+        assertEquals("document.txt", document.getName());
+        assertEquals("renamedDocument.txt", copy.getName());
         assertEquals(document.getContentStreamLength(), copy.getContentStreamLength());
         assertEquals(destination.getId(), copy.getParents().get(0).getId());
     }

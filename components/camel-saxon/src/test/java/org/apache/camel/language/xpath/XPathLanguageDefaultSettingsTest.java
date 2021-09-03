@@ -23,8 +23,9 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 
@@ -32,6 +33,7 @@ import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
  * Tests that verify the usage of default settings in the XPath language by declaring a bean called xpath in the
  * registry
  */
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
     private static final String KEY = XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://java.sun.com/jaxp/xpath/dom";
@@ -64,7 +66,7 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/language/xpath/XPathLanguageDefaultSettingsTest.xml");
+        return newAppContext("XPathLanguageDefaultSettingsTest.xml");
     }
 
     @Test

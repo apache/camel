@@ -16,29 +16,21 @@
  */
 package org.apache.camel.test.infra.cassandra.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class CassandraServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(CassandraServiceFactory.class);
-
     private CassandraServiceFactory() {
 
     }
 
-    public static CassandraService createService() {
-        String instanceType = System.getProperty("cassandra.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-cassandra-container")) {
-            return new CassandraLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new RemoteCassandraService();
-        }
-
-        LOG.error("Cassandra instance must be one of 'local-cassandra-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Cassandra instance type");
+    public static SimpleTestServiceBuilder<CassandraService> builder() {
+        return new SimpleTestServiceBuilder<>("cassandra");
     }
 
+    public static CassandraService createService() {
+        return builder()
+                .addLocalMapping(CassandraLocalContainerService::new)
+                .addRemoteMapping(RemoteCassandraService::new)
+                .build();
+    }
 }

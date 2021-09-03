@@ -300,6 +300,10 @@ public class RestSwaggerReader {
                 op.summary(verb.getDescriptionText());
             }
 
+            if (Boolean.TRUE.equals(verb.getDeprecated())) {
+                op.deprecated(true);
+            }
+
             // security
             for (SecurityDefinition sd : verb.getSecurity()) {
                 List<String> scopes = new ArrayList<>();
@@ -385,7 +389,7 @@ public class RestSwaggerReader {
                             qp.setDefaultValue(param.getDefaultValue());
                         }
                         // add examples
-                        if (param.getExamples() != null && param.getExamples().size() >= 1) {
+                        if (param.getExamples() != null && !param.getExamples().isEmpty()) {
                             // we can only set one example on the parameter
                             qp.example(param.getExamples().get(0).getValue());
                         }
@@ -523,7 +527,7 @@ public class RestSwaggerReader {
                             sp.setFormat(format);
                         }
                         sp.setDescription(header.getDescription());
-                        if (header.getAllowableValues() != null) {
+                        if (!header.getAllowableValues().isEmpty()) {
                             sp.setEnum(header.getAllowableValues());
                         }
                         // add example

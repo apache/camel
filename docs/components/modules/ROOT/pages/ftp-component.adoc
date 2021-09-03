@@ -40,7 +40,6 @@ for this component:
 
 == URI format
 
-[source,java]
 ----
 ftp://[username@]hostname[:port]/directoryname[?options]
 sftp://[username@]hostname[:port]/directoryname[?options]
@@ -68,16 +67,51 @@ This component uses two different libraries for the actual FTP work. FTP
 and FTPS uses http://commons.apache.org/net/[Apache Commons Net] while
 SFTP uses http://www.jcraft.com/jsch/[JCraft JSCH].
 
- FTPS (also known as FTP Secure) is an extension to FTP that adds
+FTPS (also known as FTP Secure) is an extension to FTP that adds
 support for the Transport Layer Security (TLS) and the Secure Sockets
 Layer (SSL) cryptographic protocols.
 
-== URI Options
 
-The options below are exclusive for the FTP component.
 
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The FTP component supports 3 options, which are listed below.
 
 
@@ -91,9 +125,9 @@ The FTP component supports 3 options, which are listed below.
 |===
 // component options: END
 
-
-
 // endpoint options: START
+== Endpoint Options
+
 The FTP endpoint is configured using URI syntax:
 
 ----
@@ -186,8 +220,8 @@ with the following path and query parameters:
 | *antFilterCaseSensitive* (filter) | Sets case sensitive flag on ant filter. | true | boolean
 | *antInclude* (filter) | Ant style filter inclusion. Multiple inclusions may be specified in comma-delimited format. |  | String
 | *eagerMaxMessagesPerPoll* (filter) | Allows for controlling whether the limit from maxMessagesPerPoll is eager or not. If eager then the limit is during the scanning of files. Where as false would scan all files, and then perform sorting. Setting this option to false allows for sorting all files first, and then limit the poll. Mind that this requires a higher memory usage as all file details are in memory to perform the sorting. | true | boolean
-| *exclude* (filter) | Is used to exclude files, if filename matches the regex pattern (matching is case in-senstive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris |  | String
-| *excludeExt* (filter) | Is used to exclude files matching file extension name (case insensitive). For example to exclude bak files, then use excludeExt=bak. Multiple extensions can be separated by comma, for example to exclude bak and dat files, use excludeExt=bak,dat. |  | String
+| *exclude* (filter) | Is used to exclude files, if filename matches the regex pattern (matching is case in-sensitive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris |  | String
+| *excludeExt* (filter) | Is used to exclude files matching file extension name (case insensitive). For example to exclude bak files, then use excludeExt=bak. Multiple extensions can be separated by comma, for example to exclude bak and dat files, use excludeExt=bak,dat. Note that the file extension includes all parts, for example having a file named mydata.tar.gz will have extension as tar.gz. For more flexibility then use the include/exclude options. |  | String
 | *filter* (filter) | Pluggable filter as a org.apache.camel.component.file.GenericFileFilter class. Will skip files if filter returns false in its accept() method. |  | GenericFileFilter
 | *filterDirectory* (filter) | Filters the directory based on Simple language. For example to filter on current date, you can use a simple date pattern such as ${date:now:yyyMMdd} |  | String
 | *filterFile* (filter) | Filters the file based on Simple language. For example to filter on file size, you can use ${file:size} 5000 |  | String
@@ -195,7 +229,7 @@ with the following path and query parameters:
 | *idempotentKey* (filter) | To use a custom idempotent key. By default the absolute path of the file is used. You can use the File Language, for example to use the file name and file size, you can do: idempotentKey=${file:name}-${file:size} |  | String
 | *idempotentRepository* (filter) | A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryMessageIdRepository if none is specified and idempotent is true. |  | IdempotentRepository
 | *include* (filter) | Is used to include files, if filename matches the regex pattern (matching is case in-sensitive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris |  | String
-| *includeExt* (filter) | Is used to include files matching file extension name (case insensitive). For example to include txt files, then use includeExt=txt. Multiple extensions can be separated by comma, for example to include txt and xml files, use includeExt=txt,xml |  | String
+| *includeExt* (filter) | Is used to include files matching file extension name (case insensitive). For example to include txt files, then use includeExt=txt. Multiple extensions can be separated by comma, for example to include txt and xml files, use includeExt=txt,xml. Note that the file extension includes all parts, for example having a file named mydata.tar.gz will have extension as tar.gz. For more flexibility then use the include/exclude options. |  | String
 | *maxDepth* (filter) | The maximum depth to traverse when recursively processing a directory. | 2147483647 | int
 | *maxMessagesPerPoll* (filter) | To define a maximum messages to gather per poll. By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files. Set a value of 0 or negative to disabled it. Notice: If this option is in use then the File and FTP components will limit before any sorting. For example if you have 100000 files and use maxMessagesPerPoll=500, then only the first 500 files will be picked up, and then sorted. You can use the eagerMaxMessagesPerPoll option and set this to false to allow to scan all files first and then sort afterwards. |  | int
 | *minDepth* (filter) | The minimum depth to start processing when recursively processing a directory. Using minDepth=1 means the base directory. Using minDepth=2 means the first sub directory. |  | int
@@ -233,8 +267,6 @@ with the following path and query parameters:
 | *sorter* (sort) | Pluggable sorter as a java.util.Comparator class. |  | Comparator
 |===
 // endpoint options: END
-
-
 
 
 == FTPS component default trust store
@@ -295,9 +327,6 @@ url.
 ----
 from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:foo");
 ----
-
-// REVISIT - Empty sections are bad!
-//=== More URI options
 
 
 == Examples
@@ -374,9 +403,7 @@ used as the filename instead.
 This header is set by Camel and its purpose is providing end-users the
 name of the file that was written.
 
-|`CamelFileIndex` |Current index out of total number of files being consumed in this batch.
-
-|`CamelFileSize` |Total number of files being consumed in this batch.
+|`CamelFileNameConsumed` |The file name of the file consumed
 
 |`CamelFileHost` |The remote hostname.
 
@@ -393,6 +420,21 @@ In addition the FTP/FTPS consumer and producer will enrich the Camel
 |`CamelFtpReplyCode` |The FTP client reply code (the type is a integer)
 
 |`CamelFtpReplyString` |The FTP client reply string
+|=======================================================================
+
+== Exchange Properties
+
+Camel sets the following exchange properties
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`CamelBatchIndex` |Current index out of total number of files being consumed in this batch.
+
+|`CamelBatchSize` |Total number of files being consumed in this batch.
+
+|`CamelBatchComplete` |True if there are no more files in this batch.
 |=======================================================================
 
 == About timeouts
@@ -458,7 +500,6 @@ The difference between the two of them is best illustrated with an
 example. Suppose we have the following directory structure on the remote
 FTP server we need to traverse and download files:
 
-[source,java]
 ----
 /
 /one
@@ -472,7 +513,6 @@ folder.
 
 == Using stepwise=true (default mode)
 
-[source,java]
 ----
 TYPE A
 200 Type set to A
@@ -562,7 +602,6 @@ structure using CD xxx.
 
 == Using stepwise=false
 
-[source,java]
 ----
 230 Logged on
 TYPE A
@@ -613,7 +652,7 @@ In the sample below we set up Camel to download all the reports from the
 FTP server once every hour (60 min) as BINARY content and store it as
 files on the local file system.
 
-And the route using Spring DSL:
+And the route using XML DSL:
 
 [source,xml]
 ----
@@ -762,4 +801,4 @@ This component has log level *TRACE* that can be helpful if you have
 problems.
 
 
-include::camel-spring-boot::page$ftp-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$ftp-starter.adoc[]

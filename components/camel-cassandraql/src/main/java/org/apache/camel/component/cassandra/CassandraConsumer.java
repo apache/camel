@@ -55,11 +55,11 @@ public class CassandraConsumer extends ScheduledPollConsumer {
         }
 
         // Create message from ResultSet
-        Exchange exchange = getEndpoint().createExchange();
-        Message message = exchange.getIn();
-        getEndpoint().fillMessage(resultSet, message);
+        Exchange exchange = createExchange(false);
 
         try {
+            Message message = exchange.getIn();
+            getEndpoint().fillMessage(resultSet, message);
             // send message to next processor in the route
             getProcessor().process(exchange);
             return 1; // number of messages polled
@@ -68,6 +68,7 @@ public class CassandraConsumer extends ScheduledPollConsumer {
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
+            releaseExchange(exchange, false);
         }
     }
 

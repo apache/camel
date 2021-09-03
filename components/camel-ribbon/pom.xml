@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ribbon</artifactId>
@@ -45,6 +45,10 @@
             <artifactId>camel-cloud</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.netflix.ribbon</groupId>
             <artifactId>ribbon-core</artifactId>
             <version>${ribbon-version}</version>
@@ -53,6 +57,12 @@
             <groupId>com.netflix.ribbon</groupId>
             <artifactId>ribbon-loadbalancer</artifactId>
             <version>${ribbon-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.servo</groupId>
+            <artifactId>servo-core</artifactId>
+            <scope>provided</scope>
+            <version>${servo-version}</version>
         </dependency>
 
         <!-- testing -->
@@ -99,4 +109,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>

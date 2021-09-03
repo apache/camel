@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,14 +27,7 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/dotfiles/?initialDelay=0&delay=10";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/dotfiles");
-        super.setUp();
-    }
+    private String fileUrl = fileUri("?initialDelay=0&delay=10");
 
     @Test
     public void testSkipDotFiles() throws Exception {
@@ -43,7 +35,7 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
         mock.setResultWaitTime(100);
 
-        template.sendBodyAndHeader("file:target/data/dotfiles/", "This is a dot file", Exchange.FILE_NAME, ".skipme");
+        template.sendBodyAndHeader(fileUri(), "This is a dot file", Exchange.FILE_NAME, ".skipme");
 
         mock.assertIsSatisfied();
     }
@@ -53,9 +45,9 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/data/dotfiles/", "This is a dot file", Exchange.FILE_NAME, ".skipme");
+        template.sendBodyAndHeader(fileUri(), "This is a dot file", Exchange.FILE_NAME, ".skipme");
 
-        template.sendBodyAndHeader("file:target/data/dotfiles/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
     }

@@ -18,41 +18,43 @@ package org.apache.camel.component.jasypt;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class MainTest {
 
     @Test
-    public void testMainShowOptions() throws Exception {
-        Main.main(new String[] {});
+    public void testMainShowOptions() {
+        assertDoesNotThrow(() -> Main.main(new String[] {}));
     }
 
     @Test
-    public void testMainEncrypt() throws Exception {
+    public void testMainEncrypt() {
         Main main = new Main();
-        main.run("-c encrypt -p secret -i tiger".split(" "));
+        assertDoesNotThrow(() -> main.run("-c encrypt -p secret -i tiger".split(" ")));
     }
 
     @Test
-    public void testMainDecrypt() throws Exception {
+    public void testMainDecrypt() {
         Main main = new Main();
-        main.run("-c decrypt -p secret -i bsW9uV37gQ0QHFu7KO03Ww==".split(" "));
+        assertDoesNotThrow(() -> main.run("-c decrypt -p secret -i bsW9uV37gQ0QHFu7KO03Ww==".split(" ")));
     }
 
     @Test
-    public void testUnknownOption() throws Exception {
+    public void testUnknownOption() {
         Main main = new Main();
-        main.run("-c encrypt -xxx foo".split(" "));
+        assertDoesNotThrow(() -> main.run("-c encrypt -xxx foo".split(" ")));
     }
 
     @Test
-    public void testMissingPassword() throws Exception {
+    public void testMissingPassword() {
         Main main = new Main();
-        main.run("-c encrypt -i tiger".split(" "));
+        assertDoesNotThrow(() -> main.run("-c encrypt -i tiger".split(" ")));
     }
 
     @Test
-    public void testMissingInput() throws Exception {
+    public void testMissingInput() {
         Main main = new Main();
-        main.run("-c encrypt -p secret".split(" "));
+        assertDoesNotThrow(() -> main.run("-c encrypt -p secret".split(" ")));
     }
 
 }

@@ -22,10 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -39,7 +37,7 @@ public class XQueryFromFileTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/xquery", "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
+        template.sendBodyAndHeader(fileUri(), "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
                 Exchange.FILE_NAME, "body.xml");
 
         assertMockEndpointsSatisfied();
@@ -54,18 +52,11 @@ public class XQueryFromFileTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/xquery");
-        super.setUp();
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/xquery")
+                from(fileUri())
                         .to("xquery:org/apache/camel/component/xquery/transform.xquery")
                         .to("mock:result");
             }

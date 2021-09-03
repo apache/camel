@@ -77,6 +77,7 @@ import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -345,5 +346,20 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     }
 
     protected abstract void prepareDataFormatConfig(Map<String, Object> properties);
+
+    protected String asTypeName(Class<?> classType) {
+        String type;
+        if (!classType.isPrimitive()) {
+            if (classType.isArray()) {
+                type = StringHelper.between(classType.getName(), "[L", ";") + "[]";
+            } else {
+                type = classType.getName();
+            }
+        } else {
+            type = classType.getCanonicalName();
+        }
+
+        return type;
+    }
 
 }

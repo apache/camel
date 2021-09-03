@@ -333,7 +333,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             return false;
         }
         ObjectName on = mbeansRegistered.get(name);
-        return (on != null && server.isRegistered(on))
+        return on != null && server.isRegistered(on)
                 || server.isRegistered(name);
     }
 
@@ -391,8 +391,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             }
         }
         if (caught > 0) {
-            LOG.warn("A number of {} exceptions caught while unregistering MBeans during stop operation. See INFO log"
-                     + "for details.",
+            LOG.warn("{} exceptions caught while unregistering MBeans during stop operation. See INFO log for details.",
                     caught);
         }
 

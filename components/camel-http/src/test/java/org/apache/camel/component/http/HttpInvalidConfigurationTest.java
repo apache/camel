@@ -34,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class HttpInvalidConfigurationTest extends CamelTestSupport {
 
+    private FailedToCreateRouteException exception;
+
     @BeforeEach
     @Override
     public void setUp() throws Exception {
@@ -41,14 +43,14 @@ public class HttpInvalidConfigurationTest extends CamelTestSupport {
             super.setUp();
             fail("Should have thrown ResolveEndpointFailedException");
         } catch (FailedToCreateRouteException e) {
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().endsWith("You have duplicated the http(s) protocol."));
+            exception = e;
         }
     }
 
     @Test
     public void testInvalidHostConfiguration() {
-        // dummy
+        ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, exception.getCause());
+        assertTrue(cause.getMessage().endsWith("You have duplicated the http(s) protocol."));
     }
 
     @Override

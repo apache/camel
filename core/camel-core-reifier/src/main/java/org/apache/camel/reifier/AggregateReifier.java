@@ -18,6 +18,7 @@ package org.apache.camel.reifier;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.BiFunction;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncProcessor;
@@ -33,9 +34,10 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
-import org.apache.camel.util.concurrent.SynchronousExecutorService;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +69,9 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         ExecutorService threadPool = getConfiguredExecutorService("Aggregator", definition, parallel);
         if (threadPool == null && !parallel) {
             // executor service is mandatory for the Aggregator
-            // we do not run in parallel mode, but use a synchronous executor,
-            // so we run in current thread
-            threadPool = new SynchronousExecutorService();
+            ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
+            // we do not run in parallel mode, but use a single thread executor must be used
+            threadPool = manager.newSingleThreadExecutor(definition, "Aggregator");
             shutdownThreadPool = true;
         }
 
@@ -207,17 +209,20 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
     public OptimisticLockRetryPolicy createOptimisticLockRetryPolicy(OptimisticLockRetryPolicyDefinition definition) {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
-        if (definition.getMaximumRetries() != null) {
-            policy.setMaximumRetries(parseInt(definition.getMaximumRetries()));
+        Integer num = parseInt(definition.getMaximumRetries());
+        if (num != null) {
+            policy.setMaximumRetries(num);
         }
-        if (definition.getRetryDelay() != null) {
-            policy.setRetryDelay(parseDuration(definition.getRetryDelay()));
+        Long dur = parseDuration(definition.getRetryDelay());
+        if (dur != null) {
+            policy.setRetryDelay(dur);
         }
-        if (definition.getMaximumRetryDelay() != null) {
-            policy.setMaximumRetryDelay(parseDuration(definition.getMaximumRetryDelay()));
+        dur = parseDuration(definition.getMaximumRetryDelay());
+        if (dur != null) {
+            policy.setMaximumRetryDelay(dur);
         }
         if (definition.getExponentialBackOff() != null) {
-            policy.setExponentialBackOff(parseBoolean(definition.getExponentialBackOff(), false));
+            policy.setExponentialBackOff(parseBoolean(definition.getExponentialBackOff(), true));
         }
         if (definition.getRandomBackOff() != null) {
             policy.setRandomBackOff(parseBoolean(definition.getRandomBackOff(), false));
@@ -231,6 +236,14 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             Object aggStrategy = lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy instanceof BiFunction) {
+                AggregationStrategyBiFunctionAdapter adapter
+                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                if (definition.getStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                }
+                strategy = adapter;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter
                         = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
@@ -248,10 +261,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (strategy == null) {
             throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
         }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
 
         return strategy;
     }

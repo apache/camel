@@ -22,21 +22,19 @@ import javax.management.ObjectName;
 
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedCamelContextNewProxyTest extends ManagementTestSupport {
 
     @Test
     public void testNewProxy() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         ManagedCamelContextMBean proxy = JMX.newMBeanProxy(mbeanServer, on, ManagedCamelContextMBean.class);
         assertNotNull(proxy);

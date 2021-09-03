@@ -25,7 +25,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -47,7 +46,7 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
 
         @Override
         public Object deserialize(final JsonParser parser, final DeserializationContext context)
-                throws IOException, JsonProcessingException {
+                throws IOException {
             final List<Result> results = parser.readValueAs(RESULTS_TYPE);
 
             return new ApprovalResult(results);
@@ -78,14 +77,11 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
         private final boolean success;
 
         @JsonCreator
-        Result(@JsonProperty("actorIds")
-        final List<String> actorIds, @JsonProperty("entityId")
-        final String entityId, @JsonProperty("errors")
-        final List<RestError> errors, @JsonProperty("instanceId")
-        final String instanceId, @JsonProperty("instanceStatus")
-        final String instanceStatus, @JsonProperty("newWorkitemIds")
-        final List<String> newWorkitemIds, @JsonProperty("success")
-        final boolean success) {
+        Result(@JsonProperty("actorIds") final List<String> actorIds, @JsonProperty("entityId") final String entityId,
+               @JsonProperty("errors") final List<RestError> errors, @JsonProperty("instanceId") final String instanceId,
+               @JsonProperty("instanceStatus") final String instanceStatus,
+               @JsonProperty("newWorkitemIds") final List<String> newWorkitemIds,
+               @JsonProperty("success") final boolean success) {
             this.actorIds = actorIds;
             this.entityId = entityId;
             this.errors = errors;

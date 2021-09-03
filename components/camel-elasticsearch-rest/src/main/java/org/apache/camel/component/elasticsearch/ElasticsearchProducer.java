@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.lang.reflect.InvocationTargetException;
-import java.net.UnknownHostException;
 import java.util.Collections;
 
 import org.apache.camel.Exchange;
@@ -292,9 +290,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
     }
 
-    private void startClient()
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException,
-            UnknownHostException {
+    private void startClient() {
         if (client == null) {
             LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
             if (configuration.getHostAddressesList() != null
@@ -306,8 +302,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
     }
 
-    private RestClient createClient()
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private RestClient createClient() {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
@@ -347,7 +342,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         return client;
     }
 
-    private final class HighLevelClient extends RestHighLevelClient {
+    private static final class HighLevelClient extends RestHighLevelClient {
         private HighLevelClient(RestClient restClient) {
             super(restClient, client -> {
             }, Collections.emptyList());

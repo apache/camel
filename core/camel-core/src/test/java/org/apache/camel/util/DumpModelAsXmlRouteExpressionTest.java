@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -75,7 +76,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("<setHeader id=\"setHeader1\" name=\"foo\">"));
+        assertThat(xml).containsPattern("<setHeader id=\"setHeader[0-9]+\" name=\"foo\">");
         assertTrue(xml.contains("<method ref=\"myCoolBean\"/>"));
     }
 

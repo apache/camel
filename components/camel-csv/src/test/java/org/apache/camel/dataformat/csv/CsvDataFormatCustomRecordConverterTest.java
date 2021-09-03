@@ -44,10 +44,10 @@ public class CsvDataFormatCustomRecordConverterTest extends CamelSpringTestSuppo
         Message message = mock.getReceivedExchanges().get(0).getIn();
         List<List<String>> body = CastUtils.cast((List) message.getBody());
         assertNotNull(body);
-        assertEquals(body.size(), 1);
+        assertEquals(1, body.size());
         List<String> row = body.get(0);
-        assertEquals(row.size(), 3);
-        assertEquals(row.toString(), "[Hello, Again, Democracy]");
+        assertEquals(3, row.size());
+        assertEquals("[Hello, Again, Democracy]", row.toString());
     }
 
     private String getData() {

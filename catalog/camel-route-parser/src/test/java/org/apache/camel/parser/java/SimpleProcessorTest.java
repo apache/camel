@@ -16,8 +16,6 @@
  */
 package org.apache.camel.parser.java;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -37,11 +35,7 @@ public class SimpleProcessorTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getMessage().setBody("Bye World");
-                    }
-                });
+                from("direct:start").routeId("myRoute").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

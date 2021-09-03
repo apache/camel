@@ -81,7 +81,7 @@ public class IrcConfigurationTest extends CamelTestSupport {
 
         // irc:nick@host[:port]/#room[?options]
         IrcEndpoint endpoint = (IrcEndpoint) component.createEndpoint(
-                "irc://badnick@irc.freenode.net?keys=foo,&channels=#camel,#smx&realname=Camel+Bot&nickname=camelbot");
+                "irc://badnick@irc.freenode.net?keys=foo,&channels=#camel,#smx&realname=Camel Bot&nickname=camelbot");
 
         IrcConfiguration conf = endpoint.getConfiguration();
         assertEquals("camelbot", conf.getNickname());

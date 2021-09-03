@@ -40,6 +40,12 @@ public class SplunkHECConfiguration {
     private boolean skipTlsVerify;
     @UriParam(label = "security", defaultValue = "true")
     private boolean https = true;
+    @UriParam
+    private boolean bodyOnly;
+    @UriParam
+    private boolean headersOnly;
+    @UriParam
+    private Long time;
 
     public String getSourceType() {
         return sourceType;
@@ -113,5 +119,38 @@ public class SplunkHECConfiguration {
      */
     public void setHttps(boolean https) {
         this.https = https;
+    }
+
+    /**
+     * Send only the message body
+     */
+    public boolean isBodyOnly() {
+        return bodyOnly;
+    }
+
+    public void setBodyOnly(boolean bodyOnly) {
+        this.bodyOnly = bodyOnly;
+    }
+
+    /**
+     * Send only message headers
+     */
+    public boolean isHeadersOnly() {
+        return headersOnly;
+    }
+
+    public void setHeadersOnly(boolean headersOnly) {
+        this.headersOnly = headersOnly;
+    }
+
+    /**
+     * Time this even occurred. By default, the time will be when this event hits the splunk server.
+     */
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 }

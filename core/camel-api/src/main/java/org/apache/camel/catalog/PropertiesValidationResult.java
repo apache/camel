@@ -133,14 +133,17 @@ abstract class PropertiesValidationResult implements Serializable {
         }
     }
 
+    private String computeErrors(String value) {
+        errors++;
+        return value;
+    }
+
     public void addInvalidEnum(String name, String value) {
         if (invalidEnum == null) {
             invalidEnum = new LinkedHashMap<>();
         }
-        if (!invalidEnum.containsKey(name)) {
-            invalidEnum.put(name, value);
-            errors++;
-        }
+
+        invalidEnum.computeIfAbsent(name, k -> computeErrors(value));
     }
 
     public void addInvalidEnumChoices(String name, String[] choices) {
@@ -161,70 +164,56 @@ abstract class PropertiesValidationResult implements Serializable {
         if (invalidReference == null) {
             invalidReference = new LinkedHashMap<>();
         }
-        if (!invalidReference.containsKey(name)) {
-            invalidReference.put(name, value);
-            errors++;
-        }
+
+        invalidReference.computeIfAbsent(name, k -> computeErrors(value));
     }
 
     public void addInvalidMap(String name, String value) {
         if (invalidMap == null) {
             invalidMap = new LinkedHashMap<>();
         }
-        if (!invalidMap.containsKey(name)) {
-            invalidMap.put(name, value);
-            errors++;
-        }
+
+        invalidMap.computeIfAbsent(name, k -> computeErrors(value));
     }
 
     public void addInvalidArray(String name, String value) {
         if (invalidArray == null) {
             invalidArray = new LinkedHashMap<>();
         }
-        if (!invalidArray.containsKey(name)) {
-            invalidArray.put(name, value);
-            errors++;
-        }
+
+        invalidArray.computeIfAbsent(name, k -> computeErrors(value));
     }
 
     public void addInvalidBoolean(String name, String value) {
         if (invalidBoolean == null) {
             invalidBoolean = new LinkedHashMap<>();
         }
-        if (!invalidBoolean.containsKey(name)) {
-            invalidBoolean.put(name, value);
-            errors++;
-        }
+
+        invalidBoolean.computeIfAbsent(name, k -> computeErrors(value));
     }
 
     public void addInvalidInteger(String name, String value) {
         if (invalidInteger == null) {
             invalidInteger = new LinkedHashMap<>();
         }
-        if (!invalidInteger.containsKey(name)) {
-            invalidInteger.put(name, value);
-            errors++;
-        }
+
+        invalidInteger.computeIfAbsent(name, k -> computeErrors(value));
     }
 
     public void addInvalidNumber(String name, String value) {
         if (invalidNumber == null) {
             invalidNumber = new LinkedHashMap<>();
         }
-        if (!invalidNumber.containsKey(name)) {
-            invalidNumber.put(name, value);
-            errors++;
-        }
+
+        invalidNumber.computeIfAbsent(name, k -> computeErrors(value));
     }
 
     public void addInvalidDuration(String name, String value) {
         if (invalidDuration == null) {
             invalidDuration = new LinkedHashMap<>();
         }
-        if (!invalidDuration.containsKey(name)) {
-            invalidDuration.put(name, value);
-            errors++;
-        }
+
+        invalidDuration.computeIfAbsent(name, k -> computeErrors(value));
     }
 
     public void addDefaultValue(String name, String value) {

@@ -31,7 +31,7 @@ public interface Lambda2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Lambda component.
+     * Builder for endpoint for the AWS Lambda component.
      */
     public interface Lambda2EndpointBuilder extends EndpointProducerBuilder {
         default AdvancedLambda2EndpointBuilder advanced() {
@@ -121,6 +121,39 @@ public interface Lambda2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder overrideEndpoint(boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder overrideEndpoint(String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * If we want to use a POJO request as body or not.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -152,7 +185,7 @@ public interface Lambda2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The region in which ECS client needs to work. When using this
+         * The region in which Lambda client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
@@ -201,6 +234,59 @@ public interface Lambda2EndpointBuilderFactory {
         default Lambda2EndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the Lambda client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Lambda client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -309,7 +395,7 @@ public interface Lambda2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Lambda component.
+     * Advanced builder for endpoint for the AWS Lambda component.
      */
     public interface AdvancedLambda2EndpointBuilder
             extends
@@ -387,7 +473,7 @@ public interface Lambda2EndpointBuilderFactory {
 
     public interface Lambda2Builders {
         /**
-         * AWS 2 Lambda (camel-aws2-lambda)
+         * AWS Lambda (camel-aws2-lambda)
          * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
          * 
          * Category: cloud,computing,serverless
@@ -406,7 +492,7 @@ public interface Lambda2EndpointBuilderFactory {
             return Lambda2EndpointBuilderFactory.endpointBuilder("aws2-lambda", path);
         }
         /**
-         * AWS 2 Lambda (camel-aws2-lambda)
+         * AWS Lambda (camel-aws2-lambda)
          * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
          * 
          * Category: cloud,computing,serverless

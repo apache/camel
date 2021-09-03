@@ -21,23 +21,21 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedEndpointBaseUriTest extends ManagementTestSupport {
 
     @Test
     public void testManageEndpointBaseUri() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance(
-                "org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5&level=WARN\"");
+        ObjectName on = getCamelObjectName(TYPE_ENDPOINT, "log://foo\\?groupDelay=2000&groupSize=5&level=WARN");
         assertTrue(mbeanServer.isRegistered(on));
 
         assertEquals("log://foo?groupDelay=2000&groupSize=5&level=WARN", mbeanServer.getAttribute(on, "EndpointUri"));

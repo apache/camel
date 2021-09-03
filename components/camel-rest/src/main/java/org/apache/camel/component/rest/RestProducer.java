@@ -83,7 +83,7 @@ public class RestProducer extends DefaultAsyncProducer {
                 // no binding in use call the producer directly
                 return producer.process(exchange, callback);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
@@ -296,8 +296,8 @@ public class RestProducer extends DefaultAsyncProducer {
             name = "json-jackson";
         }
         // this will create a new instance as the name was not already pre-created
-        DataFormat json = camelContext.resolveDataFormat(name);
-        DataFormat outJson = camelContext.resolveDataFormat(name);
+        DataFormat json = camelContext.createDataFormat(name);
+        DataFormat outJson = camelContext.createDataFormat(name);
 
         // is json binding required?
         if (mode.contains("json") && json == null) {
@@ -318,7 +318,7 @@ public class RestProducer extends DefaultAsyncProducer {
                     .withTarget(json);
             if (type != null) {
                 String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                builder.withProperty("unmarshalTypeName", typeName);
+                builder.withProperty("unmarshalType", typeName);
                 builder.withProperty("useList", type.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, "json.in.", builder);
@@ -330,7 +330,7 @@ public class RestProducer extends DefaultAsyncProducer {
                     .withTarget(outJson);
             if (outType != null) {
                 String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                builder.withProperty("unmarshalTypeName", typeName);
+                builder.withProperty("unmarshalType", typeName);
                 builder.withProperty("useList", outType.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, "json.out.", builder);
@@ -350,8 +350,8 @@ public class RestProducer extends DefaultAsyncProducer {
             name = "jaxb";
         }
         // this will create a new instance as the name was not already pre-created
-        DataFormat jaxb = camelContext.resolveDataFormat(name);
-        DataFormat outJaxb = camelContext.resolveDataFormat(name);
+        DataFormat jaxb = camelContext.createDataFormat(name);
+        DataFormat outJaxb = camelContext.createDataFormat(name);
 
         // is xml binding required?
         if (mode.contains("xml") && jaxb == null) {
@@ -367,8 +367,7 @@ public class RestProducer extends DefaultAsyncProducer {
         return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder)
-            throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during introspection setProperties
             Map<String, Object> copy = new HashMap<>();

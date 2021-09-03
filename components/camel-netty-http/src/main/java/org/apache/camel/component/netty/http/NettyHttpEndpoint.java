@@ -18,13 +18,9 @@ package org.apache.camel.component.netty.http;
 
 import java.util.Map;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -46,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * Netty HTTP server and client using the Netty 4.x.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
-             syntax = "netty-http:protocol:host:port/path", category = { Category.NETWORKING, Category.HTTP },
+             syntax = "netty-http:protocol://host:port/path", category = { Category.NETWORKING, Category.HTTP },
              lenientProperties = true)
 @Metadata(excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
                               + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
@@ -118,34 +114,6 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         throw new UnsupportedOperationException("This component does not support polling consumer");
-    }
-
-    @Override
-    public Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
-        Exchange exchange = createExchange();
-
-        Message in;
-        if (message instanceof FullHttpRequest) {
-            FullHttpRequest request = (FullHttpRequest) message;
-            in = getNettyHttpBinding().toCamelMessage(request, exchange, getConfiguration());
-        } else {
-            InboundStreamHttpRequest request = (InboundStreamHttpRequest) message;
-            in = getNettyHttpBinding().toCamelMessage(request, exchange, getConfiguration());
-        }
-        exchange.setIn(in);
-
-        // setup the common message headers
-        updateMessageHeader(in, ctx);
-
-        // honor the character encoding
-        String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
-        String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
-        if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, charset);
-            in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
-        }
-
-        return exchange;
     }
 
     @Override

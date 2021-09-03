@@ -76,8 +76,7 @@ public final class CxfHeaderHelper {
     public static void propagateCamelHeadersToCxfHeaders(
             HeaderFilterStrategy strategy,
             Map<String, Object> camelHeaders, Map<String, List<String>> requestHeaders,
-            Exchange camelExchange)
-            throws Exception {
+            Exchange camelExchange) {
         if (strategy == null) {
             return;
         }
@@ -91,7 +90,8 @@ public final class CxfHeaderHelper {
 
             // drop this header as we do not want to propagate the http method/path into the CXF request message
             if (Exchange.HTTP_METHOD.equalsIgnoreCase(entry.getKey())
-                    || Exchange.HTTP_PATH.equalsIgnoreCase(entry.getKey())) {
+                    || Exchange.HTTP_PATH.equalsIgnoreCase(entry.getKey())
+                    || Exchange.HTTP_QUERY.equalsIgnoreCase(entry.getKey())) {
                 return;
             }
 
@@ -177,8 +177,7 @@ public final class CxfHeaderHelper {
     public static void propagateCxfHeadersToCamelHeaders(
             HeaderFilterStrategy strategy,
             Map<String, List<Object>> responseHeaders, Map<String, Object> camelHeaders,
-            Exchange camelExchange)
-            throws Exception {
+            Exchange camelExchange) {
         if (strategy == null) {
             return;
         }

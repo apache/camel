@@ -91,6 +91,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "publisherAcknowledgements": target.setPublisherAcknowledgements(property(camelContext, boolean.class, value)); return true;
         case "publisheracknowledgementstimeout":
         case "publisherAcknowledgementsTimeout": target.setPublisherAcknowledgementsTimeout(property(camelContext, long.class, value)); return true;
+        case "recoverfromdeclareexception":
+        case "recoverFromDeclareException": target.setRecoverFromDeclareException(property(camelContext, boolean.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "requesttimeoutcheckerinterval":
@@ -196,6 +198,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "publisherAcknowledgements": return boolean.class;
         case "publisheracknowledgementstimeout":
         case "publisherAcknowledgementsTimeout": return long.class;
+        case "recoverfromdeclareexception":
+        case "recoverFromDeclareException": return boolean.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "requesttimeoutcheckerinterval":
@@ -302,6 +306,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "publisherAcknowledgements": return target.isPublisherAcknowledgements();
         case "publisheracknowledgementstimeout":
         case "publisherAcknowledgementsTimeout": return target.getPublisherAcknowledgementsTimeout();
+        case "recoverfromdeclareexception":
+        case "recoverFromDeclareException": return target.isRecoverFromDeclareException();
         case "requesttimeout":
         case "requestTimeout": return target.getRequestTimeout();
         case "requesttimeoutcheckerinterval":

@@ -1,0 +1,20 @@
+{
+  "id" : "9c26c4ce-90b9-44da-9ebe-d2c1218764f6",
+  "name" : "groups_check_user.json",
+  "request" : {
+    "url" : "/v3/groups/851398fccda34f208e1839ebbc1251d1/users/d599b83141fc47bc9c25e89267aa27c4",
+    "method" : "HEAD"
+  },
+  "response" : {
+    "headers" : {
+      "Date": "Wed, 17 Feb 2016 18:17:43 GMT",
+      "Server": "Apache/2.4.7 (Ubuntu)",
+      "Vary": "X-Auth-Token",
+      "x-openstack-request-id": "req-76920b81-66dd-4b88-92d6-2ef9168b9397"
+    },
+    "status" : 204
+  },
+  "uuid" : "9c26c4ce-90b9-44da-9ebe-d2c1218764f6",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

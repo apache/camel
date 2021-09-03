@@ -19,25 +19,15 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumeWithDollarInPathTest extends ContextTestSupport {
-
-    private String dir = "target/data/edi$/dev1";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory(dir);
-        super.setUp();
-    }
 
     @Test
     public void testPathWithDollar() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:" + dir, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("edi$/dev1"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +37,7 @@ public class FileConsumeWithDollarInPathTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:" + dir + "?initialDelay=0&delay=10").to("mock:result");
+                from(fileUri("edi$/dev1?initialDelay=0&delay=10")).to("mock:result");
             }
         };
     }

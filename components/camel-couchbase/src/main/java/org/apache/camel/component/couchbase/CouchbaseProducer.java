@@ -16,18 +16,16 @@
  */
 package org.apache.camel.component.couchbase;
 
-import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.couchbase.client.core.retry.BestEffortRetryStrategy;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
+import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.MutationResult;
 import com.couchbase.client.java.kv.PersistTo;
 import com.couchbase.client.java.kv.ReplicateTo;
-import com.couchbase.client.java.kv.UpsertOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
@@ -53,8 +51,9 @@ public class CouchbaseProducer extends DefaultProducer {
     private final Collection collection;
     private final PersistTo persistTo;
     private final ReplicateTo replicateTo;
-    private final int producerRetryAttempts;
     private final int producerRetryPause;
+    private final long queryTimeout;
+    private final long writeQueryTimeout;
 
     public CouchbaseProducer(CouchbaseEndpoint endpoint, Bucket client, int persistTo, int replicateTo) {
         super(endpoint);
@@ -77,8 +76,11 @@ public class CouchbaseProducer extends DefaultProducer {
         if (endpoint.isAutoStartIdForInserts()) {
             this.startId.set(endpoint.getStartingIdForInsertsFrom());
         }
-        this.producerRetryAttempts = endpoint.getProducerRetryAttempts();
+
+        // timeout and retry strategy
         this.producerRetryPause = endpoint.getProducerRetryPause();
+        this.writeQueryTimeout = endpoint.getWriteQueryTimeout();
+        this.queryTimeout = endpoint.getQueryTimeout();
 
         switch (persistTo) {
             case 0:
@@ -136,14 +138,17 @@ public class CouchbaseProducer extends DefaultProducer {
         if (endpoint.getOperation().equals(COUCHBASE_PUT)) {
             LOG.trace("Type of operation: PUT");
             Object obj = exchange.getIn().getBody();
-            exchange.getMessage().setBody(setDocument(id, ttl, obj, persistTo, replicateTo));
+            Boolean result = CouchbaseCollectionOperation.setDocument(collection, id, ttl, obj, persistTo, replicateTo,
+                    writeQueryTimeout, producerRetryPause);
+            exchange.getMessage().setBody(result);
         } else if (endpoint.getOperation().equals(COUCHBASE_GET)) {
             LOG.trace("Type of operation: GET");
-            Object result = collection.get(id);
+            GetResult result = CouchbaseCollectionOperation.getDocument(collection, id, queryTimeout);
             exchange.getMessage().setBody(result);
         } else if (endpoint.getOperation().equals(COUCHBASE_DELETE)) {
             LOG.trace("Type of operation: DELETE");
-            MutationResult result = collection.remove(id);
+            MutationResult result
+                    = CouchbaseCollectionOperation.removeDocument(collection, id, writeQueryTimeout, producerRetryPause);
             exchange.getMessage().setBody(result.toString());
         }
         // cleanup the cache headers
@@ -158,25 +163,4 @@ public class CouchbaseProducer extends DefaultProducer {
         }
     }
 
-    private Boolean setDocument(String id, int expiry, Object obj, PersistTo persistTo, ReplicateTo replicateTo) {
-        return setDocument(id, expiry, obj, producerRetryAttempts, persistTo, replicateTo);
-    }
-
-    private Boolean setDocument(
-            String id, int expiry, Object obj, int retryAttempts, PersistTo persistTo, ReplicateTo replicateTo) {
-
-        UpsertOptions options = UpsertOptions.upsertOptions()
-                .expiry(Duration.ofSeconds(expiry))
-                .durability(persistTo, replicateTo)
-                .timeout(Duration.ofMillis(retryAttempts * (long) producerRetryPause))
-                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(producerRetryPause),
-                        Duration.ofMillis(producerRetryPause), 1));
-
-        MutationResult result = collection.upsert(id, obj, options);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(result.toString());
-        }
-
-        return true;
-    }
 }

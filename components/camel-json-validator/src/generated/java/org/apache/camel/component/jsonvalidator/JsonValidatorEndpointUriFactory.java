@@ -29,7 +29,7 @@ public class JsonValidatorEndpointUriFactory extends org.apache.camel.support.co
         props.add("failOnNullBody");
         props.add("errorHandler");
         props.add("resourceUri");
-        props.add("schemaLoader");
+        props.add("uriSchemaLoader");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }

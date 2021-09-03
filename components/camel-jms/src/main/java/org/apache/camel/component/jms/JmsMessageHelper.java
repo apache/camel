@@ -25,7 +25,6 @@ import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
@@ -134,22 +133,6 @@ public final class JmsMessageHelper {
             // ignore
         }
         return null;
-    }
-
-    /**
-     * Is the JMS session from a given vendor
-     *
-     * @param  session the JMS session
-     * @param  vendor  the vendor, such as <tt>ActiveMQ</tt>, or <tt>Artemis</tt>
-     * @return         <tt>true</tt> if from the vendor, <tt>false</tt> if not or not possible to determine
-     */
-    public static boolean isVendor(Session session, String vendor) {
-        if ("Artemis".equals(vendor)) {
-            return session.getClass().getName().startsWith("org.apache.activemq.artemis");
-        } else if ("ActiveMQ".equals(vendor)) {
-            return !isVendor(session, "Artemis") && session.getClass().getName().startsWith("org.apache.activemq");
-        }
-        return false;
     }
 
     /**

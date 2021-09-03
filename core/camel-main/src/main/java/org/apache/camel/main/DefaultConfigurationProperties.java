@@ -16,8 +16,9 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Experimental;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.StartupSummaryLevel;
@@ -43,6 +44,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean inflightRepositoryBrowseEnabled;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
+    @Metadata(enums = "classic,default,short,simple,off", defaultValue = "default")
+    private String uuidGenerator = "default";
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
     private boolean loadTypeConverters;
@@ -86,10 +89,16 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean routesCollectorEnabled = true;
     private String javaRoutesIncludePattern;
     private String javaRoutesExcludePattern;
-    private String xmlRoutes = "classpath:camel/*.xml";
-    private String xmlRouteTemplates = "classpath:camel-template/*.xml";
-    private String xmlRests = "classpath:camel-rest/*.xml";
+    private String routesIncludePattern = "classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/*";
+    private String routesExcludePattern;
     private boolean lightweight;
+    private boolean eagerClassloading;
+    @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
+    private String exchangeFactory = "default";
+    private int exchangeFactoryCapacity = 100;
+    private boolean exchangeFactoryStatisticsEnabled;
+    private boolean dumpRoutes;
+    private Map<String, String> globalOptions;
     // route controller
     @Metadata(defaultValue = "DEBUG")
     @Deprecated
@@ -105,9 +114,11 @@ public abstract class DefaultConfigurationProperties<T> {
     private long routeControllerBackOffMaxAttempts;
     private double routeControllerBackOffMultiplier;
     private boolean routeControllerUnhealthyOnExhausted;
+    // startup recorder
+    @Metadata(enums = "false,off,java-flight-recorder,jfr,logging")
     private String startupRecorder;
     private int startupRecorderMaxDepth = -1;
-    private boolean startupRecorderRecording = true;
+    private boolean startupRecorderRecording;
     private String startupRecorderProfile = "default";
     private long startupRecorderDuration;
     private String startupRecorderDir;
@@ -276,6 +287,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setJmxEnabled(boolean jmxEnabled) {
         this.jmxEnabled = jmxEnabled;
+    }
+
+    public String getUuidGenerator() {
+        return uuidGenerator;
+    }
+
+    /**
+     * UUID generator to use.
+     *
+     * default (32 bytes), short (16 bytes), classic (32 bytes or longer), simple (long incrementing counter), off
+     * (turned off for exchanges - only intended for performance profiling)
+     */
+    public void setUuidGenerator(String uuidGenerator) {
+        this.uuidGenerator = uuidGenerator;
     }
 
     public int getProducerTemplateCacheSize() {
@@ -838,9 +863,9 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * Whether the routes collector is enabled or not.
-     * 
+     *
      * When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and also load additional
-     * XML routes from the file system.
+     * routes from the file system).
      *
      * The routes collector is default enabled.
      */
@@ -853,8 +878,9 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive
-     * filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern.
+     * Used for inclusive filtering RouteBuilder classes which are collected from the registry or via classpath
+     * scanning. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style
+     * pattern. Multiple patterns can be specified separated by comma.
      *
      * Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use:
      * &#42;&#42;/Foo* To include all routes form a specific package use: com/mycompany/foo/&#42; To include all routes
@@ -870,9 +896,9 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive
-     * filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple
-     * patterns can be specified separated by comma.
+     * Used for exclusive filtering RouteBuilder classes which are collected from the registry or via classpath
+     * scanning. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style
+     * pattern. Multiple patterns can be specified separated by comma.
      *
      * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42; To exclude all routes form a
      * specific package use: com/mycompany/bar/&#42; To exclude all routes form a specific package and its sub-packages
@@ -883,79 +909,128 @@ public abstract class DefaultConfigurationProperties<T> {
         this.javaRoutesExcludePattern = javaRoutesExcludePattern;
     }
 
-    public String getXmlRoutes() {
-        return xmlRoutes;
+    public String getRoutesIncludePattern() {
+        return routesIncludePattern;
     }
 
     /**
-     * Directory to scan for adding additional XML routes. You can turn this off by setting the value to false.
+     * Used for inclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive
+     * filtering. The pattern is using Ant-path style pattern.
      *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
-     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     * Multiple patterns can be specified separated by comma, as example, to include all the routes from a directory
+     * whose name contains foo use: &#42;&#42;/*foo*.
      */
-    public void setXmlRoutes(String xmlRoutes) {
-        this.xmlRoutes = xmlRoutes;
+    public void setRoutesIncludePattern(String routesIncludePattern) {
+        this.routesIncludePattern = routesIncludePattern;
     }
 
-    public String getXmlRouteTemplates() {
-        return xmlRouteTemplates;
+    public String getRoutesExcludePattern() {
+        return routesExcludePattern;
     }
 
     /**
-     * Directory to scan for adding additional XML route templates. You can turn this off by setting the value to false.
+     * Used for exclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive
+     * filtering. The pattern is using Ant-path style pattern.
      *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
-     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;template-&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes from a directory
+     * whose name contains foo use: &#42;&#42;/*foo*.
      */
-    public void setXmlRouteTemplates(String xmlRouteTemplates) {
-        this.xmlRouteTemplates = xmlRouteTemplates;
+    public void setRoutesExcludePattern(String routesExcludePattern) {
+        this.routesExcludePattern = routesExcludePattern;
     }
 
-    public String getXmlRests() {
-        return xmlRests;
-    }
-
-    /**
-     * Directory to scan for adding additional XML rests. You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
-     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    public void setXmlRests(String xmlRests) {
-        this.xmlRests = xmlRests;
-    }
-
-    @Experimental
     public boolean isLightweight() {
         return lightweight;
     }
 
     /**
-     * Experimental: Configure the context to be lightweight. This will trigger some optimizations and memory reduction
-     * options. Lightweight context have some limitations. At this moment, dynamic endpoint destinations are not
-     * supported.
+     * Configure the context to be lightweight. This will trigger some optimizations and memory reduction options.
+     * Lightweight context have some limitations. At this moment, dynamic endpoint destinations are not supported.
      */
-    @Experimental
     public void setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
+    }
+
+    public boolean isEagerClassloading() {
+        return eagerClassloading;
+    }
+
+    /**
+     * Whether to eager load a common set of Camel classes that would otherwise first be loaded on processing the first
+     * message. By eager loading these classes then the JVM has already loaded the classes during build phase, which
+     * allows Camel to process the first message faster.
+     */
+    public void setEagerClassloading(boolean eagerClassloading) {
+        this.eagerClassloading = eagerClassloading;
+    }
+
+    public String getExchangeFactory() {
+        return exchangeFactory;
+    }
+
+    /**
+     * Controls whether to pool (reuse) exchanges or create new exchanges (prototype). Using pooled will reduce JVM
+     * garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives. The
+     * default is prototype mode.
+     */
+    public void setExchangeFactory(String exchangeFactory) {
+        this.exchangeFactory = exchangeFactory;
+    }
+
+    /**
+     * The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100.
+     */
+    public int getExchangeFactoryCapacity() {
+        return exchangeFactoryCapacity;
+    }
+
+    /**
+     * The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100.
+     */
+    public void setExchangeFactoryCapacity(int exchangeFactoryCapacity) {
+        this.exchangeFactoryCapacity = exchangeFactoryCapacity;
+    }
+
+    public boolean isExchangeFactoryStatisticsEnabled() {
+        return exchangeFactoryStatisticsEnabled;
+    }
+
+    /**
+     * Configures whether statistics is enabled on exchange factory.
+     */
+    public void setExchangeFactoryStatisticsEnabled(boolean exchangeFactoryStatisticsEnabled) {
+        this.exchangeFactoryStatisticsEnabled = exchangeFactoryStatisticsEnabled;
+    }
+
+    public boolean isDumpRoutes() {
+        return dumpRoutes;
+    }
+
+    /**
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended to be used for production usage.
+     *
+     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     */
+    public void setDumpRoutes(boolean dumpRoutes) {
+        this.dumpRoutes = dumpRoutes;
+    }
+
+    public Map<String, String> getGlobalOptions() {
+        return globalOptions;
+    }
+
+    /**
+     * Sets global options that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     */
+    public void setGlobalOptions(Map<String, String> globalOptions) {
+        this.globalOptions = globalOptions;
     }
 
     @Deprecated
@@ -1125,10 +1200,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false,
-     * logging, java-flight-recorder
-     *
-     * The default is false.
+     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false (or
+     * off), logging, java-flight-recorder (or jfr).
      */
     public void setStartupRecorder(String startupRecorder) {
         this.startupRecorder = startupRecorder;
@@ -1157,9 +1230,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * To enable Java Flight Recorder to start a recording and automatic dump the recording to disk after startup is
      * complete.
      *
-     * This requires that camel-jfr is on the classpath.
-     *
-     * The default is true.
+     * This requires that camel-jfr is on the classpath, and to enable this option.
      */
     public void setStartupRecorderRecording(boolean startupRecorderRecording) {
         this.startupRecorderRecording = startupRecorderRecording;
@@ -1201,7 +1272,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Directory to store the recording. By default the user home directory will be used. Use false to turn off saving
+     * Directory to store the recording. By default the current directory will be used. Use false to turn off saving
      * recording to disk.
      */
     public void setStartupRecorderDir(String startupRecorderDir) {
@@ -1793,73 +1864,102 @@ public abstract class DefaultConfigurationProperties<T> {
         return (T) this;
     }
 
-    /**
-     * Directory to scan for adding additional XML routes. You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: By default classpath is
-     * assumed if no prefix is specified.
-     *
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    public T withXmlRoutes(String xmlRoutes) {
-        this.xmlRoutes = xmlRoutes;
+    public T withRoutesIncludePattern(String routesIncludePattern) {
+        this.routesIncludePattern = routesIncludePattern;
+        return (T) this;
+    }
+
+    public T withRoutesExcludePattern(String routesExcludePattern) {
+        this.routesExcludePattern = routesExcludePattern;
         return (T) this;
     }
 
     /**
-     * Directory to scan for adding additional XML route templates. You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
-     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;template-&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    public T withXmlRouteTemplates(String xmlRouteTemplates) {
-        this.xmlRouteTemplates = xmlRouteTemplates;
-        return (T) this;
-    }
-
-    /**
-     * Directory to scan for adding additional XML rests. You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: By default classpath is
-     * assumed if no prefix is specified.
-     *
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    public T withXmlRests(String xmlRests) {
-        this.xmlRests = xmlRests;
-        return (T) this;
-    }
-
-    /*
-     * Configure the context to be lightweight.  This will trigger some optimizations
-     * and memory reduction options.
+     * Configure the context to be lightweight. This will trigger some optimizations and memory reduction options.
      * <p/>
-     * Lightweight context have some limitations.  At the moment, dynamic endpoint
-     * destinations are not supported.  Also, this should only be done on a JVM with
-     * a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
-     * As this affects the entire JVM where Camel JARs are on the classpath.
+     * Lightweight context have some limitations. At the moment, dynamic endpoint destinations are not supported. Also,
+     * this should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus,
+     * camel-spring-boot). As this affects the entire JVM where Camel JARs are on the classpath.
      */
-    @Experimental
     public T withLightweight(boolean lightweight) {
         this.lightweight = lightweight;
+        return (T) this;
+    }
+
+    /**
+     * Whether to eager load a common set of Camel classes that would otherwise first be loaded on processing the first
+     * message. By eager loading these classes then the JVM has already loaded the classes during build phase, which
+     * allows Camel to process the first message faster.
+     */
+    public T withEagerClassloading(boolean eagerClassloading) {
+        this.eagerClassloading = eagerClassloading;
+        return (T) this;
+    }
+
+    /**
+     * Controls whether to pool (reuse) exchanges or create new fresh exchanges (default). Using pooled will reduce JVM
+     * garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives.
+     */
+    public T withExchangeFactory(String exchangeFactory) {
+        this.exchangeFactory = exchangeFactory;
+        return (T) this;
+    }
+
+    /**
+     * The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100.
+     */
+    public T withExchangeFactoryCapacity(int exchangeFactoryCapacity) {
+        this.exchangeFactoryCapacity = exchangeFactoryCapacity;
+        return (T) this;
+    }
+
+    /**
+     * Configures whether statistics is enabled on exchange factory.
+     */
+    public T withExchangeFactoryStatisticsEnabled(boolean exchangeFactoryStatisticsEnabled) {
+        this.exchangeFactoryStatisticsEnabled = exchangeFactoryStatisticsEnabled;
+        return (T) this;
+    }
+
+    /**
+     * If enable then Camel will during startup dump all loaded routes (incl rests and route templates) represented as
+     * XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended to be used for production usage.
+     *
+     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     */
+    public T withDumpRoutes(boolean dumpRoutes) {
+        this.dumpRoutes = dumpRoutes;
+        return (T) this;
+    }
+
+    /**
+     * Sets global options that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     */
+    public T withGlobalOptions(Map<String, String> globalOptions) {
+        if (this.globalOptions == null) {
+            this.globalOptions = new HashMap<>();
+        }
+        this.globalOptions.putAll(globalOptions);
+        return (T) this;
+    }
+
+    /**
+     * Sets global options that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     */
+    public T withGlobalOption(String key, String value) {
+        if (this.globalOptions == null) {
+            this.globalOptions = new HashMap<>();
+        }
+        this.globalOptions.put(key, value);
         return (T) this;
     }
 
@@ -1988,8 +2088,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false,
-     * logging, java-flight-recorder
+     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false (or
+     * off), logging, java-flight-recorder (or jfr).
      *
      * The default is false.
      */
@@ -2014,9 +2114,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * To enable Java Flight Recorder to start a recording and automatic dump the recording to disk after startup is
      * complete.
      *
-     * This requires that camel-jfr is in use.
-     *
-     * The default is false.
+     * This requires that camel-jfr is on the classpath, and to enable this option.
      */
     public T withStartupRecorderRecording(boolean startupRecorderRecording) {
         this.startupRecorderRecording = startupRecorderRecording;
@@ -2049,7 +2147,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Directory to store the recording. By default the user home directory will be used.
+     * Directory to store the recording. By default the current directory will be used.
      */
     public T withStartupRecorderDir(String startupRecorderDir) {
         this.startupRecorderDir = startupRecorderDir;

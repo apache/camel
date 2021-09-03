@@ -31,7 +31,7 @@ public final class ZooKeeperCuratorHelper {
     private ZooKeeperCuratorHelper() {
     }
 
-    public static CuratorFramework createCurator(ZooKeeperCuratorConfiguration configuration) throws Exception {
+    public static CuratorFramework createCurator(ZooKeeperCuratorConfiguration configuration) {
         CuratorFramework curator = configuration.getCuratorFramework();
         if (curator == null) {
             // Validate parameters

@@ -24,18 +24,17 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
 
     @Test
     public void testTypeConverterRegistry() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:a").expectedMessageCount(2);
 
         template.sendBody("direct:start", "3");
@@ -45,7 +44,7 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);

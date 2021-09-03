@@ -155,7 +155,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
      * @param executorService ExecutorService to use for the ZooKeeperGroup's background thread
      */
     public ZooKeeperGroup(CuratorFramework client, String path, Class<T> clazz, final ExecutorService executorService) {
-        LOG.info("Creating ZK Group for path \"" + path + "\"");
+        LOG.info("Creating ZK Group for path \"{}\"", path);
         this.client = client;
         this.path = path;
         this.clazz = clazz;
@@ -193,7 +193,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
      */
     @Override
     public void close() throws IOException {
-        LOG.debug(this + ".close, connected:" + connected);
+        LOG.debug("{}.close, connected:{}", this, connected);
         if (started.compareAndSet(true, false)) {
             client.getConnectionStateListenable().removeListener(connectionStateListener);
             executorService.shutdownNow();
@@ -254,7 +254,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     protected void doUpdate(T state) throws Exception {
         if (LOG.isTraceEnabled()) {
             // state.toString() invokes Jackson ObjectMapper serialization
-            LOG.trace(this + " doUpdate, state:" + state + " id:" + id);
+            LOG.trace("{} doUpdate, state:{} id:{}", this, state, id);
         }
         if (state == null) {
             if (id != null) {
@@ -299,7 +299,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         unstable.set(false);
         if (LOG.isTraceEnabled()) {
             // state.toString() invokes Jackson ObjectMapper serialization
-            LOG.trace(this + ", state:" + state + ", new ephemeralSequential path:" + pathId);
+            LOG.trace("{}, state:{}, new ephemeralSequential path:{}", this, state, pathId);
         }
         prunePartialState(state, pathId);
         state.uuid = null;
@@ -559,7 +559,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         for (String name : children) {
             String fullPath = ZKPaths.makePath(path, name);
 
-            if ((mode == RefreshMode.FORCE_GET_DATA_AND_STAT) || !currentData.containsKey(fullPath)) {
+            if (mode == RefreshMode.FORCE_GET_DATA_AND_STAT || !currentData.containsKey(fullPath)) {
                 try {
                     getDataAndStat(fullPath);
                 } catch (KeeperException.NoNodeException ignore) {
@@ -612,7 +612,10 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
 
     private void offerOperation(Operation operation) {
         if (!operations.contains(operation)) {
-            operations.offer(operation);
+            boolean result = operations.offer(operation);
+            if (!result) {
+                LOG.error("failed to offer() an operation");
+            }
         }
         // operations.remove(operation);   // avoids herding for refresh operations
     }

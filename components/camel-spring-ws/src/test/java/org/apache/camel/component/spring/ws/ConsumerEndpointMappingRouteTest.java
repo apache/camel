@@ -92,10 +92,12 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
 
     @Test
     public void testWrongSoapAction() throws Exception {
+        final Source defaultXmlRequestSource = getDefaultXmlRequestSource();
+        final SoapActionCallback requestCallback = new SoapActionCallback("http://this-is-a-wrong-soap-action");
+
         assertThrows(WebServiceIOException.class, () -> {
-            webServiceTemplate.sendSourceAndReceive(getDefaultXmlRequestSource(),
-                    new SoapActionCallback("http://this-is-a-wrong-soap-action"), NOOP_SOURCE_EXTRACTOR);
-            resultEndpointSoapAction.assertIsNotSatisfied();
+            webServiceTemplate.sendSourceAndReceive(defaultXmlRequestSource,
+                    requestCallback, NOOP_SOURCE_EXTRACTOR);
         });
     }
 
@@ -145,10 +147,11 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
 
     @Test
     public void testWrongUri() throws Exception {
+        final Source defaultXmlRequestSource = getDefaultXmlRequestSource();
+
         assertThrows(WebServiceIOException.class, () -> {
-            webServiceTemplate.sendSourceAndReceive("http://localhost/wrong", getDefaultXmlRequestSource(),
+            webServiceTemplate.sendSourceAndReceive("http://localhost/wrong", defaultXmlRequestSource,
                     NOOP_SOURCE_EXTRACTOR);
-            resultEndpointUri.assertIsNotSatisfied();
         });
     }
 

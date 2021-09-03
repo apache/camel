@@ -19,9 +19,11 @@ package org.apache.camel.impl.cloud;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterFactory;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
 @CloudServiceFactory("pass-through-service-filter")
+@Configurer
 public class PassThroughServiceFilterFactory implements ServiceFilterFactory {
 
     public PassThroughServiceFilterFactory() {

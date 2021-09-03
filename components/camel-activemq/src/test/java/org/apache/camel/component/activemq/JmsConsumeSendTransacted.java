@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.util.Map;
+
 import javax.jms.Connection;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -24,16 +26,26 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
-    BrokerService broker;
-    int messageCount;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class JmsConsumeSendTransacted extends ActiveMQSpringTestSupport {
+
+    @RegisterExtension
+    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .defaultBroker()
+            .withBrokerName(JmsConsumeSendTransacted.class.getSimpleName())
+            .withTcpTransport()
+            .build();
+
+    final int messagesSent = 1;
+    int messagesToConsume;
 
     @Test
     public void testTransactedRoute() throws Exception {
@@ -41,18 +53,18 @@ public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
 
         // camel route will use a single transaction for send and and ack
         consumeMessages();
+        assertEquals(0, messagesToConsume, "Some messages were not consumed");
     }
 
     private void consumeMessages() throws Exception {
-
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://testTran");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageConsumer consumer = session.createConsumer(new ActiveMQQueue("to"));
 
-        int messagesToConsume = messageCount;
+        messagesToConsume = messagesSent;
         while (messagesToConsume > 0) {
             Message message = consumer.receive(5000);
             if (message != null) {
@@ -62,39 +74,23 @@ public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://testTran");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageProducer producer = session.createProducer(new ActiveMQQueue("from"));
-        TextMessage message = session.createTextMessage("Some Text, messageCount:" + messageCount++);
-        message.setIntProperty("seq", messageCount);
+        TextMessage message = session.createTextMessage("Some Text, messageCount:" + messagesSent);
+        message.setIntProperty("seq", messagesSent);
         producer.send(message);
         connection.close();
     }
 
-    private BrokerService createBroker(boolean deleteAllMessages) throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName("testTran");
-        brokerService.setAdvisorySupport(false);
-        brokerService.setUseJmx(false);
-        brokerService.setDataDirectory("target/data");
-        brokerService.addConnector("tcp://0.0.0.0:61616");
-        return brokerService;
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        try {
-            broker = createBroker(true);
-            broker.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to start broker", e);
-        }
-
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jmsConsumeSendTransacted.xml");
+    protected Map<String, String> getTranslationProperties() {
+        Map<String, String> props = super.getTranslationProperties();
+        props.put("brokerUri", service.serviceAddress());
+        return props;
     }
+
 }

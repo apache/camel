@@ -19,7 +19,6 @@ package org.apache.camel.component.jbpm;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jbpm.emitters.CamelEventEmitter;
 import org.apache.camel.component.jbpm.listeners.CamelCaseEventListener;
@@ -98,21 +97,15 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
     }
 
     public void sendMessage(String eventType, Object body) {
-        Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
+        Exchange exchange = createExchange(false);
         exchange.getIn().setHeader("EventType", eventType);
 
         exchange.getIn().setBody(body);
 
         if (!endpoint.isSynchronous()) {
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    // handle any thrown exception
-                    if (exchange.getException() != null) {
-                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                    }
-                }
-            });
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, false);
+            getAsyncProcessor().process(exchange, cb);
         } else {
             try {
                 getProcessor().process(exchange);
@@ -124,6 +117,7 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
+            releaseExchange(exchange, false);
         }
     }
 
@@ -131,7 +125,6 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
     public void onDeploy(DeploymentEvent event) {
         InternalRuntimeManager manager = (InternalRuntimeManager) event.getDeployedUnit().getRuntimeManager();
         configure(manager, this);
-
     }
 
     @Override
@@ -156,7 +149,6 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
         }
 
         configureConsumer(eventListenerType, manager, consumer);
-
     }
 
     protected void configureConsumer(String eventListenerType, InternalRuntimeManager manager, JBPMConsumer consumer) {
@@ -196,8 +188,13 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
             return;
         }
 
-        LOGGER.debug("Adding consumer {} on {}", consumer, consumerAware);
-        consumerAware.addConsumer(consumer);
+        if (consumerAware != null) {
+            LOGGER.debug("Adding consumer {} on {}", consumer, consumerAware);
+            consumerAware.addConsumer(consumer);
+        } else {
+            LOGGER.error(
+                    "Skipping adding of consumer on instance of JBPMCamelConsumerAware, as we failed either to get non-null instance of JBPMCamelConsumerAware from cache or to create it.");
+        }
     }
 
     @Override

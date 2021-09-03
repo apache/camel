@@ -41,9 +41,11 @@ public class Main extends MainCommandLineSupport {
     public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
-        main.run(args);
-
-        System.exit(main.getExitCode());
+        int code = main.run(args);
+        if (code != 0) {
+            System.exit(code);
+        }
+        // normal exit
     }
 
     /**

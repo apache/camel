@@ -81,6 +81,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private Integer maxBinaryMessageSize;
     @UriParam(label = "advanced", defaultValue = "13")
     private Integer minVersion;
+    @UriParam(label = "consumer", defaultValue = "any")
+    private String subprotocol;
 
     public WebsocketEndpoint(WebsocketComponent component, String uri, String resourceUri, Map<String, Object> parameters) {
         super(uri, component);
@@ -348,5 +350,28 @@ public class WebsocketEndpoint extends DefaultEndpoint {
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
+    }
+
+    /**
+     * See {@link #getSubprotocol()}
+     */
+    public String getSubprotocol() {
+        return subprotocol;
+    }
+
+    /**
+     * <p>
+     * This is a comma-separated list of subprotocols that are supported by the application. The list is in priority
+     * order. The first subprotocol on this list that is proposed by the client is the one that will be accepted. If no
+     * subprotocol on this list is proposed by the client, then the websocket connection is refused. The special value
+     * 'any' means that any subprotocol is acceptable. 'any' can be used on its own, or as a failsafe at the end of a
+     * list of more specific protocols. 'any' will also match the case where no subprotocol is proposed by the client.
+     * </p>
+     *
+     * @see <a href="https://www.iana.org/assignments/websocket/websocket.xml#subprotocol-name">The official IANA list
+     *      of registered websocket subprotocols<a/>
+     */
+    public void setSubprotocol(String subprotocol) {
+        this.subprotocol = subprotocol;
     }
 }

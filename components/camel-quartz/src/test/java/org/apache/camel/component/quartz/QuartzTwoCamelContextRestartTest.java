@@ -31,7 +31,6 @@ public class QuartzTwoCamelContextRestartTest {
     @BeforeEach
     public void setUp() throws Exception {
         camel1 = new DefaultCamelContext();
-        camel1.setName("camel-1");
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -41,7 +40,7 @@ public class QuartzTwoCamelContextRestartTest {
         camel1.start();
 
         camel2 = new DefaultCamelContext();
-        camel2.setName("camel-2");
+        camel2.getComponent("quartz", QuartzComponent.class).setEnableJmx(false);
         camel2.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

@@ -702,6 +702,107 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
+         * performs PK chunking automatically, if necessary.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunking the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pkChunking(Boolean pkChunking) {
+            doSetProperty("pkChunking", pkChunking);
+            return this;
+        }
+        /**
+         * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
+         * performs PK chunking automatically, if necessary.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunking the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pkChunking(String pkChunking) {
+            doSetProperty("pkChunking", pkChunking);
+            return this;
+        }
+        /**
+         * Chunk size for use with PK Chunking. If unspecified, salesforce
+         * default is 100,000. Maximum size is 250,000.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingChunkSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pkChunkingChunkSize(
+                Integer pkChunkingChunkSize) {
+            doSetProperty("pkChunkingChunkSize", pkChunkingChunkSize);
+            return this;
+        }
+        /**
+         * Chunk size for use with PK Chunking. If unspecified, salesforce
+         * default is 100,000. Maximum size is 250,000.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingChunkSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pkChunkingChunkSize(
+                String pkChunkingChunkSize) {
+            doSetProperty("pkChunkingChunkSize", pkChunkingChunkSize);
+            return this;
+        }
+        /**
+         * Specifies the parent object when you're enabling PK chunking for
+         * queries on sharing objects. The chunks are based on the parent
+         * object's records rather than the sharing object's records. For
+         * example, when querying on AccountShare, specify Account as the parent
+         * object. PK chunking is supported for sharing objects as long as the
+         * parent object is supported.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingParent the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pkChunkingParent(
+                String pkChunkingParent) {
+            doSetProperty("pkChunkingParent", pkChunkingParent);
+            return this;
+        }
+        /**
+         * Specifies the 15-character or 18-character record ID to be used as
+         * the lower boundary for the first chunk. Use this parameter to specify
+         * a starting ID when restarting a job that failed between batches.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingStartRow the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pkChunkingStartRow(
+                String pkChunkingStartRow) {
+            doSetProperty("pkChunkingStartRow", pkChunkingStartRow);
+            return this;
+        }
+        /**
          * Query Locator provided by salesforce for use when a query results in
          * more records than can be retrieved in a single call. Use this value
          * in a subsequent call to retrieve additional records.
@@ -1805,6 +1906,107 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
+         * performs PK chunking automatically, if necessary.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunking the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder pkChunking(Boolean pkChunking) {
+            doSetProperty("pkChunking", pkChunking);
+            return this;
+        }
+        /**
+         * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
+         * performs PK chunking automatically, if necessary.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunking the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder pkChunking(String pkChunking) {
+            doSetProperty("pkChunking", pkChunking);
+            return this;
+        }
+        /**
+         * Chunk size for use with PK Chunking. If unspecified, salesforce
+         * default is 100,000. Maximum size is 250,000.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingChunkSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder pkChunkingChunkSize(
+                Integer pkChunkingChunkSize) {
+            doSetProperty("pkChunkingChunkSize", pkChunkingChunkSize);
+            return this;
+        }
+        /**
+         * Chunk size for use with PK Chunking. If unspecified, salesforce
+         * default is 100,000. Maximum size is 250,000.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingChunkSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder pkChunkingChunkSize(
+                String pkChunkingChunkSize) {
+            doSetProperty("pkChunkingChunkSize", pkChunkingChunkSize);
+            return this;
+        }
+        /**
+         * Specifies the parent object when you're enabling PK chunking for
+         * queries on sharing objects. The chunks are based on the parent
+         * object's records rather than the sharing object's records. For
+         * example, when querying on AccountShare, specify Account as the parent
+         * object. PK chunking is supported for sharing objects as long as the
+         * parent object is supported.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingParent the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder pkChunkingParent(
+                String pkChunkingParent) {
+            doSetProperty("pkChunkingParent", pkChunkingParent);
+            return this;
+        }
+        /**
+         * Specifies the 15-character or 18-character record ID to be used as
+         * the lower boundary for the first chunk. Use this parameter to specify
+         * a starting ID when restarting a job that failed between batches.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingStartRow the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder pkChunkingStartRow(
+                String pkChunkingStartRow) {
+            doSetProperty("pkChunkingStartRow", pkChunkingStartRow);
+            return this;
+        }
+        /**
          * Query Locator provided by salesforce for use when a query results in
          * more records than can be retrieved in a single call. Use this value
          * in a subsequent call to retrieve additional records.
@@ -2083,6 +2285,39 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Composite API option to indicate to rollback all records if any are
+         * not successful.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allOrNone the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder allOrNone(boolean allOrNone) {
+            doSetProperty("allOrNone", allOrNone);
+            return this;
+        }
+        /**
+         * Composite API option to indicate to rollback all records if any are
+         * not successful.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allOrNone the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder allOrNone(String allOrNone) {
+            doSetProperty("allOrNone", allOrNone);
+            return this;
+        }
+        /**
          * APEX method URL.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2158,6 +2393,68 @@ public interface SalesforceEndpointBuilderFactory {
         default SalesforceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Comma separated list of message headers to include as HTTP parameters
+         * for Raw operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawHttpHeaders the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder rawHttpHeaders(
+                String rawHttpHeaders) {
+            doSetProperty("rawHttpHeaders", rawHttpHeaders);
+            return this;
+        }
+        /**
+         * HTTP method to use for the Raw operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawMethod the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder rawMethod(String rawMethod) {
+            doSetProperty("rawMethod", rawMethod);
+            return this;
+        }
+        /**
+         * The portion of the endpoint URL after the domain name. E.g.,
+         * '/services/data/v52.0/sobjects/Account/'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawPath the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder rawPath(String rawPath) {
+            doSetProperty("rawPath", rawPath);
+            return this;
+        }
+        /**
+         * Comma separated list of message headers to include as query
+         * parameters for Raw operation. Do not url-encode values as this will
+         * be done automatically.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param rawQueryParameters the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder rawQueryParameters(
+                String rawQueryParameters) {
+            doSetProperty("rawQueryParameters", rawQueryParameters);
             return this;
         }
     }
@@ -2833,6 +3130,107 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
+         * performs PK chunking automatically, if necessary.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunking the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder pkChunking(Boolean pkChunking) {
+            doSetProperty("pkChunking", pkChunking);
+            return this;
+        }
+        /**
+         * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
+         * performs PK chunking automatically, if necessary.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunking the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder pkChunking(String pkChunking) {
+            doSetProperty("pkChunking", pkChunking);
+            return this;
+        }
+        /**
+         * Chunk size for use with PK Chunking. If unspecified, salesforce
+         * default is 100,000. Maximum size is 250,000.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingChunkSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder pkChunkingChunkSize(
+                Integer pkChunkingChunkSize) {
+            doSetProperty("pkChunkingChunkSize", pkChunkingChunkSize);
+            return this;
+        }
+        /**
+         * Chunk size for use with PK Chunking. If unspecified, salesforce
+         * default is 100,000. Maximum size is 250,000.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingChunkSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder pkChunkingChunkSize(
+                String pkChunkingChunkSize) {
+            doSetProperty("pkChunkingChunkSize", pkChunkingChunkSize);
+            return this;
+        }
+        /**
+         * Specifies the parent object when you're enabling PK chunking for
+         * queries on sharing objects. The chunks are based on the parent
+         * object's records rather than the sharing object's records. For
+         * example, when querying on AccountShare, specify Account as the parent
+         * object. PK chunking is supported for sharing objects as long as the
+         * parent object is supported.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingParent the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder pkChunkingParent(
+                String pkChunkingParent) {
+            doSetProperty("pkChunkingParent", pkChunkingParent);
+            return this;
+        }
+        /**
+         * Specifies the 15-character or 18-character record ID to be used as
+         * the lower boundary for the first chunk. Use this parameter to specify
+         * a starting ID when restarting a job that failed between batches.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pkChunkingStartRow the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder pkChunkingStartRow(
+                String pkChunkingStartRow) {
+            doSetProperty("pkChunkingStartRow", pkChunkingStartRow);
+            return this;
+        }
+        /**
          * Query Locator provided by salesforce for use when a query results in
          * more records than can be retrieved in a single call. Use this value
          * in a subsequent call to retrieve additional records.
@@ -3182,7 +3580,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Path parameter: operationName
          * The operation to use
-         * There are 59 enums and the value can be one of: getVersions,
+         * There are 65 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
@@ -3192,12 +3590,15 @@ public interface SalesforceEndpointBuilderFactory {
          * getQueryResult, getRecentReports, getReportDescription,
          * executeSyncReport, executeAsyncReport, getReportInstances,
          * getReportResults, limits, approval, approvals, composite-tree,
-         * composite-batch, composite, bulk2GetAllJobs, bulk2CreateJob,
-         * bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob,
-         * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
+         * composite-batch, composite, compositeRetrieveSObjectCollections,
+         * compositeCreateSObjectCollections, compositeUpdateSObjectCollections,
+         * compositeUpsertSObjectCollections, compositeDeleteSObjectCollections,
+         * bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch,
+         * bulk2CloseJob, bulk2AbortJob, bulk2DeleteJob,
+         * bulk2GetSuccessfulResults, bulk2GetFailedResults,
          * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
          * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-         * bulk2DeleteQueryJob
+         * bulk2DeleteQueryJob, raw
          * 
          * Path parameter: topicName
          * The name of the topic/channel to use
@@ -3220,7 +3621,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Path parameter: operationName
          * The operation to use
-         * There are 59 enums and the value can be one of: getVersions,
+         * There are 65 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
@@ -3230,12 +3631,15 @@ public interface SalesforceEndpointBuilderFactory {
          * getQueryResult, getRecentReports, getReportDescription,
          * executeSyncReport, executeAsyncReport, getReportInstances,
          * getReportResults, limits, approval, approvals, composite-tree,
-         * composite-batch, composite, bulk2GetAllJobs, bulk2CreateJob,
-         * bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob,
-         * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
+         * composite-batch, composite, compositeRetrieveSObjectCollections,
+         * compositeCreateSObjectCollections, compositeUpdateSObjectCollections,
+         * compositeUpsertSObjectCollections, compositeDeleteSObjectCollections,
+         * bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch,
+         * bulk2CloseJob, bulk2AbortJob, bulk2DeleteJob,
+         * bulk2GetSuccessfulResults, bulk2GetFailedResults,
          * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
          * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-         * bulk2DeleteQueryJob
+         * bulk2DeleteQueryJob, raw
          * 
          * Path parameter: topicName
          * The name of the topic/channel to use

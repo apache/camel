@@ -362,6 +362,37 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
+         * Show all of the exchange properties (both internal and custom).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: formatting
+         * 
+         * @param showAllProperties the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showAllProperties(boolean showAllProperties) {
+            doSetProperty("showAllProperties", showAllProperties);
+            return this;
+        }
+        /**
+         * Show all of the exchange properties (both internal and custom).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: formatting
+         * 
+         * @param showAllProperties the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showAllProperties(String showAllProperties) {
+            doSetProperty("showAllProperties", showAllProperties);
+            return this;
+        }
+        /**
          * Show the message body.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -655,7 +686,8 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * Show the exchange properties.
+         * Show the exchange properties (only custom). Use showAllProperties to
+         * show both internal and custom properties.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -670,7 +702,8 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * Show the exchange properties.
+         * Show the exchange properties (only custom). Use showAllProperties to
+         * show both internal and custom properties.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

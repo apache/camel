@@ -1,0 +1,22 @@
+{
+  "id" : "ded84235-4119-4322-a3eb-610db51d9c5d",
+  "name" : "regions_list.json",
+  "request" : {
+    "url" : "/v3/regions",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"regions\":[{\"parent_region_id\":null,\"id\":\"RegionOne\",\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/regions\/RegionOne\"},\"description\":\"\"},{\"parent_region_id\":\"RegionOne\",\"id\":\"Region_CRUD\",\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/regions\/Region_CRUD\"},\"description\":\"A region used for CRUD tests.\"}],\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/regions\",\"previous\":null,\"next\":null}}",
+    "headers" : {
+        "Content-Type": "application/json",
+        "Date": "Wed, 16 Mar 2016 15:01:58 GMT",
+        "Server": "Apache/2.4.7 (Ubuntu)",
+        "Vary": "X-Auth-Token",
+        "x-openstack-request-id": "req-3bda5b96-7a40-4125-a82c-0362e08af1e9"
+    },
+    "status" : 200
+  },
+  "uuid" : "ded84235-4119-4322-a3eb-610db51d9c5d",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

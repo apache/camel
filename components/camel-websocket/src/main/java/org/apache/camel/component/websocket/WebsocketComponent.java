@@ -92,13 +92,15 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     protected String sslPassword;
     @Metadata(label = "security", secret = true)
     protected String sslKeystore;
+    @Metadata(label = "advanced", defaultValue = "any")
+    protected String subprotocol = "any";
 
     /**
      * Map for storing servlets. {@link WebsocketComponentServlet} is identified by pathSpec {@link String}.
      */
     private Map<String, WebsocketComponentServlet> servlets = new HashMap<>();
 
-    class ConnectorRef {
+    static class ConnectorRef {
         Server server;
         ServerConnector connector;
         WebsocketComponentServlet servlet;
@@ -130,7 +132,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     public WebsocketComponent() {
         if (this.socketFactory == null) {
             this.socketFactory = new HashMap<>();
-            this.socketFactory.put("default", new DefaultWebsocketFactory());
+            this.socketFactory.put(WebsocketComponentServlet.UNSPECIFIED_SUBPROTOCOL, new DefaultWebsocketFactory());
         }
     }
 
@@ -290,7 +292,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         int port = extractPortNumber(remaining);
         String host = extractHostName(remaining);
 
-        WebsocketEndpoint endpoint = new WebsocketEndpoint(this, uri, remaining, parameters);
+        WebsocketEndpoint endpoint = newEndpoint(uri, remaining, parameters);
 
         if (enableJmx != null) {
             endpoint.setEnableJmx(enableJmx);
@@ -320,9 +322,14 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         endpoint.setSslContextParameters(sslContextParameters);
         endpoint.setPort(port);
         endpoint.setHost(host);
+        endpoint.setSubprotocol(subprotocol);
 
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    protected WebsocketEndpoint newEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+        return new WebsocketEndpoint(this, uri, remaining, parameters);
     }
 
     protected void setWebSocketComponentServletInitialParameter(ServletContextHandler context, WebsocketEndpoint endpoint) {
@@ -469,7 +476,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         return servlet;
     }
 
-    protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) throws Exception {
+    protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) {
         ServletContextHandler context
                 = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
         server.addConnector(connector);
@@ -573,7 +580,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         int index1 = remaining.indexOf(':');
         int index2 = remaining.indexOf('/');
 
-        if ((index1 != -1) && (index2 != -1)) {
+        if (index1 != -1 && index2 != -1) {
             String result = remaining.substring(index1 + 1, index2);
             return Integer.parseInt(result);
         } else {
@@ -761,6 +768,29 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    /**
+     * See {@link #getSubprotocol()}
+     */
+    public String getSubprotocol() {
+        return subprotocol;
+    }
+
+    /**
+     * <p>
+     * This is a comma-separated list of subprotocols that are supported by the application. The list is in priority
+     * order. The first subprotocol on this list that is proposed by the client is the one that will be accepted. If no
+     * subprotocol on this list is proposed by the client, then the websocket connection is refused. The special value
+     * 'any' means that any subprotocol is acceptable. 'any' can be used on its own, or as a failsafe at the end of a
+     * list of more specific protocols. 'any' will also match the case where no subprotocol is proposed by the client.
+     * </p>
+     *
+     * @see <a href="https://www.iana.org/assignments/websocket/websocket.xml#subprotocol-name">The official IANA list
+     *      of registered websocket subprotocols<a/>
+     */
+    public void setSubprotocol(String subprotocol) {
+        this.subprotocol = subprotocol;
     }
 
     public Map<String, WebSocketFactory> getSocketFactory() {

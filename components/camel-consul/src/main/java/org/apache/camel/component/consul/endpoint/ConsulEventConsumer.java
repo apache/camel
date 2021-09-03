@@ -107,32 +107,34 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
         private void onEvent(Event event) {
             LoggerFactory.getLogger(ConsulEventConsumer.this.getClass()).info("{}", event);
 
-            final Exchange exchange = endpoint.createExchange();
-            final Message message = exchange.getIn();
-
-            message.setHeader(ConsulConstants.CONSUL_KEY, key);
-            message.setHeader(ConsulConstants.CONSUL_RESULT, true);
-            message.setHeader(ConsulConstants.CONSUL_EVENT_ID, event.getId());
-            message.setHeader(ConsulConstants.CONSUL_EVENT_NAME, event.getName());
-            message.setHeader(ConsulConstants.CONSUL_EVENT_LTIME, event.getLTime());
-            message.setHeader(ConsulConstants.CONSUL_VERSION, event.getVersion());
-
-            if (event.getNodeFilter().isPresent()) {
-                message.setHeader(ConsulConstants.CONSUL_NODE_FILTER, event.getNodeFilter().get());
-            }
-            if (event.getServiceFilter().isPresent()) {
-                message.setHeader(ConsulConstants.CONSUL_SERVICE_FILTER, event.getServiceFilter().get());
-            }
-            if (event.getTagFilter().isPresent()) {
-                message.setHeader(ConsulConstants.CONSUL_TAG_FILTER, event.getTagFilter().get());
-            }
-
-            message.setBody(event.getPayload().orElse(null));
-
+            final Exchange exchange = createExchange(false);
             try {
+                final Message message = exchange.getIn();
+
+                message.setHeader(ConsulConstants.CONSUL_KEY, key);
+                message.setHeader(ConsulConstants.CONSUL_RESULT, true);
+                message.setHeader(ConsulConstants.CONSUL_EVENT_ID, event.getId());
+                message.setHeader(ConsulConstants.CONSUL_EVENT_NAME, event.getName());
+                message.setHeader(ConsulConstants.CONSUL_EVENT_LTIME, event.getLTime());
+                message.setHeader(ConsulConstants.CONSUL_VERSION, event.getVersion());
+
+                if (event.getNodeFilter().isPresent()) {
+                    message.setHeader(ConsulConstants.CONSUL_NODE_FILTER, event.getNodeFilter().get());
+                }
+                if (event.getServiceFilter().isPresent()) {
+                    message.setHeader(ConsulConstants.CONSUL_SERVICE_FILTER, event.getServiceFilter().get());
+                }
+                if (event.getTagFilter().isPresent()) {
+                    message.setHeader(ConsulConstants.CONSUL_TAG_FILTER, event.getTagFilter().get());
+                }
+
+                message.setBody(event.getPayload().orElse(null));
+
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
 

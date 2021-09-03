@@ -25,19 +25,11 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SplitPropertiesFileIssueTest extends ContextTestSupport {
 
     private String body = "foo=1" + LS + "bar=2" + LS + "bar=3" + LS + "foo=4";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file/splitprop");
-        super.setUp();
-    }
 
     @Test
     public void testSplitPropertiesFileAndRoute() throws Exception {
@@ -45,12 +37,12 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         foo.expectedBodiesReceived("[foo=1, foo=4]");
 
         // after the file is routed it should be moved to done
-        foo.expectedFileExists("target/data/file/splitprop/done/myprop.txt", body);
+        foo.expectedFileExists(testFile("done/myprop.txt"), body);
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedBodiesReceived("[bar=2, bar=3]");
 
-        template.sendBodyAndHeader("file://target/data/file/splitprop", body, Exchange.FILE_NAME, "myprop.txt");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "myprop.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -60,7 +52,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file/splitprop?initialDelay=0&delay=10&move=done").convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10&move=done")).convertBodyTo(String.class)
                         .split(new MyCustomExpression())
                         .recipientList(header("myCustomDestination"));
             }

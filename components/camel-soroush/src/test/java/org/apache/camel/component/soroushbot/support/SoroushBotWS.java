@@ -18,10 +18,10 @@ package org.apache.camel.component.soroushbot.support;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,7 +51,7 @@ import org.glassfish.jersey.media.sse.OutboundEvent;
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class SoroushBotWS {
-    static Random random = new Random(System.currentTimeMillis());
+    static SecureRandom random = new SecureRandom();
     static Map<String, Integer> tokenCount = new ConcurrentHashMap<>();
     static List<SoroushMessage> receivedMessages = new ArrayList<>();
     static Map<String, String> fileIdToContent = new ConcurrentHashMap<>();

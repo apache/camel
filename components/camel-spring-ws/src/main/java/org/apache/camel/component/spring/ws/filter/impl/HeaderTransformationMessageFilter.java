@@ -49,11 +49,15 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
     private String xslt;
     private boolean saxon;
 
-    /**
-     * @param xslt
-     */
     public HeaderTransformationMessageFilter(String xslt) {
         this.xslt = xslt;
+    }
+
+    /**
+     * Whether a header is valid
+     */
+    protected boolean validHeaderName(String name) {
+        return !"Content-Type".equalsIgnoreCase(name);
     }
 
     @Override
@@ -99,14 +103,15 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
 
     /**
      * Adding the headers of the message as parameter to the transformer
-     * 
-     * @param inOrOut
-     * @param transformer
      */
     private void addParameters(Message inOrOut, Transformer transformer) {
         Map<String, Object> headers = inOrOut.getHeaders();
         for (Map.Entry<String, Object> headerEntry : headers.entrySet()) {
             String key = headerEntry.getKey();
+
+            if (!validHeaderName(key)) {
+                continue;
+            }
 
             // Key's with '$' are not allowed in XSLT
             if (key != null && !key.startsWith("$")) {

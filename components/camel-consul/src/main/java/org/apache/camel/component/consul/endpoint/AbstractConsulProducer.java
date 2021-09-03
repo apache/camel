@@ -66,11 +66,12 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         return configuration;
     }
 
-    protected <D> D getMandatoryHeader(Message message, String header, Class<D> type) throws Exception {
+    protected <D> D getMandatoryHeader(Message message, String header, Class<D> type) throws NoSuchHeaderException {
         return getMandatoryHeader(message, header, (D) null, type);
     }
 
-    protected <D> D getMandatoryHeader(Message message, String header, D defaultValue, Class<D> type) throws Exception {
+    protected <D> D getMandatoryHeader(Message message, String header, D defaultValue, Class<D> type)
+            throws NoSuchHeaderException {
         D value = message.getHeader(header, defaultValue, type);
         if (value == null) {
             throw new NoSuchHeaderException(message.getExchange(), header, type);
@@ -98,7 +99,7 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         return builder.build();
     }
 
-    protected <T> void processConsulResponse(Message message, ConsulResponse<T> response) throws Exception {
+    protected <T> void processConsulResponse(Message message, ConsulResponse<T> response) {
         message.setHeader(ConsulConstants.CONSUL_INDEX, response.getIndex());
         message.setHeader(ConsulConstants.CONSUL_LAST_CONTACT, response.getLastContact());
         message.setHeader(ConsulConstants.CONSUL_KNOWN_LEADER, response.isKnownLeader());
@@ -106,11 +107,11 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         setBodyAndResult(message, response.getResponse());
     }
 
-    protected void setBodyAndResult(Message message, Object body) throws Exception {
+    protected void setBodyAndResult(Message message, Object body) {
         setBodyAndResult(message, body, body != null);
     }
 
-    protected void setBodyAndResult(Message message, Object body, boolean result) throws Exception {
+    protected void setBodyAndResult(Message message, Object body, boolean result) {
         message.setHeader(ConsulConstants.CONSUL_RESULT, result);
         if (body != null) {
             message.setBody(body);

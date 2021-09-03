@@ -47,6 +47,7 @@ public interface SmppConstants {
     String PRIORITY_FLAG = "CamelSmppPriorityFlag";
     String PROTOCOL_ID = "CamelSmppProtocolId";
     String REGISTERED_DELIVERY = "CamelSmppRegisteredDelivery";
+    String SINGLE_DLR = "CamelSmppSingleDLR";
     String REPLACE_IF_PRESENT_FLAG = "CamelSmppReplaceIfPresentFlag";
     String SCHEDULE_DELIVERY_TIME = "CamelSmppScheduleDeliveryTime";
     String SENT_MESSAGE_COUNT = "CamelSmppSentMessageCount";

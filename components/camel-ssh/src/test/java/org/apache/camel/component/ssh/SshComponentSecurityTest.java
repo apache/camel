@@ -79,6 +79,32 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
     }
 
     @Test
+    public void testEdDSAFile() throws Exception {
+        final String msg = "test";
+
+        MockEndpoint mock = getMockEndpoint("mock:eddsaFile");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(msg);
+
+        template.sendBody("direct:ssh-eddsaFile", msg);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testEncryptedEdDSAFile() throws Exception {
+        final String msg = "test";
+
+        MockEndpoint mock = getMockEndpoint("mock:enceddsaFile");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(msg);
+
+        template.sendBody("direct:ssh-enceddsaFile", msg);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testECFile() throws Exception {
         final String msg = "test";
 
@@ -147,6 +173,15 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
                 from("direct:ssh-ecFilepkcs8")
                         .to("ssh://smx@localhost:" + port + "?certResource=file:src/test/resources/ecpkcs8.pem")
                         .to("mock:ecFilepkcs8");
+
+                from("direct:ssh-eddsaFile")
+                        .to("ssh://smx@localhost:" + port + "?certResource=file:src/test/resources/eddsa.pem")
+                        .to("mock:eddsaFile");
+
+                from("direct:ssh-enceddsaFile")
+                        .to("ssh://smx@localhost:" + port
+                            + "?certResource=file:src/test/resources/enceddsa.pem&certResourcePassword=security")
+                        .to("mock:enceddsaFile");
             }
         };
     }

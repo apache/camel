@@ -43,6 +43,11 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
     }
 
     @Override
+    public void reset() {
+        delegate.reset();
+    }
+
+    @Override
     public String getMessageId() {
         return delegate.getMessageId();
     }
@@ -50,6 +55,16 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
     @Override
     public void setMessageId(String messageId) {
         delegate.setMessageId(messageId);
+    }
+
+    @Override
+    public boolean hasMessageId() {
+        return delegate.getMessageId() != null;
+    }
+
+    @Override
+    public long getMessageTimestamp() {
+        return delegate.getMessageTimestamp();
     }
 
     @Override

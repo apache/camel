@@ -84,7 +84,7 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
     // Properties
     // *****************************************
 
-    protected C setConfigurationProperties(C configuration, Map<String, Object> parameters) throws Exception {
+    protected C setConfigurationProperties(C configuration, Map<String, Object> parameters) {
         // Resolve config for named maps
         Map<String, Object> configs = PropertiesHelper.extractProperties(parameters, "resource.config.");
         for (Map.Entry<String, Object> entry : configs.entrySet()) {

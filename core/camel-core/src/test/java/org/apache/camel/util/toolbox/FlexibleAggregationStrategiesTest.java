@@ -44,8 +44,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the {@link FlexibleAggregationStrategy}.
- * 
- * @since 2.12
  */
 public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
@@ -169,13 +167,13 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
         template.sendBody("direct:start6", "AGGREGATE2");
         template.sendBody("direct:start6", "AGGREGATE3");
 
+        assertMockEndpointsSatisfied();
+
         ArrayList list = getMockEndpoint("mock:result6").getReceivedExchanges().get(0).getIn().getBody(ArrayList.class);
         assertEquals(3, list.size());
         for (Object object : list) {
             assertNull(object);
         }
-
-        assertMockEndpointsSatisfied();
     }
 
     @Test

@@ -184,7 +184,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
     }
 
     private void processResult(Object result, String rawJSON) throws Exception {
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = createExchange(false);
         exchange.getIn().setBody(result);
         if (rawJSON != null) {
             exchange.getIn().setHeader(FacebookConstants.RAW_JSON_HEADER, rawJSON);
@@ -197,6 +197,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
+            releaseExchange(exchange, false);
         }
     }
 
@@ -237,8 +238,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         if (this.sinceTime == null) {
             // first poll, set this to (current time - initial poll delay)
             final Date startTime = new Date(
-                    currentMillis
-                                            - TimeUnit.MILLISECONDS.convert(getInitialDelay(), getTimeUnit()));
+                    currentMillis - TimeUnit.MILLISECONDS.convert(getInitialDelay(), getTimeUnit()));
             this.sinceTime = dateFormat.format(startTime);
         } else if (this.untilTime != null) {
             // use the last 'until' time

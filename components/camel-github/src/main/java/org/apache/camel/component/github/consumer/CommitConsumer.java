@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.github.consumer;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Stack;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,11 +35,18 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
 
     private CommitService commitService;
+    private final String branchName;
+    private final String startingSha;
 
-    private List<String> commitHashes = new ArrayList<>();
+    // keep a chunk of the last hashes so we can filter out duplicates
+    private final Queue<String> commitHashes = new ArrayBlockingQueue<>(100);
+    private volatile String lastSha;
 
-    public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName) throws Exception {
+    public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName,
+                          String startingSha) throws Exception {
         super(endpoint, processor);
+        this.branchName = branchName;
+        this.startingSha = startingSha;
 
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_COMMIT_SERVICE);
@@ -48,30 +56,68 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         } else {
             commitService = new CommitService();
         }
-        initService(commitService);
+    }
 
-        LOG.info("GitHub CommitConsumer: Indexing current commits...");
-        List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
-        for (RepositoryCommit commit : commits) {
-            commitHashes.add(commit.getSha());
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        initService(commitService);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // ensure we start from clean
+        commitHashes.clear();
+        lastSha = null;
+
+        if (startingSha.equals("last")) {
+            LOG.info("GitHub CommitConsumer: Indexing current commits...");
+            List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
+            for (RepositoryCommit commit : commits) {
+                commitHashes.add(commit.getSha());
+                lastSha = commit.getSha();
+            }
+            LOG.info("GitHub CommitConsumer: Starting from last sha: {}", lastSha);
+        } else if (!startingSha.equals("beginning")) {
+            lastSha = startingSha;
+            LOG.info("GitHub CommitConsumer: Starting from sha: {}", lastSha);
+        } else {
+            LOG.info("GitHub CommitConsumer: Starting from beginning");
         }
     }
 
     @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        commitHashes.clear();
+        lastSha = null;
+    }
+
+    @Override
     protected int poll() throws Exception {
-        List<RepositoryCommit> commits = commitService.getCommits(getRepository());
+        List<RepositoryCommit> commits;
+        if (lastSha != null) {
+            commits = commitService.getCommits(getRepository(), lastSha, null);
+        } else {
+            commits = commitService.getCommits(getRepository());
+        }
+
         // In the end, we want tags oldest to newest.
         Stack<RepositoryCommit> newCommits = new Stack<>();
         for (RepositoryCommit commit : commits) {
             if (!commitHashes.contains(commit.getSha())) {
                 newCommits.push(commit);
                 commitHashes.add(commit.getSha());
+                lastSha = commit.getSha();
             }
         }
 
         while (!newCommits.empty()) {
             RepositoryCommit newCommit = newCommits.pop();
-            Exchange e = getEndpoint().createExchange();
+            Exchange e = createExchange(true);
             e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, newCommit.getAuthor().getName());
             e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_COMMITTER, newCommit.getCommitter().getName());
             e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_SHA, newCommit.getSha());

@@ -20,7 +20,7 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(125);
+        Set<String> props = new HashSet<>(126);
         props.add("disconnect");
         props.add("moveExistingFileStrategy");
         props.add("fileName");
@@ -118,6 +118,7 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("exclusiveReadLockStrategy");
         props.add("readLockCheckInterval");
         props.add("fileExist");
+        props.add("keyExchangeProtocols");
         props.add("localWorkDirectory");
         props.add("readLockIdempotentReleaseAsyncPoolSize");
         props.add("delete");

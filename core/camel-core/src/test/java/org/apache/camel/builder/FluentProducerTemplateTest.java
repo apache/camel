@@ -28,7 +28,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for FluentProducerTemplate
@@ -92,9 +95,23 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         FluentProducerTemplate on = DefaultFluentProducerTemplate.on(context);
-        on.withBody("Hello World");
-        on.toF("direct:%s", "in");
-        Object result = on.request();
+        Object result = on.withBody("Hello World").toF("direct:%s", "in").request();
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("Bye World", result);
+
+        assertSame(context, template.getCamelContext());
+    }
+
+    @Test
+    public void testWithDefaultEndpoint() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World");
+
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context, "direct:in");
+
+        Object result = template.withBody("Hello World").request();
 
         assertMockEndpointsSatisfied();
 
@@ -113,6 +130,24 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals("Bye World", result);
+
+        assertSame(context, template.getCamelContext());
+    }
+
+    @Test
+    public void testInTwice() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World", "Bye World");
+
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
+
+        Object result = template.withBody("Hello World").to("direct:in").request();
+        Object result2 = template.withBody("Hello World Again").to("direct:in").request();
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("Bye World", result);
+        assertEquals("Bye World", result2);
 
         assertSame(context, template.getCamelContext());
     }
@@ -201,6 +236,18 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertEquals("Forced exception by unit test", out.getException().getMessage());
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testExceptionUsingProcessorAndBody() throws Exception {
+        try {
+            DefaultFluentProducerTemplate.on(context)
+                    .withBody("World")
+                    .withProcessor(exchange -> exchange.getIn().setHeader("foo", 123)).to("direct:async").send();
+            fail();
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     @Test
@@ -374,6 +421,36 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testUseFourTimesSameThread() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:echo");
+        mock.expectedBodiesReceived("Camel", "Beer");
+        mock.message(0).header("foo").isEqualTo("!");
+        mock.message(1).header("foo").isNull();
+
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+        fluent.setDefaultEndpointUri("direct:red");
+        Object result = fluent.withBody("Camel").withHeader("foo", "!").to("direct:echo").request();
+        Object result2 = fluent.withBody("World").to("direct:hi").request();
+        Object result3 = fluent.withBody("Beer").to("direct:echo").request();
+        Object result4 = fluent.withBody("Wine").request();
+        assertEquals("CamelCamel!", result);
+        assertEquals("Hi World", result2);
+        assertEquals("BeerBeer", result3);
+        assertEquals("Red Wine", result4);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPerformance() throws Exception {
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+        for (int i = 0; i < 1000; i++) {
+            Object result = fluent.withBody("Camel").withHeader("foo", "" + i).to("direct:echo").request();
+            assertEquals("CamelCamel" + i, result);
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -401,6 +478,10 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                 from("direct:async").to("mock:async");
 
                 from("direct:echo").to("mock:echo").setBody().simple("${body}${body}${header.foo}");
+
+                from("direct:hi").setBody().simple("Hi ${body}");
+
+                from("direct:red").setBody().simple("Red ${body}");
 
             }
         };

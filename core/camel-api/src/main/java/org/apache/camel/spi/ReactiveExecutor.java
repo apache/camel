@@ -54,4 +54,14 @@ public interface ReactiveExecutor {
      */
     boolean executeFromQueue();
 
+    /**
+     * To enable statistics
+     */
+    void setStatisticsEnabled(boolean statisticsEnabled);
+
+    /**
+     * Whether statistics is enabled
+     */
+    boolean isStatisticsEnabled();
+
 }

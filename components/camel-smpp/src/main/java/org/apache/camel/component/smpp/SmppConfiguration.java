@@ -56,8 +56,8 @@ public class SmppConfiguration implements Cloneable {
     private byte alphabet = Alphabet.ALPHA_DEFAULT.value();
     @UriParam(label = "codec", defaultValue = "ISO-8859-1")
     private String encoding = "ISO-8859-1";
-    @UriParam(label = "advanced", defaultValue = "5000")
-    private Integer enquireLinkTimer = 5000;
+    @UriParam(label = "advanced", defaultValue = "60000")
+    private Integer enquireLinkTimer = 60000;
     @UriParam(label = "advanced", defaultValue = "10000")
     private Integer transactionTimer = 10000;
     @UriParam(label = "producer", enums = "0,1,2")
@@ -112,6 +112,12 @@ public class SmppConfiguration implements Cloneable {
     private SessionStateListener sessionStateListener;
     @UriParam(defaultValue = "ALLOW")
     private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
+    @UriParam(label = "advanced", defaultValue = "3")
+    private Integer pduProcessorDegree = 3;
+    @UriParam(label = "advanced", defaultValue = "100")
+    private Integer pduProcessorQueueCapacity = 100;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean singleDLR;
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -676,6 +682,40 @@ public class SmppConfiguration implements Cloneable {
         return proxyHeaders;
     }
 
+    public Integer getPduProcessorDegree() {
+        return pduProcessorDegree;
+    }
+
+    /**
+     * Sets the number of threads which can read PDU and process them in parallel.
+     */
+    public void setPduProcessorDegree(Integer pduProcessorDegree) {
+        this.pduProcessorDegree = pduProcessorDegree;
+    }
+
+    public Integer getPduProcessorQueueCapacity() {
+        return pduProcessorQueueCapacity;
+    }
+
+    /**
+     * Sets the capacity of the working queue for PDU processing.
+     */
+    public void setPduProcessorQueueCapacity(Integer pduProcessorQueueCapacity) {
+        this.pduProcessorQueueCapacity = pduProcessorQueueCapacity;
+    }
+
+    public boolean isSingleDLR() {
+        return singleDLR;
+    }
+
+    /**
+     * When true, the SMSC delivery receipt would be requested only for the last segment of a multi-segment (long)
+     * message. For short messages, with only 1 segment the behaviour is unchanged.
+     */
+    public void setSingleDLR(boolean singleDLR) {
+        this.singleDLR = singleDLR;
+    }
+
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL
@@ -689,7 +729,10 @@ public class SmppConfiguration implements Cloneable {
                + ", alphabet=" + alphabet
                + ", encoding=" + encoding
                + ", transactionTimer=" + transactionTimer
+               + ", pduProcessorQueueCapacity=" + pduProcessorQueueCapacity
+               + ", pduProcessorDegree=" + pduProcessorDegree
                + ", registeredDelivery=" + registeredDelivery
+               + ", singleDLR=" + singleDLR
                + ", serviceType=" + serviceType
                + ", sourceAddrTon=" + sourceAddrTon
                + ", destAddrTon=" + destAddrTon

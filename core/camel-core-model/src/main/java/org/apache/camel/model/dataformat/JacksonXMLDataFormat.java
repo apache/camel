@@ -37,18 +37,20 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String prettyPrint;
-    @XmlAttribute
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
-    @XmlAttribute
+    @XmlAttribute(name = "jsonView")
+    private String jsonViewTypeName;
+    @XmlTransient
     private Class<?> jsonView;
     @XmlAttribute
     private String include;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String allowJmsType;
-    @XmlAttribute
+    @XmlAttribute(name = "collectionType")
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;
@@ -123,6 +125,18 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    public String getJsonViewTypeName() {
+        return jsonViewTypeName;
+    }
+
+    /**
+     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you
+     * can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations
+     */
+    public void setJsonViewTypeName(String jsonViewTypeName) {
+        this.jsonViewTypeName = jsonViewTypeName;
     }
 
     public Class<?> getJsonView() {

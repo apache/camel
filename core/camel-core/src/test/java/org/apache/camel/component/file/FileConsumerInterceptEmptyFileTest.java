@@ -20,20 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for empty files
  */
 public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/exclude");
-        super.setUp();
-    }
 
     @Test
     public void testExcludeZeroLengthFiles() throws Exception {
@@ -49,11 +41,10 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
     }
 
     private void sendFiles() throws Exception {
-        String url = "file://target/data/exclude";
-        template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(url, "", Exchange.FILE_NAME, "empty1.txt");
-        template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(url, "", Exchange.FILE_NAME, "empty2.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(fileUri(), "", Exchange.FILE_NAME, "empty1.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "secret.txt");
+        template.sendBodyAndHeader(fileUri(), "", Exchange.FILE_NAME, "empty2.txt");
     }
 
     @Override
@@ -62,7 +53,8 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptFrom().when(simple("${file:length} == 0")).to("mock:skip").stop();
 
-                from("file://target/data/exclude/?initialDelay=10&delay=10").convertBodyTo(String.class).to("log:test")
+                from(fileUri("?initialDelay=10&delay=10"))
+                        .convertBodyTo(String.class).to("log:test")
                         .to("mock:result");
             }
         };

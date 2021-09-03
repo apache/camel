@@ -17,23 +17,19 @@
 package org.apache.camel.impl;
 
 import java.io.File;
-import java.nio.file.Files;
 
+import org.apache.camel.TestSupport;
 import org.apache.camel.impl.engine.FileStateRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.impl.engine.FileStateRepository.fileStateRepository;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileStateRepositoryTest {
-    private final File repositoryStore = new File("target/data/file-state-repository.dat");
+public class FileStateRepositoryTest extends TestSupport {
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        // Remove the repository file if needed
-        Files.deleteIfExists(repositoryStore.toPath());
-    }
+    private final File repositoryStore = testFile("file-state-repository.dat").toFile();
 
     @Test
     public void shouldPreventUsingDelimiterInKey() throws Exception {

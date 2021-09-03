@@ -69,7 +69,7 @@ public class HttpSendDynamicAwareRawTest extends BaseHttpTest {
             public void configure() throws Exception {
                 from("direct:moes")
                         .toD("http://localhost:" + localServer.getLocalPort()
-                             + "/moes?throwExceptionOnFailure=false&drink=${header.drink}&password=se+%ret");
+                             + "/moes?throwExceptionOnFailure=false&drink=${header.drink}&password=RAW(se+%ret)");
 
                 from("direct:joes")
                         .toD("http://localhost:" + localServer.getLocalPort()

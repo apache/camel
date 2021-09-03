@@ -1,8 +1,8 @@
 [[aws2-kinesis-component]]
-= AWS 2 Kinesis Component
+= AWS Kinesis Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws2-kinesis/src/main/docs/aws2-kinesis-component.adoc
-:docTitle: AWS 2 Kinesis
+:page-source: components/camel-aws/camel-aws2-kinesis/src/main/docs/aws2-kinesis-component.adoc
+:docTitle: AWS Kinesis
 :artifactId: camel-aws2-kinesis
 :description: Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
 :since: 3.2
@@ -10,7 +10,7 @@
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-kinesis.adoc[opts=optional]
 //Manually maintained attributes
-:group: AWS 2
+:group: AWS
 
 *Since Camel {since}*
 
@@ -25,14 +25,9 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon Kinesis. More information are available
 at https://aws.amazon.com/kinesis/[AWS Kinesis]
 
-[NOTE]
-====
-The AWS2 Kinesis component is not supported in OSGI
-====
 
 == URI Format
 
-[source,java]
 -----------------------------------
 aws2-kinesis://stream-name[?options]
 -----------------------------------
@@ -41,11 +36,47 @@ The stream needs to be created prior to it being used. +
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-== URI Options
 
+// component-configure options: START
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
-The AWS 2 Kinesis component supports 20 options, which are listed below.
+== Component Options
+
+
+The AWS Kinesis component supports 21 options, which are listed below.
 
 
 
@@ -62,6 +93,7 @@ The AWS 2 Kinesis component supports 20 options, which are listed below.
 | *region* (common) | The region in which Kinesis Firehose client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (common) | Set whether the Kinesis client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *iteratorType* (consumer) | Defines where in the Kinesis stream to start getting records. There are 6 enums and the value can be one of: AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, TRIM_HORIZON, LATEST, AT_TIMESTAMP, null | TRIM_HORIZON | ShardIteratorType
 | *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll | 1 | int
@@ -75,14 +107,10 @@ The AWS 2 Kinesis component supports 20 options, which are listed below.
 |===
 // component options: END
 
-
-
-
-
-
-
 // endpoint options: START
-The AWS 2 Kinesis endpoint is configured using URI syntax:
+== Endpoint Options
+
+The AWS Kinesis endpoint is configured using URI syntax:
 
 ----
 aws2-kinesis:streamName
@@ -100,7 +128,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (36 parameters):
+=== Query Parameters (37 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -115,6 +143,7 @@ with the following path and query parameters:
 | *region* (common) | The region in which Kinesis Firehose client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (common) | Set whether the Kinesis client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *iteratorType* (consumer) | Defines where in the Kinesis stream to start getting records. There are 6 enums and the value can be one of: AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, TRIM_HORIZON, LATEST, AT_TIMESTAMP, null | TRIM_HORIZON | ShardIteratorType
 | *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll | 1 | int
@@ -146,11 +175,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-
-
-
 Required Kinesis component options
 
 You have to provide the KinesisClient in the
@@ -166,6 +190,19 @@ batch and for instance let the Aggregator
 aggregate this number of messages.
 
 == Usage
+
+=== Static credentials vs Default Credential Provider
+
+You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+
+ - Java system properties - aws.accessKeyId and aws.secretKey
+ - Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
+ - Amazon EC2 Instance profile credentials. 
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
 === Message headers set by the Kinesis consumer
 
@@ -244,4 +281,4 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-include::camel-spring-boot::page$aws2-kinesis-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$aws2-kinesis-starter.adoc[]

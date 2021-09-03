@@ -144,7 +144,6 @@ throttling messages in the SMPP route before handing them to the SMSC.
 
 == URI format
 
-[source,java]
 --------------------------------------------
 smpp://[username@]hostname[:port][?options]
 smpps://[username@]hostname[:port][?options]
@@ -157,16 +156,47 @@ value `2775`. +
 If the protocol name is "smpps", camel-smpp with try to
 use SSLSocket to init a connection to the server.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
-== URI Options
+// component-configure options: START
+== Configuring Options
 
+Camel components are configured on two separate levels:
 
+- component level
+- endpoint level
 
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
-The SMPP component supports 38 options, which are listed below.
+== Component Options
+
+
+The SMPP component supports 41 options, which are listed below.
 
 
 
@@ -197,8 +227,11 @@ The SMPP component supports 38 options, which are listed below.
 | *typeOfNumber* (producer) | Defines the type of number (TON) to be used in the SME. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. There are 7 enums and the value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *configuration* (advanced) | To use the shared SmppConfiguration as configuration. |  | SmppConfiguration
-| *enquireLinkTimer* (advanced) | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 5000 | Integer
+| *enquireLinkTimer* (advanced) | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 60000 | Integer
+| *pduProcessorDegree* (advanced) | Sets the number of threads which can read PDU and process them in parallel. | 3 | Integer
+| *pduProcessorQueueCapacity* (advanced) | Sets the capacity of the working queue for PDU processing. | 100 | Integer
 | *sessionStateListener* (advanced) | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
+| *singleDLR* (advanced) | When true, the SMSC delivery receipt would be requested only for the last segment of a multi-segment (long) message. For short messages, with only 1 segment the behaviour is unchanged. | false | boolean
 | *transactionTimer* (advanced) | Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME). | 10000 | Integer
 | *alphabet* (codec) | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2 Alphabet. There are 3 enums and the value can be one of: 0, 4, 8 |  | byte
 | *dataCoding* (codec) | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2 (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990) |  | byte
@@ -214,12 +247,9 @@ The SMPP component supports 38 options, which are listed below.
 |===
 // component options: END
 
-
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The SMPP endpoint is configured using URI syntax:
 
 ----
@@ -239,7 +269,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (38 parameters):
+=== Query Parameters (41 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -269,8 +299,11 @@ with the following path and query parameters:
 | *sourceAddrNpi* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum). There are 10 enums and the value can be one of: 0, 1, 2, 3, 6, 8, 9, 10, 13, 18 |  | byte
 | *sourceAddrTon* (producer) | Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. There are 7 enums and the value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
 | *typeOfNumber* (producer) | Defines the type of number (TON) to be used in the SME. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. There are 7 enums and the value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
-| *enquireLinkTimer* (advanced) | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 5000 | Integer
+| *enquireLinkTimer* (advanced) | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 60000 | Integer
+| *pduProcessorDegree* (advanced) | Sets the number of threads which can read PDU and process them in parallel. | 3 | Integer
+| *pduProcessorQueueCapacity* (advanced) | Sets the capacity of the working queue for PDU processing. | 100 | Integer
 | *sessionStateListener* (advanced) | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
+| *singleDLR* (advanced) | When true, the SMSC delivery receipt would be requested only for the last segment of a multi-segment (long) message. For short messages, with only 1 segment the behaviour is unchanged. | false | boolean
 | *transactionTimer* (advanced) | Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME). | 10000 | Integer
 | *alphabet* (codec) | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2 Alphabet. There are 3 enums and the value can be one of: 0, 4, 8 |  | byte
 | *dataCoding* (codec) | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2 (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990) |  | byte
@@ -287,14 +320,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-You can have as many of these options as you like.
-
-[source,java]
-------------------------------------------------------------------------------------------------------------------
-smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer
-------------------------------------------------------------------------------------------------------------------
 
 == Producer Message Headers
 
@@ -336,6 +361,10 @@ settings above.
 |`CamelSmppRegisteredDelivery` |`Byte` |*only for SubmitSm, ReplaceSm, SubmitMulti and DataSm* Is used to
 request an SMSC delivery receipt and/or SME originated acknowledgements.
 Use the URI option `registeredDelivery` settings above.
+
+|`CamelSmppSingleDLR` | `Boolean` | *only for SubmitSm, SubmitMulti* Is used to
+request the SMSC delivery receipt only on the last segment of multi-segment (long) messages.
+Use the URI option `singleDLR` settings above.
 
 |`CamelSmppPriorityFlag` |`Byte` |*only for SubmitSm and SubmitMulti* Allows the originating SME to assign
 a priority level to the short message. Use the URI option `priorityFlag`
@@ -645,10 +674,10 @@ This component has log level *DEBUG*, which can be helpful in debugging
 problems. If you use log4j, you can add the following line to your
 configuration:
 
-[source,java]
+[source,properties]
 --------------------------------------------------
 log4j.logger.org.apache.camel.component.smpp=DEBUG
 --------------------------------------------------
 
 
-include::camel-spring-boot::page$smpp-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$smpp-starter.adoc[]

@@ -989,10 +989,8 @@ public class XPathBuilder extends ServiceSupport
             }
 
             // add to map
-            if (!map.containsKey(prefix)) {
-                map.put(prefix, new HashSet<String>());
-            }
-            map.get(prefix).add(namespaces.item(i).getNodeValue());
+            map.computeIfAbsent(prefix, k -> new HashSet<>())
+                    .add(namespaces.item(i).getNodeValue());
         }
 
         LOG.info("Namespaces discovered in message: {}.", map);
@@ -1371,7 +1369,7 @@ public class XPathBuilder extends ServiceSupport
                             LOG.info("Created Saxon XPathFactory: {}", xpathFactory);
                         }
                     }
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of " + SAXON_FACTORY_CLASS_NAME
                              + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
                     LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);

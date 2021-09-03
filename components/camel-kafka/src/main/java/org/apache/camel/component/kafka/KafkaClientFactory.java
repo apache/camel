@@ -41,4 +41,14 @@ public interface KafkaClientFactory {
      * @return            an instance of Kafka consumer.
      */
     KafkaConsumer getConsumer(Properties kafkaProps);
+
+    /**
+     * URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a subset of brokers
+     * or a VIP pointing to a subset of brokers.
+     * <p/>
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
+     *
+     * @param configuration the configuration
+     */
+    String getBrokers(KafkaConfiguration configuration);
 }

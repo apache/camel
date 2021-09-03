@@ -73,18 +73,6 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     }
 
     @Test
-    public void testRemoveFile() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:watchDelete");
-
-        Files.delete(testFiles.get(0));
-        Files.delete(testFiles.get(1));
-
-        mock.expectedMessageCount(2);
-        mock.setResultWaitTime(1000);
-        mock.assertIsSatisfied();
-    }
-
-    @Test
     public void testAntMatcher() throws Exception {
         MockEndpoint all = getMockEndpoint("mock:watchAll");
         MockEndpoint onlyTxtAnywhere = getMockEndpoint("mock:onlyTxtAnywhere");
@@ -120,11 +108,11 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     @Test
     public void createModifyReadBodyAsString() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watchAll");
+        mock.setExpectedCount(1);
+        mock.setResultWaitTime(1000);
 
         Files.write(testFiles.get(0), "Hello".getBytes(), StandardOpenOption.SYNC);
 
-        mock.setExpectedCount(1);
-        mock.setResultWaitTime(1000);
         mock.assertIsSatisfied();
         assertEquals("Hello", mock.getExchanges().get(0).getIn().getBody(String.class));
     }
@@ -132,14 +120,14 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     @Test
     public void testCreateBatch() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watchAll");
+        mock.expectedMessageCount(10);
+        mock.expectedMessagesMatches(exchange -> exchange.getIn()
+                .getHeader(FileWatchComponent.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
 
         for (int i = 0; i < 10; i++) {
             createFile(testPath(), i + "");
         }
 
-        mock.expectedMessageCount(10);
-        mock.expectedMessagesMatches(exchange -> exchange.getIn()
-                .getHeader(FileWatchComponent.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
         assertMockEndpointsSatisfied();
     }
 
@@ -168,9 +156,6 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
 
                 from("file-watch://" + testPath() + "?events=MODIFY")
                         .to("mock:watchModify");
-
-                from("file-watch://" + testPath() + "?events=DELETE")
-                        .to("mock:watchDelete");
 
                 from("file-watch://" + testPath() + "?events=DELETE,CREATE")
                         .to("mock:watchDeleteOrCreate");

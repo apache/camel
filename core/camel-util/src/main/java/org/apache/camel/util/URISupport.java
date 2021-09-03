@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
+
 /**
  * URI utilities.
  */
@@ -131,6 +133,20 @@ public final class URISupport {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Strips the query parameters from the uri
+     *
+     * @param  uri the uri
+     * @return     the uri without the query parameter
+     */
+    public static String stripQuery(String uri) {
+        int idx = uri.indexOf('?');
+        if (idx > -1) {
+            uri = uri.substring(0, idx);
+        }
+        return uri;
     }
 
     /**
@@ -352,7 +368,7 @@ public final class URISupport {
         if (query != null) {
             s = s + "?" + query;
         }
-        if ((!s.contains("#")) && (uri.getFragment() != null)) {
+        if (!s.contains("#") && uri.getFragment() != null) {
             s = s + "#" + uri.getFragment();
         }
 
@@ -477,7 +493,8 @@ public final class URISupport {
     private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode)
             throws UnsupportedEncodingException {
         if (encode) {
-            rc.append(URLEncoder.encode(key, CHARSET));
+            String encoded = URLEncoder.encode(key, CHARSET);
+            rc.append(encoded);
         } else {
             rc.append(key);
         }
@@ -494,7 +511,8 @@ public final class URISupport {
             rc.append(s);
         } else {
             if (encode) {
-                rc.append(URLEncoder.encode(value, CHARSET));
+                String encoded = URLEncoder.encode(value, CHARSET);
+                rc.append(encoded);
             } else {
                 rc.append(value);
             }
@@ -552,8 +570,12 @@ public final class URISupport {
      */
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
         // try to parse using the simpler and faster Camel URI parser
-        String[] parts = CamelURIParser.parseUri(uri);
+        String[] parts = CamelURIParser.fastParseUri(uri);
         if (parts != null) {
+            // we optimized specially if an empty array is returned
+            if (parts == URI_ALREADY_NORMALIZED) {
+                return uri;
+            }
             // use the faster and more simple normalizer
             return doFastNormalizeUri(parts);
         } else {

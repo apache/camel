@@ -87,8 +87,10 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             LOG.trace("Previous length: {}, new length: {}", length, newLength);
             LOG.trace("New older than threshold: {}", newOlderThan);
 
+            // CHECKSTYLE:OFF
             if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
                     || (minAge != 0 && newLastModified < newOlderThan))) {
+            // CHECKSTYLE:ON
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {

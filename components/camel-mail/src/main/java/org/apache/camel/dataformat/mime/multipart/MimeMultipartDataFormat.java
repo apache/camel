@@ -107,6 +107,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             writeBodyPart(bodyContent, part, contentType);
             mp.addBodyPart(part);
             if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
+                List<String> idsToRemove = new ArrayList<>();
                 for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects()
                         .entrySet()) {
                     String attachmentFilename = entry.getKey();
@@ -119,6 +120,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                     part.setHeader(CONTENT_TYPE, ct);
                     if (!contentType.match("text/*") && binaryContent) {
                         part.setHeader(CONTENT_TRANSFER_ENCODING, "binary");
+                    } else {
+                        setContentTransferEncoding(part, contentType);
                     }
                     // Set headers to the attachment
                     for (String headerName : attachment.getHeaderNames()) {
@@ -128,7 +131,10 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                         }
                     }
                     mp.addBodyPart(part);
-                    exchange.getMessage(AttachmentMessage.class).removeAttachment(attachmentFilename);
+                    idsToRemove.add(attachmentFilename);
+                }
+                for (String id : idsToRemove) {
+                    exchange.getMessage(AttachmentMessage.class).removeAttachment(id);
                 }
             }
             mm.setContent(mp);
@@ -156,7 +162,6 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                         headers.add(h.getName());
                     }
                 }
-                mm.saveChanges();
             }
             mm.writeTo(stream, headers.toArray(new String[0]));
         } else {
@@ -183,6 +188,10 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private void writeBodyPart(byte[] bodyContent, Part part, ContentType contentType) throws MessagingException {
         DataSource ds = new ByteArrayDataSource(bodyContent, contentType.toString());
         part.setDataHandler(new DataHandler(ds));
+        setContentTransferEncoding(part, contentType);
+    }
+
+    private void setContentTransferEncoding(Part part, ContentType contentType) throws MessagingException {
         part.setHeader(CONTENT_TYPE, contentType.toString());
         if (contentType.match("text/*")) {
             part.setHeader(CONTENT_TRANSFER_ENCODING, "8bit");

@@ -910,6 +910,49 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Decides whether an exception during declaration of exchanges or
+         * queues is recoverable or not. If the option is false, camel will
+         * throw an exception when starting the consumer, which will interrupt
+         * application startup (e.g. in the case when the exchange / queue is
+         * already declared in RabbitMQ and has incompatible configuration). If
+         * set to true, the consumer will try to reconnect periodically.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param recoverFromDeclareException the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointConsumerBuilder recoverFromDeclareException(
+                boolean recoverFromDeclareException) {
+            doSetProperty("recoverFromDeclareException", recoverFromDeclareException);
+            return this;
+        }
+        /**
+         * Decides whether an exception during declaration of exchanges or
+         * queues is recoverable or not. If the option is false, camel will
+         * throw an exception when starting the consumer, which will interrupt
+         * application startup (e.g. in the case when the exchange / queue is
+         * already declared in RabbitMQ and has incompatible configuration). If
+         * set to true, the consumer will try to reconnect periodically.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param recoverFromDeclareException the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointConsumerBuilder recoverFromDeclareException(
+                String recoverFromDeclareException) {
+            doSetProperty("recoverFromDeclareException", recoverFromDeclareException);
+            return this;
+        }
+        /**
          * This is used by the consumer to control rejection of the message.
          * When the consumer is complete processing the exchange, and if the
          * exchange failed, then the consumer is going to reject the message

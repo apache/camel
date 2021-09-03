@@ -73,7 +73,8 @@ public class ManagedZipkinSimpleRouteTest extends CamelTestSupport {
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=services,name=ZipkinTracer");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=services,name=ZipkinTracer");
         assertNotNull(on);
         assertTrue(mbeanServer.isRegistered(on));
 

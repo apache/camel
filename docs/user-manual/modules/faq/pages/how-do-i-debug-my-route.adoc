@@ -11,5 +11,5 @@ the route and examine historic message exchanges
 * xref:ROOT:debugger.adoc[Debug] from your unit test if you use the Camel
 `camel-test` component
 
-Some xref:ROOT:user-stories.adoc[third party tools] offers Apache Camel route
+Some link:/community/user-stories/[third party tools] offer Apache Camel route
 debugging.

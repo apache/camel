@@ -271,9 +271,11 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             // Remove this as it's an unwanted artifact of our Undertow predicate chain
             predicateContextParams.remove("remaining");
 
-            for (String paramName : predicateContextParams.keySet()) {
-                LOG.trace("REST Template Variable {}: {})", paramName, predicateContextParams.get(paramName));
-                headersMap.put(paramName, predicateContextParams.get(paramName));
+            for (Map.Entry<String, Object> paramEntry : predicateContextParams.entrySet()) {
+                String paramName = paramEntry.getKey();
+
+                LOG.trace("REST Template Variable {}: {})", paramName, paramEntry.getValue());
+                headersMap.put(paramName, paramEntry.getValue());
             }
         }
 
@@ -403,7 +405,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         int codeToUse = currentCode == null ? defaultCode : currentCode;
 
         if (codeToUse != 500) {
-            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+            if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
                 // no content 
                 codeToUse = currentCode == null ? 204 : currentCode;
             }

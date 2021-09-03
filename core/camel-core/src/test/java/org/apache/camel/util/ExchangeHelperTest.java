@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,19 +105,6 @@ public class ExchangeHelperTest extends ContextTestSupport {
             assertEquals("No bean could be found in the registry for: foo", e.getMessage());
             assertEquals("foo", e.getName());
         }
-    }
-
-    @Test
-    public void testGetExchangeById() throws Exception {
-        List<Exchange> list = new ArrayList<>();
-        Exchange e1 = context.getEndpoint("mock:foo").createExchange();
-        Exchange e2 = context.getEndpoint("mock:foo").createExchange();
-        list.add(e1);
-        list.add(e2);
-
-        assertNull(ExchangeHelper.getExchangeById(list, "unknown"));
-        assertEquals(e1, ExchangeHelper.getExchangeById(list, e1.getExchangeId()));
-        assertEquals(e2, ExchangeHelper.getExchangeById(list, e2.getExchangeId()));
     }
 
     @Test

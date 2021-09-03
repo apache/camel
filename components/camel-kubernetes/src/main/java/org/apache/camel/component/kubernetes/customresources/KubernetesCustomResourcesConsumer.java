@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -64,15 +65,11 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         LOG.debug("Stopping Kubernetes Custom Resources Consumer");
         if (executor != null) {
+            KubernetesHelper.close(customResourcesWatcher, customResourcesWatcher::getWatch);
+
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                if (customResourcesWatcher != null) {
-                    customResourcesWatcher.getWatch().close();
-                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
-                if (customResourcesWatcher != null) {
-                    customResourcesWatcher.getWatch().close();
-                }
                 executor.shutdownNow();
             }
         }
@@ -97,7 +94,7 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
 
                     @Override
                     public void eventReceived(Action action, String resource) {
-                        Exchange exchange = getEndpoint().createExchange();
+                        Exchange exchange = createExchange(false);
                         exchange.getIn().setBody(resource);
                         exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION, action);
                         exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_EVENT_TIMESTAMP,
@@ -106,6 +103,8 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
                             processor.process(exchange);
                         } catch (Exception e) {
                             getExceptionHandler().handleException("Error during processing", exchange, e);
+                        } finally {
+                            releaseExchange(exchange, false);
                         }
                     }
 
@@ -139,13 +138,12 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
             throw new IllegalArgumentException("one of more of the custom resource definition argument(s) are missing.");
         }
 
-        CustomResourceDefinitionContext cRDContext = new CustomResourceDefinitionContext.Builder()
+        return new CustomResourceDefinitionContext.Builder()
                 .withName(config.getCrdName())       // example: "githubsources.sources.knative.dev"
                 .withGroup(config.getCrdGroup())     // example: "sources.knative.dev"
                 .withScope(config.getCrdScope())     // example: "Namespaced"
                 .withVersion(config.getCrdVersion()) // example: "v1alpha1"
                 .withPlural(config.getCrdPlural())   // example: "githubsources"
                 .build();
-        return cRDContext;
     }
 }

@@ -16,31 +16,35 @@
  */
 package org.apache.camel.component.kubernetes;
 
-public interface KubernetesCategory {
+public final class KubernetesCategory {
 
-    String NAMESPACES = "namespaces";
+    public static final String NAMESPACES = "namespaces";
 
-    String SERVICES = "services";
+    public static final String SERVICES = "services";
 
-    String REPLICATION_CONTROLLERS = "replicationControllers";
+    public static final String REPLICATION_CONTROLLERS = "replicationControllers";
 
-    String PODS = "pods";
+    public static final String PODS = "pods";
 
-    String PERSISTENT_VOLUMES = "persistentVolumes";
+    public static final String PERSISTENT_VOLUMES = "persistentVolumes";
 
-    String PERSISTENT_VOLUMES_CLAIMS = "persistentVolumesClaims";
+    public static final String PERSISTENT_VOLUMES_CLAIMS = "persistentVolumesClaims";
 
-    String SECRETS = "secrets";
+    public static final String SECRETS = "secrets";
 
-    String RESOURCES_QUOTA = "resourcesQuota";
+    public static final String RESOURCES_QUOTA = "resourcesQuota";
 
-    String SERVICE_ACCOUNTS = "serviceAccounts";
+    public static final String SERVICE_ACCOUNTS = "serviceAccounts";
 
-    String NODES = "nodes";
+    public static final String NODES = "nodes";
 
-    String CONFIGMAPS = "configMaps";
+    public static final String CONFIGMAPS = "configMaps";
 
-    String BUILDS = "builds";
+    public static final String BUILDS = "builds";
 
-    String BUILD_CONFIGS = "buildConfigs";
+    public static final String BUILD_CONFIGS = "buildConfigs";
+
+    private KubernetesCategory() {
+
+    }
 }

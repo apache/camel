@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xchange</artifactId>
@@ -47,6 +47,11 @@
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-binance</artifactId>
             <version>${xchange-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${xchange-guava-version}</version>
         </dependency>
 
         <!-- test dependencies -->

@@ -88,12 +88,6 @@ public class RouteTemplateTest extends ContextTestSupport {
                 .add();
 
         TemplatedRouteBuilder.builder(context, "myTemplate")
-                .routeId("first")
-                .parameter("foo", "one")
-                .parameter("bar", "cheese")
-                .add();
-
-        TemplatedRouteBuilder.builder(context, "myTemplate")
                 .routeId("second")
                 .parameter("foo", "two")
                 .parameter("bar", "cake")

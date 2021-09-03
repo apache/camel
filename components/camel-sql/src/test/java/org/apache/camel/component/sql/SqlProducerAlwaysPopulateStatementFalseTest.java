@@ -49,7 +49,9 @@ public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSuppor
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.DERBY)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
 
         strategy = new DefaultSqlPrepareStatementStrategy() {
             @Override

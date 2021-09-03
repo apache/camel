@@ -16,16 +16,16 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory;
 import org.apache.camel.component.quartz.QuartzEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class QuartzTest extends ContextTestSupport {
+public class QuartzTest extends BaseEndpointDslTest {
 
     @Override
     public boolean isUseRouteBuilder() {

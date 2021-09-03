@@ -22,6 +22,7 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.Service;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.DelegatingConnectionFactory;
@@ -203,7 +204,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
             Constructor constructor = type.getConstructor(org.apache.activemq.ActiveMQConnectionFactory.class);
             return (ConnectionFactory) constructor.newInstance(connectionFactory);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to instantiate PooledConnectionFactory: " + e, e);
+            throw new RuntimeCamelException("Failed to instantiate PooledConnectionFactory: " + e, e);
         }
     }
 

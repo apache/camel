@@ -20,24 +20,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerPathWithAmpersandTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file&stuff");
-        super.setUp();
-    }
 
     @Test
     public void testPathWithAmpersand() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/data/file&stuff", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("file&stuff"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +39,7 @@ public class FileConsumerPathWithAmpersandTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file&stuff?delete=true&initialDelay=0&delay=10").convertBodyTo(String.class)
+                from(fileUri("file&stuff?delete=true&initialDelay=0&delay=10")).convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

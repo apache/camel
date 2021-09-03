@@ -30,11 +30,15 @@ import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_HEALTH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedHealthCheckTest extends ManagementTestSupport {
 
     @Override
@@ -53,18 +57,13 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
 
     @Test
     public void testHealthCheck() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=health,name=DefaultHealthCheck");
-        assertTrue(mbeanServer.isRegistered(on));
+        ObjectName on = getCamelObjectName(TYPE_HEALTH, "DefaultHealthCheck");
+        assertTrue(mbeanServer.isRegistered(on), "Object should be registered: " + on);
 
         Boolean up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
         assertTrue(up);
@@ -84,11 +83,6 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
 
     @Test
     public void testHealthCheckDisableById() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
@@ -102,8 +96,8 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         });
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=health,name=DefaultHealthCheck");
-        assertTrue(mbeanServer.isRegistered(on));
+        ObjectName on = getCamelObjectName(TYPE_HEALTH, "DefaultHealthCheck");
+        assertTrue(mbeanServer.isRegistered(on), "Object should be registered: " + on);
 
         Boolean up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
         assertFalse(up);

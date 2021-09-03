@@ -29,23 +29,60 @@ their `pom.xml` for this component.
 
 == URI format
 
-[source,text]
 ----------------------
 pulsar:[persistent|non-persistent]://tenant/namespace/topic
 ----------------------
 
-== Options
+// component-configure options: START
+== Configuring Options
 
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
-The Pulsar component supports 36 options, which are listed below.
+== Component Options
+
+
+The Pulsar component supports 41 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *authenticationClass* (common) | The Authentication FQCN to be used while creating the client from URI |  | String
+| *authenticationParams* (common) | The Authentication Parameters to be used while creating the client from URI |  | String
 | *configuration* (common) | Allows to pre-configure the Pulsar component with common options that the endpoints will reuse. |  | PulsarConfiguration
+| *serviceUrl* (common) | The Pulsar Service URL to point while creating the client from URI |  | String
 | *ackGroupTimeMillis* (consumer) | Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100 | 100 | long
 | *ackTimeoutMillis* (consumer) | Timeout for unacknowledged messages in milliseconds - defaults to 10000 | 10000 | long
 | *allowManualAcknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not acknowledged automatically after successful route completion. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean
@@ -55,8 +92,10 @@ The Pulsar component supports 36 options, which are listed below.
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
 | *deadLetterTopic* (consumer) | Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ |  | String
 | *maxRedeliverCount* (consumer) | Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created |  | Integer
+| *messageListener* (consumer) | Whether to use the messageListener interface, or to receive messages using a separate thread pool | true | boolean
 | *negativeAckRedeliveryDelay{zwsp}Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
+| *numberOfConsumerThreads* (consumer) | Number of threads to receive and handle messages when using a separate thread pool | 1 | int
 | *readCompacted* (consumer) | Enable compacted topic reading. | false | boolean
 | *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. There are 2 enums and the value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String
@@ -84,11 +123,9 @@ The Pulsar component supports 36 options, which are listed below.
 |===
 // component options: END
 
-
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Pulsar endpoint is configured using URI syntax:
 
 ----
@@ -110,12 +147,15 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (33 parameters):
+=== Query Parameters (38 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *authenticationClass* (common) | The Authentication FQCN to be used while creating the client from URI |  | String
+| *authenticationParams* (common) | The Authentication Parameters to be used while creating the client from URI |  | String
+| *serviceUrl* (common) | The Pulsar Service URL to point while creating the client from URI |  | String
 | *ackGroupTimeMillis* (consumer) | Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100 | 100 | long
 | *ackTimeoutMillis* (consumer) | Timeout for unacknowledged messages in milliseconds - defaults to 10000 | 10000 | long
 | *allowManualAcknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not acknowledged automatically after successful route completion. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean
@@ -125,8 +165,10 @@ with the following path and query parameters:
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
 | *deadLetterTopic* (consumer) | Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ |  | String
 | *maxRedeliverCount* (consumer) | Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created |  | Integer
+| *messageListener* (consumer) | Whether to use the messageListener interface, or to receive messages using a separate thread pool | true | boolean
 | *negativeAckRedeliveryDelay{zwsp}Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
+| *numberOfConsumerThreads* (consumer) | Number of threads to receive and handle messages when using a separate thread pool | 1 | int
 | *readCompacted* (consumer) | Enable compacted topic reading. | false | boolean
 | *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. There are 2 enums and the value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String
@@ -153,35 +195,4 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-// message-headers options: START
-=== Message headers evaluated by the Pulsar producer
-
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|===
-| Header | Type | Description
-| `CamelPulsarProducerMessageKey` | `String` | Sets the key on the message for the Pulsar routing policy
-| `CamelPulsarProducerMessageProperties` | `Map<String,String>` | The properties to set on the Pulsar message
-| `CamelPulsarProducerEventTime` | `long` | Sets the event time on the message
-|===
-
-=== Message headers set by the Pulsar consumer
-
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|===
-| Header | Type | Description
-| `properties` | `Map<String,String>` | The properties from the Pulsar message or the empty Map if unset on the Pulsar message
-| `producer_name` | `String` | The name of the producer that created the message
-| `sequence_id` | `long` | Sequence identifier of the Pulsar message
-| `publish_time` | `long` | Time the Pulsar message was published to the topic
-| `message_id` | `MessageId` | Unique identifier of the message
-| `event_time` | `long` | The event time associated with the message or 0 if unset on the Pulsar message
-| `key` | `String` | The key of the Pulsar message in String form or the empty string if unset on the Pulsar message
-| `key_bytes` | `byte[]` | The bytes in the key. If the key has been base64 encoded, it is decoded before being returned. Otherwise, if the key is a plain string, the UTF-8 encoded bytes of the string.
-| `topic_name` | `String` | The topic to which the message was published
-| `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
-|===
-// message-headers options: END
-
-include::camel-spring-boot::page$pulsar-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$pulsar-starter.adoc[]

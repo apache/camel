@@ -16,44 +16,44 @@
  */
 package org.apache.camel.component.pubnub;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class PubNubConfiguration {
+public class PubNubConfiguration implements Cloneable {
 
-    @UriPath()
+    @UriPath
     @Metadata(required = true)
     private String channel;
-
     @UriParam(label = "security", secret = true)
     private String publishKey;
-
     @UriParam(label = "security", secret = true)
     private String subscribeKey;
-
     @UriParam(label = "security", secret = true)
     private String secretKey;
-
     @UriParam(label = "security", secret = true)
     private String authKey;
-
     @UriParam(label = "security", secret = true)
     private String cipherKey;
-
     @UriParam(label = "security", defaultValue = "true")
     private boolean secure = true;
-
-    @UriParam()
+    @UriParam
     private String uuid;
-
     @UriParam(label = "producer", enums = "HERENOW,WHERENOW,GETSTATE,SETSTATE,GETHISTORY,PUBLISH,FIRE")
     private String operation;
-
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean withPresence;
+
+    public PubNubConfiguration copy() {
+        try {
+            return (PubNubConfiguration) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 
     /**
      * The publish key obtained from your PubNub account. Required when publishing messages.

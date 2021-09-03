@@ -106,40 +106,13 @@ from("activemq:queue:foo").policy(notsupported)
     .to("activemq:queue:bar");
 ----
 
-[[TransactionalClient-OSGiBlueprint]]
-== OSGi Blueprint
-
-If you are using
-xref:latest@manual:ROOT:using-osgi-blueprint-with-camel.adoc[OSGi Blueprint]
-then you most likely have to explicit declare a policy and
-refer to the policy from the transacted in the route.
-
-[source,xml]
-----
-<bean id="required" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
-    <property name="transactionManager" ref="jmsTransactionManager"/>
-    <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
-</bean>
-----
-
-And then refer to "required" from the route:
-
-[source,xml]
-----
-<route>
-    <from uri="activemq:queue:foo"/>
-    <transacted ref="required"/>
-    <to uri="activemq:queue:bar"/>
-</route>
-----
-
 [[TransactionalClient-DatabaseSample]]
 == Database Sample
 
 In this sample we want to ensure that two endpoints is under transaction
 control. These two endpoints inserts data into a database.
 The sample is in its full as a
-https://github.com/apache/camel/tree/master/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/TransactionalClientDataSourceMinimalConfigurationTest.java[unit test].
+https://github.com/apache/camel/tree/main/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/TransactionalClientDataSourceMinimalConfigurationTest.java[unit test].
 
 First of all we setup the usual spring stuff in its configuration file.
 Here we have defined a DataSource to the HSQLDB and a most
@@ -226,7 +199,7 @@ XML to setup the transaction manager.
 In this sample we want to listen for messages on a queue and process the
 messages with our business logic java code and send them along. Since
 it is based on a
-https://github.com/apache/camel/tree/master/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[unit test]
+https://github.com/apache/camel/tree/main/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[unit test]
 the destination is a mock endpoint.
 
 First we configure the standard Spring XML to declare a JMS connection
@@ -288,13 +261,10 @@ route as transacted using the *transacted* tag.
 === Transaction error handler
 
 When a route is marked as transacted using *transacted* Camel will
-automatic use the
-xref:latest@manual:ROOT:transactionerrorhandler.adoc[TransactionErrorHandler]
-as xref:latest@manual:ROOT:error-handler.adoc[Error Handler].
-It supports basically the same feature set as the
-xref:latest@manual:ROOT:defaulterrorhandler.adoc[DefaultErrorHandler],
-so you can for instance use
-xref:latest@manual:ROOT:exception-clause.adoc[Exception Clause]
+automatic use `TransactionErrorHandler` as the
+xref:latest@manual:ROOT:error-handler.adoc[Error Handler]. This error handler supports basically the same
+feature set as the xref:latest@manual:ROOT:defaulterrorhandler.adoc[DefaultErrorHandler],
+so you can for instance use xref:latest@manual:ROOT:exception-clause.adoc[Exception Clause]
 as well.
 
 [[TransactionalClient-IntegrationTestingwithSpring]]

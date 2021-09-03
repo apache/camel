@@ -28,6 +28,8 @@ import org.apache.camel.support.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
+
 /**
  * A polling consumer that reads messages from a chat using the Telegram bot API.
  */
@@ -68,7 +70,7 @@ public class TelegramConsumer extends ScheduledPollConsumer {
 
         List<Update> updates = updateResult.getUpdates();
 
-        if (updates.size() > 0) {
+        if (!updates.isEmpty()) {
             LOG.debug("Received {} updates from Telegram service", updates.size());
         } else {
             LOG.debug("No updates received from Telegram service");
@@ -87,7 +89,7 @@ public class TelegramConsumer extends ScheduledPollConsumer {
 
             LOG.debug("Received update from Telegram service: {}", update);
 
-            Exchange exchange = endpoint.createExchange(update);
+            Exchange exchange = createExchange(update);
             getProcessor().process(exchange);
         }
     }
@@ -99,4 +101,11 @@ public class TelegramConsumer extends ScheduledPollConsumer {
             LOG.debug("Next Telegram offset will be {}", this.offset);
         }
     }
+
+    private Exchange createExchange(Update update) {
+        Exchange exchange = createExchange(true);
+        populateExchange(exchange, update);
+        return exchange;
+    }
+
 }

@@ -171,11 +171,11 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
 
     @Test
     public void testWrongWSAddressingAction() throws Exception {
+        StreamSource source = new StreamSource(new StringReader(xmlBody));
+        final ActionCallback requestCallback = new ActionCallback("http://this-is-a-wrong-ws-addressing-action");
+
         assertThrows(WebServiceIOException.class, () -> {
-            StreamSource source = new StreamSource(new StringReader(xmlBody));
-            webServiceTemplate.sendSourceAndReceive(source, new ActionCallback("http://this-is-a-wrong-ws-addressing-action"),
-                    TestUtil.NOOP_SOURCE_EXTRACTOR);
-            resultEndpointAction.assertIsSatisfied();
+            webServiceTemplate.sendSourceAndReceive(source, requestCallback, TestUtil.NOOP_SOURCE_EXTRACTOR);
         });
     }
 

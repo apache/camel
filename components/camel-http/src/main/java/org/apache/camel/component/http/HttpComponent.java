@@ -42,6 +42,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -147,7 +148,43 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
               description = "The time for connection to live, the time unit is millisecond, the default value is always keep alive.")
     protected long connectionTimeToLive = -1;
     @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
-    private boolean useGlobalSslContextParameters;
+    protected boolean useGlobalSslContextParameters;
+    @Metadata(label = "producer", defaultValue = "8192",
+              description = "This threshold in bytes controls whether the response payload"
+                            + " should be stored in memory as a byte array or be streaming based. Set this to -1 to always use streaming mode.")
+    protected int responsePayloadStreamingThreshold = 8192;
+    @Metadata(label = "advanced", description = "Disables automatic redirect handling")
+    protected boolean redirectHandlingDisabled;
+    @Metadata(label = "advanced", description = "Disables automatic request recovery and re-execution")
+    protected boolean automaticRetriesDisabled;
+    @Metadata(label = "advanced", description = "Disables automatic content decompression")
+    protected boolean contentCompressionDisabled;
+    @Metadata(label = "advanced", description = "Disables state (cookie) management")
+    protected boolean cookieManagementDisabled;
+    @Metadata(label = "advanced", description = "Disables authentication scheme caching")
+    protected boolean authCachingDisabled;
+    @Metadata(label = "advanced", description = "Disables connection state tracking")
+    protected boolean connectionStateDisabled;
+    @Metadata(label = "advanced",
+              description = "Disables the default user agent set by this builder if none has been provided by the user")
+    protected boolean defaultUserAgentDisabled;
+    @Metadata(label = "producer",
+              defaultValue = "true",
+              description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
+                            + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
+    protected boolean copyHeaders = true;
+    @Metadata(label = "producer,advanced",
+              description = "Whether to skip mapping all the Camel headers as HTTP request headers."
+                            + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
+                            + " parsing overhead with many object allocations for the JVM garbage collector.")
+    protected boolean skipRequestHeaders;
+    @Metadata(label = "producer,advanced",
+              description = "Whether to skip mapping all the HTTP response headers to Camel headers."
+                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
+                            + " with many object allocations for the JVM garbage collector.")
+    protected boolean skipResponseHeaders;
+    @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
+    protected String userAgent;
 
     public HttpComponent() {
         this(HttpEndpoint.class);
@@ -204,8 +241,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureHttpProxy(
-            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure)
-            throws Exception {
+            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) {
         String proxyAuthScheme = getParameter(parameters, "proxyAuthScheme", String.class, getProxyAuthScheme());
         if (proxyAuthScheme == null) {
             // fallback and use either http or https depending on secure
@@ -324,6 +360,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         LOG.debug("Creating endpoint uri {}", endpointUriString);
         final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
+        endpoint.setCopyHeaders(copyHeaders);
+        endpoint.setSkipRequestHeaders(skipRequestHeaders);
+        endpoint.setSkipResponseHeaders(skipResponseHeaders);
+        endpoint.setUserAgent(userAgent);
 
         // configure the endpoint with the common configuration from the component
         if (getHttpConfiguration() != null) {
@@ -389,17 +429,18 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // need to check the parameters of maxTotalConnections and connectionsPerRoute
         final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
         final int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
+        final boolean useSystemProperties = CamelContextHelper.mandatoryConvertTo(this.getCamelContext(), boolean.class,
+                parameters.get("useSystemProperties"));
 
         final Registry<ConnectionSocketFactory> connectionRegistry
-                = createConnectionRegistry(hostnameVerifier, sslContextParameters);
+                = createConnectionRegistry(hostnameVerifier, sslContextParameters, useSystemProperties);
 
         return createConnectionManager(connectionRegistry, maxTotalConnections, connectionsPerRoute);
     }
 
     protected HttpClientBuilder createHttpClientBuilder(
             final String uri, final Map<String, Object> parameters,
-            final Map<String, Object> httpClientOptions)
-            throws Exception {
+            final Map<String, Object> httpClientOptions) {
         // http client can be configured from URI options
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         // allow the builder pattern
@@ -413,11 +454,34 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, httpClientOptions, null);
 
+        if (redirectHandlingDisabled) {
+            clientBuilder.disableRedirectHandling();
+        }
+        if (automaticRetriesDisabled) {
+            clientBuilder.disableRedirectHandling();
+        }
+        if (contentCompressionDisabled) {
+            clientBuilder.disableContentCompression();
+        }
+        if (cookieManagementDisabled) {
+            clientBuilder.disableCookieManagement();
+        }
+        if (authCachingDisabled) {
+            clientBuilder.disableAuthCaching();
+        }
+        if (connectionStateDisabled) {
+            clientBuilder.disableConnectionState();
+        }
+        if (defaultUserAgentDisabled) {
+            clientBuilder.disableDefaultUserAgent();
+        }
+
         return clientBuilder;
     }
 
     protected Registry<ConnectionSocketFactory> createConnectionRegistry(
-            HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
+            HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams,
+            boolean useSystemProperties)
             throws GeneralSecurityException, IOException {
         // create the default connection registry to use
         RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.<ConnectionSocketFactory> create();
@@ -426,7 +490,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             builder.register("https",
                     new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
         } else {
-            builder.register("https", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
+            builder.register("https", new SSLConnectionSocketFactory(
+                    useSystemProperties ? SSLContexts.createSystemDefault() : SSLContexts.createDefault(),
+                    x509HostnameVerifier));
         }
         return builder.build();
     }
@@ -454,7 +520,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (localConnectionsPerRoute > 0) {
             answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
         }
-        LOG.info("Created ClientConnectionManager {}", answer);
+        LOG.debug("Created ClientConnectionManager {}", answer);
 
         return answer;
     }
@@ -758,6 +824,102 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     public void setProxyAuthNtHost(String proxyAuthNtHost) {
         this.proxyAuthNtHost = proxyAuthNtHost;
+    }
+
+    public int getResponsePayloadStreamingThreshold() {
+        return responsePayloadStreamingThreshold;
+    }
+
+    public void setResponsePayloadStreamingThreshold(int responsePayloadStreamingThreshold) {
+        this.responsePayloadStreamingThreshold = responsePayloadStreamingThreshold;
+    }
+
+    public boolean isRedirectHandlingDisabled() {
+        return redirectHandlingDisabled;
+    }
+
+    public void setRedirectHandlingDisabled(boolean redirectHandlingDisabled) {
+        this.redirectHandlingDisabled = redirectHandlingDisabled;
+    }
+
+    public boolean isAutomaticRetriesDisabled() {
+        return automaticRetriesDisabled;
+    }
+
+    public void setAutomaticRetriesDisabled(boolean automaticRetriesDisabled) {
+        this.automaticRetriesDisabled = automaticRetriesDisabled;
+    }
+
+    public boolean isContentCompressionDisabled() {
+        return contentCompressionDisabled;
+    }
+
+    public void setContentCompressionDisabled(boolean contentCompressionDisabled) {
+        this.contentCompressionDisabled = contentCompressionDisabled;
+    }
+
+    public boolean isCookieManagementDisabled() {
+        return cookieManagementDisabled;
+    }
+
+    public void setCookieManagementDisabled(boolean cookieManagementDisabled) {
+        this.cookieManagementDisabled = cookieManagementDisabled;
+    }
+
+    public boolean isAuthCachingDisabled() {
+        return authCachingDisabled;
+    }
+
+    public void setAuthCachingDisabled(boolean authCachingDisabled) {
+        this.authCachingDisabled = authCachingDisabled;
+    }
+
+    public boolean isConnectionStateDisabled() {
+        return connectionStateDisabled;
+    }
+
+    public void setConnectionStateDisabled(boolean connectionStateDisabled) {
+        this.connectionStateDisabled = connectionStateDisabled;
+    }
+
+    public boolean isDefaultUserAgentDisabled() {
+        return defaultUserAgentDisabled;
+    }
+
+    public void setDefaultUserAgentDisabled(boolean defaultUserAgentDisabled) {
+        this.defaultUserAgentDisabled = defaultUserAgentDisabled;
+    }
+
+    public boolean isCopyHeaders() {
+        return copyHeaders;
+    }
+
+    public void setCopyHeaders(boolean copyHeaders) {
+        this.copyHeaders = copyHeaders;
+    }
+
+    public boolean isSkipRequestHeaders() {
+        return skipRequestHeaders;
+    }
+
+    public void setSkipRequestHeaders(boolean skipRequestHeaders) {
+        this.skipRequestHeaders = skipRequestHeaders;
+    }
+
+    public boolean isSkipResponseHeaders() {
+        return skipResponseHeaders;
+    }
+
+    public void setSkipResponseHeaders(boolean skipResponseHeaders) {
+        this.skipResponseHeaders = skipResponseHeaders;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     @Override

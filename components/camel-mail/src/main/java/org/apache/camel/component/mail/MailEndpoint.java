@@ -97,7 +97,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     /**
      * Creates a producer using the given sender
      */
-    public Producer createProducer(JavaMailSender sender) throws Exception {
+    public Producer createProducer(JavaMailSender sender) {
         return new MailProducer(this, sender);
     }
 
@@ -139,7 +139,8 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     public MailBinding getBinding() {
         if (binding == null) {
             boolean decode = getConfiguration() != null && getConfiguration().isDecodeFilename();
-            binding = new MailBinding(headerFilterStrategy, contentTypeResolver, decode);
+            boolean mapMailMessage = getConfiguration() != null && getConfiguration().isMapMailMessage();
+            binding = new MailBinding(headerFilterStrategy, contentTypeResolver, decode, mapMailMessage);
         }
         return binding;
     }

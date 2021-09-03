@@ -16,7 +16,9 @@
  */
 package org.apache.camel;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.naming.Context;
 
@@ -113,9 +115,18 @@ public abstract class ContextTestSupport extends TestSupport {
 
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
+            // add configuration before routes
             for (RouteBuilder builder : builders) {
-                log.debug("Using created route builder: {}", builder);
-                context.addRoutes(builder);
+                if (builder instanceof RouteConfigurationsBuilder) {
+                    log.debug("Using created route configuration: {}", builder);
+                    context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+                }
+            }
+            for (RouteBuilder builder : builders) {
+                if (!(builder instanceof RouteConfigurationsBuilder)) {
+                    log.debug("Using created route builder: {}", builder);
+                    context.addRoutes(builder);
+                }
             }
         } else {
             log.debug("isUseRouteBuilder() is false");
@@ -211,6 +222,11 @@ public abstract class ContextTestSupport extends TestSupport {
 
     protected Context createJndiContext() throws Exception {
         return JndiTest.createInitialContext();
+    }
+
+    protected List<Processor> getProcessors(String pattern) {
+        return context.getRoutes().stream()
+                .flatMap(r -> r.filter(pattern).stream()).collect(Collectors.toList());
     }
 
     /**

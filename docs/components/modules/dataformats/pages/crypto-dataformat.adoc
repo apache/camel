@@ -283,4 +283,4 @@ need to add the following dependency to your pom.
 ----------------------------------------------------------
 
 
-include::camel-spring-boot::page$crypto-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$crypto-starter.adoc[]

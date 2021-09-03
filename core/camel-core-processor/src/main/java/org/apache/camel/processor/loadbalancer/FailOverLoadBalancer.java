@@ -156,7 +156,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     @Override
     public boolean isRunAllowed() {
         // determine if we can still run, or the camel context is forcing a shutdown
-        boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
+        boolean forceShutdown = camelContext.getShutdownStrategy().isForceShutdown();
         if (forceShutdown) {
             LOG.trace("Run not allowed as ShutdownStrategy is forcing shutting down");
         }

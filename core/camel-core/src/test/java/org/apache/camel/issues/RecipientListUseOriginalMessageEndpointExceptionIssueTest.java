@@ -20,21 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  *
  */
 public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/inbox");
-        deleteDirectory("target/data/outbox");
-        super.setUp();
-    }
 
     @Test
     public void testRecipientListUseOriginalMessageIssue() throws Exception {
@@ -45,9 +36,11 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
             }
         });
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:error").expectedFileExists("target/data/outbox/hello.txt", "A");
+        getMockEndpoint("mock:error").expectedFileExists(
+                testFile("outbox/hello.txt"), "A");
 
-        template.sendBodyAndHeader("file:target/data/inbox", "A", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("inbox"), "A",
+                Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,10 +50,11 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).handled(true).useOriginalMessage().to("file://target/data/outbox")
+                onException(Exception.class).handled(true).useOriginalMessage().to(fileUri("outbox"))
                         .to("mock:error");
 
-                from("file://target/data/inbox?initialDelay=0&delay=10").transform(constant("B"))
+                from(fileUri("inbox?initialDelay=0&delay=10"))
+                        .transform(constant("B"))
                         .setHeader("path", constant("mock:throwException"))
                         // must enable share uow to let the onException use
                         // the original message from the route input

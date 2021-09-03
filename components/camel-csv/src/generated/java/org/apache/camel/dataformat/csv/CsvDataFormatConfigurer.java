@@ -55,6 +55,8 @@ public class CsvDataFormatConfigurer extends PropertyConfigurerSupport implement
         case "ignoreHeaderCase": dataformat.setIgnoreHeaderCase(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "trailingdelimiter":
         case "trailingDelimiter": dataformat.setTrailingDelimiter(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "captureheaderrecord":
+        case "captureHeaderRecord": dataformat.setCaptureHeaderRecord(property(camelContext, boolean.class, value)); return true;
         case "lazyload":
         case "lazyLoad": dataformat.setLazyLoad(property(camelContext, boolean.class, value)); return true;
         case "usemaps":

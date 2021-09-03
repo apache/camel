@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
@@ -38,9 +39,9 @@ public class CombinedServiceFilter implements ServiceFilter {
     }
 
     @Override
-    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
+    public List<ServiceDefinition> apply(Exchange exchange, List<ServiceDefinition> services) {
         for (int i = 0; i < delegatesSize; i++) {
-            services = delegates.get(i).apply(services);
+            services = delegates.get(i).apply(exchange, services);
         }
 
         return services;

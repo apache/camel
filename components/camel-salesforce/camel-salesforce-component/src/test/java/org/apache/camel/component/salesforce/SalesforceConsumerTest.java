@@ -25,10 +25,12 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.salesforce.api.dto.PlatformEvent;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.ExchangeFactory;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.common.HashMapMessage;
@@ -82,9 +84,11 @@ public class SalesforceConsumerTest {
 
     SalesforceEndpointConfig configuration = new SalesforceEndpointConfig();
     SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class);
-    Exchange exchange = mock(Exchange.class);
+    ExtendedExchange exchange = mock(ExtendedExchange.class);
     org.apache.camel.Message in = mock(org.apache.camel.Message.class);
     AsyncProcessor processor = mock(AsyncProcessor.class);
+    ExtendedCamelContext context = mock(ExtendedCamelContext.class);
+    ExchangeFactory exchangeFactory = mock(ExchangeFactory.class);
     Message pushTopicMessage;
 
     @Mock
@@ -99,7 +103,12 @@ public class SalesforceConsumerTest {
     @BeforeEach
     public void setupMocks() {
         when(endpoint.getConfiguration()).thenReturn(configuration);
-        when(endpoint.createExchange()).thenReturn(exchange);
+        when(endpoint.getCamelContext()).thenReturn(context);
+        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
+        when(context.getExchangeFactory()).thenReturn(exchangeFactory);
+        when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
+        when(exchangeFactory.create(endpoint, true)).thenReturn(exchange);
+        when(exchange.adapt(ExtendedExchange.class)).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         final SalesforceComponent component = mock(SalesforceComponent.class);
         when(endpoint.getComponent()).thenReturn(component);

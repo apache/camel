@@ -72,11 +72,6 @@ public class FacebookMethodsTypeHelperTest {
     }
 
     @Test
-    public void testFilterMethods() throws Exception {
-        // TODO
-    }
-
-    @Test
     public void testGetArguments() throws Exception {
         final Class<?>[] interfaces = Facebook.class.getInterfaces();
         for (Class<?> clazz : interfaces) {

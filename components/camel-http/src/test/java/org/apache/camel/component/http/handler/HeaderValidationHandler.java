@@ -17,6 +17,7 @@
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,13 +30,26 @@ import org.apache.http.protocol.HttpContext;
 
 public class HeaderValidationHandler extends BasicValidationHandler {
 
+    // Map of headers and values that are expected to be present
+    // in HttpRequest.
     protected Map<String, String> expectedHeaders;
+    // List of headers that are expected to be absent from HttpRequest
+    // (e.g. for testing filtering).
+    protected List<String> absentHeaders;
 
     public HeaderValidationHandler(String expectedMethod, String expectedQuery,
                                    Object expectedContent, String responseContent,
                                    Map<String, String> expectedHeaders) {
         super(expectedMethod, expectedQuery, expectedContent, responseContent);
         this.expectedHeaders = expectedHeaders;
+    }
+
+    public HeaderValidationHandler(String expectedMethod, String expectedQuery,
+                                   Object expectedContent, String responseContent,
+                                   Map<String, String> expectedHeaders,
+                                   List<String> absentHeaders) {
+        this(expectedMethod, expectedQuery, expectedContent, responseContent, expectedHeaders);
+        this.absentHeaders = absentHeaders;
     }
 
     @Override
@@ -57,6 +71,15 @@ public class HeaderValidationHandler extends BasicValidationHandler {
                 }
 
                 if (!headerExist) {
+                    response.setStatusCode(HttpStatus.SC_EXPECTATION_FAILED);
+                    return;
+                }
+            }
+        }
+
+        if (absentHeaders != null) {
+            for (String header : absentHeaders) {
+                if (request.getHeaders(header).length > 0) {
                     response.setStatusCode(HttpStatus.SC_EXPECTATION_FAILED);
                     return;
                 }

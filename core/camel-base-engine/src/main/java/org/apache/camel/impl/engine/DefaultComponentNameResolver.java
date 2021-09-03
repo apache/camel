@@ -18,11 +18,13 @@ package org.apache.camel.impl.engine;
 
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ComponentNameResolver;
+import org.apache.camel.spi.Resource;
 
 public class DefaultComponentNameResolver implements ComponentNameResolver {
 
@@ -30,17 +32,17 @@ public class DefaultComponentNameResolver implements ComponentNameResolver {
 
     @Override
     public Set<String> resolveNames(CamelContext camelContext) {
-        // remove leading path to only keep name
-        Set<String> sorted = new TreeSet<>();
-
         try {
-            Set<String> locations = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver()
-                    .findResourceNames(RESOURCE_PATH);
-            locations.forEach(l -> sorted.add(l.substring(l.lastIndexOf('/') + 1)));
+            return camelContext.adapt(ExtendedCamelContext.class)
+                    .getPackageScanResourceResolver()
+                    .findResources(RESOURCE_PATH)
+                    .stream()
+                    .map(Resource::getLocation)
+                    // remove leading path to only keep name
+                    .map(l -> l.substring(l.lastIndexOf('/') + 1))
+                    .collect(Collectors.toCollection(TreeSet::new));
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
-
-        return sorted;
     }
 }

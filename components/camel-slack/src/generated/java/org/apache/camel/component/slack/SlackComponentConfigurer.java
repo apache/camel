@@ -27,6 +27,7 @@ public class SlackComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         case "webhookurl":
         case "webhookUrl": target.setWebhookUrl(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -42,6 +43,7 @@ public class SlackComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "token": return java.lang.String.class;
         case "webhookurl":
         case "webhookUrl": return java.lang.String.class;
         default: return null;
@@ -58,6 +60,7 @@ public class SlackComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "token": return target.getToken();
         case "webhookurl":
         case "webhookUrl": return target.getWebhookUrl();
         default: return null;

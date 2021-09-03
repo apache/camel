@@ -40,8 +40,8 @@ public class ServletEndpointUriFactory extends org.apache.camel.support.componen
         props.add("disableStreamCache");
         props.add("headerFilterStrategy");
         props.add("transferException");
-        props.add("optionsEnabled");
         props.add("mapHttpMessageHeaders");
+        props.add("optionsEnabled");
         props.add("traceEnabled");
         props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

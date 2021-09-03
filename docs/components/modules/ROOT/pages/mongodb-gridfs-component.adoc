@@ -33,10 +33,45 @@ for this component:
 mongodb-gridfs:connectionBean?database=databaseName&bucket=bucketName[&moreOptions...]
 ------------------------------------------------------------------------------
 
-== MongoDB GridFS options
+// component-configure options: START
+== Configuring Options
 
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
+
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
+
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The MongoDB GridFS component supports 3 options, which are listed below.
 
 
@@ -50,10 +85,9 @@ The MongoDB GridFS component supports 3 options, which are listed below.
 |===
 // component options: END
 
-
-
-
 // endpoint options: START
+== Endpoint Options
+
 The MongoDB GridFS endpoint is configured using URI syntax:
 
 ----
@@ -98,8 +132,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
 == Configuration of database in Spring XML
 
 The following Spring XML creates a bean defining the connection to a
@@ -133,8 +165,6 @@ xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
   <to uri="direct:result" />
 </route>
 ----------------------------------------------------------------------------------
-
- 
 
 == GridFS operations - producer endpoint
 
@@ -173,9 +203,7 @@ filename1.txt   1252314321
 filename2.txt   2897651254
 ----------------------------------------------------------------------------------
 
- 
-
-=== *findOne*
+=== findOne
 
 Finds a file in the GridFS system and sets the body to an InputStream of
 the content. Also provides the metadata has headers. It uses
@@ -188,8 +216,6 @@ Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 InputStream result = template.requestBodyAndHeaders("direct:findOne", "irrelevantBody", headers);
 -------------------------------------------------------------------------------------------------
-
- 
 
 === create
 
@@ -219,4 +245,4 @@ template.requestBodyAndHeaders("direct:remove", "", headers);
 ------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$mongodb-gridfs-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$mongodb-gridfs-starter.adoc[]

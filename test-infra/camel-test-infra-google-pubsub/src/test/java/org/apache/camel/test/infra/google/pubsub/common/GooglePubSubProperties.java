@@ -18,9 +18,12 @@
 package org.apache.camel.test.infra.google.pubsub.common;
 
 public final class GooglePubSubProperties {
-    public static final String CONTAINER_NAME = "google.pubsub.container";
     public static final String PROJECT_ID = "google.pubsub.project.id";
     public static final String SERVICE_ADDRESS = "google.pubsub.service.address";
+
+    public static final String PUBSUB_CONTAINER = "google.pubsub.container";
+    @Deprecated
+    public static final String CONTAINER_NAME = PUBSUB_CONTAINER;
 
     private GooglePubSubProperties() {
 

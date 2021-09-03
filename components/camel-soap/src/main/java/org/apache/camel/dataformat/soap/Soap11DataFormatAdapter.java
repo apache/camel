@@ -33,6 +33,7 @@ import javax.xml.ws.WebFault;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Detail;
@@ -69,7 +70,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
         Body body = objectFactory.createBody();
         Header header = objectFactory.createHeader();
 
-        Throwable exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        Throwable exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
         if (exception == null) {
             exception = exchange.getIn().getHeader(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         }

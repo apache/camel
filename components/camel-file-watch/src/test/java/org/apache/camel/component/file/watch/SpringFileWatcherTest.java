@@ -46,29 +46,32 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
 
     @Test
     public void testDefaultConfig() throws Exception {
-        Files.write(springTestFile.toPath(), "modification".getBytes(), StandardOpenOption.SYNC);
-        // Adding few millis to avoid fleaky tests
-        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file could be done before hashing is done
-        Thread.sleep(50);
-        Files.write(springTestFile.toPath(), "modification 2".getBytes(), StandardOpenOption.SYNC);
         MockEndpoint mock = getMockEndpoint("mock:springTest");
         mock.setExpectedCount(2); // two MODIFY events
         mock.setResultWaitTime(1000);
+
+        Files.write(springTestFile.toPath(), "modification".getBytes(), StandardOpenOption.SYNC);
+        // Adding few millis to avoid flaky tests
+        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file could be done before hashing is done
+        Thread.sleep(50);
+        Files.write(springTestFile.toPath(), "modification 2".getBytes(), StandardOpenOption.SYNC);
+
         mock.assertIsSatisfied();
 
     }
 
     @Test
     public void testCustomHasher() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:springTestCustomHasher");
+        mock.setExpectedCount(1); // We passed dummy TestHasher which returns constant hashcode. This should cause, that second MODIFY event is discarded
+        mock.setResultWaitTime(1000);
+
         Files.write(springTestCustomHasherFile.toPath(), "first modification".getBytes(), StandardOpenOption.SYNC);
-        // Adding few millis to avoid fleaky tests
+        // Adding few millis to avoid flaky tests
         // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file could be done before hashing is done
         Thread.sleep(50);
         Files.write(springTestCustomHasherFile.toPath(), "second modification".getBytes(), StandardOpenOption.SYNC);
 
-        MockEndpoint mock = getMockEndpoint("mock:springTestCustomHasher");
-        mock.setExpectedCount(1); // We passed dummy TestHasher which returns constant hashcode. This should cause, that second MODIFY event is discarded
-        mock.setResultWaitTime(1000);
         mock.assertIsSatisfied();
     }
 

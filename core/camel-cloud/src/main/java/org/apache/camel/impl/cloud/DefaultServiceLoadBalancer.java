@@ -21,6 +21,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceChooserAware;
 import org.apache.camel.cloud.ServiceDefinition;
@@ -111,15 +112,13 @@ public class DefaultServiceLoadBalancer
                 serviceFilter.getClass(),
                 serviceChooser.getClass());
 
-        ServiceHelper.startService(serviceChooser);
-        ServiceHelper.startService(serviceDiscovery);
+        ServiceHelper.startService(serviceChooser, serviceDiscovery);
     }
 
     @Override
     protected void doStop() throws Exception {
         // Stop services if needed
-        ServiceHelper.stopService(serviceDiscovery);
-        ServiceHelper.stopService(serviceChooser);
+        ServiceHelper.stopService(serviceDiscovery, serviceChooser);
     }
 
     // *************************************
@@ -127,7 +126,7 @@ public class DefaultServiceLoadBalancer
     // *************************************
 
     @Override
-    public <T> T process(String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception {
+    public <T> T process(Exchange exchange, String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception {
         ServiceDefinition service;
 
         List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
@@ -135,7 +134,7 @@ public class DefaultServiceLoadBalancer
             throw new RejectedExecutionException("No active services with name " + serviceName);
         } else {
             // filter services
-            services = serviceFilter.apply(services);
+            services = serviceFilter.apply(exchange, services);
             // let the client service chooser find which server to use
             service = services.isEmpty() ? null : services.size() > 1 ? serviceChooser.choose(services) : services.get(0);
             if (service == null) {

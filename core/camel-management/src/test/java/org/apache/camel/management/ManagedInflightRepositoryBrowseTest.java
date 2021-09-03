@@ -22,19 +22,18 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedInflightRepositoryBrowseTest extends ManagementTestSupport {
 
     @Test
     public void testInflightRepository() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
@@ -53,8 +52,7 @@ public class ManagedInflightRepositoryBrowseTest extends ManagementTestSupport {
                         .to("mock:a")
                         .process(exchange -> {
                             MBeanServer mbeanServer = getMBeanServer();
-                            ObjectName name = ObjectName.getInstance(
-                                    "org.apache.camel:context=camel-1,type=services,name=DefaultInflightRepository");
+                            ObjectName name = getCamelObjectName(TYPE_SERVICE, "DefaultInflightRepository");
 
                             Integer size = (Integer) mbeanServer.getAttribute(name, "Size");
                             assertEquals(1, size.intValue());

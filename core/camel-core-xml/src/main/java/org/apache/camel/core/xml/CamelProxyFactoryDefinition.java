@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "proxy")
+@Deprecated
 public class CamelProxyFactoryDefinition extends IdentifiedType {
 
     @XmlAttribute

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -67,13 +68,17 @@ public final class HttpHelper {
 
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         if (contentType != null) {
-            String charset = getCharsetFromContentType(contentType);
+            String charset = IOHelper.getCharsetNameFromContentType(contentType);
             if (charset != null) {
-                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             }
         }
     }
 
+    /**
+     * @deprecated use {@link IOHelper#getCharsetNameFromContentType(String)}
+     */
+    @Deprecated
     public static String getCharsetFromContentType(String contentType) {
         if (contentType != null) {
             // find the charset and set it to the Exchange
@@ -124,7 +129,7 @@ public final class HttpHelper {
      * This implementation supports HTTP multi value parameters which is based on the syntax of
      * <tt>[value1, value2, value3]</tt> by returning a {@link List} containing the values.
      * <p/>
-     * If the value is not a HTTP mulit value the value is returned as is.
+     * If the value is not a HTTP multi value the value is returned as is.
      *
      * @param  value the parameter value
      * @return       the extracted parameter value, see more details in javadoc.

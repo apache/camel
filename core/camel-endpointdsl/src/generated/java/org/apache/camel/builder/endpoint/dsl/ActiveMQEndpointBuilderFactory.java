@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
@@ -1107,6 +1108,54 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Destination Options are a way to provide extended configuration
+         * options to a JMS consumer without having to extend the JMS API. The
+         * options are encoded using URL query syntax in the destination name
+         * that the consumer is created on. See more details at
+         * https://activemq.apache.org/destination-options.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * destinationOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointConsumerBuilder destinationOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("destinationOptions", "destination." + key, value);
+            return this;
+        }
+        /**
+         * Destination Options are a way to provide extended configuration
+         * options to a JMS consumer without having to extend the JMS API. The
+         * options are encoded using URL query syntax in the destination name
+         * that the consumer is created on. See more details at
+         * https://activemq.apache.org/destination-options.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * destinationOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointConsumerBuilder destinationOptions(
+                Map values) {
+            doSetMultiValueProperties("destinationOptions", "destination.", values);
+            return this;
+        }
+        /**
          * Enables eager loading of JMS properties and payload as soon as a
          * message is loaded which generally is inefficient as the JMS
          * properties may not be required but sometimes can catch early any
@@ -1386,11 +1435,13 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -1402,12 +1453,14 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -2328,9 +2381,9 @@ public interface ActiveMQEndpointBuilderFactory {
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
          * a regular payload. Use this with caution as the data is using Java
-         * Object serialization and requires the received to be able to
+         * Object serialization and requires the receiver to be able to
          * deserialize the data at Class level, which forces a strong coupling
-         * between the producers and consumer having to use compatible Camel
+         * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2355,9 +2408,9 @@ public interface ActiveMQEndpointBuilderFactory {
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
          * a regular payload. Use this with caution as the data is using Java
-         * Object serialization and requires the received to be able to
+         * Object serialization and requires the receiver to be able to
          * deserialize the data at Class level, which forces a strong coupling
-         * between the producers and consumer having to use compatible Camel
+         * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -3879,11 +3932,13 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -3895,12 +3950,14 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -4821,9 +4878,9 @@ public interface ActiveMQEndpointBuilderFactory {
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
          * a regular payload. Use this with caution as the data is using Java
-         * Object serialization and requires the received to be able to
+         * Object serialization and requires the receiver to be able to
          * deserialize the data at Class level, which forces a strong coupling
-         * between the producers and consumer having to use compatible Camel
+         * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -4848,9 +4905,9 @@ public interface ActiveMQEndpointBuilderFactory {
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
          * a regular payload. Use this with caution as the data is using Java
-         * Object serialization and requires the received to be able to
+         * Object serialization and requires the receiver to be able to
          * deserialize the data at Class level, which forces a strong coupling
-         * between the producers and consumer having to use compatible Camel
+         * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -5486,11 +5543,13 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -5502,12 +5561,14 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether optimizing for Apache Artemis streaming mode.
+         * Whether optimizing for Apache Artemis streaming mode. This can reduce
+         * memory overhead when using Artemis with JMS StreamMessage types. This
+         * option must only be enabled if Apache Artemis is being used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param artemisStreamingEnabled the value to set
@@ -6424,9 +6485,9 @@ public interface ActiveMQEndpointBuilderFactory {
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
          * a regular payload. Use this with caution as the data is using Java
-         * Object serialization and requires the received to be able to
+         * Object serialization and requires the receiver to be able to
          * deserialize the data at Class level, which forces a strong coupling
-         * between the producers and consumer having to use compatible Camel
+         * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -6451,9 +6512,9 @@ public interface ActiveMQEndpointBuilderFactory {
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
          * a regular payload. Use this with caution as the data is using Java
-         * Object serialization and requires the received to be able to
+         * Object serialization and requires the receiver to be able to
          * deserialize the data at Class level, which forces a strong coupling
-         * between the producers and consumer having to use compatible Camel
+         * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;

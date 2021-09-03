@@ -17,15 +17,19 @@
 package org.apache.camel.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilePathResolverTest {
 
     @Test
+    @ResourceLock(Resources.SYSTEM_PROPERTIES)
     public void testFilePathResolver() throws Exception {
         assertEquals("/foo/bar", FilePathResolver.resolvePath("/foo/bar"));
 
+        assertEquals("/foo/myserver/bar", FilePathResolver.resolvePath("/foo/${env:FOO_SERVICE_HOST}/bar"));
         assertEquals("/foo/myserver/bar", FilePathResolver.resolvePath("/foo/${env.FOO_SERVICE_HOST}/bar"));
 
         String tmp = System.getProperty("java.io.tmpdir");
@@ -37,6 +41,7 @@ public class FilePathResolverTest {
         assertEquals("/myprefix/" + tmp + "bar/Carlsberg",
                 FilePathResolver.resolvePath("/myprefix/${java.io.tmpdir}bar/${beer}"));
 
+        assertEquals("/foo/myserver/bar/Carlsberg", FilePathResolver.resolvePath("/foo/${env:FOO_SERVICE_HOST}/bar/${beer}"));
         assertEquals("/foo/myserver/bar/Carlsberg", FilePathResolver.resolvePath("/foo/${env.FOO_SERVICE_HOST}/bar/${beer}"));
     }
 }

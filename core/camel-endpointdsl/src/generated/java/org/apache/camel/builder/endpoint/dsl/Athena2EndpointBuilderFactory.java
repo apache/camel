@@ -31,7 +31,7 @@ public interface Athena2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 Athena component.
+     * Builder for endpoint for the AWS Athena component.
      */
     public interface Athena2EndpointBuilder extends EndpointProducerBuilder {
         default AdvancedAthena2EndpointBuilder advanced() {
@@ -663,6 +663,43 @@ public interface Athena2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Athena client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Athena client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Optional max wait time in millis to wait for a successful query
          * completion. See the section 'Waiting for Query Completion and
          * Retrying Failed Queries' to learn more.
@@ -713,7 +750,7 @@ public interface Athena2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Athena component.
+     * Advanced builder for endpoint for the AWS Athena component.
      */
     public interface AdvancedAthena2EndpointBuilder
             extends
@@ -783,7 +820,7 @@ public interface Athena2EndpointBuilderFactory {
 
     public interface Athena2Builders {
         /**
-         * AWS 2 Athena (camel-aws2-athena)
+         * AWS Athena (camel-aws2-athena)
          * Access AWS Athena service using AWS SDK version 2.x.
          * 
          * Category: cloud,database
@@ -802,7 +839,7 @@ public interface Athena2EndpointBuilderFactory {
             return Athena2EndpointBuilderFactory.endpointBuilder("aws2-athena", path);
         }
         /**
-         * AWS 2 Athena (camel-aws2-athena)
+         * AWS Athena (camel-aws2-athena)
          * Access AWS Athena service using AWS SDK version 2.x.
          * 
          * Category: cloud,database

@@ -67,10 +67,6 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "advanced,consumer,tcp", defaultValue = "5")
     int maxConcurrentConsumers = 5;
 
-    @Deprecated // use idleTimeout
-    @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "null")
-    Integer maxReceiveTimeouts;
-
     @UriParam(label = "advanced,tcp,timeout", defaultValue = "null")
     Integer idleTimeout;
 
@@ -97,10 +93,6 @@ public class MllpConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "true")
     boolean hl7Headers = true;
-
-    @UriParam(defaultValue = "false")
-    @Deprecated
-    boolean bufferWrites;
 
     @UriParam(defaultValue = "true")
     boolean requireEndOfData = true;
@@ -147,7 +139,6 @@ public class MllpConfiguration implements Cloneable {
             target.sendBufferSize = source.sendBufferSize;
             target.autoAck = source.autoAck;
             target.hl7Headers = source.hl7Headers;
-            target.bufferWrites = source.bufferWrites;
             target.requireEndOfData = source.requireEndOfData;
             target.stringPayload = source.stringPayload;
             target.validatePayload = source.validatePayload;
@@ -433,44 +424,6 @@ public class MllpConfiguration implements Cloneable {
         this.maxConcurrentConsumers = maxConcurrentConsumers;
     }
 
-    /**
-     * Determine if the maxReceiveTimeouts URI parameter has been set
-     *
-     * @return     true if the parameter has been set; false otherwise
-     *
-     * @deprecated Use the idleTimeout URI parameter
-     */
-    @Deprecated
-    public boolean hasMaxReceiveTimeouts() {
-        return maxReceiveTimeouts != null;
-    }
-
-    /**
-     * Retrieve the value of the maxReceiveTimeouts URI parameter.
-     *
-     * @return     the maximum number of receive timeouts before the TCP Socket is reset
-     *
-     * @deprecated Use the idleTimeout URI parameter
-     */
-    @Deprecated
-    public Integer getMaxReceiveTimeouts() {
-        return maxReceiveTimeouts;
-    }
-
-    /**
-     * The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset.
-     *
-     * @param      maxReceiveTimeouts maximum number of receiveTimeouts
-     *
-     * @deprecated                    Use the idleTimeout URI parameter. For backward compibility, setting this
-     *                                parameter will result in an idle timeout of maxReceiveTimeouts * receiveTimeout.
-     *                                If idleTimeout is also specified, this parameter will be ignored.
-     */
-    @Deprecated
-    public void setMaxReceiveTimeouts(Integer maxReceiveTimeouts) {
-        this.maxReceiveTimeouts = maxReceiveTimeouts;
-    }
-
     public boolean hasIdleTimeout() {
         return idleTimeout != null && idleTimeout > 0;
     }
@@ -675,22 +628,6 @@ public class MllpConfiguration implements Cloneable {
         this.validatePayload = validatePayload;
     }
 
-    public boolean isBufferWrites() {
-        return bufferWrites;
-    }
-
-    /**
-     * Enable/Disable the buffering of HL7 payloads before writing to the socket.
-     *
-     * @deprecated              the parameter will be ignored
-     *
-     * @param      bufferWrites enabled if true, otherwise disabled
-     */
-    @Deprecated
-    public void setBufferWrites(boolean bufferWrites) {
-        this.bufferWrites = bufferWrites;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(bridgeErrorHandler,
@@ -702,7 +639,6 @@ public class MllpConfiguration implements Cloneable {
                 connectTimeout,
                 receiveTimeout,
                 maxConcurrentConsumers,
-                maxReceiveTimeouts,
                 idleTimeout,
                 readTimeout,
                 keepAlive,
@@ -712,7 +648,6 @@ public class MllpConfiguration implements Cloneable {
                 sendBufferSize,
                 autoAck,
                 hl7Headers,
-                bufferWrites,
                 requireEndOfData,
                 stringPayload,
                 validatePayload,
@@ -741,13 +676,11 @@ public class MllpConfiguration implements Cloneable {
                 && readTimeout == rhs.readTimeout
                 && autoAck == rhs.autoAck
                 && hl7Headers == rhs.hl7Headers
-                && bufferWrites == rhs.bufferWrites
                 && requireEndOfData == rhs.requireEndOfData
                 && stringPayload == rhs.stringPayload
                 && validatePayload == rhs.validatePayload
                 && Objects.equals(backlog, rhs.backlog)
                 && Objects.equals(maxConcurrentConsumers, rhs.maxConcurrentConsumers)
-                && Objects.equals(maxReceiveTimeouts, rhs.maxReceiveTimeouts)
                 && Objects.equals(idleTimeout, rhs.idleTimeout)
                 && Objects.equals(keepAlive, rhs.keepAlive)
                 && Objects.equals(tcpNoDelay, rhs.tcpNoDelay)
@@ -769,7 +702,6 @@ public class MllpConfiguration implements Cloneable {
                + ", connectTimeout=" + connectTimeout
                + ", receiveTimeout=" + receiveTimeout
                + ", maxConcurrentConsumers=" + maxConcurrentConsumers
-               + ", maxReceiveTimeouts=" + maxReceiveTimeouts
                + ", idleTimeout=" + idleTimeout
                + ", readTimeout=" + readTimeout
                + ", keepAlive=" + keepAlive
@@ -779,7 +711,6 @@ public class MllpConfiguration implements Cloneable {
                + ", sendBufferSize=" + sendBufferSize
                + ", autoAck=" + autoAck
                + ", hl7Headers=" + hl7Headers
-               + ", bufferWrites=" + bufferWrites
                + ", requireEndOfData=" + requireEndOfData
                + ", stringPayload=" + stringPayload
                + ", validatePayload=" + validatePayload

@@ -27,12 +27,14 @@ import java.util.TreeMap;
 
 import javax.security.auth.Subject;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Variant;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -42,6 +44,9 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.HttpHeaderHelper;
+import org.apache.cxf.jaxrs.client.AbstractClient;
+import org.apache.cxf.jaxrs.client.ClientState;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
 import org.apache.cxf.message.MessageContentsList;
@@ -58,6 +63,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfRsBinding.class);
 
     private HeaderFilterStrategy headerFilterStrategy;
+
+    private String contentLanguage;
 
     public DefaultCxfRsBinding() {
     }
@@ -184,7 +191,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             String charset = HttpHeaderHelper.findCharset(contentTypeHeader);
             String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, Charset.forName("UTF-8").name());
             if (normalizedEncoding != null) {
-                camelExchange.setProperty(Exchange.CHARSET_NAME, normalizedEncoding);
+                camelExchange.setProperty(ExchangePropertyKey.CHARSET_NAME, normalizedEncoding);
             }
         }
     }
@@ -243,6 +250,14 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     @Override
     public Entity<Object> bindCamelMessageToRequestEntity(Object body, Message camelMessage, Exchange camelExchange)
             throws Exception {
+        return bindCamelMessageToRequestEntity(body, camelMessage, camelExchange, null);
+    }
+
+    @Override
+    public Entity<Object> bindCamelMessageToRequestEntity(
+            Object body, Message camelMessage, Exchange camelExchange,
+            WebClient webClient)
+            throws Exception {
         if (body == null) {
             return null;
         }
@@ -251,6 +266,27 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             contentType = MediaType.WILDCARD;
         }
         String contentEncoding = camelMessage.getHeader(Exchange.CONTENT_ENCODING, String.class);
+        if (webClient != null && contentLanguage == null) {
+            try {
+                Method getStateMethod = AbstractClient.class.getDeclaredMethod("getState");
+                getStateMethod.setAccessible(true);
+                ClientState clientState = (ClientState) getStateMethod.invoke(webClient);
+                if (clientState.getRequestHeaders().containsKey(HttpHeaders.CONTENT_LANGUAGE)) {
+                    contentLanguage = clientState.getRequestHeaders()
+                            .getFirst(HttpHeaders.CONTENT_LANGUAGE);
+                    if (contentLanguage != null) {
+                        return Entity.entity(body, new Variant(
+                                MediaType.valueOf(contentType),
+                                new Locale(contentLanguage), contentEncoding));
+                    }
+                }
+            } catch (Exception ex) {
+                LOG.warn(
+                        "Cannot retrieve CONTENT_LANGUAGE from WebClient. This exception is ignored, and US Locale will be used",
+                        ex);
+            }
+        }
+        contentLanguage = Locale.US.getLanguage();
         return Entity.entity(body, new Variant(MediaType.valueOf(contentType), Locale.US, contentEncoding));
     }
 

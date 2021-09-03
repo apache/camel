@@ -57,7 +57,7 @@ public class JsonPathSplitTest extends CamelTestSupport {
 
     @Test
     public void testSplit() throws Exception {
-        getMockEndpoint("mock:authors").expectedMessageCount(2);
+        getMockEndpoint("mock:authors").expectedMessageCount(3);
 
         String out = template.requestBody("direct:start", new File("src/test/resources/books.json"), String.class);
         assertNotNull(out);
@@ -75,7 +75,7 @@ public class JsonPathSplitTest extends CamelTestSupport {
         // should preserve quotes etc
         assertTrue(out.contains("\"author\": \"Nigel Rees\""));
         assertTrue(out.contains("\"price\": 8.95"));
-        assertTrue(out.contains("\"title\": \"Sword of Honour\""));
+        assertTrue(out.contains("\"title\": \"Sword's of Honour\""));
         assertTrue(out.contains("\"price\": 12.99,"));
     }
 

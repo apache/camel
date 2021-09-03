@@ -41,10 +41,15 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>simple</id>
+            <id>spring-boot-starter-support</id>
             <goals>
               <goal>generate</goal>
             </goals>
+            <configuration>
+              <configOptions>
+                <dateLibrary>java8</dateLibrary>
+              </configOptions>
+            </configuration>
           </execution>
         </executions>
       </plugin>

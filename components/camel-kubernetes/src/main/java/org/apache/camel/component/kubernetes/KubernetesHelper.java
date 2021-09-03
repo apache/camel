@@ -16,16 +16,21 @@
  */
 package org.apache.camel.component.kubernetes;
 
+import java.util.function.Supplier;
+
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.Watch;
+import org.apache.camel.Exchange;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper moethods for Kubernetes resources.
+ * Helper methods for Kubernetes resources.
  */
 public final class KubernetesHelper {
 
@@ -50,52 +55,58 @@ public final class KubernetesHelper {
 
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
-        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword()))
+        if (ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword())
                 && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
         }
-        if (ObjectHelper.isNotEmpty(configuration.getOauthToken())) {
-            builder.withOauthToken(configuration.getOauthToken());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getCaCertData())) {
-            builder.withCaCertData(configuration.getCaCertData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getCaCertFile())) {
-            builder.withCaCertFile(configuration.getCaCertFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientCertData())) {
-            builder.withClientCertData(configuration.getClientCertData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientCertFile())) {
-            builder.withClientCertFile(configuration.getClientCertFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getApiVersion())) {
-            builder.withApiVersion(configuration.getApiVersion());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyAlgo())) {
-            builder.withClientKeyAlgo(configuration.getClientKeyAlgo());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyData())) {
-            builder.withClientKeyData(configuration.getClientKeyData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyFile())) {
-            builder.withClientKeyFile(configuration.getClientKeyFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyPassphrase())) {
-            builder.withClientKeyPassphrase(configuration.getClientKeyPassphrase());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getTrustCerts())) {
-            builder.withTrustCerts(configuration.getTrustCerts());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getConnectionTimeout())) {
-            builder.withConnectionTimeout(configuration.getConnectionTimeout());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getNamespace())) {
-            builder.withNamespace(configuration.getNamespace());
-        }
+
+        ObjectHelper.ifNotEmpty(configuration.getOauthToken(), builder::withOauthToken);
+        ObjectHelper.ifNotEmpty(configuration.getCaCertData(), builder::withCaCertData);
+        ObjectHelper.ifNotEmpty(configuration.getCaCertFile(), builder::withCaCertFile);
+        ObjectHelper.ifNotEmpty(configuration.getClientCertData(), builder::withClientCertData);
+        ObjectHelper.ifNotEmpty(configuration.getClientCertFile(), builder::withClientCertFile);
+        ObjectHelper.ifNotEmpty(configuration.getApiVersion(), builder::withApiVersion);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyAlgo(), builder::withClientKeyAlgo);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyData(), builder::withClientKeyData);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyFile(), builder::withClientKeyFile);
+        ObjectHelper.ifNotEmpty(configuration.getClientKeyPassphrase(), builder::withClientKeyPassphrase);
+        ObjectHelper.ifNotEmpty(configuration.getTrustCerts(), builder::withTrustCerts);
+        ObjectHelper.ifNotEmpty(configuration.getConnectionTimeout(), builder::withConnectionTimeout);
+        ObjectHelper.ifNotEmpty(configuration.getNamespace(), builder::withNamespace);
+
         Config conf = builder.build();
         return new DefaultKubernetesClient(conf);
+    }
+
+    public static void close(Runnable runnable, Supplier<Watch> watchGetter) {
+        if (runnable != null) {
+            final Watch watch = watchGetter.get();
+            if (watch != null) {
+                watch.close();
+            }
+        }
+    }
+
+    public static String extractOperation(AbstractKubernetesEndpoint endpoint, Exchange exchange) {
+        String operation;
+
+        if (ObjectHelper.isEmpty(endpoint.getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        } else {
+            operation = endpoint.getKubernetesConfiguration().getOperation();
+        }
+
+        if (ObjectHelper.isEmpty(operation)) {
+            throw new IllegalArgumentException("The kubernetes producer for this component requires a operation to proceed");
+        }
+
+        return operation;
+    }
+
+    public static void prepareOutboundMessage(Exchange exchange, Object body) {
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getMessage(), true);
+        exchange.getMessage().setBody(body);
     }
 
 }

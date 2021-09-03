@@ -109,6 +109,10 @@ public abstract class BaseService {
                 return;
             }
             init();
+            if (status == FAILED) {
+                LOG.trace("Init failed");
+                return;
+            }
             try (AutoCloseable ignored = doLifecycleChange()) {
                 status = STARTING;
                 LOG.trace("Starting service: {}", this);

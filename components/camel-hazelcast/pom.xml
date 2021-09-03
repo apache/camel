@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hazelcast</artifactId>
@@ -74,6 +74,11 @@
             <artifactId>camel-test-spring-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-main</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -83,8 +88,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkCount>1</forkCount>
-                    <reuseForks>false</reuseForks>
-                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                    <reuseForks>true</reuseForks>
+<!--                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>-->
                     <systemProperties>
                         <property>
                             <name>hazelcast.logging.type</name>

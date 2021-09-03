@@ -35,7 +35,7 @@
   <!-- configure the bus -->
   <cxfcore:bus>
     <cxfcore:features>
-      <cxfcore:logging/>
+        <bean class="org.apache.cxf.ext.logging.LoggingFeature"/>
     </cxfcore:features>
   </cxfcore:bus> 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>

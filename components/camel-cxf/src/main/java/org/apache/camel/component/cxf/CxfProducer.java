@@ -168,9 +168,10 @@ public class CxfProducer extends DefaultAsyncProducer {
                                 cxfHeaders);
                     }
                 } catch (IOException e) {
-                    LOG.error("Cannot store cookies", e);
+                    LOG.warn("Cannot store cookies. This exception is ignored.", e);
                 }
             }
+
             // bind the CXF response to Camel exchange
             if (!boi.getOperationInfo().isOneWay()) {
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,

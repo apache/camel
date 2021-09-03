@@ -231,7 +231,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
              * First random determines +/-, second random determines how far to
              * go in that direction. -cgs
              */
-            Random random = getRandomNumberGenerator();
+            Random random = getRandomNumberGenerator(); // NOSONAR
             double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
                               * random.nextDouble();
             redeliveryDelayResult += redeliveryDelayResult * variance;
@@ -253,8 +253,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         // find the group where the redelivery counter matches
         long answer = 0;
         for (String group : groups) {
-            long delay = Long.valueOf(StringHelper.after(group, ":"));
-            int count = Integer.valueOf(StringHelper.before(group, ":"));
+            long delay = Long.parseLong(StringHelper.after(group, ":"));
+            int count = Integer.parseInt(StringHelper.before(group, ":"));
             if (count > redeliveryCounter) {
                 break;
             } else {
@@ -563,7 +563,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     protected static synchronized Random getRandomNumberGenerator() {
         if (randomNumberGenerator == null) {
-            randomNumberGenerator = new Random();
+            randomNumberGenerator = new Random(); // NOSONAR
         }
         return randomNumberGenerator;
     }

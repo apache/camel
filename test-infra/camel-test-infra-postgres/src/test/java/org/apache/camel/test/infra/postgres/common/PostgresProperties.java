@@ -23,6 +23,7 @@ public final class PostgresProperties {
     public static final String PORT = "postgres.service.port";
     public static final String USERNAME = "postgres.user.name";
     public static final String PASSWORD = "postgres.user.password";
+    public static final String POSTGRES_CONTAINER = "postgres.container";
 
     public static final int DEFAULT_PORT = 5432;
 

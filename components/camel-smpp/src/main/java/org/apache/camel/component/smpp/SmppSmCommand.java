@@ -149,7 +149,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         }
 
         if (providedAlphabet == Alphabet.ALPHA_UCS2.value()
-                || (providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value())) {
+                || providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value()) {
             // change charset to use multilang messages
             return Charset.forName(SmppConstants.UCS2_ENCODING);
         }
@@ -186,5 +186,19 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
             return true;
         }
         return false;
+    }
+
+    protected byte getRegisterDeliveryFlag(Message message) {
+        if (message.getHeaders().containsKey(SmppConstants.REGISTERED_DELIVERY)) {
+            return message.getHeader(SmppConstants.REGISTERED_DELIVERY, Byte.class);
+        }
+        return config.getRegisteredDelivery();
+    }
+
+    protected boolean getRequestsSingleDLR(Message message) {
+        if (message.getHeaders().containsKey(SmppConstants.SINGLE_DLR)) {
+            return message.getHeader(SmppConstants.SINGLE_DLR, Boolean.class);
+        }
+        return config.isSingleDLR();
     }
 }

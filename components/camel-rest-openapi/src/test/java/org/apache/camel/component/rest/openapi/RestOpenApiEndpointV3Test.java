@@ -367,16 +367,6 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
-    public void shouldLoadOpenApiSpecifications() throws IOException {
-        final CamelContext camelContext = mock(CamelContext.class);
-        when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
-
-        assertThat(
-                RestOpenApiEndpoint.loadSpecificationFrom(camelContext, RestOpenApiComponent.DEFAULT_SPECIFICATION_URI))
-                        .isNotNull();
-    }
-
-    @Test
     public void shouldPickBestScheme() {
         assertThat(RestOpenApiEndpoint.pickBestScheme("http", Arrays.asList("http", "https")))
                 .isEqualTo("https");
@@ -397,8 +387,9 @@ public class RestOpenApiEndpointV3Test {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
+        final URI uri = URI.create("non-existant.json");
         assertThrows(IllegalArgumentException.class,
-                () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json")));
+                () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, uri));
     }
 
     @Test

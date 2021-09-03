@@ -18,10 +18,9 @@ package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class EndpointQueryParamTest extends CamelTestSupport {
+public class EndpointQueryParamTest extends BaseEndpointDslTest {
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {

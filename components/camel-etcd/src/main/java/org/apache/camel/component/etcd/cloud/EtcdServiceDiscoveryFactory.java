@@ -20,11 +20,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.etcd.EtcdConfiguration;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
 @CloudServiceFactory("etcd-service-discovery")
+@Configurer
 public class EtcdServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private final EtcdConfiguration configuration;
     private String type;

@@ -39,8 +39,7 @@ public interface AWS2S3EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the AWS 2 S3 Storage Service
-     * component.
+     * Builder for endpoint consumers for the AWS S3 Storage Service component.
      */
     public interface AWS2S3EndpointConsumerBuilder
             extends
@@ -123,7 +122,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -142,7 +141,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -572,6 +571,20 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If provided, Camel will only consume files if a done file exists.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param doneFileName the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder doneFileName(String doneFileName) {
+            doSetProperty("doneFileName", doneFileName);
+            return this;
+        }
+        /**
          * To get the object from the bucket with the given file name.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -586,13 +599,48 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If it is true, the S3 Object Body will be ignored completely, if it
+         * is set to false the S3 Object will be put in the body. Setting this
+         * to true, will override any behavior defined by includeBody option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder ignoreBody(boolean ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+        /**
+         * If it is true, the S3 Object Body will be ignored completely, if it
+         * is set to false the S3 Object will be put in the body. Setting this
+         * to true, will override any behavior defined by includeBody option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder ignoreBody(String ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+        /**
          * If it is true, the S3Object exchange will be consumed and put into
          * the body and closed. If false the S3Object stream will be put raw
          * into the body and the headers will be set with the S3 object
          * metadata. This option is strongly related to autocloseBody option. In
          * case of setting includeBody to true because the S3Object stream will
-         * be consumed then it will also be closed in case of includeBody false
-         * then it will be up to the caller to close the S3Object stream.
+         * be consumed then it will also be closed, while in case of includeBody
+         * false then it will be up to the caller to close the S3Object stream.
          * However setting autocloseBody to true when includeBody is false it
          * will schedule to close the S3Object stream automatically on exchange
          * completion.
@@ -615,8 +663,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * into the body and the headers will be set with the S3 object
          * metadata. This option is strongly related to autocloseBody option. In
          * case of setting includeBody to true because the S3Object stream will
-         * be consumed then it will also be closed in case of includeBody false
-         * then it will be up to the caller to close the S3Object stream.
+         * be consumed then it will also be closed, while in case of includeBody
+         * false then it will be up to the caller to close the S3Object stream.
          * However setting autocloseBody to true when includeBody is false it
          * will schedule to close the S3Object stream automatically on exchange
          * completion.
@@ -1338,7 +1386,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the AWS 2 S3 Storage Service
+     * Advanced builder for endpoint consumers for the AWS S3 Storage Service
      * component.
      */
     public interface AdvancedAWS2S3EndpointConsumerBuilder
@@ -1546,8 +1594,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the AWS 2 S3 Storage Service
-     * component.
+     * Builder for endpoint producers for the AWS S3 Storage Service component.
      */
     public interface AWS2S3EndpointProducerBuilder
             extends
@@ -1630,7 +1677,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -1649,7 +1696,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -1923,6 +1970,68 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * The number of messages composing a batch in streaming upload mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param batchMessageNumber the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder batchMessageNumber(
+                int batchMessageNumber) {
+            doSetProperty("batchMessageNumber", batchMessageNumber);
+            return this;
+        }
+        /**
+         * The number of messages composing a batch in streaming upload mode.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param batchMessageNumber the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder batchMessageNumber(
+                String batchMessageNumber) {
+            doSetProperty("batchMessageNumber", batchMessageNumber);
+            return this;
+        }
+        /**
+         * The batch size (in bytes) in streaming upload mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000000
+         * Group: producer
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * The batch size (in bytes) in streaming upload mode.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000000
+         * Group: producer
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder batchSize(String batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
          * Delete file object after the S3 file has been uploaded.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2055,6 +2164,40 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * The naming strategy to use in streaming upload mode.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
+         * 
+         * Default: progressive
+         * Group: producer
+         * 
+         * @param namingStrategy the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder namingStrategy(
+                AWSS3NamingStrategyEnum namingStrategy) {
+            doSetProperty("namingStrategy", namingStrategy);
+            return this;
+        }
+        /**
+         * The naming strategy to use in streaming upload mode.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
+         * 
+         * Default: progressive
+         * Group: producer
+         * 
+         * @param namingStrategy the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder namingStrategy(
+                String namingStrategy) {
+            doSetProperty("namingStrategy", namingStrategy);
+            return this;
+        }
+        /**
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option is a:
@@ -2118,6 +2261,40 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * The restarting policy to use in streaming upload mode.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum&lt;/code&gt; type.
+         * 
+         * Default: override
+         * Group: producer
+         * 
+         * @param restartingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder restartingPolicy(
+                AWSS3RestartingPolicyEnum restartingPolicy) {
+            doSetProperty("restartingPolicy", restartingPolicy);
+            return this;
+        }
+        /**
+         * The restarting policy to use in streaming upload mode.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum&lt;/code&gt; type.
+         * 
+         * Default: override
+         * Group: producer
+         * 
+         * @param restartingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder restartingPolicy(
+                String restartingPolicy) {
+            doSetProperty("restartingPolicy", restartingPolicy);
+            return this;
+        }
+        /**
          * The storage class to set in the
          * com.amazonaws.services.s3.model.PutObjectRequest request.
          * 
@@ -2130,6 +2307,73 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointProducerBuilder storageClass(String storageClass) {
             doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * When stream mode is true the upload to bucket will be done in
+         * streaming.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param streamingUploadMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamingUploadMode(
+                boolean streamingUploadMode) {
+            doSetProperty("streamingUploadMode", streamingUploadMode);
+            return this;
+        }
+        /**
+         * When stream mode is true the upload to bucket will be done in
+         * streaming.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param streamingUploadMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamingUploadMode(
+                String streamingUploadMode) {
+            doSetProperty("streamingUploadMode", streamingUploadMode);
+            return this;
+        }
+        /**
+         * While streaming upload mode is true, this option set the timeout to
+         * complete upload.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param streamingUploadTimeout the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamingUploadTimeout(
+                long streamingUploadTimeout) {
+            doSetProperty("streamingUploadTimeout", streamingUploadTimeout);
+            return this;
+        }
+        /**
+         * While streaming upload mode is true, this option set the timeout to
+         * complete upload.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param streamingUploadTimeout the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamingUploadTimeout(
+                String streamingUploadTimeout) {
+            doSetProperty("streamingUploadTimeout", streamingUploadTimeout);
             return this;
         }
         /**
@@ -2163,7 +2407,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the AWS 2 S3 Storage Service
+     * Advanced builder for endpoint producers for the AWS S3 Storage Service
      * component.
      */
     public interface AdvancedAWS2S3EndpointProducerBuilder
@@ -2300,7 +2544,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the AWS 2 S3 Storage Service component.
+     * Builder for endpoint for the AWS S3 Storage Service component.
      */
     public interface AWS2S3EndpointBuilder
             extends
@@ -2380,7 +2624,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -2398,7 +2642,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -2698,7 +2942,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 S3 Storage Service component.
+     * Advanced builder for endpoint for the AWS S3 Storage Service component.
      */
     public interface AdvancedAWS2S3EndpointBuilder
             extends
@@ -2763,6 +3007,15 @@ public interface AWS2S3EndpointBuilderFactory {
 
     /**
      * Proxy enum for
+     * <code>org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum</code> enum.
+     */
+    enum AWSS3NamingStrategyEnum {
+        progressive,
+        random;
+    }
+
+    /**
+     * Proxy enum for
      * <code>org.apache.camel.component.aws2.s3.AWS2S3Operations</code> enum.
      */
     enum AWS2S3Operations {
@@ -2776,9 +3029,18 @@ public interface AWS2S3EndpointBuilderFactory {
         createDownloadLink;
     }
 
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum</code> enum.
+     */
+    enum AWSS3RestartingPolicyEnum {
+        override,
+        lastPart;
+    }
+
     public interface AWS2S3Builders {
         /**
-         * AWS 2 S3 Storage Service (camel-aws2-s3)
+         * AWS S3 Storage Service (camel-aws2-s3)
          * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
          * version 2.x.
          * 
@@ -2798,7 +3060,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return AWS2S3EndpointBuilderFactory.endpointBuilder("aws2-s3", path);
         }
         /**
-         * AWS 2 S3 Storage Service (camel-aws2-s3)
+         * AWS S3 Storage Service (camel-aws2-s3)
          * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
          * version 2.x.
          * 

@@ -19,12 +19,12 @@ package org.apache.camel.component.soroushbot.utils;
 public class ExponentialBackOffStrategy implements BackOffStrategy {
     Long baseRetryTimeOut;
     Long coefficient;
-    Long maxRetryWaitingTime;
+    //Long maxRetryWaitingTime;
 
     public ExponentialBackOffStrategy(Long baseRetryTimeOut, Long coefficient, Long maxRetryWaitingTime) {
         this.baseRetryTimeOut = baseRetryTimeOut;
         this.coefficient = coefficient;
-        this.maxRetryWaitingTime = maxRetryWaitingTime;
+        //this.maxRetryWaitingTime = maxRetryWaitingTime;
     }
 
     @Override

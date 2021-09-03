@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -28,13 +27,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedInflightStatisticsTest extends ManagementTestSupport {
 
     @Override
@@ -46,11 +48,6 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
 
     @Test
     public void testOldestInflight() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -104,9 +101,9 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
         log.info("Oldest Exchange id: {}, duration: {}", id2, ts2);
 
         // Lets verify the oldest changed.
-        assertTrue(!id2.equals(id));
+        assertNotEquals(id, id2);
         // The duration values could be different
-        assertTrue(!Objects.equals(ts2, ts));
+        assertNotEquals(ts, ts2);
 
         latch2.countDown();
 

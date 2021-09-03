@@ -16,28 +16,18 @@
  */
 package org.apache.camel.test.infra.nsq.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class NsqServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(NsqServiceFactory.class);
-
     private NsqServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<NsqService> builder() {
+        return new SimpleTestServiceBuilder<>("nsq");
+    }
+
     public static NsqService createService() {
-        String instanceType = System.getProperty("nsq.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-nsq-container")) {
-            return new NsqLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new NsqRemoteService();
-        }
-
-        LOG.error("Nsq instance must be one of 'local-nsq-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Nsq instance type");
+        return builder().addLocalMapping(NsqLocalContainerService::new).addRemoteMapping(NsqRemoteService::new).build();
     }
 }

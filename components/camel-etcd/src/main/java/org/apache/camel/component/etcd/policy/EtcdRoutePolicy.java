@@ -165,19 +165,6 @@ public class EtcdRoutePolicy extends RoutePolicySupport
         }
     }
 
-    private void startConsumer(Route route) {
-        synchronized (lock) {
-            try {
-                if (suspendedRoutes.contains(route)) {
-                    startConsumer(route.getConsumer());
-                    suspendedRoutes.remove(route);
-                }
-            } catch (Exception e) {
-                handleException(e);
-            }
-        }
-    }
-
     private void stopConsumer(Route route) {
         synchronized (lock) {
             try {

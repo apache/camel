@@ -16,28 +16,20 @@
  */
 package org.apache.camel.test.infra.nats.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class NatsServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(NatsServiceFactory.class);
-
     private NatsServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<NatsService> builder() {
+        return new SimpleTestServiceBuilder<>("nats");
+    }
+
     public static NatsService createService() {
-        String instanceType = System.getProperty("nats.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-nats-container")) {
-            return new NatsLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new NatsRemoteService();
-        }
-
-        LOG.error("Nats instance must be one of 'local-nats-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Nats instance type");
+        return builder().addLocalMapping(NatsLocalContainerService::new)
+                .addRemoteMapping(NatsRemoteService::new)
+                .build();
     }
 }

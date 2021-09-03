@@ -20,18 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumePollEnrichFileTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/enrich");
-        deleteDirectory("target/data/enrichdata");
-        super.setUp();
-    }
 
     @Test
     public void testPollEnrich() throws Exception {
@@ -39,14 +30,16 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Big file");
-        mock.expectedFileExists("target/data/enrich/.done/AAA.fin");
-        mock.expectedFileExists("target/data/enrichdata/.done/AAA.dat");
+        mock.expectedFileExists(testFile("enrich/.done/AAA.fin"));
+        mock.expectedFileExists(testFile("enrichdata/.done/AAA.dat"));
 
-        template.sendBodyAndHeader("file://target/data/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
+        template.sendBodyAndHeader(fileUri("enrich"), "Start", Exchange.FILE_NAME,
+                "AAA.fin");
 
         log.info("Sleeping for 1/4 sec before writing enrichdata file");
         Thread.sleep(250);
-        template.sendBodyAndHeader("file://target/data/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
+        template.sendBodyAndHeader(fileUri("enrichdata"), "Big file",
+                Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
 
         assertMockEndpointsSatisfied();
@@ -57,8 +50,12 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/enrich?initialDelay=0&delay=10&move=.done").to("mock:start")
-                        .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&move=.done", 1000).to("mock:result");
+                from(fileUri("enrich?initialDelay=0&delay=10&move=.done"))
+                        .to("mock:start")
+                        .pollEnrich(
+                                fileUri("enrichdata?initialDelay=0&delay=10&move=.done"),
+                                1000)
+                        .to("mock:result");
             }
         };
     }

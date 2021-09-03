@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -47,7 +49,10 @@ public class JsonPathMapTransformTest extends CamelTestSupport {
         getMockEndpoint("mock:authors").expectedMessageCount(1);
 
         // should be a map
-        Object document = Configuration.defaultConfiguration().jsonProvider()
+        Configuration.ConfigurationBuilder builder = Configuration.builder();
+        builder.jsonProvider(new JacksonJsonProvider());
+        builder.mappingProvider(new JacksonMappingProvider());
+        Object document = builder.build().jsonProvider()
                 .parse(new FileInputStream("src/test/resources/books.json"), "utf-8");
         assertIsInstanceOf(Map.class, document);
 

@@ -30,6 +30,9 @@ public class SlackComponent extends DefaultComponent {
     @Metadata(label = "webhook")
     private String webhookUrl;
 
+    @Metadata(label = "token")
+    private String token;
+
     public SlackComponent() {
         this(null);
     }
@@ -55,5 +58,16 @@ public class SlackComponent extends DefaultComponent {
      */
     public void setWebhookUrl(String webhookUrl) {
         this.webhookUrl = webhookUrl;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * The token to use
+     */
+    public void setToken(String token) {
+        this.token = token;
     }
 }

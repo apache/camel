@@ -200,8 +200,9 @@ public class HBaseProducer extends DefaultProducer {
             throws Exception {
         List<HBaseRow> rowSet = new LinkedList<>();
 
-        HBaseRow startRow = new HBaseRow(model.getCells());
-        startRow.setId(start);
+        // unused
+        //HBaseRow startRow = new HBaseRow(model.getCells());
+        //startRow.setId(start);
 
         Scan scan = new Scan();
         if (start != null) {

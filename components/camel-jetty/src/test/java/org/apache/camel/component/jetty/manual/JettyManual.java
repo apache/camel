@@ -19,9 +19,8 @@ package org.apache.camel.component.jetty.manual;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -31,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Used for manual unit test, eg to curl to upload a file with: curl -F data=@src/test/data/plain.txt
  * http://localhost:9080/myapp/myservice
  */
-public class JettyManual extends CamelTestSupport {
+@Disabled
+public class JettyManual extends BaseJettyTest {
 
     @Test
-    @Disabled
     public void testManual() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -46,7 +45,7 @@ public class JettyManual extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:" + AvailablePortFinder.getNextAvailable() + "/ myapp / myservice")
+                from("jetty:http://localhost:" + port1 + "/ myapp / myservice")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);

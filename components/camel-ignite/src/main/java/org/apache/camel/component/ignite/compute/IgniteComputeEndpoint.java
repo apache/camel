@@ -62,7 +62,7 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     private Long timeoutMillis;
 
     public IgniteComputeEndpoint(String uri, String remaining, Map<String, Object> parameters,
-                                 IgniteComputeComponent igniteComponent) throws ClassNotFoundException {
+                                 IgniteComputeComponent igniteComponent) {
         super(uri, igniteComponent);
     }
 

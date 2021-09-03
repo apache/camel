@@ -91,6 +91,8 @@ public class Main extends MainCommandLineSupport {
         Main main = new Main();
         instance = main;
         main.run(args);
+
+        System.exit(main.getExitCode());
     }
 
     /**
@@ -227,7 +229,7 @@ public class Main extends MainCommandLineSupport {
         return getCamelContext().createProducerTemplate();
     }
 
-    protected AbstractApplicationContext createDefaultApplicationContext() throws IOException {
+    protected AbstractApplicationContext createDefaultApplicationContext() {
         ApplicationContext parentContext = getParentApplicationContext();
 
         // file based

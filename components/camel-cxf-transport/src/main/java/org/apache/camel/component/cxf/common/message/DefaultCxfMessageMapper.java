@@ -78,7 +78,7 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
 
         LOG.trace(
                 "Processing {}, requestContentType = {}, acceptContentTypes = {}, encoding = {}, path = {}, basePath = {}, verb = {}",
-                new Object[] { camelExchange, requestContentType, acceptContentTypes, enc, path, basePath, verb });
+                camelExchange, requestContentType, acceptContentTypes, enc, path, basePath, verb);
 
         return answer;
     }
@@ -131,7 +131,7 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
             camelHeaders.put(Exchange.HTTP_RESPONSE_CODE, value);
             LOG.trace("Populate header from CXF header={} value={} as {}",
-                    new Object[] { key, value, Exchange.HTTP_RESPONSE_CODE });
+                    key, value, Exchange.HTTP_RESPONSE_CODE);
         }
 
         // propagate HTTP CONTENT_TYPE

@@ -328,22 +328,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the spreadsheet identifier that is used to identify the
-         * target to obtain.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param spreadsheetId the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsStreamEndpointBuilder spreadsheetId(
-                String spreadsheetId) {
-            doSetProperty("spreadsheetId", spreadsheetId);
-            return this;
-        }
-        /**
          * Determines how values should be rendered in the output.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1010,16 +994,17 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Google Sheets Stream (camel-google-sheets)
          * Poll for changes in Google Sheets.
          * 
-         * Category: api,cloud,sheets
+         * Category: cloud,sheets
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-google-sheets
          * 
-         * Syntax: <code>google-sheets-stream:apiName</code>
+         * Syntax: <code>google-sheets-stream:spreadsheetId</code>
          * 
-         * Path parameter: apiName (required)
-         * Sets the apiName.
+         * Path parameter: spreadsheetId (required)
+         * Specifies the spreadsheet identifier that is used to identify the
+         * target to obtain.
          * 
-         * @param path apiName
+         * @param path spreadsheetId
          * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {
@@ -1029,18 +1014,19 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Google Sheets Stream (camel-google-sheets)
          * Poll for changes in Google Sheets.
          * 
-         * Category: api,cloud,sheets
+         * Category: cloud,sheets
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-google-sheets
          * 
-         * Syntax: <code>google-sheets-stream:apiName</code>
+         * Syntax: <code>google-sheets-stream:spreadsheetId</code>
          * 
-         * Path parameter: apiName (required)
-         * Sets the apiName.
+         * Path parameter: spreadsheetId (required)
+         * Specifies the spreadsheet identifier that is used to identify the
+         * target to obtain.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path apiName
+         * @param path spreadsheetId
          * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder googleSheetsStream(

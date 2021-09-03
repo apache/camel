@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -34,7 +34,6 @@
     <description>Camel Init</description>
 
     <modules>
-        <module>camel-format-plugin</module>
         <module>camel-bundle-plugin</module>
     </modules>
 

@@ -16,8 +16,14 @@
  */
 package org.apache.camel.issues;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NamedNode;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.NodeIdFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,6 +38,20 @@ public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
 
         assertNotNull(context.getRoute("route1"), "Should have route1 (fixed id");
         assertNotNull(context.getRoute("route2"), "Should have route2 (auto assigned id)");
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext(true);
+        ctx.setNodeIdFactory(new NodeIdFactory() {
+            AtomicInteger counter = new AtomicInteger();
+
+            @Override
+            public String createId(NamedNode definition) {
+                return definition.getShortName() + counter.incrementAndGet();
+            }
+        });
+        return ctx;
     }
 
     @Override

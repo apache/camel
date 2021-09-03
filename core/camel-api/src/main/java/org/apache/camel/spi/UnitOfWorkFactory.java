@@ -37,4 +37,5 @@ public interface UnitOfWorkFactory extends AfterPropertiesConfigured {
     default void afterPropertiesConfigured(CamelContext camelContext) {
         // noop
     }
+
 }

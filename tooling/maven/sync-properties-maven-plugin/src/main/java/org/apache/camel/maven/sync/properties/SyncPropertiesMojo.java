@@ -99,10 +99,10 @@ public class SyncPropertiesMojo extends AbstractMojo {
             out = out.replace("https://maven.apache.org/xsd/maven-4.0.0.xsd", "http://maven.apache.org/xsd/maven-4.0.0.xsd");
 
             // write lines
-            FileOutputStream outputStream = new FileOutputStream(targetPom);
-            byte[] strToBytes = out.getBytes();
-            outputStream.write(strToBytes);
-            outputStream.close();
+            try (FileOutputStream outputStream = new FileOutputStream(targetPom)) {
+                byte[] strToBytes = out.getBytes();
+                outputStream.write(strToBytes);
+            }
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);
         }

@@ -112,23 +112,21 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
     protected void scanCamelComponents(CamelCatalog camelCatalog, ClassLoader classLoader, Set<String> names) {
         // is there any custom Camel components in this library?
         Properties properties = loadComponentProperties(log, classLoader);
-        if (properties != null) {
-            String components = (String) properties.get("components");
-            if (components != null) {
-                String[] part = components.split("\\s");
-                for (String scheme : part) {
-                    if (!camelCatalog.findComponentNames().contains(scheme)) {
-                        // find the class name
-                        String javaType = extractComponentJavaType(log, classLoader, scheme);
-                        if (javaType != null) {
-                            String json = loadComponentJSonSchema(log, classLoader, scheme);
-                            if (json != null) {
-                                if (log) {
-                                    LOG.info("Adding component: {}", scheme);
-                                }
-                                camelCatalog.addComponent(scheme, javaType, json);
-                                names.add(scheme);
+        String components = (String) properties.get("components");
+        if (components != null) {
+            String[] part = components.split("\\s");
+            for (String scheme : part) {
+                if (!camelCatalog.findComponentNames().contains(scheme)) {
+                    // find the class name
+                    String javaType = extractComponentJavaType(log, classLoader, scheme);
+                    if (javaType != null) {
+                        String json = loadComponentJSonSchema(log, classLoader, scheme);
+                        if (json != null) {
+                            if (log) {
+                                LOG.info("Adding component: {}", scheme);
                             }
+                            camelCatalog.addComponent(scheme, javaType, json);
+                            names.add(scheme);
                         }
                     }
                 }

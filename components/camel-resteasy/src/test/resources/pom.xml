@@ -81,7 +81,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
+			<artifactId>camel-spring-xml</artifactId>
 			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
         <dependency>

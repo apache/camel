@@ -187,6 +187,7 @@ public class GenericFile<T> implements WrappedFile<T> {
             }
             if (getLastModified() > 0) {
                 message.setHeader(Exchange.FILE_LAST_MODIFIED, getLastModified());
+                message.setHeader(Exchange.MESSAGE_TIMESTAMP, getLastModified());
             }
         }
     }

@@ -60,7 +60,7 @@ public class DozerEndpoint extends DefaultEndpoint {
     @UriParam
     private DozerConfiguration configuration;
 
-    public DozerEndpoint(String endpointUri, Component component, DozerConfiguration configuration) throws Exception {
+    public DozerEndpoint(String endpointUri, Component component, DozerConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
         variableMapper = new VariableMapper();
@@ -78,7 +78,7 @@ public class DozerEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported for Dozer endpoints");
     }
 
-    public Mapper getMapper() throws Exception {
+    public Mapper getMapper() {
         return mapper;
     }
 
@@ -125,7 +125,7 @@ public class DozerEndpoint extends DefaultEndpoint {
 
         if (mapper == null) {
             if (configuration.getMappingConfiguration() == null) {
-                URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(),
+                URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext(),
                         configuration.getMappingFile());
 
                 DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();
@@ -144,7 +144,7 @@ public class DozerEndpoint extends DefaultEndpoint {
                 // if bean mapping builders have been defined skip loading the "default" mapping file.
                 if (isNullOrEmpty(configuration.getMappingConfiguration().getBeanMappingBuilders())) {
                     if (config.getMappingFiles() == null || config.getMappingFiles().isEmpty()) {
-                        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(),
+                        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext(),
                                 configuration.getMappingFile());
                         config.setMappingFiles(Arrays.asList(url.toString()));
                     }

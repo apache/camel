@@ -28,6 +28,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
@@ -71,10 +72,12 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     private final XStream xStreamCompositeTree;
 
-    public DefaultCompositeApiClient(final SalesforceEndpointConfig configuration, final PayloadFormat format,
+    public DefaultCompositeApiClient(
+                                     final SalesforceEndpointConfig configuration, final PayloadFormat format,
                                      final String version, final SalesforceSession session,
                                      final SalesforceHttpClient httpClient, final SalesforceLoginConfig loginConfig)
                                                                                                                      throws SalesforceException {
+
         super(version, session, httpClient, loginConfig);
         this.format = format;
 
@@ -95,19 +98,16 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     public void submitCompositeRaw(
             final InputStream raw, final Map<String, List<String>> headers,
-            final ResponseCallback<InputStream> callback,
-            final String sObjectName, final String extId, String compositeMethod)
+            final ResponseCallback<InputStream> callback, String compositeMethod)
             throws SalesforceException {
         checkCompositeFormat(format, SObjectComposite.REQUIRED_PAYLOAD_FORMAT);
 
-        final String url = String.format("%s%s/%s/%s/%s", versionUrl(), "composite", "sobjects", sObjectName, extId);
+        final String url = versionUrl() + "composite";
 
-        Request request;
-        if (compositeMethod != null) {
-            request = createRequest(compositeMethod, url, headers);
-        } else {
-            request = createRequest(HttpMethod.POST, url, headers);
+        if (compositeMethod == null) {
+            compositeMethod = HttpMethod.POST.asString();
         }
+        Request request = createRequest(compositeMethod, url, headers);
 
         final ContentProvider content = new InputStreamContentProvider(raw);
         request.content(content);
@@ -115,7 +115,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                callback.onResponse(Optional.of(response), headers, ex);
+                callback.onResponse(Optional.ofNullable(response), headers, ex);
             }
         });
     }
@@ -211,6 +211,11 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         return jsonReaderFor(expectedType).readValue(responseStream);
     }
 
+    <T> List<T> fromJsonList(final Class<T> expectedType, final InputStream responseStream) throws IOException {
+        final CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(List.class, expectedType);
+        return mapper.readValue(responseStream, collectionType);
+    }
+
     ObjectReader jsonReaderFor(final Class<?> type) {
         return mapper.readerFor(type);
     }
@@ -289,7 +294,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         final String reason = response.getReason();
 
-        return new SalesforceException("Unexpected error: " + reason, status);
+        return new SalesforceException(errors, status, "Unexpected error: " + reason);
     }
 
     @Override
@@ -332,5 +337,4 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         return new ByteArrayInputStream(out.toByteArray());
     }
-
 }

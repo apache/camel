@@ -130,7 +130,7 @@ public class MasterConsumer extends DefaultConsumer {
         LOG.info("Leadership taken. Consumer started: {}", delegatedEndpoint);
     }
 
-    private synchronized void onLeadershipLost() throws Exception {
+    private synchronized void onLeadershipLost() {
         ServiceHelper.stopAndShutdownServices(delegatedConsumer, delegatedEndpoint);
 
         delegatedConsumer = null;

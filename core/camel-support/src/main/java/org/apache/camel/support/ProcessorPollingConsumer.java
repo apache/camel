@@ -43,6 +43,16 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport implements 
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processor);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
     }

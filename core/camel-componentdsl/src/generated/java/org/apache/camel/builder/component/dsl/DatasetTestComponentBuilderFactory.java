@@ -77,6 +77,24 @@ public interface DatasetTestComponentBuilderFactory {
             return this;
         }
         /**
+         * To turn on logging when the mock receives an incoming message. This
+         * will log only one time at INFO level for the incoming message. For
+         * more detailed logging then set the logger to DEBUG level for the
+         * org.apache.camel.component.mock.MockEndpoint class.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param log the value to set
+         * @return the dsl builder
+         */
+        default DatasetTestComponentBuilder log(boolean log) {
+            doSetProperty("log", log);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -97,6 +115,24 @@ public interface DatasetTestComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * Sets a custom ExchangeFormatter to convert the Exchange to a String
+         * suitable for logging. If not specified, we default to
+         * DefaultExchangeFormatter.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param exchangeFormatter the value to set
+         * @return the dsl builder
+         */
+        default DatasetTestComponentBuilder exchangeFormatter(
+                org.apache.camel.spi.ExchangeFormatter exchangeFormatter) {
+            doSetProperty("exchangeFormatter", exchangeFormatter);
+            return this;
+        }
     }
 
     class DatasetTestComponentBuilderImpl
@@ -115,7 +151,9 @@ public interface DatasetTestComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((DataSetTestComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "log": ((DataSetTestComponent) component).setLog((boolean) value); return true;
             case "autowiredEnabled": ((DataSetTestComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "exchangeFormatter": ((DataSetTestComponent) component).setExchangeFormatter((org.apache.camel.spi.ExchangeFormatter) value); return true;
             default: return false;
             }
         }

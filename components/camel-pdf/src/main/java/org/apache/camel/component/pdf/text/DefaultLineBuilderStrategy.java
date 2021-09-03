@@ -88,7 +88,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
                 end = middle;
                 middle = currentSplitIndex + (word.substring(currentSplitIndex, middle).length() >> 1);
             }
-        } while ((currentSplitIndex == -1) || !isSplitIndexFound(word, allowedLineWidth, currentSplitIndex));
+        } while (currentSplitIndex == -1 || !isSplitIndexFound(word, allowedLineWidth, currentSplitIndex));
 
         return currentSplitIndex;
     }

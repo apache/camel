@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
@@ -30,12 +31,44 @@ import org.apache.camel.util.ObjectHelper;
  * {@link org.apache.camel.CamelExecutionException} while others stores any thrown exception on the returned
  * {@link Exchange}. <br/>
  * <p/>
- * The {@link FluentProducerTemplate} is <b>thread safe</b>. <br/>
+ * The {@link FluentProducerTemplate} is <b>thread safe</b> with the assumption that its the same (single) thread that
+ * builds the message (via the fluent methods) that also sends the message. <br/>
+ * <p/>
+ * When using the fluent template its required to chain the methods such as:
+ * 
+ * <pre>
+ *     FluentProducerTemplate fluent = ...
+ *     fluent.withHeader("foo", 123).withHeader("bar", 456).withBody("Hello World").to("kafka:cheese").send();
+ * </pre>
+ * 
+ * The following code is <b>wrong</b> (do not do this)
+ * 
+ * <pre>
+ *     FluentProducerTemplate fluent = ...
+ *     fluent.withHeader("foo", 123);
+ *     fluent.withHeader("bar", 456);
+ *     fluent.withBody("Hello World");
+ *     fluent.to("kafka:cheese");
+ *     fluent.send();
+ * </pre>
+ * 
+ * If you do not want to chain fluent methods you can do as follows:
+ * 
+ * <pre>
+ *     FluentProducerTemplate fluent = ...
+ *     fluent = fluent.withHeader("foo", 123);
+ *     fluent = fluent.withHeader("bar", 456);
+ *     fluent = fluent.withBody("Hello World");
+ *     fluent = fluent.to("kafka:cheese")
+ *     fluent.send();
+ * </pre>
+ * <p/>
+ * You can either only use either withExchange, or withProcessor or a combination of withBody/withHeaders to construct
+ * the message to be sent.<br/>
  * <p/>
  * All the methods which sends a message may throw {@link FailedToCreateProducerException} in case the {@link Producer}
  * could not be created. Or a {@link NoSuchEndpointException} if the endpoint could not be resolved. There may be other
- * related exceptions being thrown which occurs <i>before</i> the {@link Producer} has started sending the message.
- * <br/>
+ * related exceptions being thrown which occurs <i>before</i> the {@link Producer} has started sending the message.<br/>
  * <p/>
  * All the send or request methods will return the content according to this strategy:
  * <ul>
@@ -48,7 +81,7 @@ import org.apache.camel.util.ObjectHelper;
  * <br/>
  * <p/>
  * Before using the template it must be started. And when you are done using the template, make sure to {@link #stop()}
- * the template. <br/>
+ * the template.<br/>
  * <p/>
  * <b>Important note on usage:</b> See this
  * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a> before
@@ -146,7 +179,20 @@ public interface FluentProducerTemplate extends Service {
     FluentProducerTemplate clearAll();
 
     /**
+     * Set the headers
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
+     * @param headers the headers
+     */
+    FluentProducerTemplate withHeaders(Map<String, Object> headers);
+
+    /**
      * Set the header
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
      *
      * @param key   the key of the header
      * @param value the value of the header
@@ -164,12 +210,18 @@ public interface FluentProducerTemplate extends Service {
     /**
      * Set the message body
      *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
      * @param body the body
      */
     FluentProducerTemplate withBody(Object body);
 
     /**
      * Set the message body after converting it to the given type
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
      *
      * @param body the body
      * @param type the type which the body should be converted to
@@ -212,6 +264,9 @@ public interface FluentProducerTemplate extends Service {
      *
      * When using withExchange then you must use the send method (request is not supported).
      *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
      * @param exchange the exchange
      */
     FluentProducerTemplate withExchange(Exchange exchange);
@@ -220,6 +275,9 @@ public interface FluentProducerTemplate extends Service {
      * Set the exchangeSupplier which will be invoke to get the exchange to be used for send.
      *
      * When using withExchange then you must use the send method (request is not supported).
+     *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
      *
      * @param exchangeSupplier the supplier
      */
@@ -242,6 +300,9 @@ public interface FluentProducerTemplate extends Service {
      *     .request()}
      * </pre>
      *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
      * @param processor the processor
      */
     FluentProducerTemplate withProcessor(Processor processor);
@@ -249,9 +310,33 @@ public interface FluentProducerTemplate extends Service {
     /**
      * Set the processorSupplier which will be invoke to get the processor to be used for send/request.
      *
+     * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
+     * withBody/withHeaders to construct the message to be sent.
+     *
      * @param processorSupplier the supplier
      */
     FluentProducerTemplate withProcessor(Supplier<Processor> processorSupplier);
+
+    /**
+     * Sets the default endpoint
+     *
+     * @param endpointUri the endpoint URI to send to
+     */
+    FluentProducerTemplate withDefaultEndpoint(String endpointUri);
+
+    /**
+     * Sets the default endpoint
+     *
+     * @param resolver the {@link EndpointProducerResolver} that supply the endpoint to send to.
+     */
+    FluentProducerTemplate withDefaultEndpoint(EndpointProducerResolver resolver);
+
+    /**
+     * Sets the default endpoint
+     *
+     * @param endpoint the endpoint to send to
+     */
+    FluentProducerTemplate withDefaultEndpoint(Endpoint endpoint);
 
     /**
      * Endpoint to send to
@@ -277,7 +362,7 @@ public interface FluentProducerTemplate extends Service {
     /**
      * Endpoint to send to
      *
-     * @param resolver the {@link EndpointConsumerResolver} that supply the endpoint to send to.
+     * @param resolver the {@link EndpointProducerResolver} that supply the endpoint to send to.
      */
     default FluentProducerTemplate to(EndpointProducerResolver resolver) {
         final CamelContext context = ObjectHelper.notNull(getCamelContext(), "camel context");

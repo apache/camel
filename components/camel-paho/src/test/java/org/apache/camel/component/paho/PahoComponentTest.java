@@ -18,21 +18,31 @@ package org.apache.camel.component.paho;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PahoComponentTest extends CamelTestSupport {
+
+    static int mqttPort = AvailablePortFinder.getNextAvailable();
+
+    @RegisterExtension
+    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .bare()
+            .withPersistent(false)
+            .withMqttTransport(mqttPort)
+            .build();
 
     @EndpointInject("mock:test")
     MockEndpoint mock;
@@ -40,29 +50,9 @@ public class PahoComponentTest extends CamelTestSupport {
     @EndpointInject("mock:testCustomizedPaho")
     MockEndpoint testCustomizedPahoMock;
 
-    BrokerService broker;
-
-    int mqttPort = AvailablePortFinder.getNextAvailable();
-
     @Override
     protected boolean useJmx() {
         return false;
-    }
-
-    @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("mqtt://localhost:" + mqttPort);
-        broker.start();
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-        broker.stop();
     }
 
     @Override

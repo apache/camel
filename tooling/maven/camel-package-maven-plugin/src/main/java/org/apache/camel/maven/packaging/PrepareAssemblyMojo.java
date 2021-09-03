@@ -102,7 +102,6 @@ public class PrepareAssemblyMojo extends AbstractMojo {
         Pattern pattern = Pattern.compile(
                 "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*</dependency>");
         Matcher matcher = pattern.matcher(between);
-        TreeSet<String> dependencies = new TreeSet<>();
         while (matcher.find()) {
             artifactIds.add(matcher.group(2));
         }

@@ -94,7 +94,7 @@ public class TrustManagersParameters extends JsseParameters {
             }
 
             LOG.debug("TrustManagerFactory [{}] is using provider [{}] and algorithm [{}].",
-                    new Object[] { tmf, tmf.getProvider(), tmf.getAlgorithm() });
+                    tmf, tmf.getProvider(), tmf.getAlgorithm());
 
             KeyStore ks = this.getKeyStore() == null ? null : this.getKeyStore().createKeyStore();
             tmf.init(ks);

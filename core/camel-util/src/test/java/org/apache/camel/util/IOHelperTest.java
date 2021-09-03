@@ -21,11 +21,21 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IOHelperTest {
+
     @Test
     public void testLookupEnvironmentVariable() throws Exception {
         assertEquals("8081", IOHelper.lookupEnvironmentVariable("FOO_SERVICE_PORT"));
         assertEquals("8081", IOHelper.lookupEnvironmentVariable("foo-service.port"));
         assertEquals("8081", IOHelper.lookupEnvironmentVariable("foo-service-port"));
         assertEquals("8081", IOHelper.lookupEnvironmentVariable("foo.service.port"));
+    }
+
+    @Test
+    public void testCharset() throws Exception {
+        assertEquals("UTF-8", IOHelper.getCharsetNameFromContentType("charset=utf-8"));
+        assertEquals("UTF-8", IOHelper.getCharsetNameFromContentType("charset=UTF-8"));
+        assertEquals("UTF-8", IOHelper.getCharsetNameFromContentType("text/plain; charset=UTF-8"));
+        assertEquals("UTF-8", IOHelper.getCharsetNameFromContentType("application/json; charset=utf-8"));
+        assertEquals("iso-8859-1", IOHelper.getCharsetNameFromContentType("application/json; charset=iso-8859-1"));
     }
 }

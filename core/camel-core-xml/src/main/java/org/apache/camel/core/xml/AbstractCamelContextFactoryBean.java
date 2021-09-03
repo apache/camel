@@ -72,6 +72,8 @@ import org.apache.camel.model.PackageScanDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
+import org.apache.camel.model.RouteConfigurationContainer;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -132,6 +134,8 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
@@ -143,7 +147,7 @@ import org.slf4j.LoggerFactory;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType
-        implements RouteTemplateContainer, RouteContainer, RestContainer {
+        implements RouteTemplateContainer, RouteConfigurationContainer, RouteContainer, RestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
@@ -444,6 +448,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // mark that we are setting up routes
             getContext().adapt(ExtendedCamelContext.class).setupRoutes(false);
 
+            // add route configurations
+            getContext().addRouteConfigurations(getRouteConfigurations());
+
             // init route templates
             initRouteTemplateRefs();
 
@@ -546,9 +553,55 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // sanity check first as the route is created using XML
             RouteDefinitionHelper.sanityCheckRoute(route);
 
-            // leverage logic from route definition helper to prepare the route
-            RouteDefinitionHelper.prepareRoute(getContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
-                    getInterceptSendToEndpoints(), getOnCompletions());
+            // reset before preparing route
+            route.resetPrepare();
+
+            // merge global and route scoped together
+            List<OnExceptionDefinition> oe = new ArrayList<>(getOnExceptions());
+            List<InterceptDefinition> icp = new ArrayList<>(getIntercepts());
+            List<InterceptFromDefinition> ifrom = new ArrayList<>(getInterceptFroms());
+            List<InterceptSendToEndpointDefinition> ito = new ArrayList<>(getInterceptSendToEndpoints());
+            List<OnCompletionDefinition> oc = new ArrayList<>(getOnCompletions());
+            if (getContext() != null) {
+                List<RouteConfigurationDefinition> globalConfigurations
+                        = getContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
+                if (globalConfigurations != null) {
+                    // if there are multiple ids configured then we should apply in that same order
+                    String[] ids = route.getRouteConfigurationId() != null
+                            ? route.getRouteConfigurationId().split(",") : new String[] { "*" };
+                    for (String id : ids) {
+                        // sort according to ordered
+                        globalConfigurations.stream().sorted(OrderedComparator.get())
+                                .filter(g -> {
+                                    if (route.getRouteConfigurationId() != null) {
+                                        // if the route has a route configuration assigned then use pattern matching
+                                        return PatternHelper.matchPattern(g.getId(), id);
+                                    } else {
+                                        // global configurations have no id assigned or is a wildcard
+                                        return g.getId() == null || g.getId().equals(id);
+                                    }
+                                })
+                                .forEach(g -> {
+                                    String aid = g.getId() == null ? "<default>" : g.getId();
+                                    // remember the id that was used on the route
+                                    route.addAppliedRouteConfigurationId(aid);
+                                    oe.addAll(g.getOnExceptions());
+                                    icp.addAll(g.getIntercepts());
+                                    ifrom.addAll(g.getInterceptFroms());
+                                    ito.addAll(g.getInterceptSendTos());
+                                    oc.addAll(g.getOnCompletions());
+                                });
+                    }
+                }
+            }
+
+            // must prepare the route before we can add it to the routes list
+            RouteDefinitionHelper.prepareRoute(getContext(), route, oe, icp, ifrom, ito, oc);
+
+            if (LOG.isDebugEnabled() && route.getAppliedRouteConfigurationIds() != null) {
+                LOG.debug("Route: {} is using route configurations ids: {}", route.getId(),
+                        route.getAppliedRouteConfigurationIds());
+            }
 
             // mark the route as prepared now
             route.markPrepared();
@@ -857,6 +910,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract List<RouteTemplateDefinition> getRouteTemplates();
 
     @Override
+    public abstract List<RouteConfigurationDefinition> getRouteConfigurations();
+
+    @Override
     public abstract List<RouteDefinition> getRoutes();
 
     @Override
@@ -913,6 +969,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract String getUseMDCLogging();
 
     public abstract String getMDCLoggingKeysPattern();
+
+    public abstract String getDumpRoutes();
 
     public abstract String getUseDataType();
 
@@ -1053,6 +1111,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getMDCLoggingKeysPattern() != null) {
             context.setMDCLoggingKeysPattern(CamelContextHelper.parseText(context, getMDCLoggingKeysPattern()));
+        }
+        if (getDumpRoutes() != null) {
+            context.setDumpRoutes(CamelContextHelper.parseBoolean(context, getDumpRoutes()));
         }
         if (getUseDataType() != null) {
             context.setUseDataType(CamelContextHelper.parseBoolean(context, getUseDataType()));
@@ -1254,7 +1315,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // package scan
         addPackageElementContentsToScanDefinition();
         PackageScanDefinition packageScanDef = getPackageScan();
-        if (packageScanDef != null && packageScanDef.getPackages().size() > 0) {
+        if (packageScanDef != null && !packageScanDef.getPackages().isEmpty()) {
             // use package scan filter
             PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
             // support property placeholders in include and exclude

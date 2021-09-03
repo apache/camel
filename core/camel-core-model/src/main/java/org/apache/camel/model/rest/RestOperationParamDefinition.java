@@ -32,9 +32,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.StringHelper;
 
 /**
- * To specify the rest operation parameters using Swagger.
- * <p/>
- * This maps to the Swagger Parameter Message Object.
+ * To specify the rest operation parameters.
  */
 @Metadata(label = "rest")
 @XmlRootElement(name = "param")
@@ -97,7 +95,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter type.
+     * Sets the parameter type.
      */
     public void setType(RestParamType type) {
         this.type = type;
@@ -108,7 +106,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter name.
+     * Sets the parameter name.
      */
     public void setName(String name) {
         this.name = name;
@@ -119,14 +117,14 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter description.
+     * Sets the parameter description.
      */
     public void setDescription(String description) {
         this.description = description;
     }
 
     /**
-     * Sets the Swagger Parameter default value.
+     * Sets the parameter default value.
      */
     public String getDefaultValue() {
         return defaultValue != null ? defaultValue : "";
@@ -141,7 +139,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter required flag.
+     * Sets the parameter required flag.
      */
     public void setRequired(Boolean required) {
         this.required = required;
@@ -152,7 +150,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter collection format.
+     * Sets the parameter collection format.
      */
     public void setCollectionFormat(CollectionFormat collectionFormat) {
         this.collectionFormat = collectionFormat;
@@ -163,8 +161,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter array type. Required if data type is "array". Describes the type of items in the
-     * array.
+     * Sets the parameter array type. Required if data type is "array". Describes the type of items in the array.
      */
     public void setArrayType(String arrayType) {
         this.arrayType = arrayType;
@@ -175,7 +172,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter data type.
+     * Sets the parameter data type.
      */
     public void setDataType(String dataType) {
         this.dataType = dataType;
@@ -186,7 +183,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter data format.
+     * Sets the parameter data format.
      */
     public void setDataFormat(String dataFormat) {
         this.dataFormat = dataFormat;
@@ -201,7 +198,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter list of allowable values (enum).
+     * Sets the parameter list of allowable values (enum).
      */
     public void setAllowableValues(List<String> allowableValues) {
         this.allowableValues = allowableValues;
@@ -212,7 +209,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter examples.
+     * Sets the parameter examples.
      */
     public void setExamples(List<RestPropertyDefinition> examples) {
         this.examples = examples;

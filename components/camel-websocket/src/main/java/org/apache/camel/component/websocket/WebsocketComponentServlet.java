@@ -16,19 +16,24 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
-import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.eclipse.jetty.websocket.api.WebSocketConstants.SEC_WEBSOCKET_PROTOCOL;
+
 public class WebsocketComponentServlet extends WebSocketServlet {
+    public static final String UNSPECIFIED_SUBPROTOCOL = "default";
+    public static final String ANY_SUBPROTOCOL = "any";
+
     private static final long serialVersionUID = 1L;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -63,19 +68,81 @@ public class WebsocketComponentServlet extends WebSocketServlet {
         consumers.remove(consumer.getPath());
     }
 
-    public DefaultWebsocket doWebSocketConnect(ServletUpgradeRequest request, String protocol) {
-        String protocolKey = protocol;
-
-        if (protocol == null || !socketFactory.containsKey(protocol)) {
-            log.debug("No factory found for the socket protocol: {}, returning default implementation", protocol);
-            protocolKey = "default";
+    public DefaultWebsocket doWebSocketConnect(ServletUpgradeRequest request, ServletUpgradeResponse resp) {
+        String subprotocol = negotiateSubprotocol(request, consumer);
+        if (subprotocol == null) {
+            return null;       // no agreeable subprotocol was found, reject the connection
         }
 
-        WebSocketFactory factory = socketFactory.get(protocolKey);
-        return factory.newInstance(request, protocolKey,
-                (consumer != null && consumer.getEndpoint() != null)
-                        ? WebsocketComponent.createPathSpec(consumer.getEndpoint().getResourceUri()) : null,
-                sync, consumer);
+        // now select the WebSocketFactory implementation based upon the agreed subprotocol
+        final WebSocketFactory factory;
+        if (socketFactory.containsKey(subprotocol)) {
+            factory = socketFactory.get(subprotocol);
+        } else {
+            log.debug("No factory found for the socket subprotocol: {}, using default implementation", subprotocol);
+            factory = socketFactory.get(UNSPECIFIED_SUBPROTOCOL);
+        }
+
+        if (subprotocol.equals(UNSPECIFIED_SUBPROTOCOL)) {
+            subprotocol = null;             // application clients should just see null if no subprotocol was actually negotiated
+        } else {
+            resp.setHeader(SEC_WEBSOCKET_PROTOCOL, subprotocol);    // confirm selected subprotocol to client
+        }
+
+        // if the websocket component was configured with a wildcard path, determine the releative path used by this client
+        final String relativePath;
+        if (pathSpec != null && pathSpec.endsWith("*")) {
+            final String prefix = pathSpec.substring(0, pathSpec.length() - 1);
+            final String reqPath = request.getRequestPath();
+            if (reqPath.startsWith(prefix) && reqPath.length() > prefix.length()) {
+                relativePath = reqPath.substring(prefix.length());
+            } else {
+                relativePath = null;
+            }
+        } else {
+            relativePath = null;
+        }
+
+        return factory.newInstance(request, pathSpec, sync, consumer, subprotocol, relativePath);
+    }
+
+    private String negotiateSubprotocol(ServletUpgradeRequest request, WebsocketConsumer consumer) {
+        final String[] supportedSubprotocols = Optional.ofNullable(consumer)
+                .map(WebsocketConsumer::getEndpoint)
+                .map(WebsocketEndpoint::getSubprotocol)
+                .map(String::trim)
+                .filter(value -> !value.isEmpty())
+                .map(subprotocols -> subprotocols.split(","))
+                .orElse(new String[] { ANY_SUBPROTOCOL });         // default: all subprotocols are supported
+
+        final List<String> proposedSubprotocols = Optional.ofNullable(request.getHeaders(SEC_WEBSOCKET_PROTOCOL))
+                .map(list -> list.stream()
+                        .map(String::trim)
+                        .filter(value -> !value.isEmpty())
+                        .map(header -> header.split(","))
+                        .map(array -> Arrays.stream(array)
+                                .map(String::trim)
+                                .filter(value -> !value.isEmpty())
+                                .collect(Collectors.toList()))
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());               // default: no subprotocols are proposed
+
+        for (String s : supportedSubprotocols) {
+            final String supportedSubprotocol = s.trim();
+            if (supportedSubprotocol.equalsIgnoreCase(ANY_SUBPROTOCOL)) {
+                return UNSPECIFIED_SUBPROTOCOL;             // agree to use an unspecified subprotocol
+            } else {
+                if (proposedSubprotocols.contains(supportedSubprotocol)) {
+                    return supportedSubprotocol;                // accept this subprotocol
+                }
+            }
+        }
+
+        log.debug("no agreeable subprotocol could be negotiated, server supports {} but client proposes {}",
+                supportedSubprotocols,
+                proposedSubprotocols);
+        return null;
     }
 
     public Map<String, WebSocketFactory> getSocketFactory() {
@@ -88,13 +155,6 @@ public class WebsocketComponentServlet extends WebSocketServlet {
 
     @Override
     public void configure(WebSocketServletFactory factory) {
-        factory.setCreator(new WebSocketCreator() {
-            @Override
-            public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp) {
-                String protocolKey = "default";
-                WebSocketFactory factory = socketFactory.get(protocolKey);
-                return factory.newInstance(req, protocolKey, pathSpec, sync, consumer);
-            }
-        });
+        factory.setCreator(this::doWebSocketConnect);
     }
 }

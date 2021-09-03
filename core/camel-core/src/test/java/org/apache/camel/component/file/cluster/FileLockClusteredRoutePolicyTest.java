@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
@@ -71,7 +72,7 @@ public final class FileLockClusteredRoutePolicyTest {
 
             FileLockClusterService service = new FileLockClusterService();
             service.setId("node-" + id);
-            service.setRoot("target/data/cluster");
+            service.setRoot(TestSupport.testDirectory(FileLockClusteredRoutePolicyTest.class, false).toString());
             service.setAcquireLockDelay(1, TimeUnit.SECONDS);
             service.setAcquireLockInterval(1, TimeUnit.SECONDS);
 

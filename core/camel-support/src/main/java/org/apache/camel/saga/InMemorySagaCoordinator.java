@@ -168,9 +168,9 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         }
         return result.whenComplete((done, ex) -> {
             if (ex != null) {
-                LOG.error("Cannot finalize " + description + " the saga", ex);
+                LOG.error("Cannot finalize {} the saga", description, ex);
             } else if (!done) {
-                LOG.warn("Unable to finalize " + description + " for all required steps of the saga " + sagaId);
+                LOG.warn("Unable to finalize {} for all required steps of the saga {}", description, sagaId);
             }
         });
     }
@@ -186,9 +186,8 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             }
             return true;
         }, sagaService.getExecutorService()).exceptionally(ex -> {
-            LOG.warn("Exception thrown during " + description + " at " + endpoint.getEndpointUri()
-                     + ". Attempt " + (doneAttempts + 1) + " of " + sagaService.getMaxRetryAttempts(),
-                    ex);
+            LOG.warn("Exception thrown during {} at {}. Attempt {} of {}", description, endpoint.getEndpointUri(),
+                    doneAttempts + 1, sagaService.getMaxRetryAttempts(), ex);
             return false;
         }).thenCompose(executed -> {
             int currentAttempt = doneAttempts + 1;

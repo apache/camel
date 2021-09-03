@@ -18,17 +18,48 @@ package org.apache.camel.component.consul.endpoint;
 
 import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
+import com.orbitz.consul.model.agent.Registration;
+import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
+import org.apache.camel.spi.InvokeOnHeader;
 
 public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
 
     public ConsulAgentProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
         super(endpoint, configuration, Consul::agentClient);
-
-        bind(ConsulAgentActions.CHECKS, wrap(c -> c.getChecks()));
-        bind(ConsulAgentActions.SERVICES, wrap(c -> c.getServices()));
-        bind(ConsulAgentActions.MEMBERS, wrap(c -> c.getMembers()));
-        bind(ConsulAgentActions.AGENT, wrap(c -> c.getAgent()));
     }
+
+    @InvokeOnHeader("CHECKS")
+    public Object invokeChecks(Message message) throws Exception {
+        return getClient().getChecks();
+    }
+
+    @InvokeOnHeader("SERVICES")
+    public Object invokeServices(Message message) throws Exception {
+        return getClient().getServices();
+    }
+
+    @InvokeOnHeader("MEMBERS")
+    public Object invokeMembers(Message message) throws Exception {
+        return getClient().getMembers();
+    }
+
+    @InvokeOnHeader("AGENT")
+    public Object invokeAgent(Message message) throws Exception {
+        return getClient().getAgent();
+    }
+
+    @InvokeOnHeader("REGISTER")
+    public void invokeRegister(Message message) throws Exception {
+        getClient().register(message.getMandatoryBody(Registration.class));
+    }
+
+    @InvokeOnHeader("DEREGISTER")
+    public void invokeDeregister(Message message) throws Exception {
+        getClient().deregister(getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE_ID, String.class),
+                buildQueryOptions(message, getConfiguration()));
+    }
+
 }

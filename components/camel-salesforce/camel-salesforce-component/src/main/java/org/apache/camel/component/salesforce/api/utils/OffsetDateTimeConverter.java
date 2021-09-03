@@ -31,8 +31,7 @@ final class OffsetDateTimeConverter implements SingleValueConverter {
     }
 
     @Override
-    public boolean canConvert(@SuppressWarnings("rawtypes")
-    final Class type) {
+    public boolean canConvert(@SuppressWarnings("rawtypes") final Class type) {
         return OffsetDateTime.class.equals(type);
     }
 

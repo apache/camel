@@ -1,0 +1,18 @@
+{
+  "id" : "3ca2b6da-cfbb-463a-9205-7843cbbdf087",
+  "name" : "images_detail.json",
+  "request" : {
+    "url" : "/v1/images/detail",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"images\":[{\"status\":\"active\",\"name\":\"Fedora-x86_64-20-20140407-sda\",\"tags\":[\"testTag\"],\"container_format\":\"bare\",\"created_at\":\"2016-08-09T21:32:02Z\",\"size\":210829312,\"disk_format\":\"qcow2\",\"updated_at\":\"2016-08-15T20:28:15Z\",\"visibility\":\"public\",\"self\":\"\/v2\/images\/7541b8be-c62b-46c3-b5a5-5bb5ce43ce01\",\"min_disk\":0,\"protected\":false,\"id\":\"7541b8be-c62b-46c3-b5a5-5bb5ce43ce01\",\"file\":\"\/v2\/images\/7541b8be-c62b-46c3-b5a5-5bb5ce43ce01\/file\",\"checksum\":\"1ec332a350e0a839f03c967c1c568623\",\"owner\":\"48e3c436235547a68324c2891bea41ac\",\"virtual_size\":null,\"min_ram\":0,\"schema\":\"\/v1\/schemas\/image\"},{\"status\":\"active\",\"name\":\"CentOS-7-x86_64-GenericCloud-1604\",\"tags\":[],\"container_format\":\"bare\",\"created_at\":\"2016-08-09T21:31:49Z\",\"size\":912654336,\"disk_format\":\"qcow2\",\"updated_at\":\"2016-08-09T21:31:54Z\",\"visibility\":\"public\",\"self\":\"\/v2\/images\/fc3ac324-f361-453d-a906-d8a695b6ab91\",\"min_disk\":0,\"protected\":false,\"id\":\"fc3ac324-f361-453d-a906-d8a695b6ab91\",\"file\":\"\/v2\/images\/fc3ac324-f361-453d-a906-d8a695b6ab91\/file\",\"checksum\":\"6008a645f61baffe0d19dfe992def8a6\",\"owner\":\"48e3c436235547a68324c2891bea41ac\",\"virtual_size\":null,\"min_ram\":0,\"schema\":\"\/v1\/schemas\/image\"}],\"schema\":\"\/v1\/schemas\/images\",\"first\":\"\/v1\/images\"}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "3ca2b6da-cfbb-463a-9205-7843cbbdf087",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

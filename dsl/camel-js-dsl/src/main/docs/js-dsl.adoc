@@ -1,0 +1,13 @@
+[[js-dsl-other]]
+= JavaScript DSL
+:docTitle: JavaScript Dsl
+:artifactId: camel-js-dsl
+:description: Camel DSL with JavaScript
+:supportLevel: Experimental
+:since: 3.
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/js-dsl.adoc[opts=optional]
+//Manually maintained attributes
+:group: DSL
+
+See https://camel.apache.org/manual/latest/dsl.html

@@ -49,6 +49,6 @@ public class PlatformHttpHeaderFilterStrategy extends DefaultHeaderFilterStrateg
 
         // filter headers begin with "Camel" or "org.apache.camel"
         // must ignore case for Http based transports
-        setOutFilterPattern(CAMEL_FILTER_PATTERN);
+        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
 }

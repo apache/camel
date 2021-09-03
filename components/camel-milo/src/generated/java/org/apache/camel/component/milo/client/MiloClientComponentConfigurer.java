@@ -63,6 +63,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxPendingPublishRequests": getOrCreateConfiguration(target).setMaxPendingPublishRequests(property(camelContext, java.lang.Long.class, value)); return true;
         case "maxresponsemessagesize":
         case "maxResponseMessageSize": getOrCreateConfiguration(target).setMaxResponseMessageSize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "miloclientconnectionmanager":
+        case "miloClientConnectionManager": target.setMiloClientConnectionManager(property(camelContext, org.apache.camel.component.milo.client.MiloClientConnectionManager.class, value)); return true;
         case "overridehost":
         case "overrideHost": getOrCreateConfiguration(target).setOverrideHost(property(camelContext, boolean.class, value)); return true;
         case "producturi":
@@ -77,6 +79,11 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "sessionTimeout": getOrCreateConfiguration(target).setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"miloClientConnectionManager"};
     }
 
     @Override
@@ -117,6 +124,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxPendingPublishRequests": return java.lang.Long.class;
         case "maxresponsemessagesize":
         case "maxResponseMessageSize": return java.lang.Long.class;
+        case "miloclientconnectionmanager":
+        case "miloClientConnectionManager": return org.apache.camel.component.milo.client.MiloClientConnectionManager.class;
         case "overridehost":
         case "overrideHost": return boolean.class;
         case "producturi":
@@ -172,6 +181,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxPendingPublishRequests": return getOrCreateConfiguration(target).getMaxPendingPublishRequests();
         case "maxresponsemessagesize":
         case "maxResponseMessageSize": return getOrCreateConfiguration(target).getMaxResponseMessageSize();
+        case "miloclientconnectionmanager":
+        case "miloClientConnectionManager": return target.getMiloClientConnectionManager();
         case "overridehost":
         case "overrideHost": return getOrCreateConfiguration(target).isOverrideHost();
         case "producturi":

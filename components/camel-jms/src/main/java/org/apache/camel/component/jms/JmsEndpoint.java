@@ -414,11 +414,11 @@ public class JmsEndpoint extends DefaultEndpoint
         return getComponent().getAsyncStartStopExecutorService();
     }
 
-    public void onListenerContainerStarting(AbstractMessageListenerContainer container) {
+    public void onListenerContainerStarting() {
         runningMessageListeners.incrementAndGet();
     }
 
-    public void onListenerContainerStopped(AbstractMessageListenerContainer container) {
+    public void onListenerContainerStopped() {
         runningMessageListeners.decrementAndGet();
     }
 

@@ -29,9 +29,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.splunk.event.SplunkEvent;
+import org.apache.camel.component.splunk.support.DataWriter;
 import org.apache.camel.component.splunk.support.StreamDataWriter;
 import org.apache.camel.component.splunk.support.SubmitDataWriter;
 import org.apache.camel.component.splunk.support.TcpDataWriter;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -73,6 +75,7 @@ public class ProducerTest extends SplunkMockTestSupport {
         when(service.getIndexes()).thenReturn(indexColl);
         when(service.getInputs()).thenReturn(inputCollection);
         when(input.attach()).thenReturn(socket);
+        when(input.getHost()).thenReturn("localhost");
         when(inputCollection.get(anyString())).thenReturn(input);
         when(indexColl.get(anyString())).thenReturn(index);
         when(index.attach(isA(Args.class))).thenReturn(socket);
@@ -119,6 +122,35 @@ public class ProducerTest extends SplunkMockTestSupport {
         assertMockEndpointsSatisfied();
         Producer tcpProducer = tcpEndpoint.createProducer();
         assertIsInstanceOf(TcpDataWriter.class, ((SplunkProducer) tcpProducer).getDataWriter());
+    }
+
+    @Test
+    public void testTcpWriterWithLocalReceiverPort() throws Exception {
+        try {
+            tcpEndpoint.getConfiguration().setTcpReceiverLocalPort(-1);
+            Producer tcpProducer = tcpEndpoint.createProducer();
+
+            DataWriter dw = ((SplunkProducer) tcpProducer).getDataWriter();
+            //connection is created to socket localhost:-1, which has to fail
+            Assertions.assertThrows(Exception.class, () -> dw.start());
+        } finally {
+            tcpEndpoint.getConfiguration().setTcpReceiverLocalPort(null);
+        }
+    }
+
+    @Test
+    public void testTcpWriterWithDifferentHost() throws Exception {
+        String host = tcpEndpoint.getConfiguration().getHost();
+        try {
+            tcpEndpoint.getConfiguration().setHost("foo");
+            Producer tcpProducer = tcpEndpoint.createProducer();
+
+            DataWriter dw = ((SplunkProducer) tcpProducer).getDataWriter();
+            //connection is created to socket foo:2222, which has to fail
+            Assertions.assertThrows(RuntimeException.class, () -> dw.start());
+        } finally {
+            tcpEndpoint.getConfiguration().setHost(host);
+        }
     }
 
     @Test

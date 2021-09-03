@@ -68,7 +68,7 @@ public class WsConsumer extends DefaultConsumer {
     }
 
     private void sendMessageInternal(Object message) {
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         //TODO may set some headers with some meta info (e.g., socket info, unique-id for correlation purpose, etc0 
         // set the body
@@ -79,14 +79,9 @@ public class WsConsumer extends DefaultConsumer {
             exchange.getIn().setBody(message);
         }
 
-        // send exchange using the async routing engine
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
 }

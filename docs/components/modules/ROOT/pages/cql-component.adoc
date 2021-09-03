@@ -22,50 +22,51 @@ availability. Like Google's BigTable, Cassandra data is structured using
 column families which can be accessed through the Thrift RPC API or a
 SQL-like API called CQL.
 
-This component aims at integrating Cassandra 2.0+ using the CQL3 API
+NOTE: This component aims at integrating Cassandra 2.0+ using the CQL3 API
 (not the Thrift API). It's based on
 https://github.com/datastax/java-driver[Cassandra Java Driver] provided
 by DataStax.
 
-Maven users will need to add the following dependency to their
-`pom.xml`:
 
-*pom.xml*
+// component-configure options: START
+== Configuring Options
 
-[source,xml]
-------------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-cassandraql</artifactId>
-    <version>x.y.z</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-------------------------------------------------------------
+Camel components are configured on two separate levels:
 
-== URI format
+- component level
+- endpoint level
 
-The endpoint can initiate the Cassandra connection or use an existing
-one.
+=== Configuring Component Options
 
-[cols="<,<",options="header",]
-|======================================================================
-|URI |Description
-|`cql:localhost/keyspace` |Single host, default port, usual for testing
-|`cql:host1,host2/keyspace` |Multi host, default port
-|`cql:host1,host2:9042/keyspace` |Multi host, custom port
-|`cql:host1,host2` |Default port and keyspace
-|`cql:bean:sessionRef` |Provided Session reference
-|`cql:bean:clusterRef/keyspace` |Provided Cluster reference
-|======================================================================
+The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
+For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
 
-To fine tune the Cassandra connection (SSL options, pooling options,
-load balancing policy, retry policy, reconnection policy...), create
-your own Cluster instance and give it to the Camel endpoint.
+Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+that are commonly used, then you may often only need to configure a few options on a component; or none at all.
 
-== Cassandra Options
+Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
+in a configuration file (application.properties|yaml), or directly with Java code.
 
+=== Configuring Endpoint Options
+
+Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
+configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
+or as a producer (to), or used for both.
+
+Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
+the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+
+A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
+which allows to not hardcode urls, port numbers, sensitive information, and other settings.
+In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+
+The following two sections lists all the options, firstly for the component followed by the endpoint.
+// component-configure options: END
 
 // component options: START
+== Component Options
+
+
 The Cassandra CQL component supports 3 options, which are listed below.
 
 
@@ -79,9 +80,9 @@ The Cassandra CQL component supports 3 options, which are listed below.
 |===
 // component options: END
 
-
-
 // endpoint options: START
+== Endpoint Options
+
 The Cassandra CQL endpoint is configured using URI syntax:
 
 ----
@@ -97,8 +98,8 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *beanRef* | beanRef is defined using bean:id |  | String
-| *hosts* | Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma. |  | String
-| *port* | Port number of cassansdra server(s) |  | Integer
+| *hosts* | Hostname(s) Cassandra server(s). Multiple hosts can be separated by comma. |  | String
+| *port* | Port number of Cassandra server(s) |  | Integer
 | *keyspace* | Keyspace to use |  | String
 |===
 
@@ -142,6 +143,26 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Endpoint Connection Syntax
+
+The endpoint can initiate the Cassandra connection or use an existing
+one.
+
+[cols="<,<",options="header",]
+|======================================================================
+|URI |Description
+|`cql:localhost/keyspace` |Single host, default port, usual for testing
+|`cql:host1,host2/keyspace` |Multi host, default port
+|`cql:host1,host2:9042/keyspace` |Multi host, custom port
+|`cql:host1,host2` |Default port and keyspace
+|`cql:bean:sessionRef` |Provided Session reference
+|`cql:bean:clusterRef/keyspace` |Provided Cluster reference
+|======================================================================
+
+To fine tune the Cassandra connection (SSL options, pooling options,
+load balancing policy, retry policy, reconnection policy...), create
+your own Cluster instance and give it to the Camel endpoint.
+
 == Messages
 
 === Incoming Message
@@ -160,8 +181,6 @@ either as a plain String or built using the `QueryBuilder`.
 
 The Camel Cassandra endpoint produces one or many a Cassandra Row
 objects depending on the `resultSetConversionStrategy`:
-
- 
 
 * `List<Row>` if `resultSetConversionStrategy` is `ALL` or
 `LIMIT_[0-9]+`
@@ -288,5 +307,4 @@ Arrays.asList("davsclaus", "Claus", "Ibsen")
 The same approach can be used for updating or querying the table.
 
 
-
-include::camel-spring-boot::page$cassandraql-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$cassandraql-starter.adoc[]

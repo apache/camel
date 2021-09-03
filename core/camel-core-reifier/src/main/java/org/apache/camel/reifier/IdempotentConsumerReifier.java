@@ -58,9 +58,9 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
      * @return the repository
      */
     protected <T> IdempotentRepository resolveMessageIdRepository() {
-        if (definition.getMessageIdRepositoryRef() != null) {
-            definition.setMessageIdRepository(
-                    mandatoryLookup(parseString(definition.getMessageIdRepositoryRef()), IdempotentRepository.class));
+        String ref = parseString(definition.getMessageIdRepositoryRef());
+        if (ref != null) {
+            definition.setMessageIdRepository(mandatoryLookup(ref, IdempotentRepository.class));
         }
         return definition.getMessageIdRepository();
     }

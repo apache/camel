@@ -145,5 +145,5 @@ public enum Command {
     GEOHASH,
     GEOPOS,
     GEORADIUS,
-    GEORADIUSBYMEMBER
+    GEORADIUSBYMEMBER;
 }

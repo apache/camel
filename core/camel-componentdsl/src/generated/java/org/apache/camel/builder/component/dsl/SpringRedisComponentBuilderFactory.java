@@ -51,6 +51,22 @@ public interface SpringRedisComponentBuilderFactory {
             extends
                 ComponentBuilder<RedisComponent> {
         /**
+         * Reference to a pre-configured RedisTemplate instance to use.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param redisTemplate the value to set
+         * @return the dsl builder
+         */
+        default SpringRedisComponentBuilder redisTemplate(
+                org.springframework.data.redis.core.RedisTemplate redisTemplate) {
+            doSetProperty("redisTemplate", redisTemplate);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -134,6 +150,7 @@ public interface SpringRedisComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "redisTemplate": ((RedisComponent) component).setRedisTemplate((org.springframework.data.redis.core.RedisTemplate) value); return true;
             case "bridgeErrorHandler": ((RedisComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((RedisComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((RedisComponent) component).setAutowiredEnabled((boolean) value); return true;

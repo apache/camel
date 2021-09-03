@@ -32,17 +32,16 @@ public class AtmosScheduledPollGetConsumer extends AtmosScheduledPollConsumer {
     /**
      * Poll from an atmos remote path and put the result in the message exchange
      * 
-     * @return           number of messages polled
-     * @throws Exception
+     * @return number of messages polled
      */
     @Override
     protected int poll() throws Exception {
-        Exchange exchange = endpoint.createExchange();
-        AtmosResult result = AtmosAPIFacade.getInstance(configuration.getClient())
-                .get(configuration.getRemotePath());
-        result.populateExchange(exchange);
-
+        Exchange exchange = createExchange(false);
         try {
+            AtmosResult result = AtmosAPIFacade.getInstance(configuration.getClient())
+                    .get(configuration.getRemotePath());
+            result.populateExchange(exchange);
+
             // send message to next processor in the route
             getProcessor().process(exchange);
             return 1; // number of messages polled
@@ -51,6 +50,7 @@ public class AtmosScheduledPollGetConsumer extends AtmosScheduledPollConsumer {
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
+            releaseExchange(exchange, false);
         }
     }
 }

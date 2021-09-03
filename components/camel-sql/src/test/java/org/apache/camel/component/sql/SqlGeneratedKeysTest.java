@@ -33,6 +33,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SqlGeneratedKeysTest extends CamelTestSupport {
@@ -79,8 +80,9 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert");
 
+        Object body = new Object[] { "project x", "ASF", "new project" };
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(new Object[] { "project x", "ASF", "new project" });
+        exchange.getIn().setBody(body);
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
 
         // now we send the exchange to the endpoint, and receives the response from Camel
@@ -90,6 +92,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         assertNotNull(out);
         assertNotNull(out.getMessage());
         assertNotNull(out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertSame(body, out.getMessage().getBody());
 
         List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull(generatedKeys, "out body could not be converted to a List - was: "

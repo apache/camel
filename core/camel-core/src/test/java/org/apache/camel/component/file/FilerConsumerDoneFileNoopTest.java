@@ -16,27 +16,15 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for writing done files
  */
 public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/done");
-        super.setUp();
-    }
 
     @Test
     public void testDoneFile() throws Exception {
@@ -45,7 +33,7 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         // done file
         getMockEndpoint("mock:result").setResultMinimumWaitTime(50);
 
-        template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         resetMocks();
@@ -54,18 +42,16 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the done file
-        template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done");
+        template.sendBodyAndHeader(fileUri(), "", Exchange.FILE_NAME, "done");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
 
         // done file should be kept now
-        File file = new File("target/data/done/done");
-        assertTrue(file.exists(), "Done file should be not be deleted: " + file);
+        assertFileExists(testFile("done"));
 
         // as well the original file should be kept due noop
-        file = new File("target/data/done/hello.txt");
-        assertTrue(file.exists(), "Original file should be kept: " + file);
+        assertFileExists(testFile("hello.txt"));
     }
 
     @Override
@@ -73,7 +59,7 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?initialDelay=0&delay=10&doneFileName=done&noop=true").to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10&doneFileName=done&noop=true")).to("mock:result");
             }
         };
     }

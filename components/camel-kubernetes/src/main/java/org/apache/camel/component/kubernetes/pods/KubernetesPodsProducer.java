@@ -26,12 +26,14 @@ import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesPodsProducer extends DefaultProducer {
 
@@ -48,34 +50,28 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String operation;
-
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
-            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
-        } else {
-            operation = getEndpoint().getKubernetesConfiguration().getOperation();
-        }
+        String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
 
             case KubernetesOperations.LIST_PODS_OPERATION:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_PODS_BY_LABELS_OPERATION:
-                doListPodsByLabel(exchange, operation);
+                doListPodsByLabel(exchange);
                 break;
 
             case KubernetesOperations.GET_POD_OPERATION:
-                doGetPod(exchange, operation);
+                doGetPod(exchange);
                 break;
 
             case KubernetesOperations.CREATE_POD_OPERATION:
-                doCreatePod(exchange, operation);
+                doCreatePod(exchange);
                 break;
 
             case KubernetesOperations.DELETE_POD_OPERATION:
-                doDeletePod(exchange, operation);
+                doDeletePod(exchange);
                 break;
 
             default:
@@ -83,7 +79,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange) {
         PodList podList;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isNotEmpty(namespaceName)) {
@@ -91,11 +87,10 @@ public class KubernetesPodsProducer extends DefaultProducer {
         } else {
             podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().list();
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(podList.getItems());
+        prepareOutboundMessage(exchange, podList.getItems());
     }
 
-    protected void doListPodsByLabel(Exchange exchange, String operation) {
+    protected void doListPodsByLabel(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get pods by labels require specify a labels set");
@@ -103,16 +98,13 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
 
         FilterWatchListMultiDeletable<Pod, PodList> pods = getEndpoint().getKubernetesClient().pods().inAnyNamespace();
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
-            pods.withLabel(entry.getKey(), entry.getValue());
-        }
-        PodList podList = pods.list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(podList.getItems());
+        PodList podList = pods.withLabels(labels).list();
+
+        prepareOutboundMessage(exchange, podList.getItems());
     }
 
-    protected void doGetPod(Exchange exchange, String operation) throws Exception {
+    protected void doGetPod(Exchange exchange) {
         Pod pod = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -126,11 +118,10 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).get();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(pod);
+        prepareOutboundMessage(exchange, pod);
     }
 
-    protected void doCreatePod(Exchange exchange, String operation) throws Exception {
+    protected void doCreatePod(Exchange exchange) {
         Pod pod = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
@@ -152,11 +143,10 @@ public class KubernetesPodsProducer extends DefaultProducer {
                 .withSpec(podSpec).build();
         pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).create(podCreating);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(pod);
+        prepareOutboundMessage(exchange, pod);
     }
 
-    protected void doDeletePod(Exchange exchange, String operation) throws Exception {
+    protected void doDeletePod(Exchange exchange) {
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(podName)) {
@@ -169,7 +159,6 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         boolean podDeleted = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).delete();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(podDeleted);
+        prepareOutboundMessage(exchange, podDeleted);
     }
 }

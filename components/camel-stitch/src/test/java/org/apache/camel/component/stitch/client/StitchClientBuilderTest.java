@@ -25,16 +25,15 @@ class StitchClientBuilderTest {
 
     @Test
     void shouldNotCreateClientIfTokenOrRegionIsMissing() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            StitchClientBuilder.builder().build();
-        });
+        final StitchClientBuilder builder = StitchClientBuilder.builder();
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            StitchClientBuilder.builder().withToken("test").build();
-        });
+        assertThrows(IllegalArgumentException.class, () -> builder.build());
 
+        assertThrows(IllegalArgumentException.class, () -> builder.withToken("test").build());
+
+        final StitchClientBuilder europeBuilder = StitchClientBuilder.builder().withRegion(StitchRegion.EUROPE);
         assertThrows(IllegalArgumentException.class, () -> {
-            StitchClientBuilder.builder().withRegion(StitchRegion.EUROPE).build();
+            europeBuilder.build();
         });
     }
 

@@ -112,7 +112,7 @@ public class SjmsProducer extends DefaultAsyncProducer {
                     // validate that replyToType and replyTo is configured accordingly
                     if (endpoint.getReplyToType() != null) {
                         // setting temporary with a fixed replyTo is not supported
-                        if (endpoint.getReplyTo() != null && endpoint.getReplyToType().equals(ReplyToType.Temporary.name())) {
+                        if (endpoint.getReplyTo() != null && endpoint.getReplyToType().equals(ReplyToType.Temporary)) {
                             throw new IllegalArgumentException(
                                     "ReplyToType " + ReplyToType.Temporary
                                                                + " is not supported when replyTo " + endpoint.getReplyTo()
@@ -373,11 +373,10 @@ public class SjmsProducer extends DefaultAsyncProducer {
                 if (jmsReplyTo != null && !(endpoint.isPreserveMessageQos() || endpoint.isExplicitQosEnabled())) {
                     // log at debug what we are doing, as higher level may cause noise in production logs
                     // this behavior is also documented at the camel website
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Disabling JMSReplyTo: {} for destination: {}. Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: {}",
-                                new Object[] { jmsReplyTo, to, endpoint });
-                    }
+                    LOG.debug(
+                            "Disabling JMSReplyTo: {} for destination: {}. Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: {}",
+                            jmsReplyTo, to, endpoint);
+
                     jmsReplyTo = null;
                 }
 
@@ -474,7 +473,7 @@ public class SjmsProducer extends DefaultAsyncProducer {
             throws JMSException {
 
         boolean isPubSub = isTopicPrefix(destinationName)
-                || (!isQueuePrefix(destinationName) && endpoint.isTopic());
+                || !isQueuePrefix(destinationName) && endpoint.isTopic();
 
         // must normalize the destination name
         String before = destinationName;
@@ -491,7 +490,7 @@ public class SjmsProducer extends DefaultAsyncProducer {
      * @throws JMSException can be thrown
      */
     protected String determineCorrelationId(Message message) throws JMSException {
-        String cid = getJMSCorrelationIDAsBytes(message);
+        String cid = getJMSCorrelationID(message);
         if (ObjectHelper.isEmpty(cid)) {
             cid = getJMSMessageID(message);
         }

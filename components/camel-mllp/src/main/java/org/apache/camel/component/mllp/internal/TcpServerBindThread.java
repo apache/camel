@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.SocketException;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
@@ -66,63 +67,73 @@ public class TcpServerBindThread extends Thread {
         }
 
         try {
+            // Note: this socket is going to be closed in the TcpServerAcceptThread instance
+            // launched by the consumer
             ServerSocket serverSocket = new ServerSocket();
-            if (consumer.getConfiguration().hasReceiveBufferSize()) {
-                serverSocket.setReceiveBufferSize(consumer.getConfiguration().getReceiveBufferSize());
-            }
-
-            if (consumer.getConfiguration().hasReuseAddress()) {
-                serverSocket.setReuseAddress(consumer.getConfiguration().getReuseAddress());
-            }
-
-            // Accept Timeout
-            serverSocket.setSoTimeout(consumer.getConfiguration().getAcceptTimeout());
-
-            InetSocketAddress socketAddress;
-            if (null == consumer.getEndpoint().getHostname()) {
-                socketAddress = new InetSocketAddress(consumer.getEndpoint().getPort());
-            } else {
-                socketAddress = new InetSocketAddress(consumer.getEndpoint().getHostname(), consumer.getEndpoint().getPort());
-            }
+            InetSocketAddress socketAddress = setupSocket(serverSocket);
 
             log.debug("Attempting to bind to {}", socketAddress);
 
-            long startTicks = System.currentTimeMillis();
-            do {
-                try {
-                    if (consumer.getConfiguration().hasBacklog()) {
-                        serverSocket.bind(socketAddress, consumer.getConfiguration().getBacklog());
-                    } else {
-                        serverSocket.bind(socketAddress);
-                    }
-                    consumer.startAcceptThread(serverSocket);
-                } catch (BindException bindException) {
-                    if (System.currentTimeMillis() > startTicks + consumer.getConfiguration().getBindTimeout()) {
-                        log.error("Failed to bind to address {} within timeout {}", socketAddress,
-                                consumer.getConfiguration().getBindTimeout(), bindException);
-                        break;
-                    } else {
-                        log.warn("Failed to bind to address {} - retrying in {} milliseconds", socketAddress,
-                                consumer.getConfiguration().getBindRetryInterval());
-                        try {
-                            Thread.sleep(consumer.getConfiguration().getBindRetryInterval());
-                        } catch (InterruptedException interruptedEx) {
-                            log.info("Bind to address {} interrupted", socketAddress, interruptedEx);
-                            if (!this.isInterrupted()) {
-                                super.interrupt();
-                            }
-                            break;
-                        }
-                    }
-                } catch (IOException unexpectedEx) {
-                    log.error("Unexpected exception encountered binding to address {}", socketAddress, unexpectedEx);
-                    break;
-                }
-            } while (!this.isInterrupted() && !serverSocket.isBound());
-
+            doAccept(serverSocket, socketAddress);
         } catch (IOException ioEx) {
             log.error("Unexpected exception encountered initializing ServerSocket before attempting to bind", ioEx);
         }
+    }
+
+    private void doAccept(ServerSocket serverSocket, InetSocketAddress socketAddress) {
+        long startTicks = System.currentTimeMillis();
+        do {
+            try {
+                if (consumer.getConfiguration().hasBacklog()) {
+                    serverSocket.bind(socketAddress, consumer.getConfiguration().getBacklog());
+                } else {
+                    serverSocket.bind(socketAddress);
+                }
+                consumer.startAcceptThread(serverSocket);
+            } catch (BindException bindException) {
+                if (System.currentTimeMillis() > startTicks + consumer.getConfiguration().getBindTimeout()) {
+                    log.error("Failed to bind to address {} within timeout {}", socketAddress,
+                            consumer.getConfiguration().getBindTimeout(), bindException);
+                    break;
+                } else {
+                    log.warn("Failed to bind to address {} - retrying in {} milliseconds", socketAddress,
+                            consumer.getConfiguration().getBindRetryInterval());
+                    try {
+                        Thread.sleep(consumer.getConfiguration().getBindRetryInterval());
+                    } catch (InterruptedException interruptedEx) {
+                        log.info("Bind to address {} interrupted", socketAddress, interruptedEx);
+                        if (!this.isInterrupted()) {
+                            super.interrupt();
+                        }
+                        break;
+                    }
+                }
+            } catch (IOException unexpectedEx) {
+                log.error("Unexpected exception encountered binding to address {}", socketAddress, unexpectedEx);
+                break;
+            }
+        } while (!this.isInterrupted() && !serverSocket.isBound());
+    }
+
+    private InetSocketAddress setupSocket(ServerSocket serverSocket) throws SocketException {
+        if (consumer.getConfiguration().hasReceiveBufferSize()) {
+            serverSocket.setReceiveBufferSize(consumer.getConfiguration().getReceiveBufferSize());
+        }
+
+        if (consumer.getConfiguration().hasReuseAddress()) {
+            serverSocket.setReuseAddress(consumer.getConfiguration().getReuseAddress());
+        }
+
+        // Accept Timeout
+        serverSocket.setSoTimeout(consumer.getConfiguration().getAcceptTimeout());
+
+        InetSocketAddress socketAddress;
+        if (null == consumer.getEndpoint().getHostname()) {
+            socketAddress = new InetSocketAddress(consumer.getEndpoint().getPort());
+        } else {
+            socketAddress = new InetSocketAddress(consumer.getEndpoint().getHostname(), consumer.getEndpoint().getPort());
+        }
+        return socketAddress;
     }
 
 }

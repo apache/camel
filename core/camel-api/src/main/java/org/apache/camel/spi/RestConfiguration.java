@@ -172,7 +172,7 @@ public class RestConfiguration {
     }
 
     /**
-     * WWhether to use X-Forward headers to set host etc. for Swagger.
+     * Whether to use X-Forward headers to set host etc. for Swagger.
      * <p/>
      * This option is default <tt>true</tt>.
      */
@@ -181,11 +181,9 @@ public class RestConfiguration {
     }
 
     /**
-     * WWhether to use X-Forward headers to set host etc. for Swagger.
+     * Whether to use X-Forward headers to set host etc. for Swagger.
      * <p/>
      * This option is default <tt>true</tt>.
-     *
-     * @param useXForwardHeaders whether to use X-Forward headers
      */
     public void setUseXForwardHeaders(boolean useXForwardHeaders) {
         this.useXForwardHeaders = useXForwardHeaders;
@@ -196,7 +194,7 @@ public class RestConfiguration {
     }
 
     /**
-     * To use an specific hostname for the API documentation (eg swagger)
+     * To use a specific hostname for the API documentation (such as swagger or openapi)
      * <p/>
      * This can be used to override the generated host with this configured hostname
      */

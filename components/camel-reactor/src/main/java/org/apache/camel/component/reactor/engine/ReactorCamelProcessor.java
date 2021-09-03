@@ -71,7 +71,7 @@ final class ReactorCamelProcessor implements Closeable {
             throw new IllegalStateException("A producer is already attached to the stream '" + name + "'");
         }
 
-        if (this.camelProducer != producer) {
+        if (this.camelProducer != producer) { // this condition is always true
             detach();
 
             ReactiveStreamsBackpressureStrategy strategy = producer.getEndpoint().getBackpressureStrategy();

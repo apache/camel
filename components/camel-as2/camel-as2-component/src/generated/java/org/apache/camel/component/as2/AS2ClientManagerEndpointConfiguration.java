@@ -16,7 +16,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "client", producerOnly = true,
            description = "Sends EDI Messages over HTTP",
-           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.http.protocol.HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, org.apache.http.entity.ContentType ediMessageContentType, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.http.protocol.HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, org.apache.http.entity.ContentType ediMessageContentType, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class AS2ClientManagerEndpointConfiguration extends AS2Configuration {
@@ -30,6 +30,9 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="AS2 name of recipient")})
     private String as2To;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The name of the attached file or null if user doesn't want to specify it")})
+    private String attachedFileName;
+    @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The algorithm used to compress the message or null if sending EDI message uncompressed")})
     private org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm;
     @UriParam
@@ -39,7 +42,7 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="EDI message to transport")})
     private String ediMessage;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="The content typw of EDI message")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="The content type of EDI message")})
     private org.apache.http.entity.ContentType ediMessageContentType;
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The transfer encoding used to transport EDI message")})
@@ -94,6 +97,14 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
 
     public void setAs2To(String as2To) {
         this.as2To = as2To;
+    }
+
+    public String getAttachedFileName() {
+        return attachedFileName;
+    }
+
+    public void setAttachedFileName(String attachedFileName) {
+        this.attachedFileName = attachedFileName;
     }
 
     public org.apache.camel.component.as2.api.AS2CompressionAlgorithm getCompressionAlgorithm() {

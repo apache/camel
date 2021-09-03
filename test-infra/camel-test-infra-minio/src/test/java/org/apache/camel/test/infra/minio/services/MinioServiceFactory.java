@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.minio.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class MinioServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(MinioServiceFactory.class);
-
     private MinioServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<MinioService> builder() {
+        return new SimpleTestServiceBuilder<>("minio");
+    }
+
     public static MinioService createService() {
-        String instanceType = System.getProperty("minio.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-minio-container")) {
-            return new MinioLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new MinioRemoteService();
-        }
-
-        LOG.error("Minio instance must be one of 'local-minio-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Minio instance type");
+        return builder()
+                .addLocalMapping(MinioLocalContainerService::new)
+                .addRemoteMapping(MinioRemoteService::new)
+                .build();
     }
 }

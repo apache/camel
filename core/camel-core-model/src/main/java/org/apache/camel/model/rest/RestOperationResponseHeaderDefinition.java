@@ -32,9 +32,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.StringHelper;
 
 /**
- * To specify the rest operation response headers using Swagger.
- * <p>
- * This maps to the Swagger Response Header Object.
+ * To specify the rest operation response headers.
  */
 @Metadata(label = "rest")
 @XmlRootElement(name = "responseHeader")
@@ -112,7 +110,7 @@ public class RestOperationResponseHeaderDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter collection format.
+     * Sets the parameter collection format.
      */
     public void setCollectionFormat(CollectionFormat collectionFormat) {
         this.collectionFormat = collectionFormat;
@@ -123,8 +121,7 @@ public class RestOperationResponseHeaderDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter array type. Required if data type is "array". Describes the type of items in the
-     * array.
+     * Sets the parameter array type. Required if data type is "array". Describes the type of items in the array.
      */
     public void setArrayType(String arrayType) {
         this.arrayType = arrayType;
@@ -135,7 +132,7 @@ public class RestOperationResponseHeaderDefinition {
     }
 
     /**
-     * Sets the Swagger header data type.
+     * Sets the header data type.
      */
     public void setDataType(String dataType) {
         this.dataType = dataType;
@@ -146,7 +143,7 @@ public class RestOperationResponseHeaderDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter data format.
+     * Sets the parameter data format.
      */
     public void setDataFormat(String dataFormat) {
         this.dataFormat = dataFormat;
@@ -165,14 +162,14 @@ public class RestOperationResponseHeaderDefinition {
     }
 
     /**
-     * Sets the Swagger example
+     * Sets the example
      */
     public void setExample(String example) {
         this.example = example;
     }
 
     /**
-     * Sets the Swagger Parameter list of allowable values.
+     * Sets the parameter list of allowable values.
      */
     public void setAllowableValues(List<String> allowableValues) {
         this.allowableValues = allowableValues;

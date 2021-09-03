@@ -24,19 +24,22 @@ import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 @Component("elsql")
 public class ElsqlComponent extends DefaultComponent {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ElsqlComponent.class);
+
+    @Metadata(autowired = true)
+    private DataSource dataSource;
     @Metadata
     private ElSqlDatabaseVendor databaseVendor;
-    @Metadata
-    private DataSource dataSource;
     @Metadata(label = "advanced")
     private ElSqlConfig elSqlConfig;
     @Metadata
@@ -47,29 +50,6 @@ public class ElsqlComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        DataSource target = null;
-
-        // endpoint options overrule component configured datasource
-        DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
-        if (ds != null) {
-            target = ds;
-        }
-        String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
-        if (target == null && dataSourceRef != null) {
-            target = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
-        }
-        if (target == null) {
-            // fallback and use component
-            target = getDataSource();
-        }
-        if (target == null) {
-            throw new IllegalArgumentException("DataSource must be configured");
-        }
-
-        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(target);
-        Map<String, Object> params = PropertiesHelper.extractProperties(parameters, "template.");
-        PropertyBindingSupport.bindProperties(getCamelContext(), jdbcTemplate, params);
-
         String elsqlName = remaining;
         String resUri = resourceUri;
         String[] part = remaining.split(":");
@@ -93,14 +73,33 @@ public class ElsqlComponent extends DefaultComponent {
             onConsumeBatchComplete = getAndRemoveParameter(parameters, "onConsumeBatchComplete", String.class);
         }
 
-        ElsqlEndpoint endpoint = new ElsqlEndpoint(uri, this, jdbcTemplate, target, elsqlName, resUri);
+        // create endpoint
+        ElsqlEndpoint endpoint = new ElsqlEndpoint(uri, this, elsqlName, resUri);
         endpoint.setElSqlConfig(elSqlConfig);
         endpoint.setDatabaseVendor(databaseVendor);
-        endpoint.setDataSource(target);
-        endpoint.setDataSourceRef(dataSourceRef);
         endpoint.setOnConsume(onConsume);
         endpoint.setOnConsumeFailed(onConsumeFailed);
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
+
+        // endpoint configured data source takes precedence
+        DataSource ds = dataSource;
+        if (endpoint.getDataSource() != null) {
+            ds = endpoint.getDataSource();
+        }
+        if (ds == null) {
+            throw new IllegalArgumentException("DataSource must be configured");
+        }
+
+        // create template
+        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(ds);
+        Map<String, Object> templateOptions = PropertiesHelper.extractProperties(parameters, "template.");
+        PropertyBindingSupport.bindProperties(getCamelContext(), jdbcTemplate, templateOptions);
+
+        // set template on endpoint
+        endpoint.setNamedJdbcTemplate(jdbcTemplate);
+        endpoint.setDataSource(ds);
+        endpoint.setTemplateOptions(templateOptions);
+
         return endpoint;
     }
 

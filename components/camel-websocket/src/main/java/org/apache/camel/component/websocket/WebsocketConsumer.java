@@ -56,30 +56,35 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
     public void sendMessage(
             final String connectionKey,
             final String message,
-            final InetSocketAddress remote) {
-        sendMessage(connectionKey, (Object) message, remote);
+            final InetSocketAddress remote,
+            final String subprotocol,
+            final String relativePath) {
+        sendMessage(connectionKey, (Object) message, remote, subprotocol, relativePath);
     }
 
     public void sendMessage(
             final String connectionKey,
             final Object message,
-            final InetSocketAddress remote) {
+            final InetSocketAddress remote,
+            final String subprotocol,
+            final String relativePath) {
 
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         // set header and body
         exchange.getIn().setHeader(WebsocketConstants.REMOTE_ADDRESS, remote);
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
+        if (subprotocol != null) {
+            exchange.getIn().setHeader(WebsocketConstants.SUBPROTOCOL, subprotocol);
+        }
+        if (relativePath != null) {
+            exchange.getIn().setHeader(WebsocketConstants.RELATIVE_PATH, relativePath);
+        }
         exchange.getIn().setBody(message);
 
-        // send exchange using the async routing engine
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
 }

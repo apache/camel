@@ -116,8 +116,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * The uri of the endpoint to send to. The uri can be dynamic computed using the
-     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     * The uri of the endpoint to send to. The uri can be dynamic computed using the simple language expression.
      */
     public void setUri(String uri) {
         this.uri = uri;

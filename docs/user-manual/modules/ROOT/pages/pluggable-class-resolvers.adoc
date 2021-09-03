@@ -2,70 +2,25 @@
 
 Camel provides pluggable class resolvers allowing third party platforms
 and containers to provide their own resolvers in case the default ones
-would not fit. For example we provide a
-`WebSpherePackageScanClassResolver` out of the box to
-integrate Camel with IBM WebSphere.
+would not fit.
 
-Platform providers should look in the `org.apache.camel.spi` package for
-the pluggable resolvers below:
-
-* `PackageScanClassResolver`
-* `ClassResolver`
-* `FactoryFinderResolver`
-
-In *camel-osgi* we provide OSGi aware class resolver allowing Camel to
-run in any OSGi container.
+When running Camel on platforms such as Spring Boot, Quarkus, or Apache Karaf,
+then Camel uses platform specific resolvers to support classloading in these runtimes.
 
 == Configuration of a custom class resolver
 
 To instruct Camel to use your own custom class resolver, you set the
-resolver on the `CamelContext` using the appropriate setters.
+resolver on the `CamelContext` using the appropriate setters;
+or register a custom resolver in the xref:registry.adoc[Registry] then Camel
+will automatically detect this during startup.
 
-== Easy configuration of a custom class resolver in Spring XML
+=== SPI providers
 
-We have provided easy configuration in Spring XML as you just need to
-declare a spring bean with your custom resolver and Camel will pick it
-up automatically.
+Platform providers should look in the `org.apache.camel.spi` package for
+the pluggable resolvers, such as:
 
-[source,xml]
-----
-<bean id="jbossresolver" class="com.mycompany.jboss.JBossPackageScanClassResolver"/>
-
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="seda:start"/>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
-----
-
-In the sample above the CamelContext will automatic detect the
-`jbossresolver` bean and use it instead of its default one.
-
-== Configuration of a custom factory finder resolver
-
-FactoryFinderResolver is used to get an instance of `FactoryFinder` that
-is used for lookup of resource files in the classpath in the
-`META-INF/services`. It is used internally by Camel to look in .jars for
-Camel components. For instance to look for the `file` component Camel
-will use the `FactoryFinder` to look the file named `file` in
-`META-INF/services/org/apache/camel/component`. The `CamelContext` have
-methods to inject a custom `FactoryFinderResolver`.
-
-== Easy configuration of a custom factory finder resolver in Spring XML
-
-We have provided easy configuration in Spring XML as you just need to
-declare a spring bean with your custom factory finder resolver and Camel
-will pick it up automatically.
-
-[source,xml]
-----
-<bean id="jbossFactoryFinderResolver" class="com.mycompany.jboss.JBossFactoryFinderResolver"/>
-
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="seda:start"/>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
-----
+* `ClassResolver`
+* `FactoryFinderResolver`
+* `PackageScanClassResolver`
+* `PackageScanResourceResolver`
+* `ResourceResolver`

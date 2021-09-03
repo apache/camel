@@ -185,7 +185,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
                 queue = ref.getQueue();
                 String key = getComponent().getQueueKey(getEndpointUri());
-                LOG.info("Endpoint {} is using shared queue: {} with size: {}", this, key,
+                LOG.debug("Endpoint {} is using shared queue: {} with size: {}", this, key,
                         ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE);
                 // and set the size we are using
                 if (ref.getSize() != null) {
@@ -194,7 +194,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             } else {
                 // fallback and create queue (as this endpoint has no component)
                 queue = createQueue();
-                LOG.info("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
+                LOG.debug("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
             }
         }
         return queue;
@@ -219,7 +219,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         return ref;
     }
 
-    protected synchronized AsyncProcessor getConsumerMulticastProcessor() throws Exception {
+    protected synchronized AsyncProcessor getConsumerMulticastProcessor() {
         if (!multicastStarted && consumerMulticastProcessor != null) {
             // only start it on-demand to avoid starting it during stopping
             ServiceHelper.startService(consumerMulticastProcessor);
@@ -526,15 +526,20 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                                                + " You can only either discard or block when full.");
         }
 
+        // special for unit testing where we can set a system property to make seda poll faster
+        // and therefore also react faster upon shutdown, which makes overall testing faster of the Camel project
+        String override = System.getProperty("CamelSedaPollTimeout", "" + getPollTimeout());
+        setPollTimeout(Integer.parseInt(override));
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
         // force creating queue when starting
         if (queue == null) {
             queue = getQueue();
         }
-
-        // special for unit testing where we can set a system property to make seda poll faster
-        // and therefore also react faster upon shutdown, which makes overall testing faster of the Camel project
-        String override = System.getProperty("CamelSedaPollTimeout", "" + getPollTimeout());
-        setPollTimeout(Integer.valueOf(override));
     }
 
     @Override

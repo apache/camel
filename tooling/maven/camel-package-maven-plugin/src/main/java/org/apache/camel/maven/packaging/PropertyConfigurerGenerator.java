@@ -116,6 +116,8 @@ public final class PropertyConfigurerGenerator {
                     w.write("        default: return false;\n");
                 }
                 w.write("        }\n");
+            } else {
+                w.write("        return false;\n");
             }
             w.write("    }\n");
 
@@ -191,6 +193,8 @@ public final class PropertyConfigurerGenerator {
                     w.write("        default: return null;\n");
                 }
                 w.write("        }\n");
+            } else {
+                w.write("        return null;\n");
             }
             w.write("    }\n");
 
@@ -217,6 +221,9 @@ public final class PropertyConfigurerGenerator {
                     w.write("        default: return null;\n");
                 }
                 w.write("        }\n");
+            } else {
+                w.write("        return null;\n");
+
             }
             w.write("    }\n");
 
@@ -245,6 +252,8 @@ public final class PropertyConfigurerGenerator {
                         w.write("        default: return null;\n");
                     }
                     w.write("        }\n");
+                } else {
+                    w.write("        return null;\n");
                 }
                 w.write("    }\n");
             }

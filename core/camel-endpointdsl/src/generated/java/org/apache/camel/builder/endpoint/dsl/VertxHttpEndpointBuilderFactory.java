@@ -153,7 +153,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * @param httpMethod the value to set
          * @return the dsl builder
          */
-        default VertxHttpEndpointBuilder httpMethod(HttpMethod httpMethod) {
+        default VertxHttpEndpointBuilder httpMethod(Object httpMethod) {
             doSetProperty("httpMethod", httpMethod);
             return this;
         }
@@ -239,6 +239,41 @@ public interface VertxHttpEndpointBuilderFactory {
         default VertxHttpEndpointBuilder okStatusCodeRange(
                 String okStatusCodeRange) {
             doSetProperty("okStatusCodeRange", okStatusCodeRange);
+            return this;
+        }
+        /**
+         * Whether the response body should be byte or as
+         * io.vertx.core.buffer.Buffer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param responsePayloadAsByteArray the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder responsePayloadAsByteArray(
+                boolean responsePayloadAsByteArray) {
+            doSetProperty("responsePayloadAsByteArray", responsePayloadAsByteArray);
+            return this;
+        }
+        /**
+         * Whether the response body should be byte or as
+         * io.vertx.core.buffer.Buffer.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param responsePayloadAsByteArray the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder responsePayloadAsByteArray(
+                String responsePayloadAsByteArray) {
+            doSetProperty("responsePayloadAsByteArray", responsePayloadAsByteArray);
             return this;
         }
         /**
@@ -676,22 +711,6 @@ public interface VertxHttpEndpointBuilderFactory {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>io.vertx.core.http.HttpMethod</code> enum.
-     */
-    enum HttpMethod {
-        OPTIONS,
-        GET,
-        HEAD,
-        POST,
-        PUT,
-        DELETE,
-        TRACE,
-        CONNECT,
-        PATCH,
-        OTHER;
     }
 
     /**

@@ -95,20 +95,20 @@ public interface ProducerTemplate extends Service {
     int getCurrentCacheSize();
 
     /**
-     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true). In
+     * Reports if async* methods will dispatch processing from the calling thread (false) or through executor (true). In
      * both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed non-blocking
      * processing.
      * 
-     * @return if async* methods will dipatch processing with the executor
+     * @return if async* methods will dispatch processing with the executor
      */
     boolean isThreadedAsyncMode();
 
     /**
-     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true). In
+     * Reports if async* methods will dispatch processing from the calling thread (false) or through executor (true). In
      * both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed non-blocking
      * processing.
      * 
-     * @param useExecutor if async* methods will dipatch processing with the executor
+     * @param useExecutor if async* methods will dispatch processing with the executor
      */
     void setThreadedAsyncMode(boolean useExecutor);
 
@@ -928,6 +928,10 @@ public interface ProducerTemplate extends Service {
     /**
      * Sends an asynchronous exchange to the given endpoint.
      *
+     * <b>Important:</b> The transformer processor is invoked by a thread from the underlying thread pool, when the task
+     * is running to send the exchange asynchronously. In other words mind about thread-safety when using the
+     * transformer processor.
+     *
      * @param  endpointUri the endpoint URI to send the exchange to
      * @param  processor   the transformer used to populate the new exchange
      * @return             a handle to be used to get the response in the future
@@ -1021,6 +1025,10 @@ public interface ProducerTemplate extends Service {
     /**
      * Sends an asynchronous exchange to the given endpoint.
      *
+     * <b>Important:</b> The transformer processor is invoked by a thread from the underlying thread pool, when the task
+     * is running to send the exchange asynchronously. In other words mind about thread-safety when using the
+     * transformer processor.
+     * 
      * @param  endpoint  the endpoint to send the exchange to
      * @param  processor the transformer used to populate the new exchange
      * @return           a handle to be used to get the response in the future
@@ -1143,6 +1151,7 @@ public interface ProducerTemplate extends Service {
      * @param  onCompletion callback invoked when exchange has been completed
      * @return              a handle to be used to get the response in the future
      */
+    @Deprecated
     CompletableFuture<Exchange> asyncCallback(String endpointUri, Exchange exchange, Synchronization onCompletion);
 
     /**
@@ -1153,6 +1162,7 @@ public interface ProducerTemplate extends Service {
      * @param  onCompletion callback invoked when exchange has been completed
      * @return              a handle to be used to get the response in the future
      */
+    @Deprecated
     CompletableFuture<Exchange> asyncCallback(Endpoint endpoint, Exchange exchange, Synchronization onCompletion);
 
     /**
@@ -1163,6 +1173,7 @@ public interface ProducerTemplate extends Service {
      * @param  onCompletion callback invoked when exchange has been completed
      * @return              a handle to be used to get the response in the future
      */
+    @Deprecated
     CompletableFuture<Exchange> asyncCallback(String endpointUri, Processor processor, Synchronization onCompletion);
 
     /**
@@ -1173,6 +1184,7 @@ public interface ProducerTemplate extends Service {
      * @param  onCompletion callback invoked when exchange has been completed
      * @return              a handle to be used to get the response in the future
      */
+    @Deprecated
     CompletableFuture<Exchange> asyncCallback(Endpoint endpoint, Processor processor, Synchronization onCompletion);
 
     /**
@@ -1184,6 +1196,7 @@ public interface ProducerTemplate extends Service {
      * @param  onCompletion callback invoked when exchange has been completed
      * @return              a handle to be used to get the response in the future
      */
+    @Deprecated
     CompletableFuture<Object> asyncCallbackSendBody(String endpointUri, Object body, Synchronization onCompletion);
 
     /**
@@ -1195,6 +1208,7 @@ public interface ProducerTemplate extends Service {
      * @param  onCompletion callback invoked when exchange has been completed
      * @return              a handle to be used to get the response in the future
      */
+    @Deprecated
     CompletableFuture<Object> asyncCallbackSendBody(Endpoint endpoint, Object body, Synchronization onCompletion);
 
     /**
@@ -1205,6 +1219,7 @@ public interface ProducerTemplate extends Service {
      * @param  onCompletion callback invoked when exchange has been completed
      * @return              a handle to be used to get the response in the future
      */
+    @Deprecated
     CompletableFuture<Object> asyncCallbackRequestBody(String endpointUri, Object body, Synchronization onCompletion);
 
     /**
@@ -1215,6 +1230,7 @@ public interface ProducerTemplate extends Service {
      * @param  onCompletion callback invoked when exchange has been completed
      * @return              a handle to be used to get the response in the future
      */
+    @Deprecated
     CompletableFuture<Object> asyncCallbackRequestBody(Endpoint endpoint, Object body, Synchronization onCompletion);
 
 }

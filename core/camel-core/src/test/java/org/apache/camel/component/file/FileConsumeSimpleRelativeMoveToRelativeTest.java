@@ -20,27 +20,19 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/move";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/move");
-        super.setUp();
-    }
+    private String fileUrl = fileUri();
 
     @Test
     public void testMoveToSubDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
-        mock.expectedFileExists("target/data/move/.done/bye.txt");
-        mock.expectedFileExists("target/data/move/sub/.done/hello.txt");
-        mock.expectedFileExists("target/data/move/sub/sub2/.done/goodday.txt");
+        mock.expectedFileExists(testFile(".done/bye.txt"));
+        mock.expectedFileExists(testFile("sub/.done/hello.txt"));
+        mock.expectedFileExists(testFile("sub/sub2/.done/goodday.txt"));
 
         template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
         template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
@@ -54,7 +46,7 @@ public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/move?recursive=true&move=.done&initialDelay=0&delay=10").convertBodyTo(String.class)
+                from(fileUri("?recursive=true&move=.done&initialDelay=0&delay=10")).convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

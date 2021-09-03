@@ -157,23 +157,21 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                         .map(x -> x.replace("\u0085", ""))
                         .collect(Collectors.toList());
 
-                if (result.size() == 0 || result.isEmpty()) {
+                if (result.isEmpty()) {
                     throw new IllegalArgumentException("No records have been defined in the KVP");
                 }
 
-                if (result.size() > 0) {
-                    // Bind data from message with model classes
-                    // Counter is used to detect line where error occurs
-                    factory.bind(getCamelContext(), result, model, count.get(), lists);
+                // Bind data from message with model classes
+                // Counter is used to detect line where error occurs
+                factory.bind(getCamelContext(), result, model, count.get(), lists);
 
-                    // Link objects together
-                    factory.link(model);
+                // Link objects together
+                factory.link(model);
 
-                    // Add objects graph to the list
-                    models.add(model);
+                // Add objects graph to the list
+                models.add(model);
 
-                    LOG.debug("Graph of objects created: {}", model);
-                }
+                LOG.debug("Graph of objects created: {}", model);
             }
         } catch (Exception e) {
             throw new WrappedException(e);

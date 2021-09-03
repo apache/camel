@@ -38,13 +38,18 @@ import io.minio.Result;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,7 +187,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     protected Queue<Exchange> createExchanges(InputStream objectStream, String objectName) throws Exception {
         Queue<Exchange> answer = new LinkedList<>();
-        Exchange exchange = getEndpoint().createExchange(objectStream, objectName);
+        Exchange exchange = createExchange(objectStream, objectName);
         answer.add(exchange);
         IOHelper.close(objectStream);
         return answer;
@@ -200,7 +205,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     Item minioObjectSummary = minioObjectSummaries.next().get();
                     InputStream minioObject = getObject(bucketName, getMinioClient(), minioObjectSummary.objectName());
                     minioObjects.add(minioObject);
-                    Exchange exchange = getEndpoint().createExchange(minioObject, minioObjectSummary.objectName());
+                    Exchange exchange = createExchange(minioObject, minioObjectSummary.objectName());
                     answer.add(exchange);
                     continuationToken = minioObjectSummary.objectName();
                 } while (minioObjectSummaries.hasNext());
@@ -212,7 +217,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     if (!minioObjectSummary.isDir()) {
                         InputStream minioObject = getObject(bucketName, getMinioClient(), minioObjectSummary.objectName());
                         minioObjects.add(minioObject);
-                        Exchange exchange = getEndpoint().createExchange(minioObject, minioObjectSummary.objectName());
+                        Exchange exchange = createExchange(minioObject, minioObjectSummary.objectName());
                         answer.add(exchange);
                         continuationToken = minioObjectSummary.objectName();
                     }
@@ -224,7 +229,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 totalCounter += messageCounter;
             }
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Error getting MinioObject due: {}", e.getMessage());
             throw e;
 
@@ -263,9 +268,9 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             // only loop if we are started (allowed to run)
             final Exchange exchange = cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
@@ -286,8 +291,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange ...");
-            getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange done."));
+            getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
         }
 
         return total;
@@ -399,6 +403,34 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     @Override
     public MinioEndpoint getEndpoint() {
         return (MinioEndpoint) super.getEndpoint();
+    }
+
+    private Exchange createExchange(InputStream minioObject, String objectName) throws Exception {
+        LOG.trace("Getting object with objectName {} from bucket {}...", objectName, getConfiguration().getBucketName());
+
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(getEndpoint().getExchangePattern());
+        Message message = exchange.getIn();
+        LOG.trace("Got object!");
+
+        getEndpoint().getObjectStat(objectName, message);
+
+        if (getConfiguration().isIncludeBody()) {
+            message.setBody(IOUtils.toByteArray(minioObject));
+            if (getConfiguration().isAutoCloseBody()) {
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        IOHelper.close(minioObject);
+                    }
+                });
+            }
+        } else {
+            message.setBody(null);
+            IOHelper.close(minioObject);
+        }
+
+        return exchange;
     }
 
     @Override

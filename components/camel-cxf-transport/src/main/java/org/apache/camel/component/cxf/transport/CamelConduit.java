@@ -140,7 +140,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     }
 
     @Deprecated
-    public ProducerTemplate getCamelTemplate() throws Exception {
+    public ProducerTemplate getCamelTemplate() {
         if (camelTemplate == null) {
             camelTemplate = getCamelContext().createProducerTemplate();
         }

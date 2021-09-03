@@ -27,8 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -56,7 +58,6 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -92,7 +93,16 @@ public class RouteCoverageMojo extends AbstractExecMojo {
      *
      * @parameter property="camel.coverageThreshold" default-value="100"
      */
+    @Parameter(property = "camel.coverageThreshold", defaultValue = "100")
     private byte coverageThreshold = 100;
+
+    /**
+     * The minimum coverage across all routes in percent when using failOnError.
+     *
+     * @parameter property="camel.overallCoverageThreshold" default-value="0"
+     */
+    @Parameter(property = "camel.overallCoverageThreshold", defaultValue = "0")
+    private byte overallCoverageThreshold;
 
     /**
      * Whether to include test source code
@@ -131,7 +141,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
     // CHECKSTYLE:OFF
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
 
         Set<File> javaFiles = new LinkedHashSet<>();
         Set<File> xmlFiles = new LinkedHashSet<>();
@@ -208,6 +218,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         }
 
         final AtomicInteger notCovered = new AtomicInteger();
+        final AtomicInteger coveredNodes = new AtomicInteger();
+        int totalNumberOfNodes = 0;
 
         List<CamelNodeDetails> routeIdTrees = routeTrees.stream().filter(t -> t.getRouteId() != null).collect(Collectors.toList());
         List<CamelNodeDetails> anonymousRouteTrees = routeTrees.stream().filter(t -> t.getRouteId() == null).collect(Collectors.toList());
@@ -256,7 +268,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                         + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
                 } else {
                     List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(Collections.singletonList(t), coverageData);
-                    String out = templateCoverageData(fileName, routeId, coverage, notCovered);
+                    totalNumberOfNodes += coverage.size();
+                    String out = templateCoverageData(fileName, routeId, coverage, notCovered, coveredNodes);
                     getLog().info("Route coverage summary:\n\n" + out);
                     getLog().info("");
 
@@ -306,8 +319,9 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                         }
 
                         if (!coverage.isEmpty()) {
+                            totalNumberOfNodes += coverage.size();
                             String fileName = stripRootPath(asRelativeFile(t.getValue().get(0).getFileName()));
-                            String out = templateCoverageData(fileName, null, coverage, notCovered);
+                            String out = templateCoverageData(fileName, null, coverage, notCovered, coveredNodes);
                             getLog().info("Route coverage summary:\n\n" + out);
                             getLog().info("");
                         }
@@ -318,8 +332,16 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             }
         }
 
+        // compute and log overall coverage across routes
+        AtomicBoolean overallCoverageAboveThreshold = new AtomicBoolean();
+        String out = templateOverallCoverageData(coveredNodes.get(), totalNumberOfNodes, overallCoverageAboveThreshold);
+        getLog().info("Overall coverage summary:\n\n" + out);
+        getLog().info("");
+
         if (failOnError && notCovered.get() > 0) {
             throw new MojoExecutionException("There are " + notCovered.get() + " route(s) not fully covered!");
+        } else if (failOnError && !overallCoverageAboveThreshold.get()) {
+            throw new MojoExecutionException("The overall coverage is below " + overallCoverageThreshold + "%!");
         }
     }
 
@@ -378,8 +400,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
     @SuppressWarnings("unchecked")
     private String templateCoverageData(
-            String fileName, String routeId, List<RouteCoverageNode> model, AtomicInteger notCovered)
-            throws MojoExecutionException {
+            String fileName, String routeId, List<RouteCoverageNode> model, AtomicInteger notCovered,
+            AtomicInteger coveredNodes) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         PrintStream sw = new PrintStream(bos);
 
@@ -404,6 +426,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             sw.println(String.format("%8s    %8s    %s", node.getLineNumber(), node.getCount(), pad + node.getName()));
         }
 
+        coveredNodes.addAndGet(covered);
+
         // calculate percentage of route coverage (must use double to have decimals)
         double percentage = ((double) covered / (double) model.size()) * 100;
 
@@ -415,9 +439,28 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         }
 
         sw.println();
-        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format("%.1f", percentage)
+        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format(Locale.ROOT, "%.1f", percentage)
                    + "% / threshold " + coverageThreshold + ".0%)");
         sw.println("Status: " + (success ? "Success" : "Failed"));
+        sw.println();
+
+        return bos.toString();
+    }
+
+    private String templateOverallCoverageData(
+            int coveredNodes, int totalNumberOfNodes, AtomicBoolean overallCoverageAboveThreshold) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PrintStream sw = new PrintStream(bos);
+
+        // calculate percentage of overall coverage (must use double to have decimals)
+        double percentage = totalNumberOfNodes > 0 ? ((double) coveredNodes / (double) totalNumberOfNodes) * 100 : 100;
+
+        overallCoverageAboveThreshold.set(coveredNodes == totalNumberOfNodes || percentage >= overallCoverageThreshold);
+
+        sw.println("Coverage: " + coveredNodes + " out of " + totalNumberOfNodes + " ("
+                   + String.format(Locale.ROOT, "%.1f", percentage)
+                   + "% / threshold " + overallCoverageThreshold + ".0%)");
+        sw.println("Status: " + (overallCoverageAboveThreshold.get() ? "Success" : "Failed"));
         sw.println();
 
         return bos.toString();
@@ -449,7 +492,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
         RouteCoverageNode data = new RouteCoverageNode();
         data.setName(node.getName());
-        data.setLineNumber(Integer.valueOf(node.getLineNumber()));
+        data.setLineNumber(Integer.parseInt(node.getLineNumber()));
         data.setLevel(level.get());
         data.setClassName(node.getClassName());
         data.setMethodName(node.getMethodName());

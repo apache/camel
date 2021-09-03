@@ -53,12 +53,12 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
     @Override
     public Exchange createExchange() {
         // create the file
-        String uri = "file://target/data/filelanguage?fileExist=Override";
+        String uri = fileUri("?fileExist=Override");
         template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "test/bye.def.txt");
 
         // get the file handle
-        file = new File("target/data/filelanguage/test/bye.def.txt");
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/data/filelanguage", file, null, false);
+        file = testFile("test/bye.def.txt").toFile();
+        GenericFile<File> gf = FileConsumer.asGenericFile(testDirectory().toString(), file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.support.DefaultConsumer;
@@ -99,15 +100,23 @@ public class SpringIntegrationConsumer extends DefaultConsumer implements Messag
     public void handleMessage(org.springframework.messaging.Message<?> siInMessage) {
         // we received a message from spring integration
         // wrap that in a Camel Exchange and process it
-        Exchange exchange
-                = getEndpoint().createExchange(getEndpoint().isInOut() ? ExchangePattern.InOut : ExchangePattern.InOnly);
-        exchange.setIn(new SpringIntegrationMessage(exchange, siInMessage));
+        Exchange exchange = createExchange(false);
+        exchange.setPattern(getEndpoint().isInOut() ? ExchangePattern.InOut : ExchangePattern.InOnly);
+
+        // optimize and reuse exchange
+        SpringIntegrationMessage sim = exchange.adapt(ExtendedExchange.class).getInOrNull(SpringIntegrationMessage.class);
+        if (sim == null) {
+            exchange.setIn(new SpringIntegrationMessage(exchange, siInMessage));
+        } else {
+            sim.setMessage(siInMessage);
+        }
 
         // process the exchange
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
             getExceptionHandler().handleException("Error processing exchange", exchange, e);
+            releaseExchange(exchange, false);
             return;
         }
 
@@ -139,6 +148,8 @@ public class SpringIntegrationConsumer extends DefaultConsumer implements Messag
             // put the message back the outputChannel if we need
             org.springframework.messaging.Message<?> siOutMessage
                     = SpringIntegrationBinding.storeToSpringIntegrationMessage(exchange.getOut());
+
+            releaseExchange(exchange, false);
 
             // send the message to spring integration
             LOG.debug("Sending {} to ReplyChannel: {}", siOutMessage, reply);

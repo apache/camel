@@ -18,14 +18,12 @@ package org.apache.camel.component.couchdb;
 
 import java.util.concurrent.ExecutorService;
 
+import com.google.gson.JsonObject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CouchDbConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CouchDbConsumer.class);
 
     private final CouchDbClientWrapper couchClient;
     private final CouchDbEndpoint endpoint;
@@ -38,10 +36,20 @@ public class CouchDbConsumer extends DefaultConsumer {
         this.endpoint = endpoint;
     }
 
+    public Exchange createExchange(String seq, String id, JsonObject obj, boolean deleted) {
+        Exchange exchange = createExchange(false);
+        exchange.getIn().setHeader(CouchDbConstants.HEADER_DATABASE, endpoint.getDatabase());
+        exchange.getIn().setHeader(CouchDbConstants.HEADER_SEQ, seq);
+        exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, id);
+        exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, obj.get("_rev").getAsString());
+        exchange.getIn().setHeader(CouchDbConstants.HEADER_METHOD, deleted ? "DELETE" : "UPDATE");
+        exchange.getIn().setBody(obj);
+        return exchange;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.info("Starting CouchDB consumer");
 
         executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
                 1);
@@ -52,7 +60,6 @@ public class CouchDbConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        LOG.info("Stopping CouchDB consumer");
         if (task != null) {
             task.stop();
         }

@@ -45,7 +45,7 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     private EhcacheManager cacheManager;
 
     EhcacheEndpoint(String uri, EhcacheComponent component, String cacheName,
-                    EhcacheConfiguration configuration) throws Exception {
+                    EhcacheConfiguration configuration) {
         super(uri, component);
         this.cacheName = cacheName;
         this.configuration = configuration;

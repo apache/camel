@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-caffeine-lrucache</artifactId>
@@ -35,6 +35,7 @@
     <properties>
         <firstVersion>3.0</firstVersion>
         <label>core</label>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>

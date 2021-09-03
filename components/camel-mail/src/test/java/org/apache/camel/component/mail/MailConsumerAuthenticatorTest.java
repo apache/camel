@@ -23,12 +23,15 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ExchangeFactory;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -51,8 +54,11 @@ public class MailConsumerAuthenticatorTest {
 
         JavaMailSender sender = Mockito.mock(JavaMailSender.class);
         Processor processor = Mockito.mock(Processor.class);
+        ExtendedCamelContext ecc = Mockito.mock(ExtendedCamelContext.class);
+        ExchangeFactory ef = Mockito.mock(ExchangeFactory.class);
 
         MailEndpoint endpoint = new MailEndpoint();
+        endpoint.setCamelContext(ecc);
         MailConfiguration configuration = new MailConfiguration();
         configuration.setAuthenticator(authenticator);
         configuration.configureProtocol(protocol);
@@ -65,6 +71,9 @@ public class MailConsumerAuthenticatorTest {
         Session session = Session.getDefaultInstance(props, authenticator);
 
         when(sender.getSession()).thenReturn(session);
+        when(ecc.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(ecc.getExchangeFactory()).thenReturn(ef);
+        when(ef.newExchangeFactory(any())).thenReturn(ef);
 
         MailConsumer consumer = new MailConsumer(endpoint, processor, sender);
         try {

@@ -256,7 +256,8 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         }
 
         // create exchange and set data on it
-        Exchange exchange = consumer.getEndpoint().createExchange(ExchangePattern.InOut);
+        Exchange exchange = consumer.createExchange(false);
+        exchange.setPattern(ExchangePattern.InOut);
 
         if (consumer.getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
@@ -362,6 +363,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             }
         } finally {
             consumer.doneUoW(exchange);
+            consumer.releaseExchange(exchange, false);
         }
     }
 
@@ -452,7 +454,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             Thread.currentThread().setContextClassLoader(appCtxCl);
             if (log.isTraceEnabled()) {
                 log.trace("Overrode TCCL for exchangeId {} to {} on thread {}",
-                        new Object[] { exchange.getExchangeId(), appCtxCl, Thread.currentThread().getName() });
+                        exchange.getExchangeId(), appCtxCl, Thread.currentThread().getName());
             }
             return oldClassLoader;
         }
@@ -469,7 +471,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         Thread.currentThread().setContextClassLoader(oldTccl);
         if (log.isTraceEnabled()) {
             log.trace("Restored TCCL for exchangeId {} to {} on thread {}",
-                    new String[] { exchange.getExchangeId(), oldTccl.toString(), Thread.currentThread().getName() });
+                    exchange.getExchangeId(), oldTccl, Thread.currentThread().getName());
         }
     }
 

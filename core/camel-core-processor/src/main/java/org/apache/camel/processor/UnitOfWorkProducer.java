@@ -57,6 +57,16 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processor);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         ServiceHelper.startService(processor);

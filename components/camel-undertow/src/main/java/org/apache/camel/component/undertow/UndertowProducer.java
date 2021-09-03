@@ -145,7 +145,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
         final Object body = undertowHttpBinding.toHttpRequest(request, camelExchange.getIn());
         final UndertowClientCallback clientCallback;
         final boolean streaming = getEndpoint().isUseStreaming();
-        if (streaming && (body instanceof InputStream)) {
+        if (streaming && body instanceof InputStream) {
             // For streaming, make it chunked encoding instead of specifying content length
             requestHeaders.put(Headers.TRANSFER_ENCODING, "chunked");
             clientCallback = new UndertowStreamingClientCallback(

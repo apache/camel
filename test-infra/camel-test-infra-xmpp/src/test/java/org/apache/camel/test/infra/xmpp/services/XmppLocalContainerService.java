@@ -27,7 +27,19 @@ public class XmppLocalContainerService implements XmppService, ContainerService<
     private XmppServerContainer container;
 
     public XmppLocalContainerService() {
-        container = new XmppServerContainer();
+        this(System.getProperty(XmppProperties.XMPP_CONTAINER, XmppServerContainer.VYSPER_IMAGE));
+    }
+
+    public XmppLocalContainerService(String imageName) {
+        container = initContainer(imageName);
+    }
+
+    public XmppLocalContainerService(XmppServerContainer container) {
+        this.container = container;
+    }
+
+    protected XmppServerContainer initContainer(String imageName) {
+        return new XmppServerContainer();
     }
 
     @Override

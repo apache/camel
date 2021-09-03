@@ -50,8 +50,8 @@ public class JettyHttp9EndpointUriFactory extends org.apache.camel.support.compo
         props.add("disableStreamCache");
         props.add("handlers");
         props.add("multipartFilter");
-        props.add("optionsEnabled");
         props.add("mapHttpMessageHeaders");
+        props.add("optionsEnabled");
         props.add("traceEnabled");
         props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

@@ -96,7 +96,7 @@ public class SubscriptionHelper extends ServiceSupport {
     private final AtomicLong restartBackoff;
     private final AtomicBoolean restarting = new AtomicBoolean();
 
-    public SubscriptionHelper(final SalesforceComponent component) throws SalesforceException {
+    public SubscriptionHelper(final SalesforceComponent component) {
         this.component = component;
         this.session = component.getSession();
 

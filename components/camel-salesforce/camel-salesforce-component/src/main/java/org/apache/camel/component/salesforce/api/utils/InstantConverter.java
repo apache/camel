@@ -32,8 +32,7 @@ final class InstantConverter implements SingleValueConverter {
     }
 
     @Override
-    public boolean canConvert(@SuppressWarnings("rawtypes")
-    final Class type) {
+    public boolean canConvert(@SuppressWarnings("rawtypes") final Class type) {
         return Instant.class.equals(type);
     }
 

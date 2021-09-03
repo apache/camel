@@ -425,7 +425,8 @@ public final class URISupport {
     private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode)
             throws UnsupportedEncodingException {
         if (encode) {
-            rc.append(URLEncoder.encode(key, CHARSET));
+            String encoded = URLEncoder.encode(key, CHARSET);
+            rc.append(encoded);
         } else {
             rc.append(key);
         }
@@ -440,7 +441,8 @@ public final class URISupport {
         });
         if (!isRaw) {
             if (encode) {
-                rc.append(URLEncoder.encode(value, CHARSET));
+                String encoded = URLEncoder.encode(value, CHARSET);
+                rc.append(encoded);
             } else {
                 rc.append(value);
             }

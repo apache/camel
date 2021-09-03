@@ -47,6 +47,20 @@ public interface SlackEndpointBuilderFactory {
             return (AdvancedSlackEndpointConsumerBuilder) this;
         }
         /**
+         * The token to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default SlackEndpointConsumerBuilder token(String token) {
+            doSetProperty("token", token);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -92,6 +106,40 @@ public interface SlackEndpointBuilderFactory {
             return this;
         }
         /**
+         * Type of conversation.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.slack.api.model.ConversationType&lt;/code&gt; type.
+         * 
+         * Default: PUBLIC_CHANNEL
+         * Group: consumer
+         * 
+         * @param conversationType the value to set
+         * @return the dsl builder
+         */
+        default SlackEndpointConsumerBuilder conversationType(
+                ConversationType conversationType) {
+            doSetProperty("conversationType", conversationType);
+            return this;
+        }
+        /**
+         * Type of conversation.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.slack.api.model.ConversationType&lt;/code&gt; type.
+         * 
+         * Default: PUBLIC_CHANNEL
+         * Group: consumer
+         * 
+         * @param conversationType the value to set
+         * @return the dsl builder
+         */
+        default SlackEndpointConsumerBuilder conversationType(
+                String conversationType) {
+            doSetProperty("conversationType", conversationType);
+            return this;
+        }
+        /**
          * The Max Result for the poll.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -104,6 +152,37 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder maxResults(String maxResults) {
             doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * Create exchanges in natural order (oldest to newest) or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param naturalOrder the value to set
+         * @return the dsl builder
+         */
+        default SlackEndpointConsumerBuilder naturalOrder(boolean naturalOrder) {
+            doSetProperty("naturalOrder", naturalOrder);
+            return this;
+        }
+        /**
+         * Create exchanges in natural order (oldest to newest) or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param naturalOrder the value to set
+         * @return the dsl builder
+         */
+        default SlackEndpointConsumerBuilder naturalOrder(String naturalOrder) {
+            doSetProperty("naturalOrder", naturalOrder);
             return this;
         }
         /**
@@ -154,20 +233,6 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder serverUrl(String serverUrl) {
             doSetProperty("serverUrl", serverUrl);
-            return this;
-        }
-        /**
-         * The token to use.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param token the value to set
-         * @return the dsl builder
-         */
-        default SlackEndpointConsumerBuilder token(String token) {
-            doSetProperty("token", token);
             return this;
         }
         /**
@@ -776,6 +841,20 @@ public interface SlackEndpointBuilderFactory {
             return (AdvancedSlackEndpointProducerBuilder) this;
         }
         /**
+         * The token to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default SlackEndpointProducerBuilder token(String token) {
+            doSetProperty("token", token);
+            return this;
+        }
+        /**
          * Use a Slack emoji as an avatar.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -908,6 +987,20 @@ public interface SlackEndpointBuilderFactory {
         default AdvancedSlackEndpointBuilder advanced() {
             return (AdvancedSlackEndpointBuilder) this;
         }
+        /**
+         * The token to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default SlackEndpointBuilder token(String token) {
+            doSetProperty("token", token);
+            return this;
+        }
     }
 
     /**
@@ -920,6 +1013,16 @@ public interface SlackEndpointBuilderFactory {
         default SlackEndpointBuilder basic() {
             return (SlackEndpointBuilder) this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.slack.api.model.ConversationType</code> enum.
+     */
+    enum ConversationType {
+        PUBLIC_CHANNEL,
+        PRIVATE_CHANNEL,
+        MPIM,
+        IM;
     }
 
     public interface SlackBuilders {

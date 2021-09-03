@@ -24,8 +24,10 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.utils.CongestionException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Flaky test")
 public class ConsumerExceptionHandledWithErrorHandlerTest extends SoroushBotTestSupport {
     @Override
     protected RoutesBuilder createRouteBuilder() {

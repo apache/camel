@@ -44,6 +44,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,11 +60,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
     private CamelContext camelContext;
     private XmlMapper xmlMapper;
+    private String collectionTypeName;
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
     private String moduleClassNames;
     private String moduleRefs;
+    private String unmarshalTypeName;
     private Class<?> unmarshalType;
+    private String jsonViewTypeName;
     private Class<?> jsonView;
     private String include;
     private boolean prettyPrint;
@@ -200,6 +204,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
         this.xmlMapper = xmlMapper;
     }
 
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
+
     public Class<?> getUnmarshalType() {
         return this.unmarshalType;
     }
@@ -208,12 +220,28 @@ public class JacksonXMLDataFormat extends ServiceSupport
         this.unmarshalType = unmarshalType;
     }
 
+    public String getCollectionTypeName() {
+        return collectionTypeName;
+    }
+
+    public void setCollectionTypeName(String collectionTypeName) {
+        this.collectionTypeName = collectionTypeName;
+    }
+
     public Class<? extends Collection> getCollectionType() {
         return collectionType;
     }
 
     public void setCollectionType(Class<? extends Collection> collectionType) {
         this.collectionType = collectionType;
+    }
+
+    public String getJsonViewTypeName() {
+        return jsonViewTypeName;
+    }
+
+    public void setJsonViewTypeName(String jsonViewTypeName) {
+        this.jsonViewTypeName = jsonViewTypeName;
     }
 
     public Class<?> getJsonView() {
@@ -449,6 +477,20 @@ public class JacksonXMLDataFormat extends ServiceSupport
             disableFeatures = feature.name();
         } else {
             disableFeatures += "," + feature.name();
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == HashMap.class)) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
+        }
+        if (jsonViewTypeName != null && jsonView == null) {
+            jsonView = camelContext.getClassResolver().resolveClass(jsonViewTypeName);
+        }
+        if (collectionTypeName != null && collectionType == null) {
+            Class<?> clazz = camelContext.getClassResolver().resolveClass(collectionTypeName);
+            collectionType = CastUtils.cast(clazz);
         }
     }
 

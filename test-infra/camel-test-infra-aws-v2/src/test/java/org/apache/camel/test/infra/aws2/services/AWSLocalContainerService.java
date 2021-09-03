@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
+import org.apache.camel.test.infra.aws.common.AWSProperties;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
@@ -30,14 +31,24 @@ import software.amazon.awssdk.regions.Region;
 
 public abstract class AWSLocalContainerService implements AWSService, ContainerService<AWSContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
-    private AWSContainer container;
+    private final AWSContainer container;
 
     public AWSLocalContainerService(Service... services) {
-        container = new AWSContainer(services);
+        this(System.getProperty(AWSProperties.AWS_CONTAINER, AWSContainer.LOCALSTACK_CONTAINER), services);
     }
 
-    public AWSLocalContainerService(String containerName, Service... services) {
-        container = new AWSContainer(containerName, services);
+    public AWSLocalContainerService(AWSContainer container) {
+        this.container = container;
+    }
+
+    public AWSLocalContainerService(String imageName, Service... services) {
+        container = initContainer(imageName);
+
+        container.setupServices(services);
+    }
+
+    protected AWSContainer initContainer(String imageName, Service... services) {
+        return new AWSContainer(imageName, services);
     }
 
     private String getAmazonHost() {

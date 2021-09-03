@@ -63,6 +63,8 @@ public class SplunkConfiguration {
     private String eventHost;
     @UriParam(label = "producer")
     private int tcpReceiverPort;
+    @UriParam(label = "producer")
+    private Integer tcpReceiverLocalPort;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean raw;
 
@@ -153,6 +155,18 @@ public class SplunkConfiguration {
      */
     public void setTcpReceiverPort(int tcpReceiverPort) {
         this.tcpReceiverPort = tcpReceiverPort;
+    }
+
+    public Integer getTcpReceiverLocalPort() {
+        return tcpReceiverLocalPort;
+    }
+
+    /**
+     * Splunk tcp receiver port defined locally on splunk server. (For example if splunk port 9997 is mapped to 12345,
+     * tcpReceiverLocalPort has to be 9997)
+     */
+    public void setTcpReceiverLocalPort(Integer tcpReceiverLocalPort) {
+        this.tcpReceiverLocalPort = tcpReceiverLocalPort;
     }
 
     public boolean isRaw() {

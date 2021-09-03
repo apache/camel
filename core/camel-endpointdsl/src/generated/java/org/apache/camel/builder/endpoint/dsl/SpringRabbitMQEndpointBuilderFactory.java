@@ -509,6 +509,40 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * How many times a Rabbitmq consumer will retry the same message if
+         * Camel failed to process the message.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: consumer
+         * 
+         * @param maximumRetryAttempts the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder maximumRetryAttempts(
+                int maximumRetryAttempts) {
+            doSetProperty("maximumRetryAttempts", maximumRetryAttempts);
+            return this;
+        }
+        /**
+         * How many times a Rabbitmq consumer will retry the same message if
+         * Camel failed to process the message.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: consumer
+         * 
+         * @param maximumRetryAttempts the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder maximumRetryAttempts(
+                String maximumRetryAttempts) {
+            doSetProperty("maximumRetryAttempts", maximumRetryAttempts);
+            return this;
+        }
+        /**
          * Set to true for an no-local consumer.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -555,6 +589,76 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             doSetProperty("queues", queues);
             return this;
         }
+        /**
+         * Whether a Rabbitmq consumer should reject the message without
+         * requeuing. This enables failed messages to be sent to a Dead Letter
+         * Exchange/Queue, if the broker is so configured.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param rejectAndDontRequeue the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder rejectAndDontRequeue(
+                boolean rejectAndDontRequeue) {
+            doSetProperty("rejectAndDontRequeue", rejectAndDontRequeue);
+            return this;
+        }
+        /**
+         * Whether a Rabbitmq consumer should reject the message without
+         * requeuing. This enables failed messages to be sent to a Dead Letter
+         * Exchange/Queue, if the broker is so configured.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param rejectAndDontRequeue the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder rejectAndDontRequeue(
+                String rejectAndDontRequeue) {
+            doSetProperty("rejectAndDontRequeue", rejectAndDontRequeue);
+            return this;
+        }
+        /**
+         * Delay in msec a Rabbitmq consumer will wait before redelivering a
+         * message that Camel failed to process.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param retryDelay the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder retryDelay(int retryDelay) {
+            doSetProperty("retryDelay", retryDelay);
+            return this;
+        }
+        /**
+         * Delay in msec a Rabbitmq consumer will wait before redelivering a
+         * message that Camel failed to process.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param retryDelay the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder retryDelay(
+                String retryDelay) {
+            doSetProperty("retryDelay", retryDelay);
+            return this;
+        }
     }
 
     /**
@@ -566,6 +670,36 @@ public interface SpringRabbitMQEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default SpringRabbitMQEndpointConsumerBuilder basic() {
             return (SpringRabbitMQEndpointConsumerBuilder) this;
+        }
+        /**
+         * The number of consumers.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder concurrentConsumers(
+                int concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
+         * The number of consumers.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder concurrentConsumers(
+                String concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -635,6 +769,117 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         default AdvancedSpringRabbitMQEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * The maximum number of consumers (available only with SMLC).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder maxConcurrentConsumers(
+                Integer maxConcurrentConsumers) {
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * The maximum number of consumers (available only with SMLC).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder maxConcurrentConsumers(
+                String maxConcurrentConsumers) {
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * The type of the MessageListenerContainer.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: DMLC
+         * Group: consumer (advanced)
+         * 
+         * @param messageListenerContainerType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder messageListenerContainerType(
+                String messageListenerContainerType) {
+            doSetProperty("messageListenerContainerType", messageListenerContainerType);
+            return this;
+        }
+        /**
+         * Tell the broker how many messages to send in a single request. Often
+         * this can be set quite high to improve throughput.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder prefetchCount(
+                int prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
+         * Tell the broker how many messages to send in a single request. Often
+         * this can be set quite high to improve throughput.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder prefetchCount(
+                String prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
+         * Custom retry configuration to use. If this is configured then the
+         * other settings such as maximumRetryAttempts for retry are not in use.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.springframework.retry.interceptor.RetryOperationsInterceptor&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param retry the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder retry(Object retry) {
+            doSetProperty("retry", retry);
+            return this;
+        }
+        /**
+         * Custom retry configuration to use. If this is configured then the
+         * other settings such as maximumRetryAttempts for retry are not in use.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.springframework.retry.interceptor.RetryOperationsInterceptor&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param retry the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder retry(String retry) {
+            doSetProperty("retry", retry);
             return this;
         }
         /**

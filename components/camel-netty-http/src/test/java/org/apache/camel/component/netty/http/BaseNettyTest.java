@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Properties;
 
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.util.ResourceLeakDetector;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
@@ -28,6 +27,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.logging.log4j.core.LogEvent;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,18 +37,15 @@ import org.slf4j.LoggerFactory;
 public class BaseNettyTest extends CamelTestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(BaseNettyTest.class);
 
-    private static volatile int port;
-
-    @BeforeAll
-    public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
-    }
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @BeforeAll
     public static void startLeakDetection() {
         System.setProperty("io.netty.leakDetection.maxRecords", "100");
         System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        System.setProperty("io.netty.leakDetection.targetRecords", "100");
+        LogCaptureAppender.reset();
     }
 
     @AfterAll
@@ -85,13 +82,8 @@ public class BaseNettyTest extends CamelTestSupport {
         return prop;
     }
 
-    protected int getNextPort() {
-        port = AvailablePortFinder.getNextAvailable();
-        return port;
-    }
-
     protected int getPort() {
-        return port;
+        return port.getPort();
     }
 
 }

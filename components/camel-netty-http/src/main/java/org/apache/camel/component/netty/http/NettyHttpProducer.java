@@ -32,6 +32,7 @@ import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,23 @@ public class NettyHttpProducer extends NettyProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpProducer.class);
 
+    private int minOkRange;
+    private int maxOkRange;
+
     public NettyHttpProducer(NettyHttpEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint, configuration);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        String range = getEndpoint().getConfiguration().getOkStatusCodeRange();
+        if (!range.contains(",")) {
+            // default is 200-299 so lets optimize for this
+            minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
+            maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
+        }
     }
 
     @Override
@@ -127,7 +143,7 @@ public class NettyHttpProducer extends NettyProducer {
                                 @Override
                                 public void onDone(Exchange exchange) {
                                     if (response.refCnt() > 0) {
-                                        LOG.debug("Releasing Netty HttpResonse ByteBuf");
+                                        LOG.debug("Releasing Netty HttpResponse ByteBuf");
                                         ReferenceCountUtil.release(response);
                                     }
                                 }
@@ -139,7 +155,12 @@ public class NettyHttpProducer extends NettyProducer {
                             LOG.debug("Http responseCode: {}", code);
 
                             // if there was a http error code then check if we should throw an exception
-                            boolean ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
+                            boolean ok;
+                            if (minOkRange > 0) {
+                                ok = code >= minOkRange && code <= maxOkRange;
+                            } else {
+                                ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
+                            }
                             if (!ok && getConfiguration().isThrowExceptionOnFailure()) {
                                 // operation failed so populate exception to throw
                                 Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl,

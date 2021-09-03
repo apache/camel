@@ -42,9 +42,8 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.support.PlatformHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.AnnotationExpressionFactory;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
@@ -64,6 +63,8 @@ import static org.apache.camel.component.bean.ParameterMappingStrategyHelper.cre
 public class BeanInfo {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
+    private static final String CGLIB_METHOD_MARKER = "CGLIB$";
+    private static final String BYTE_BUDDY_METHOD_MARKER = "$accessor$";
     private static final String[] EXCLUDED_METHOD_NAMES = new String[] {
             "clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
             "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
@@ -100,19 +101,16 @@ public class BeanInfo {
     public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy,
                     BeanComponent beanComponent) {
 
-        boolean osgi = PlatformHelper.isOsgiContext(camelContext);
-        if (!osgi) {
-            // OSGi services wont work for this
-            while (type.isSynthetic()) {
-                type = type.getSuperclass();
-                if (explicitMethod != null) {
-                    try {
-                        explicitMethod = type.getDeclaredMethod(explicitMethod.getName(), explicitMethod.getParameterTypes());
-                    } catch (NoSuchMethodException e) {
-                        throw new RuntimeCamelException("Unable to find a method " + explicitMethod + " on " + type, e);
-                    }
-                }
-            }
+        // use type resolver
+        BeanInfoTypeResolver typeResolver = CamelContextHelper.findByType(camelContext, BeanInfoTypeResolver.class);
+        if (typeResolver == null) {
+            // use default instance
+            typeResolver = DefaultBeanInfoTypeResolver.INSTANCE;
+        }
+        Object[] resolved = typeResolver.resolve(type, explicitMethod);
+        if (resolved != null) {
+            type = (Class<?>) resolved[0];
+            explicitMethod = (Method) resolved[1];
         }
 
         this.camelContext = camelContext;
@@ -257,7 +255,7 @@ public class BeanInfo {
                         }
                     }
 
-                    if (methodInfo == null || (name != null && !name.equals(methodInfo.getMethod().getName()))) {
+                    if (methodInfo == null || name != null && !name.equals(methodInfo.getMethod().getName())) {
                         throw new AmbiguousMethodCallException(exchange, methods);
                     }
                 } else {
@@ -593,8 +591,8 @@ public class BeanInfo {
         if (noParameters && localOperationsWithNoBody != null && localOperationsWithNoBody.size() == 1) {
             // if there was a method name configured and it has no parameters, then use the method with no body (eg no parameters)
             return localOperationsWithNoBody.get(0);
-        } else if (!noParameters && (localOperationsWithBody != null && localOperationsWithBody.size() == 1
-                && localOperationsWithCustomAnnotation == null)) {
+        } else if (!noParameters && localOperationsWithBody != null && localOperationsWithBody.size() == 1
+                && localOperationsWithCustomAnnotation == null) {
             // if there is one method with body then use that one
             return localOperationsWithBody.get(0);
         }
@@ -914,7 +912,12 @@ public class BeanInfo {
         }
 
         // return type must not be an Exchange and it should not be a bridge method
-        if ((method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) || method.isBridge()) {
+        if (Exchange.class.isAssignableFrom(method.getReturnType()) || method.isBridge()) {
+            return false;
+        }
+
+        // must not be a method added by Mockito (CGLIB or Byte Buddy)
+        if (name.contains(CGLIB_METHOD_MARKER) || name.contains(BYTE_BUDDY_METHOD_MARKER)) {
             return false;
         }
 
@@ -1013,9 +1016,9 @@ public class BeanInfo {
                     AnnotationExpressionFactory expressionFactory = (AnnotationExpressionFactory) object;
                     return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
                 } else {
-                    LOG.warn("Ignoring bad annotation: " + languageAnnotation + "on method: " + method
-                             + " which declares a factory: " + type.getName()
-                             + " which does not implement " + AnnotationExpressionFactory.class.getName());
+                    LOG.warn(
+                            "Ignoring bad annotation: {} on method: {} which declares a factory {} which does not implement {}",
+                            languageAnnotation, method, type.getName(), AnnotationExpressionFactory.class.getName());
                 }
             }
         }

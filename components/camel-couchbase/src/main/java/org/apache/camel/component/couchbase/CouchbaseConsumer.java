@@ -41,8 +41,8 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
 
     private final CouchbaseEndpoint endpoint;
     private final Bucket bucket;
+    private final Collection collection;
     private ViewOptions viewOptions;
-    private Collection collection;
 
     public CouchbaseConsumer(CouchbaseEndpoint endpoint, Bucket client, Processor processor) {
         super(endpoint, processor);
@@ -60,13 +60,10 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
         } else {
             this.collection = client.defaultCollection();
         }
-        init();
     }
 
     @Override
     protected void doInit() {
-
-        //   query.setIncludeDocs(true);
         this.viewOptions = ViewOptions.viewOptions();
         int limit = endpoint.getLimit();
         if (limit > 0) {
@@ -92,13 +89,11 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        LOG.info("Starting Couchbase consumer");
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Stopping Couchbase consumer");
         super.doStop();
         if (bucket != null) {
             bucket.core().shutdown();
@@ -109,9 +104,6 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
     protected synchronized int poll() throws Exception {
         ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
 
-        LOG.info("Received result set from Couchbase");
-        Collection collection = bucket.defaultCollection();
-
         if (LOG.isTraceEnabled()) {
             LOG.trace("ViewResponse =  {}", result);
         }
@@ -121,7 +113,7 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
             Object doc;
             String id = row.id().get();
             if (endpoint.isFullDocument()) {
-                doc = collection.get(id);
+                doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout());
             } else {
                 doc = row.valueAs(Object.class);
             }
@@ -130,34 +122,36 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
             String designDocumentName = endpoint.getDesignDocumentName();
             String viewName = endpoint.getViewName();
 
-            Exchange exchange = endpoint.createExchange();
-            exchange.getIn().setBody(doc);
-            exchange.getIn().setHeader(HEADER_ID, id);
-            exchange.getIn().setHeader(HEADER_KEY, key);
-            exchange.getIn().setHeader(HEADER_DESIGN_DOCUMENT_NAME, designDocumentName);
-            exchange.getIn().setHeader(HEADER_VIEWNAME, viewName);
-
-            if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Deleting doc with ID {}", id);
-                }
-
-                collection.remove(id);
-            } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Filtering out ID {}", id);
-                }
-                // add filter for already processed docs
-            } else {
-                LOG.trace("No strategy set for already processed docs, beware of duplicates!");
-            }
-
-            logDetails(id, doc, key, designDocumentName, viewName, exchange);
-
+            Exchange exchange = createExchange(false);
             try {
-                this.getProcessor().process(exchange);
+                exchange.getIn().setBody(doc);
+                exchange.getIn().setHeader(HEADER_ID, id);
+                exchange.getIn().setHeader(HEADER_KEY, key);
+                exchange.getIn().setHeader(HEADER_DESIGN_DOCUMENT_NAME, designDocumentName);
+                exchange.getIn().setHeader(HEADER_VIEWNAME, viewName);
+
+                if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Deleting doc with ID {}", id);
+                    }
+                    CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
+                            endpoint.getProducerRetryPause());
+                } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Filtering out ID {}", id);
+                    }
+                    // add filter for already processed docs
+                } else {
+                    LOG.trace("No strategy set for already processed docs, beware of duplicates!");
+                }
+
+                logDetails(id, doc, key, designDocumentName, viewName, exchange);
+
+                getProcessor().process(exchange);
             } catch (Exception e) {
                 this.getExceptionHandler().handleException("Error processing exchange.", exchange, e);
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
 
