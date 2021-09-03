@@ -51,7 +51,7 @@ tooling to encrypt or decrypt values.
 
 The console output the syntax and which options it provides:
 
-[source,java]
+[source,text]
 --------------------------------------------------------------
 Apache Camel Jasypt takes the following options
 
@@ -67,7 +67,7 @@ parameters. In the apache camel kit, you cd into the lib folder and run
 the following java cmd, where _<CAMEL_HOME>_ is where you have
 downloaded and extract the Camel distribution.
 
-[source,java]
+[source,bash]
 ----------------------------------------------------------------
 $ cd <CAMEL_HOME>/lib
 $ java -jar camel-jasypt-2.5.0.jar -c encrypt -p secret -i tiger
@@ -75,7 +75,7 @@ $ java -jar camel-jasypt-2.5.0.jar -c encrypt -p secret -i tiger
 
 Which outputs the following result
 
-[source,java]
+[source,text]
 ----------------------------------------
 Encrypted text: qaEEacuW7BUti8LcMgyjKw==
 ----------------------------------------
@@ -90,7 +90,7 @@ correct original value.
 So you can test it by running the tooling using the following
 parameters:
 
-[source,java]
+[source,bash]
 -----------------------------------------------------------------------------------
 $ cd <CAMEL_HOME>/lib
 $ java -jar camel-jasypt-2.5.0.jar -c decrypt -p secret -i qaEEacuW7BUti8LcMgyjKw==
@@ -98,7 +98,7 @@ $ java -jar camel-jasypt-2.5.0.jar -c decrypt -p secret -i qaEEacuW7BUti8LcMgyjK
 
 Which outputs the following result:
 
-[source,java]
+[source,text]
 ---------------------
 Decrypted text: tiger
 ---------------------
@@ -117,14 +117,14 @@ When running jasypt tooling, if you come across `java.lang.NoClassDefFoundError:
 The options below are exclusive for the Jasypt
 component.
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%m,10%m,10%m,70%",options="header",]
 |=======================================================================
 |Name |Default Value |Type |Description
 
-|`password` |`null` |`String` |Specifies the master password to use for decrypting. This option is
+| password |  | string |Specifies the master password to use for decrypting. This option is
 mandatory. See below for more details.
 
-|`algorithm` |`null` |`String` |Name of an optional algorithm to use.
+| algorithm |  | string |Name of an optional algorithm to use.
 |=======================================================================
 
 
@@ -142,7 +142,7 @@ system property.
 For example you could provided the password before you start the
 application
 
-[source,java]
+[source,bash]
 -----------------------------------------
 $ export CAMEL_ENCRYPTION_PASSWORD=secret
 -----------------------------------------
@@ -151,7 +151,7 @@ Then start the application, such as running the start script.
 
 When the application is up and running you can unset the environment
 
-[source,java]
+[source,bash]
 ---------------------------------
 $ unset CAMEL_ENCRYPTION_PASSWORD
 ---------------------------------
@@ -198,7 +198,7 @@ inside the `<camelContext>` tag which is shown below. Notice how we use
 the `propertiesParserRef` attribute to refer to
 Jasypt.
 
-[source,java]
+[source,xml]
 --------------------------------------------------------------------------------------------------------------
 <!-- define the jasypt properties parser with the given password to be used -->
 <bean id="jasypt" class="org.apache.camel.component.jasypt.JasyptPropertiesParser">
