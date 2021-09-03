@@ -19,6 +19,7 @@ package org.apache.camel.component.jackson.converter;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Set;
 
@@ -107,6 +108,9 @@ public final class JacksonTypeConverters {
             } else if (byte[].class.isAssignableFrom(type)) {
                 byte[] out = mapper.writeValueAsBytes(value);
                 return type.cast(out);
+            } else if (ByteBuffer.class.isAssignableFrom(type)) {
+                byte[] out = mapper.writeValueAsBytes(value);
+                return type.cast(ByteBuffer.wrap(out));
             } else if (mapper.canSerialize(type) && !Enum.class.isAssignableFrom(type)) {
                 // if the source value type is readable by the mapper then use
                 // its read operation
