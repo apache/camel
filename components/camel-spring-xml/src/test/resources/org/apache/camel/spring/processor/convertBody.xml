@@ -34,6 +34,12 @@
         </route>
 
         <route>
+            <from uri="direct:optional"/>
+            <convertBodyTo type="java.lang.Integer" mandatory="false"/>
+            <to uri="mock:result"/>
+        </route>
+
+        <route>
             <from uri="direct:invalid"/>
             <convertBodyTo type="java.util.Date"/>
             <to uri="mock:result"/>
