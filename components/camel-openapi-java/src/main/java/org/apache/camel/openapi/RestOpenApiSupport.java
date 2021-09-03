@@ -31,15 +31,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import io.apicurio.datamodels.core.models.common.Contact;
+import io.apicurio.datamodels.core.models.common.License;
 import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Contact;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Info;
-import io.apicurio.datamodels.openapi.v2.models.Oas20License;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Contact;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
-import io.apicurio.datamodels.openapi.v3.models.Oas30License;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -312,19 +310,18 @@ public class RestOpenApiSupport {
         info.termsOfService = termsOfService;
 
         if (licenseName != null || licenseUrl != null) {
-            Oas30License license = new Oas30License();
+            License license = info.createLicense();
             license.name = licenseName;
             license.url = licenseUrl;
             info.license = license;
         }
 
         if (contactName != null || contactUrl != null || contactEmail != null) {
-            Oas30Contact contact = new Oas30Contact();
+            Contact contact = info.createContact();
             contact.name = contactName;
             contact.url = contactUrl;
             contact.email = contactEmail;
             info.contact = contact;
-            contact._parent = info;
         }
         openApiConfig.setInfo(info);
     }
@@ -340,19 +337,18 @@ public class RestOpenApiSupport {
         info.termsOfService = termsOfService;
 
         if (licenseName != null || licenseUrl != null) {
-            Oas20License license = new Oas20License();
+            License license = info.createLicense();
             license.name = licenseName;
             license.url = licenseUrl;
             info.license = license;
         }
 
         if (contactName != null || contactUrl != null || contactEmail != null) {
-            Oas20Contact contact = new Oas20Contact();
+            Contact contact = info.createContact();
             contact.name = contactName;
             contact.url = contactUrl;
             contact.email = contactEmail;
             info.contact = contact;
-            contact._parent = info;
         }
         openApiConfig.setInfo(info);
     }
