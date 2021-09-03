@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.concurrent.Executors;
@@ -422,41 +423,12 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
      */
     void checkConnection() throws IOException {
         if (null == socket || socket.isClosed() || !socket.isConnected()) {
-            if (socket == null) {
-                log.debug("checkConnection() - Socket is null - attempting to establish connection");
-            } else if (socket.isClosed()) {
-                log.info("checkConnection() - Socket {} is closed - attempting to establish new connection", socket);
-            } else if (!socket.isConnected()) {
-                log.info("checkConnection() - Socket {} is not connected - attempting to establish new connection", socket);
-            }
+            logCurrentSocketState();
 
-            Socket newSocket = new Socket();
+            // The socket will be closed by close connection, resetConnection, etc
+            Socket newSocket = createNewSocket();
 
-            if (getConfiguration().hasKeepAlive()) {
-                newSocket.setKeepAlive(getConfiguration().getKeepAlive());
-            }
-            if (getConfiguration().hasTcpNoDelay()) {
-                newSocket.setTcpNoDelay(getConfiguration().getTcpNoDelay());
-            }
-
-            if (getConfiguration().hasReceiveBufferSize()) {
-                newSocket.setReceiveBufferSize(getConfiguration().getReceiveBufferSize());
-            }
-            if (getConfiguration().hasSendBufferSize()) {
-                newSocket.setSendBufferSize(getConfiguration().getSendBufferSize());
-            }
-            if (getConfiguration().hasReuseAddress()) {
-                newSocket.setReuseAddress(getConfiguration().getReuseAddress());
-            }
-
-            newSocket.setSoLinger(false, -1);
-
-            InetSocketAddress socketAddress;
-            if (null == getEndpoint().getHostname()) {
-                socketAddress = new InetSocketAddress(getEndpoint().getPort());
-            } else {
-                socketAddress = new InetSocketAddress(getEndpoint().getHostname(), getEndpoint().getPort());
-            }
+            InetSocketAddress socketAddress = configureSocketAddress();
 
             newSocket.connect(socketAddress, getConfiguration().getConnectTimeout());
             log.info("checkConnection() - established new connection {}", newSocket);
@@ -464,15 +436,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
 
             socket = newSocket;
 
-            SocketAddress localSocketAddress = socket.getLocalSocketAddress();
-            if (localSocketAddress != null) {
-                cachedLocalAddress = localSocketAddress.toString();
-            }
-            SocketAddress remoteSocketAddress = socket.getRemoteSocketAddress();
-            if (remoteSocketAddress != null) {
-                cachedRemoteAddress = remoteSocketAddress.toString();
-            }
-            cachedCombinedAddress = MllpSocketBuffer.formatAddressString(localSocketAddress, remoteSocketAddress);
+            cacheAddresses();
 
             if (getConfiguration().hasIdleTimeout()) {
                 log.debug("Scheduling initial idle producer connection check of {} in {} milliseconds", getConnectionAddress(),
@@ -482,6 +446,62 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
         } else {
             log.debug("checkConnection() - Connection {} is still valid - no new connection required", socket);
         }
+    }
+
+    private void logCurrentSocketState() {
+        if (socket == null) {
+            log.debug("checkConnection() - Socket is null - attempting to establish connection");
+        } else if (socket.isClosed()) {
+            log.info("checkConnection() - Socket {} is closed - attempting to establish new connection", socket);
+        } else if (!socket.isConnected()) {
+            log.info("checkConnection() - Socket {} is not connected - attempting to establish new connection", socket);
+        }
+    }
+
+    private void cacheAddresses() {
+        SocketAddress localSocketAddress = socket.getLocalSocketAddress();
+        if (localSocketAddress != null) {
+            cachedLocalAddress = localSocketAddress.toString();
+        }
+        SocketAddress remoteSocketAddress = socket.getRemoteSocketAddress();
+        if (remoteSocketAddress != null) {
+            cachedRemoteAddress = remoteSocketAddress.toString();
+        }
+        cachedCombinedAddress = MllpSocketBuffer.formatAddressString(localSocketAddress, remoteSocketAddress);
+    }
+
+    private InetSocketAddress configureSocketAddress() {
+        InetSocketAddress socketAddress;
+        if (null == getEndpoint().getHostname()) {
+            socketAddress = new InetSocketAddress(getEndpoint().getPort());
+        } else {
+            socketAddress = new InetSocketAddress(getEndpoint().getHostname(), getEndpoint().getPort());
+        }
+        return socketAddress;
+    }
+
+    private Socket createNewSocket() throws SocketException {
+        Socket newSocket = new Socket();
+
+        if (getConfiguration().hasKeepAlive()) {
+            newSocket.setKeepAlive(getConfiguration().getKeepAlive());
+        }
+        if (getConfiguration().hasTcpNoDelay()) {
+            newSocket.setTcpNoDelay(getConfiguration().getTcpNoDelay());
+        }
+
+        if (getConfiguration().hasReceiveBufferSize()) {
+            newSocket.setReceiveBufferSize(getConfiguration().getReceiveBufferSize());
+        }
+        if (getConfiguration().hasSendBufferSize()) {
+            newSocket.setSendBufferSize(getConfiguration().getSendBufferSize());
+        }
+        if (getConfiguration().hasReuseAddress()) {
+            newSocket.setReuseAddress(getConfiguration().getReuseAddress());
+        }
+
+        newSocket.setSoLinger(false, -1);
+        return newSocket;
     }
 
     /**
