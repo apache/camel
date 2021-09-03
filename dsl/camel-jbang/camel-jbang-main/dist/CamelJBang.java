@@ -31,7 +31,7 @@
 //DEPS org.apache.logging.log4j:log4j-core:2.13.3
 //DEPS org.apache.logging.log4j:log4j-slf4j-impl:2.13.3
 //DEPS org.apache.velocity:velocity-engine-core:2.3
-//DEPS info.picocli:picocli:4.5.0
+//DEPS info.picocli:picocli:4.6.1
 
 package main;
 
