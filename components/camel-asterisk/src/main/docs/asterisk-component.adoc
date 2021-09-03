@@ -134,4 +134,22 @@ Supported actions are:
 * SIP_PEERS: List SIP peers
 * EXTENSION_STATE: Check extension status
 
+== Examples
+
+=== Producer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:in")
+  .to("asterisk://myVoIP?hostname=hostname&username=username&password=password&action=EXTENSION_STATE")
+--------------------------------------------------------------------------------
+
+=== Consumer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+from("asterisk:myVoIP?hostname=hostname&username=username&password=password")
+  .log("Received a message - ${body}");
+--------------------------------------------------------------------------------
+
 include::{page-component-version}@camel-spring-boot::page$asterisk-starter.adoc[]
