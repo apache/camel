@@ -125,6 +125,15 @@ public class StringHelperTest {
     }
 
     @Test
+    public void testRemoveLeadingAndEndingQuotes() throws Exception {
+        assertEquals("abc", removeLeadingAndEndingQuotes("'abc'"));
+        assertEquals("abc", removeLeadingAndEndingQuotes("\"abc\""));
+        assertEquals("a'b'c", removeLeadingAndEndingQuotes("a'b'c"));
+        assertEquals("'b'c", removeLeadingAndEndingQuotes("'b'c"));
+        assertEquals("", removeLeadingAndEndingQuotes("''"));
+        assertEquals("'", removeLeadingAndEndingQuotes("'"));
+    }
+
     public void testSplitOnCharacterAsList() throws Exception {
         List<String> list = splitOnCharacterAsList("foo", ',', 1);
         assertEquals(1, list.size());
