@@ -16,6 +16,9 @@ However the method is needed to be exposed in the API as well.
 
 The `ThroughputLogger` has changed the return type from `int` to `long` in the `getReceivedCounter` method.
 
+Removed the `dataSonnet(Expression)` methods from `RouteBuilder` as they should not be used;
+use the methods that take `String` as type.
+
 === Data Formats
 
 The `camel-asn1` data format has renamed the option `clazzName` to `unmarshalType`.
