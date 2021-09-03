@@ -29,9 +29,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
@@ -279,28 +277,6 @@ public class MockEndpointTest extends ContextTestSupport {
         // assert we can assert using other than string, eg numbers
         resultEndpoint.expectedHeaderReceived("number", 123);
         sendHeader("number", 123);
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testExpressionExpectationOfHeader() throws InterruptedException {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.reset();
-
-        resultEndpoint.expectedHeaderReceived("number", 123);
-        template.sendBodyAndHeader("direct:a", "<foo><id>123</id></foo>", "number",
-                XPathBuilder.xpath("/foo/id", Integer.class));
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testExpressionExpectationOfProperty() throws InterruptedException {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.reset();
-
-        resultEndpoint.expectedPropertyReceived("number", 123);
-        template.sendBodyAndProperty("direct:a", "<foo><id>123</id></foo>", "number",
-                XPathBuilder.xpath("/foo/id", Integer.class));
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -1071,18 +1047,6 @@ public class MockEndpointTest extends ContextTestSupport {
 
         // start with 0 (zero) to have it converted to the number and match 987
         template.sendBody("direct:a", "0987");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testExpectedBodyExpression() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived(987);
-
-        // start with 0 (zero) to have it converted to the number and match 987
-        // and since its an expression it would be evaluated first as well
-        template.sendBody("direct:a", ExpressionBuilder.constantExpression("0987"));
 
         assertMockEndpointsSatisfied();
     }

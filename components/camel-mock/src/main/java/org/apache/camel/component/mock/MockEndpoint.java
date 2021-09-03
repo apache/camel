@@ -802,15 +802,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             return null;
         }
 
-        if (actualValue instanceof Expression) {
-            Class<?> clazz = Object.class;
-            if (expectedValue != null) {
-                clazz = expectedValue.getClass();
-            }
-            actualValue = ((Expression) actualValue).evaluate(exchange, clazz);
-        } else if (actualValue instanceof Predicate) {
-            actualValue = ((Predicate) actualValue).matches(exchange);
-        } else if (expectedValue != null) {
+        if (expectedValue != null) {
             String from = actualValue.getClass().getName();
             String to = expectedValue.getClass().getName();
             actualValue = getCamelContext().getTypeConverter().convertTo(expectedValue.getClass(), exchange, actualValue);
