@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.datasonnet;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,12 +47,16 @@ public class DatasonnetLanguage extends LanguageSupport implements PropertyConfi
 
     static {
         LOG.debug("One time classpath search...");
-        try (ScanResult scanResult = new ClassGraph().whitelistPaths("/").scan()) {
-            scanResult.getResourcesWithExtension("libsonnet")
-                    .forEachByteArray((resource, bytes) -> {
-                        LOG.debug("Loading DataSonnet library: {}", resource.getPath());
-                        CLASSPATH_IMPORTS.put(resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
-                    });
+        try (ScanResult scanResult = new ClassGraph().acceptPaths("/").scan()) {
+            try {
+                scanResult.getResourcesWithExtension("libsonnet")
+                        .forEachByteArrayThrowingIOException((resource, bytes) -> {
+                            LOG.debug("Loading DataSonnet library: {}", resource.getPath());
+                            CLASSPATH_IMPORTS.put(resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
+                        });
+            } catch (IOException e) {
+                // ignore
+            }
         }
         LOG.debug("One time classpath search done");
     }
