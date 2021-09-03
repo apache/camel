@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -39,9 +38,6 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
     @Produce("direct:expressionsInJava")
     protected ProducerTemplate expressionsInJavaProducer;
 
-    @Produce("direct:chainExpressions")
-    protected ProducerTemplate chainExpressionsProducer;
-
     @Produce("direct:fluentBuilder")
     protected ProducerTemplate fluentBuilderProducer;
 
@@ -50,11 +46,6 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:chainExpressions")
-                        .setHeader("ScriptHeader", constant("{ hello: \"World\"}"))
-                        .setBody(datasonnet(simple("${header.ScriptHeader}", String.class)))
-                        .to("mock:direct:response");
-
                 from("direct:expressionsInJava")
                                 .choice()
                                     .when(datasonnet("payload == 'World'"))
@@ -96,15 +87,6 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
         Exchange exchange = endEndpoint.assertExchangeReceived(endEndpoint.getReceivedCounter() - 1);
         String response = exchange.getIn().getBody().toString();
         assertEquals("Hello, World", response);
-    }
-
-    @Test
-    public void testChainExpressions() throws Exception {
-        endEndpoint.expectedMessageCount(1);
-        chainExpressionsProducer.sendBody("{}");
-        Exchange exchange = endEndpoint.assertExchangeReceived(endEndpoint.getReceivedCounter() - 1);
-        String response = exchange.getIn().getBody().toString();
-        JSONAssert.assertEquals("{\"hello\":\"World\"}", response, true);
     }
 
     @Test
