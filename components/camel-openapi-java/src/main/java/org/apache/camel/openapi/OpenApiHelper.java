@@ -53,7 +53,8 @@ public final class OpenApiHelper {
 
         if (openApi instanceof Oas20Document) {
             openApi.clearExtensions();
-            if (((Oas20Document) openApi).definitions.getDefinitions() != null) {
+            if (((Oas20Document) openApi).definitions != null
+                    && ((Oas20Document) openApi).definitions.getDefinitions() != null) {
                 for (Oas20SchemaDefinition schemaDefinition : ((Oas20Document) openApi).definitions.getDefinitions()) {
                     schemaDefinition.clearExtensions();
                 }
