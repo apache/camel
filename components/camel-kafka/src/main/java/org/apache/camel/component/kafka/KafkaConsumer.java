@@ -446,6 +446,7 @@ public class KafkaConsumer extends DefaultConsumer {
                     if (breakOnErrorHit) {
                         // force re-connect
                         reconnect.set(true);
+                        retry.set(false); // to close the current consumer
                     }
                 }
 
