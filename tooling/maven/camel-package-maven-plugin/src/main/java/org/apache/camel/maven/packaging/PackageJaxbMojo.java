@@ -22,6 +22,7 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -153,11 +154,10 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     private Path asFolder(String p) {
         if (p.endsWith(".jar")) {
             File fp = new File(p);
-            try {
-                Map<String, String> env = new HashMap<>();
-                return FileSystems.newFileSystem(URI.create("jar:" + fp.toURI().toString()), env).getPath("/");
+            try (FileSystem fs = FileSystems.newFileSystem(URI.create("jar:" + fp.toURI()), new HashMap<>())) {
+                return fs.getPath("/");
             } catch (FileSystemAlreadyExistsException e) {
-                return FileSystems.getFileSystem(URI.create("jar:" + fp.toURI().toString())).getPath("/");
+                return FileSystems.getFileSystem(URI.create("jar:" + fp.toURI())).getPath("/");
             } catch (IOException e) {
                 throw new IOError(e);
             }
