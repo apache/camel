@@ -180,7 +180,7 @@ public final class VertxPlatformHttpSupport {
             response.end((Buffer) body);
         } else {
             final TypeConverter tc = camelExchange.getContext().getTypeConverter();
-            final ByteBuffer bb = tc.mandatoryConvertTo(ByteBuffer.class, body);
+            final ByteBuffer bb = tc.mandatoryConvertTo(ByteBuffer.class, camelExchange, body);
             final Buffer b = Buffer.buffer(bb.capacity());
 
             b.setBytes(0, bb);
