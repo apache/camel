@@ -34,7 +34,7 @@ public class KafkaSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(KafkaSpanDecorator.TOPIC, String.class)).thenReturn("test");
+        Mockito.when(message.getHeader(KafkaSpanDecorator.OVERRIDE_TOPIC, String.class)).thenReturn("test");
 
         KafkaSpanDecorator decorator = new KafkaSpanDecorator();
 
@@ -49,7 +49,7 @@ public class KafkaSpanDecoratorTest {
 
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(endpoint.getEndpointUri())
-                .thenReturn("kafka:localhost:9092?topic=test&groupId=testing&consumersCount=1");
+                .thenReturn("kafka:test?brokers=localhost:9092&consumersCount=1");
 
         KafkaSpanDecorator decorator = new KafkaSpanDecorator();
 
