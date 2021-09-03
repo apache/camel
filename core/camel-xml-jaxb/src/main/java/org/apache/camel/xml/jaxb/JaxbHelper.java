@@ -40,10 +40,13 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -76,6 +79,33 @@ public final class JaxbHelper {
                 if (map != null && !map.isEmpty()) {
                     namespaces.putAll(map);
                 }
+            }
+        }
+    }
+
+    /**
+     * If the route has been built with endpoint-dsl, then the model will not have uri set which then cannot be included
+     * in the JAXB model dump
+     */
+    @SuppressWarnings("unchecked")
+    public static void resolveEndpointDslUris(RouteDefinition route) {
+        FromDefinition from = route.getInput();
+        if (from != null && from.getEndpointConsumerBuilder() != null) {
+            String uri = from.getEndpointConsumerBuilder().getUri();
+            from.setUri(uri);
+        }
+        Collection<SendDefinition> col = filterTypeInOutputs(route.getOutputs(), SendDefinition.class);
+        for (SendDefinition<?> to : col) {
+            if (to.getEndpointProducerBuilder() != null) {
+                String uri = to.getEndpointProducerBuilder().getUri();
+                to.setUri(uri);
+            }
+        }
+        Collection<ToDynamicDefinition> col2 = filterTypeInOutputs(route.getOutputs(), ToDynamicDefinition.class);
+        for (ToDynamicDefinition to : col2) {
+            if (to.getEndpointProducerBuilder() != null) {
+                String uri = to.getEndpointProducerBuilder().getUri();
+                to.setUri(uri);
             }
         }
     }
