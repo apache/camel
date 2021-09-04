@@ -32,7 +32,7 @@ language uses OGNL expressions, such as calling a method named `myMethod` on the
 At runtime the simple language will then us its built-in OGNL support which requires the `camel-bean` component.
 ====
 
-The simple language uses `${body}` placeholders for complex expressions or functions.
+The simple language uses `$\{body}` placeholders for complex expressions or functions.
 
 [NOTE]
 ====
