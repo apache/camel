@@ -7,7 +7,7 @@
 :endpoint-query-option-name: `[#_endpoint_query_option_{base-option-name}
 :last-cell-formats: |util.description(value) \
 |value.defaultValue ? `${value.defaultValue}` : "" \
-|`${value.type}`
+|util.javaSimpleName(value.javaType)
 :requires: 'util=util/jsonpath-util.js'
 include::jsonpath$example$json/{shortName}.json[query='$.component',formats='name,scheme,pascalcasescheme=util.pascalCase(scheme),syntax,apiSyntax', requires={requires}]
 include::jsonpathcount$example$json/{shortName}.json[queries='pathparametercount=nodes$.properties[?(@.kind=="path")],queryparametercount=nodes$.properties[?(@.kind=="parameter")],apicount=nodes$.apis.*']
