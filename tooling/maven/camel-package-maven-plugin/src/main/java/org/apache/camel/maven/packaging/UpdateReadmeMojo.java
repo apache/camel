@@ -397,16 +397,16 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private void executeEips() throws MojoExecutionException {
-        // only run if in camel-core-model
+        // only run if in camel-core-engine
         String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
-        if (!currentDir.endsWith("camel-core-model")) {
+        if (!currentDir.endsWith("camel-core-engine")) {
             return;
         }
 
         final Set<File> jsonFiles = new TreeSet<>();
 
         // find all json files in camel-core
-        File coreDir = new File(".");
+        File coreDir = new File("./../camel-core-model");
         if (coreDir.isDirectory()) {
             File target = new File(coreDir, "target/classes/org/apache/camel/model");
             PackageHelper.findJsonFiles(target, jsonFiles);
