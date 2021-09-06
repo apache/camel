@@ -532,6 +532,7 @@ The `camel-kafka` library provides a Kafka topic-based idempotent repository. Th
 The topic used must be unique per idempotent repository instance. The mechanism does not have any requirements about the number of topic partitions; as the repository consumes from all partitions at the same time. It also does not have any requirements about the replication factor of the topic.
 Each repository instance that uses the topic (e.g. typically on different machines running in parallel) controls its own consumer group, so in a cluster of 10 Camel processes using the same topic each will control its own offset.
 On startup, the instance subscribes to the topic and rewinds the offset to the beginning, rebuilding the cache to the latest state. The cache will not be considered warmed up until one poll of `pollDurationMs` in length returns 0 records. Startup will not be completed until either the cache has warmed up, or 30 seconds go by; if the latter happens the idempotent repository may be in an inconsistent state until its consumer catches up to the end of the topic.
+Be mindful of the format of the header used for the uniqueness check. By default, it uses Strings as the data types. When using primitive numeric formats, the header must be deserialized accordingly. Check the samples below for examples.
 
 A `KafkaIdempotentRepository` has the following properties:
 [width="100%",cols="2m,5",options="header"]
@@ -593,6 +594,52 @@ In XML:
     </props>
   </property>
 </bean>
+----
+
+There are 3 alternatives to choose from when using idempotency with numeric identifiers. The first one is to use the static method `numericHeader` method from `org.apache.camel.component.kafka.serde.KafkaSerdeHelper` to perform the conversion for you:
+
+[source,java]
+----
+from("direct:performInsert")
+    .idempotentConsumer(numericHeader("id")).messageIdRepositoryRef("insertDbIdemRepo")
+        // once-only insert into database
+    .end()
+----
+
+Alternatively, it is possible use a custom serializer configured via the route URL to perform the conversion:
+
+[source,java]
+----
+public class CustomHeaderDeserializer extends DefaultKafkaHeaderDeserializer {
+    private static final Logger LOG = LoggerFactory.getLogger(CustomHeaderDeserializer.class);
+
+    @Override
+    public Object deserialize(String key, byte[] value) {
+        if (key.equals("id")) {
+            BigInteger bi = new BigInteger(value);
+
+            return String.valueOf(bi.longValue());
+        } else {
+            return super.deserialize(key, value);
+        }
+    }
+}
+----
+
+Lastly, it is also possible to do so in a processor:
+
+[source,java]
+----
+from(from).routeId("foo")
+    .process(exchange -> {
+        byte[] id = exchange.getIn().getHeader("id", byte[].class);
+
+        BigInteger bi = new BigInteger(id);
+        exchange.getIn().setHeader("id", String.valueOf(bi.longValue()));
+    })
+    .idempotentConsumer(header("id"))
+    .messageIdRepositoryRef("kafkaIdempotentRepository")
+    .to(to);
 ----
 
 == Using manual commit with Kafka consumer
