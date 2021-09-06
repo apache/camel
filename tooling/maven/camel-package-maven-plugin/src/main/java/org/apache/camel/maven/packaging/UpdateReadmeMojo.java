@@ -45,7 +45,6 @@ import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.OtherModel;
@@ -201,10 +200,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                         option.setDescription(desc);
                     });
 
+                    updated |= updateOptionsIn(file, "component-configure", "");
                     String options = evaluateTemplate("component-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
 
-                    options = evaluateTemplate("endpoint-options.mvel", model);
                     updated |= updateOptionsIn(file, "endpoint", "");
 
                     if (updated) {
@@ -355,25 +354,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     }
 
                     LanguageModel model = JsonMapper.generateLanguageModel(json);
-                    // skip option named id
-                    model.getOptions().removeIf(
-                            opt -> Objects.equals(opt.getName(), "id") || Objects.equals(opt.getName(), "expression"));
-                    // enhanced for autowired
-                    model.getOptions().stream().filter(BaseOptionModel::isAutowired).forEach(option -> {
-                        option.setDescription("*Autowired* " + option.getDescription());
-                    });
-                    // enhance description for deprecated options
-                    model.getOptions().stream().filter(BaseOptionModel::isDeprecated).forEach(option -> {
-                        String desc = "*Deprecated* " + option.getDescription();
-                        if (!Strings.isEmpty(option.getDeprecationNote())) {
-                            desc = option.getDescription();
-                            if (!desc.endsWith(".")) {
-                                desc = desc + ".";
-                            }
-                            desc += " Deprecation note: " + option.getDeprecationNote();
-                        }
-                        option.setDescription(desc);
-                    });
 
                     boolean updated = updateHeader(languageName, file, model, " Language", kind);
                     checkSince(file, model);
@@ -419,41 +399,14 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 String json = loadEipJson(jsonFile);
                 if (json != null) {
                     EipModel model = JsonMapper.generateEipModel(json);
-                    // skip option named id/description/expression/outputs
-                    model.getOptions()
-                            .removeIf(option -> "id".equals(option.getName()) || "description".equals(option.getName())
-                                    || "expression".equals(option.getName())
-                                    || "outputs".equals(option.getName()));
-                    // lets put autowired in the description
-                    model.getOptions().stream().filter(EipOptionModel::isAutowired).forEach(option -> {
-                        String desc = "*Autowired* " + option.getDescription();
-                        option.setDescription(desc);
-                    });
-                    // lets put required in the description
-                    model.getOptions().stream().filter(EipOptionModel::isRequired).forEach(option -> {
-                        String desc = "*Required* " + option.getDescription();
-                        option.setDescription(desc);
-                    });
-                    // is the option deprecated then include that as well in the
-                    // description
-                    model.getOptions().stream().filter(EipOptionModel::isDeprecated).forEach(option -> {
-                        String desc = "*Deprecated* " + option.getDescription();
-                        if (!Strings.isEmpty(option.getDeprecationNote())) {
-                            if (!desc.endsWith(".")) {
-                                desc += ".";
-                            }
-                            desc = desc + " Deprecation note: " + option.getDeprecationNote();
-                        }
-                        option.setDescription(desc);
-                    });
-
-                    String eipName = model.getName();
 
                     // we only want actual EIPs from the models
                     final String kind = "eip";
                     if (!model.getLabel().startsWith(kind)) {
                         continue;
                     }
+
+                    String eipName = model.getName();
 
                     File file = new File(eipDocDir, eipName + "-" + kind + ".adoc");
                     boolean exists = file.exists();
@@ -818,37 +771,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private ComponentModel generateComponentModel(String json) {
         ComponentModel component = JsonMapper.generateComponentModel(json);
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
-                .filter(BaseOptionModel::isAutowired).forEach(option -> {
-                    String desc = "*Autowired* " + option.getDescription();
-                    option.setDescription(desc);
-                });
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
-                .filter(BaseOptionModel::isRequired).forEach(option -> {
-                    String desc = "*Required* " + option.getDescription();
-                    option.setDescription(desc);
-                });
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
-                .filter(BaseOptionModel::isDeprecated).forEach(option -> {
-                    String desc = "*Deprecated* " + option.getDescription();
-                    if (!Strings.isEmpty(option.getDeprecationNote())) {
-                        if (!desc.endsWith(".")) {
-                            desc += ".";
-                        }
-                        desc = desc + " Deprecation note: " + option.getDeprecationNote();
-                    }
-                    option.setDescription(desc);
-                });
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
-                .filter(o -> o.getEnums() != null).forEach(option -> {
-                    String desc = option.getDescription();
-                    if (!desc.endsWith(".")) {
-                        desc = desc + ".";
-                    }
-                    desc = desc + " There are " + option.getEnums().size() + " enums and the value can be one of: "
-                           + wrapEnumValues(option.getEnums());
-                    option.setDescription(desc);
-                });
         return component;
     }
 
@@ -859,33 +781,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private DataFormatModel generateDataFormatModel(String json) {
         DataFormatModel model = JsonMapper.generateDataFormatModel(json);
-        // skip option named id
-        model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id"));
-        model.getOptions().stream().filter(BaseOptionModel::isAutowired).forEach(option -> {
-            String desc = "*Autowired* " + option.getDescription();
-            option.setDescription(desc);
-        });
-        // enhance description for deprecated options
-        model.getOptions().stream().filter(BaseOptionModel::isDeprecated).forEach(option -> {
-            String desc = "*Deprecated* " + option.getDescription();
-            if (!Strings.isEmpty(option.getDeprecationNote())) {
-                desc = option.getDescription();
-                if (!desc.endsWith(".")) {
-                    desc = desc + ".";
-                }
-                desc += " Deprecation note: " + option.getDeprecationNote();
-            }
-            option.setDescription(desc);
-        });
-        model.getOptions().stream().filter(o -> o.getEnums() != null).forEach(option -> {
-            String desc = option.getDescription();
-            if (!desc.endsWith(".")) {
-                desc = desc + ".";
-            }
-            desc = desc + " There are " + option.getEnums().size() + " enums and the value can be one of: "
-                   + wrapEnumValues(option.getEnums());
-            option.setDescription(desc);
-        });
         return model;
     }
 
