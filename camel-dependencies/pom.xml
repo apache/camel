@@ -379,7 +379,6 @@
     <logback-version>1.2.3</logback-version>
     <lucene-version>8.9.0</lucene-version>
     <lucene-version-range>[8,9)</lucene-version-range>
-    <lz4-version>1.6.0</lz4-version>
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
     <maven-archetype-plugin-version>3.2.0</maven-archetype-plugin-version>
