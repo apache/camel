@@ -361,7 +361,6 @@
         <lucene-version>8.9.0</lucene-version>
         <lucene-version-range>[8,9)</lucene-version-range>
         <lightcouch-version>0.2.0</lightcouch-version>
-        <lz4-version>1.6.0</lz4-version>
         <!-- needed from tooling/archetypes -->
         <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
         <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
