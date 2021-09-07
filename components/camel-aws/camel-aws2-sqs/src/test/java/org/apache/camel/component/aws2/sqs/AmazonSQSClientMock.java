@@ -38,6 +38,8 @@ import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
@@ -186,6 +188,12 @@ public class AmazonSQSClientMock implements SqsClient {
     @Override
     public PurgeQueueResponse purgeQueue(PurgeQueueRequest purgeQueueRequest) {
         return PurgeQueueResponse.builder().build();
+    }
+
+    @Override
+    public DeleteQueueResponse deleteQueue(DeleteQueueRequest deleteQueueRequest)
+            throws AwsServiceException, SdkClientException, SqsException {
+        return DeleteQueueResponse.builder().build();
     }
 
     @Override

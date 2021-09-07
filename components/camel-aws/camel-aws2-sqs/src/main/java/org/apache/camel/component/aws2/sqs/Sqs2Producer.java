@@ -37,6 +37,8 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
 import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
 import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
@@ -84,6 +86,9 @@ public class Sqs2Producer extends DefaultProducer {
                     break;
                 case purgeQueue:
                     purgeQueue(getClient(), exchange);
+                    break;
+                case deleteQueue:
+                    deleteQueue(getClient(), exchange);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
@@ -181,6 +186,16 @@ public class Sqs2Producer extends DefaultProducer {
             request.queueUrl(getQueueUrl());
         }
         PurgeQueueResponse result = amazonSQS.purgeQueue(request.build());
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void deleteQueue(SqsClient amazonSQS, Exchange exchange) {
+        DeleteQueueRequest.Builder request = DeleteQueueRequest.builder();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX))) {
+            request.queueUrl(getQueueUrl());
+        }
+        DeleteQueueResponse result = amazonSQS.deleteQueue(request.build());
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
