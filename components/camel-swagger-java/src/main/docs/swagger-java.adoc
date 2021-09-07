@@ -194,6 +194,24 @@ the HTTP Accept header is used to detect if json or yaml can be
 accepted. If either both is accepted or none was set as accepted then
 json is returned as the default format.
 
+== useXForwardHeaders and API URL resolution
+
+The Swagger specification allows you to specify the host, port & path that is serving the API. This is done
+via the `host` field.
+
+By default, the value for these fields is determined by `X-Forwarded` headers, `X-Forwarded-Host` & `X-Forwarded-Proto`.
+
+This can be overridden by disabling the lookup of `X-Forwarded` headers and by specifying your own host, port & scheme on the REST configuration.
+
+[source,java]
+----
+restConfiguration().component("netty-http")
+    .useXForwardHeaders(false)
+    .apiProperty("schemes", "https");
+    .host("localhost")
+    .port(8080);
+----
+
 == Examples
 
 In the Apache Camel distribution we ship
