@@ -1,6 +1,6 @@
 [[disruptor-vm-component]]
 = Disruptor VM Component
-:docTitle: Disruptor VM
+:doctitle: Disruptor VM
 :artifactId: camel-disruptor
 :description: Provides asynchronous SEDA behavior using LMAX Disruptor.
 :since: 2.12
