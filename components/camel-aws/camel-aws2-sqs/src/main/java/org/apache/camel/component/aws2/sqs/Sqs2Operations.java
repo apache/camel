@@ -21,5 +21,6 @@ public enum Sqs2Operations {
     sendBatchMessage,
     deleteMessage,
     listQueues,
-    purgeQueue
+    purgeQueue,
+    deleteQueue
 }

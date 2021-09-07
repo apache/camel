@@ -3090,7 +3090,8 @@ public interface Sqs2EndpointBuilderFactory {
         sendBatchMessage,
         deleteMessage,
         listQueues,
-        purgeQueue;
+        purgeQueue,
+        deleteQueue;
     }
 
     public interface Sqs2Builders {
