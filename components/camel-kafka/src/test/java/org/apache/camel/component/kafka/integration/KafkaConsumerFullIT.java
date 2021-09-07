@@ -37,12 +37,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "true",
+                          disabledReason = "Runtime conflicts with the idempotency tests")
 public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "test";
