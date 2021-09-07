@@ -1,6 +1,7 @@
 [[avro-dataformat]]
 = Avro DataFormat
-:docTitle: Avro
+:doctitle: Avro
+:shortName: avro
 :artifactId: camel-avro
 :description: Serialize and deserialize messages using Apache Avro binary data format.
 :since: 2.14
@@ -72,15 +73,7 @@ In the same manner you can umarshal using the avro data format.
 == Avro Dataformat Options
 
 // dataformat options: START
-The Avro dataformat supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| instanceClassName |  | String | Class name to use for marshal and unmarshalling
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 include::{page-component-version}@camel-spring-boot::page$avro-starter.adoc[]

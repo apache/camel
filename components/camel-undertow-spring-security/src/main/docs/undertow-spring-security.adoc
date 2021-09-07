@@ -1,6 +1,7 @@
 [[undertow-spring-security-other]]
 = Undertow Spring Security Component
-:docTitle: Undertow Spring Security
+:doctitle: Undertow Spring Security
+:shortName: undertow-spring-security
 :artifactId: camel-undertow-spring-security
 :description: Spring Security Provider for camel-undertow
 :since: 3.3

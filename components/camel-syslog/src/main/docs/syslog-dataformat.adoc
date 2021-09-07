@@ -1,6 +1,7 @@
 [[syslog-dataformat]]
 = Syslog DataFormat
-:docTitle: Syslog
+:doctitle: Syslog
+:shortName: syslog
 :artifactId: camel-syslog
 :description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
 :since: 2.6
@@ -53,7 +54,7 @@ renamed to `SyslogDataFormat`.
 == Options
 
 // dataformat options: START
-The Syslog dataformat has no options.
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == RFC5424 Syslog protocol

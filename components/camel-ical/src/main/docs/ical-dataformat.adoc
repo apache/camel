@@ -1,6 +1,7 @@
 [[ical-dataformat]]
 = iCal DataFormat
-:docTitle: iCal
+:doctitle: iCal
+:shortName: ical
 :artifactId: camel-ical
 :description: Marshal and unmarshal iCal (.ics) documents to/from model objects provided by the iCal4j library.
 :since: 2.12
@@ -36,15 +37,7 @@ END:VCALENDAR
 == Options
 
 // dataformat options: START
-The iCal dataformat supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| validating | false | Boolean | Whether to validate.
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == Basic Usage

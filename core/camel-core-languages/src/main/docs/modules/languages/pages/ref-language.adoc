@@ -1,6 +1,7 @@
 [[ref-language]]
 = Ref Language
-:docTitle: Ref
+:doctitle: Ref
+:shortName: ref
 :artifactId: camel-core-languages
 :description: Look up an expression in the Camel Registry and evaluate it.
 :since: 2.8
@@ -17,15 +18,7 @@ This is particular useable in XML DSLs.
 == Ref Language options
 
 // language options: START
-The Ref language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 == Example usage

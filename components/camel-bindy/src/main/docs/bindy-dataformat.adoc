@@ -1,6 +1,7 @@
 [[bindy-dataformat]]
 = Bindy DataFormat
-:docTitle: Bindy
+:doctitle: Bindy
+:shortName: bindy
 :artifactId: camel-bindy
 :description: Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy
 :since: 2.0
@@ -58,19 +59,7 @@ you can put multiple models in the same package.
 == Options
 
 // dataformat options: START
-The Bindy dataformat supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| type |  | BindyType | Whether to use Csv, Fixed, or KeyValue. There are 3 enums and the value can be one of: Csv, Fixed, KeyValue
-| classType |  | String | Name of model class to use.
-| locale |  | String | To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default
-| unwrapSingleInstance | true | Boolean | When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List.
-| allowEmptyStream | false | Boolean | Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided.
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 

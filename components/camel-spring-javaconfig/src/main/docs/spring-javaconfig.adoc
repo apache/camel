@@ -1,6 +1,7 @@
 [[spring-javaconfig-other]]
 = Spring Java Configuration Component (deprecated)
-:docTitle: Spring Java Configuration
+:doctitle: Spring Java Configuration
+:shortName: spring-javaconfig
 :artifactId: camel-spring-javaconfig
 :description: Using Camel with Spring Java Configuration
 :since: 2.0

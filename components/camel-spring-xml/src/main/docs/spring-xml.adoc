@@ -1,6 +1,7 @@
 [[spring-xml-other]]
 = Spring Xml Component
-:docTitle: Spring Xml
+:doctitle: Spring Xml
+:shortName: spring-xml
 :artifactId: camel-spring-xml
 :description: Camel Spring with XML DSL
 :since: 3.9

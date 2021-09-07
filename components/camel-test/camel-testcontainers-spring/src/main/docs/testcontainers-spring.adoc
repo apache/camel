@@ -1,6 +1,7 @@
 [[testcontainers-spring-other]]
 = Testcontainers Spring Component (deprecated)
-:docTitle: Testcontainers Spring
+:doctitle: Testcontainers Spring
+:shortName: testcontainers-spring
 :artifactId: camel-testcontainers-spring
 :description: Camel unit testing with Spring and testcontainers
 :since: 2.22

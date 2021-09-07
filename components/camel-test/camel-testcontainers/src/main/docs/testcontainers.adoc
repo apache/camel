@@ -1,6 +1,7 @@
 [[testcontainers-other]]
 = Testcontainers Component (deprecated)
-:docTitle: Testcontainers
+:doctitle: Testcontainers
+:shortName: testcontainers
 :artifactId: camel-testcontainers
 :description: Camel support for testcontainers
 :since: 2.22

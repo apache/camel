@@ -1,6 +1,7 @@
 [[opentracing-other]]
 = OpenTracing Component
-:docTitle: OpenTracing
+:doctitle: OpenTracing
+:shortName: opentracing
 :artifactId: camel-opentracing
 :description: Distributed tracing using OpenTracing
 :since: 2.19

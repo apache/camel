@@ -1,6 +1,7 @@
 [[lra-other]]
 = LRA Component
-:docTitle: LRA
+:doctitle: LRA
+:shortName: lra
 :artifactId: camel-lra
 :description: Camel saga binding for Long-Running-Action framework
 :since: 2.21

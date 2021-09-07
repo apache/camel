@@ -1,6 +1,7 @@
 [[vertx-http-component]]
 = Vert.x HTTP Client Component
-:docTitle: Vert.x HTTP Client
+:doctitle: Vert.x HTTP Client
+:shortName: vertx-http
 :artifactId: camel-vertx-http
 :description: Send requests to external HTTP servers using Vert.x
 :since: 3.5
@@ -36,123 +37,16 @@ vertx-http:hostname[:port][/resourceUri][?options]
 
 
 // component-configure options: START
-== Configuring Options
 
-Camel components are configured on two separate levels:
-
-- component level
-- endpoint level
-
-=== Configuring Component Options
-
-The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
-For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
-
-Some components only have a few options, and others may have many. Because components typically have pre configured defaults
-that are commonly used, then you may often only need to configure a few options on a component; or none at all.
-
-Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
-in a configuration file (application.properties|yaml), or directly with Java code.
-
-=== Configuring Endpoint Options
-
-Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
-configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
-or as a producer (to), or used for both.
-
-Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
-the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
-
-A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
-which allows to not hardcode urls, port numbers, sensitive information, and other settings.
-In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
-
-The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
 
 // component options: START
-== Component Options
-
-
-The Vert.x HTTP Client component supports 18 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *responsePayloadAsByteArray* (producer) | Whether the response body should be byte or as io.vertx.core.buffer.Buffer | true | boolean
-| *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request has the Content-Type application/x-java-serialized-object This is disabled by default. If you enable this, be aware that Java will deserialize the incoming data from the request. This can be a potential security risk. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *vertx* (advanced) | To use an existing vertx instead of creating a new instance |  | Vertx
-| *vertxHttpBinding* (advanced) | A custom VertxHttpBinding which can control how to bind between Vert.x and Camel |  | VertxHttpBinding
-| *vertxOptions* (advanced) | To provide a custom set of vertx options for configuring vertx |  | VertxOptions
-| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *proxyHost* (proxy) | The proxy server host address |  | String
-| *proxyPassword* (proxy) | The proxy server password if authentication is required |  | String
-| *proxyPort* (proxy) | The proxy server port |  | Integer
-| *proxyType* (proxy) | The proxy server type. There are 3 enums and the value can be one of: HTTP, SOCKS4, SOCKS5 |  | ProxyType
-| *proxyUsername* (proxy) | The proxy server username if authentication is required |  | String
-| *basicAuthPassword* (security) | The password to use for basic authentication |  | String
-| *basicAuthUsername* (security) | The user name to use for basic authentication |  | String
-| *bearerToken* (security) | The bearer token to use for bearer token authentication |  | String
-| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-== Endpoint Options
 
-The Vert.x HTTP Client endpoint is configured using URI syntax:
-
-----
-vertx-http:httpUri
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *httpUri* | *Required* The HTTP URI to connect to |  | URI
-|===
-
-
-=== Query Parameters (23 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *connectTimeout* (producer) | The amount of time in milliseconds until a connection is established. A timeout value of zero is interpreted as an infinite timeout. | 60000 | int
-| *cookieStore* (producer) | A custom CookieStore to use when session management is enabled. If this option is not set then an in-memory CookieStore is used | InMemoryCookieStore | CookieStore
-| *headerFilterStrategy* (producer) | A custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. | VertxHttpHeaderFilterStrategy | HeaderFilterStrategy
-| *httpMethod* (producer) | The HTTP method to use. The HttpMethod header cannot override this option if set |  | HttpMethod
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included | 200-299 | String
-| *responsePayloadAsByteArray* (producer) | Whether the response body should be byte or as io.vertx.core.buffer.Buffer | true | boolean
-| *sessionManagement* (producer) | Enables session management via WebClientSession. By default the client is configured to use an in-memory CookieStore. The cookieStore option can be used to override this | false | boolean
-| *throwExceptionOnFailure* (producer) | Disable throwing HttpOperationFailedException in case of failed responses from the remote server | true | boolean
-| *timeout* (producer) | The amount of time in milliseconds after which if the request does not return any data within the timeout period a TimeoutException fails the request. Setting zero or a negative value disables the timeout. | -1 | long
-| *transferException* (producer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was sent back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Camel will deserialize the incoming data from the request to a Java object, which can be a potential security risk. | false | boolean
-| *useCompression* (producer) | Set whether compression is enabled to handled compressed (E.g gzipped) responses | false | boolean
-| *vertxHttpBinding* (producer) | A custom VertxHttpBinding which can control how to bind between Vert.x and Camel. |  | VertxHttpBinding
-| *webClientOptions* (producer) | Sets customized options for configuring the Vert.x WebClient |  | WebClientOptions
-| *proxyHost* (proxy) | The proxy server host address |  | String
-| *proxyPassword* (proxy) | The proxy server password if authentication is required |  | String
-| *proxyPort* (proxy) | The proxy server port |  | Integer
-| *proxyType* (proxy) | The proxy server type. There are 3 enums and the value can be one of: HTTP, SOCKS4, SOCKS5 |  | ProxyType
-| *proxyUsername* (proxy) | The proxy server username if authentication is required |  | String
-| *basicAuthPassword* (security) | The password to use for basic authentication |  | String
-| *basicAuthUsername* (security) | The user name to use for basic authentication |  | String
-| *bearerToken* (security) | The bearer token to use for bearer token authentication |  | String
-| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-|===
 // endpoint options: END
 
 

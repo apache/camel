@@ -1,6 +1,7 @@
 [[redis-other]]
 = Redis Component
-:docTitle: Redis
+:doctitle: Redis
+:shortName: redis
 :artifactId: camel-redis
 :description: Aggregation repository using Redis as datastore
 :since: 3.5

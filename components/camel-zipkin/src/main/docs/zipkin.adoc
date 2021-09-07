@@ -1,6 +1,7 @@
 [[zipkin-other]]
 = Zipkin Component
-:docTitle: Zipkin
+:doctitle: Zipkin
+:shortName: zipkin
 :artifactId: camel-zipkin
 :description: Distributed message tracing using Zipkin
 :since: 2.18

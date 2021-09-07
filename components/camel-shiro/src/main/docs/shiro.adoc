@@ -1,6 +1,7 @@
 [[shiro-other]]
 = Shiro Component
-:docTitle: Shiro
+:doctitle: Shiro
+:shortName: shiro
 :artifactId: camel-shiro
 :description: Security using Shiro
 :since: 2.5

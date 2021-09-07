@@ -1,6 +1,7 @@
 [[gzipdeflater-dataformat]]
 = GZip Deflater DataFormat
-:docTitle: GZip Deflater
+:doctitle: GZip Deflater
+:shortName: gzipdeflater
 :artifactId: camel-zip-deflater
 :description: Compress and decompress messages using java.util.zip.GZIPStream.
 :since: 2.0
@@ -28,7 +29,7 @@ Instead use the zipfile dataformat.
 == Options
 
 // dataformat options: START
-The GZip Deflater dataformat has no options.
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == Marshal

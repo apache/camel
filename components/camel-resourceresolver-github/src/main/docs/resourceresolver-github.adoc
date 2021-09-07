@@ -1,6 +1,7 @@
 [[resourceresolver-github-other]]
 = Resourceresolver Github Component
-:docTitle: Resourceresolver Github
+:doctitle: Resourceresolver Github
+:shortName: resourceresolver-github
 :artifactId: camel-resourceresolver-github
 :description: Resource resolver to load files from GitHub
 :since: 3.11

@@ -1,6 +1,7 @@
 [[ognl-language]]
 = OGNL Language
-:docTitle: OGNL
+:doctitle: OGNL
+:shortName: ognl
 :artifactId: camel-ognl
 :description: Evaluate an Apache Commons Object Graph Navigation Library (OGNL) expression against the Camel Exchange.
 :since: 1.1
@@ -34,15 +35,7 @@ you can construct the syntax as follows:
 
 
 // language options: START
-The OGNL language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 

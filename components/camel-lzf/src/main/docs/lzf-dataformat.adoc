@@ -1,6 +1,7 @@
 [[lzf-dataformat]]
 = LZF Deflate Compression DataFormat
-:docTitle: LZF Deflate Compression
+:doctitle: LZF Deflate Compression
+:shortName: lzf
 :artifactId: camel-lzf
 :description: Compress and decompress streams using LZF deflate algorithm.
 :since: 2.17
@@ -21,15 +22,7 @@ comressed using LZF algotithm.
 == Options
 
 // dataformat options: START
-The LZF Deflate Compression dataformat supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| usingParallelCompression | false | Boolean | Enable encoding (compress) using multiple processing cores.
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == Marshal

@@ -1,6 +1,7 @@
 [[json-xstream-dataformat]]
 = JSON XStream DataFormat
-:docTitle: JSON XStream
+:doctitle: JSON XStream
+:shortName: json-xstream
 :artifactId: camel-xstream
 :description: Marshal POJOs to JSON and back using XStream
 :since: 2.0
@@ -34,17 +35,7 @@ Maven users will need to add the following dependency to their
 == Options
 
 // dataformat options: START
-The JSON XStream dataformat supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
-| dropRootNode | false | Boolean | Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs; as then the written object will include the class name as root node, which is often not intended to be written in the JSON output.
-| contentTypeHeader | true | Boolean | Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 

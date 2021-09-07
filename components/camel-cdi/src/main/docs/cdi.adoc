@@ -1,6 +1,7 @@
 [[cdi-other]]
 = CDI Component
-:docTitle: CDI
+:doctitle: CDI
+:shortName: cdi
 :artifactId: camel-cdi
 :description: Using Camel with CDI
 :since: 2.10

@@ -1,6 +1,7 @@
 [[rss-dataformat]]
 = RSS DataFormat
-:docTitle: RSS
+:doctitle: RSS
+:shortName: rss
 :artifactId: camel-rss
 :description: Transform from ROME SyndFeed Java Objects to XML and vice-versa.
 :since: 2.1
@@ -34,7 +35,7 @@ you can for example do
 == Options
 
 // dataformat options: START
-The RSS dataformat has no options.
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == Example

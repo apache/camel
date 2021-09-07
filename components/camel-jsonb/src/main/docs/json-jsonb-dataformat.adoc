@@ -1,6 +1,7 @@
 [[json-jsonb-dataformat]]
 = JSON JSON-B DataFormat
-:docTitle: JSON JSON-B
+:doctitle: JSON JSON-B
+:shortName: json-jsonb
 :artifactId: camel-jsonb
 :description: Marshal POJOs to JSON and back using JSON-B.
 :since: 3.7
@@ -23,17 +24,7 @@ from("activemq:My.Queue").
 
 
 // dataformat options: START
-The JSON JSON-B dataformat supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| objectMapper |  | String | Lookup and use the existing Jsonb instance with the given id.
-| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
-| unmarshalType |  | String | Class name of the java type to use when unmarshalling
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 

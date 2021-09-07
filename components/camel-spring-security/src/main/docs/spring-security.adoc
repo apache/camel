@@ -1,6 +1,7 @@
 [[spring-security-other]]
 = Spring Security Component
-:docTitle: Spring Security
+:doctitle: Spring Security
+:shortName: spring-security
 :artifactId: camel-spring-security
 :description: Security using Spring Security
 :since: 2.3

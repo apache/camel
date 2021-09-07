@@ -1,6 +1,7 @@
 [[barcode-dataformat]]
 = Barcode DataFormat
-:docTitle: Barcode
+:doctitle: Barcode
+:shortName: barcode
 :artifactId: camel-barcode
 :description: Transform strings to various 1D/2D barcode bitmap formats and back.
 :since: 2.14
@@ -36,18 +37,7 @@ the download page for the latest versions).
 == Barcode Options
 
 // dataformat options: START
-The Barcode dataformat supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| width |  | Integer | Width of the barcode
-| height |  | Integer | Height of the barcode
-| imageType |  | String | Image type of the barcode such as png
-| barcodeFormat |  | String | Barcode format such as QR-Code
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == Using the Java DSL

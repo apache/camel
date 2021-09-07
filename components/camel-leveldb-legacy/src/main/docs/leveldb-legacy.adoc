@@ -1,6 +1,7 @@
 [[leveldb-legacy-other]]
 = LevelDB-legacy Component
-:docTitle: LevelDB-legacy
+:doctitle: LevelDB-legacy
+:shortName: leveldb-legacy
 :artifactId: camel-leveldb-legacy
 :description: Using LevelDB as persistent EIP store
 :since: 2.10

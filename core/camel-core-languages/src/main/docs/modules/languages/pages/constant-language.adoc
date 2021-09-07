@@ -1,6 +1,7 @@
 [[constant-language]]
 = Constant Language
-:docTitle: Constant
+:doctitle: Constant
+:shortName: constant
 :artifactId: camel-core-languages
 :description: A fixed value set only once during the route startup.
 :since: 1.5
@@ -22,15 +23,7 @@ do not use this if you want dynamic values during routing.
 
 
 // language options: START
-The Constant language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 

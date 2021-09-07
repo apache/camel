@@ -1,6 +1,7 @@
 [[headersmap-other]]
 = Headersmap Component
-:docTitle: Headersmap
+:doctitle: Headersmap
+:shortName: headersmap
 :artifactId: camel-headersmap
 :description: Fast case-insensitive headers map implementation
 :since: 2.20

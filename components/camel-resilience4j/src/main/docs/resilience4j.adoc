@@ -1,6 +1,7 @@
 [[resilience4j-other]]
 = Resilience4j Component
-:docTitle: Resilience4j
+:doctitle: Resilience4j
+:shortName: resilience4j
 :artifactId: camel-resilience4j
 :description: Circuit Breaker EIP using Resilience4j
 :since: 3.0

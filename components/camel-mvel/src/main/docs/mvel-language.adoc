@@ -1,6 +1,7 @@
 [[mvel-language]]
 = MVEL Language
-:docTitle: MVEL
+:doctitle: MVEL
+:shortName: mvel
 :artifactId: camel-mvel
 :description: Evaluate an MVEL template against the Camel Exchange.
 :since: 2.0
@@ -32,15 +33,7 @@ you can construct the syntax as follows:
 == Mvel Options
 
 // language options: START
-The MVEL language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 

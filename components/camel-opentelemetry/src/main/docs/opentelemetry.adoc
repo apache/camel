@@ -1,6 +1,7 @@
 [[opentelemetry-other]]
 = OpenTelemetry Component
-:docTitle: OpenTelemetry
+:doctitle: OpenTelemetry
+:shortName: opentelemetry
 :artifactId: camel-opentelemetry
 :description: Distributed tracing using OpenTelemetry
 :since: 3.5

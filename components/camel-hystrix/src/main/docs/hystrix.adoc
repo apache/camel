@@ -1,6 +1,7 @@
 [[hystrix-other]]
 = Hystrix Component (deprecated)
-:docTitle: Hystrix
+:doctitle: Hystrix
+:shortName: hystrix
 :artifactId: camel-hystrix
 :description: Circuit Breaker EIP using Netflix Hystrix
 :since: 2.18

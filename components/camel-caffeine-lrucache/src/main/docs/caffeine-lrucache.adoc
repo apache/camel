@@ -1,6 +1,7 @@
 [[caffeine-lrucache-other]]
 = Caffeine Lrucache Component (deprecated)
-:docTitle: Caffeine Lrucache
+:doctitle: Caffeine Lrucache
+:shortName: caffeine-lrucache
 :artifactId: camel-caffeine-lrucache
 :description: Camel Caffeine LRUCache support
 :since: 3.0

@@ -1,6 +1,7 @@
 [[test-other]]
 = Test Component (deprecated)
-:docTitle: Test
+:doctitle: Test
+:shortName: test
 :artifactId: camel-test
 :description: Camel unit testing
 :since: 2.9

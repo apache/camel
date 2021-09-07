@@ -1,6 +1,7 @@
 [[microprofile-metrics-component]]
 = MicroProfile Metrics Component
-:docTitle: MicroProfile Metrics
+:doctitle: MicroProfile Metrics
+:shortName: microprofile-metrics
 :artifactId: camel-microprofile-metrics
 :description: Expose metrics from Camel routes.
 :since: 3.0
@@ -37,98 +38,16 @@ microprofile-metrics:[ concurrent gauge | counter | gauge | histogram | meter | 
 
 == Options
 // component-configure options: START
-== Configuring Options
 
-Camel components are configured on two separate levels:
-
-- component level
-- endpoint level
-
-=== Configuring Component Options
-
-The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
-For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
-
-Some components only have a few options, and others may have many. Because components typically have pre configured defaults
-that are commonly used, then you may often only need to configure a few options on a component; or none at all.
-
-Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
-in a configuration file (application.properties|yaml), or directly with Java code.
-
-=== Configuring Endpoint Options
-
-Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
-configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
-or as a producer (to), or used for both.
-
-Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
-the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
-
-A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
-which allows to not hardcode urls, port numbers, sensitive information, and other settings.
-In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
-
-The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
 
 // component options: START
-== Component Options
-
-
-The MicroProfile Metrics component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *metricRegistry* (advanced) | Use a custom MetricRegistry. |  | MetricRegistry
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-== Endpoint Options
 
-The MicroProfile Metrics endpoint is configured using URI syntax:
-
-----
-microprofile-metrics:metricType:metricName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *metricType* | *Required* Metric type. There are 8 enums and the value can be one of: concurrent gauge, counter, gauge, meter, histogram, timer, simple timer, invalid |  | MetricType
-| *metricName* | *Required* Metric name |  | String
-|===
-
-
-=== Query Parameters (12 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *action* (producer) | Action to use when using the timer type |  | String
-| *counterIncrement* (producer) | Increment value when using the counter type |  | Long
-| *description* (producer) | Metric description |  | String
-| *displayName* (producer) | Metric display name |  | String
-| *gaugeDecrement* (producer) | Decrement metric value when using concurrent gauge type |  | Boolean
-| *gaugeIncrement* (producer) | Increment metric value when using the concurrent gauge type |  | Boolean
-| *gaugeValue* (producer) | Decrement metric value when using concurrent gauge type |  | Number
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *mark* (producer) | Mark value to set when using the meter type |  | Long
-| *metricUnit* (producer) | Metric unit. See org.eclipse.microprofile.metrics.MetricUnits |  | String
-| *tags* (producer) | Comma delimited list of tags associated with the metric in the format tagName=tagValue |  | String
-| *value* (producer) | Value to set when using the histogram type |  | Long
-|===
 // endpoint options: END
 
 == MetricRegistry Configuration

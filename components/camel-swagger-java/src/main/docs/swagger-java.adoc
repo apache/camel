@@ -1,6 +1,7 @@
 [[swagger-java-other]]
 = Swagger Java Component
-:docTitle: Swagger Java
+:doctitle: Swagger Java
+:shortName: swagger-java
 :artifactId: camel-swagger-java
 :description: Rest-dsl support for using swagger api-doc
 :since: 2.16

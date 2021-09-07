@@ -57,7 +57,7 @@
 ** xref:threadpoolfactory-vertx.adoc[ThreadPoolFactory Vert.x]
 ** xref:tracing.adoc[Tracing]
 ** xref:undertow-spring-security.adoc[Undertow Spring Security]
-** xref:java-xml-io-dsl.adoc[XML Dsl]
 ** xref:java-joor-dsl.adoc[XML Dsl]
+** xref:java-xml-io-dsl.adoc[XML Dsl]
 ** xref:yaml-dsl.adoc[Yaml Dsl]
 ** xref:zipkin.adoc[Zipkin]

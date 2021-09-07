@@ -1,6 +1,7 @@
 [[test-spring-junit5-other]]
 = Test Spring JUnit5 Component
-:docTitle: Test Spring JUnit5
+:doctitle: Test Spring JUnit5
+:shortName: test-spring-junit5
 :artifactId: camel-test-spring-junit5
 :description: Camel unit testing with Spring and JUnit 5
 :since: 3.0
