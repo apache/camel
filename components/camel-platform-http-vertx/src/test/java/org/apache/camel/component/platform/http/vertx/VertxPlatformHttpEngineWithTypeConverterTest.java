@@ -134,12 +134,14 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
         }
 
         @Override
-        public <T> T mandatoryConvertTo(Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException {
+        public <T> T mandatoryConvertTo(Class<T> type, Object value)
+                throws TypeConversionException, NoTypeConversionAvailableException {
             return null;
         }
 
         @Override
-        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException, NoTypeConversionAvailableException {
+        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value)
+                throws TypeConversionException, NoTypeConversionAvailableException {
             return null;
         }
 

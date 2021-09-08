@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonConstants;
-import org.apache.camel.component.jackson.JacksonDataFormat;
-import org.apache.camel.component.jackson.TestPojo;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -65,8 +63,8 @@ public class JacksonConversionsAdvancedTest extends CamelTestSupport {
 
         String text = new BufferedReader(
                 new InputStreamReader(testInputStream, StandardCharsets.UTF_8))
-                .lines()
-                .collect(Collectors.joining("\n"));
+                        .lines()
+                        .collect(Collectors.joining("\n"));
 
         assertEquals("{\"name\":\"someName\"}", text);
     }

@@ -26,7 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
- * FastJson {@link org.apache.camel.TypeConverter} that allows converting json to byte buffer/stream oriented output. <br/>
+ * FastJson {@link org.apache.camel.TypeConverter} that allows converting json to byte buffer/stream oriented output.
+ * <br/>
  * This implementation uses a fallback converter.
  */
 @Converter(generateLoader = true)

@@ -28,7 +28,8 @@ import org.apache.johnzon.mapper.Mapper;
 import org.apache.johnzon.mapper.MapperBuilder;
 
 /**
- * Johnzon {@link org.apache.camel.TypeConverter} that allows converting json to byte buffer/stream oriented output. <br/>
+ * Johnzon {@link org.apache.camel.TypeConverter} that allows converting json to byte buffer/stream oriented output.
+ * <br/>
  * This implementation uses a fallback converter.
  */
 @Converter(generateLoader = true)
