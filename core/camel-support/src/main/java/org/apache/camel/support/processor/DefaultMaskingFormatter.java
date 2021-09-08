@@ -36,7 +36,7 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultMaskingFormatter.class);
 
-    private Set<String> keywords;
+    private final Set<String> keywords;
     private boolean maskKeyValue;
     private boolean maskXmlElement;
     private boolean maskJson;
@@ -109,13 +109,13 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
             answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + maskString + "$3");
             if (maskKeyValue) {
                 // used for the attributes in the XML tags
-                answer = keyValueMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
+                answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
             }
         } else if (json) {
             answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + maskString + "\"");
         } else if (maskKeyValue) {
             // key=value paris
-            answer = keyValueMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
+            answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
         }
 
         return answer;
@@ -169,7 +169,7 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
             return null;
         }
         regex.insert(0, "([\\w]*(?:");
-        regex.append(")[\\w]*[\\s]*?=[\\s]*?)([\\S&&[^'\",\\}\\]\\)]]+[\\S&&[^,\\}\\]\\)>]]*?|\"[^\"]*?\"|'[^']*?')");
+        regex.append(")[\\w]*[\\s]*?=[\\s]*?['\"]?)([^'\",]+)");
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("KeyValue Pattern: {}", regex);

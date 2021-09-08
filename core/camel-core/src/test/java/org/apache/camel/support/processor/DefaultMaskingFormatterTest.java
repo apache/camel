@@ -27,7 +27,7 @@ public class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myPassword=\"xxxxx\",\n myPassphrase=\"xxxxx\", secretKey=\"xxxxx\"", answer);
+        assertEquals("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'", answer);
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
         assertEquals("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"xxxxx\"/>", answer);
@@ -61,7 +61,7 @@ public class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, false, true);
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myPassword=\"xxxxx\",\n myPassphrase=\"xxxxx\", secretKey=\"xxxxx\"", answer);
+        assertEquals("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'", answer);
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
         assertEquals("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"xxxxx\"/>", answer);
@@ -78,7 +78,7 @@ public class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, true, false);
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myPassword=\"xxxxx\",\n myPassphrase=\"xxxxx\", secretKey=\"xxxxx\"", answer);
+        assertEquals("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'", answer);
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
         assertEquals("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"xxxxx\"/>", answer);
@@ -96,7 +96,7 @@ public class DefaultMaskingFormatterTest {
         formatter.setMaskString("**********");
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myPassword=\"**********\",\n myPassphrase=\"**********\", secretKey=\"**********\"", answer);
+        assertEquals("key=value, myPassword=**********,\n myPassphrase=\"**********\", secretKey='**********'", answer);
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
         assertEquals("<xmlPassword>\n ********** \n</xmlPassword>\n<user password=\"**********\"/>", answer);
@@ -113,7 +113,7 @@ public class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         String answer
                 = formatter.format("key=value, myAccessKey=foo,\n authkey=\"foo bar\", refreshtoken='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myAccessKey=\"xxxxx\",\n authkey=\"xxxxx\", refreshtoken=\"xxxxx\"", answer);
+        assertEquals("key=value, myAccessKey=xxxxx,\n authkey=\"xxxxx\", refreshtoken='xxxxx'", answer);
 
         answer = formatter.format("<subscribeKey>\n foo bar \n</subscribeKey>\n<user verificationCode=\"asdf qwert\"/>");
         assertEquals("<subscribeKey>\n xxxxx \n</subscribeKey>\n<user verificationCode=\"xxxxx\"/>", answer);
@@ -134,7 +134,7 @@ public class DefaultMaskingFormatterTest {
                 = formatter.format(
                         "key=value, Cheese=gauda, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
         assertEquals(
-                "key=value, Cheese=\"**********\", myPassword=\"**********\",\n myPassphrase=\"**********\", secretKey=\"**********\"",
+                "key=value, Cheese=**********, myPassword=**********,\n myPassphrase=\"**********\", secretKey='**********'",
                 answer);
 
         answer = formatter
