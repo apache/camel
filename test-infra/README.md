@@ -206,3 +206,24 @@ used in the test infra service.
 There are some cases where the container instance requires [extra customization](https://github.com/apache/camel/blob/camel-3.6.0/components/camel-pg-replication-slot/src/test/java/org/apache/camel/component/pg/replication/slot/integration/PgReplicationTestSupport.java#L31).
 Nonetheless, the migrated code still benefits from the [test-infra approach](https://github.com/apache/camel/blob/camel-3.7.0/components/camel-pg-replication-slot/src/test/java/org/apache/camel/component/pg/replication/slot/integration/PgReplicationTestSupport.java#L31),
 but this may be very specific to the test scenario.
+
+
+## Running With Podman
+
+Most of the test infrastructure in this module is based on containers. Therefore, they will require a container runtime to run. Although the tests have been written and tested using Docker, they should also work with [Podman](https://podman.io/) (another popular container runtime on Linux operating systems). 
+
+Assuming Podman is properly installed and configured to behave like docker (i.e.: short name resolution, resolving docker.io registry, etc), the only requirement for using Podman is to export the DOCKER_HOST variable before running the tests.
+
+### Linux
+
+On most systems that should be similar to the following command: 
+
+```
+export DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
+```
+
+### OS X and Windows
+
+Running the test-infra with Podman on OS X and Windows should work on many cases. However, it requires additional steps and has a few issues. Therefore, it is not recommended at this time.
+
+
