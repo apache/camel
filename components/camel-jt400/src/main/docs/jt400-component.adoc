@@ -199,7 +199,7 @@ Inquiry messages or messages requiring a message ID are not supported.
 You can explicit configure a connection pool on the Jt400Component, or as an uri option
 on the endpoint.
 
-=== Program call
+== Program call
 
 This endpoint expects the input to be an `Object[]`, whose object types are
 `int`, `long`, `CharSequence` (such as `String`), or `byte[]`. All other
