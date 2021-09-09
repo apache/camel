@@ -30,9 +30,12 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "true",
+                          disabledReason = "Runtime conflicts with the idempotency tests")
 public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "test";
