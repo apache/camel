@@ -326,6 +326,31 @@ public interface PahoMqtt5ComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the Session Expiry Interval. This value, measured in seconds,
+         * defines the maximum time that the broker will maintain the session
+         * for once the client disconnects. Clients should only connect with a
+         * long Session Expiry interval if they intend to connect to the server
+         * at some later point in time. By default this value is -1 and so will
+         * not be sent, in this case, the session will not expire. If a 0 is
+         * sent, the session will end immediately once the Network Connection is
+         * closed. When the client has determined that it has no longer any use
+         * for the session, it should disconnect with a Session Expiry Interval
+         * set to 0.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param sessionExpiryInterval the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5ComponentBuilder sessionExpiryInterval(
+                long sessionExpiryInterval) {
+            doSetProperty("sessionExpiryInterval", sessionExpiryInterval);
+            return this;
+        }
+        /**
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
@@ -708,6 +733,7 @@ public interface PahoMqtt5ComponentBuilderFactory {
             case "receiveMaximum": getOrCreateConfiguration((PahoMqtt5Component) component).setReceiveMaximum((int) value); return true;
             case "retained": getOrCreateConfiguration((PahoMqtt5Component) component).setRetained((boolean) value); return true;
             case "serverURIs": getOrCreateConfiguration((PahoMqtt5Component) component).setServerURIs((java.lang.String) value); return true;
+            case "sessionExpiryInterval": getOrCreateConfiguration((PahoMqtt5Component) component).setSessionExpiryInterval((long) value); return true;
             case "willMqttProperties": getOrCreateConfiguration((PahoMqtt5Component) component).setWillMqttProperties((org.eclipse.paho.mqttv5.common.packet.MqttProperties) value); return true;
             case "willPayload": getOrCreateConfiguration((PahoMqtt5Component) component).setWillPayload((java.lang.String) value); return true;
             case "willQos": getOrCreateConfiguration((PahoMqtt5Component) component).setWillQos((int) value); return true;

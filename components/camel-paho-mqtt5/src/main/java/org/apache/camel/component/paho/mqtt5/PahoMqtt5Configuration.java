@@ -86,6 +86,8 @@ public class PahoMqtt5Configuration implements Cloneable {
     private Map<String, String> customWebSocketHeaders;
     @UriParam(label = "advanced", defaultValue = "1")
     private int executorServiceTimeout = 1;
+    @UriParam(defaultValue = "-1")
+    private long sessionExpiryInterval = -1;
 
     public String getClientId() {
         return clientId;
@@ -525,6 +527,25 @@ public class PahoMqtt5Configuration implements Cloneable {
      */
     public void setExecutorServiceTimeout(int executorServiceTimeout) {
         this.executorServiceTimeout = executorServiceTimeout;
+    }
+
+    public long getSessionExpiryInterval() {
+        return sessionExpiryInterval;
+    }
+
+    /**
+     * Sets the Session Expiry Interval.
+     *
+     * This value, measured in seconds, defines the maximum time that the broker will maintain the session for once the
+     * client disconnects. Clients should only connect with a long Session Expiry interval if they intend to connect to
+     * the server at some later point in time.
+     *
+     * By default this value is -1 and so will not be sent, in this case, the session will not expire. If a 0 is sent,
+     * the session will end immediately once the Network Connection is closed. When the client has determined that it
+     * has no longer any use for the session, it should disconnect with a Session Expiry Interval set to 0.
+     */
+    public void setSessionExpiryInterval(long sessionExpiryInterval) {
+        this.sessionExpiryInterval = sessionExpiryInterval;
     }
 
     public PahoMqtt5Configuration copy() {

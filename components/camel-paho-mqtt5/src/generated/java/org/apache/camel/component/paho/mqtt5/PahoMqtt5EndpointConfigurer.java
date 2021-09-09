@@ -60,6 +60,8 @@ public class PahoMqtt5EndpointConfigurer extends PropertyConfigurerSupport imple
         case "retained": target.getConfiguration().setRetained(property(camelContext, boolean.class, value)); return true;
         case "serveruris":
         case "serverURIs": target.getConfiguration().setServerURIs(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessionexpiryinterval":
+        case "sessionExpiryInterval": target.getConfiguration().setSessionExpiryInterval(property(camelContext, long.class, value)); return true;
         case "socketfactory":
         case "socketFactory": target.getConfiguration().setSocketFactory(property(camelContext, javax.net.SocketFactory.class, value)); return true;
         case "sslclientprops":
@@ -124,6 +126,8 @@ public class PahoMqtt5EndpointConfigurer extends PropertyConfigurerSupport imple
         case "retained": return boolean.class;
         case "serveruris":
         case "serverURIs": return java.lang.String.class;
+        case "sessionexpiryinterval":
+        case "sessionExpiryInterval": return long.class;
         case "socketfactory":
         case "socketFactory": return javax.net.SocketFactory.class;
         case "sslclientprops":
@@ -189,6 +193,8 @@ public class PahoMqtt5EndpointConfigurer extends PropertyConfigurerSupport imple
         case "retained": return target.getConfiguration().isRetained();
         case "serveruris":
         case "serverURIs": return target.getConfiguration().getServerURIs();
+        case "sessionexpiryinterval":
+        case "sessionExpiryInterval": return target.getConfiguration().getSessionExpiryInterval();
         case "socketfactory":
         case "socketFactory": return target.getConfiguration().getSocketFactory();
         case "sslclientprops":

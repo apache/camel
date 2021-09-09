@@ -483,6 +483,56 @@ public interface PahoMqtt5EndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the Session Expiry Interval. This value, measured in seconds,
+         * defines the maximum time that the broker will maintain the session
+         * for once the client disconnects. Clients should only connect with a
+         * long Session Expiry interval if they intend to connect to the server
+         * at some later point in time. By default this value is -1 and so will
+         * not be sent, in this case, the session will not expire. If a 0 is
+         * sent, the session will end immediately once the Network Connection is
+         * closed. When the client has determined that it has no longer any use
+         * for the session, it should disconnect with a Session Expiry Interval
+         * set to 0.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param sessionExpiryInterval the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5EndpointConsumerBuilder sessionExpiryInterval(
+                long sessionExpiryInterval) {
+            doSetProperty("sessionExpiryInterval", sessionExpiryInterval);
+            return this;
+        }
+        /**
+         * Sets the Session Expiry Interval. This value, measured in seconds,
+         * defines the maximum time that the broker will maintain the session
+         * for once the client disconnects. Clients should only connect with a
+         * long Session Expiry interval if they intend to connect to the server
+         * at some later point in time. By default this value is -1 and so will
+         * not be sent, in this case, the session will not expire. If a 0 is
+         * sent, the session will end immediately once the Network Connection is
+         * closed. When the client has determined that it has no longer any use
+         * for the session, it should disconnect with a Session Expiry Interval
+         * set to 0.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param sessionExpiryInterval the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5EndpointConsumerBuilder sessionExpiryInterval(
+                String sessionExpiryInterval) {
+            doSetProperty("sessionExpiryInterval", sessionExpiryInterval);
+            return this;
+        }
+        /**
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
@@ -1555,6 +1605,56 @@ public interface PahoMqtt5EndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the Session Expiry Interval. This value, measured in seconds,
+         * defines the maximum time that the broker will maintain the session
+         * for once the client disconnects. Clients should only connect with a
+         * long Session Expiry interval if they intend to connect to the server
+         * at some later point in time. By default this value is -1 and so will
+         * not be sent, in this case, the session will not expire. If a 0 is
+         * sent, the session will end immediately once the Network Connection is
+         * closed. When the client has determined that it has no longer any use
+         * for the session, it should disconnect with a Session Expiry Interval
+         * set to 0.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param sessionExpiryInterval the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5EndpointProducerBuilder sessionExpiryInterval(
+                long sessionExpiryInterval) {
+            doSetProperty("sessionExpiryInterval", sessionExpiryInterval);
+            return this;
+        }
+        /**
+         * Sets the Session Expiry Interval. This value, measured in seconds,
+         * defines the maximum time that the broker will maintain the session
+         * for once the client disconnects. Clients should only connect with a
+         * long Session Expiry interval if they intend to connect to the server
+         * at some later point in time. By default this value is -1 and so will
+         * not be sent, in this case, the session will not expire. If a 0 is
+         * sent, the session will end immediately once the Network Connection is
+         * closed. When the client has determined that it has no longer any use
+         * for the session, it should disconnect with a Session Expiry Interval
+         * set to 0.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param sessionExpiryInterval the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5EndpointProducerBuilder sessionExpiryInterval(
+                String sessionExpiryInterval) {
+            doSetProperty("sessionExpiryInterval", sessionExpiryInterval);
+            return this;
+        }
+        /**
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
@@ -2554,6 +2654,56 @@ public interface PahoMqtt5EndpointBuilderFactory {
          */
         default PahoMqtt5EndpointBuilder serverURIs(String serverURIs) {
             doSetProperty("serverURIs", serverURIs);
+            return this;
+        }
+        /**
+         * Sets the Session Expiry Interval. This value, measured in seconds,
+         * defines the maximum time that the broker will maintain the session
+         * for once the client disconnects. Clients should only connect with a
+         * long Session Expiry interval if they intend to connect to the server
+         * at some later point in time. By default this value is -1 and so will
+         * not be sent, in this case, the session will not expire. If a 0 is
+         * sent, the session will end immediately once the Network Connection is
+         * closed. When the client has determined that it has no longer any use
+         * for the session, it should disconnect with a Session Expiry Interval
+         * set to 0.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param sessionExpiryInterval the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5EndpointBuilder sessionExpiryInterval(
+                long sessionExpiryInterval) {
+            doSetProperty("sessionExpiryInterval", sessionExpiryInterval);
+            return this;
+        }
+        /**
+         * Sets the Session Expiry Interval. This value, measured in seconds,
+         * defines the maximum time that the broker will maintain the session
+         * for once the client disconnects. Clients should only connect with a
+         * long Session Expiry interval if they intend to connect to the server
+         * at some later point in time. By default this value is -1 and so will
+         * not be sent, in this case, the session will not expire. If a 0 is
+         * sent, the session will end immediately once the Network Connection is
+         * closed. When the client has determined that it has no longer any use
+         * for the session, it should disconnect with a Session Expiry Interval
+         * set to 0.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @param sessionExpiryInterval the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5EndpointBuilder sessionExpiryInterval(
+                String sessionExpiryInterval) {
+            doSetProperty("sessionExpiryInterval", sessionExpiryInterval);
             return this;
         }
         /**

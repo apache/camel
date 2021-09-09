@@ -114,6 +114,9 @@ public class PahoMqtt5Endpoint extends DefaultEndpoint {
         if (config.getServerURIs() != null) {
             options.setServerURIs(config.getServerURIs().split(","));
         }
+        if (config.getSessionExpiryInterval() >= 0) {
+            options.setSessionExpiryInterval(config.getSessionExpiryInterval());
+        }
         return options;
     }
 

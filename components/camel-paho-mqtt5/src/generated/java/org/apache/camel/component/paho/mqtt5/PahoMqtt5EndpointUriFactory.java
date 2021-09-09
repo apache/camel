@@ -20,7 +20,7 @@ public class PahoMqtt5EndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(33);
         props.add("serverURIs");
         props.add("customWebSocketHeaders");
         props.add("willMqttProperties");
@@ -50,6 +50,7 @@ public class PahoMqtt5EndpointUriFactory extends org.apache.camel.support.compon
         props.add("sslHostnameVerifier");
         props.add("topic");
         props.add("persistence");
+        props.add("sessionExpiryInterval");
         props.add("willPayload");
         props.add("willRetained");
         props.add("exceptionHandler");
