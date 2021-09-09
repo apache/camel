@@ -27,6 +27,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.StateRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,14 +44,15 @@ public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
-        messagesLatch = new CountDownLatch(2);
+        messagesLatch = new CountDownLatch(1);
         stateRepository = new OffsetStateRepository(messagesLatch);
     }
 
     @Test
     public void offsetGetStateMustHaveBeenCalledTwice() throws Exception {
         boolean offsetGetStateCalled = messagesLatch.await(30000, TimeUnit.MILLISECONDS);
-        assertTrue(offsetGetStateCalled, "StateRepository.getState should have been called twice for topic " + TOPIC
+        // The getState should most likely be called during the partition assignment
+        assertTrue(offsetGetStateCalled, "StateRepository.getState should have been called for topic " + TOPIC
                                          + ". Remaining count : " + messagesLatch.getCount());
     }
 
@@ -71,7 +74,8 @@ public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
         };
     }
 
-    public class OffsetStateRepository implements StateRepository<String, String> {
+    public static class OffsetStateRepository implements StateRepository<String, String> {
+        private static final Logger LOG = LoggerFactory.getLogger(OffsetStateRepository.class);
         CountDownLatch messagesLatch;
 
         public OffsetStateRepository(CountDownLatch messagesLatch) {
@@ -88,9 +92,12 @@ public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
 
         @Override
         public String getState(String key) {
+            LOG.debug("Getting the state for {} from topic {}", key, TOPIC);
             if (key.contains(TOPIC)) {
+                LOG.trace("Topic matches, counting down");
                 messagesLatch.countDown();
             }
+
             return "-1";
         }
 
