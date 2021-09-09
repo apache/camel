@@ -117,15 +117,16 @@ public class XPathTransformTest extends ContextTestSupport {
         if (version.startsWith("1.")) {
             version = version.substring(2, 3);
         } else {
-            int dot = version.indexOf('.');
-            if (dot != -1) {
-                version = version.substring(0, dot);
+            int pos = version.indexOf('.');
+            if (pos != -1) {
+                version = version.substring(0, pos);
             }
+            pos = version.indexOf('-');
+            if (pos != -1) {
+                version = version.substring(0, pos);
+            }
+
         }
-        if (version.equalsIgnoreCase("16-ea")) {
-            return 16;
-        } else {
-            return Integer.parseInt(version);
-        }
+        return Integer.parseInt(version);
     }
 }
