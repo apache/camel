@@ -105,6 +105,11 @@ public class Sns2Producer extends DefaultProducer {
                     mav.dataType("String");
                     mav.stringValue((String) value);
                     result.put(entry.getKey(), mav.build());
+                } else if (value instanceof Number) {
+                    MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
+                    mav.dataType("String");
+                    mav.stringValue(value.toString());
+                    result.put(entry.getKey(), mav.build());
                 } else if (value instanceof ByteBuffer) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("Binary");

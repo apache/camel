@@ -58,10 +58,11 @@ public class SnsProducerTest {
         headers.put("key5", Arrays.asList("Value7", null, "Value9"));
         headers.put("key6", Arrays.asList(10, null, 12));
         headers.put("key7", Arrays.asList(true, null, false));
+        headers.put("key8", 42);
 
         Map<String, MessageAttributeValue> translateAttributes = producer.translateAttributes(headers, exchange);
 
-        assertThat(translateAttributes.size(), is(5));
+        assertThat(translateAttributes.size(), is(6));
         assertThat(translateAttributes.get("key3").dataType(), is("String"));
         assertThat(translateAttributes.get("key3").stringValue(), is("value3"));
         assertThat(translateAttributes.get("key4").dataType(), is("String.Array"));
@@ -69,5 +70,7 @@ public class SnsProducerTest {
         assertThat(translateAttributes.get("key5").stringValue(), is("[\"Value7\", null, \"Value9\"]"));
         assertThat(translateAttributes.get("key6").stringValue(), is("[10, null, 12]"));
         assertThat(translateAttributes.get("key7").stringValue(), is("[true, null, false]"));
+        assertThat(translateAttributes.get("key8").dataType(), is("String"));
+        assertThat(translateAttributes.get("key8").stringValue(), is("42"));
     }
 }
