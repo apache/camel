@@ -29,6 +29,7 @@ import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,29 +65,25 @@ public class KafkaConsumer extends DefaultConsumer {
         return (KafkaEndpoint) super.getEndpoint();
     }
 
+    private String randomUUID() {
+        return UUID.randomUUID().toString();
+    }
+
     Properties getProps() {
-        Properties props = endpoint.getConfiguration().createConsumerProperties();
+        KafkaConfiguration configuration = endpoint.getConfiguration();
+
+        Properties props = configuration.createConsumerProperties();
         endpoint.updateClassProperties(props);
 
-        String brokers = endpoint.getKafkaClientFactory().getBrokers(endpoint.getConfiguration());
-        if (brokers != null) {
-            props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
-        }
+        ObjectHelper.ifNotEmpty(endpoint.getKafkaClientFactory().getBrokers(configuration),
+                v -> props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, v));
 
-        if (endpoint.getConfiguration().getGroupId() != null) {
-            String groupId = endpoint.getConfiguration().getGroupId();
-            props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-            LOG.debug("Kafka consumer groupId is {}", groupId);
-        } else {
-            String randomGroupId = UUID.randomUUID().toString();
-            props.put(ConsumerConfig.GROUP_ID_CONFIG, randomGroupId);
-            LOG.debug("Kafka consumer groupId is {} (generated)", randomGroupId);
-        }
-        if (endpoint.getConfiguration().getGroupInstanceId() != null) {
-            String gid = endpoint.getConfiguration().getGroupInstanceId();
-            LOG.debug("Kafka consumer groupInstanceId is {}", gid);
-            props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, gid);
-        }
+        String groupId = ObjectHelper.supplyIfEmpty(configuration.getGroupId(), this::randomUUID);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+
+        ObjectHelper.ifNotEmpty(configuration.getGroupInstanceId(),
+                v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, v));
+
         return props;
     }
 

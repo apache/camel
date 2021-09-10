@@ -108,8 +108,7 @@ class KafkaFetchRecords implements Runnable, ConsumerRebalanceListener {
 
             first = false;
 
-            if (!kafkaConsumer.isRunAllowed() || kafkaConsumer.isStoppingOrStopped()
-                    || kafkaConsumer.isSuspendingOrSuspended()) {
+            if (isCloseable()) {
                 LOG.debug("Closing consumer {}", threadId);
                 IOHelper.close(consumer);
                 return;
@@ -120,6 +119,10 @@ class KafkaFetchRecords implements Runnable, ConsumerRebalanceListener {
         }
 
         LOG.info("Terminating KafkaConsumer thread: {} receiving from topic: {}", threadId, topicName);
+    }
+
+    private boolean isCloseable() {
+        return !kafkaConsumer.isRunAllowed() || kafkaConsumer.isStoppingOrStopped() || kafkaConsumer.isSuspendingOrSuspended();
     }
 
     void preInit() {

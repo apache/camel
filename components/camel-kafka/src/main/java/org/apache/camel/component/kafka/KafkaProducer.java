@@ -307,11 +307,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         List<RecordMetadata> recordMetadatas = new ArrayList<>();
 
         if (endpoint.getConfiguration().isRecordMetadata()) {
-            if (exchange.hasOut()) {
-                exchange.getOut().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
-            } else {
-                exchange.getIn().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
-            }
+            exchange.getMessage().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
         }
 
         while (c.hasNext()) {
@@ -331,11 +327,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 innerExchange = (Exchange) f.getKey();
                 if (innerExchange != null) {
                     if (endpoint.getConfiguration().isRecordMetadata()) {
-                        if (innerExchange.hasOut()) {
-                            innerExchange.getOut().setHeader(KafkaConstants.KAFKA_RECORDMETA, metadata);
-                        } else {
-                            innerExchange.getIn().setHeader(KafkaConstants.KAFKA_RECORDMETA, metadata);
-                        }
+                        innerExchange.getMessage().setHeader(KafkaConstants.KAFKA_RECORDMETA, metadata);
                     }
                 }
             }
@@ -432,11 +424,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
             if (endpoint.getConfiguration().isRecordMetadata()) {
                 if (body instanceof Exchange) {
                     Exchange ex = (Exchange) body;
-                    if (ex.hasOut()) {
-                        ex.getOut().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
-                    } else {
-                        ex.getIn().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
-                    }
+                    ex.getMessage().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
                 }
                 if (body instanceof Message) {
                     Message msg = (Message) body;
