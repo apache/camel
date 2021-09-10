@@ -629,6 +629,20 @@ Setting the header means potentially change the file name on each exchange and t
 The selected naming strategy will do the rest of the of the work.
 ====
 
+Another possibility is specifying a streamingUploadTimeout with batchMessageNumber and batchSize options. With this option the user will be able to complete the upload of a file after a certain time passed.
+In this way the upload completion will be passed on three tiers: the timeout, the number of messages and the batch size.
+
+As an example:
+
+[source,java]
+--------------------------------------------------------------------------------
+from(kafka("topic1").brokers("localhost:9092"))
+        .log("Kafka Message is: ${body}")
+        .to(aws2S3("camel-bucket").streamingUploadMode(true).batchMessageNumber(25).streamingUploadTimeout(10000).namingStrategy(AWS2S3EndpointBuilderFactory.AWSS3NamingStrategyEnum.progressive).keyName("{{kafkaTopic1}}/{{kafkaTopic1}}.txt"));
+--------------------------------------------------------------------------------
+
+In this case the upload will be completed after 10 seconds.
+
 == Bucket Autocreation
 
 With the option `autoCreateBucket` users are able to avoid the autocreation of an S3 Bucket in case it doesn't exist. The default for this option is `true`.
