@@ -68,7 +68,8 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
     private String loggerId;
 
-    @UriParam(label = "consumer", name = "concurrentConsumers", description = "The number of parallel streams consuming from the subscription",
+    @UriParam(label = "consumer", name = "concurrentConsumers",
+              description = "The number of parallel streams consuming from the subscription",
               defaultValue = "1")
     private Integer concurrentConsumers = 1;
 
@@ -76,7 +77,8 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
               description = "The max number of messages to receive from the server in a single API call", defaultValue = "1")
     private Integer maxMessagesPerPoll = 1;
 
-    @UriParam(label = "consumer", name = "synchronousPull", description = "Synchronously pull batches of messages", defaultValue = "false")
+    @UriParam(label = "consumer", name = "synchronousPull", description = "Synchronously pull batches of messages",
+              defaultValue = "false")
     private boolean synchronousPull;
 
     @UriParam(label = "consumer", defaultValue = "AUTO", enums = "AUTO,NONE",
