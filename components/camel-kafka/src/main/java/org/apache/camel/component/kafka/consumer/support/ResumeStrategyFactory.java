@@ -14,23 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
 
-import org.apache.camel.Exchange;
+package org.apache.camel.component.kafka.consumer.support;
+
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
 
-/**
- * Factory to create a new {@link KafkaManualCommit} to store on the {@link Exchange}.
- */
-public interface KafkaManualCommitFactory {
-
+public final class ResumeStrategyFactory {
     /**
-     * Creates a new instance
+     * A NO-OP resume strategy that does nothing (i.e.: no resume)
      */
-    KafkaManualCommit newInstance(
-            Exchange exchange, KafkaConsumer consumer, String topicName, String threadId,
-            StateRepository<String, String> offsetRepository,
-            TopicPartition partition, long recordOffset, long commitTimeout);
+    private static class NoOpResumeStrategy implements ResumeStrategy {
+        @Override
+        public void resume() {
+
+        }
+    }
+
+    private static final NoOpResumeStrategy NO_OP_RESUME_STRATEGY = new NoOpResumeStrategy();
+
+    private ResumeStrategyFactory() {
+    }
+
+
+    public static ResumeStrategy newResumeStrategy(
+            KafkaConsumer<?, ?> consumer, StateRepository<String, String> offsetRepository,
+            String seekTo) {
+        if (offsetRepository != null) {
+            return new OffsetResumeStrategy(consumer, offsetRepository);
+        } else if (seekTo != null) {
+            return new SeekPolicyResumeStrategy(consumer, seekTo);
+        }
+
+        return NO_OP_RESUME_STRATEGY;
+    }
 }
