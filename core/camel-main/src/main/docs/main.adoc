@@ -5,8 +5,6 @@
 :description: Camel Main support
 :since: 3.0
 :supportLevel: Stable
-//Manually maintained attributes
-:group: Core
 
 *Since Camel {since}*
 

@@ -6,8 +6,6 @@
 :since: 2.7
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/spel.adoc[opts=optional]
-//Manually maintained attributes
-:group: Spring
 
 *Since Camel {since}*
 
