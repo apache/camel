@@ -10,6 +10,4 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/java-joor-dsl.
 //Manually maintained attributes
 :group: DSL
 
-xml-io-
-
-See https://camel.apache.org/manual/latest/dsl.html
+See xref:latest@manual:ROOT:dsl.adoc[DSL]
