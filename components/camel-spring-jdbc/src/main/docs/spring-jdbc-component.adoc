@@ -7,6 +7,7 @@
 :supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-jdbc.adoc[opts=optional]
+:group: Spring
 
 *Since Camel {since}*
 
