@@ -140,4 +140,20 @@ from("direct:test1")
   .transform(ack())
 ----
 
+=== Custom Acknowledgement for MLLP
+
+In particural situations you may want to set a custom acknowledgement without using Exceptions.
+This can be achieved using the `ack` expression:
+
+[source,java]
+----
+import org.apache.camel.component.mllp.MllpConstants;
+import ca.uhn.hl7v2.AcknowledgmentCode;
+import ca.uhn.hl7v2.ErrorCode;
+
+// In process block
+exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT,
+  ack(AcknowledgmentCode.AR, "Server didn't accept this message", ErrorCode.UNKNOWN_KEY_IDENTIFIER).evaluate(exchange, Object.class)
+----
+
 include::{page-component-version}@camel-spring-boot::page$hl7-starter.adoc[]
