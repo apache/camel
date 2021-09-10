@@ -145,6 +145,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private StateRepository<String, String> offsetRepository;
     @UriParam(label = "consumer", defaultValue = "ERROR_HANDLER")
     private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
+    @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
+    private Long commitTimeoutMs = 5000L;
 
     // Producer configuration properties
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -695,7 +697,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Timeout in milli seconds to wait gracefully for the consumer or producer to shutdown and terminate its worker
+     * Timeout in milliseconds to wait gracefully for the consumer or producer to shutdown and terminate its worker
      * threads.
      */
     public void setShutdownTimeout(int shutdownTimeout) {
@@ -1783,5 +1785,18 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setPollOnError(PollOnError pollOnError) {
         this.pollOnError = pollOnError;
+    }
+
+    public Long getCommitTimeoutMs() {
+        return commitTimeoutMs;
+    }
+
+    /**
+     * The maximum time, in milliseconds, that the code will wait for a synchronous commit to complete
+     * 
+     * @param commitTimeoutMs
+     */
+    public void setCommitTimeoutMs(Long commitTimeoutMs) {
+        this.commitTimeoutMs = commitTimeoutMs;
     }
 }

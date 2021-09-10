@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.time.Duration;
 import java.util.Collections;
 
 import org.apache.camel.spi.StateRepository;
@@ -35,16 +36,20 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
     private final StateRepository<String, String> offsetRepository;
     private final TopicPartition partition;
     private final long recordOffset;
+    private final long commitTimeout;
 
     public DefaultKafkaManualCommit(KafkaConsumer consumer, String topicName, String threadId,
                                     StateRepository<String, String> offsetRepository, TopicPartition partition,
-                                    long recordOffset) {
+                                    long recordOffset, long commitTimeout) {
         this.consumer = consumer;
         this.topicName = topicName;
         this.threadId = threadId;
         this.offsetRepository = offsetRepository;
         this.partition = partition;
         this.recordOffset = recordOffset;
+        this.commitTimeout = commitTimeout;
+
+        LOG.debug("Using commit timeout of {}", commitTimeout);
     }
 
     @Override
@@ -58,7 +63,9 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
                 offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {
                 LOG.debug("CommitSync {} from topic {} with offset: {}", threadId, topicName, recordOffset);
-                consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)));
+                consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
+                        Duration.ofMillis(commitTimeout));
+                LOG.debug("CommitSync done for {} from topic {} with offset: {}", threadId, topicName, recordOffset);
             }
         }
     }

@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -80,7 +80,7 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
         };
     }
 
-    @Test
+    @RepeatedTest(4)
     public void kafkaAutoCommitDisabledDuringRebalance() throws Exception {
         to.expectedMessageCount(1);
         String firstMessage = "message-0";
@@ -128,7 +128,7 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
         to.assertIsSatisfied(3000);
     }
 
-    @Test
+    @RepeatedTest(4)
     public void kafkaManualCommit() throws Exception {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
@@ -145,6 +145,8 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
         to.assertIsSatisfied(3000);
 
         to.reset();
+
+        //        Thread.sleep(5000);
 
         // Second step: We shut down our route, we expect nothing will be recovered by our route
         context.getRouteController().stopRoute("foo");

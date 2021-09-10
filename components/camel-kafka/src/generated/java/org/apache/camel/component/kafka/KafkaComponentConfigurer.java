@@ -53,6 +53,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "checkCrcs": getOrCreateConfiguration(target).setCheckCrcs(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "clientid":
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "committimeoutms":
+        case "commitTimeoutMs": getOrCreateConfiguration(target).setCommitTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
         case "compressioncodec":
         case "compressionCodec": getOrCreateConfiguration(target).setCompressionCodec(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.kafka.KafkaConfiguration.class, value)); return true;
@@ -265,6 +267,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "checkCrcs": return java.lang.Boolean.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
+        case "committimeoutms":
+        case "commitTimeoutMs": return java.lang.Long.class;
         case "compressioncodec":
         case "compressionCodec": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.kafka.KafkaConfiguration.class;
@@ -473,6 +477,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "checkCrcs": return getOrCreateConfiguration(target).getCheckCrcs();
         case "clientid":
         case "clientId": return getOrCreateConfiguration(target).getClientId();
+        case "committimeoutms":
+        case "commitTimeoutMs": return getOrCreateConfiguration(target).getCommitTimeoutMs();
         case "compressioncodec":
         case "compressionCodec": return getOrCreateConfiguration(target).getCompressionCodec();
         case "configuration": return target.getConfiguration();

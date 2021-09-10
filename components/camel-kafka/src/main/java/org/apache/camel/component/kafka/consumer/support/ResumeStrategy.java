@@ -14,23 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
+package org.apache.camel.component.kafka.consumer.support;
 
 /**
- * Factory to create a new {@link KafkaManualCommit} to store on the {@link Exchange}.
+ * Defines a strategy for handling resume operations. Implementations can define different ways to handle how to resume
+ * processing records.
  */
-public interface KafkaManualCommitFactory {
-
+public interface ResumeStrategy {
     /**
-     * Creates a new instance
+     * Perform the resume operation
      */
-    KafkaManualCommit newInstance(
-            Exchange exchange, KafkaConsumer consumer, String topicName, String threadId,
-            StateRepository<String, String> offsetRepository,
-            TopicPartition partition, long recordOffset, long commitTimeout);
+    void resume();
 }

@@ -44,6 +44,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "checkCrcs": target.getConfiguration().setCheckCrcs(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "clientid":
         case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "committimeoutms":
+        case "commitTimeoutMs": target.getConfiguration().setCommitTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
         case "compressioncodec":
         case "compressionCodec": target.getConfiguration().setCompressionCodec(property(camelContext, java.lang.String.class, value)); return true;
         case "connectionmaxidlems":
@@ -244,6 +246,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "checkCrcs": return java.lang.Boolean.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
+        case "committimeoutms":
+        case "commitTimeoutMs": return java.lang.Long.class;
         case "compressioncodec":
         case "compressionCodec": return java.lang.String.class;
         case "connectionmaxidlems":
@@ -445,6 +449,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "checkCrcs": return target.getConfiguration().getCheckCrcs();
         case "clientid":
         case "clientId": return target.getConfiguration().getClientId();
+        case "committimeoutms":
+        case "commitTimeoutMs": return target.getConfiguration().getCommitTimeoutMs();
         case "compressioncodec":
         case "compressionCodec": return target.getConfiguration().getCompressionCodec();
         case "connectionmaxidlems":

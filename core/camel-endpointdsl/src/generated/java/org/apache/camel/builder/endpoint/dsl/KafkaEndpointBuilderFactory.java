@@ -205,7 +205,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milli seconds to wait gracefully for the consumer or
+         * Timeout in milliseconds to wait gracefully for the consumer or
          * producer to shutdown and terminate its worker threads.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -221,7 +221,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milli seconds to wait gracefully for the consumer or
+         * Timeout in milliseconds to wait gracefully for the consumer or
          * producer to shutdown and terminate its worker threads.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
@@ -517,6 +517,41 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder checkCrcs(String checkCrcs) {
             doSetProperty("checkCrcs", checkCrcs);
+            return this;
+        }
+        /**
+         * The maximum time, in milliseconds, that the code will wait for a
+         * synchronous commit to complete.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param commitTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder commitTimeoutMs(
+                Long commitTimeoutMs) {
+            doSetProperty("commitTimeoutMs", commitTimeoutMs);
+            return this;
+        }
+        /**
+         * The maximum time, in milliseconds, that the code will wait for a
+         * synchronous commit to complete.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param commitTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder commitTimeoutMs(
+                String commitTimeoutMs) {
+            doSetProperty("commitTimeoutMs", commitTimeoutMs);
             return this;
         }
         /**
@@ -1998,7 +2033,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milli seconds to wait gracefully for the consumer or
+         * Timeout in milliseconds to wait gracefully for the consumer or
          * producer to shutdown and terminate its worker threads.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -2014,7 +2049,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milli seconds to wait gracefully for the consumer or
+         * Timeout in milliseconds to wait gracefully for the consumer or
          * producer to shutdown and terminate its worker threads.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
@@ -3944,7 +3979,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milli seconds to wait gracefully for the consumer or
+         * Timeout in milliseconds to wait gracefully for the consumer or
          * producer to shutdown and terminate its worker threads.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -3960,7 +3995,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milli seconds to wait gracefully for the consumer or
+         * Timeout in milliseconds to wait gracefully for the consumer or
          * producer to shutdown and terminate its worker threads.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.

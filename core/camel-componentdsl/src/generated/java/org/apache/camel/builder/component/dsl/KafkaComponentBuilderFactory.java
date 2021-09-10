@@ -158,7 +158,7 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milli seconds to wait gracefully for the consumer or
+         * Timeout in milliseconds to wait gracefully for the consumer or
          * producer to shutdown and terminate its worker threads.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -328,6 +328,23 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder checkCrcs(java.lang.Boolean checkCrcs) {
             doSetProperty("checkCrcs", checkCrcs);
+            return this;
+        }
+        /**
+         * The maximum time, in milliseconds, that the code will wait for a
+         * synchronous commit to complete.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param commitTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder commitTimeoutMs(
+                java.lang.Long commitTimeoutMs) {
+            doSetProperty("commitTimeoutMs", commitTimeoutMs);
             return this;
         }
         /**
@@ -1995,6 +2012,7 @@ public interface KafkaComponentBuilderFactory {
             case "breakOnFirstError": getOrCreateConfiguration((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
             case "bridgeErrorHandler": ((KafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "checkCrcs": getOrCreateConfiguration((KafkaComponent) component).setCheckCrcs((java.lang.Boolean) value); return true;
+            case "commitTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setCommitTimeoutMs((java.lang.Long) value); return true;
             case "consumerRequestTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setConsumerRequestTimeoutMs((java.lang.Integer) value); return true;
             case "consumersCount": getOrCreateConfiguration((KafkaComponent) component).setConsumersCount((int) value); return true;
             case "consumerStreams": getOrCreateConfiguration((KafkaComponent) component).setConsumerStreams((int) value); return true;

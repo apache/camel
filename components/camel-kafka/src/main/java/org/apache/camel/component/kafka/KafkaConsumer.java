@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Processor;
@@ -120,7 +121,9 @@ public class KafkaConsumer extends DefaultConsumer {
             // pre-initialize task during startup so if there is any error we
             // have it thrown asap
             task.preInit();
+
             executor.submit(task);
+
             tasks.add(task);
         }
     }
@@ -139,8 +142,16 @@ public class KafkaConsumer extends DefaultConsumer {
                 LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor, timeout);
             } else {
-                executor.shutdownNow();
+                executor.shutdown();
+
+                int timeout = endpoint.getConfiguration().getShutdownTimeout();
+                LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
+                if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
+                    LOG.warn("Shutting down Kafka {} consumer worker threads did not finish within {} millis",
+                            tasks.size());
+                }
             }
+
             if (!executor.isTerminated()) {
                 tasks.forEach(KafkaFetchRecords::shutdown);
                 executor.shutdownNow();
