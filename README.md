@@ -7,16 +7,11 @@
 [![Twitter](https://img.shields.io/twitter/follow/ApacheCamel.svg?label=Follow&style=social)](https://twitter.com/ApacheCamel)
 
 
-[Apache Camel](https://camel.apache.org/) is a powerful, open-source integration framework based on prevalent 
-Enterprise Integration Patterns with powerful bean integration.
+[Apache Camel](https://camel.apache.org/) is an Open Source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data.
 
 ### Introduction
 
-Camel enables the creation of the Enterprise Integration Patterns to implement routing
-and mediation rules in either a Java-based Domain Specific Language (or Fluent API),
-via Spring or Blueprint based Xml Configuration files, or via the Scala DSL.
-That means you get smart completion of routing rules in your IDE whether
-in your Java, Scala, or XML editor.
+Camel empowers you to define routing and mediation rules in a variety of domain-specific languages (DSL, such as Java, XML, Groovy, Kotlin, and YAML). This means you get smart completion of routing rules in your IDE, whether in a Java or XML editor.
 
 Apache Camel uses URIs to enable easier integration with all kinds of
 transport or messaging model including HTTP, ActiveMQ, JMS, JBI, SCA, MINA
@@ -27,7 +22,7 @@ transport type, making it possible to interact with all the components provided 
 with a good understanding of the API.
 
 Apache Camel has powerful Bean Binding and integrated seamlessly with
-popular frameworks such as Spring, CDI, and Blueprint.
+popular frameworks such as Spring, Quarkus, and CDI.
 
 Apache Camel has extensive testing support allowing you to easily
 unit test your routes.
@@ -113,39 +108,3 @@ The Camel riders!
 The terms for software licensing are detailed in the `LICENSE.txt` file,  
 located in the working directory.
 
-This distribution includes cryptographic software.  The country in
-which you currently reside may levy restrictions on the import,
-possession, use, and re-export to foreign countries of
-encryption software.  BEFORE using any encryption software, please
-check your country's laws, regulations, and policies concerning the
-import, possession, or use, and re-export of encryption software, to
-see if this is permitted.  See <http://www.wassenaar.org/> for more
-information.
-
-The U.S. Government Department of Commerce, Bureau of Industry and
-Security (BIS) has classified this software as Export Commodity
-Control Number (ECCN) 5D002.C.1, which includes information security
-software using or performing cryptographic functions with asymmetric
-algorithms.  The form and manner of this Apache Software Foundation
-distribution makes it eligible for export under the License Exception
-ENC Technology Software Unrestricted (TSU) exception (see the BIS
-Export Administration Regulations, Section 740.13) for both object
-code and source code.
-
-The following provides more details on the included cryptographic
-software:
-
-* **camel-ahc** can be configured to use https.
-* **camel-atmosphere-websocket** can be used for secure communications.
-* **camel-crypto** can be used for secure communications.
-* **camel-cxf** can be configured for secure communications.
-* **camel-ftp** can be configured for secure communications.
-* **camel-http** can be configured to use https.
-* **camel-infinispan** can be configured for secure communications.
-* **camel-jasypt** can be used for secure communications.
-* **camel-jetty** can be configured to use https.
-* **camel-mail** can be configured for secure communications.
-* **camel-nagios** can be configured for secure communications.
-* **camel-netty-http** can be configured to use https.
-* **camel-undertow** can be configured to use https.
-* **camel-xmlsecurity** can be configured for secure communications.
