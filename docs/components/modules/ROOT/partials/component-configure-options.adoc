@@ -1,3 +1,4 @@
+// component-configure options: START
 == Configuring Options
 
 Camel components are configured on two separate levels:
@@ -30,4 +31,4 @@ which allows to not hardcode urls, port numbers, sensitive information, and othe
 In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
 
 The following two sections lists all the options, firstly for the component followed by the endpoint.
-
+// component-configure options: END
