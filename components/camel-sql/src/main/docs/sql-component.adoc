@@ -1,5 +1,7 @@
 [[sql-component]]
 = SQL Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-sql/src/main/docs/sql-component.adoc
 :docTitle: SQL
 :artifactId: camel-sql
 :description: Perform SQL queries using Spring JDBC.

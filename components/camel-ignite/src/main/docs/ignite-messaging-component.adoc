@@ -1,5 +1,7 @@
 [[ignite-messaging-component]]
 = Ignite Messaging Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ignite/src/main/docs/ignite-messaging-component.adoc
 :docTitle: Ignite Messaging
 :artifactId: camel-ignite
 :description: Send and receive messages from an Ignite topic.

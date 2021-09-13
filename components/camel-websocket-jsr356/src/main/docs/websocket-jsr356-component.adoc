@@ -1,5 +1,7 @@
 [[websocket-jsr356-component]]
 = Javax Websocket Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-websocket-jsr356/src/main/docs/websocket-jsr356-component.adoc
 :docTitle: Javax Websocket
 :artifactId: camel-websocket-jsr356
 :description: Expose websocket endpoints using JSR356.

@@ -1,5 +1,7 @@
 [[zipkin-other]]
 = Zipkin Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-zipkin/src/main/docs/zipkin.adoc
 :docTitle: Zipkin
 :artifactId: camel-zipkin
 :description: Distributed message tracing using Zipkin

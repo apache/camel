@@ -1,5 +1,7 @@
 [[slack-component]]
 = Slack Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-slack/src/main/docs/slack-component.adoc
 :docTitle: Slack
 :artifactId: camel-slack
 :description: Send and receive messages to/from Slack.

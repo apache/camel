@@ -1,5 +1,7 @@
 [[graphql-component]]
 = GraphQL Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-graphql/src/main/docs/graphql-component.adoc
 :docTitle: GraphQL
 :artifactId: camel-graphql
 :description: Send GraphQL queries and mutations to external systems.

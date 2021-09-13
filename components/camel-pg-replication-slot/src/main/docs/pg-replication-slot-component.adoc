@@ -1,5 +1,7 @@
 [[pg-replication-slot-component]]
 = PostgresSQL Replication Slot Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-pg-replication-slot/src/main/docs/pg-replication-slot-component.adoc
 :docTitle: PostgresSQL Replication Slot
 :artifactId: camel-pg-replication-slot
 :description: Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.

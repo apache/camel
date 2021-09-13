@@ -1,5 +1,7 @@
 [[openstack-glance-component]]
 = OpenStack Glance Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-openstack/src/main/docs/openstack-glance-component.adoc
 :docTitle: OpenStack Glance
 :artifactId: camel-openstack
 :description: Manage VM images and metadata definitions in OpenStack Glance.

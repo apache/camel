@@ -1,5 +1,7 @@
 [[metrics-component]]
 = Metrics Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-metrics/src/main/docs/metrics-component.adoc
 :docTitle: Metrics
 :artifactId: camel-metrics
 :description: Collect various metrics directly from Camel routes using the DropWizard metrics library.

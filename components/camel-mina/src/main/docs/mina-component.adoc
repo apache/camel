@@ -1,5 +1,7 @@
 [[mina-component]]
 = Mina Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-mina/src/main/docs/mina-component.adoc
 :docTitle: Mina
 :artifactId: camel-mina
 :description: Socket level networking using TCP or UDP with Apache Mina 2.x.

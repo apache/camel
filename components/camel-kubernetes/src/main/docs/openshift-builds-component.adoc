@@ -1,5 +1,7 @@
 [[openshift-builds-component]]
 = Openshift Builds Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-kubernetes/src/main/docs/openshift-builds-component.adoc
 :docTitle: Openshift Builds
 :artifactId: camel-kubernetes
 :description: Perform operations on OpenShift Builds.

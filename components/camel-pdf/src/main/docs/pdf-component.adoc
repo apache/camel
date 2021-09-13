@@ -1,5 +1,7 @@
 [[pdf-component]]
 = PDF Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-pdf/src/main/docs/pdf-component.adoc
 :docTitle: PDF
 :artifactId: camel-pdf
 :description: Create, modify or extract content from PDF documents.

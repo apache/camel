@@ -1,5 +1,7 @@
 [[zendesk-component]]
 = Zendesk Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-zendesk/src/main/docs/zendesk-component.adoc
 :docTitle: Zendesk
 :artifactId: camel-zendesk
 :description: Manage Zendesk tickets, users, organizations, etc.

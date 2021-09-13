@@ -1,5 +1,7 @@
 [[spring-xml-other]]
 = Spring Xml Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-spring-xml/src/main/docs/spring-xml.adoc
 :docTitle: Spring Xml
 :artifactId: camel-spring-xml
 :description: Camel Spring with XML DSL

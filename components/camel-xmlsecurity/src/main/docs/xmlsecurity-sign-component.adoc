@@ -1,5 +1,7 @@
 [[xmlsecurity-sign-component]]
 = XML Security Sign Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-xmlsecurity/src/main/docs/xmlsecurity-sign-component.adoc
 :docTitle: XML Security Sign
 :artifactId: camel-xmlsecurity
 :description: Sign XML payloads using the XML signature specification.

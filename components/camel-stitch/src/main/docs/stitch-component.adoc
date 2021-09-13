@@ -1,5 +1,7 @@
 [[stitch-component]]
 = Stitch Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-stitch/src/main/docs/stitch-component.adoc
 :docTitle: Stitch
 :artifactId: camel-stitch
 :description: Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various integrations.

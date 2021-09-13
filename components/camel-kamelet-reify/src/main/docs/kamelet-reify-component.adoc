@@ -1,5 +1,7 @@
 [[kamelet-reify-component]]
 = Kamelet Reify Component (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-kamelet-reify/src/main/docs/kamelet-reify-component.adoc
 :docTitle: Kamelet Reify
 :artifactId: camel-kamelet-reify
 :description: To call Kamelets (indirectly)

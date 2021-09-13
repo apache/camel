@@ -1,5 +1,7 @@
 [[mock-component]]
 = Mock Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-mock/src/main/docs/mock-component.adoc
 :docTitle: Mock
 :artifactId: camel-mock
 :description: Test routes and mediation rules using mocks.

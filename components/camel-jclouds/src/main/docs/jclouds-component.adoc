@@ -1,5 +1,7 @@
 [[jclouds-component]]
 = JClouds Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jclouds/src/main/docs/jclouds-component.adoc
 :docTitle: JClouds
 :artifactId: camel-jclouds
 :description: Interact with jclouds compute and blobstore service.

@@ -1,5 +1,7 @@
 [[mllp-component]]
 = MLLP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-mllp/src/main/docs/mllp-component.adoc
 :docTitle: MLLP
 :artifactId: camel-mllp
 :description: Communicate with external systems using the MLLP protocol.

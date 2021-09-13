@@ -1,5 +1,7 @@
 [[splunk-component]]
 = Splunk Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-splunk/src/main/docs/splunk-component.adoc
 :docTitle: Splunk
 :artifactId: camel-splunk
 :description: Publish or search for events in Splunk.

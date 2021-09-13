@@ -1,5 +1,7 @@
 [[mybatis-bean-component]]
 = MyBatis Bean Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-mybatis/src/main/docs/mybatis-bean-component.adoc
 :docTitle: MyBatis Bean
 :artifactId: camel-mybatis
 :description: Perform queries, inserts, updates or deletes in a relational database using MyBatis.

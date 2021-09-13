@@ -1,5 +1,7 @@
 [[platform-http-component]]
 = Platform HTTP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-platform-http/src/main/docs/platform-http-component.adoc
 :docTitle: Platform HTTP
 :artifactId: camel-platform-http
 :description: Expose HTTP endpoints using the HTTP server available in the current platform.

@@ -1,5 +1,7 @@
 [[yammer-component]]
 = Yammer Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-yammer/src/main/docs/yammer-component.adoc
 :docTitle: Yammer
 :artifactId: camel-yammer
 :description: Interact with the Yammer enterprise social network.

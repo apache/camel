@@ -1,5 +1,7 @@
 [[pubnub-component]]
 = PubNub Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-pubnub/src/main/docs/pubnub-component.adoc
 :docTitle: PubNub
 :artifactId: camel-pubnub
 :description: Send and receive messages to/from PubNub data stream network for connected devices.

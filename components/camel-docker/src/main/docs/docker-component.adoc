@@ -1,5 +1,7 @@
 [[docker-component]]
 = Docker Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-docker/src/main/docs/docker-component.adoc
 :docTitle: Docker
 :artifactId: camel-docker
 :description: Manage Docker containers.

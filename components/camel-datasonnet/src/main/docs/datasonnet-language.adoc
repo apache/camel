@@ -1,5 +1,7 @@
 [[datasonnet-language]]
 = DataSonnet Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-datasonnet/src/main/docs/datasonnet-language.adoc
 :docTitle: DataSonnet
 :artifactId: camel-datasonnet
 :description: To use DataSonnet scripts in Camel expressions or predicates.

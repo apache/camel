@@ -1,5 +1,7 @@
 [[servlet-component]]
 = Servlet Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-servlet/src/main/docs/servlet-component.adoc
 :docTitle: Servlet
 :artifactId: camel-servlet
 :description: Serve HTTP requests by a Servlet.

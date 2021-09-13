@@ -1,5 +1,7 @@
 [[tidyMarkup-dataformat]]
 = TidyMarkup DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-tagsoup/src/main/docs/tidyMarkup-dataformat.adoc
 :docTitle: TidyMarkup
 :artifactId: camel-tagsoup
 :description: Parse (potentially invalid) HTML into valid HTML or DOM.

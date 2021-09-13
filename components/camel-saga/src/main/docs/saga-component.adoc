@@ -1,5 +1,7 @@
 [[saga-component]]
 = Saga Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-saga/src/main/docs/saga-component.adoc
 :docTitle: Saga
 :artifactId: camel-saga
 :description: Execute custom actions within a route using the Saga EIP.

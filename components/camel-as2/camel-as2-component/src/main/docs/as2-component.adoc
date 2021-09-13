@@ -1,5 +1,7 @@
 [[as2-component]]
 = AS2 Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-as2/camel-as2-component/src/main/docs/as2-component.adoc
 :docTitle: AS2
 :artifactId: camel-as2
 :description: Transfer data securely and reliably using the AS2 protocol (RFC4130).

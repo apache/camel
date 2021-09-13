@@ -1,5 +1,7 @@
 [[timer-component]]
 = Timer Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-timer/src/main/docs/timer-component.adoc
 :docTitle: Timer
 :artifactId: camel-timer
 :description: Generate messages in specified intervals using java.util.Timer.

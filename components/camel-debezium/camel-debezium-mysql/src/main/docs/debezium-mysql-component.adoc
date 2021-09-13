@@ -1,5 +1,7 @@
 [[debezium-mysql-component]]
 = Debezium MySQL Connector Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-debezium/camel-debezium-mysql/src/main/docs/debezium-mysql-component.adoc
 :docTitle: Debezium MySQL Connector
 :artifactId: camel-debezium-mysql
 :description: Capture changes from a MySQL database.

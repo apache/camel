@@ -1,5 +1,7 @@
 [[atomix-messaging-component]]
 = Atomix Messaging Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-atomix/src/main/docs/atomix-messaging-component.adoc
 :docTitle: Atomix Messaging
 :artifactId: camel-atomix
 :description: Access Atomix's group messaging.

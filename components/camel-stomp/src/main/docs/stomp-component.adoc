@@ -1,5 +1,7 @@
 [[stomp-component]]
 = Stomp Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-stomp/src/main/docs/stomp-component.adoc
 :docTitle: Stomp
 :artifactId: camel-stomp
 :description: Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.

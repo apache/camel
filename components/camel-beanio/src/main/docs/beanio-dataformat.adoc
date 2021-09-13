@@ -1,5 +1,7 @@
 [[beanio-dataformat]]
 = BeanIO DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-beanio/src/main/docs/beanio-dataformat.adoc
 :docTitle: BeanIO
 :artifactId: camel-beanio
 :description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).

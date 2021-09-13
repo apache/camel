@@ -1,5 +1,7 @@
 [[twitter-directmessage-component]]
 = Twitter Direct Message Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-twitter/src/main/docs/twitter-directmessage-component.adoc
 :docTitle: Twitter Direct Message
 :artifactId: camel-twitter
 :description: Send and receive Twitter direct messages.

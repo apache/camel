@@ -1,5 +1,7 @@
 [[kubernetes-pods-component]]
 = Kubernetes Pods Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-pods-component.adoc
 :docTitle: Kubernetes Pods
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Pods and get notified on Pod changes.
