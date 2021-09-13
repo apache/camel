@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "csimple",
     "title": "CSimple",
-    "description": "Evaluate a compile simple expression language.",
+    "description": "Evaluate a compiled simple expression.",
     "deprecated": false,
     "firstVersion": "3.7.0",
     "label": "language,java",

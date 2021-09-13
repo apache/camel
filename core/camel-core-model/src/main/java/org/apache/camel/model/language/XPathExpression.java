@@ -27,7 +27,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate an XPath expression against an XML payload.
+ * Evaluates an XPath expression against an XML payload.
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath")
 @XmlRootElement(name = "xpath")

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Get values of named Camel Exchange properties.
+ * Gets a property from the Exchange.
  */
 @Metadata(firstVersion = "2.0.0", label = "language,core", title = "ExchangeProperty")
 @XmlRootElement(name = "exchangeProperty")

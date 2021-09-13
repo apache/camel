@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "xtokenize",
     "title": "XML Tokenize",
-    "description": "Tokenize XML payloads using the specified path expression.",
+    "description": "Tokenize XML payloads.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "language,core,xml",

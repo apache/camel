@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate a jOOR (Java compiled once at runtime) expression language.
+ * Evaluates a jOOR (Java compiled once at runtime) expression.
  */
 @Metadata(firstVersion = "3.7.0", label = "language", title = "jOOR")
 @XmlRootElement(name = "joor")

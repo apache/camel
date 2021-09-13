@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate an XQuery expressions against an XML payload.
+ * Evaluates an XQuery expressions against an XML payload.
  */
 @Metadata(firstVersion = "1.0.0", label = "language,xml", title = "XQuery")
 @XmlRootElement(name = "xquery")

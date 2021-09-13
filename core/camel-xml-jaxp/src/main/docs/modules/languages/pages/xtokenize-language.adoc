@@ -4,7 +4,7 @@
 :page-source: core/camel-xml-jaxp/src/main/docs/modules/languages/pages/xtokenize-language.adoc
 :docTitle: XML Tokenize
 :artifactId: camel-xml-jaxp
-:description: Tokenize XML payloads using the specified path expression.
+:description: Tokenize XML payloads.
 :since: 2.14
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xtokenize.adoc[opts=optional]

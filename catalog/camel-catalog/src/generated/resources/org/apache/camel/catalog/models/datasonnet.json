@@ -3,10 +3,10 @@
     "kind": "model",
     "name": "datasonnet",
     "title": "DataSonnet",
-    "description": "To use DataSonnet scripts in Camel expressions or predicates.",
+    "description": "To use DataSonnet scripts for message transformations.",
     "deprecated": false,
     "firstVersion": "3.7.0",
-    "label": "language,script",
+    "label": "language,transformation",
     "javaType": "org.apache.camel.model.language.DatasonnetExpression",
     "input": false,
     "output": false

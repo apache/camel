@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate a JsonPath expression against a JSON message body.
+ * Evaluates a JSONPath expression against a JSON message body.
  */
-@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JsonPath")
+@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JSONPath")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonPathExpression extends ExpressionDefinition {

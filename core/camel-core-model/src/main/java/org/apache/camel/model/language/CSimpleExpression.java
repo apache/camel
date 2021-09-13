@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate a compile simple expression language.
+ * Evaluate a compiled simple expression.
  */
 @Metadata(firstVersion = "3.7.0", label = "language,java", title = "CSimple")
 @XmlRootElement(name = "csimple")

@@ -4,7 +4,7 @@
 :page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/ref-language.adoc
 :docTitle: Ref
 :artifactId: camel-core-languages
-:description: Look up an expression in the Camel Registry and evaluate it.
+:description: Uses an existing expression from the registry.
 :since: 2.8
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ref.adoc[opts=optional]

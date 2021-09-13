@@ -4,7 +4,7 @@
 :page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/csimple-language.adoc
 :docTitle: CSimple
 :artifactId: camel-core-languages
-:description: Evaluate a compile simple expression language.
+:description: Evaluate a compiled simple expression.
 :since: 3.7
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/csimple.adoc[opts=optional]

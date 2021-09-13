@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate a Groovy script.
+ * Evaluates a Groovy script.
  */
 @Metadata(firstVersion = "1.3.0", label = "language,script", title = "Groovy")
 @XmlRootElement(name = "groovy")

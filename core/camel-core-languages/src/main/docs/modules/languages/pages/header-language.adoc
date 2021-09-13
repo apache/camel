@@ -4,7 +4,7 @@
 :page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/header-language.adoc
 :docTitle: Header
 :artifactId: camel-core-languages
-:description: Get values of Camel Message headers.
+:description: Gets a header from the Exchange.
 :since: 1.5
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/header.adoc[opts=optional]

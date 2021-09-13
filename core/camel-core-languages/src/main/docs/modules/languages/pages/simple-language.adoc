@@ -4,7 +4,7 @@
 :page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/simple-language.adoc
 :docTitle: Simple
 :artifactId: camel-core-languages
-:description: Evaluate Camel's built-in Simple language expression against the Camel Exchange.
+:description: Evaluates a Camel simple expression.
 :since: 1.1
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/simple.adoc[opts=optional]
@@ -842,4 +842,3 @@ eg to refer to a file on the classpath you can do:
 ----
 .setHeader("myHeader").simple("resource:classpath:mysimple.txt")
 ----
-

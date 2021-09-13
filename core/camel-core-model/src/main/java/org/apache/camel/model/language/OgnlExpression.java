@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate an Apache Commons Object Graph Navigation Library (OGNL) expression against the Camel Exchange.
+ * Evaluates an OGNL expression (Apache Commons OGNL).
  */
 @Metadata(firstVersion = "1.1.0", label = "language,java", title = "OGNL")
 @XmlRootElement(name = "ognl")

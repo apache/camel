@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Get the value of an HL7 message field specified by terse location specification syntax.
+ * Get the value of a HL7 message field specified by terse location specification syntax.
  */
 @Metadata(firstVersion = "2.11.0", label = "language,hl7", title = "HL7 Terser")
 @XmlRootElement(name = "hl7terser")

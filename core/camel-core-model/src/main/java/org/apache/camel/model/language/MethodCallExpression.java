@@ -26,9 +26,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Call a method of the specified Java bean passing the Exchange, Body or specific headers to it.
+ * Calls a Java bean method.
  */
-@Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean method")
+@Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean Method")
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {

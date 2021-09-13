@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "ref",
     "title": "Ref",
-    "description": "Look up an expression in the Camel Registry and evaluate it.",
+    "description": "Uses an existing expression from the registry.",
     "deprecated": false,
     "firstVersion": "2.8.0",
     "label": "language,core",

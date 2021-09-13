@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "header",
     "title": "Header",
-    "description": "Get values of Camel Message headers.",
+    "description": "Gets a header from the Exchange.",
     "deprecated": false,
     "firstVersion": "1.5.0",
     "label": "language,core",

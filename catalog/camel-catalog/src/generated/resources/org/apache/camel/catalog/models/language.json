@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "language",
     "title": "Language",
-    "description": "Evaluate the given expression using the specified language.",
+    "description": "Evaluates a custom language.",
     "deprecated": false,
     "label": "language,core",
     "javaType": "org.apache.camel.model.language.LanguageExpression",

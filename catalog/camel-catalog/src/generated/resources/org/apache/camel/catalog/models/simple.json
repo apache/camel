@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "simple",
     "title": "Simple",
-    "description": "Evaluate Camel's built-in Simple language expression against the Camel Exchange.",
+    "description": "Evaluates a Camel simple expression.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "language,core,java",
