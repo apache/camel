@@ -13351,15 +13351,7 @@ Sets the class name of the result type (type from output).
 
   <xs:complexType name="constantExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:expression">
-        <xs:attribute name="resultType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name of the constant type.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
+      <xs:extension base="tns:expression"/>
     </xs:simpleContent>
   </xs:complexType>
 
