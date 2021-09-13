@@ -111,6 +111,16 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * Specify the constant expression value. <b>Important:</b> this is a fixed constant value that is only set once
      * during starting up the route, do not use this if you want dynamic values during routing.
      */
+    public T constant(String value, Class<?> resultType) {
+        ConstantExpression exp = new ConstantExpression(value);
+        exp.setResultType(resultType);
+        return expression(exp);
+    }
+
+    /**
+     * Specify the constant expression value. <b>Important:</b> this is a fixed constant value that is only set once
+     * during starting up the route, do not use this if you want dynamic values during routing.
+     */
     public T constant(Object value, boolean trim) {
         if (value instanceof String) {
             ConstantExpression ce = new ConstantExpression((String) value);

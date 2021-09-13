@@ -114,7 +114,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
     private static ExpressionReifier<? extends ExpressionDefinition> coreReifier(
             CamelContext camelContext, ExpressionDefinition definition) {
         if (definition instanceof ConstantExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
+            return new ConstantExpressionReifier(camelContext, definition);
         } else if (definition instanceof CSimpleExpression) {
             return new CSimpleExpressionReifier(camelContext, definition);
         } else if (definition instanceof DatasonnetExpression) {

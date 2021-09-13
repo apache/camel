@@ -146,6 +146,15 @@ public final class Builder {
     /**
      * Returns a constant expression
      */
+    public static ValueBuilder constant(String value, Class<?> resultType) {
+        ConstantExpression exp = new ConstantExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a constant expression
+     */
     public static ValueBuilder constant(Object value, boolean trim) {
         Expression exp;
         if (value instanceof String) {

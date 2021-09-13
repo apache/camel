@@ -17,17 +17,18 @@
 package org.apache.camel.language.constant;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
  * A language for constant expressions.
  */
 @org.apache.camel.spi.annotations.Language("constant")
-public class ConstantLanguage implements Language, IsSingleton {
+public class ConstantLanguage extends LanguageSupport {
 
     public static Expression constant(Object value) {
         return ExpressionBuilder.constantExpression(value);
@@ -41,6 +42,28 @@ public class ConstantLanguage implements Language, IsSingleton {
     @Override
     public Expression createExpression(String expression) {
         return ConstantLanguage.constant(expression);
+    }
+
+    @Override
+    public Predicate createPredicate(String expression, Object[] properties) {
+        Expression exp = createExpression(expression, properties);
+        return ExpressionToPredicateAdapter.toPredicate(exp);
+    }
+
+    @Override
+    public Expression createExpression(String expression, Object[] properties) {
+        Class<?> resultType = property(Class.class, properties, 0, null);
+        if (resultType != null) {
+            try {
+                // convert constant to result type eager as its a constant
+                Object value = getCamelContext().getTypeConverter().mandatoryConvertTo(resultType, expression);
+                return ExpressionBuilder.constantExpression(value);
+            } catch (NoTypeConversionAvailableException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        } else {
+            return ConstantLanguage.constant(expression);
+        }
     }
 
     @Override

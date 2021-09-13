@@ -18,7 +18,9 @@ package org.apache.camel.model.language;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -29,6 +31,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "constant")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConstantExpression extends ExpressionDefinition {
+
+    @XmlAttribute(name = "resultType")
+    private String resultTypeName;
+    @XmlTransient
+    private Class<?> resultType;
 
     public ConstantExpression() {
     }
@@ -41,4 +48,27 @@ public class ConstantExpression extends ExpressionDefinition {
     public String getLanguage() {
         return "constant";
     }
+
+    public Class<?> getResultType() {
+        return resultType;
+    }
+
+    /**
+     * Sets the class of the constant type
+     */
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
+    }
+
+    public String getResultTypeName() {
+        return resultTypeName;
+    }
+
+    /**
+     * Sets the class name of the constant type
+     */
+    public void setResultTypeName(String resultTypeName) {
+        this.resultTypeName = resultTypeName;
+    }
+
 }

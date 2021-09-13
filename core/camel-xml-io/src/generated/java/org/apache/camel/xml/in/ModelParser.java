@@ -2497,8 +2497,13 @@ public class ModelParser extends BaseParser {
         }, noElementHandler(), expressionDefinitionValueHandler());
     }
     protected ConstantExpression doParseConstantExpression() throws IOException, XmlPullParserException {
-        return doParse(new ConstantExpression(),
-            expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+        return doParse(new ConstantExpression(), (def, key, val) -> {
+            if ("resultType".equals(key)) {
+                def.setResultTypeName(val);
+                return true;
+            }
+            return expressionDefinitionAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), expressionDefinitionValueHandler());
     }
     protected DatasonnetExpression doParseDatasonnetExpression() throws IOException, XmlPullParserException {
         return doParse(new DatasonnetExpression(), (def, key, val) -> {

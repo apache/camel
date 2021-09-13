@@ -5300,6 +5300,9 @@
             "id" : {
               "type" : "string"
             },
+            "result-type" : {
+              "type" : "string"
+            },
             "trim" : {
               "type" : "boolean"
             }
