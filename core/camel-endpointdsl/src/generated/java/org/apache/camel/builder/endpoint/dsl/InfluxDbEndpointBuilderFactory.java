@@ -35,6 +35,39 @@ public interface InfluxDbEndpointBuilderFactory {
      */
     public interface InfluxDbEndpointBuilder extends EndpointProducerBuilder {
         /**
+         * Define if we want to auto create the database if it's not present.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param autoCreateDatabase the value to set
+         * @return the dsl builder
+         */
+        default InfluxDbEndpointBuilder autoCreateDatabase(
+                boolean autoCreateDatabase) {
+            doSetProperty("autoCreateDatabase", autoCreateDatabase);
+            return this;
+        }
+        /**
+         * Define if we want to auto create the database if it's not present.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param autoCreateDatabase the value to set
+         * @return the dsl builder
+         */
+        default InfluxDbEndpointBuilder autoCreateDatabase(
+                String autoCreateDatabase) {
+            doSetProperty("autoCreateDatabase", autoCreateDatabase);
+            return this;
+        }
+        /**
          * Define if this operation is a batch operation or not.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -63,6 +96,41 @@ public interface InfluxDbEndpointBuilderFactory {
          */
         default InfluxDbEndpointBuilder batch(String batch) {
             doSetProperty("batch", batch);
+            return this;
+        }
+        /**
+         * Define if we want to check the database existence while starting the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param checkDatabaseExistence the value to set
+         * @return the dsl builder
+         */
+        default InfluxDbEndpointBuilder checkDatabaseExistence(
+                boolean checkDatabaseExistence) {
+            doSetProperty("checkDatabaseExistence", checkDatabaseExistence);
+            return this;
+        }
+        /**
+         * Define if we want to check the database existence while starting the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param checkDatabaseExistence the value to set
+         * @return the dsl builder
+         */
+        default InfluxDbEndpointBuilder checkDatabaseExistence(
+                String checkDatabaseExistence) {
+            doSetProperty("checkDatabaseExistence", checkDatabaseExistence);
             return this;
         }
         /**
