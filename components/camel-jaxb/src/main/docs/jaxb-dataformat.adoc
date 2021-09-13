@@ -1,5 +1,7 @@
 [[jaxb-dataformat]]
 = JAXB DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jaxb/src/main/docs/jaxb-dataformat.adoc
 :docTitle: JAXB
 :artifactId: camel-jaxb
 :description: Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.

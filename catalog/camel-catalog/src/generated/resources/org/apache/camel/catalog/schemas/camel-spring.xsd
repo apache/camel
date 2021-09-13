@@ -13466,7 +13466,7 @@ false
         <xs:attribute name="allowSimple" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to allow in inlined simple exceptions in the JsonPath expression.
+Whether to allow in inlined Simple exceptions in the JSONPath expression.
 Default value: true
             ]]></xs:documentation>
           </xs:annotation>
@@ -13497,8 +13497,8 @@ Name of header to use as input, instead of the message body.
         <xs:attribute name="option" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To configure additional options on json path. Multiple values can be separated
-by comma.
+To configure additional options on JSONPath. Multiple values can be separated by
+comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

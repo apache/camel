@@ -1,5 +1,7 @@
 [[testcontainers-spring-other]]
 = Testcontainers Spring Component (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-test/camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc
 :docTitle: Testcontainers Spring
 :artifactId: camel-testcontainers-spring
 :description: Camel unit testing with Spring and testcontainers
