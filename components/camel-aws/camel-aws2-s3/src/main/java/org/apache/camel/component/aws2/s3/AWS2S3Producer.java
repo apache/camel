@@ -307,6 +307,11 @@ public class AWS2S3Producer extends DefaultProducer {
             putObjectRequest.acl(acl.toString());
         }
 
+        String contentMd5 = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_MD5, String.class);
+        if (contentMd5 != null) {
+            putObjectRequest.contentMD5(contentMd5);
+        }
+
         if (getConfiguration().isUseAwsKMS()) {
             if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
                 putObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
