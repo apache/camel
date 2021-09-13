@@ -18,10 +18,8 @@ __metadata:
     eslint-plugin-standard: ^4.0.1
     gulp: ~4.0
     gulp-cli: ~2.3
-    gulp-filter: ^6.0.0
     gulp-inject: ^5.0.2
     gulp-rename: ^1.4.0
-    gulp-replace: ^1.0.0
     gulp-sort: ^2.0.0
     map-stream: ^0.0.7
     prettier-eslint-cli: ^5.0.0
@@ -101,13 +99,6 @@ __metadata:
   version: 0.0.29
   resolution: "@types/json5@npm:0.0.29"
   checksum: 66e9ac0143ec521522c7bb670301e9836ee886207eeed1aab6d4854a1b19b404ab3a54cd8d449f9b1f13acc357f540be96f8ac2d1e86e301eab52ae0f9a4066f
-  languageName: node
-  linkType: hard
-
-"@types/minimatch@npm:^3.0.3":
-  version: 3.0.4
-  resolution: "@types/minimatch@npm:3.0.4"
-  checksum: abbe7031d8a6144c36f1803c5c1914885c2349d5d73fc45aae44807c12c4c803b8acfb134c71c7eff75c462c218697f982b96633f8fdf71b83ec50eba36122a6
   languageName: node
   linkType: hard
 
@@ -423,13 +414,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array-differ@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "array-differ@npm:3.0.0"
-  checksum: 6d87a752b56b9e9b29b617d7092173ac3b418d77621077eb7d7637a143b8df6019d59fe98cb3ba8ceba2677ad9904220dabd816f762c1cd5afaa3eec14db3b92
-  languageName: node
-  linkType: hard
-
 "array-each@npm:^1.0.0, array-each@npm:^1.0.1":
   version: 1.0.1
   resolution: "array-each@npm:1.0.1"
@@ -493,13 +477,6 @@ __metadata:
   dependencies:
     array-uniq: ^1.0.1
   checksum: 5be2568acc80d284519ff2bed8385daa37074dccbf440d5a9ce911bcb9cf51486dd677d3f61903ba113196333d033b261c8eb901a491e15bb4e437e5c68f92c7
-  languageName: node
-  linkType: hard
-
-"array-union@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "array-union@npm:2.1.0"
-  checksum: 93af542eb854bf62a742192d0061c82788a963a9a6594628f367388f2b9f1bfd9215910febbbdd55074841555d8b59bda6a13ecba4a8e136f58b675499eda292
   languageName: node
   linkType: hard
 
@@ -682,13 +659,6 @@ __metadata:
   version: 1.13.1
   resolution: "binary-extensions@npm:1.13.1"
   checksum: 7cdacc6dadaffb6a4d250c39ca51e1fd7ba0fd846348e2813465dfaa7fce1e59a3465c1555578e7e4e7959023b47824cc387b37780e2160f52fface775cc0133
-  languageName: node
-  linkType: hard
-
-"binaryextensions@npm:2":
-  version: 2.3.0
-  resolution: "binaryextensions@npm:2.3.0"
-  checksum: 2634fffe528099e566101e98836356328ba3d7e39ff6cd940dfb57dc558bc3550902a94760acc1466c0dc4bda8efd26ba01306e22bcfddc697c5002296bf30d6
   languageName: node
   linkType: hard
 
@@ -1374,13 +1344,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"editions@npm:^1.3.3":
-  version: 1.3.4
-  resolution: "editions@npm:1.3.4"
-  checksum: f22f710bc55e7ec3695d9598b08b03eaf1268eb31c36bde9313561050488908c6ce19f0c76a3f1199cf1fc8ef033b4dcaa836ddb8e3e67621549582f1f31bf19
-  languageName: node
-  linkType: hard
-
 "emoji-regex@npm:^7.0.1":
   version: 7.0.3
   resolution: "emoji-regex@npm:7.0.3"
@@ -1508,7 +1471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-string-regexp@npm:^1.0.2, escape-string-regexp@npm:^1.0.3, escape-string-regexp@npm:^1.0.5":
+"escape-string-regexp@npm:^1.0.2, escape-string-regexp@npm:^1.0.5":
   version: 1.0.5
   resolution: "escape-string-regexp@npm:1.0.5"
   checksum: f9484b8b4c8827d816e0fd905c25ed4b561376a9c220e1430403ea84619bf680c76a883a48cff8b8e091daf55d6a497e37479f9787b9f15f3c421b6054289744
@@ -2533,17 +2496,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gulp-filter@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "gulp-filter@npm:6.0.0"
-  dependencies:
-    multimatch: ^4.0.0
-    plugin-error: ^1.0.1
-    streamfilter: ^3.0.0
-  checksum: 77439532ed99a7ade22fbaa8436208124b55ed22e5d8158fabfafd7655cd96c7a250bca69f543d95765edab377831baf62fe13e9fc64cfb60822461e2c4417d8
-  languageName: node
-  linkType: hard
-
 "gulp-inject@npm:^5.0.2":
   version: 5.0.5
   resolution: "gulp-inject@npm:5.0.5"
@@ -2564,17 +2516,6 @@ fsevents@^1.2.7:
   version: 1.4.0
   resolution: "gulp-rename@npm:1.4.0"
   checksum: 8241dcd0312d14cc1b6fd121a59eafc352291263f3ac0c47f118e999ef18df3a7d0718fb81021c825e18367fb25a93375b1bc9d6bb3402ed9319ab1f740d72f5
-  languageName: node
-  linkType: hard
-
-"gulp-replace@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "gulp-replace@npm:1.0.0"
-  dependencies:
-    istextorbinary: 2.2.1
-    readable-stream: ^2.0.1
-    replacestream: ^4.0.0
-  checksum: 166f49b3521fefb1f1e4f7aad30b2ad7ac96e442844d028fba92287d0b7e0705ff05d2de6a0cd7750146f3000486b7632bcde6fb952c345057269ec1149a9054
   languageName: node
   linkType: hard
 
@@ -3233,17 +3174,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"istextorbinary@npm:2.2.1":
-  version: 2.2.1
-  resolution: "istextorbinary@npm:2.2.1"
-  dependencies:
-    binaryextensions: 2
-    editions: ^1.3.3
-    textextensions: 2
-  checksum: c8edc6cb3249291107398672032b57cbfcc318cc31e9f799d2fe35796a504e6a8b6194d146d0339243e24185ca686ee9dcbf730640474fa67f37e89b14d5befb
-  languageName: node
-  linkType: hard
-
 "js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -3786,19 +3716,6 @@ fsevents@^1.2.7:
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
   checksum: 6e721e648a544154d5de4c114b32f573d8027ca8ec505cf6c1105e505986d6ac46934a1256735aa0eece8eb2f5b2a1230503b2dddd3b100f9f016fd8a4f15f33
-  languageName: node
-  linkType: hard
-
-"multimatch@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "multimatch@npm:4.0.0"
-  dependencies:
-    "@types/minimatch": ^3.0.3
-    array-differ: ^3.0.0
-    array-union: ^2.1.0
-    arrify: ^2.0.1
-    minimatch: ^3.0.4
-  checksum: c1ba3c9b68e7840cdb4d5d2998eeb68a88ef14a09ce03bd392738529665147a6ec6970d8bf9e7fbac618bb58c2a615f190c048f97c290e36fb4890a3ef78991e
   languageName: node
   linkType: hard
 
@@ -4611,7 +4528,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:2 || 3, readable-stream@npm:^3.0.6":
+"readable-stream@npm:2 || 3":
   version: 3.6.0
   resolution: "readable-stream@npm:3.6.0"
   dependencies:
@@ -4738,17 +4655,6 @@ fsevents@^1.2.7:
     is-absolute: ^1.0.0
     remove-trailing-separator: ^1.1.0
   checksum: 8e55cf69834f2358f277b9d9ec3ca1ef4cd4b448229e7e9facee754e31794134b9714fb3834bd2a2486a438364aba876cf2cdeda560b810a59910e1a6d6f4673
-  languageName: node
-  linkType: hard
-
-"replacestream@npm:^4.0.0":
-  version: 4.0.3
-  resolution: "replacestream@npm:4.0.3"
-  dependencies:
-    escape-string-regexp: ^1.0.3
-    object-assign: ^4.0.1
-    readable-stream: ^2.0.2
-  checksum: 180c09f94ce428ef7cc8f97a8f0e3a68624b58a0e8814f458801ebb3543a65a6789ca5df599c142612d4df27b04056644df8761e0cd4294b9783950c45163e7b
   languageName: node
   linkType: hard
 
@@ -5288,15 +5194,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"streamfilter@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "streamfilter@npm:3.0.0"
-  dependencies:
-    readable-stream: ^3.0.6
-  checksum: eb43dff8c17baf1ffa0f28ae5b490e1c2bd06d88c4ef8853e1515de9eefae9de26a66780f244730ea4a512ecb242c2eec151ce7bd45f6179243b5117aff29c74
-  languageName: node
-  linkType: hard
-
 "string-width@npm:^1.0.1, string-width@npm:^1.0.2":
   version: 1.0.2
   resolution: "string-width@npm:1.0.2"
@@ -5526,13 +5423,6 @@ fsevents@^1.2.7:
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
   checksum: 373904ce70524ba11ec7e1905c44fb92671132d5e0b0aba2fb48057161f8bf9cbf7f6178f0adf31810150cf44fb52c7b912dc722bff3fddf9688378596dbeb56
-  languageName: node
-  linkType: hard
-
-"textextensions@npm:2":
-  version: 2.6.0
-  resolution: "textextensions@npm:2.6.0"
-  checksum: 96ca15779a786f5867804239fcc8e33d0636fe1ec70bf3bac6beccb5520288a0cf499b49646aad8eacd21ab16a286bd9f4e57efd6bb37ca9d865aa74226bec93
   languageName: node
   linkType: hard
 
