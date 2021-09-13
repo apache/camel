@@ -1,5 +1,7 @@
 [[jsonata-component]]
 = JSONata Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jsonata/src/main/docs/jsonata-component.adoc
 :docTitle: JSONata
 :artifactId: camel-jsonata
 :description: Transforms JSON payload using JSONata transformation.

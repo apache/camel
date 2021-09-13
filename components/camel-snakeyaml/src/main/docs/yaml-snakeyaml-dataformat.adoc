@@ -1,5 +1,7 @@
 [[yaml-snakeyaml-dataformat]]
 = YAML SnakeYAML DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc
 :docTitle: YAML SnakeYAML
 :artifactId: camel-snakeyaml
 :description: Marshal and unmarshal Java objects to and from YAML using SnakeYAML

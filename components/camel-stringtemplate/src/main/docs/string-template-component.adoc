@@ -1,5 +1,7 @@
 [[string-template-component]]
 = String Template Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-stringtemplate/src/main/docs/string-template-component.adoc
 :docTitle: String Template
 :artifactId: camel-stringtemplate
 :description: Transform messages using StringTemplate engine.

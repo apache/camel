@@ -1,5 +1,7 @@
 [[caffeine-cache-component]]
 = Caffeine Cache Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-caffeine/src/main/docs/caffeine-cache-component.adoc
 :docTitle: Caffeine Cache
 :artifactId: camel-caffeine
 :description: Perform caching operations using Caffeine Cache.

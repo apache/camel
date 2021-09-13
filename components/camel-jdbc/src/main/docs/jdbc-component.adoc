@@ -1,5 +1,7 @@
 [[jdbc-component]]
 = JDBC Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jdbc/src/main/docs/jdbc-component.adoc
 :docTitle: JDBC
 :artifactId: camel-jdbc
 :description: Access databases through SQL and JDBC.

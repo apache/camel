@@ -1,5 +1,7 @@
 [[jcache-component]]
 = JCache Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jcache/src/main/docs/jcache-component.adoc
 :docTitle: JCache
 :artifactId: camel-jcache
 :description: Perform caching operations against JSR107/JCache.

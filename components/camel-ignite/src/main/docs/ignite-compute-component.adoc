@@ -1,5 +1,7 @@
 [[ignite-compute-component]]
 = Ignite Compute Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ignite/src/main/docs/ignite-compute-component.adoc
 :docTitle: Ignite Compute
 :artifactId: camel-ignite
 :description: Run compute operations on an Ignite cluster.

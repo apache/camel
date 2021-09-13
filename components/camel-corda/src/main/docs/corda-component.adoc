@@ -1,5 +1,7 @@
 [[corda-component]]
 = Corda Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-corda/src/main/docs/corda-component.adoc
 :docTitle: Corda
 :artifactId: camel-corda
 :description: Perform operations against Corda blockchain platform using corda-rpc library.

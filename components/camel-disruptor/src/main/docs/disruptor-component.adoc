@@ -1,5 +1,7 @@
 [[disruptor-component]]
 = Disruptor Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-disruptor/src/main/docs/disruptor-component.adoc
 :docTitle: Disruptor
 :artifactId: camel-disruptor
 :description: Provides asynchronous SEDA behavior using LMAX Disruptor.

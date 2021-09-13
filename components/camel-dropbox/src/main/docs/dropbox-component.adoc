@@ -1,5 +1,7 @@
 [[dropbox-component]]
 = Dropbox Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-dropbox/src/main/docs/dropbox-component.adoc
 :docTitle: Dropbox
 :artifactId: camel-dropbox
 :description: Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.

@@ -1,5 +1,7 @@
 [[mvel-component]]
 = MVEL Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-mvel/src/main/docs/mvel-component.adoc
 :docTitle: MVEL
 :artifactId: camel-mvel
 :description: Transform messages using an MVEL template.

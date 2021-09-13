@@ -1,5 +1,7 @@
 [[xchange-component]]
 = XChange Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-xchange/src/main/docs/xchange-component.adoc
 :docTitle: XChange
 :artifactId: camel-xchange
 :description: Access market data and trade on Bitcoin and Altcoin exchanges.

@@ -1,5 +1,7 @@
 [[groovy-language]]
 = Groovy Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-groovy/src/main/docs/groovy-language.adoc
 :docTitle: Groovy
 :artifactId: camel-groovy
 :description: Evaluate a Groovy script.

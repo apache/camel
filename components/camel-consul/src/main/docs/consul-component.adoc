@@ -1,5 +1,7 @@
 [[consul-component]]
 = Consul Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-consul/src/main/docs/consul-component.adoc
 :docTitle: Consul
 :artifactId: camel-consul
 :description: Integrate with Consul service discovery and configuration store.

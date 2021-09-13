@@ -1,5 +1,7 @@
 [[hazelcast-seda-component]]
 = Hazelcast SEDA Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-seda-component.adoc
 :docTitle: Hazelcast SEDA
 :artifactId: camel-hazelcast
 :description: Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.

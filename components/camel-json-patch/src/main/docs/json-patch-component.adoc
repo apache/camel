@@ -1,5 +1,7 @@
 [[json-patch-component]]
 = JsonPatch Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-json-patch/src/main/docs/json-patch-component.adoc
 :docTitle: JsonPatch
 :artifactId: camel-json-patch
 :description: JsonPatch component which transform JSON using JSON patch (RFC 6902).

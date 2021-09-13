@@ -1,5 +1,7 @@
 [[oaipmh-component]]
 = OAI-PMH Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-oaipmh/src/main/docs/oaipmh-component.adoc
 :docTitle: OAI-PMH
 :artifactId: camel-oaipmh
 :description: Harvest metadata using OAI-PMH protocol

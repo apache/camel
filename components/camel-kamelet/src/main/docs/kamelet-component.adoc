@@ -1,5 +1,7 @@
 [[kamelet-component]]
 = Kamelet Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-kamelet/src/main/docs/kamelet-component.adoc
 :docTitle: Kamelet
 :artifactId: camel-kamelet
 :description: To call Kamelets

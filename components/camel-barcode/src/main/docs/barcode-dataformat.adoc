@@ -1,5 +1,7 @@
 [[barcode-dataformat]]
 = Barcode DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-barcode/src/main/docs/barcode-dataformat.adoc
 :docTitle: Barcode
 :artifactId: camel-barcode
 :description: Transform strings to various 1D/2D barcode bitmap formats and back.

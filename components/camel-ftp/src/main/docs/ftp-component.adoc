@@ -1,5 +1,7 @@
 [[ftp-component]]
 = FTP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ftp/src/main/docs/ftp-component.adoc
 :docTitle: FTP
 :artifactId: camel-ftp
 :description: Upload and download files to/from FTP servers.

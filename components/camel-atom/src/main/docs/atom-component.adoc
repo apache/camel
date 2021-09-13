@@ -1,5 +1,7 @@
 [[atom-component]]
 = Atom Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-atom/src/main/docs/atom-component.adoc
 :docTitle: Atom
 :artifactId: camel-atom
 :description: Poll Atom RSS feeds.

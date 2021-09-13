@@ -1,5 +1,7 @@
 [[aws2-ses-component]]
 = AWS Simple Email Service (SES) Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-aws/camel-aws2-ses/src/main/docs/aws2-ses-component.adoc
 :docTitle: AWS Simple Email Service (SES)
 :artifactId: camel-aws2-ses
 :description: Send e-mails through AWS SES service using AWS SDK version 2.x.

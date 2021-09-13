@@ -1,5 +1,7 @@
 [[github-component]]
 = GitHub Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-github/src/main/docs/github-component.adoc
 :docTitle: GitHub
 :artifactId: camel-github
 :description: Interact with the GitHub API.

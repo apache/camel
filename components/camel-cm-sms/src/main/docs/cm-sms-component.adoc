@@ -1,5 +1,7 @@
 [[cm-sms-component]]
 = CM SMS Gateway Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-cm-sms/src/main/docs/cm-sms-component.adoc
 :docTitle: CM SMS Gateway
 :artifactId: camel-cm-sms
 :description: Send SMS messages via CM SMS Gateway.

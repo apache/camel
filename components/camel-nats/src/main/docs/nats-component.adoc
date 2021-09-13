@@ -1,5 +1,7 @@
 [[nats-component]]
 = Nats Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-nats/src/main/docs/nats-component.adoc
 :docTitle: Nats
 :artifactId: camel-nats
 :description: Send and receive messages from NATS messaging system.

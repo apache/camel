@@ -1,5 +1,7 @@
 [[spring-ws-component]]
 = Spring WebService Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-spring-ws/src/main/docs/spring-ws-component.adoc
 :docTitle: Spring WebService
 :artifactId: camel-spring-ws
 :description: Access external web services as a client or expose your own web services.

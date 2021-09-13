@@ -1,5 +1,7 @@
 [[bean-language]]
 = Bean method Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-bean/src/main/docs/bean-language.adoc
 :docTitle: Bean method
 :artifactId: camel-bean
 :description: Call a method of the specified Java bean passing the Exchange, Body or specific headers to it.

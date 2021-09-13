@@ -1,5 +1,7 @@
 [[crypto-component]]
 = Crypto (JCE) Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-crypto/src/main/docs/crypto-component.adoc
 :docTitle: Crypto (JCE)
 :artifactId: camel-crypto
 :description: Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).

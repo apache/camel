@@ -1,5 +1,7 @@
 [[jpa-component]]
 = JPA Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jpa/src/main/docs/jpa-component.adoc
 :docTitle: JPA
 :artifactId: camel-jpa
 :description: Store and retrieve Java objects from databases using Java Persistence API (JPA).

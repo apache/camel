@@ -1,5 +1,7 @@
 [[ignite-queue-component]]
 = Ignite Queues Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ignite/src/main/docs/ignite-queue-component.adoc
 :docTitle: Ignite Queues
 :artifactId: camel-ignite
 :description: Interact with Ignite Queue data structures.

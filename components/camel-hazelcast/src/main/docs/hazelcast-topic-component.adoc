@@ -1,5 +1,7 @@
 [[hazelcast-topic-component]]
 = Hazelcast Topic Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-topic-component.adoc
 :docTitle: Hazelcast Topic
 :artifactId: camel-hazelcast
 :description: Send and receive messages to/from Hazelcast distributed topic.

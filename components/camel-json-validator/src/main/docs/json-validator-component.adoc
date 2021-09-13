@@ -1,5 +1,7 @@
 [[json-validator-component]]
 = JSON Schema Validator Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-json-validator/src/main/docs/json-validator-component.adoc
 :docTitle: JSON Schema Validator
 :artifactId: camel-json-validator
 :description: Validate JSON payloads using NetworkNT JSON Schema.

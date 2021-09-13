@@ -1,5 +1,7 @@
 [[xstream-dataformat]]
 = XStream DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-xstream/src/main/docs/xstream-dataformat.adoc
 :docTitle: XStream
 :artifactId: camel-xstream
 :description: Marshal and unmarshal POJOs to/from XML using XStream library.

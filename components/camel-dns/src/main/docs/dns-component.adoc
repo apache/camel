@@ -1,5 +1,7 @@
 [[dns-component]]
 = DNS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-dns/src/main/docs/dns-component.adoc
 :docTitle: DNS
 :artifactId: camel-dns
 :description: Perform DNS queries using DNSJava.

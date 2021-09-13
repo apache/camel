@@ -1,5 +1,7 @@
 [[aws2-sts-component]]
 = AWS Security Token Service (STS) Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-aws/camel-aws2-sts/src/main/docs/aws2-sts-component.adoc
 :docTitle: AWS Security Token Service (STS)
 :artifactId: camel-aws2-sts
 :description: Manage AWS STS cluster instances using AWS SDK version 2.x.

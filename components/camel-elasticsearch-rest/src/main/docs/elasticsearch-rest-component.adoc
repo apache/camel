@@ -1,5 +1,7 @@
 [[elasticsearch-rest-component]]
 = Elasticsearch Rest Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc
 :docTitle: Elasticsearch Rest
 :artifactId: camel-elasticsearch-rest
 :description: Send requests to ElasticSearch via REST API

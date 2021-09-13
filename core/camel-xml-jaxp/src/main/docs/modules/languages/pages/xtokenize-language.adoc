@@ -1,5 +1,7 @@
 [[xtokenize-language]]
 = XML Tokenize Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: core/camel-xml-jaxp/src/main/docs/modules/languages/pages/xtokenize-language.adoc
 :docTitle: XML Tokenize
 :artifactId: camel-xml-jaxp
 :description: Tokenize XML payloads using the specified path expression.

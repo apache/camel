@@ -1,5 +1,7 @@
 [[arangodb-component]]
 = ArangoDb Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-arangodb/src/main/docs/arangodb-component.adoc
 :docTitle: ArangoDb
 :artifactId: camel-arangodb
 :description: Perform operations on ArangoDb when used as a Document Database, or as a Graph Database

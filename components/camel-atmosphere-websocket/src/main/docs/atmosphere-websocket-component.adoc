@@ -1,5 +1,7 @@
 [[atmosphere-websocket-component]]
 = Atmosphere Websocket Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-atmosphere-websocket/src/main/docs/atmosphere-websocket-component.adoc
 :docTitle: Atmosphere Websocket
 :artifactId: camel-atmosphere-websocket
 :description: Expose WebSocket endpoints using the Atmosphere framework.

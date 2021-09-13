@@ -1,5 +1,7 @@
 [[wordpress-component]]
 = Wordpress Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-wordpress/src/main/docs/wordpress-component.adoc
 :docTitle: Wordpress
 :artifactId: camel-wordpress
 :description: Manage posts and users using Wordpress API.

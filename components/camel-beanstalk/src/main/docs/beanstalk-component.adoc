@@ -1,5 +1,7 @@
 [[beanstalk-component]]
 = Beanstalk Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-beanstalk/src/main/docs/beanstalk-component.adoc
 :docTitle: Beanstalk
 :artifactId: camel-beanstalk
 :description: Retrieve and post-process Beanstalk jobs.

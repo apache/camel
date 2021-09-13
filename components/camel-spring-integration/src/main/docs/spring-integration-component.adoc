@@ -1,5 +1,7 @@
 [[spring-integration-component]]
 = Spring Integration Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-spring-integration/src/main/docs/spring-integration-component.adoc
 :docTitle: Spring Integration
 :artifactId: camel-spring-integration
 :description: Bridge Camel with Spring Integration.

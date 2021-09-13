@@ -1,5 +1,7 @@
 [[elsql-component]]
 = ElSQL Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-elsql/src/main/docs/elsql-component.adoc
 :docTitle: ElSQL
 :artifactId: camel-elsql
 :description: Use ElSql to define SQL queries. Extends the SQL Component.

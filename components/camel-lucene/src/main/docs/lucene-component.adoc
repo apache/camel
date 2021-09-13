@@ -1,5 +1,7 @@
 [[lucene-component]]
 = Lucene Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-lucene/src/main/docs/lucene-component.adoc
 :docTitle: Lucene
 :artifactId: camel-lucene
 :description: Perform inserts or queries against Apache Lucene databases.

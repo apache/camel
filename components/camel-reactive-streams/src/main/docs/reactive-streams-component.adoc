@@ -1,5 +1,7 @@
 [[reactive-streams-component]]
 = Reactive Streams Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-reactive-streams/src/main/docs/reactive-streams-component.adoc
 :docTitle: Reactive Streams
 :artifactId: camel-reactive-streams
 :description: Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.

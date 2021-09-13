@@ -1,5 +1,7 @@
 [[ognl-language]]
 = OGNL Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ognl/src/main/docs/ognl-language.adoc
 :docTitle: OGNL
 :artifactId: camel-ognl
 :description: Evaluate an Apache Commons Object Graph Navigation Library (OGNL) expression against the Camel Exchange.

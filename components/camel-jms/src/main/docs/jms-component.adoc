@@ -1,5 +1,7 @@
 [[jms-component]]
 = JMS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jms/src/main/docs/jms-component.adoc
 :docTitle: JMS
 :artifactId: camel-jms
 :description: Sent and receive messages to/from a JMS Queue or Topic.

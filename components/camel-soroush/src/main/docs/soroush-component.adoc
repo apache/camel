@@ -1,5 +1,7 @@
 [[soroush-component]]
 = Soroush Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-soroush/src/main/docs/soroush-component.adoc
 :docTitle: Soroush
 :artifactId: camel-soroush
 :description: Send and receive messages as a Soroush chat bot.

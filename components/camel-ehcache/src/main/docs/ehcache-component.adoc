@@ -1,5 +1,7 @@
 [[ehcache-component]]
 = Ehcache Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ehcache/src/main/docs/ehcache-component.adoc
 :docTitle: Ehcache
 :artifactId: camel-ehcache
 :description: Perform caching operations using Ehcache.

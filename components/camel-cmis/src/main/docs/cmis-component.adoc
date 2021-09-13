@@ -1,5 +1,7 @@
 [[cmis-component]]
 = CMIS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-cmis/src/main/docs/cmis-component.adoc
 :docTitle: CMIS
 :artifactId: camel-cmis
 :description: Read and write data from to/from a CMIS compliant content repositories.

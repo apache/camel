@@ -1,5 +1,7 @@
 [[hazelcast-multimap-component]]
 = Hazelcast Multimap Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-multimap-component.adoc
 :docTitle: Hazelcast Multimap
 :artifactId: camel-hazelcast
 :description: Perform operations on Hazelcast distributed multimap.
