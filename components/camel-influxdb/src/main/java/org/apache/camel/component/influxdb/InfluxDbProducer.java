@@ -98,13 +98,13 @@ public class InfluxDbProducer extends DefaultProducer {
         Query influxdbQuery = new Query(query, dataBaseName);
         QueryResult resultSet = connection.query(influxdbQuery);
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(resultSet);
+        exchange.getMessage().setBody(resultSet);
     }
 
     private void doPing(Exchange exchange) {
         Pong result = connection.ping();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(result);
+        exchange.getMessage().setBody(result);
     }
 
     private String calculateRetentionPolicy(Exchange exchange) {
