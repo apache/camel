@@ -11,11 +11,11 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/hl7terser.a
 
 *Since Camel {since}*
 
-http://hl7api.sourceforge.net[HAPI] provides a
-http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
+https://hapifhir.github.io/hapi-hl7v2/[HAPI] provides a
+https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
 class that provides access to fields using a commonly used terse
-location specification syntax. The Terser language allows to use this
-syntax to extract values from messages and to use them as expressions
+location specification syntax. The HL7 Terser language allows to use this
+syntax to extract values from HL7 messages and to use them as expressions
 and predicates for filtering, content-based routing etc.
 
 == HL7 Terser Language options
@@ -33,7 +33,10 @@ The HL7 Terser language supports 1 options, which are listed below.
 // language options: END
 
 
-== Samples:
+== Example
+
+In the example below we want to set a header with the patent id
+from field QRD-8 in the QRY_A19 message:
 
 [source,java]
 ----
@@ -50,13 +53,14 @@ from("direct:test2")
    .to("mock:test2");
 ----
 
-== HL7 Validation predicate
+== HL7 Validation
 
 Often it is preferable to first parse a HL7v2 message and in a separate
 step validate it against a HAPI
-http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext].
+https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext].
 
-Sample:
+The example below shows how to do that. Notice how we use the static method `messageConformsTo`
+which validates that the message is a HL7v2 message.
 
 [source,java]
 ----
@@ -72,16 +76,16 @@ from("direct:test1")
    .to("mock:test1");
 ----
 
-== HL7 Validation predicate using the HapiContext
+=== HL7 Validation using the HapiContext
 
 The HAPI Context is always configured with a
-http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext]
+https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext]
 (or a
-http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html[ValidationRuleBuilder]),
-so you can access the validation rules indirectly. Furthermore, when
-unmarshalling the HL7DataFormat forwards the configured HAPI context in
-the `CamelHL7Context` header, and the validation rules of this context
-can be easily reused:
+https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html[ValidationRuleBuilder]),
+so you can access the validation rules indirectly.
+
+Furthermore, when unmarshalling the xref:hl7-dataformat[HL7 DataFormat] forwards the configured HAPI context in
+the `CamelHL7Context` header, and the validation rules of this context can be reused:
 
 [source,java]
 ----
@@ -108,7 +112,7 @@ hl7.setHapiContext(hapiContext);
 from("direct:test1")
   .unmarshal(hl7)                // uses the GenericParser returned from the HapiContext
   .validate(messageConforms())   // uses the validation rules returned from the HapiContext
-                                    // equivalent with .validate(messageConformsTo(hapiContext))
+                                 // equivalent with .validate(messageConformsTo(hapiContext))
    // route continues from here
 ----
 
@@ -142,7 +146,7 @@ from("direct:test1")
 
 === Custom Acknowledgement for MLLP
 
-In particural situations you may want to set a custom acknowledgement without using Exceptions.
+In special situations you may want to set a custom acknowledgement without using Exceptions.
 This can be achieved using the `ack` expression:
 
 [source,java]
