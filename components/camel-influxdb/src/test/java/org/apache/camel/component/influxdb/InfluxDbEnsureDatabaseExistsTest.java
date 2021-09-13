@@ -48,7 +48,7 @@ public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
 
                 //test route
                 from("direct:test")
-                        .to("influxdb:influxDbBean?databaseName=dbName")
+                        .to("influxdb:influxDbBean?databaseName=dbName&checkDatabaseExistence=true&autoCreateDatabase=true")
                         .to("mock:test");
             }
         };
@@ -79,7 +79,7 @@ public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
         sendBody("direct:test", createPoint());
 
         //if db exist, there will be only 1 call to show databases.
-        Mockito.verify(mockedDbConnection, Mockito.times(1)).query(Mockito.any(Query.class));
+        Mockito.verify(mockedDbConnection, Mockito.times(2)).query(Mockito.any(Query.class));
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();

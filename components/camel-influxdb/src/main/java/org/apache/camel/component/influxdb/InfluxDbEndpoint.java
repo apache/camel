@@ -59,8 +59,8 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private String query;
     @UriParam(defaultValue = "false")
     private boolean checkDatabaseExistence;
-    @UriParam(defaultValue = "true")
-    private boolean autoCreateDatabase = true;
+    @UriParam(defaultValue = "false")
+    private boolean autoCreateDatabase;
 
     public InfluxDbEndpoint(String uri, InfluxDbComponent component) {
         super(uri, component);

@@ -20,12 +20,14 @@ public class InfluxDbEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(9);
         props.add("lazyStartProducer");
         props.add("connectionBean");
         props.add("databaseName");
+        props.add("autoCreateDatabase");
         props.add("query");
         props.add("batch");
+        props.add("checkDatabaseExistence");
         props.add("retentionPolicy");
         props.add("operation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
