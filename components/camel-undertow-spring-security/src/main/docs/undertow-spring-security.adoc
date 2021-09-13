@@ -1,5 +1,7 @@
 [[undertow-spring-security-other]]
 = Undertow Spring Security Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-undertow-spring-security/src/main/docs/undertow-spring-security.adoc
 :docTitle: Undertow Spring Security
 :artifactId: camel-undertow-spring-security
 :description: Spring Security Provider for camel-undertow

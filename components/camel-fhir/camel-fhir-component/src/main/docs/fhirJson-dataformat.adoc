@@ -1,5 +1,7 @@
 [[fhirJson-dataformat]]
 = FHIR JSon DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-fhir/camel-fhir-component/src/main/docs/fhirJson-dataformat.adoc
 :docTitle: FHIR JSon
 :artifactId: camel-fhir
 :description: Marshall and unmarshall FHIR objects to/from JSON.

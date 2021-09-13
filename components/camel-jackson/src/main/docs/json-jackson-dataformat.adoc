@@ -1,5 +1,7 @@
 [[json-jackson-dataformat]]
 = JSON Jackson DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jackson/src/main/docs/json-jackson-dataformat.adoc
 :docTitle: JSON Jackson
 :artifactId: camel-jackson
 :description: Marshal POJOs to JSON and back using Jackson

@@ -1,5 +1,7 @@
 [[json-xstream-dataformat]]
 = JSON XStream DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-xstream/src/main/docs/json-xstream-dataformat.adoc
 :docTitle: JSON XStream
 :artifactId: camel-xstream
 :description: Marshal POJOs to JSON and back using XStream

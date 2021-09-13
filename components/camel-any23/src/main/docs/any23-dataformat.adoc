@@ -1,5 +1,7 @@
 [[any23-dataformat]]
 = Any23 DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-any23/src/main/docs/any23-dataformat.adoc
 :docTitle: Any23
 :artifactId: camel-any23
 :description: Extract RDF data from HTML documents.

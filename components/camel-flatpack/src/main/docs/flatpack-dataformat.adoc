@@ -1,5 +1,7 @@
 [[flatpack-dataformat]]
 = Flatpack DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-flatpack/src/main/docs/flatpack-dataformat.adoc
 :docTitle: Flatpack
 :artifactId: camel-flatpack
 :description: Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library.

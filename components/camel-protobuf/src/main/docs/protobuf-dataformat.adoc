@@ -1,5 +1,7 @@
 [[protobuf-dataformat]]
 = Protobuf DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-protobuf/src/main/docs/protobuf-dataformat.adoc
 :docTitle: Protobuf
 :artifactId: camel-protobuf
 :description: Serialize and deserialize Java objects using Google's Protocol buffers.
