@@ -1,5 +1,7 @@
 [[iota-component]]
 = IOTA Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-iota/src/main/docs/iota-component.adoc
 :docTitle: IOTA
 :artifactId: camel-iota
 :description: Manage financial transactions using IOTA distributed ledger.

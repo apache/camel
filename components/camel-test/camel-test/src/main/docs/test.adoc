@@ -1,5 +1,7 @@
 [[test-other]]
 = Test Component (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-test/camel-test/src/main/docs/test.adoc
 :docTitle: Test
 :artifactId: camel-test
 :description: Camel unit testing

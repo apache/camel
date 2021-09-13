@@ -1,5 +1,7 @@
 [[ahc-component]]
 = Async HTTP Client (AHC) Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ahc/src/main/docs/ahc-component.adoc
 :docTitle: Async HTTP Client (AHC)
 :artifactId: camel-ahc
 :description: Call external HTTP services using Async Http Client.

@@ -1,5 +1,7 @@
 [[atomix-map-component]]
 = Atomix Map Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-atomix/src/main/docs/atomix-map-component.adoc
 :docTitle: Atomix Map
 :artifactId: camel-atomix
 :description: Access Atomix's distributed map.

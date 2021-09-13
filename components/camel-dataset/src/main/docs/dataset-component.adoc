@@ -1,5 +1,7 @@
 [[dataset-component]]
 = Dataset Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-dataset/src/main/docs/dataset-component.adoc
 :docTitle: Dataset
 :artifactId: camel-dataset
 :description: Provide data for load and soak testing of your Camel application.

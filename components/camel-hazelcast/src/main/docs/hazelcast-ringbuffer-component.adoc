@@ -1,5 +1,7 @@
 [[hazelcast-ringbuffer-component]]
 = Hazelcast Ringbuffer Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-ringbuffer-component.adoc
 :docTitle: Hazelcast Ringbuffer
 :artifactId: camel-hazelcast
 :description: Perform operations on Hazelcast distributed ringbuffer.

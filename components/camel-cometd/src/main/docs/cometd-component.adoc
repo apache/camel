@@ -1,5 +1,7 @@
 [[cometd-component]]
 = CometD Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-cometd/src/main/docs/cometd-component.adoc
 :docTitle: CometD
 :artifactId: camel-cometd
 :description: Offers publish/subscribe, peer-to-peer (via a server), and RPC style messaging using the CometD/Bayeux protocol.

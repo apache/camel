@@ -1,5 +1,7 @@
 [[rest-swagger-component]]
 = REST Swagger Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-rest-swagger/src/main/docs/rest-swagger-component.adoc
 :docTitle: REST Swagger
 :artifactId: camel-rest-swagger
 :description: Configure REST producers based on a Swagger (OpenAPI) specification document delegating to a component implementing the RestProducerFactory interface.

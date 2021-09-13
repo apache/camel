@@ -1,5 +1,7 @@
 [[threadpoolfactory-vertx-other]]
 = ThreadPoolFactory Vert.x Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-threadpoolfactory-vertx/src/main/docs/threadpoolfactory-vertx.adoc
 :docTitle: ThreadPoolFactory Vert.x
 :artifactId: camel-threadpoolfactory-vertx
 :description: ThreadPoolFactory for camel-core using Vert.x

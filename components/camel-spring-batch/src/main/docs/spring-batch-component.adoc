@@ -1,5 +1,7 @@
 [[spring-batch-component]]
 = Spring Batch Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-spring-batch/src/main/docs/spring-batch-component.adoc
 :docTitle: Spring Batch
 :artifactId: camel-spring-batch
 :description: Send messages to Spring Batch for further processing.

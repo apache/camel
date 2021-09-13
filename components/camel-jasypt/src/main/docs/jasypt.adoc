@@ -1,5 +1,7 @@
 [[jasypt-other]]
 = Jasypt Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jasypt/src/main/docs/jasypt.adoc
 :docTitle: Jasypt
 :artifactId: camel-jasypt
 :description: Security using Jasypt

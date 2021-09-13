@@ -1,5 +1,7 @@
 [[telegram-component]]
 = Telegram Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-telegram/src/main/docs/telegram-component.adoc
 :docTitle: Telegram
 :artifactId: camel-telegram
 :description: Send and receive messages acting as a Telegram Bot Telegram Bot API.

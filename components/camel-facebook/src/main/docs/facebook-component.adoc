@@ -1,5 +1,7 @@
 [[facebook-component]]
 = Facebook Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-facebook/src/main/docs/facebook-component.adoc
 :docTitle: Facebook
 :artifactId: camel-facebook
 :description: Send requests to Facebook APIs supported by Facebook4J.

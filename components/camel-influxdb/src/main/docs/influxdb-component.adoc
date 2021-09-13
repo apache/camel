@@ -1,5 +1,7 @@
 [[influxdb-component]]
 = InfluxDB Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-influxdb/src/main/docs/influxdb-component.adoc
 :docTitle: InfluxDB
 :artifactId: camel-influxdb
 :description: Interact with InfluxDB, a time series database.

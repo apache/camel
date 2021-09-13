@@ -1,5 +1,7 @@
 [[jetty-component]]
 = Jetty Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jetty/src/main/docs/jetty-component.adoc
 :docTitle: Jetty
 :artifactId: camel-jetty
 :description: Expose HTTP endpoints using Jetty 9.

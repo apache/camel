@@ -1,5 +1,7 @@
 [[sql-stored-component]]
 = SQL Stored Procedure Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-sql/src/main/docs/sql-stored-component.adoc
 :docTitle: SQL Stored Procedure
 :artifactId: camel-sql
 :description: Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.

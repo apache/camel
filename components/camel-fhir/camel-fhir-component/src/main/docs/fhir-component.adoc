@@ -1,5 +1,7 @@
 [[fhir-component]]
 = FHIR Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-fhir/camel-fhir-component/src/main/docs/fhir-component.adoc
 :docTitle: FHIR
 :artifactId: camel-fhir
 :description: Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.

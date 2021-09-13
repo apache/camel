@@ -1,5 +1,7 @@
 [[json-jsonb-dataformat]]
 = JSON JSON-B DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jsonb/src/main/docs/json-jsonb-dataformat.adoc
 :docTitle: JSON JSON-B
 :artifactId: camel-jsonb
 :description: Marshal POJOs to JSON and back using JSON-B.

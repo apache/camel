@@ -1,5 +1,7 @@
 [[xmpp-component]]
 = XMPP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-xmpp/src/main/docs/xmpp-component.adoc
 :docTitle: XMPP
 :artifactId: camel-xmpp
 :description: Send and receive messages to/from an XMPP chat server.

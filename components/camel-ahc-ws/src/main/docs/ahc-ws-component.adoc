@@ -1,5 +1,7 @@
 [[ahc-ws-component]]
 = Async HTTP Client (AHC) Websocket Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ahc-ws/src/main/docs/ahc-ws-component.adoc
 :docTitle: Async HTTP Client (AHC) Websocket
 :artifactId: camel-ahc-ws
 :description: Exchange data with external Websocket servers using Async Http Client.

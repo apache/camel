@@ -1,5 +1,7 @@
 [[cxf-transport-other]]
 = CXF Transport Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-cxf-transport/src/main/docs/cxf-transport.adoc
 :docTitle: CXF Transport
 :artifactId: camel-cxf-transport
 :description: Camel Transport for Apache CXF

@@ -1,5 +1,7 @@
 [[direct-vm-component]]
 = Direct VM Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-directvm/src/main/docs/direct-vm-component.adoc
 :docTitle: Direct VM
 :artifactId: camel-directvm
 :description: Call another endpoint from any Camel Context in the same JVM synchronously.

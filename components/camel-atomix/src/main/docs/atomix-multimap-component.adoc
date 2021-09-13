@@ -1,5 +1,7 @@
 [[atomix-multimap-component]]
 = Atomix MultiMap Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-atomix/src/main/docs/atomix-multimap-component.adoc
 :docTitle: Atomix MultiMap
 :artifactId: camel-atomix
 :description: Access Atomix's distributed multi map.

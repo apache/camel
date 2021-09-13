@@ -1,5 +1,7 @@
 [[jira-component]]
 = Jira Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jira/src/main/docs/jira-component.adoc
 :docTitle: Jira
 :artifactId: camel-jira
 :description: Interact with JIRA issue tracker.

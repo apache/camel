@@ -1,5 +1,7 @@
 [[twitter-search-component]]
 = Twitter Search Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-twitter/src/main/docs/twitter-search-component.adoc
 :docTitle: Twitter Search
 :artifactId: camel-twitter
 :description: Access Twitter Search.

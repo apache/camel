@@ -1,5 +1,7 @@
 [[xj-component]]
 = XJ Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-xj/src/main/docs/xj-component.adoc
 :docTitle: XJ
 :artifactId: camel-xj
 :description: Transform JSON and XML message using a XSLT.

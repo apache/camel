@@ -1,5 +1,7 @@
 [[mvel-language]]
 = MVEL Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-mvel/src/main/docs/mvel-language.adoc
 :docTitle: MVEL
 :artifactId: camel-mvel
 :description: Evaluate an MVEL template against the Camel Exchange.

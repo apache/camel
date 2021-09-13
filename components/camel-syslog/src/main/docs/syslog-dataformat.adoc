@@ -1,5 +1,7 @@
 [[syslog-dataformat]]
 = Syslog DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-syslog/src/main/docs/syslog-dataformat.adoc
 :docTitle: Syslog
 :artifactId: camel-syslog
 :description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.

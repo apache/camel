@@ -1,5 +1,7 @@
 [[jslt-component]]
 = JSLT Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jslt/src/main/docs/jslt-component.adoc
 :docTitle: JSLT
 :artifactId: camel-jslt
 :description: Query or transform JSON payloads using an JSLT.

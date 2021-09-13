@@ -1,5 +1,7 @@
 [[couchbase-component]]
 = Couchbase Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-couchbase/src/main/docs/couchbase-component.adoc
 :docTitle: Couchbase
 :artifactId: camel-couchbase
 :description: Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.

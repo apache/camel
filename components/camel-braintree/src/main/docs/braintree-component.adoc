@@ -1,5 +1,7 @@
 [[braintree-component]]
 = Braintree Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-braintree/src/main/docs/braintree-component.adoc
 :docTitle: Braintree
 :artifactId: camel-braintree
 :description: Process payments using Braintree Payments.

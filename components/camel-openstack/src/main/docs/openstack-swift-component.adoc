@@ -1,5 +1,7 @@
 [[openstack-swift-component]]
 = OpenStack Swift Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-openstack/src/main/docs/openstack-swift-component.adoc
 :docTitle: OpenStack Swift
 :artifactId: camel-openstack
 :description: Access OpenStack Swift object/blob store.

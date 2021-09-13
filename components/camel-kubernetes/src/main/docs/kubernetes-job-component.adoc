@@ -1,5 +1,7 @@
 [[kubernetes-job-component]]
 = Kubernetes Job Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-job-component.adoc
 :docTitle: Kubernetes Job
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Jobs.

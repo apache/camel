@@ -1,5 +1,7 @@
 [[paho-mqtt5-component]]
 = Paho MQTT 5 Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-paho-mqtt5/src/main/docs/paho-mqtt5-component.adoc
 :docTitle: Paho MQTT 5
 :artifactId: camel-paho-mqtt5
 :description: Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.

@@ -1,5 +1,7 @@
 [[spark-component]]
 = Spark Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-spark/src/main/docs/spark-component.adoc
 :docTitle: Spark
 :artifactId: camel-spark
 :description: Send RDD or DataFrame jobs to Apache Spark clusters.

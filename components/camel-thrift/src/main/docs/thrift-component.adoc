@@ -1,5 +1,7 @@
 [[thrift-component]]
 = Thrift Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-thrift/src/main/docs/thrift-component.adoc
 :docTitle: Thrift
 :artifactId: camel-thrift
 :description: Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.

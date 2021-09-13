@@ -1,5 +1,7 @@
 [[ref-component]]
 = Ref Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ref/src/main/docs/ref-component.adoc
 :docTitle: Ref
 :artifactId: camel-ref
 :description: Route messages to an endpoint looked up dynamically by name in the Camel Registry.

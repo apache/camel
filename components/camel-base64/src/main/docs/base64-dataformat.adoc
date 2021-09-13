@@ -1,5 +1,7 @@
 [[base64-dataformat]]
 = Base64 DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-base64/src/main/docs/base64-dataformat.adoc
 :docTitle: Base64
 :artifactId: camel-base64
 :description: Encode and decode data using Base64.

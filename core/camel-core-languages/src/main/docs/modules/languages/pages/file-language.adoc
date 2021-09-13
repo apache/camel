@@ -1,5 +1,7 @@
 [[file-language]]
 = File Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/file-language.adoc
 :docTitle: File
 :artifactId: camel-core-languages
 :description: File related capabilities for the Simple language

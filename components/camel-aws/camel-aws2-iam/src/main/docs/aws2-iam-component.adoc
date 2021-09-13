@@ -1,5 +1,7 @@
 [[aws2-iam-component]]
 = AWS Identity and Access Management (IAM) Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-aws/camel-aws2-iam/src/main/docs/aws2-iam-component.adoc
 :docTitle: AWS Identity and Access Management (IAM)
 :artifactId: camel-aws2-iam
 :description: Manage AWS IAM instances using AWS SDK version 2.x.

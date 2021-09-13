@@ -1,5 +1,7 @@
 [[milo-server-component]]
 = OPC UA Server Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-milo/src/main/docs/milo-server-component.adoc
 :docTitle: OPC UA Server
 :artifactId: camel-milo
 :description: Make telemetry data available as an OPC UA server.

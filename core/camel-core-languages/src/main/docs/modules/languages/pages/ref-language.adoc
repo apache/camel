@@ -1,5 +1,7 @@
 [[ref-language]]
 = Ref Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/ref-language.adoc
 :docTitle: Ref
 :artifactId: camel-core-languages
 :description: Look up an expression in the Camel Registry and evaluate it.

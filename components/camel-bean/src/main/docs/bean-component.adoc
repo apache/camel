@@ -1,5 +1,7 @@
 [[bean-component]]
 = Bean Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-bean/src/main/docs/bean-component.adoc
 :docTitle: Bean
 :artifactId: camel-bean
 :description: Invoke methods of Java beans stored in Camel registry.

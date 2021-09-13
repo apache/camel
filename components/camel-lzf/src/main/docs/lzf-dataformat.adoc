@@ -1,5 +1,7 @@
 [[lzf-dataformat]]
 = LZF Deflate Compression DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-lzf/src/main/docs/lzf-dataformat.adoc
 :docTitle: LZF Deflate Compression
 :artifactId: camel-lzf
 :description: Compress and decompress streams using LZF deflate algorithm.

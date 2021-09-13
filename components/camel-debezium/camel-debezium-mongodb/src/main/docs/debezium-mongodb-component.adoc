@@ -1,5 +1,7 @@
 [[debezium-mongodb-component]]
 = Debezium MongoDB Connector Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-debezium/camel-debezium-mongodb/src/main/docs/debezium-mongodb-component.adoc
 :docTitle: Debezium MongoDB Connector
 :artifactId: camel-debezium-mongodb
 :description: Capture changes from a MongoDB database.

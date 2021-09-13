@@ -1,5 +1,7 @@
 [[joor-language]]
 = jOOR Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-joor/src/main/docs/joor-language.adoc
 :docTitle: jOOR
 :artifactId: camel-joor
 :description: Evaluate a jOOR (Java compiled once at runtime) expression language.

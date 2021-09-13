@@ -1,5 +1,7 @@
 [[kubernetes-nodes-component]]
 = Kubernetes Nodes Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-nodes-component.adoc
 :docTitle: Kubernetes Nodes
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Nodes and get notified on Node changes.

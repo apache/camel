@@ -1,5 +1,7 @@
 [[sap-netweaver-component]]
 = SAP NetWeaver Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-sap-netweaver/src/main/docs/sap-netweaver-component.adoc
 :docTitle: SAP NetWeaver
 :artifactId: camel-sap-netweaver
 :description: Send requests to SAP NetWeaver Gateway using HTTP.

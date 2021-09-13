@@ -1,5 +1,7 @@
 [[ignite-cache-component]]
 = Ignite Cache Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-ignite/src/main/docs/ignite-cache-component.adoc
 :docTitle: Ignite Cache
 :artifactId: camel-ignite
 :description: Perform cache operations on an Ignite cache or consume changes from a continuous query.

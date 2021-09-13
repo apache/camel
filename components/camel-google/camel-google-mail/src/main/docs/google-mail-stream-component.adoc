@@ -1,5 +1,7 @@
 [[google-mail-stream-component]]
 = Google Mail Stream Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-google/camel-google-mail/src/main/docs/google-mail-stream-component.adoc
 :docTitle: Google Mail Stream
 :artifactId: camel-google-mail
 :description: Poll for incoming messages in Google Mail.
