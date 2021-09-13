@@ -1,7 +1,5 @@
 [[bean-validator-component]]
 = Bean Validator Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-bean-validator/src/main/docs/bean-validator-component.adoc
 :docTitle: Bean Validator
 :artifactId: camel-bean-validator
 :description: Validate the message body using the Java Bean Validation API.

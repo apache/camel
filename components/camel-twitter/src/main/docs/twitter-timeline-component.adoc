@@ -1,7 +1,5 @@
 [[twitter-timeline-component]]
 = Twitter Timeline Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-twitter/src/main/docs/twitter-timeline-component.adoc
 :docTitle: Twitter Timeline
 :artifactId: camel-twitter
 :description: Send tweets and receive tweets from user's timeline.

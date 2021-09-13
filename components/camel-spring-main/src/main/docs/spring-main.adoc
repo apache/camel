@@ -1,7 +1,5 @@
 [[spring-main-other]]
 = Spring Main Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-spring-main/src/main/docs/spring-main.adoc
 :docTitle: Spring Main
 :artifactId: camel-spring-main
 :description: Camel Spring Main support

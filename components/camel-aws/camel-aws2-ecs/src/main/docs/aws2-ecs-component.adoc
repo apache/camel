@@ -1,7 +1,5 @@
 [[aws2-ecs-component]]
 = AWS Elastic Container Service (ECS) Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-ecs/src/main/docs/aws2-ecs-component.adoc
 :docTitle: AWS Elastic Container Service (ECS)
 :artifactId: camel-aws2-ecs
 :description: Manage AWS ECS cluster instances using AWS SDK version 2.x.

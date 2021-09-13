@@ -1,7 +1,5 @@
 [[irc-component]]
 = IRC Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-irc/src/main/docs/irc-component.adoc
 :docTitle: IRC
 :artifactId: camel-irc
 :description: Send and receive messages to/from and IRC chat.

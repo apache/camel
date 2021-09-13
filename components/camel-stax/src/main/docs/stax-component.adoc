@@ -1,7 +1,5 @@
 [[stax-component]]
 = StAX Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-stax/src/main/docs/stax-component.adoc
 :docTitle: StAX
 :artifactId: camel-stax
 :description: Process XML payloads by a SAX ContentHandler.

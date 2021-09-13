@@ -1,7 +1,5 @@
 [[xslt-component]]
 = XSLT Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-xslt/src/main/docs/xslt-component.adoc
 :docTitle: XSLT
 :artifactId: camel-xslt
 :description: Transforms XML payload using an XSLT template.

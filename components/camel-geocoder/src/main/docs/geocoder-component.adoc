@@ -1,7 +1,5 @@
 [[geocoder-component]]
 = Geocoder Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-geocoder/src/main/docs/geocoder-component.adoc
 :docTitle: Geocoder
 :artifactId: camel-geocoder
 :description: Find geocodes (latitude and longitude) for a given address or the other way round.

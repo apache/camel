@@ -1,7 +1,5 @@
 [[jcr-component]]
 = JCR Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jcr/src/main/docs/jcr-component.adoc
 :docTitle: JCR
 :artifactId: camel-jcr
 :description: Read and write nodes to/from a JCR compliant content repository.

@@ -1,7 +1,5 @@
 [[web3j-component]]
 = Web3j Ethereum Blockchain Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-web3j/src/main/docs/web3j-component.adoc
 :docTitle: Web3j Ethereum Blockchain
 :artifactId: camel-web3j
 :description: Interact with Ethereum nodes using web3j client API.

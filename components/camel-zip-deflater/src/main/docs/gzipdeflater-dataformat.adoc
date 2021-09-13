@@ -1,7 +1,5 @@
 [[gzipdeflater-dataformat]]
 = GZip Deflater DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-zip-deflater/src/main/docs/gzipdeflater-dataformat.adoc
 :docTitle: GZip Deflater
 :artifactId: camel-zip-deflater
 :description: Compress and decompress messages using java.util.zip.GZIPStream.

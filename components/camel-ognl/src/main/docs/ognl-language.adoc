@@ -1,7 +1,5 @@
 [[ognl-language]]
 = OGNL Language
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-ognl/src/main/docs/ognl-language.adoc
 :docTitle: OGNL
 :artifactId: camel-ognl
 :description: Evaluates an OGNL expression (Apache Commons OGNL).

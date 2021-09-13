@@ -1,7 +1,5 @@
 [[jacksonxml-dataformat]]
 = JacksonXML DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc
 :docTitle: JacksonXML
 :artifactId: camel-jacksonxml
 :description: Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.

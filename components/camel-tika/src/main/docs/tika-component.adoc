@@ -1,7 +1,5 @@
 [[tika-component]]
 = Tika Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-tika/src/main/docs/tika-component.adoc
 :docTitle: Tika
 :artifactId: camel-tika
 :description: Parse documents and extract metadata and text using Apache Tika.

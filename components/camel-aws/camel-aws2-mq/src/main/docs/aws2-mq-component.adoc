@@ -1,7 +1,5 @@
 [[aws2-mq-component]]
 = AWS MQ Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-mq/src/main/docs/aws2-mq-component.adoc
 :docTitle: AWS MQ
 :artifactId: camel-aws2-mq
 :description: Manage AWS MQ instances using AWS SDK version 2.x.

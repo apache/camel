@@ -1,7 +1,5 @@
 [[kubernetes-custom-resources-component]]
 = Kubernetes Custom Resources Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-kubernetes/src/main/docs/kubernetes-custom-resources-component.adoc
 :docTitle: Kubernetes Custom Resources
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Custom Resources and get notified on Deployment changes.

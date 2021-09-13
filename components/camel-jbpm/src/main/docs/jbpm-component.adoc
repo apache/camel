@@ -1,7 +1,5 @@
 [[jbpm-component]]
 = JBPM Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jbpm/src/main/docs/jbpm-component.adoc
 :docTitle: JBPM
 :artifactId: camel-jbpm
 :description: Interact with jBPM workflow engine over REST.

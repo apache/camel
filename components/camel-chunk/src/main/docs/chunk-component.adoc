@@ -1,7 +1,5 @@
 [[chunk-component]]
 = Chunk Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-chunk/src/main/docs/chunk-component.adoc
 :docTitle: Chunk
 :artifactId: camel-chunk
 :description: Transform messages using Chunk templating engine.

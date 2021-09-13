@@ -1,7 +1,5 @@
 [[stub-component]]
 = Stub Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-stub/src/main/docs/stub-component.adoc
 :docTitle: Stub
 :artifactId: camel-stub
 :description: Stub out any physical endpoints while in development or testing.

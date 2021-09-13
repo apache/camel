@@ -1,7 +1,5 @@
 [[log-component]]
 = Log Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-log/src/main/docs/log-component.adoc
 :docTitle: Log
 :artifactId: camel-log
 :description: Log messages to the underlying logging mechanism.

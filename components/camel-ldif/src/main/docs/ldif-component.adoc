@@ -1,7 +1,5 @@
 [[ldif-component]]
 = LDIF Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-ldif/src/main/docs/ldif-component.adoc
 :docTitle: LDIF
 :artifactId: camel-ldif
 :description: Perform updates on an LDAP server from an LDIF body content.

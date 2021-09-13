@@ -1,7 +1,5 @@
 [[guava-eventbus-component]]
 = Guava EventBus Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-guava-eventbus/src/main/docs/guava-eventbus-component.adoc
 :docTitle: Guava EventBus
 :artifactId: camel-guava-eventbus
 :description: Send and receive messages to/from Guava EventBus.

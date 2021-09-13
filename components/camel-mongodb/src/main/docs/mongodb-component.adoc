@@ -1,7 +1,5 @@
 [[mongodb-component]]
 = MongoDB Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-mongodb/src/main/docs/mongodb-component.adoc
 :docTitle: MongoDB
 :artifactId: camel-mongodb
 :description: Perform operations on MongoDB documents and collections.

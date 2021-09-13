@@ -1,7 +1,5 @@
 [[etcd-stats-component]]
 = Etcd Stats Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-etcd/src/main/docs/etcd-stats-component.adoc
 :docTitle: Etcd Stats
 :artifactId: camel-etcd
 :description: Access etcd cluster statistcs.

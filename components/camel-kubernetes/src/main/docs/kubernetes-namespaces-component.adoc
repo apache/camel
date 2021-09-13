@@ -1,7 +1,5 @@
 [[kubernetes-namespaces-component]]
 = Kubernetes Namespaces Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-kubernetes/src/main/docs/kubernetes-namespaces-component.adoc
 :docTitle: Kubernetes Namespaces
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Namespaces and get notified on Namespace changes.

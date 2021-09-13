@@ -1,7 +1,5 @@
 [[scheduler-component]]
 = Scheduler Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-scheduler/src/main/docs/scheduler-component.adoc
 :docTitle: Scheduler
 :artifactId: camel-scheduler
 :description: Generate messages in specified intervals using java.util.concurrent.ScheduledExecutorService.

@@ -1,7 +1,5 @@
 [[json-johnzon-dataformat]]
 = JSON Johnzon DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc
 :docTitle: JSON Johnzon
 :artifactId: camel-johnzon
 :description: Marshal POJOs to JSON and back using Johnzon

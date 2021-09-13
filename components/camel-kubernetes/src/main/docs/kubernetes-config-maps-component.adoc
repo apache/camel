@@ -1,7 +1,5 @@
 [[kubernetes-config-maps-component]]
 = Kubernetes ConfigMap Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc
 :docTitle: Kubernetes ConfigMap
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes ConfigMaps and get notified on ConfigMaps changes.

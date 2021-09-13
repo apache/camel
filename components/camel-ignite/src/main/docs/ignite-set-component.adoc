@@ -1,7 +1,5 @@
 [[ignite-set-component]]
 = Ignite Sets Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-ignite/src/main/docs/ignite-set-component.adoc
 :docTitle: Ignite Sets
 :artifactId: camel-ignite
 :description: Interact with Ignite Set data structures.

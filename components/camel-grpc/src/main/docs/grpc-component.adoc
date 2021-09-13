@@ -1,7 +1,5 @@
 [[grpc-component]]
 = gRPC Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-grpc/src/main/docs/grpc-component.adoc
 :docTitle: gRPC
 :artifactId: camel-grpc
 :description: Expose gRPC endpoints and access external gRPC endpoints.

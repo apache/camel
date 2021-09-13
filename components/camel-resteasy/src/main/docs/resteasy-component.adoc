@@ -1,7 +1,5 @@
 [[resteasy-component]]
 = Resteasy Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-resteasy/src/main/docs/resteasy-component.adoc
 :docTitle: Resteasy
 :artifactId: camel-resteasy
 :description: Expose REST endpoints and access external REST servers.

@@ -1,7 +1,5 @@
 [[spring-jdbc-component]]
 = Spring JDBC Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-spring-jdbc/src/main/docs/spring-jdbc-component.adoc
 :docTitle: Spring JDBC
 :artifactId: camel-spring-jdbc
 :description: Access databases through SQL and JDBC with Spring Transaction support.

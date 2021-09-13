@@ -1,7 +1,5 @@
 [[atomix-queue-component]]
 = Atomix Queue Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-atomix/src/main/docs/atomix-queue-component.adoc
 :docTitle: Atomix Queue
 :artifactId: camel-atomix
 :description: Access Atomix's distributed queue.

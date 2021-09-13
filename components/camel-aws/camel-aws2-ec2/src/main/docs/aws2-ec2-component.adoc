@@ -1,7 +1,5 @@
 [[aws2-ec2-component]]
 = AWS Elastic Compute Cloud (EC2) Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-ec2/src/main/docs/aws2-ec2-component.adoc
 :docTitle: AWS Elastic Compute Cloud (EC2)
 :artifactId: camel-aws2-ec2
 :description: Manage AWS EC2 instances using AWS SDK version 2.x.

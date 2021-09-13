@@ -1,7 +1,5 @@
 [[service-component]]
 = Service Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-service/src/main/docs/service-component.adoc
 :docTitle: Service
 :artifactId: camel-service
 :description: Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.

@@ -1,7 +1,5 @@
 [[kubernetes-replication-controllers-component]]
 = Kubernetes Replication Controller Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-kubernetes/src/main/docs/kubernetes-replication-controllers-component.adoc
 :docTitle: Kubernetes Replication Controller
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Replication Controllers and get notified on Replication Controllers changes.

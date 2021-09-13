@@ -1,7 +1,5 @@
 [[grok-dataformat]]
 = Grok DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-grok/src/main/docs/grok-dataformat.adoc
 :docTitle: Grok
 :artifactId: camel-grok
 :description: Unmarshal unstructured data to objects using Logstash based Grok patterns.

@@ -1,7 +1,5 @@
 [[ignite-events-component]]
 = Ignite Events Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-ignite/src/main/docs/ignite-events-component.adoc
 :docTitle: Ignite Events
 :artifactId: camel-ignite
 :description: Receive events from an Ignite cluster by creating a local event listener.

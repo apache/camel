@@ -1,7 +1,5 @@
 [[http-component]]
 = HTTP Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-http/src/main/docs/http-component.adoc
 :docTitle: HTTP
 :artifactId: camel-http
 :description: Send requests to external HTTP servers using Apache HTTP Client 4.x.

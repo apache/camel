@@ -1,7 +1,5 @@
 [[dozer-component]]
 = Dozer Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-dozer/src/main/docs/dozer-component.adoc
 :docTitle: Dozer
 :artifactId: camel-dozer
 :description: Map between Java beans using the Dozer mapping library.

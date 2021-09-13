@@ -1,7 +1,5 @@
 [[hdfs-component]]
 = HDFS Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-hdfs/src/main/docs/hdfs-component.adoc
 :docTitle: HDFS
 :artifactId: camel-hdfs
 :description: Read and write from/to an HDFS filesystem using Hadoop 2.x.

@@ -1,7 +1,5 @@
 [[jfr-other]]
 = Jfr Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jfr/src/main/docs/jfr.adoc
 :docTitle: Jfr
 :artifactId: camel-jfr
 :description: Diagnose Camel applications with Java Flight Recorder

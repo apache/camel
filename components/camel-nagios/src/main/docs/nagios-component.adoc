@@ -1,7 +1,5 @@
 [[nagios-component]]
 = Nagios Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-nagios/src/main/docs/nagios-component.adoc
 :docTitle: Nagios
 :artifactId: camel-nagios
 :description: Send passive checks to Nagios using JSendNSCA.

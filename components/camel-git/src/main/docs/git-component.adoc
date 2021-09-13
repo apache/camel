@@ -1,7 +1,5 @@
 [[git-component]]
 = Git Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-git/src/main/docs/git-component.adoc
 :docTitle: Git
 :artifactId: camel-git
 :description: Perform operations on git repositories.

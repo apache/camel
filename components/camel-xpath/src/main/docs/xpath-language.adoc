@@ -1,7 +1,5 @@
 [[xpath-language]]
 = XPath Language
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-xpath/src/main/docs/xpath-language.adoc
 :docTitle: XPath
 :artifactId: camel-xpath
 :description: Evaluates an XPath expression against an XML payload.

@@ -1,7 +1,5 @@
 [[gora-component]]
 = Gora Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-gora/src/main/docs/gora-component.adoc
 :docTitle: Gora
 :artifactId: camel-gora
 :description: Access NoSQL databases using the Apache Gora framework.

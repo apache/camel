@@ -1,7 +1,5 @@
 [[univocity-tsv-dataformat]]
 = uniVocity TSV DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-univocity-parsers/src/main/docs/univocity-tsv-dataformat.adoc
 :docTitle: uniVocity TSV
 :artifactId: camel-univocity-parsers
 :description: Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.

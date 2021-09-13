@@ -1,7 +1,5 @@
 [[hazelcast-set-component]]
 = Hazelcast Set Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-hazelcast/src/main/docs/hazelcast-set-component.adoc
 :docTitle: Hazelcast Set
 :artifactId: camel-hazelcast
 :description: Perform operations on Hazelcast distributed set.

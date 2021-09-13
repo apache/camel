@@ -1,7 +1,5 @@
 [[zipdeflater-dataformat]]
 = Zip Deflate Compression DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-zip-deflater/src/main/docs/zipdeflater-dataformat.adoc
 :docTitle: Zip Deflate Compression
 :artifactId: camel-zip-deflater
 :description: Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.

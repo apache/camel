@@ -1,7 +1,5 @@
 [[ftps-component]]
 = FTPS Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-ftp/src/main/docs/ftps-component.adoc
 :docTitle: FTPS
 :artifactId: camel-ftp
 :description: Upload and download files to/from FTP servers supporting the FTPS protocol.

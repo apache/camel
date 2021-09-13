@@ -1,7 +1,5 @@
 [[pgp-dataformat]]
 = PGP DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-crypto/src/main/docs/pgp-dataformat.adoc
 :docTitle: PGP
 :artifactId: camel-crypto
 :description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.

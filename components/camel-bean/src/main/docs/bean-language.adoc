@@ -1,7 +1,5 @@
 [[bean-language]]
 = Bean Method Language
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-bean/src/main/docs/bean-language.adoc
 :docTitle: Bean Method
 :artifactId: camel-bean
 :description: Calls a Java bean method.

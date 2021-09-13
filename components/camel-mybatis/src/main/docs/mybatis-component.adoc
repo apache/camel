@@ -1,7 +1,5 @@
 [[mybatis-component]]
 = MyBatis Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-mybatis/src/main/docs/mybatis-component.adoc
 :docTitle: MyBatis
 :artifactId: camel-mybatis
 :description: Performs a query, poll, insert, update or delete in a relational database using MyBatis.

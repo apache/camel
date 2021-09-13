@@ -1,7 +1,5 @@
 [[sjms-component]]
 = Simple JMS Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-sjms/src/main/docs/sjms-component.adoc
 :docTitle: Simple JMS
 :artifactId: camel-sjms
 :description: Send and receive messages to/from a JMS Queue or Topic using plain JMS 1.x API.

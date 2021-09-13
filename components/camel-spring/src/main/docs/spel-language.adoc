@@ -1,7 +1,5 @@
 [[spel-language]]
 = SpEL Language
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-spring/src/main/docs/spel-language.adoc
 :docTitle: SpEL
 :artifactId: camel-spring
 :description: Evaluates a Spring expression (SpEL).

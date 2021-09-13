@@ -1,7 +1,5 @@
 [[bindy-dataformat]]
 = Bindy DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-bindy/src/main/docs/bindy-dataformat.adoc
 :docTitle: Bindy
 :artifactId: camel-bindy
 :description: Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy

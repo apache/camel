@@ -1,7 +1,5 @@
 [[hl7-dataformat]]
 = HL7 DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-hl7/src/main/docs/hl7-dataformat.adoc
 :docTitle: HL7
 :artifactId: camel-hl7
 :description: Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.

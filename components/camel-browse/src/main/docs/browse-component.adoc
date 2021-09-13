@@ -1,7 +1,5 @@
 [[browse-component]]
 = Browse Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-browse/src/main/docs/browse-component.adoc
 :docTitle: Browse
 :artifactId: camel-browse
 :description: Inspect the messages received on endpoints supporting BrowsableEndpoint.

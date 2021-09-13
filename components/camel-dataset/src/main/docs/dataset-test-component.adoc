@@ -1,7 +1,5 @@
 [[dataset-test-component]]
 = DataSet Test Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-dataset/src/main/docs/dataset-test-component.adoc
 :docTitle: DataSet Test
 :artifactId: camel-dataset
 :description: Extends the mock component by pulling messages from another endpoint on startup to set the expected message bodies.

@@ -1,7 +1,5 @@
 [[avro-component]]
 = Avro RPC Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-avro-rpc/camel-avro-rpc-component/src/main/docs/avro-component.adoc
 :docTitle: Avro RPC
 :artifactId: camel-avro-rpc
 :description: Produce or consume Apache Avro RPC services.

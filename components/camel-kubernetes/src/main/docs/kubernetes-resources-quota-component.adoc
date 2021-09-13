@@ -1,7 +1,5 @@
 [[kubernetes-resources-quota-component]]
 = Kubernetes Resources Quota Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-kubernetes/src/main/docs/kubernetes-resources-quota-component.adoc
 :docTitle: Kubernetes Resources Quota
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Resources Quotas.

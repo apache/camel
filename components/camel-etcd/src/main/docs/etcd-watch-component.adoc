@@ -1,7 +1,5 @@
 [[etcd-watch-component]]
 = Etcd Watch Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-etcd/src/main/docs/etcd-watch-component.adoc
 :docTitle: Etcd Watch
 :artifactId: camel-etcd
 :description: Watch specific etcd keys or directories for changes.

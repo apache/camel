@@ -1,7 +1,5 @@
 [[asn1-dataformat]]
 = ASN.1 File DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-asn1/src/main/docs/asn1-dataformat.adoc
 :docTitle: ASN.1 File
 :artifactId: camel-asn1
 :description: Encode and decode data structures using Abstract Syntax Notation One (ASN.1).

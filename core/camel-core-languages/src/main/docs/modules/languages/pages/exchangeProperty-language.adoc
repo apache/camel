@@ -1,7 +1,5 @@
 [[exchangeProperty-language]]
 = ExchangeProperty Language
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/exchangeProperty-language.adoc
 :docTitle: ExchangeProperty
 :artifactId: camel-core-languages
 :description: Gets a property from the Exchange.

@@ -1,7 +1,5 @@
 [[etcd-keys-component]]
 = Etcd Keys Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-etcd/src/main/docs/etcd-keys-component.adoc
 :docTitle: Etcd Keys
 :artifactId: camel-etcd
 :description: Get, set or delete keys in etcd key-value store.

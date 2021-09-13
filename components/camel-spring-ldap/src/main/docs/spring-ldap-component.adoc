@@ -1,7 +1,5 @@
 [[spring-ldap-component]]
 = Spring LDAP Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-spring-ldap/src/main/docs/spring-ldap-component.adoc
 :docTitle: Spring LDAP
 :artifactId: camel-spring-ldap
 :description: Perform searches in LDAP servers using filters as the message payload.

@@ -1,7 +1,5 @@
 [[lpr-component]]
 = Printer Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-printer/src/main/docs/lpr-component.adoc
 :docTitle: Printer
 :artifactId: camel-printer
 :description: Send print jobs to printers.

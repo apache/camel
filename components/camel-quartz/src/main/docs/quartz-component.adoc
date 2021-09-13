@@ -1,7 +1,5 @@
 [[quartz-component]]
 = Quartz Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-quartz/src/main/docs/quartz-component.adoc
 :docTitle: Quartz
 :artifactId: camel-quartz
 :description: Schedule sending of messages using the Quartz 2.x scheduler.

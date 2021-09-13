@@ -1,7 +1,5 @@
 [[rss-dataformat]]
 = RSS DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-rss/src/main/docs/rss-dataformat.adoc
 :docTitle: RSS
 :artifactId: camel-rss
 :description: Transform from ROME SyndFeed Java Objects to XML and vice-versa.

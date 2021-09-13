@@ -1,6 +1,5 @@
 [[requestReply-eip]]
 = Request Reply
-:page-source: core/camel-core-engine/src/main/docs/eips/requestreply-eip.adoc
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/RequestReply.html[Request

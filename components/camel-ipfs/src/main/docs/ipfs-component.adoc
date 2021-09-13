@@ -1,7 +1,5 @@
 [[ipfs-component]]
 = IPFS Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-ipfs/src/main/docs/ipfs-component.adoc
 :docTitle: IPFS
 :artifactId: camel-ipfs
 :description: Access the Interplanetary File System (IPFS).

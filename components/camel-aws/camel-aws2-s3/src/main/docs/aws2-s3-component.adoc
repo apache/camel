@@ -1,7 +1,5 @@
 [[aws2-s3-component]]
 = AWS S3 Storage Service Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-s3/src/main/docs/aws2-s3-component.adoc
 :docTitle: AWS S3 Storage Service
 :artifactId: camel-aws2-s3
 :description: Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.

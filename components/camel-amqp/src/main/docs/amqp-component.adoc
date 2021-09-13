@@ -1,7 +1,5 @@
 [[amqp-component]]
 = AMQP Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-amqp/src/main/docs/amqp-component.adoc
 :docTitle: AMQP
 :artifactId: camel-amqp
 :description: Messaging with AMQP protocol using Apache QPid Client.

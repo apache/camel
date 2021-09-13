@@ -1,7 +1,5 @@
 [[jgroups-component]]
 = JGroups Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jgroups/src/main/docs/jgroups-component.adoc
 :docTitle: JGroups
 :artifactId: camel-jgroups
 :description: Exchange messages with JGroups clusters.

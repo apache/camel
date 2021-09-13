@@ -1,7 +1,5 @@
 [[aws2-kms-component]]
 = AWS Key Management Service (KMS) Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-kms/src/main/docs/aws2-kms-component.adoc
 :docTitle: AWS Key Management Service (KMS)
 :artifactId: camel-aws2-kms
 :description: Manage keys stored in AWS KMS instances using AWS SDK version 2.x.

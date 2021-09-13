@@ -1,7 +1,5 @@
 [[freemarker-component]]
 = Freemarker Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-freemarker/src/main/docs/freemarker-component.adoc
 :docTitle: Freemarker
 :artifactId: camel-freemarker
 :description: Transform messages using FreeMarker templates.

@@ -1,7 +1,5 @@
 [[twilio-component]]
 = Twilio Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-twilio/src/main/docs/twilio-component.adoc
 :docTitle: Twilio
 :artifactId: camel-twilio
 :description: Interact with Twilio REST APIs using Twilio Java SDK.

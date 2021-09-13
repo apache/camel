@@ -1,7 +1,5 @@
 [[atomix-set-component]]
 = Atomix Set Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-atomix/src/main/docs/atomix-set-component.adoc
 :docTitle: Atomix Set
 :artifactId: camel-atomix
 :description: Access Atomix's distributed set.

@@ -1,7 +1,5 @@
 [[zookeeper-component]]
 = ZooKeeper Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-zookeeper/src/main/docs/zookeeper-component.adoc
 :docTitle: ZooKeeper
 :artifactId: camel-zookeeper
 :description: Manage ZooKeeper clusters.

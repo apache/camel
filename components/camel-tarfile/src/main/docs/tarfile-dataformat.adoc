@@ -1,7 +1,5 @@
 [[tarfile-dataformat]]
 = Tar File DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-tarfile/src/main/docs/tarfile-dataformat.adoc
 :docTitle: Tar File
 :artifactId: camel-tarfile
 :description: Archive files into tarballs or extract files from tarballs.

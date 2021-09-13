@@ -1,7 +1,5 @@
 [[exec-component]]
 = Exec Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-exec/src/main/docs/exec-component.adoc
 :docTitle: Exec
 :artifactId: camel-exec
 :description: Execute commands on the underlying operating system.

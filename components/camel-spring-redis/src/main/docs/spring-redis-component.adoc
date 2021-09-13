@@ -1,7 +1,5 @@
 [[spring-redis-component]]
 = Spring Redis Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-spring-redis/src/main/docs/spring-redis-component.adoc
 :docTitle: Spring Redis
 :artifactId: camel-spring-redis
 :description: Send and receive messages from Redis.

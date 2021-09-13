@@ -1,7 +1,5 @@
 [[csimple-joor-other]]
 = CSimple jOOR Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-csimple-joor/src/main/docs/csimple-joor.adoc
 :docTitle: CSimple jOOR
 :artifactId: camel-csimple-joor
 :description: jOOR compiler for csimple language

@@ -1,7 +1,5 @@
 [[nsq-component]]
 = NSQ Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-nsq/src/main/docs/nsq-component.adoc
 :docTitle: NSQ
 :artifactId: camel-nsq
 :description: Send and receive messages from NSQ realtime distributed messaging platform.

@@ -1,7 +1,5 @@
 [[box-component]]
 = Box Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-box/camel-box-component/src/main/docs/box-component.adoc
 :docTitle: Box
 :artifactId: camel-box
 :description: Upload, download and manage files, folders, groups, collaborations, etc. on box.com.

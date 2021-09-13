@@ -1,7 +1,5 @@
 [[sip-component]]
 = SIP Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-sip/src/main/docs/sip-component.adoc
 :docTitle: SIP
 :artifactId: camel-sip
 :description: Send and receive messages using the SIP protocol (used in telecommunications).

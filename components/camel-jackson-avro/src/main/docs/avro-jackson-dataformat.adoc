@@ -1,7 +1,5 @@
 [[avro-jackson-dataformat]]
 = Avro Jackson DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jackson-avro/src/main/docs/avro-jackson-dataformat.adoc
 :docTitle: Avro Jackson
 :artifactId: camel-jackson-avro
 :description: Marshal POJOs to Avro and back using Jackson.

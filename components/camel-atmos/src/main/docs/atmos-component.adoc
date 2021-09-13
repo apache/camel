@@ -1,7 +1,5 @@
 [[atmos-component]]
 = Atmos Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-atmos/src/main/docs/atmos-component.adoc
 :docTitle: Atmos
 :artifactId: camel-atmos
 :description: Integrate with EMC's ViPR object data services using the Atmos Client.

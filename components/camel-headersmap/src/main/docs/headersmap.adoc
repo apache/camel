@@ -1,7 +1,5 @@
 [[headersmap-other]]
 = Headersmap Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-headersmap/src/main/docs/headersmap.adoc
 :docTitle: Headersmap
 :artifactId: camel-headersmap
 :description: Fast case-insensitive headers map implementation

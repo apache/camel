@@ -1,7 +1,5 @@
 [[header-language]]
 = Header Language
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/header-language.adoc
 :docTitle: Header
 :artifactId: camel-core-languages
 :description: Gets a header from the Exchange.

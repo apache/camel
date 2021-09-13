@@ -1,7 +1,5 @@
 [[aws2-ddb-component]]
 = AWS DynamoDB Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-ddb/src/main/docs/aws2-ddb-component.adoc
 :docTitle: AWS DynamoDB
 :artifactId: camel-aws2-ddb
 :description: Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.

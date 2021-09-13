@@ -1,7 +1,5 @@
 [[google-storage-component]]
 = Google Storage Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google/camel-google-storage/src/main/docs/google-storage-component.adoc
 :docTitle: Google Storage
 :artifactId: camel-google-storage
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.

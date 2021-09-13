@@ -1,7 +1,5 @@
 [[xslt-saxon-component]]
 = XSLT Saxon Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-xslt-saxon/src/main/docs/xslt-saxon-component.adoc
 :docTitle: XSLT Saxon
 :artifactId: camel-xslt-saxon
 :description: Transform XML payloads using an XSLT template using Saxon.

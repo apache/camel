@@ -1,7 +1,5 @@
 [[undertow-component]]
 = Undertow Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-undertow/src/main/docs/undertow-component.adoc
 :docTitle: Undertow
 :artifactId: camel-undertow
 :description: Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.

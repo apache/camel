@@ -1,7 +1,5 @@
 [[quickfix-component]]
 = QuickFix Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-quickfix/src/main/docs/quickfix-component.adoc
 :docTitle: QuickFix
 :artifactId: camel-quickfix
 :description: Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.

@@ -1,7 +1,5 @@
 [[openapi-java-other]]
 = Openapi Java Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-openapi-java/src/main/docs/openapi-java.adoc
 :docTitle: Openapi Java
 :artifactId: camel-openapi-java
 :description: Rest-dsl support for using openapi doc

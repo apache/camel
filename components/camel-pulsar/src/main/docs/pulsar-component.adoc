@@ -1,7 +1,5 @@
 [[pulsar-component]]
 = Pulsar Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-pulsar/src/main/docs/pulsar-component.adoc
 :docTitle: Pulsar
 :artifactId: camel-pulsar
 :description: Send and receive messages from/to Apache Pulsar messaging system.

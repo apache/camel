@@ -1,7 +1,5 @@
 [[zipfile-dataformat]]
 = Zip File DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-zipfile/src/main/docs/zipfile-dataformat.adoc
 :docTitle: Zip File
 :artifactId: camel-zipfile
 :description: Compression and decompress streams using java.util.zip.ZipStream.

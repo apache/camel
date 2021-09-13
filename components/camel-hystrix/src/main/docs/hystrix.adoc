@@ -1,7 +1,5 @@
 [[hystrix-other]]
 = Hystrix Component (deprecated)
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-hystrix/src/main/docs/hystrix.adoc
 :docTitle: Hystrix
 :artifactId: camel-hystrix
 :description: Circuit Breaker EIP using Netflix Hystrix

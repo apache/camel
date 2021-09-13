@@ -1,7 +1,5 @@
 [[jolt-component]]
 = JOLT Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jolt/src/main/docs/jolt-component.adoc
 :docTitle: JOLT
 :artifactId: camel-jolt
 :description: JSON to JSON transformation using JOLT.

@@ -1,7 +1,5 @@
 [[kubernetes-persistent-volumes-component]]
 = Kubernetes Persistent Volume Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-kubernetes/src/main/docs/kubernetes-persistent-volumes-component.adoc
 :docTitle: Kubernetes Persistent Volume
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Persistent Volumes and get notified on Persistent Volume changes.

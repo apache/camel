@@ -1,7 +1,5 @@
 [[vm-component]]
 = VM Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-vm/src/main/docs/vm-component.adoc
 :docTitle: VM
 :artifactId: camel-vm
 :description: Call another endpoint in the same CamelContext asynchronously.

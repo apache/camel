@@ -1,7 +1,5 @@
 [[infinispan-component]]
 = Infinispan Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-infinispan/camel-infinispan/src/main/docs/infinispan-component.adoc
 :docTitle: Infinispan
 :artifactId: camel-infinispan
 :description: Read and write from/to Infinispan distributed key/value store and data grid.

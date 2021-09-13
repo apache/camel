@@ -1,7 +1,5 @@
 [[splunk-hec-component]]
 = Splunk HEC Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-splunk-hec/src/main/docs/splunk-hec-component.adoc
 :docTitle: Splunk HEC
 :artifactId: camel-splunk-hec
 :description: The splunk component allows to publish events in Splunk using the HTTP Event Collector.

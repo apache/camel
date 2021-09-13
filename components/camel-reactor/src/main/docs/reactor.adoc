@@ -1,7 +1,5 @@
 [[reactor-other]]
 = Reactor Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-reactor/src/main/docs/reactor.adoc
 :docTitle: Reactor
 :artifactId: camel-reactor
 :description: Reactor based back-end for Camel's reactive streams component

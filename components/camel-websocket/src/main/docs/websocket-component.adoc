@@ -1,7 +1,5 @@
 [[websocket-component]]
 = Jetty Websocket Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-websocket/src/main/docs/websocket-component.adoc
 :docTitle: Jetty Websocket
 :artifactId: camel-websocket
 :description: Expose websocket endpoints using Jetty.

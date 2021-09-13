@@ -1,7 +1,5 @@
 [[validator-component]]
 = Validator Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-validator/src/main/docs/validator-component.adoc
 :docTitle: Validator
 :artifactId: camel-validator
 :description: Validate the payload using XML Schema and JAXP Validation.

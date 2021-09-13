@@ -1,7 +1,5 @@
 [[rest-api-component]]
 = REST API Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-rest/src/main/docs/rest-api-component.adoc
 :docTitle: REST API
 :artifactId: camel-rest
 :description: Expose OpenAPI Specification of the REST services defined using Camel REST DSL.

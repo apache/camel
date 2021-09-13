@@ -1,7 +1,5 @@
 [[cbor-dataformat]]
 = CBOR DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-cbor/src/main/docs/cbor-dataformat.adoc
 :docTitle: CBOR
 :artifactId: camel-cbor
 :description: Unmarshal a CBOR payload to POJO and back.

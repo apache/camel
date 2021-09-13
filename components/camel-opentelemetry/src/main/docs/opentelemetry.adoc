@@ -1,7 +1,5 @@
 [[opentelemetry-other]]
 = OpenTelemetry Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-opentelemetry/src/main/docs/opentelemetry.adoc
 :docTitle: OpenTelemetry
 :artifactId: camel-opentelemetry
 :description: Distributed tracing using OpenTelemetry

@@ -1,7 +1,5 @@
 [[openstack-nova-component]]
 = OpenStack Nova Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-openstack/src/main/docs/openstack-nova-component.adoc
 :docTitle: OpenStack Nova
 :artifactId: camel-openstack
 :description: Access OpenStack to manage compute resources.

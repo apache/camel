@@ -1,7 +1,5 @@
 [[aws2-lambda-component]]
 = AWS Lambda Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-lambda/src/main/docs/aws2-lambda-component.adoc
 :docTitle: AWS Lambda
 :artifactId: camel-aws2-lambda
 :description: Manage and invoke AWS Lambda functions using AWS SDK version 2.x.

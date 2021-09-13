@@ -1,7 +1,5 @@
 [[workday-component]]
 = Workday Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-workday/src/main/docs/workday-component.adoc
 :docTitle: Workday
 :artifactId: camel-workday
 :description: Detect and parse documents using Workday.

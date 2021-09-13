@@ -1,7 +1,5 @@
 [[cxfrs-component]]
 = CXF-RS Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-cxf/src/main/docs/cxfrs-component.adoc
 :docTitle: CXF-RS
 :artifactId: camel-cxf
 :description: Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.

@@ -1,7 +1,5 @@
 [[azure-cosmosdb-component]]
 = Azure CosmosDB Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-azure/camel-azure-cosmosdb/src/main/docs/azure-cosmosdb-component.adoc
 :docTitle: Azure CosmosDB
 :artifactId: camel-azure-cosmosdb
 :description: To read and write records to the CosmosDB database on Azure cloud platform.

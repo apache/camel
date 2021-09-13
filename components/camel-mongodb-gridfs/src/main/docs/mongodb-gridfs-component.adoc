@@ -1,7 +1,5 @@
 [[mongodb-gridfs-component]]
 = MongoDB GridFS Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-mongodb-gridfs/src/main/docs/mongodb-gridfs-component.adoc
 :docTitle: MongoDB GridFS
 :artifactId: camel-mongodb-gridfs
 :description: Interact with MongoDB GridFS.

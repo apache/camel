@@ -1,7 +1,5 @@
 [[robotframework-component]]
 = Robot Framework Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-robotframework/src/main/docs/robotframework-component.adoc
 :docTitle: Robot Framework
 :artifactId: camel-robotframework
 :description: Pass camel exchanges to acceptence test written in Robot DSL.

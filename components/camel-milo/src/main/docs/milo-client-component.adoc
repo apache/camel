@@ -1,7 +1,5 @@
 [[milo-client-component]]
 = OPC UA Client Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-milo/src/main/docs/milo-client-component.adoc
 :docTitle: OPC UA Client
 :artifactId: camel-milo
 :description: Connect to OPC UA servers using the binary protocol for acquiring telemetry data.

@@ -1,7 +1,5 @@
 [[class-component]]
 = Class Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-bean/src/main/docs/class-component.adoc
 :docTitle: Class
 :artifactId: camel-bean
 :description: Invoke methods of Java beans specified by class name.

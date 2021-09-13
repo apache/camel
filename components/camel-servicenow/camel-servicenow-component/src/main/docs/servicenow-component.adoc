@@ -1,7 +1,5 @@
 [[servicenow-component]]
 = ServiceNow Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc
 :docTitle: ServiceNow
 :artifactId: camel-servicenow
 :description: Interact with ServiceNow via its REST API.

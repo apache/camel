@@ -1,7 +1,5 @@
 [[asterisk-component]]
 = Asterisk Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-asterisk/src/main/docs/asterisk-component.adoc
 :docTitle: Asterisk
 :artifactId: camel-asterisk
 :description: Interact with Asterisk PBX Server.

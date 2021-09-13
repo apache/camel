@@ -1,7 +1,5 @@
 [[xquery-component]]
 = XQuery Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-saxon/src/main/docs/xquery-component.adoc
 :docTitle: XQuery
 :artifactId: camel-saxon
 :description: Query and/or transform XML payloads using XQuery and Saxon.

@@ -1,7 +1,5 @@
 [[aws2-ddbstream-component]]
 = AWS DynamoDB Streams Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-ddb/src/main/docs/aws2-ddbstream-component.adoc
 :docTitle: AWS DynamoDB Streams
 :artifactId: camel-aws2-ddb
 :description: Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.

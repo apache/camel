@@ -1,7 +1,5 @@
 [[aws2-eventbridge-component]]
 = AWS Eventbridge Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-eventbridge/src/main/docs/aws2-eventbridge-component.adoc
 :docTitle: AWS Eventbridge
 :artifactId: camel-aws2-eventbridge
 :description: Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.

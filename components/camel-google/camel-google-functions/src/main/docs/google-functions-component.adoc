@@ -1,7 +1,5 @@
 [[google-functions-component]]
 = Google Cloud Functions Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google/camel-google-functions/src/main/docs/google-functions-component.adoc
 :docTitle: Google Cloud Functions
 :artifactId: camel-google-functions
 :description: Manage and invoke Google Cloud Functions

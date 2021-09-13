@@ -1,7 +1,5 @@
 [[kubernetes-hpa-component]]
 = Kubernetes HPA Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-kubernetes/src/main/docs/kubernetes-hpa-component.adoc
 :docTitle: Kubernetes HPA
 :artifactId: camel-kubernetes
 :description: Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.

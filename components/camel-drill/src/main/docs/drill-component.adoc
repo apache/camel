@@ -1,7 +1,5 @@
 [[drill-component]]
 = Drill Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-drill/src/main/docs/drill-component.adoc
 :docTitle: Drill
 :artifactId: camel-drill
 :description: Perform queries against an Apache Drill cluster.

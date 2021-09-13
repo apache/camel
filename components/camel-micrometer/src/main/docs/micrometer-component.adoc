@@ -1,7 +1,5 @@
 [[micrometer-component]]
 = Micrometer Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-micrometer/src/main/docs/micrometer-component.adoc
 :docTitle: Micrometer
 :artifactId: camel-micrometer
 :description: Collect various metrics directly from Camel routes using the Micrometer library.

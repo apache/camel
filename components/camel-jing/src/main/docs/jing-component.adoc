@@ -1,7 +1,5 @@
 [[jing-component]]
 = Jing Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jing/src/main/docs/jing-component.adoc
 :docTitle: Jing
 :artifactId: camel-jing
 :description: Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax) using Jing library.

@@ -1,7 +1,5 @@
 [[rss-component]]
 = RSS Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-rss/src/main/docs/rss-component.adoc
 :docTitle: RSS
 :artifactId: camel-rss
 :description: Poll RSS feeds.

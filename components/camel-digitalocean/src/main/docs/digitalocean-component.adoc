@@ -1,7 +1,5 @@
 [[digitalocean-component]]
 = DigitalOcean Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-digitalocean/src/main/docs/digitalocean-component.adoc
 :docTitle: DigitalOcean
 :artifactId: camel-digitalocean
 :description: Manage Droplets and resources within the DigitalOcean cloud.

@@ -1,7 +1,5 @@
 [[solr-component]]
 = Solr Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-solr/src/main/docs/solr-component.adoc
 :docTitle: Solr
 :artifactId: camel-solr
 :description: Perform operations against Apache Lucene Solr.

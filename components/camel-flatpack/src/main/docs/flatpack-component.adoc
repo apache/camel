@@ -1,7 +1,5 @@
 [[flatpack-component]]
 = Flatpack Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-flatpack/src/main/docs/flatpack-component.adoc
 :docTitle: Flatpack
 :artifactId: camel-flatpack
 :description: Parse fixed width and delimited files using the FlatPack library.

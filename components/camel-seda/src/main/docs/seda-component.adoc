@@ -1,7 +1,5 @@
 [[seda-component]]
 = SEDA Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-seda/src/main/docs/seda-component.adoc
 :docTitle: SEDA
 :artifactId: camel-seda
 :description: Asynchronously call another endpoint from any Camel Context in the same JVM.

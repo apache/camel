@@ -1,7 +1,5 @@
 [[msv-component]]
 = MSV Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-msv/src/main/docs/msv-component.adoc
 :docTitle: MSV
 :artifactId: camel-msv
 :description: Validate XML payloads using Multi-Schema Validator (MSV).

@@ -1,7 +1,5 @@
 [[ssh-component]]
 = SSH Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-ssh/src/main/docs/ssh-component.adoc
 :docTitle: SSH
 :artifactId: camel-ssh
 :description: Execute commands on remote hosts using SSH.

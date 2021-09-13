@@ -1,7 +1,5 @@
 [[minio-component]]
 = Minio Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-minio/src/main/docs/minio-component.adoc
 :docTitle: Minio
 :artifactId: camel-minio
 :description: Store and retrieve objects from Minio Storage Service using Minio SDK.

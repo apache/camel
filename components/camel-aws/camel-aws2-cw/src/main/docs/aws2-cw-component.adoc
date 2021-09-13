@@ -1,7 +1,5 @@
 [[aws2-cw-component]]
 = AWS CloudWatch Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-cw/src/main/docs/aws2-cw-component.adoc
 :docTitle: AWS CloudWatch
 :artifactId: camel-aws2-cw
 :description: Sending metrics to AWS CloudWatch using AWS SDK version 2.x.

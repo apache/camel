@@ -1,7 +1,5 @@
 [[aws2-eks-component]]
 = AWS Elastic Kubernetes Service (EKS) Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws/camel-aws2-eks/src/main/docs/aws2-eks-component.adoc
 :docTitle: AWS Elastic Kubernetes Service (EKS)
 :artifactId: camel-aws2-eks
 :description: Manage AWS EKS cluster instances using AWS SDK version 2.x.

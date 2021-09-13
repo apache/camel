@@ -1,7 +1,5 @@
 [[spring-rabbitmq-component]]
 = Spring RabbitMQ Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-spring-rabbitmq/src/main/docs/spring-rabbitmq-component.adoc
 :docTitle: Spring RabbitMQ
 :artifactId: camel-spring-rabbitmq
 :description: Send and receive messages from RabbitMQ using Spring RabbitMQ client.

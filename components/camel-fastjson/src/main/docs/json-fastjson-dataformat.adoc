@@ -1,7 +1,5 @@
 [[json-fastjson-dataformat]]
 = JSON Fastjson DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc
 :docTitle: JSON Fastjson
 :artifactId: camel-fastjson
 :description: Marshal POJOs to JSON and back using Fastjson

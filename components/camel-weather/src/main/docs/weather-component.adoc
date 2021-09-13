@@ -1,7 +1,5 @@
 [[weather-component]]
 = Weather Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-weather/src/main/docs/weather-component.adoc
 :docTitle: Weather
 :artifactId: camel-weather
 :description: Poll the weather information from Open Weather Map.

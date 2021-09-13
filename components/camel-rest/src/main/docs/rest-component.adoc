@@ -1,7 +1,5 @@
 [[rest-component]]
 = REST Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-rest/src/main/docs/rest-component.adoc
 :docTitle: REST
 :artifactId: camel-rest
 :description: Expose REST services or call external REST services.

@@ -1,7 +1,5 @@
 [[jmx-component]]
 = JMX Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jmx/src/main/docs/jmx-component.adoc
 :docTitle: JMX
 :artifactId: camel-jmx
 :description: Receive JMX notifications.

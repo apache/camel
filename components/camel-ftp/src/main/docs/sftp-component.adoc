@@ -1,7 +1,5 @@
 [[sftp-component]]
 = SFTP Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-ftp/src/main/docs/sftp-component.adoc
 :docTitle: SFTP
 :artifactId: camel-ftp
 :description: Upload and download files to/from SFTP servers.

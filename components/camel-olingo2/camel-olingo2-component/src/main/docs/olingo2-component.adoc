@@ -1,7 +1,5 @@
 [[olingo2-component]]
 = Olingo2 Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc
 :docTitle: Olingo2
 :artifactId: camel-olingo2
 :description: Communicate with OData 2.0 services using Apache Olingo.
