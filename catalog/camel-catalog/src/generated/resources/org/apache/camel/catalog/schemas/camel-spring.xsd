@@ -240,7 +240,7 @@ Encrypt and decrypt messages using Java Cryptography Extension (JCE).
   <xs:element name="csimple" type="tns:cSimpleExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate a compile simple expression language.
+Evaluate a compiled simple expression.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -289,7 +289,7 @@ Configure data formats.
   <xs:element name="datasonnet" type="tns:datasonnetExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-To use DataSonnet scripts in Camel expressions or predicates.
+To use DataSonnet scripts for message transformations.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -401,7 +401,7 @@ null
   <xs:element name="exchangeProperty" type="tns:exchangePropertyExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Get values of named Camel Exchange properties.
+Gets a property from the Exchange.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -532,7 +532,7 @@ Unmarshal unstructured data to objects using Logstash based Grok patterns.
   <xs:element name="groovy" type="tns:groovyExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate a Groovy script.
+Evaluates a Groovy script.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -556,7 +556,7 @@ Rest HEAD command
   <xs:element name="header" type="tns:headerExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Get values of Camel Message headers.
+Gets a header from the Exchange.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -580,7 +580,7 @@ Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.
   <xs:element name="hl7terser" type="tns:hl7TerserExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Get the value of an HL7 message field specified by terse location specification
+Get the value of a HL7 message field specified by terse location specification
 syntax.
       ]]></xs:documentation>
     </xs:annotation>
@@ -694,7 +694,7 @@ JMX configuration.
   <xs:element name="joor" type="tns:joorExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate a jOOR (Java compiled once at runtime) expression language.
+Evaluates a jOOR (Java compiled once at runtime) expression.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -718,7 +718,7 @@ Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
   <xs:element name="jsonpath" type="tns:jsonPathExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate a JsonPath expression against a JSON message body.
+Evaluates a JSONPath expression against a JSON message body.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -750,7 +750,7 @@ null
   <xs:element name="language" type="tns:languageExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate the given expression using the specified language.
+Evaluates a custom language.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -807,8 +807,7 @@ component
   <xs:element name="method" type="tns:methodCallExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Call a method of the specified Java bean passing the Exchange, Body or specific
-headers to it.
+Calls a Java bean method.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -840,7 +839,7 @@ Rest security mutual TLS authentication definition
   <xs:element name="mvel" type="tns:mvelExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate an MVEL template against the Camel Exchange.
+Evaluates a MVEL template.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -856,8 +855,7 @@ Rest security OAuth2 definition
   <xs:element name="ognl" type="tns:ognlExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate an Apache Commons Object Graph Navigation Library (OGNL) expression
-against the Camel Exchange.
+Evaluates an OGNL expression (Apache Commons OGNL).
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1098,7 +1096,7 @@ Configuration of redelivery policy.
   <xs:element name="ref" type="tns:refExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Look up an expression in the Camel Registry and evaluate it.
+Uses an existing expression from the registry.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1508,7 +1506,7 @@ Sets a named property on the message exchange
   <xs:element name="simple" type="tns:simpleExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate Camel's built-in Simple language expression against the Camel Exchange.
+Evaluates a Camel simple expression.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1532,8 +1530,7 @@ Sorts the contents of the message
   <xs:element name="spel" type="tns:spELExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate a Spring Expression Language (SpEL) expression against the Camel
-Exchange.
+Evaluates a Spring expression (SpEL).
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1894,7 +1891,7 @@ Marshal and unmarshal XML RPC protocol requests or responses.
   <xs:element name="xpath" type="tns:xPathExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate an XPath expression against an XML payload.
+Evaluates an XPath expression against an XML payload.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1902,7 +1899,7 @@ Evaluate an XPath expression against an XML payload.
   <xs:element name="xquery" type="tns:xQueryExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Evaluate an XQuery expressions against an XML payload.
+Evaluates an XQuery expressions against an XML payload.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1918,7 +1915,7 @@ Marshal and unmarshal POJOs to/from XML using XStream library.
   <xs:element name="xtokenize" type="tns:xmlTokenizerExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Tokenize XML payloads using the specified path expression.
+Tokenize XML payloads.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>

@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "groovy",
     "title": "Groovy",
-    "description": "Evaluate a Groovy script.",
+    "description": "Evaluates a Groovy script.",
     "deprecated": false,
     "firstVersion": "1.3.0",
     "label": "language,script",

@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "hl7terser",
     "title": "HL7 Terser",
-    "description": "Get the value of an HL7 message field specified by terse location specification syntax.",
+    "description": "Get the value of a HL7 message field specified by terse location specification syntax.",
     "deprecated": false,
     "firstVersion": "2.11.0",
     "label": "language,hl7",

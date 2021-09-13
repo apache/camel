@@ -4,7 +4,7 @@
 :page-source: components/camel-xpath/src/main/docs/xpath-language.adoc
 :docTitle: XPath
 :artifactId: camel-xpath
-:description: Evaluate an XPath expression against an XML payload.
+:description: Evaluates an XPath expression against an XML payload.
 :since: 1.1
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xpath.adoc[opts=optional]

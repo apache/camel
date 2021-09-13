@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "xpath",
     "title": "XPath",
-    "description": "Evaluate an XPath expression against an XML payload.",
+    "description": "Evaluates an XPath expression against an XML payload.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "language,core,xml",

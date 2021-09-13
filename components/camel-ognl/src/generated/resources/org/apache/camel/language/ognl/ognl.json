@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "ognl",
     "title": "OGNL",
-    "description": "Evaluate an Apache Commons Object Graph Navigation Library (OGNL) expression against the Camel Exchange.",
+    "description": "Evaluates an OGNL expression (Apache Commons OGNL).",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "language,java",

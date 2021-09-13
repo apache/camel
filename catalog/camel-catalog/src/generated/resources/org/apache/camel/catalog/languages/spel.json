@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "spel",
     "title": "SpEL",
-    "description": "Evaluate a Spring Expression Language (SpEL) expression against the Camel Exchange.",
+    "description": "Evaluates a Spring expression (SpEL).",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "language,spring",

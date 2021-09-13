@@ -12,7 +12,7 @@
 ** xref:header-language.adoc[Header]
 ** xref:hl7terser-language.adoc[HL7 Terser]
 ** xref:joor-language.adoc[jOOR]
-** xref:jsonpath-language.adoc[JsonPath]
+** xref:jsonpath-language.adoc[JSONPath]
 ** xref:mvel-language.adoc[MVEL]
 ** xref:ognl-language.adoc[OGNL]
 ** xref:ref-language.adoc[Ref]
