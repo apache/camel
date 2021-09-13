@@ -9,12 +9,11 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[o
 
 *Since Camel {since}*
 
-The jOOR language allows to use Java code in your Camel expression, with some limitations.
+The jOOR language allows using Java code in your Camel expression, with some limitations.
+
 The jOOR library integrates with the Java compiler and performs runtime compilation of Java code.
 
-NOTE: Java 8 is not supported.
-Java 11 or 14 is required.
-
+NOTE: Java 8 is not supported. Java 11 is required.
 
 == jOOR Options
 
@@ -77,7 +76,7 @@ Here we want to get the message body as a `com.foo.MyUser` type we can do as fol
 var user = bodyAs(com.foo.MyUser.class);
 ----
 
-You can omit _.class_ to make the function a little bit smaller:
+You can omit _.class_ to make the function a little smaller:
 
 [source,java]
 ----
@@ -201,7 +200,7 @@ You can also add aliases (key=value) where an alias will be used as a shorthand 
 echo()=bodyAs(String) + bodyAs(String)
 ----
 
-Which allows to use _echo()_ in the jOOR language script such as:
+Which allows using _echo()_ in the jOOR language script such as:
 
 [source,java]
 ----
@@ -214,7 +213,7 @@ The _echo()_ alias will be replaced with its value resulting in a script as:
 
 [source,java]
 ----
-    .transform(joor("'Hello ' + bodyAs(String) + bodyAs(String)"))
+.transform(joor("'Hello ' + bodyAs(String) + bodyAs(String)"))
 ----
 
 You can configure a custom configuration location for the `camel-joor.properties` file or reference to a bean in the registry:
@@ -233,7 +232,7 @@ String config = "....";
 camelContext.getRegistry().put("MyJoorConfig", config);
 ----
 
-== Sample
+== Example
 
 For example to transform the message using jOOR language to upper case
 
