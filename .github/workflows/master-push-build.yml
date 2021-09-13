@@ -21,6 +21,8 @@ on:
   push:
     branches:
       - main
+      - camel-3.11.x
+      - camel-3.7.x
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -55,7 +57,7 @@ jobs:
           branch: regen_bot
           title: "Generated sources regen"
           body: |
-            Regen bot :robot: found some uncommited changes after running build on :camel: main.
+            Regen bot :robot: found some uncommited changes after running build on :camel: $GITHUB_REF.
             Please do not delete `regen_bot` branch after merge/rebase.
           labels: |
             regen
