@@ -1,0 +1,1 @@
+../../../../../dsl/camel-xml-io-dsl/src/main/docs/java-xml-io-dsl.adoc
