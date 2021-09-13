@@ -1,10 +1,10 @@
 [[jsonpath-language]]
-= JsonPath Language
+= JSONPath Language
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jsonpath/src/main/docs/jsonpath-language.adoc
-:docTitle: JsonPath
+:docTitle: JSONPath
 :artifactId: camel-jsonpath
-:description: Evaluate a JsonPath expression against a JSON message body.
+:description: Evaluates a JSONPath expression against a JSON message body.
 :since: 2.13
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/jsonpath.adoc[opts=optional]
@@ -31,7 +31,7 @@ from("queue:books.new")
 
 
 // language options: START
-The JsonPath language supports 8 options, which are listed below.
+The JSONPath language supports 8 options, which are listed below.
 
 
 

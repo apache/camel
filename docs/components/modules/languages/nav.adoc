@@ -2,7 +2,7 @@
 // make edits in docs/*nav.adoc.template files instead
 
 * xref:languages:index.adoc[Languages]
-** xref:bean-language.adoc[Bean method]
+** xref:bean-language.adoc[Bean Method]
 ** xref:constant-language.adoc[Constant]
 ** xref:csimple-language.adoc[CSimple]
 ** xref:datasonnet-language.adoc[DataSonnet]
@@ -12,7 +12,7 @@
 ** xref:header-language.adoc[Header]
 ** xref:hl7terser-language.adoc[HL7 Terser]
 ** xref:joor-language.adoc[jOOR]
-** xref:jsonpath-language.adoc[JsonPath]
+** xref:jsonpath-language.adoc[JSONPath]
 ** xref:mvel-language.adoc[MVEL]
 ** xref:ognl-language.adoc[OGNL]
 ** xref:ref-language.adoc[Ref]

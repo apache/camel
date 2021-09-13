@@ -1037,5 +1037,3 @@ generated Java Enumerations.
 Please refer to
 https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
 for details on how to generate the DTO.
-
-

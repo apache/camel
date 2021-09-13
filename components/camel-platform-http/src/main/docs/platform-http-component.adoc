@@ -122,5 +122,3 @@ with the following path and query parameters:
 | *platformHttpEngine* (advanced) | An HTTP Server engine implementation to serve the requests of this endpoint. |  | PlatformHttpEngine
 |===
 // endpoint options: END
-
-

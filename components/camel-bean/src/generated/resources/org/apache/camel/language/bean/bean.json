@@ -2,8 +2,8 @@
   "language": {
     "kind": "language",
     "name": "bean",
-    "title": "Bean method",
-    "description": "Call a method of the specified Java bean passing the Exchange, Body or specific headers to it.",
+    "title": "Bean Method",
+    "description": "Calls a Java bean method.",
     "deprecated": false,
     "firstVersion": "1.3.0",
     "label": "language,core,java",

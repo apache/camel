@@ -1,10 +1,10 @@
 [[bean-language]]
-= Bean method Language
+= Bean Method Language
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-bean/src/main/docs/bean-language.adoc
-:docTitle: Bean method
+:docTitle: Bean Method
 :artifactId: camel-bean
-:description: Call a method of the specified Java bean passing the Exchange, Body or specific headers to it.
+:description: Calls a Java bean method.
 :since: 1.3
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/bean.adoc[opts=optional]
@@ -29,7 +29,7 @@ xref:xpath-language.adoc[XPath] or xref:xquery-language.adoc[XQuery] from the me
 == Bean Language options
 
 // language options: START
-The Bean method language supports 5 options, which are listed below.
+The Bean Method language supports 5 options, which are listed below.
 
 
 

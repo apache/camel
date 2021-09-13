@@ -23,4 +23,3 @@ and Camel should auto-detect this on startup and log as follows:
 ----
 Detected and using HeadersMapFactory: camel-headersmap
 ----
-
