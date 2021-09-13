@@ -220,24 +220,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                             throw new MojoExecutionException("Failed build due failFast=true");
                         }
                     }
-
-                    if (updated || exists) {
-                        try {
-                            // if we run in camel-core project then add additional meta-data
-                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
-                            if (rootFile != null) {
-                                Path root = rootFile.toPath().getParent().getParent();
-                                String text = PackageHelper.loadText(file);
-                                String rep = "$1\n"
-                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                             + ":page-source: " + root.relativize(file.toPath());
-                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                                updateResource(root.resolve("docs/components/modules/ROOT/pages"), file.getName(), text);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
-                        }
-                    }
                 }
             }
         }
@@ -445,24 +427,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                         getLog().warn("No language doc file: " + file);
                         if (isFailFast()) {
                             throw new MojoExecutionException("Failed build due failFast=true");
-                        }
-                    }
-
-                    if (updated || exists) {
-                        try {
-                            // if we run in camel-core project then add additional meta-data
-                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
-                            if (rootFile != null) {
-                                Path root = rootFile.toPath().getParent().getParent();
-                                String text = PackageHelper.loadText(file);
-                                String rep = "$1\n"
-                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                             + ":page-source: " + root.relativize(file.toPath());
-                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                                updateResource(root.resolve("docs/components/modules/languages/pages"), file.getName(), text);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
                     }
                 }
