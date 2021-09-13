@@ -1,0 +1,1 @@
+../../../../../dsl/camel-groovy-dsl/camel-groovy-dsl/src/main/docs/groovy-dsl.adoc
