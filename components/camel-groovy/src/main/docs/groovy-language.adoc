@@ -11,29 +11,18 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/groovy.adoc
 
 *Since Camel {since}*
 
-Camel supports http://www.groovy-lang.org/[Groovy] to allow an
-xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] to be
-used in the xref:manual::dsl.adoc[DSL].
+Camel has support for using http://www.groovy-lang.org/[Groovy].
 
-For example you could use Groovy to create an
-Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
-Filter] or as an Expression for a
-xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List].
-
-To use a Groovy expression use the following Java code
+For example, you can use Groovy in a xref:manual::predicate.adoc[Predicate]
+with the xref:{eip-vc}:eips:filter-eip.adoc[Message
+Filter] EIP.
 
 [source,java]
 ---------------------------------------
 groovy("someGroovyExpression")
 ---------------------------------------
 
-For example you could use the *groovy* function to create an
-Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message Filter] or as an Expression for a
-Recipient List
-
 == Groovy Options
-
-
 
 // language options: START
 The Groovy language supports 1 options, which are listed below.
@@ -47,97 +36,35 @@ The Groovy language supports 1 options, which are listed below.
 |===
 // language options: END
 
+== Examples
 
-
-
-== Customizing Groovy Shell
-
-Sometimes you may need to use custom `GroovyShell` instance in your
-Groovy expressions. To provide custom `GroovyShell`, add implementation
-of the `org.apache.camel.language.groovy.GroovyShellFactory` SPI
-interface to your Camel registry. For example after adding the following
-bean to your Spring context...
-
-[source,java]
-----------------------------------------------------------------------
-public class CustomGroovyShellFactory implements GroovyShellFactory {
-
-  public GroovyShell createGroovyShell(Exchange exchange) {
-    ImportCustomizer importCustomizer = new ImportCustomizer();
-    importCustomizer.addStaticStars("com.example.Utils");
-    CompilerConfiguration configuration = new CompilerConfiguration();
-    configuration.addCompilationCustomizers(importCustomizer);
-    return new GroovyShell(configuration);
-  }
-
-}
-----------------------------------------------------------------------
-
-...Camel will use your custom GroovyShell instance (containing your
-custom static imports), instead of the default one.
-
-=== Customizing Groovy class file name
-
-You may rarely in need of customizing generated Groovy class file name for debugging purposes.
-This is also possible by implementing `getFileName` method.
-
-[source,java]
-----------------------------------------------------------------------
-public class CustomGroovyShellFactory implements GroovyShellFactory {
-
-  public GroovyShell createGroovyShell(Exchange exchange) {
-    return new GroovyShell();
-  }
-
-  public String getFileName(Exchange exchange) {
-    return "Foo.groovy";
-  }
-
-}
-----------------------------------------------------------------------
-
-== Example
+In the example below we use a groovy script as predicate in the message filter,
+to determine if any line items is over $100:
 
 [source,java]
 ------------------------------------------------------------------------------------------------
 // lets route if a line item is over $100
-from("queue:foo").filter(groovy("request.lineItems.any { i -> i.value > 100 }")).to("queue:bar")
+from("queue:foo")
+    .filter(groovy("request.lineItems.any { i -> i.value > 100 }"))
+        .to("queue:bar")
 ------------------------------------------------------------------------------------------------
 
-And the Spring DSL:
+And in XML DSL:
 
 [source,xml]
------------------------------------------------------------------------------
-        <route>
-            <from uri="queue:foo"/>
-            <filter>
-                <groovy>request.lineItems.any { i -> i.value > 100 }</groovy>
-                <to uri="queue:bar"/>
-            </filter>
-        </route>
------------------------------------------------------------------------------
-
-== Additional arguments to ScriptingEngine
-
-You can provide additional arguments to the `ScriptingEngine` using a
-header on the Camel message with the key `CamelScriptArguments`. +
- See this example:
-
-== Loading script from external resource
-
-You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`. +
- This is done using the following syntax: `"resource:scheme:location"`,
-eg to refer to a file on the classpath you can do:
-
-[source,java]
--------------------------------------------------------------------
-.setHeader("myHeader").groovy("resource:classpath:mygroovy.groovy")
--------------------------------------------------------------------
+----
+<route>
+    <from uri="queue:foo"/>
+    <filter>
+        <groovy>request.lineItems.any { i -> i.value > 100 }</groovy>
+        <to uri="queue:bar"/>
+    </filter>
+</route>
+----
 
 == How to get the result from multiple statements script
 
-As the scripteengine evaluate method just return a Null if it runs a
+As the Groovy script engine evaluate method just return a `Null` if it runs a
 multiple statements script. Camel now look up the value of script result
 by using the key of "result" from the value set. If you have multiple
 statements script, you need to make sure you set the value of result
@@ -150,6 +77,43 @@ bar = "baz";
 # camel take the result value as the script evaluation result
 result = body * 2 + 1
 -------------------------------------------------------------
+
+== Customizing Groovy Shell
+
+For very special use-cases you may need to use a custom `GroovyShell` instance in your
+Groovy expressions. To provide the custom `GroovyShell`, add an implementation
+of the `org.apache.camel.language.groovy.GroovyShellFactory` SPI
+interface to the Camel registry.
+
+[source,java]
+----
+public class CustomGroovyShellFactory implements GroovyShellFactory {
+
+  public GroovyShell createGroovyShell(Exchange exchange) {
+    ImportCustomizer importCustomizer = new ImportCustomizer();
+    importCustomizer.addStaticStars("com.example.Utils");
+    CompilerConfiguration configuration = new CompilerConfiguration();
+    configuration.addCompilationCustomizers(importCustomizer);
+    return new GroovyShell(configuration);
+  }
+
+}
+----
+
+Camel will then use your custom GroovyShell instance (containing your
+custom static imports), instead of the default one.
+
+== Loading script from external resource
+
+You can externalize the script and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`. +
+ This is done using the following syntax: `"resource:scheme:location"`,
+eg to refer to a file on the classpath you can do:
+
+[source,java]
+-------------------------------------------------------------------
+.setHeader("myHeader").groovy("resource:classpath:mygroovy.groovy")
+-------------------------------------------------------------------
 
 == Dependencies
 
