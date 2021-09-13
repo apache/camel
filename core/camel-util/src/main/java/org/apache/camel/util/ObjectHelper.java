@@ -1138,8 +1138,8 @@ public final class ObjectHelper {
      * @return       <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
-        return value instanceof Number
-                && (Float.isNaN(((Number) value).floatValue()) || Double.isNaN(((Number) value).doubleValue()));
+        return value instanceof Float && ((Float) value).isNaN()
+                || value instanceof Double && ((Double) value).isNaN();
     }
 
     /**
