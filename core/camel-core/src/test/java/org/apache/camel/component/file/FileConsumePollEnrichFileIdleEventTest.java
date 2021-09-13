@@ -42,7 +42,7 @@ public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/enrichdata", "EnrichData",
                 Exchange.FILE_NAME, "AAA.dat");
         // Trigger second event which should find the EnrichData file
-        template.sendBodyAndHeader("target/enrich", "Event2", Exchange.FILE_NAME,
+        template.sendBodyAndHeader("file:target/enrich", "Event2", Exchange.FILE_NAME,
                 "Event2.txt");
         log.info("... write done");
 
