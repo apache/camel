@@ -19,7 +19,7 @@ package org.apache.camel.component.salesforce.internal.client;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -150,8 +150,8 @@ public class AbstractClientBaseTest {
         when(conversation.getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE))
                 .thenReturn(salesforceRequest);
 
-        final Executor executor = mock(Executor.class);
-        when(client.httpClient.getExecutor()).thenReturn(executor);
+        final ExecutorService executor = mock(ExecutorService.class);
+        when(client.httpClient.getWorkerPool()).thenReturn(executor);
 
         // completes the request
         listener.getValue().onComplete(result);

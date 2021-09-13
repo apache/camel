@@ -200,13 +200,13 @@ public abstract class AbstractClientBase extends ServiceSupport
                         // from SalesforceSecurityHandler
                         Throwable failure = result.getFailure();
                         if (failure instanceof SalesforceException) {
-                            httpClient.getExecutor()
+                            httpClient.getWorkerPool()
                                     .execute(() -> callback.onResponse(null, headers, (SalesforceException) failure));
                         } else {
                             final String msg = String.format("Unexpected error {%s:%s} executing {%s:%s}", response.getStatus(),
                                     response.getReason(), request.getMethod(),
                                     request.getURI());
-                            httpClient.getExecutor().execute(() -> callback.onResponse(null, headers,
+                            httpClient.getWorkerPool().execute(() -> callback.onResponse(null, headers,
                                     new SalesforceException(msg, response.getStatus(), failure)));
                         }
                     } else {
@@ -226,13 +226,13 @@ public abstract class AbstractClientBase extends ServiceSupport
                                 session.parseLoginResponse(contentResponse, getContentAsString());
                                 final String msg = String.format("Unexpected Error {%s:%s} executing {%s:%s}", status,
                                         response.getReason(), request.getMethod(), request.getURI());
-                                httpClient.getExecutor()
+                                httpClient.getWorkerPool()
                                         .execute(() -> callback.onResponse(null, headers, new SalesforceException(msg, null)));
                             } catch (SalesforceException e) {
 
                                 final String msg = String.format("Error {%s:%s} executing {%s:%s}", status,
                                         response.getReason(), request.getMethod(), request.getURI());
-                                httpClient.getExecutor().execute(() -> callback.onResponse(null, headers,
+                                httpClient.getWorkerPool().execute(() -> callback.onResponse(null, headers,
                                         new SalesforceException(msg, response.getStatus(), e)));
                             }
                         } else if (status < HttpStatus.OK_200 || status >= HttpStatus.MULTIPLE_CHOICES_300) {
@@ -241,12 +241,12 @@ public abstract class AbstractClientBase extends ServiceSupport
 
                             // for APIs that return body on status 400, such as
                             // Composite API we need content as well
-                            httpClient.getExecutor()
+                            httpClient.getWorkerPool()
                                     .execute(() -> callback.onResponse(getContentAsInputStream(), headers, exception));
                         } else {
 
                             // Success!!!
-                            httpClient.getExecutor()
+                            httpClient.getWorkerPool()
                                     .execute(() -> callback.onResponse(getContentAsInputStream(), headers, null));
                         }
                     }

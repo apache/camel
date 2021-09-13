@@ -19,21 +19,20 @@ package org.apache.camel.component.salesforce;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.SalesforceHttpRequest;
 import org.apache.camel.component.salesforce.internal.client.SalesforceSecurityHandler;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.client.HttpConversation;
 import org.eclipse.jetty.client.HttpRequest;
 import org.eclipse.jetty.client.ProtocolHandler;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * Custom Salesforce HTTP Client that creates {@link SalesforceHttpRequest} requests.
@@ -52,19 +51,22 @@ public class SalesforceHttpClient extends HttpClient {
     private long timeout = DEFAULT_TIMEOUT;
 
     private final Method addProtocolHandlerMethod;
-
     private final Method getProtocolHandlersMethod;
+
+    private final ExecutorService workerPool;
 
     public SalesforceHttpClient() {
         this(null);
     }
 
     public SalesforceHttpClient(SslContextFactory sslContextFactory) {
-        this(null, sslContextFactory);
+        this(Executors.newCachedThreadPool(), sslContextFactory);
     }
 
-    public SalesforceHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory) {
-        super(ofNullable(transport).orElse(new HttpClientTransportOverHTTP()), sslContextFactory);
+    public SalesforceHttpClient(ExecutorService workerPool, SslContextFactory sslContextFactory) {
+        super(new HttpClientTransportOverHTTP(), sslContextFactory);
+
+        this.workerPool = workerPool;
 
         // Jetty 9.3, as opposed to 9.2 the way to add ProtocolHandler to
         // HttpClient changed in 9.2 HttpClient::getProtocolHandlers returned
@@ -141,5 +143,9 @@ public class SalesforceHttpClient extends HttpClient {
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public ExecutorService getWorkerPool() {
+        return workerPool;
     }
 }

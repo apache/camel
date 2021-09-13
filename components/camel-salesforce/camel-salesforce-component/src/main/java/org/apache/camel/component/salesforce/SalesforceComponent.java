@@ -94,6 +94,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
+    private static final int WORKER_POOL_SIZE = 10;
+    private static final int WORKER_POOL_MAX_SIZE = 20;
 
     @Metadata(description = "All authentication configuration in one nested bean, all properties set there can be set"
                             + " directly on the component as well",
@@ -389,7 +391,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
-            httpClient = createHttpClient(sslContextFactory);
+            httpClient = createHttpClient(this, sslContextFactory, getCamelContext());
             if (config != null) {
                 config.setHttpClient(httpClient);
             }
@@ -795,7 +797,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
 
-        final SalesforceHttpClient httpClient = createHttpClient(sslContextFactory);
+        final SalesforceHttpClient httpClient = createHttpClient("SalesforceComponent", sslContextFactory, camelContext);
         setupHttpClient(httpClient, camelContext, properties);
 
         final SalesforceSession session = new SalesforceSession(camelContext, httpClient, httpClient.getTimeout(), loginConfig);
@@ -808,10 +810,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         return new DefaultRawClient(httpClient, "", session, loginConfig);
     }
 
-    static SalesforceHttpClient createHttpClient(final SslContextFactory sslContextFactory) {
+    static SalesforceHttpClient createHttpClient(
+            Object source, final SslContextFactory sslContextFactory, final CamelContext context) {
         SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
-        final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
+        final SalesforceHttpClient httpClient = new SalesforceHttpClient(
+                context.getExecutorServiceManager().newThreadPool(source, "SalesforceHttpClient", WORKER_POOL_SIZE,
+                        WORKER_POOL_MAX_SIZE),
+                sslContextFactory);
         // default settings, use httpClientProperties to set other
         // properties
         httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
