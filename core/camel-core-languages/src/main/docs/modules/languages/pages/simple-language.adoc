@@ -12,14 +12,13 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/simple.adoc
 The Simple Expression Language was a really simple language when it was
 created, but has since grown more powerful. It is primarily intended for
 being a very small and simple language for evaluating
-Expressions and Predicates
-without requiring any new dependencies or knowledge of
-xref:xpath-language.adoc[XPath]; so it is ideal for testing in camel-core. The
-idea was to cover 95% of the common use cases when you need a little bit
-of expression based script in your Camel routes.
+`Expression` or `Predicate` without requiring any new dependencies
+or knowledge of other scripting languages such as Groovy.
 
-However for much more complex use cases you are generally recommended to
-choose a more expressive and powerful language such as:
+The simple langauge is designed with intend to cover almost all of the common use cases
+when little need for scripting in your Camel routes.
+
+However, for much more complex use cases then a more powerful language is recommended such as:
 
 * xref:groovy-language.adoc[Groovy]
 * xref:mvel-language.adoc[MVEL]
@@ -80,9 +79,9 @@ OGNL expression.
 
 |exchangeId |String |the exchange id
 
-|id |String |the input message id
+|id |String |the message id
 
-|messageTimestamp |String |the input message timestamp (millis since epoc) that this message originates from.
+|messageTimestamp |String |the message timestamp (millis since epoc) that this message originates from.
 Some systems like JMS, Kafka, AWS have a timestamp on the event/message, that Camel received. This method returns
 the timestamp, if a timestamp exists.
 The message timestamp and exchange created are not the same. An exchange always have a created timestamp which is the
@@ -90,13 +89,9 @@ local timestamp when Camel created the exchange. The message timestamp is only a
 when the consumer is able to extract the timestamp from the source event.
 If the message has no timestamp then 0 is returned.
 
-|body |Object |the input body
+|body |Object |the body
 
-|in.body |Object |*deprecated* the input body
-
-|body.*OGNL* |Object |the input body invoked using a Camel OGNL expression.
-
-|in.body.*OGNL* |Object |*deprecated* the input body invoked using a Camel OGNL expression.
+|body.*OGNL* |Object |the body invoked using a Camel OGNL expression.
 
 |bodyAs(_type_) |Type |Converts the body to the given type determined by its
 classname. The converted body can be null.
@@ -113,54 +108,26 @@ classname, and expects the body to be not null.
 |mandatoryBodyAs(_type_).*OGNL* |Object |Converts the body to the given type determined by its
 classname and then invoke methods using a Camel OGNL expression.
 
-|header.foo |Object |refer to the input foo header
+|header.foo |Object |refer to the foo header
 
-|header:foo |Object |refer to the input foo header
+|header[foo] |Object |refer to the foo header
 
-|header[foo] |Object |refer to the input foo header
+|headers.foo |Object |refer to the foo header
 
-|headers.foo |Object |refer to the input foo header
+|headers:foo |Object |refer to the foo header
 
-|headers:foo |Object |refer to the input foo header
+|headers[foo] |Object |refer to the foo header
 
-|headers[foo] |Object |refer to the input foo header
-
-|in.header.foo |Object |*deprecated* refer to the input foo header
-
-|in.header:foo |Object |*deprecated* refer to the input foo header
-
-|in.header[foo] |Object |*deprecated* refer to the input foo header
-
-|in.headers.foo |Object |*deprecated* refer to the input foo header
-
-|in.headers:foo |Object |*deprecated* refer to the input foo header
-
-|in.headers[foo] |Object |*deprecated* refer to the input foo header
-
-|header.foo[bar] |Object |regard input foo header as a map and perform lookup on the
+|header.foo[bar] |Object |regard foo header as a map and perform lookup on the
 map with bar as key
 
-|in.header.foo[bar] |Object |*deprecated* regard input foo header as a map and perform lookup on the
-map with bar as key
-
-|in.headers.foo[bar] |Object |*deprecated* regard input foo header as a map and perform lookup on the
-map with bar as key
-
-|header.foo.*OGNL* |Object |refer to the input foo header and invoke its value using a
-Camel OGNL expression.
-
-|in.header.foo.*OGNL* |Object |*deprecated* refer to the input foo header and invoke its value using a
-Camel OGNL expression.
-
-|in.headers.foo.*OGNL* |Object |*deprecated* refer to the input foo header and invoke its value using a
+|header.foo.*OGNL* |Object |refer to the foo header and invoke its value using a
 Camel OGNL expression.
 
 |headerAs(_key_,_type_) |Type |converts the header to the given type determined by its
 classname
 
-|headers |Map |refer to the input headers
-
-|in.headers |Map |*deprecated* refer to the input headers
+|headers |Map |refer to the headers
 
 |exchangeProperty.foo |Object |refer to the foo property on the exchange
 
@@ -227,7 +194,7 @@ logging purpose.
 the given id.
 
 |type:name.field |Object |To refer to a type or field by its FQN name. To refer to a
-field you can append .FIELD_NAME. For example you can refer to the
+field you can append .FIELD_NAME. For example, you can refer to the
 constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`
 
 |null |null |represents a *null*
@@ -253,7 +220,7 @@ been routed. This is similar to the route stack-trace message history
 the error handler logs in case of an unhandled exception.
 
 |messageHistory(false) |String |As messageHistory but without the exchange details (only
-includes the route strack-trace). This can be used if you do not want to
+includes the route stack-trace). This can be used if you do not want to
 log sensitive data from the message itself.
 |=======================================================================
 
@@ -401,13 +368,13 @@ ${leftValue} OP rightValue
 --------------------------
 
 Where the `rightValue` can be a String literal enclosed in `' '`,
-`null`, a constant value or another expression enclosed in $\{ }.
+`null`, a constant value or another expression enclosed in `$\{ }`.
 
 IMPORTANT: There *must* be spaces around the operator.
 
 Camel will automatically type convert the rightValue type to the
-leftValue type, so it is able to eg. convert a string into a numeric so
-you can use > comparison for numeric values.
+leftValue type, so it is able to eg. convert a string into a numeric, so
+you can use `>` comparison for numeric values.
 
 The following operators are supported:
 
@@ -453,9 +420,9 @@ is a set of four values with an empty value and then the three medals.
 by comma. If you want to include an empty value, then it must be defined using double comma, eg ',,bronze,silver,gold', which
 is a set of four values with an empty value and then the three medals.
 
-|is |For matching if the left hand side type is an instanceof the value.
+|is |For matching if the left hand side type is an instance of the value.
 
-|!is |For matching if the left hand side type is not an instanceof the value.
+|!is |For matching if the left hand side type is not an instance of the value.
 
 |range |For matching if the left hand side is within a range of values defined
 as numbers: `from..to`..
@@ -514,14 +481,14 @@ And the following logical operators can be used to group expressions:
 
 The syntax for AND is:
 
-[source]
+[source,text]
 ----------------------------------------------------------
 ${leftValue} OP rightValue && ${leftValue} OP rightValue
 ----------------------------------------------------------
 
 And the syntax for OR is:
 
-[source]
+[source,text]
 ---------------------------------------------------------
 ${leftValue} OP rightValue || ${leftValue} OP rightValue
 ---------------------------------------------------------
@@ -531,18 +498,18 @@ Some examples:
 [source,java]
 ----
 // exact equals match
-simple("${in.header.foo} == 'foo'")
+simple("${header.foo} == 'foo'")
 
 // ignore case when comparing, so if the header has value FOO this will match
-simple("${in.header.foo} =~ 'foo'")
+simple("${header.foo} =~ 'foo'")
 
-// here Camel will type convert '100' into the type of in.header.bar and if it is an Integer '100' will also be converter to an Integer
-simple("${in.header.bar} == '100'")
+// here Camel will type convert '100' into the type of header.bar and if it is an Integer '100' will also be converter to an Integer
+simple("${header.bar} == '100'")
 
-simple("${in.header.bar} == 100")
+simple("${header.bar} == 100")
 
-// 100 will be converter to the type of in.header.bar so we can do > comparison
-simple("${in.header.bar} > 100")
+// 100 will be converter to the type of header.bar so we can do > comparison
+simple("${header.bar} > 100")
 ----
 
 === Comparing with different types
@@ -556,23 +523,23 @@ the bar value above is a String. Then you can flip the equation:
 
 [source,java]
 ----
-simple("100 < ${in.header.bar}")
+simple("100 < ${header.bar}")
 ----
 
 which then ensures the int type is used as 1st priority.
 
 This may change in the future if the Camel team improves the binary
-comparison operations to prefer numeric types over String based. It's
+comparison operations to prefer numeric types to String based. It's
 most often the String type which causes problem when comparing with
 numbers.
 
 [source,java]
 ----
 // testing for null
-simple("${in.header.baz} == null")
+simple("${header.baz} == null")
 
 // testing for not null
-simple("${in.header.baz} != null")
+simple("${header.baz} != null")
 ----
 
 And a bit more advanced example where the right value is another
@@ -580,9 +547,9 @@ expression
 
 [source,java]
 ----
-simple("${in.header.date} == ${date:now:yyyyMMdd}")
+simple("${header.date} == ${date:now:yyyyMMdd}")
 
-simple("${in.header.type} == ${bean:orderService?method=getOrderType}")
+simple("${header.type} == ${bean:orderService?method=getOrderType}")
 ----
 
 And an example with contains, testing if the title contains the word
@@ -590,7 +557,7 @@ Camel
 
 [source,java]
 ----
-simple("${in.header.title} contains 'Camel'")
+simple("${header.title} contains 'Camel'")
 ----
 
 And an example with regex, testing if the number header is a 4 digit
@@ -598,7 +565,7 @@ value:
 
 [source,java]
 ----
-simple("${in.header.number} regex '\\d{4}'")
+simple("${header.number} regex '\\d{4}'")
 ----
 
 And finally an example if the header equals any of the values in the
@@ -608,14 +575,14 @@ into the type of the left hand side.
 
 [source,java]
 ----
-simple("${in.header.type} in 'gold,silver'")
+simple("${header.type} in 'gold,silver'")
 ----
 
 And for all the last 3 we also support the negate test using not:
 
 [source,java]
 ----
-simple("${in.header.type} !in 'gold,silver'")
+simple("${header.type} !in 'gold,silver'")
 ----
 
 And you can test if the type is a certain instance, eg for instance a
@@ -623,7 +590,7 @@ String
 
 [source,java]
 ----
-simple("${in.header.type} is 'java.lang.String'")
+simple("${header.type} is 'java.lang.String'")
 ----
 
 We have added a shorthand for all `java.lang` types so you can write it
@@ -631,7 +598,7 @@ as:
 
 [source,java]
 ----
-simple("${in.header.type} is 'String'")
+simple("${header.type} is 'String'")
 ----
 
 Ranges are also supported. The range interval requires numbers and both
@@ -640,17 +607,15 @@ between 100 and 199:
 
 [source,java]
 ----
-simple("${in.header.number} range 100..199")
+simple("${header.number} range 100..199")
 ----
 
 Notice we use `..` in the range without spaces. It is based on the same
 syntax as Groovy.
 
-From *Camel 2.9* onwards the range value must be in single quotes
-
 [source,java]
 ----
-simple("${in.header.number} range '100..199'")
+simple("${header.number} range '100..199'")
 ----
 
 === Using Spring XML
@@ -665,7 +630,7 @@ order:
 ----
 <from uri="seda:orders">
    <filter>
-       <simple>${in.header.type} == 'widget'</simple>
+       <simple>${header.type} == 'widget'</simple>
        <to uri="bean:orderService?method=handleWidget"/>
    </filter>
 </from>
@@ -680,25 +645,25 @@ For instance:
 
 [source,java]
 -----
-simple("${in.header.title} contains 'Camel' && ${in.header.type'} == 'gold'")
+simple("${header.title} contains 'Camel' && ${header.type'} == 'gold'")
 -----
 
 And of course the `||` is also supported. The sample would be:
 
 [source,java]
 -----
-simple("${in.header.title} contains 'Camel' || ${in.header.type'} == 'gold'")
+simple("${header.title} contains 'Camel' || ${header.type'} == 'gold'")
 -----
 
 == Samples
 
-In the Spring XML sample below we filter based on a header value:
+In the XML DSL sample below we filter based on a header value:
 
 [source,xml]
 --------------------------------------------
 <from uri="seda:orders">
    <filter>
-       <simple>${in.header.foo}</simple>
+       <simple>${header.foo}</simple>
        <to uri="mock:fooOrders"/>
    </filter>
 </from>
@@ -715,7 +680,7 @@ The same example in Java DSL:
 [source,java]
 ----
 from("seda:orders")
-    .filter().simple("${in.header.foo}")
+    .filter().simple("${header.foo}")
         .to("seda:fooOrders");
 ----
 
@@ -725,7 +690,7 @@ as:
 [source,java]
 ----
 from("direct:hello")
-    .transform().simple("Hello ${in.header.user} how are you?")
+    .transform().simple("Hello ${header.user} how are you?")
     .to("mock:reply");
 ----
 
@@ -814,14 +779,6 @@ You can nest functions, such as shown below:
 </setHeader>
 ----
 
-== Referring to constants or enums
-
-Suppose you have an enum for customers
-
-And in a Content Based Router we can use
-the xref:simple-language.adoc[Simple] language to refer to this enum, to check
-the message which enum it matches.
-
 == Using new lines or tabs in XML DSLs
 
 It is easier to specify new lines or tabs in
@@ -884,19 +841,3 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").simple("resource:classpath:mysimple.txt")
 ----
 
-== Setting Spring beans to Exchange properties
-
-You can set a spring bean into an exchange property as shown below:
-
-[source,xml]
-----
-<bean id="myBeanId" class="my.package.MyCustomClass" />
-...
-<route>
-  ...
-  <setProperty name="monitoring.message">
-    <simple>ref:myBeanId</simple>
-  </setProperty>
-  ...
-</route>
-----

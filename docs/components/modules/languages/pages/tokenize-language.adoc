@@ -12,16 +12,15 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/tokenize.ad
 *Since Camel {since}*
 
 The tokenizer language is a built-in language in camel-core, which is
-most often used only with the Splitter EIP to split
-a message using a token-based strategy. +
+most often used with the Splitter EIP to split
+a message using a token-based strategy.
+
 The tokenizer language is intended to tokenize text documents using a
 specified delimiter pattern. It can also be used to tokenize XML
 documents with some limited capability. For a truly XML-aware
 tokenization, the use of the XMLTokenizer
 language is recommended as it offers a faster, more efficient
 tokenization specifically for XML documents.
-
-For more details see xref:{eip-vc}:eips:split-eip.adoc[Split] EIP.
 
 == Tokenize Options
 
@@ -46,3 +45,30 @@ The Tokenize language supports 11 options, which are listed below.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
+
+
+== Example usage
+
+The following example shows how to take a request from the *direct:a* endpoint the split it into pieces using an Expression, then forward each piece to *direct:b*
+
+[source,xml]
+----
+<route>
+  <from uri="direct:a"/>
+  <split>
+    <tokenize token="\n"/>
+    <to uri="direct:b"/>
+  </split>
+</route>
+----
+
+And in Java DSL:
+
+[source,java]
+----
+from("direct:a")
+    .split(body().tokenize("\n"))
+        .to("direct:b");
+----
+
+For more examples see xref:{eip-vc}:eips:split-eip.adoc[Split] EIP.

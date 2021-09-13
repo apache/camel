@@ -12,7 +12,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ref.adoc[op
 *Since Camel {since}*
 
 The Ref Expression Language is really just a way to lookup a custom
-Expression or Predicate from the Registry.
+`Expression` or `Predicate` from the xref:latest@manual:ROOT:registry.adoc[Registry].
 
 This is particular useable in XML DSLs.
 
@@ -32,7 +32,7 @@ The Ref language supports 1 options, which are listed below.
 
 == Example usage
 
-The Splitter in XML DSL can utilize a custom
+The Splitter EIP in XML DSL can utilize a custom
 expression using `<ref>` like:
 
 [source,xml]
@@ -48,10 +48,10 @@ expression using `<ref>` like:
 </route>
 ----
 
-in this case, the Message coming from the seda:a
-Endpoint will be splitted using a custom
-Expression which has the id `myExpression` in the
-Registry.
+in this case, the message coming from the seda:a
+endpoint will be splitted using a custom
+`Expression` which has the id `myExpression` in the
+xref:latest@manual:ROOT:registry.adoc[Registry].
 
 And the same example using Java DSL:
 

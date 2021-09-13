@@ -312,7 +312,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     private static String asDescription(String name, String description) {
         // special for some languages
         if ("file".equals(name)) {
-            return "File related capabilities for the Simle language";
+            return "File related capabilities for the Simple language";
         }
         return description;
     }

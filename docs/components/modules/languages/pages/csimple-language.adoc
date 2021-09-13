@@ -20,13 +20,13 @@ The simple language is a dynamic expression language which is runtime parsed int
 The csimple language is parsed into regular Java source code and compiled together with all the other source code,
 or compiled once during bootstrap via the `camel-csimple-joor` module.
 
-The simple langauge is generally very lightweight and fast, however for some use-cases with dynamic method calls via OGNL paths,
+The simple language is generally very lightweight and fast, however for some use-cases with dynamic method calls via OGNL paths,
 then the simple language does runtime introspection and reflection calls. This has an overhead on performance,
 and was one of the reasons why csimple was created.
 
 The csimple language requires to be typesafe and method calls via OGNL paths requires to know the type during parsing.
 This means for csimple languages expressions you would need to provide the class type in the script,
-where as simple introspects this at runtime.
+whereas simple introspects this at runtime.
 
 In other words the simple language is using _duck typing_ (if it looks like a duck, and quacks like a duck, then it is a duck)
 and csimple is using Java type (typesafety). If there is a type error then simple will report this at runtime,
@@ -88,14 +88,14 @@ There are two ways to compile csimple
 
 === Using camel-csimple-maven-plugin
 
-The `camel-csimple-maven-plugin` Maven plugin is used for discoving all the csimple scripts from the source code, and then automatic generate source code in the `src/generated/java` folder, which then gets compiled together with all the other sources.
+The `camel-csimple-maven-plugin` Maven plugin is used for discovering all the csimple scripts from the source code, and then automatic generate source code in the `src/generated/java` folder, which then gets compiled together with all the other sources.
 
 The maven plugin will do source code scanning of `.java` and `.xml` files (Java and XML DSL).
 The scanner limits to detect certain code patterns, and it may miss discovering some csimple scripts if they are being used in unusual/rare ways.
 
 The runtime compilation using `camel-csimple-joor` does not have this limitation.
 
-However the pros is that all of the csimple scripts will be compiled using the regular Java compiler and therefore everything
+The benefit is all the csimple scripts will be compiled using the regular Java compiler and therefore everything
 is included out of the box as `.class` files in the application JAR file, and no additional dependencies is required at runtime.
 
 To use `camel-csimple-maven-plugin` you need to add it to your `pom.xml` file as shown:
@@ -192,7 +192,7 @@ The CSimple language supports 2 options, which are listed below.
 
 == Limitations
 
-Currently the csimple language does **not** support:
+Currently, the csimple language does **not** support:
 
 - nested functions (aka functions inside functions)
 - the _null safe_ operator (`?`).
@@ -211,7 +211,7 @@ For example the following scripts cannot compile:
 
 == Auto imports
 
-The csimple language will automatic import from:
+The csimple language will automatically import from:
 
 [source,java]
 ----
