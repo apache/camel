@@ -193,7 +193,7 @@ from("direct:streaming")
     .to("activemq:my.parts")
 ----
 
-== Streaming big XML payloads using Tokenizer language
+== Streaming big XML payloads using XML Tokenize language
 
 There are two tokenizers that can be used to tokenize an XML payload. The first tokenizer uses the same principle as in the text tokenizer to scan the XML payload and extract a sequence of tokens.
 
@@ -206,7 +206,8 @@ If you have a big XML payload, from a file source, and want to split it in strea
 The Camel StAX component can also be used to split big XML files in a streaming mode. See more details at StAX.
 ====
 
-For example you may have a XML payload structured as follows
+For example, you may have an XML payload structured as follows:
+
 [source,xml]
 ----
 <orders>
@@ -264,6 +265,7 @@ If you want to inherit namespaces from a root/parent tag, then you can do this a
 ----
 
 And in Java DSL its as follows:
+
 [source,java]
 ----
 from("file:inbox")
