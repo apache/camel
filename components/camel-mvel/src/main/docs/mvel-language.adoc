@@ -51,6 +51,8 @@ The MVEL language supports 1 options, which are listed below.
 
 == Variables
 
+The following Camel related variables are made available:
+
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Variable |Type |Description
