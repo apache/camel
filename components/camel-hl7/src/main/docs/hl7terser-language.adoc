@@ -82,7 +82,7 @@ https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/Valid
 https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html[ValidationRuleBuilder]),
 so you can access the validation rules indirectly.
 
-Furthermore, when unmarshalling the xref:hl7-dataformat[HL7 DataFormat] forwards the configured HAPI context in
+Furthermore, when unmarshalling the xref:hl7-dataformat.adoc[HL7 DataFormat] forwards the configured HAPI context in
 the `CamelHL7Context` header, and the validation rules of this context can be reused:
 
 [source,java]
