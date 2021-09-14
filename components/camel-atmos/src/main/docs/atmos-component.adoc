@@ -137,8 +137,6 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-[[Atmos-Integrations]]
-
 == Integrations
 
 When you look at atmos integrations, there is one type of consumer, 
