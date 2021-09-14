@@ -238,10 +238,22 @@ The nodes of the Atomix cluster you want to join can be se at Endpoint or compon
 </beans>
 ----
 
-== Usage examples:
+== Examples
 
-* *PUT an element with TTL of 1 second:*
-+
+=== Consumer Example
+
+Consuming from an Atomix Map
+
+[source,java]
+----
+fromF("atomix-map:map")
+  .to("mock:result");
+----
+
+=== Producer Example
+
+PUT an element with TTL of 1 second:
+
 [source,java]
 ----
 FluentProducerTemplate.on(context)
@@ -249,7 +261,7 @@ FluentProducerTemplate.on(context)
     .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
     .withHeader(AtomixClientConstants.RESOURCE_TTL, "1s")
     .withBody(val)
-    .to("direct:start")
+    .to("atomix-map:map")
     .send();
 ----
 
