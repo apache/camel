@@ -94,8 +94,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
-    private static final int WORKER_POOL_SIZE = 10;
-    private static final int WORKER_POOL_MAX_SIZE = 20;
 
     @Metadata(description = "All authentication configuration in one nested bean, all properties set there can be set"
                             + " directly on the component as well",
@@ -189,6 +187,13 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
                             + " look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options.",
               label = "common,advanced")
     private Map<String, Object> httpClientProperties;
+
+    @Metadata(description = "Size of the thread pool used to handle HTTP responses.",
+              label = "common,advanced", defaultValue = "10")
+    private int workerPoolSize = 10;
+    @Metadata(description = "Maximum size of the thread pool used to handle HTTP responses.",
+              label = "common,advanced", defaultValue = "20")
+    private int workerPoolMaxSize = 20;
 
     @Metadata(description = "Used to set any properties that can be configured on the LongPollingTransport used by the"
                             + " BayeuxClient (CometD) used by the streaming api",
@@ -391,7 +396,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
-            httpClient = createHttpClient(this, sslContextFactory, getCamelContext());
+            httpClient = createHttpClient(this, sslContextFactory, getCamelContext(), workerPoolSize, workerPoolMaxSize);
             if (config != null) {
                 config.setHttpClient(httpClient);
             }
@@ -732,6 +737,22 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         this.httpProxyUseDigestAuth = httpProxyUseDigestAuth;
     }
 
+    public int getWorkerPoolSize() {
+        return workerPoolSize;
+    }
+
+    public void setWorkerPoolSize(int workerPoolSize) {
+        this.workerPoolSize = workerPoolSize;
+    }
+
+    public int getWorkerPoolMaxSize() {
+        return workerPoolMaxSize;
+    }
+
+    public void setWorkerPoolMaxSize(int workerPoolMaxSize) {
+        this.workerPoolMaxSize = workerPoolMaxSize;
+    }
+
     public String getPackages() {
         return packages;
     }
@@ -797,7 +818,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
 
-        final SalesforceHttpClient httpClient = createHttpClient("SalesforceComponent", sslContextFactory, camelContext);
+        final SalesforceHttpClient httpClient
+                = createHttpClient("SalesforceComponent", sslContextFactory, camelContext, 10, 20);
         setupHttpClient(httpClient, camelContext, properties);
 
         final SalesforceSession session = new SalesforceSession(camelContext, httpClient, httpClient.getTimeout(), loginConfig);
@@ -811,12 +833,13 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     static SalesforceHttpClient createHttpClient(
-            Object source, final SslContextFactory sslContextFactory, final CamelContext context) {
+            Object source, final SslContextFactory sslContextFactory, final CamelContext context, int workerPoolSize,
+            int workerPoolMaxSize) {
         SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(
-                context.getExecutorServiceManager().newThreadPool(source, "SalesforceHttpClient", WORKER_POOL_SIZE,
-                        WORKER_POOL_MAX_SIZE),
+                context.getExecutorServiceManager().newThreadPool(source, "SalesforceHttpClient", workerPoolSize,
+                        workerPoolMaxSize),
                 sslContextFactory);
         // default settings, use httpClientProperties to set other
         // properties

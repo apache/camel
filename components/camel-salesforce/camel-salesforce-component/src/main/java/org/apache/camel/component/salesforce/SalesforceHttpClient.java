@@ -113,6 +113,12 @@ public class SalesforceHttpClient extends HttpClient {
         super.doStart();
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        workerPool.shutdown();
+        super.doStop();
+    }
+
     public SalesforceSession getSession() {
         return session;
     }
