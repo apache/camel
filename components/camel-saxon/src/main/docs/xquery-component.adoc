@@ -217,38 +217,6 @@ attribute:
 <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
 -------------------------------------------------------------------------------
 
-== Using XQuery as transformation
-
-We can do a message translation using transform or setBody in the route,
-as shown below:
-
-[source,java]
-----------------------------------------
-from("direct:start").
-   transform().xquery("/people/person");
-----------------------------------------
-
-Notice that xquery will use DOMResult by default, so if we want to grab
-the value of the person node, using text() we need to tell xquery to use
-String as result type, as shown:
-
-[source,java]
--------------------------------------------------------------
-from("direct:start").
-   transform().xquery("/people/person/text()", String.class);
--------------------------------------------------------------
-
-If you want to use camel variables like headers, you have to explicitly declare them in the xquery expression.
-[source,xml]
--------------------------------------------------------------
-<transform>
-    <xquery>
-        declare variable $in.headers.foo external;
-        element item {$in.headers.foo}
-    </xquery>
-</transform>
--------------------------------------------------------------
-
 
 == Using XQuery as an endpoint
 
@@ -271,27 +239,17 @@ The following example shows how to take a message of an ActiveMQ queue
   </camelContext>
 -------------------------------------------------------------------------
 
-== Examples
+== Loading script from external resource
 
-Here is a simple using an XQuery expression as a predicate in a Message Filter
-
-[source,java]
-----
-from("direct:start")
-  .filter().xquery("/person[@name='James']")
-  .to("mock:result");
-----
-
-This uses XQuery with namespaces as a predicate in a Message Filter
+You can externalize the script and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+This is done using the following syntax: `"resource:scheme:location"`,
+e.g. to refer to a file on the classpath you can do:
 
 [source,java]
-----
-Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
-
-from("direct:start")
-  .filter().xquery("/c:person[@name='James']", ns)
-  .to("mock:result");
-----
+------------------------------------------------------------------------------
+.setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
+------------------------------------------------------------------------------
 
 == Learning XQuery
 
@@ -300,19 +258,6 @@ returning XML. For help learning XQuery try these tutorials
 
 * Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery Primer]
 * The W3Schools http://www.w3schools.com/xquery/default.asp[XQuery Tutorial]
-* XQuery reference http://www.w3.org/TR/xpath-functions/[XQuery function reference]
-
-== Loading script from external resource
-
-You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`. +
- This is done using the following syntax: `"resource:scheme:location"`,
-eg to refer to a file on the classpath you can do:
-
-[source,java]
-------------------------------------------------------------------------------
-.setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
-------------------------------------------------------------------------------
 
 == Dependencies
 
