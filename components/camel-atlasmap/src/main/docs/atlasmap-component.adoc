@@ -130,7 +130,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-== Samples
+== Examples
 
 For example you could use something like
 
