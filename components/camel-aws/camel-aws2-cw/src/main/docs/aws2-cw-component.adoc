@@ -225,4 +225,23 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `${camel-version`} must be replaced by the actual version of Camel.
 
+== Examples
+
+=== Producer Example
+
+[source,java]
+-------------------------------
+from("direct:start")
+  .to("aws2-cw://http://camel.apache.org/aws-cw");
+-------------------------------
+
+and sends something like
+
+[source,java]
+-------------------------------
+exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "ExchangesCompleted");
+exchange.getIn().setHeader(Cw2Constants.METRIC_VALUE, "2.0");
+exchange.getIn().setHeader(Cw2Constants.METRIC_UNIT, "Count");
+-------------------------------
+
 include::{page-component-version}@camel-spring-boot::page$aws2-cw-starter.adoc[]
