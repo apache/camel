@@ -53,9 +53,6 @@ public final class ObjectHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
 
-    private static final Float FLOAT_NAN = Float.NaN;
-    private static final Double DOUBLE_NAN = Double.NaN;
-
     /**
      * Utility classes should not have a public constructor.
      */
@@ -176,7 +173,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <tt>null</tt> or an empty string.
+     * Tests whether the value is <tt>null</tt> or an empty string or an empty collection/map.
      *
      * @param  value the value, if its a String it will be tested for text length as well
      * @return       true if empty
@@ -202,17 +199,7 @@ public final class ObjectHelper {
      * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(Object value) {
-        if (value == null) {
-            return false;
-        } else if (value instanceof String) {
-            return !((String) value).trim().isEmpty();
-        } else if (value instanceof Collection) {
-            return !((Collection<?>) value).isEmpty();
-        } else if (value instanceof Map) {
-            return !((Map<?, ?>) value).isEmpty();
-        } else {
-            return true;
-        }
+        return !isEmpty(value);
     }
 
     /**
@@ -1151,7 +1138,8 @@ public final class ObjectHelper {
      * @return       <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
-        return value instanceof Number && (FLOAT_NAN.equals(value) || DOUBLE_NAN.equals(value));
+        return value instanceof Float && ((Float) value).isNaN()
+                || value instanceof Double && ((Double) value).isNaN();
     }
 
     /**
