@@ -155,39 +155,30 @@ Whereas there are 4 types of producers which are
 
 == Examples
 
-These example are taken from tests:
+=== Consumer Example
 
 [source,java]
 -------------------------------
-from("atmos:foo/get?remotePath=/path").to("mock:test");
+from("atmos:foo/get?remotePath=/path")
+  .to("mock:test");
 -------------------------------
 
-Here, this is a consumer example.
 `remotePath` represents the path from where the data will
 be read and passes the camel exchange to regarding producer
-Underneath, this component uses atmos client API for this and
+Underneath, this component uses Atmos client API for this and
 every other operations.
+
+=== Producer Example
 
 [source,java]
 -------------------------------
 from("direct:start")
-.to("atmos://get?remotePath=/dummy/dummy.txt")
-.to("mock:result");
+  .to("atmos://get?remotePath=/dummy/dummy.txt")
 -------------------------------
 
-Here, this a producer sample.
 `remotePath` represents the path where the operations occur
 on ViPR object data service. In producers, operations(`Get`,`Del`,
 `Move`,`Put`) run on ViPR object data services and results are set 
 on headers of camel exchange.
-
-Regarding the operations, the following headers are set on camel
-exhange
-
-[source,text]
--------------------------------
-DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH;
--------------------------------
-
 
 include::{page-component-version}@camel-spring-boot::page$atmos-starter.adoc[]
