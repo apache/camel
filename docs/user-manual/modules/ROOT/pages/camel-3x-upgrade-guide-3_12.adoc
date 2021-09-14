@@ -73,4 +73,4 @@ Both of the options are false by default. So, you'll need to set both to true if
 
 === camel-huawei
 
-All Huawei Cloud components use AK/SK as security keys to authenticate against the hauwei cloud backend services. Initally AK was mapped to authenticationKey in the endpoint class. To be in-line with Huawei Cloud's naming conventions, we have renamed this variable from authenticationKey to accessKey. This is a breaking change for users who are already using huawei cloud components until version 3.11.x. 
+All Huawei Cloud components use AK/SK as security keys to authenticate against the hauwei cloud backend services. Initally AK was mapped to authenticationKey in the endpoint class. To be in-line with Huawei Cloud's naming conventions, we have renamed this option from `authenticationKey` to `accessKey` for all components. This is a breaking change for users who are already using huawei cloud components until version 3.11.x. 
