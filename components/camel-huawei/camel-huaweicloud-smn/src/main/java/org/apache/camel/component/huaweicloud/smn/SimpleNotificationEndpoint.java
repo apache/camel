@@ -51,9 +51,9 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Authentication key for the cloud user", displayName = "API authentication key (AK)", secret = true)
+    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", secret = true)
     @Metadata(required = true)
-    private String authKey;
+    private String accessKey;
 
     @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true)
     @Metadata(required = true)
@@ -150,12 +150,12 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
         this.serviceKeys = serviceKeys;
     }
 
-    public String getAuthKey() {
-        return authKey;
+    public String getAccessKey() {
+        return accessKey;
     }
 
-    public void setAuthKey(String authKey) {
-        this.authKey = authKey;
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {

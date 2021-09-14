@@ -21,8 +21,8 @@ public class SimpleNotificationEndpointConfigurer extends PropertyConfigurerSupp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SimpleNotificationEndpoint target = (SimpleNotificationEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authkey":
-        case "authKey": target.setAuthKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "accesskey":
+        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "ignoresslverification":
         case "ignoreSslVerification": target.setIgnoreSslVerification(property(camelContext, boolean.class, value)); return true;
@@ -53,8 +53,8 @@ public class SimpleNotificationEndpointConfigurer extends PropertyConfigurerSupp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authkey":
-        case "authKey": return java.lang.String.class;
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
         case "endpoint": return java.lang.String.class;
         case "ignoresslverification":
         case "ignoreSslVerification": return boolean.class;
@@ -86,8 +86,8 @@ public class SimpleNotificationEndpointConfigurer extends PropertyConfigurerSupp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SimpleNotificationEndpoint target = (SimpleNotificationEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authkey":
-        case "authKey": return target.getAuthKey();
+        case "accesskey":
+        case "accessKey": return target.getAccessKey();
         case "endpoint": return target.getEndpoint();
         case "ignoresslverification":
         case "ignoreSslVerification": return target.isIgnoreSslVerification();

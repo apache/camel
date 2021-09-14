@@ -91,10 +91,10 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Authentication key for the cloud user", displayName = "API authentication key (AK)", secret = true,
+    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", secret = true,
               label = "security")
     @Metadata(required = true)
-    private String authenticationKey;
+    private String accessKey;
 
     @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true,
               label = "security")
@@ -215,12 +215,12 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
         this.serviceKeys = serviceKeys;
     }
 
-    public String getAuthenticationKey() {
-        return authenticationKey;
+    public String getAccessKey() {
+        return accessKey;
     }
 
-    public void setAuthenticationKey(String authenticationKey) {
-        this.authenticationKey = authenticationKey;
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
@@ -252,8 +252,8 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
         // setup AK/SK credential information. User can input AK/SK through the ServiceKeys class, which, if provided, overrides the AK/SK passed through the endpoint
         BasicCredentials auth = new BasicCredentials()
                 .withAk(getServiceKeys() != null
-                        ? getServiceKeys().getAuthenticationKey()
-                        : getAuthenticationKey())
+                        ? getServiceKeys().getAccessKey()
+                        : getAccessKey())
                 .withSk(getServiceKeys() != null
                         ? getServiceKeys().getSecretKey()
                         : getSecretKey())

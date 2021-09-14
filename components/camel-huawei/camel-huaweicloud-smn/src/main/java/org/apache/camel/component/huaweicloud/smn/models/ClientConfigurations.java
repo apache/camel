@@ -20,7 +20,7 @@ public class ClientConfigurations {
 
     private String operation;
     private String secretKey;
-    private String authenticationkey;
+    private String accessKey;
     private String projectId;
     private String topicUrn;
     private String subject;
@@ -48,12 +48,12 @@ public class ClientConfigurations {
         this.secretKey = secretKey;
     }
 
-    public String getAuthenticationkey() {
-        return authenticationkey;
+    public String getAccessKey() {
+        return accessKey;
     }
 
-    public void setAuthenticationkey(String authenticationkey) {
-        this.authenticationkey = authenticationkey;
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 
     public String getProjectId() {

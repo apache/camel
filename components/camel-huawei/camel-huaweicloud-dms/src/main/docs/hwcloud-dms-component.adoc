@@ -113,8 +113,8 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *accessKey* (producer) | *Required* Access key for the cloud user |  | String
 | *accessUser* (producer) | The username of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance. |  | String
-| *authenticationKey* (producer) | *Required* Authentication key for the cloud user |  | String
 | *availableZones* (producer) | The ID of an available zone. This option is mandatory when creating an instance and it cannot be an empty array. |  | List
 | *endpoint* (producer) | DMS url. Carries higher precedence than region parameter based client initialization |  | String
 | *engine* (producer) | The message engine. Either kafka or rabbitmq. If the parameter is not specified, all instances will be queried. There are 2 enums and the value can be one of: kafka, rabbitmq |  | String
@@ -222,14 +222,14 @@ To create an instance, you can pass the parameters through the endpoint, the exc
 ----
 from("direct:triggerRoute")
  .setBody(new CreateInstanceRequestBody().withName("new-instance").withDescription("description").with*) // add remaining options
- .to("hwcloud-dms:createInstance?region=cn-north-4&authenticationKey=********&secretKey=********&projectId=*******")
+ .to("hwcloud-dms:createInstance?region=cn-north-4&accessKey=********&secretKey=********&projectId=*******")
 ----
 
 [source,java]
 ----
 from("direct:triggerRoute")
  .setBody("{\"name\":\"new-instance\",\"description\":\"description\"}") // add remaining options
- .to("hwcloud-dms:createInstance?region=cn-north-4&authenticationKey=********&secretKey=********&projectId=*******")
+ .to("hwcloud-dms:createInstance?region=cn-north-4&accessKey=********&secretKey=********&projectId=*******")
 ----
 
 === Update Instance
@@ -239,19 +239,19 @@ To update an instance, you must pass the parameters through the exchange body as
 ----
 from("direct:triggerRoute")
  .setBody(new UpdateInstanceRequestBody().withName("new-instance").withDescription("description").with*) // add remaining options
- .to("hwcloud-dms:updateInstance?instanceId=******&region=cn-north-4&authenticationKey=********&secretKey=********&projectId=*******")
+ .to("hwcloud-dms:updateInstance?instanceId=******&region=cn-north-4&accessKey=********&secretKey=********&projectId=*******")
 ----
 
 [source,java]
 ----
 from("direct:triggerRoute")
  .setBody("{\"name\":\"new-instance\",\"description\":\"description\"}") // add remaining options
- .to("hwcloud-dms:updateInstance?instanceId=******&region=cn-north-4&authenticationKey=********&secretKey=********&projectId=*******")
+ .to("hwcloud-dms:updateInstance?instanceId=******&region=cn-north-4&accessKey=********&secretKey=********&projectId=*******")
 ----
 
 == Using ServiceKey Configuration Bean
 
-Authentication key and secret keys are required to authenticate against cloud DMS service. You can avoid having them being exposed
+Access key and secret keys are required to authenticate against cloud DMS service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.common.models.ServiceKeys`.
 Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
 
@@ -260,7 +260,7 @@ Check the following code snippets:
 [source,xml]
 ----
 <bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.common.models.ServiceKeys">
-   <property name="authenticationKey" value="your_authentication_key" />
+   <property name="accessKey" value="your_access_key" />
    <property name="secretKey" value="your_secret_key" />
 </bean>
 ----

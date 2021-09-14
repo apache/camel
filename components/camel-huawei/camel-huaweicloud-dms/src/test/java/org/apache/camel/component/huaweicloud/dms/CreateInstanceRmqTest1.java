@@ -40,7 +40,7 @@ public class CreateInstanceRmqTest1 extends CamelTestSupport {
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("authenticationKey"),
+            testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
     @BindToRegistry("availableZones")

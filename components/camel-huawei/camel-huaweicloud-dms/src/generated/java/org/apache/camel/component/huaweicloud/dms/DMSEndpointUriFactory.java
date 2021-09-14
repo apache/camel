@@ -39,10 +39,10 @@ public class DMSEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("secretKey");
         props.add("proxyPassword");
         props.add("specification");
-        props.add("authenticationKey");
         props.add("proxyHost");
         props.add("lazyStartProducer");
         props.add("storageSpecCode");
+        props.add("accessKey");
         props.add("availableZones");
         props.add("name");
         props.add("proxyUser");
@@ -55,9 +55,9 @@ public class DMSEndpointUriFactory extends org.apache.camel.support.component.En
         Set<String> secretProps = new HashSet<>(5);
         secretProps.add("serviceKeys");
         secretProps.add("secretKey");
+        secretProps.add("accessKey");
         secretProps.add("proxyPassword");
         secretProps.add("proxyUser");
-        secretProps.add("authenticationKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 

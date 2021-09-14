@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PublishTextMessageFunctionalTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublishTemplatedMessageTest.class.getName());
 
-    private static final String AUTH_KEY = "replace_this_with_auth_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String NOTIFICATION_SUBJECT = "sample notification subjectline";
     private static final String TOPIC_NAME = "replace_this_with_topic_name";
@@ -43,7 +43,7 @@ public class PublishTextMessageFunctionalTest extends CamelTestSupport {
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys
-            = new ServiceKeys(AUTH_KEY, SECRET_KEY);
+            = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -52,7 +52,7 @@ public class PublishTextMessageFunctionalTest extends CamelTestSupport {
                         .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant(NOTIFICATION_SUBJECT))
                         .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(TOPIC_NAME))
                         .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
-                        .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&authKey=" + AUTH_KEY
+                        .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&accessKey=" + ACCESS_KEY
                             + "&secretKey=" + SECRET_KEY
                             + "&projectId=" + PROJECT_ID
                             + "&region=" + REGION

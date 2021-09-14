@@ -150,7 +150,7 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *authenticationKey* (security) | *Required* Authentication key for the cloud user |  | String
+| *accessKey* (security) | *Required* Access key for the cloud user |  | String
 | *ignoreSslVerification* (security) | Ignore SSL verification | false | boolean
 | *secretKey* (security) | *Required* Secret key for the cloud user |  | String
 | *serviceKeys* (security) | Configuration object for cloud service authentication |  | ServiceKeys
@@ -229,14 +229,14 @@ If you would like to configure all the https://support.huaweicloud.com/intl/en-u
 ----
 from("direct:triggerRoute")
  .setBody(new CreateBucketRequest("Bucket name", "Bucket location"))
- .to("hwcloud-obs:createBucket?region=cn-north-4&authenticationKey=********&secretKey=********")
+ .to("hwcloud-obs:createBucket?region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 [source,java]
 ----
 from("direct:triggerRoute")
  .setBody("{\"bucketName\":\"Bucket name\",\"location\":\"Bucket location\"}")
- .to("hwcloud-obs:createBucket?region=cn-north-4&authenticationKey=********&secretKey=********")
+ .to("hwcloud-obs:createBucket?region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 If you would like to configure all the https://support.huaweicloud.com/intl/en-us/api-obs/obs_04_0022.html[parameters] when listing objects, you can pass a https://obssdk-intl.obs.ap-southeast-1.myhuaweicloud.com/apidoc/en/java/com/obs/services/model/ListObjectsRequest.html[ListObjectsRequest] object or a Json string into the exchange body. If the exchange body is empty, objects will be listed based on the bucketName passed through the endpoint uri.
@@ -245,20 +245,20 @@ If you would like to configure all the https://support.huaweicloud.com/intl/en-u
 ----
 from("direct:triggerRoute")
  .setBody(new ListObjectsRequest("Bucket name", 1000))
- .to("hwcloud-obs:listObjects?region=cn-north-4&authenticationKey=********&secretKey=********")
+ .to("hwcloud-obs:listObjects?region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 [source,java]
 ----
 from("direct:triggerRoute")
  .setBody("{\"bucketName\":\"Bucket name\",\"maxKeys\":1000"}")
- .to("hwcloud-obs:listObjects?region=cn-north-4&authenticationKey=********&secretKey=********")
+ .to("hwcloud-obs:listObjects?region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 
 == Using ServiceKey Configuration Bean
 
-Authentication key and secret keys are required to authenticate against the OBS cloud. You can avoid having them being exposed
+Access key and secret keys are required to authenticate against the OBS cloud. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.obs.models.ServiceKeys`.
 Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
 
@@ -267,7 +267,7 @@ Check the following code snippets:
 [source,xml]
 ----
 <bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.obs.models.ServiceKeys">
-   <property name="authenticationKey" value="your_authentication_key" />
+   <property name="accessKey" value="your_access_key" />
    <property name="secretKey" value="your_secret_key" />
 </bean>
 ----

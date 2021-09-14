@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class UpdateUserFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateUserFunctionalTest.class.getName());
 
-    private static final String AUTHENTICATION_KEY = "replace_this_with_authentication_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String REGION = "replace_this_with_region";
     private static final String USER_ID = "replace_this_with_user_id";
@@ -42,7 +42,7 @@ public class UpdateUserFunctionalTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:update_user")
                         .to("hwcloud-iam:updateUser?" +
-                            "authenticationKey=" + AUTHENTICATION_KEY +
+                            "accessKey=" + ACCESS_KEY +
                             "&secretKey=" + SECRET_KEY +
                             "&region=" + REGION +
                             "&userId=" + USER_ID +

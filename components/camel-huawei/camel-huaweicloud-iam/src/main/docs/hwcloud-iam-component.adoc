@@ -112,7 +112,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *authenticationKey* (producer) | *Required* Authentication key for the cloud user |  | String
+| *accessKey* (producer) | *Required* Access key for the cloud user |  | String
 | *groupId* (producer) | Group ID to perform operation with |  | String
 | *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -164,14 +164,14 @@ For the `updateUser` operation, you can pass the user options as an UpdateUserOp
 ----
 from("direct:triggerRoute")
  .setBody(new UpdateUserOption().withName("user").withDescription("employee").withEmail("user@email.com"))
- .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&authenticationKey=********&secretKey=********")
+ .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 [source,java]
 ----
 from("direct:triggerRoute")
  .setBody("{\"name\":\"user\",\"description\":\"employee\",\"email\":\"user@email.com\"}")
- .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&authenticationKey=********&secretKey=********")
+ .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 For the `updateGroup` operation, you can pass the group options as a KeystoneUpdateGroupOption object or a Json string:
@@ -180,19 +180,19 @@ For the `updateGroup` operation, you can pass the group options as a KeystoneUpd
 ----
 from("direct:triggerRoute")
  .setBody(new KeystoneUpdateGroupOption().withName("group").withDescription("employees").withDomainId("1234"))
- .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&authenticationKey=********&secretKey=********")
+ .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 [source,java]
 ----
 from("direct:triggerRoute")
  .setBody("{\"name\":\"group\",\"description\":\"employees\",\"domain_id\":\"1234\"}")
- .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&authenticationKey=********&secretKey=********")
+ .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 == Using ServiceKey Configuration Bean
 
-Authentication key and secret keys are required to authenticate against cloud IAM service. You can avoid having them being exposed
+Access key and secret keys are required to authenticate against cloud IAM service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.iam.models.ServiceKeys`.
 Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
 
@@ -201,7 +201,7 @@ Check the following code snippets:
 [source,xml]
 ----
 <bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.iam.models.ServiceKeys">
-   <property name="authenticationKey" value="your_authentication_key" />
+   <property name="accessKey" value="your_access_key" />
    <property name="secretKey" value="your_secret_key" />
 </bean>
 ----

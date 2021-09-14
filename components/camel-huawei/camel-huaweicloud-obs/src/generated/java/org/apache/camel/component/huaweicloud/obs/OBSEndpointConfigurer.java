@@ -21,8 +21,8 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OBSEndpoint target = (OBSEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authenticationkey":
-        case "authenticationKey": target.setAuthenticationKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "accesskey":
+        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -101,8 +101,8 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authenticationkey":
-        case "authenticationKey": return java.lang.String.class;
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
         case "backoffidlethreshold":
@@ -182,8 +182,8 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OBSEndpoint target = (OBSEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authenticationkey":
-        case "authenticationKey": return target.getAuthenticationKey();
+        case "accesskey":
+        case "accessKey": return target.getAccessKey();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":

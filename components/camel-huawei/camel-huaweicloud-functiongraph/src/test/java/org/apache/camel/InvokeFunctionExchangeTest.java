@@ -48,7 +48,7 @@ public class InvokeFunctionExchangeTest extends CamelTestSupport {
                         .setProperty(FunctionGraphProperties.FUNCTION_PACKAGE,
                                 constant(testConfiguration.getProperty("functionPackage")))
                         .to("hwcloud-functiongraph:?" +
-                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "accessKey=" + testConfiguration.getProperty("accessKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
                             "&projectId=" + testConfiguration.getProperty("projectId") +
                             "&region=" + testConfiguration.getProperty("region") +

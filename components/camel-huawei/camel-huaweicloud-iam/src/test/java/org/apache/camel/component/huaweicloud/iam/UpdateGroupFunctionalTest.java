@@ -34,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class UpdateGroupFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateGroupFunctionalTest.class.getName());
 
-    private static final String AUTHENTICATION_KEY = "replace_this_with_authentication_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String REGION = "replace_this_with_region";
     private static final String GROUP_ID = "replace_this_with_group_id";
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(AUTHENTICATION_KEY, SECRET_KEY);
+    ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -48,7 +48,7 @@ public class UpdateGroupFunctionalTest extends CamelTestSupport {
                 from("direct:update_group")
                         .setProperty("CamelHwCloudIamGroupId", constant(GROUP_ID))
                         .to("hwcloud-iam:updateGroup?" +
-                            "authenticationKey=" + AUTHENTICATION_KEY +
+                            "accessKey=" + ACCESS_KEY +
                             "&secretKey=" + SECRET_KEY +
                             "&region=" + REGION +
                             "&ignoreSslVerification=true" +

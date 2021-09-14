@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GetUserFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GetUserFunctionalTest.class.getName());
 
-    private static final String AUTHENTICATION_KEY = "replace_this_with_authentication_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String REGION = "replace_this_with_region";
     private static final String USER_ID = "replace_this_with_user_id";
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(AUTHENTICATION_KEY, SECRET_KEY);
+    ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

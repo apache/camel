@@ -21,8 +21,8 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IAMEndpoint target = (IAMEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authenticationkey":
-        case "authenticationKey": target.setAuthenticationKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "accesskey":
+        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "groupid":
         case "groupId": target.setGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "ignoresslverification":
@@ -51,8 +51,8 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authenticationkey":
-        case "authenticationKey": return java.lang.String.class;
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
         case "groupid":
         case "groupId": return java.lang.String.class;
         case "ignoresslverification":
@@ -82,8 +82,8 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         IAMEndpoint target = (IAMEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authenticationkey":
-        case "authenticationKey": return target.getAuthenticationKey();
+        case "accesskey":
+        case "accessKey": return target.getAccessKey();
         case "groupid":
         case "groupId": return target.getGroupId();
         case "ignoresslverification":

@@ -32,7 +32,7 @@ public class TestConfiguration {
 
     private void initPropertyMap() {
         propertyMap = new HashMap<>();
-        propertyMap.put("authenticationKey", "dummy_authentication_key");
+        propertyMap.put("accessKey", "dummy_access_key");
         propertyMap.put("secretKey", "dummy_secret_key");
         propertyMap.put("region", "dummy_region");
         propertyMap.put("endpoint", "dummy_endpoint");

@@ -50,13 +50,13 @@ public class OBSEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("exchangePattern");
         props.add("proxyPassword");
         props.add("includeFolders");
-        props.add("authenticationKey");
         props.add("proxyHost");
         props.add("backoffIdleThreshold");
         props.add("lazyStartProducer");
         props.add("delay");
         props.add("pollStrategy");
         props.add("startScheduler");
+        props.add("accessKey");
         props.add("deleteAfterRead");
         props.add("proxyUser");
         props.add("region");
@@ -66,9 +66,9 @@ public class OBSEndpointUriFactory extends org.apache.camel.support.component.En
         Set<String> secretProps = new HashSet<>(5);
         secretProps.add("serviceKeys");
         secretProps.add("secretKey");
+        secretProps.add("accessKey");
         secretProps.add("proxyPassword");
         secretProps.add("proxyUser");
-        secretProps.add("authenticationKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 

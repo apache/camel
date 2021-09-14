@@ -116,7 +116,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *authKey* (producer) | *Required* Authentication key for the cloud user |  | String
+| *accessKey* (producer) | *Required* Access key for the cloud user |  | String
 | *endpoint* (producer) | Fully qualified smn service url. Carries higher precedence than region parameter based client initialization |  | String
 | *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -188,7 +188,7 @@ from("direct:triggerRoute")
 .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Notification Subject"))
 .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME,constant(testConfiguration.getProperty("topic")))
 .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
-.to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&authKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
+.to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 --------------------------------------------------------------------------------
 
 XML DSL
@@ -205,7 +205,7 @@ XML DSL
    <setProperty name="CamelHwCloudSmnMessageTtl">
       <constant>60</constant>
    </setProperty>
-   <to uri="hwcloud-smn:publishMessageService?operation=publishAsTextMessage&amp;authKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+   <to uri="hwcloud-smn:publishMessageService?operation=publishAsTextMessage&amp;accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
 </route>
 --------------------------------------------------------------------------------
 
@@ -221,12 +221,12 @@ from("direct:triggerRoute")
 .setProperty("CamelHwCloudSmnMessageTtl", constant(60))
 .setProperty("CamelHwCloudSmnTemplateTags", constant(tags))
 .setProperty("CamelHwCloudSmnTemplateName", constant("hello-template"))
-.to("hwcloud-smn:publishMessageService?operation=publishAsTemplatedMessage&authKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
+.to("hwcloud-smn:publishMessageService?operation=publishAsTemplatedMessage&accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 --------------------------------------------------------------------------------
 
 == Using ServiceKey configuration Bean
 
-Authentication key and secret keys are required to authenticate against cloud smn service. You can avoid having them being exposed
+Access key and secret keys are required to authenticate against cloud smn service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class ```org.apache.camel.component.huaweicloud.smn.models.ServiceKeys```.
 Add it to the registry and let camel look it up by referring the object via endpoint query parameter ```serviceKeys```.
 Check the following code snippets
@@ -234,7 +234,7 @@ Check the following code snippets
 [source,xml]
 ----
 <bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.smn.models.ServiceKeys">
-   <property name="authenticationKey" value="your_auth_key" />
+   <property name="accessKey" value="your_access_key" />
    <property name="secretKey" value="your_secret_key" />
 </bean>
 ----

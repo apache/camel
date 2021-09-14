@@ -42,7 +42,7 @@ public class UpdateUserTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:update_user")
                         .to("hwcloud-iam:updateUser?" +
-                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "accessKey=" + testConfiguration.getProperty("accessKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&userId=" + testConfiguration.getProperty("userId") +

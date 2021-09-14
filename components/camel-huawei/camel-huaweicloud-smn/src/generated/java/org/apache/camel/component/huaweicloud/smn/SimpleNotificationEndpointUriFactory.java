@@ -21,7 +21,6 @@ public class SimpleNotificationEndpointUriFactory extends org.apache.camel.suppo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
         Set<String> props = new HashSet<>(15);
-        props.add("authKey");
         props.add("serviceKeys");
         props.add("secretKey");
         props.add("proxyPassword");
@@ -30,6 +29,7 @@ public class SimpleNotificationEndpointUriFactory extends org.apache.camel.suppo
         props.add("proxyPort");
         props.add("endpoint");
         props.add("lazyStartProducer");
+        props.add("accessKey");
         props.add("proxyUser");
         props.add("messageTtl");
         props.add("region");
@@ -38,9 +38,9 @@ public class SimpleNotificationEndpointUriFactory extends org.apache.camel.suppo
         props.add("smnService");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(5);
-        secretProps.add("authKey");
         secretProps.add("serviceKeys");
         secretProps.add("secretKey");
+        secretProps.add("accessKey");
         secretProps.add("proxyPassword");
         secretProps.add("proxyUser");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);

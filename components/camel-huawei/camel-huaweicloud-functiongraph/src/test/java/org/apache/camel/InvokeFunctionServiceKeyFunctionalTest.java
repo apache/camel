@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class InvokeFunctionServiceKeyFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(InvokeFunctionServiceKeyFunctionalTest.class.getName());
 
-    private static final String AUTHENTICATION_KEY = "replace_this_with_authentication_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String FUNCTION_NAME = "replace_this_with_function_name";
     private static final String FUNCTION_PACKAGE = "replace_this_with_function_package";
@@ -40,7 +40,7 @@ public class InvokeFunctionServiceKeyFunctionalTest extends CamelTestSupport {
     private static final String REGION = "replace_this_with_region";
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(AUTHENTICATION_KEY, SECRET_KEY);
+    ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

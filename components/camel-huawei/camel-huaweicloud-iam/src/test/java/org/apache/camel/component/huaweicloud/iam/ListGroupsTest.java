@@ -41,7 +41,7 @@ public class ListGroupsTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:list_groups")
                         .to("hwcloud-iam:listGroups?" +
-                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "accessKey=" + testConfiguration.getProperty("accessKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&ignoreSslVerification=true" +

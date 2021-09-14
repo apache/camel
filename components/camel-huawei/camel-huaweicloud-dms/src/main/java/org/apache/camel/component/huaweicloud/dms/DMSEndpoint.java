@@ -83,9 +83,9 @@ public class DMSEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Authentication key for the cloud user", displayName = "API authentication key (AK)", secret = true)
+    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", secret = true)
     @Metadata(required = true)
-    private String authenticationKey;
+    private String accessKey;
 
     @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true)
     @Metadata(required = true)
@@ -272,12 +272,12 @@ public class DMSEndpoint extends DefaultEndpoint {
         this.serviceKeys = serviceKeys;
     }
 
-    public String getAuthenticationKey() {
-        return authenticationKey;
+    public String getAccessKey() {
+        return accessKey;
     }
 
-    public void setAuthenticationKey(String authenticationKey) {
-        this.authenticationKey = authenticationKey;
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
@@ -438,8 +438,8 @@ public class DMSEndpoint extends DefaultEndpoint {
         }
 
         // check for mandatory AK/SK in ServiceKeys object or in endpoint
-        if (ObjectHelper.isEmpty(getServiceKeys()) && ObjectHelper.isEmpty(getAuthenticationKey())) {
-            throw new IllegalArgumentException("Authentication parameter 'authentication key (AK)' not found");
+        if (ObjectHelper.isEmpty(getServiceKeys()) && ObjectHelper.isEmpty(getAccessKey())) {
+            throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
         }
         if (ObjectHelper.isEmpty(getServiceKeys()) && ObjectHelper.isEmpty(getSecretKey())) {
             throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
@@ -448,8 +448,8 @@ public class DMSEndpoint extends DefaultEndpoint {
         // setup AK/SK credential information. AK/SK provided through ServiceKeys overrides the AK/SK passed through the endpoint
         BasicCredentials auth = new BasicCredentials()
                 .withAk(getServiceKeys() != null
-                        ? getServiceKeys().getAuthenticationKey()
-                        : getAuthenticationKey())
+                        ? getServiceKeys().getAccessKey()
+                        : getAccessKey())
                 .withSk(getServiceKeys() != null
                         ? getServiceKeys().getSecretKey()
                         : getSecretKey())

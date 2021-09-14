@@ -38,7 +38,7 @@ public class CheckBucketTest extends CamelTestSupport {
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("authenticationKey"),
+            testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -47,7 +47,7 @@ public class CheckBucketTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:check_bucket")
                         .to("hwcloud-obs:checkBucketExists?" +
-                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "accessKey=" + testConfiguration.getProperty("accessKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&bucketName=" + testConfiguration.getProperty("bucketName") +

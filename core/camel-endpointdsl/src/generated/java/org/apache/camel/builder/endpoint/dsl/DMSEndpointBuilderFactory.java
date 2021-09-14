@@ -38,6 +38,21 @@ public interface DMSEndpointBuilderFactory {
      */
     public interface DMSEndpointBuilder extends EndpointProducerBuilder {
         /**
+         * Access key for the cloud user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
+         */
+        default DMSEndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
          * The username of a RabbitMQ instance. This option is mandatory when
          * creating a RabbitMQ instance.
          * 
@@ -50,21 +65,6 @@ public interface DMSEndpointBuilderFactory {
          */
         default DMSEndpointBuilder accessUser(String accessUser) {
             doSetProperty("accessUser", accessUser);
-            return this;
-        }
-        /**
-         * Authentication key for the cloud user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: producer
-         * 
-         * @param authenticationKey the value to set
-         * @return the dsl builder
-         */
-        default DMSEndpointBuilder authenticationKey(String authenticationKey) {
-            doSetProperty("authenticationKey", authenticationKey);
             return this;
         }
         /**

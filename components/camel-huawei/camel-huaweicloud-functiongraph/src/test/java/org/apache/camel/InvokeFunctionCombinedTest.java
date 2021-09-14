@@ -48,7 +48,7 @@ public class InvokeFunctionCombinedTest extends CamelTestSupport {
                         .setProperty(FunctionGraphProperties.FUNCTION_PACKAGE,
                                 constant(testConfiguration.getProperty("functionPackage")))
                         .to("hwcloud-functiongraph:dummy-operation?" +
-                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "accessKey=" + testConfiguration.getProperty("accessKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
                             "&projectId=" + testConfiguration.getProperty("projectId") +
                             "&region=dummy-region" +

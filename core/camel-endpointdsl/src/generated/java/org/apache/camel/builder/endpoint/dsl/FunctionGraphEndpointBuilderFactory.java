@@ -262,19 +262,18 @@ public interface FunctionGraphEndpointBuilderFactory {
             return this;
         }
         /**
-         * Authentication key for the cloud user.
+         * Access key for the cloud user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
          * 
-         * @param authenticationKey the value to set
+         * @param accessKey the value to set
          * @return the dsl builder
          */
-        default FunctionGraphEndpointBuilder authenticationKey(
-                String authenticationKey) {
-            doSetProperty("authenticationKey", authenticationKey);
+        default FunctionGraphEndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**

@@ -183,16 +183,16 @@ public class SimpleNotificationProducer extends DefaultProducer {
         }
 
         //checking for cloud AK (auth key)
-        if (ObjectHelper.isEmpty(simpleNotificationEndpoint.getAuthKey()) &&
+        if (ObjectHelper.isEmpty(simpleNotificationEndpoint.getAccessKey()) &&
                 ObjectHelper.isEmpty(simpleNotificationEndpoint.getServiceKeys())) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("authentication key (AK) not found");
+                LOG.error("access key (AK) not found");
             }
-            throw new IllegalArgumentException("authentication parameter 'authentication key (AK)' not found");
+            throw new IllegalArgumentException("authentication parameter 'access key (AK)' not found");
         } else {
-            clientConfigurations.setAuthenticationkey(simpleNotificationEndpoint.getAuthKey() != null
-                    ? simpleNotificationEndpoint.getAuthKey()
-                    : simpleNotificationEndpoint.getServiceKeys().getAuthenticationKey());
+            clientConfigurations.setAccessKey(simpleNotificationEndpoint.getAccessKey() != null
+                    ? simpleNotificationEndpoint.getAccessKey()
+                    : simpleNotificationEndpoint.getServiceKeys().getAccessKey());
         }
 
         //checking for project ID
@@ -269,7 +269,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
         }
 
         BasicCredentials credentials = new BasicCredentials()
-                .withAk(clientConfigurations.getAuthenticationkey())
+                .withAk(clientConfigurations.getAccessKey())
                 .withSk(clientConfigurations.getSecretKey())
                 .withProjectId(clientConfigurations.getProjectId());
 

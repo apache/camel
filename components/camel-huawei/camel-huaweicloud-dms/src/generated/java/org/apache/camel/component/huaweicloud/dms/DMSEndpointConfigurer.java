@@ -21,10 +21,10 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DMSEndpoint target = (DMSEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "accessuser":
         case "accessUser": target.setAccessUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "authenticationkey":
-        case "authenticationKey": target.setAuthenticationKey(property(camelContext, java.lang.String.class, value)); return true;
         case "availablezones":
         case "availableZones": target.setAvailableZones(property(camelContext, java.util.List.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
@@ -80,10 +80,10 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
         case "accessuser":
         case "accessUser": return java.lang.String.class;
-        case "authenticationkey":
-        case "authenticationKey": return java.lang.String.class;
         case "availablezones":
         case "availableZones": return java.util.List.class;
         case "endpoint": return java.lang.String.class;
@@ -140,10 +140,10 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DMSEndpoint target = (DMSEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return target.getAccessKey();
         case "accessuser":
         case "accessUser": return target.getAccessUser();
-        case "authenticationkey":
-        case "authenticationKey": return target.getAuthenticationKey();
         case "availablezones":
         case "availableZones": return target.getAvailableZones();
         case "endpoint": return target.getEndpoint();

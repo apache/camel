@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CheckBucketFunctionalTest extends CamelTestSupport {
 
-    private static final String AUTHENTICATION_KEY = "replace_this_with_authentication_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String REGION = "replace_this_with_region";
     private static final String BUCKET_NAME = "replace_this_with_bucket_name";
@@ -39,7 +39,7 @@ public class CheckBucketFunctionalTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:check_bucket")
                         .to("hwcloud-obs:checkBucketExists?" +
-                            "authenticationKey=" + AUTHENTICATION_KEY +
+                            "accessKey=" + ACCESS_KEY +
                             "&secretKey=" + SECRET_KEY +
                             "&region=" + REGION +
                             "&bucketName=" + BUCKET_NAME +

@@ -21,8 +21,8 @@ public class FunctionGraphEndpointConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FunctionGraphEndpoint target = (FunctionGraphEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authenticationkey":
-        case "authenticationKey": target.setAuthenticationKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "accesskey":
+        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "functionname":
         case "functionName": target.setFunctionName(property(camelContext, java.lang.String.class, value)); return true;
@@ -54,8 +54,8 @@ public class FunctionGraphEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authenticationkey":
-        case "authenticationKey": return java.lang.String.class;
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
         case "endpoint": return java.lang.String.class;
         case "functionname":
         case "functionName": return java.lang.String.class;
@@ -88,8 +88,8 @@ public class FunctionGraphEndpointConfigurer extends PropertyConfigurerSupport i
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FunctionGraphEndpoint target = (FunctionGraphEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "authenticationkey":
-        case "authenticationKey": return target.getAuthenticationKey();
+        case "accesskey":
+        case "accessKey": return target.getAccessKey();
         case "endpoint": return target.getEndpoint();
         case "functionname":
         case "functionName": return target.getFunctionName();

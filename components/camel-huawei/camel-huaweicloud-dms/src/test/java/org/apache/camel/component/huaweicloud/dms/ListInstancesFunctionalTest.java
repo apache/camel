@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ListInstancesFunctionalTest extends CamelTestSupport {
-    private static final String AUTHENTICATION_KEY = "replace_this_with_authentication_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String PROJECT_ID = "replace_this_with_project_id";
     private static final String REGION = "replace_this_with_region";
@@ -38,7 +38,7 @@ public class ListInstancesFunctionalTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:operation")
                         .to("hwcloud-dms:listInstances?" +
-                            "authenticationKey=" + AUTHENTICATION_KEY +
+                            "accessKey=" + ACCESS_KEY +
                             "&secretKey=" + SECRET_KEY +
                             "&projectId=" + PROJECT_ID +
                             "&region=" + REGION +
