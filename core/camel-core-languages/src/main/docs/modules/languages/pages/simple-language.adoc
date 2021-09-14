@@ -15,7 +15,7 @@ being a very small and simple language for evaluating
 `Expression` or `Predicate` without requiring any new dependencies
 or knowledge of other scripting languages such as Groovy.
 
-The simple langauge is designed with intend to cover almost all of the common use cases
+The simple language is designed with intend to cover almost all the common use cases
 when little need for scripting in your Camel routes.
 
 However, for much more complex use cases then a more powerful language is recommended such as:
@@ -618,9 +618,7 @@ syntax as Groovy.
 simple("${header.number} range '100..199'")
 ----
 
-=== Using Spring XML
-
-As the Spring XML does not have all the power as the Java DSL with all
+As the XML DSL does not have all the power as the Java DSL with all
 its various builder methods, you have to resort to use some other
 languages for testing with simple operators. Now you can do this with the simple
 language. In the sample below we want to test if the header is a widget
@@ -636,7 +634,7 @@ order:
 </from>
 ----
 
-== Using and / or
+=== Using and / or
 
 If you have two expressions you can combine them with the `&&` or `||`
 operator.
@@ -655,7 +653,7 @@ And of course the `||` is also supported. The sample would be:
 simple("${header.title} contains 'Camel' || ${header.type'} == 'gold'")
 -----
 
-== Samples
+== Examples
 
 In the XML DSL sample below we filter based on a header value:
 
@@ -779,6 +777,30 @@ You can nest functions, such as shown below:
 </setHeader>
 ----
 
+== Setting result type
+
+You can now provide a result type to the xref:simple-language.adoc[Simple]
+expression, which means the result of the evaluation will be converted
+to the desired type. This is most usable to define types such as
+booleans, integers, etc.
+
+For example to set a header as a boolean type you can do:
+
+[source,java]
+----
+.setHeader("cool", simple("true", Boolean.class))
+----
+
+And in XML DSL
+
+[source,xml]
+----
+<setHeader name="cool">
+  <!-- use resultType to indicate that the type should be a java.lang.Boolean -->
+  <simple resultType="java.lang.Boolean">true</simple>
+</setHeader>
+----
+
 == Using new lines or tabs in XML DSLs
 
 It is easier to specify new lines or tabs in
@@ -805,36 +827,12 @@ whitespace characters.
 </setBody>
 ----
 
-== Setting result type
-
-You can now provide a result type to the xref:simple-language.adoc[Simple]
-expression, which means the result of the evaluation will be converted
-to the desired type. This is most usable to define types such as
-booleans, integers, etc.
-
-For example to set a header as a boolean type you can do:
-
-[source,java]
-----
-.setHeader("cool", simple("true", Boolean.class))
-----
-
-And in XML DSL
-
-[source,xml]
-----
-<setHeader name="cool">
-  <!-- use resultType to indicate that the type should be a java.lang.Boolean -->
-  <simple resultType="java.lang.Boolean">true</simple>
-</setHeader>
-----
-
 == Loading script from external resource
 
 You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`. +
- This is done using the following syntax: `"resource:scheme:location"`,
-eg to refer to a file on the classpath you can do:
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+This is done using the following syntax: `"resource:scheme:location"`,
+e.g. to refer to a file on the classpath you can do:
 
 [source,java]
 ----
