@@ -36,7 +36,6 @@ public final class ResumeStrategyFactory {
     private ResumeStrategyFactory() {
     }
 
-
     public static ResumeStrategy newResumeStrategy(
             KafkaConsumer<?, ?> consumer, StateRepository<String, String> offsetRepository,
             String seekTo) {
