@@ -143,5 +143,26 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Examples
+
+=== Consumer Example
+
+Consuming from an Atomix Queue
+
+[source,java]
+----
+from("atomix-queue:queue")
+  .to("mock:result");
+----
+
+=== Producer Example
+
+Send a message to Atomix Queue
+
+[source,java]
+----
+from("direct:start")
+  .to("atomix-queue:queue");
+----
 
 include::{page-component-version}@camel-spring-boot::page$atomix-starter.adoc[]
