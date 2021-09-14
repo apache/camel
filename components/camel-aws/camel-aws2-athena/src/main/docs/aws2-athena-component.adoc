@@ -175,7 +175,9 @@ You have to provide the amazonAthenaClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/athena/[AWS Athena] service.
 
-== Usage
+== Examples
+
+=== Producer Examples
 
 For example, to run a simple query, wait up to 60 seconds for completion, and log the results:
 
