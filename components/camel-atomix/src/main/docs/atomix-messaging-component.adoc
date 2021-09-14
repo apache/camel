@@ -149,5 +149,26 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Examples
+
+=== Consumer Example
+
+Consuming from an Atomix Messaging
+
+[source,java]
+----
+from("atomix-messaging:group?memberName=member-1&channelName=channel")
+  .to("mock:member-1");
+----
+
+=== Producer Example
+
+Send a message to Atomix Messaging
+
+[source,java]
+----
+from("direct:start")
+  .to("atomix-messaging:group");
+----
 
 include::{page-component-version}@camel-spring-boot::page$atomix-starter.adoc[]
