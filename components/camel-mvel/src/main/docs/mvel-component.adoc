@@ -14,7 +14,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mvel.adoc[
 
 The MVEL component allows you to process a message using an
 http://mvel.documentnode.com/[MVEL] template. This can be ideal when using
-Templating to generate responses for requests.
+templating to generate responses for requests.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -132,7 +132,7 @@ with the following path and query parameters:
 
 == Message Headers
 
-The mvel component sets a couple headers on the message.
+The MVEL component sets a couple headers on the message.
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -144,29 +144,20 @@ The mvel component sets a couple headers on the message.
 == MVEL Context
 
 Camel will provide exchange information in the MVEL context (just a
-`Map`). The `Exchange` is transfered as:
+`Map`). The `Exchange` is transferred as:
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%m,90%",options="header",]
 |=======================================================================
 |key |value
-
-|`exchange` |The `Exchange` itself.
-
-|`exchange.properties` |The `Exchange` properties.
-
-|`headers` |The headers of the In message.
-
-|`camelContext` |The Camel Context intance.
-
-|`request` |The In message.
-
-|`in` |The In message.
-
-|`body` |The In message body.
-
-|`out` |The Out message (only for InOut message exchange pattern).
-
-|`response` |The Out message (only for InOut message exchange pattern).
+|exchange |The `Exchange` itself
+|exchange.properties |The `Exchange` properties
+|headers |The headers of the message
+|camelContext |The `CamelContext`
+|request |The message
+|in |The message
+|body |The message body
+|out | The Out message (only for InOut message exchange pattern).
+|response |The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
 == Hot reloading
@@ -180,7 +171,7 @@ never changes.
 == Dynamic templates
 
 Camel provides two headers by which you can define a different resource
-location for a template or the template content itself. If any of these
+location for a template, or the template content itself. If any of these
 headers is set then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
@@ -194,9 +185,9 @@ configured.
 |CamelMvelTemplate |String |The template to use instead of the endpoint configured.
 |=======================================================================
 
-== Samples
+== Example
 
-For example you could use something like
+For example, you could use something like
 
 [source,java]
 --------------------------------------

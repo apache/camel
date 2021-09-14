@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.mvel;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -46,10 +45,15 @@ public class RootObject {
         return exchange.getExchangeId();
     }
 
+    public Message getMessage() {
+        return exchange.getMessage();
+    }
+
     public Message getRequest() {
         return exchange.getIn();
     }
 
+    @Deprecated
     public Message getResponse() {
         return exchange.getOut();
     }
@@ -67,10 +71,14 @@ public class RootObject {
     }
 
     public Map<String, Object> getHeaders() {
-        Message message = exchange.getMessage();
-        if (message != null) {
-            return message.getHeaders();
-        }
-        return Collections.emptyMap();
+        return exchange.getMessage().getHeaders();
+    }
+
+    public Object getHeader(String name) {
+        return exchange.getMessage().getHeader(name);
+    }
+
+    public <T> T getHeader(String name, Class<T> type) {
+        return exchange.getMessage().getHeader(name, type);
     }
 }
