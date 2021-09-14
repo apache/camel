@@ -143,5 +143,16 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Examples
+
+=== Producer Example
+
+Send a message to Atomix Multimap
+
+[source,java]
+----
+from("direct:start")
+  .to("atomix-multimap:multimap");
+----
 
 include::{page-component-version}@camel-spring-boot::page$atomix-starter.adoc[]
