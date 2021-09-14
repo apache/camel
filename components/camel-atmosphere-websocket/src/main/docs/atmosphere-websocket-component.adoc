@@ -163,7 +163,9 @@ An atmopshere-websocket endpoint can either write data to the socket or
 read from the socket, depending on whether the endpoint is configured as
 the producer or the consumer, respectively.
 
-== Configuring URI to Read or Write Data
+== Examples
+
+=== Consumer Example
 
 In the route below, Camel will read from the specified websocket
 connection.
@@ -186,7 +188,9 @@ And the equivalent Spring sample:
 </camelContext>
 ------------------------------------------------------------
 
-In the route below, Camel will read from the specified websocket
+=== Producer Example
+
+In the route below, Camel will write to the specified websocket
 connection.
 
 [source,java]
@@ -206,8 +210,5 @@ And the equivalent Spring sample:
   </route>
 </camelContext>
 ------------------------------------------------------------
-
- 
-
 
 include::{page-component-version}@camel-spring-boot::page$atmosphere-websocket-starter.adoc[]
