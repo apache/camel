@@ -164,7 +164,7 @@ Send a message to Atomix Set
 [source,java]
 ----
 from("direct:start")
-  .toF("atomix-set:set");
+  .to("atomix-set:set");
 ----
 
 include::{page-component-version}@camel-spring-boot::page$atomix-starter.adoc[]
