@@ -49,6 +49,7 @@ public class RootObject {
         return exchange.getIn();
     }
 
+    @Deprecated
     public Message getResponse() {
         return exchange.getOut();
     }
@@ -64,4 +65,17 @@ public class RootObject {
     public <T> T getProperty(String name, Class<T> type) {
         return exchange.getProperty(name, type);
     }
+
+    public Map<String, Object> getHeaders() {
+        return exchange.getMessage().getHeaders();
+    }
+
+    public Object getHeader(String name) {
+        return exchange.getMessage().getHeader(name);
+    }
+
+    public <T> T getHeader(String name, Class<T> type) {
+        return exchange.getMessage().getHeader(name, type);
+    }
+
 }

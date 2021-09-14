@@ -24,14 +24,14 @@ you can construct the syntax as follows:
 
 [source,text]
 ----
-message.body.familyName
+request.body.familyName
 ----
 
 Or use similar syntax as in Java:
 
 [source,java]
 ----
-getMessage().getBody().getFamilyName()
+getRequest().getBody().getFamilyName()
 ----
 
 == MVEL Options
