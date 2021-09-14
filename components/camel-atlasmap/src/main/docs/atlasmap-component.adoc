@@ -132,7 +132,9 @@ with the following path and query parameters:
 
 == Examples
 
-For example you could use something like
+=== Producer Example
+
+You could use something like
 
 [source,java]
 --------------------------------------
