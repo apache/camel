@@ -17,7 +17,7 @@ The Channel Adapter is implemented in Camel by components.
 Each component adapters between the systems and Camel where all details are hidden in the implementation
 of the component, which allows applications to easily send and receive data.
 
-== Samples
+== Example
 
 An application must receive messages from a Kafka topic, which can be done by using the
 xref:components::kafka-component.adoc[Kafka] component.
@@ -35,6 +35,7 @@ And the bean has method which accepts the message payload as a byte array.
 [source,java]
 ----
 public class CheeseBean {
+
   public void receiveCheeseData(byte[] data) {
     // do something
   }
