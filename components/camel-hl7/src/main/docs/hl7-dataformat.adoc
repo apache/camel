@@ -21,8 +21,6 @@ This component supports the following:
 * HL7 MLLP codec for xref:ROOT:netty-component.adoc[Netty]
 * Type Converter from/to HAPI and String
 * HL7 DataFormat using the HAPI library
-* Even more ease-of-use as it's integrated well with the
-xref:ROOT:mina-component.adoc[camel-mina] component.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -217,7 +215,7 @@ String patientId = msg.getQRD().getWhoSubjectFilter(0).getIDNumber().getValue();
 
 == HL7 DataFormat
 
-The xref:hl7-dataformat.adoc[HL7] component ships with a HL7 data format that can
+The `camel-hl7` JAR ships with a HL7 data format that can
 be used to marshal or unmarshal HL7 model objects.
 
 // dataformat options: START
