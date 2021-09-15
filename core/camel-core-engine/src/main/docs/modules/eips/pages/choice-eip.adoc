@@ -26,88 +26,134 @@ The Choice EIP supports 2 options which are listed below:
 |===
 // eip options: END
 
-== Examples
+== Example
 
 The following example shows how to route a request from an input
 *seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on
-the evaluation of various xref:latest@manual:ROOT:predicate.adoc[Predicate] expressions
+the evaluation of various xref:latest@manual:ROOT:predicate.adoc[Predicate].
+
+The Camel xref:components:languages:simple-language.adoc[Simple] language
+is great to use with the Choice EIP when routing is based on the content of the message,
+such as checking message headers.
 
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        from("direct:a")
-            .choice()
-                .when(simple("${header.foo} == 'bar'"))
-                    .to("direct:b")
-                .when(simple("${header.foo} == 'cheese'"))
-                    .to("direct:c")
-                .otherwise()
-                    .to("direct:d");
-    }
-};
-
+from("direct:a")
+    .choice()
+        .when(simple("${header.foo} == 'bar'"))
+            .to("direct:b")
+        .when(simple("${header.foo} == 'cheese'"))
+            .to("direct:c")
+        .otherwise()
+            .to("direct:d");
 ----
 
-
-And the same example using XML:
+And the same example using XML DSL:
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:a"/>
-        <choice>
-            <when>
-                <simple>${header.foo} == 'bar'</simple>
-                <to uri="direct:b"/>
-            </when>
-            <when>
-                <simple>${header.foo} == 'cheese'</simple>
-                <to uri="direct:c"/>
-            </when>
-            <otherwise>
-                <to uri="direct:d"/>
-            </otherwise>
-        </choice>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:a"/>
+    <choice>
+        <when>
+            <simple>${header.foo} == 'bar'</simple>
+            <to uri="direct:b"/>
+        </when>
+        <when>
+            <simple>${header.foo} == 'cheese'</simple>
+            <to uri="direct:c"/>
+        </when>
+        <otherwise>
+            <to uri="direct:d"/>
+        </otherwise>
+    </choice>
+</route>
 ----
 
-== Usage of endChoice and end
-Usage of `endChoice` is not mandatory. However, It should be used whenever you want to return back control to `choice()` dsl so that you can add subsequent `when` and `otherwise` to the choice dsl.
-If you want to end entire `choice()` block use `end()`.
+=== Why can I not use otherwise in Java DSL
 
-=== Example
+When using the Choice EIP in the Java DSL you may have a situation where the compiler will not accept
+`when()` or `otherwise()` statements.
+
+For example as shown in the route below where we use the
+xref:loadBalance-eip.adoc[Load Balancer] inside the
+xref:content-based-router-eip.adoc[Content Based Router] in the first when:
+
+*Code will not compile*
 
 [source,java]
 ----
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(body().contains("Camel"))
-                        .multicast()
-                            .to("mock:foo")
-                            .to("mock:bar")
-                        .endChoice() //we need to use endChoice to tell Java DSL to return scope back to the choice DSL.
-                        .otherwise() 
-                            .to("mock:result");
-            }
-        };
-    }
-    
+from("direct:start")
+    .choice()
+        .when(body().contains("Camel"))
+            .loadBalance().roundRobin().to("mock:foo").to("mock:bar")
+        .otherwise()
+            .to("mock:result");
 ----
 
-Another example is explained in the TIP below.
+Well the first issue is that the xref:loadBalance-eip.adoc[Load Balancer]
+uses the additional routing to know what to use in the load balancing.
+In this example that would be the:
 
-[TIP]
-====
-See xref:latest@manual:faq:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
-can I not use when or otherwise in a Java Camel route] if you have
-problems with the Java DSL, accepting using `when` or `otherwise`.
-====
+[source,java]
+----
+.to("mock:foo").to("mock:bar")
+----
+
+To indicate when the balancing stops, you should use `.end()` to denote
+the end. So the route is updates as follows:
+
+*Code will still not compile*
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(body().contains("Camel"))
+            .loadBalance().roundRobin().to("mock:foo").to("mock:bar").end()
+        .otherwise()
+            .to("mock:result");
+----
+
+However, the code will still not compile.
+
+The reason is we have stretched how far we can take the good old Java language in terms of
+xref:latest@manual:ROOT:dsl.adoc[DSL]. In a more dynamic or modern language such as Kotlin or Groovy
+you would be able to let it be stack based, so the `.end()` will pop the last type of the
+stack, and you would return to the scope of the
+xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router].
+
+That's not doable in Java. So we need to help Java a bit, which you do by
+using `.endChoice()`, which tells Camel to "pop the stack" and return
+to the scope of the xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based
+Router].
+
+*Code compiles*
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(body().contains("Camel"))
+            .loadBalance().roundRobin().to("mock:foo").to("mock:bar").endChoice()
+        .otherwise()
+            .to("mock:result");
+----
+
+You only need to use `.endChoice()` when using certain
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP]s which often have additional
+methods to configure or as part of the EIP itself. For example the
+xref:split-eip.adoc[Splitter] EIP has a sub-route which denotes the
+routing of each _splitted_ message. You would also have to use
+`.endChoice()` to indicate the end of the sub-route and to return
+to the xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router].
+
+==== Still problems
+
+If there are still problems, then you can split your route into multiple
+routes, and link them together using the xref:components::direct-component.adoc[Direct]
+component.
+
+There can be some combinations of xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP]s
+that can hit limits in how far we can take the fluent builder DSL with
+generics you can do in Java programming language.
