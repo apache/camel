@@ -36,18 +36,18 @@ public interface IAMEndpointBuilderFactory {
      */
     public interface IAMEndpointBuilder extends EndpointProducerBuilder {
         /**
-         * Authentication key for the cloud user.
+         * Access key for the cloud user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
          * 
-         * @param authenticationKey the value to set
+         * @param accessKey the value to set
          * @return the dsl builder
          */
-        default IAMEndpointBuilder authenticationKey(String authenticationKey) {
-            doSetProperty("authenticationKey", authenticationKey);
+        default IAMEndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**

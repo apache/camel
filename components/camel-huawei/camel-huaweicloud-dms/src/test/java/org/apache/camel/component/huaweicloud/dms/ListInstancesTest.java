@@ -41,7 +41,7 @@ public class ListInstancesTest extends CamelTestSupport {
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("authenticationKey"),
+            testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -50,7 +50,7 @@ public class ListInstancesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:operation")
                         .to("hwcloud-dms:listInstances?" +
-                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "accessKey=" + testConfiguration.getProperty("accessKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
                             "&projectId=" + testConfiguration.getProperty("projectId") +
                             "&region=" + testConfiguration.getProperty("region") +

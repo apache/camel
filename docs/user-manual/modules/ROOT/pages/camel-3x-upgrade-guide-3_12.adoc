@@ -71,3 +71,6 @@ The `camel-influxdb` won't autocreate the database if not present anymore.
 With CAMEL-16892 we introduced the checkDatabaseExistence and autoCreateDatabase options for this purpose. 
 Both of the options are false by default. So, you'll need to set both to true if you want to have the older releases behavior, or create the database yourself before using the camel component.
 
+=== camel-huawei
+
+All Huawei Cloud components use AK/SK as security keys to authenticate against the hauwei cloud backend services. Initally AK was mapped to authenticationKey in the endpoint class. To be in-line with Huawei Cloud's naming conventions, we have renamed this option from `authenticationKey` to `accessKey` for all components. This is a breaking change for users who are already using huawei cloud components until version 3.11.x. 

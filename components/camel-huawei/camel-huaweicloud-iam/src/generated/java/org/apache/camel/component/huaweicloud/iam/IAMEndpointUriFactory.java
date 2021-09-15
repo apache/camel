@@ -26,11 +26,11 @@ public class IAMEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("groupId");
         props.add("proxyPassword");
         props.add("ignoreSslVerification");
-        props.add("authenticationKey");
         props.add("proxyHost");
         props.add("userId");
         props.add("proxyPort");
         props.add("lazyStartProducer");
+        props.add("accessKey");
         props.add("proxyUser");
         props.add("region");
         props.add("operation");
@@ -38,10 +38,10 @@ public class IAMEndpointUriFactory extends org.apache.camel.support.component.En
         Set<String> secretProps = new HashSet<>(7);
         secretProps.add("serviceKeys");
         secretProps.add("secretKey");
+        secretProps.add("accessKey");
         secretProps.add("groupId");
         secretProps.add("proxyPassword");
         secretProps.add("proxyUser");
-        secretProps.add("authenticationKey");
         secretProps.add("userId");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }

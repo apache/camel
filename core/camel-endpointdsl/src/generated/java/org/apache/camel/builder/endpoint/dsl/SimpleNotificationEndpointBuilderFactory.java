@@ -39,18 +39,18 @@ public interface SimpleNotificationEndpointBuilderFactory {
             extends
                 EndpointProducerBuilder {
         /**
-         * Authentication key for the cloud user.
+         * Access key for the cloud user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
          * 
-         * @param authKey the value to set
+         * @param accessKey the value to set
          * @return the dsl builder
          */
-        default SimpleNotificationEndpointBuilder authKey(String authKey) {
-            doSetProperty("authKey", authKey);
+        default SimpleNotificationEndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**

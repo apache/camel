@@ -45,8 +45,8 @@ public class PublishTextMessageWithCustomEndpointTest extends CamelTestSupport {
                         .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Dummy Subject Line"))
                         .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
                         .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
-                        .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&authKey="
-                            + testConfiguration.getProperty("authKey") + "&secretKey="
+                        .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&accessKey="
+                            + testConfiguration.getProperty("accessKey") + "&secretKey="
                             + testConfiguration.getProperty("secretKey") + "&projectId="
                             + testConfiguration.getProperty("projectId") + "&region=" + testConfiguration.getProperty("region")
                             + "&endpoint=" + testConfiguration.getProperty("endpoint")

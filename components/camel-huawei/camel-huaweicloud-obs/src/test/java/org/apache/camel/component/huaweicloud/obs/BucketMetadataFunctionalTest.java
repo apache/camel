@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BucketMetadataFunctionalTest extends CamelTestSupport {
 
-    private static final String AUTHENTICATION_KEY = "replace_this_with_authentication_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String REGION = "replace_this_with_region";
     private static final String BUCKET_NAME = "replace_this_with_bucket_name";
@@ -40,7 +40,7 @@ public class BucketMetadataFunctionalTest extends CamelTestSupport {
                 from("direct:bucket_metadata")
                         .setProperty("CamelHwCloudObsBucketName", constant(BUCKET_NAME))
                         .to("hwcloud-obs:getBucketMetadata?" +
-                            "authenticationKey=" + AUTHENTICATION_KEY +
+                            "accessKey=" + ACCESS_KEY +
                             "&secretKey=" + SECRET_KEY +
                             "&region=" + REGION +
                             "&ignoreSslVerification=true")

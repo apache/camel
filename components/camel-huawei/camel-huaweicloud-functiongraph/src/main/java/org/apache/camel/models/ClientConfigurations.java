@@ -34,7 +34,7 @@ public class ClientConfigurations {
     private String proxyPassword;
     private boolean ignoreSslVerification;
     private String endpoint;
-    private String authenticationKey;
+    private String accessKey;
     private String secretKey;
     private String xcffLogType;
 
@@ -86,17 +86,17 @@ public class ClientConfigurations {
         }
         this.setIgnoreSslVerification(endpoint.isIgnoreSslVerification());
 
-        // checking for required cloud AK (authentication key)
-        if (ObjectHelper.isEmpty(endpoint.getAuthenticationKey())
+        // checking for required cloud AK (access key)
+        if (ObjectHelper.isEmpty(endpoint.getAccessKey())
                 && ObjectHelper.isEmpty(endpoint.getServiceKeys())) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("No authentication key (AK) given. Cannot proceed with FunctionGraph operations");
+                LOG.error("No access key (AK) given. Cannot proceed with FunctionGraph operations");
             }
-            throw new IllegalArgumentException("Authentication parameter 'authentication key (AK)' not found");
+            throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
         } else {
-            this.setAuthenticationKey(ObjectHelper.isNotEmpty(endpoint.getServiceKeys())
-                    ? endpoint.getServiceKeys().getAuthenticationKey()
-                    : endpoint.getAuthenticationKey());
+            this.setAccessKey(ObjectHelper.isNotEmpty(endpoint.getServiceKeys())
+                    ? endpoint.getServiceKeys().getAccessKey()
+                    : endpoint.getAccessKey());
         }
 
         // checking for required cloud SK (secret key)
@@ -201,12 +201,12 @@ public class ClientConfigurations {
         this.endpoint = endpoint;
     }
 
-    public String getAuthenticationKey() {
-        return authenticationKey;
+    public String getAccessKey() {
+        return accessKey;
     }
 
-    public void setAuthenticationKey(String authenticationKey) {
-        this.authenticationKey = authenticationKey;
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {

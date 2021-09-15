@@ -39,7 +39,7 @@ public class BucketMetadataTest extends CamelTestSupport {
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("authenticationKey"),
+            testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -49,7 +49,7 @@ public class BucketMetadataTest extends CamelTestSupport {
                 from("direct:bucket_metadata")
                         .setProperty("CamelHwCloudObsBucketName", constant(testConfiguration.getProperty("bucketName")))
                         .to("hwcloud-obs:getBucketMetadata?" +
-                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "accessKey=" + testConfiguration.getProperty("accessKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&ignoreSslVerification=true" +

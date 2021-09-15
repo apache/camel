@@ -29,14 +29,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DeleteInstanceFunctionalTest extends CamelTestSupport {
-    private static final String AUTHENTICATION_KEY = "replace_this_with_authentication_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String PROJECT_ID = "replace_this_with_project_id";
     private static final String REGION = "replace_this_with_region";
     private static final String INSTANCE_ID = "replace_this_with_instance_id";
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(AUTHENTICATION_KEY, SECRET_KEY);
+    ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

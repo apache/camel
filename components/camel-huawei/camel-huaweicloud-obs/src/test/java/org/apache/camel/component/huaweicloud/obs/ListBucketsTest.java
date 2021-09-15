@@ -47,7 +47,7 @@ public class ListBucketsTest extends CamelTestSupport {
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("authenticationKey"),
+            testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -56,7 +56,7 @@ public class ListBucketsTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:list_buckets")
                         .to("hwcloud-obs:listBuckets?" +
-                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "accessKey=" + testConfiguration.getProperty("accessKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&ignoreSslVerification=true" +

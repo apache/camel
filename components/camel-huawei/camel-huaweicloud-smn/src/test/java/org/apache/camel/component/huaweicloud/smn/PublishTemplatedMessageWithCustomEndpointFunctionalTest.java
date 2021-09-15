@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PublishTemplatedMessageWithCustomEndpointFunctionalTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublishTemplatedMessageTest.class.getName());
 
-    private static final String AUTH_KEY = "replace_this_with_auth_key";
+    private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String TEMPLATE_NAME = "replace_this_with_template_name";
     private static final String NOTIFICATION_SUBJECT = "sample notification subjectline";
@@ -48,7 +48,7 @@ public class PublishTemplatedMessageWithCustomEndpointFunctionalTest extends Cam
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys
-            = new ServiceKeys(AUTH_KEY, SECRET_KEY);
+            = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         // populating tag values. user has to adjust the map entries according to the structure of their respective templates

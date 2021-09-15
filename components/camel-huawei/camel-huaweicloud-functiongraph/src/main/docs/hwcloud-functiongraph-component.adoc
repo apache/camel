@@ -124,7 +124,7 @@ with the following path and query parameters:
 | *proxyPassword* (proxy) | Proxy authentication password |  | String
 | *proxyPort* (proxy) | Proxy server port |  | int
 | *proxyUser* (proxy) | Proxy authentication user |  | String
-| *authenticationKey* (security) | *Required* Authentication key for the cloud user |  | String
+| *accessKey* (security) | *Required* Access key for the cloud user |  | String
 | *ignoreSslVerification* (security) | Ignore SSL verification | false | boolean
 | *secretKey* (security) | *Required* Secret key for the cloud user |  | String
 |===
@@ -168,7 +168,7 @@ If the operation, function name, or function package are set, they will override
 
 == Using ServiceKey Configuration Bean
 
-Authentication key and secret keys are required to authenticate against cloud FunctionGraph service. You can avoid having them being exposed
+Access key and secret keys are required to authenticate against cloud FunctionGraph service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.functiongraph.models.ServiceKeys`.
 Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
 
@@ -177,7 +177,7 @@ Check the following code snippets:
 [source,xml]
 ----
 <bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.functiongraph.models.ServiceKeys">
-   <property name="authenticationKey" value="your_authentication_key" />
+   <property name="accessKey" value="your_access_key" />
    <property name="secretKey" value="your_secret_key" />
 </bean>
 ----

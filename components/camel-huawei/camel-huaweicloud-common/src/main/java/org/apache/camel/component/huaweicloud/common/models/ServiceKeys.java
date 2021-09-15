@@ -17,28 +17,28 @@
 package org.apache.camel.component.huaweicloud.common.models;
 
 public class ServiceKeys {
-    private String authenticationKey;
+    private String accessKey;
     private String secretKey;
 
     public ServiceKeys() {
     }
 
-    public ServiceKeys(String authenticationKey, String secretKey) {
-        this.authenticationKey = authenticationKey;
+    public ServiceKeys(String accessKey, String secretKey) {
+        this.accessKey = accessKey;
         this.secretKey = secretKey;
     }
 
-    public ServiceKeys(String authenticationKey, String secretKey, String projectId) {
-        this.authenticationKey = authenticationKey;
+    public ServiceKeys(String accessKey, String secretKey, String projectId) {
+        this.accessKey = accessKey;
         this.secretKey = secretKey;
     }
 
-    public String getAuthenticationKey() {
-        return authenticationKey;
+    public String getAccessKey() {
+        return accessKey;
     }
 
-    public void setAuthenticationKey(String authenticationKey) {
-        this.authenticationKey = authenticationKey;
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {

@@ -41,7 +41,7 @@ public class CreateInstancePojoTest extends CamelTestSupport {
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("authenticationKey"),
+            testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() throws Exception {

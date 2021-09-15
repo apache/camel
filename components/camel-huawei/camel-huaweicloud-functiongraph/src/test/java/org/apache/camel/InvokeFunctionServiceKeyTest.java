@@ -39,7 +39,7 @@ public class InvokeFunctionServiceKeyTest extends CamelTestSupport {
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys
-            = new ServiceKeys(testConfiguration.getProperty("authenticationKey"), testConfiguration.getProperty("secretKey"));
+            = new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

@@ -40,7 +40,7 @@ public class PublishTemplatedMessageTest extends CamelTestSupport {
 
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys
-            = new ServiceKeys(testConfiguration.getProperty("authKey"), testConfiguration.getProperty("secretKey"));
+            = new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     @BindToRegistry("smnClient")
     SmnClientMock smnClientMock = new SmnClientMock(null); // creating mock smn client to stub method behavior for unit testing

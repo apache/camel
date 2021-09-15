@@ -43,7 +43,7 @@ public class InvokeFunctionTest extends CamelTestSupport {
                 from("direct:invoke_function")
                         .setProperty(FunctionGraphProperties.XCFFLOGTYPE, constant("tail"))
                         .to("hwcloud-functiongraph:invokeFunction?" +
-                            "authenticationKey=" + testConfiguration.getProperty("authenticationKey") +
+                            "accessKey=" + testConfiguration.getProperty("accessKey") +
                             "&secretKey=" + testConfiguration.getProperty("secretKey") +
                             "&projectId=" + testConfiguration.getProperty("projectId") +
                             "&region=" + testConfiguration.getProperty("region") +
