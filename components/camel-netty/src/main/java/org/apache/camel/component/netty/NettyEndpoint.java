@@ -18,10 +18,11 @@ package org.apache.camel.component.netty;
 
 import java.math.BigInteger;
 import java.security.Principal;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
-import javax.security.cert.X509Certificate;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslHandler;
@@ -138,9 +139,13 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     protected void enrichWithClientCertInformation(SSLSession sslSession, Message message) {
         try {
-            X509Certificate[] certificates = sslSession.getPeerCertificateChain();
+
+            Certificate[] certificates = sslSession.getPeerCertificates();
             if (certificates != null && certificates.length > 0) {
-                X509Certificate cert = certificates[0];
+                if (!(certificates[0] instanceof X509Certificate)) {
+                    return;
+                }
+                X509Certificate cert = (X509Certificate) certificates[0];
 
                 Principal subject = cert.getSubjectDN();
                 if (subject != null) {
