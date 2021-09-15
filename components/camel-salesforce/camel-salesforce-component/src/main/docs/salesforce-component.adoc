@@ -683,7 +683,7 @@ for details on how to generate the DTO.
 
 
 // component options: START
-The Salesforce component supports 74 options, which are listed below.
+The Salesforce component supports 76 options, which are listed below.
 
 
 
@@ -735,6 +735,8 @@ The Salesforce component supports 74 options, which are listed below.
 | *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpointConfig
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *longPollingTransportProperties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
+| *workerPoolMaxSize* (common) | Maximum size of the thread pool used to handle HTTP responses. | 20 | int
+| *workerPoolSize* (common) | Size of the thread pool used to handle HTTP responses. | 10 | int
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *apexUrl* (producer) | APEX method URL |  | String
 | *compositeMethod* (producer) | Composite (raw) method. |  | String
