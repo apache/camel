@@ -200,6 +200,20 @@ total parameters will be -1, and the timeout parameter will be provided
 only if configured as a fixed value. You must *not* throw any exceptions
 from the `timeout` method.
 
+=== Aggregate with persistent repository
+
+The aggregator provides a pluggable repository which you can implement
+your own `org.apache.camel.spi.AggregationRepository`.
+
+If you need persistent repository then Camel provides numerous implementations, such as from the
+xref:components::caffeine-cache-component.adoc[Caffeine],
+xref:components::cql-component.adoc[CassandraQL],
+xref:components::ehcache-component.adoc[EHCache],
+xref:components::infinispan-component.adoc[Infinispan],
+xref:components::jcache-component.adoc[JCache],
+xref:components:others:leveldb.adoc[LevelDB],
+xref:components:others:redis.adoc[Redis],
+or xref:components::sql-component.adoc[SQL] components.
 
 == Completion
 
@@ -275,21 +289,6 @@ When the aggregation is in _pre-completion_ mode, then only the following comple
 completions
 * any other completion are not used (such as by size, from batch consumer etc)
 * _eagerCheckCompletion_ is implied as `true`, but the option has no effect
-
-== Persistent AggregationRepository
-
-The aggregator provides a pluggable repository which you can implement
-your own `org.apache.camel.spi.AggregationRepository`.
-
-If you need persistent repository then Camel provides numerous implementations, such as from the
-xref:components::caffeine-cache-component.adoc[Caffeine],
-xref:components::cql-component.adoc[CassandraQL],
-xref:components::ehcache-component.adoc[EHCache],
-xref:components::infinispan-component.adoc[Infinispan],
-xref:components::jcache-component.adoc[JCache],
-xref:components:others:leveldb.adoc[LevelDB],
-xref:components:others:redis.adoc[Redis],
-or xref:components::sql-component.adoc[SQL] components.
 
 === CompletionAwareAggregationStrategy
 
