@@ -471,6 +471,12 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
+    public void querySyncAsyncDoesntTimeout() throws Exception {
+        final Object result = template.requestBody("direct:querySyncAsync", "");
+        assertNotNull(result);
+    }
+
+    @Test
     public void testParentRelationshipQuery() throws Exception {
         try {
             createAccountAndContact();
@@ -751,6 +757,16 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 from("direct:queryAll")
                         .to("salesforce:queryAll?sObjectQuery=SELECT name from Line_Item__c&sObjectClass="
                             + QueryRecordsLine_Item__c.class.getName() + "&format=" + format);
+
+                from("direct:querySyncAsync")
+                        .to("direct:querySync")
+                        .to("direct:queryAsync");
+
+                from("direct:querySync?synchronous=false").routeId("r.querySync")
+                        .to("salesforce:query?rawPayload=true&sObjectQuery=Select Id From Contact Where Name = 'Sync'");
+
+                from("direct:queryAsync?synchronous=true").routeId("r.queryAsync")
+                        .to("salesforce:query?rawPayload=true&sObjectQuery=Select Id From Contact  Where Name = 'Sync'");
 
                 // testSearch
                 from("direct:search").to("salesforce:search?sObjectSearch=FIND {Wee}&format=" + format);
