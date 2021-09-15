@@ -282,10 +282,9 @@ The aggregator provides a pluggable repository which you can implement
 your own `org.apache.camel.spi.AggregationRepository`.
 
 If you need persistent repository then Camel provides numerous implementations, such as from the
-xref:components::caffeine-component.adoc[Caffeine],
-xref:components::cassandraql-component.adoc[CassandraQL],
+xref:components::caffeine-cache-component.adoc[Caffeine],
+xref:components::cql-component.adoc[CassandraQL],
 xref:components::ehcache-component.adoc[EHCache],
-xref:components::hazelcast-component.adoc[Hazelcast],
 xref:components::infinispan-component.adoc[Infinispan],
 xref:components::jcache-component.adoc[JCache],
 xref:components:others:leveldb.adoc[LevelDB],
