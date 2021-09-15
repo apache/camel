@@ -557,6 +557,14 @@ from("direct:insert")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=save");
 ---------------------------------------------------------------------------
 
+[source,java]
+------------------------------------------------------------------------------------------------------------------------------------------
+// route: from("direct:insert").to("mongodb:myDb?database=flights&collection=tickets&operation=save");
+org.bson.Document docForSave = new org.bson.Document();
+docForSave.put("key", "value");
+Object result = template.requestBody("direct:insert", docForSave);
+------------------------------------------------------------------------------------------------------------------------------------------
+
 ==== update
 
 Update one or multiple records on the collection. Requires a filter query and 
@@ -620,9 +628,12 @@ field equals true by setting the value of the "scientist" field to
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------------
 // route: from("direct:update").to("mongodb:myDb?database=science&collection=notableScientists&operation=update");
+List<Bson> body = new ArrayList<>();
 Bson filterField = Filters.eq("filterField", true);
-String updateObj = Updates.set("scientist", "Darwin");
-Object result = template.requestBodyAndHeader("direct:update", new Bson[] {filterField, Document.parse(updateObj)}, MongoDbConstants.MULTIUPDATE, true);
+body.add(filterField);
+BsonDocument updateObj = new BsonDocument().append("$set", new BsonDocument("scientist", new BsonString("Darwin")));
+body.add(updateObj);
+Object result = template.requestBodyAndHeader("direct:update", body, MongoDbConstants.MULTIUPDATE, true);
 ------------------------------------------------------------------------------------------------------------------------------------------
 
 [source,java]
