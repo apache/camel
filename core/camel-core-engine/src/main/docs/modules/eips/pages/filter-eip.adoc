@@ -80,7 +80,7 @@ And the example in XML:
 Stop is a bit different than a message filter as it will filter out all
 messages and end the route entirely (filter only applies to its child
 processor). Stop is convenient to use in a
-xref:content-based-router-eip.adoc[Content Based Router] when you for
+xref:choice-eip.adoc[Content Based Router] when you for
 example need to stop further processing in one of the predicates.
 
 In the example below we do not want to route messages any further that

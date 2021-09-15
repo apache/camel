@@ -10,7 +10,7 @@ but arrive in different formats. The normalizer transforms the incoming messages
 
 image::eip/NormalizerDetail.gif[image]
 
-In Apache Camel, you can implement the normalizer pattern by combining a xref:content-based-router-eip.adoc[Content Based Router],
+In Apache Camel, you can implement the normalizer pattern by combining a xref:choice-eip.adoc[Content Based Router],
 which detects the incoming message's format, with a collection of different xref:message-translator.adoc[Message Translator]'s,
 which transform the different incoming formats into a common format.
 
