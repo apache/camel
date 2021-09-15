@@ -3,6 +3,7 @@
     "kind": "model",
     "name": "circuitBreaker",
     "title": "Circuit Breaker",
+    "description": "Route messages in a fault tolerance way using Circuit Breaker",
     "deprecated": false,
     "label": "eip,routing,circuitbreaker",
     "javaType": "org.apache.camel.model.CircuitBreakerDefinition",
