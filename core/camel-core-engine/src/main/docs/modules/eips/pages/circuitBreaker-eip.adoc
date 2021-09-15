@@ -16,7 +16,7 @@ image::eip/CircuitBreaker.png[image]
 The states are as follows:
 
 * *Closed* — When operating successfully.
-* *Open* — When failure is detected and the breaker opens to short-circuit and fail
+* *Open* — When failure is detected, and the breaker opens to short-circuit and fail
   fast. In this state, the circuit breaker avoids invoking the protected operation and
   avoids putting additional load on the struggling service.
 * *Half Open* — After a short period in the open state, an operation is attempted to
@@ -38,7 +38,11 @@ The Circuit Breaker EIP supports 4 options which are listed below:
 
 == Example
 
-Below is an example route showing a circuit breaker endpoint that protects against slow operation by falling back to the in-lined fallback route. By default the timeout request is just *1000ms* so the HTTP endpoint has to be fairly quick to succeed.
+Below is an example route showing a circuit breaker endpoint that protects against
+slow operation by falling back to the in-lined fallback route.
+
+By default, the timeout request is just *1000ms, so the HTTP endpoint has to be fairly quick to succeed.
+
 [source,java]
 ----
 from("direct:start")
@@ -51,25 +55,24 @@ from("direct:start")
 ----
 
 And in XML DSL:
+
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <circuitBreaker>
-      <to uri="http://fooservice.com/slow"/>
-      <onFallback>
-        <transform>
-          <constant>Fallback message</constant>
-        </transform>
-      </onFallback>
-    </circuitBreaker>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
+<route>
+  <from uri="direct:start"/>
+  <circuitBreaker>
+    <to uri="http://fooservice.com/slow"/>
+    <onFallback>
+      <transform>
+        <constant>Fallback message</constant>
+      </transform>
+    </onFallback>
+  </circuitBreaker>
+  <to uri="mock:result"/>
+</route>
 ----
 
-== CircuitBreaker Implementations
+== Circuit Breaker components
 
 Camel provides three implementations of this pattern:
 
