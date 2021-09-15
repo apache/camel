@@ -838,7 +838,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(
-                context.getExecutorServiceManager().newThreadPool(source, "SalesforceHttpClient", workerPoolSize,
+                context, context.getExecutorServiceManager().newThreadPool(source, "SalesforceHttpClient", workerPoolSize,
                         workerPoolMaxSize),
                 sslContextFactory);
         // default settings, use httpClientProperties to set other

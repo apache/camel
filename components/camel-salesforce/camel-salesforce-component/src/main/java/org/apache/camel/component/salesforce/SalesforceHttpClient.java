@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.SalesforceHttpRequest;
 import org.apache.camel.component.salesforce.internal.client.SalesforceSecurityHandler;
@@ -44,6 +45,7 @@ public class SalesforceHttpClient extends HttpClient {
 
     private static final int DEFAULT_MAX_RETRIES = 3;
     private static final int DEFAULT_MAX_CONTENT_LENGTH = 4 * 1024 * 1024;
+    private final CamelContext camelContext;
 
     private SalesforceSession session;
     private int maxRetries = DEFAULT_MAX_RETRIES;
@@ -60,13 +62,13 @@ public class SalesforceHttpClient extends HttpClient {
     }
 
     public SalesforceHttpClient(SslContextFactory sslContextFactory) {
-        this(Executors.newCachedThreadPool(), sslContextFactory);
+        this(null, Executors.newCachedThreadPool(), sslContextFactory);
     }
 
-    public SalesforceHttpClient(ExecutorService workerPool, SslContextFactory sslContextFactory) {
+    public SalesforceHttpClient(CamelContext context, ExecutorService workerPool, SslContextFactory sslContextFactory) {
         super(new HttpClientTransportOverHTTP(), sslContextFactory);
-
         this.workerPool = workerPool;
+        this.camelContext = context;
 
         // Jetty 9.3, as opposed to 9.2 the way to add ProtocolHandler to
         // HttpClient changed in 9.2 HttpClient::getProtocolHandlers returned
@@ -115,7 +117,13 @@ public class SalesforceHttpClient extends HttpClient {
 
     @Override
     protected void doStop() throws Exception {
-        workerPool.shutdown();
+        if (workerPool != null) {
+            if (camelContext != null) {
+                camelContext.getExecutorServiceManager().shutdownGraceful(workerPool);
+            } else {
+                workerPool.shutdown();
+            }
+        }
         super.doStop();
     }
 
