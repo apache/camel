@@ -262,7 +262,7 @@ The default is 3 seconds.|No
 
 === Producer Example
 
-To have a full understanding of how the component works, you may have a look at this https://github.com/apache/camel/blob/main/components/camel-aws2-lambda/src/test/java/org/apache/camel/component/aws2/lambda/integration/LambdaComponentIntegrationTest.java[integration test]
+To have a full understanding of how the component works, you may have a look at these https://github.com/apache/camel/tree/main/components/camel-aws/camel-aws2-lambda/src/test/java/org/apache/camel/component/aws2/lambda/integration[integration tests]
 
 == Using a POJO as body
 
