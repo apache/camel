@@ -394,6 +394,25 @@ Registry.
 
 == Dependencies
 
+== Examples
+
+=== Producer Examples
+
+- PutItem: this operation will create an entry into DynamoDB
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(Ddb2Constants.OPERATION, Ddb2Operations.PutItem)
+  .setHeader(Ddb2Constants.CONSISTENT_READ, "true")
+  .setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD")
+  .setHeader(Ddb2Constants.ITEM, attributeMap)
+  .setHeader(Ddb2Constants.ATTRIBUTE_NAMES, attributeMap.keySet());
+  .to("aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
+  + "&keyScalarType=" + ScalarAttributeType.S
+  + "&readCapacity=1&writeCapacity=1");
+--------------------------------------------------------------------------------
+
 Maven users will need to add the following dependency to their pom.xml.
 
 *pom.xml*
