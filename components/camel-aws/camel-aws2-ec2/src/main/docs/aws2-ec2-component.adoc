@@ -207,7 +207,9 @@ terminate operations on.
 - createTags
 - deleteTags
 
-== Producer Examples
+== Examples
+
+=== Producer Examples
 
 - createAndRunInstances: this operation will create an EC2 instance and run it
 
