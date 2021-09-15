@@ -296,7 +296,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     * This option can be used to explicit declare the method name to use, when using beans as the AggregationStrategy.
      */
     public void setAggregationStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
@@ -311,7 +311,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     * This option can be used to explicit declare the method name to use, when using beans as the AggregationStrategy.
      */
     public void setStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
@@ -319,7 +319,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     /**
      * If this option is false then the aggregate method is not used for the very first aggregation. If this option is
-     * true then null values is used as the oldExchange (at the very first aggregation), when using POJOs as the
+     * true then null values is used as the oldExchange (at the very first aggregation), when using beans as the
      * AggregationStrategy.
      */
     public void setStrategyMethodAllowNull(String strategyMethodAllowNull) {
@@ -888,7 +888,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * Sets the method name to use when using a POJO as {@link AggregationStrategy}.
+     * Sets the method name to use when using a bean as {@link AggregationStrategy}.
      *
      * @param  methodName the method name to call
      * @return            the builder
@@ -899,7 +899,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * Sets allowing null when using a POJO as {@link AggregationStrategy}.
+     * Sets allowing null when using a bean as {@link AggregationStrategy}.
      *
      * @return the builder
      */
