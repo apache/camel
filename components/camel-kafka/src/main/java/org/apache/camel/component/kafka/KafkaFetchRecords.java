@@ -18,12 +18,12 @@ package org.apache.camel.component.kafka;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -56,7 +56,7 @@ class KafkaFetchRecords implements Runnable {
     private final Pattern topicPattern;
     private final String threadId;
     private final Properties kafkaProps;
-    private final Map<String, Long> lastProcessedOffset = new ConcurrentHashMap<>();
+    private final Map<String, Long> lastProcessedOffset = new HashMap<>();
     private final PollExceptionStrategy pollExceptionStrategy;
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
