@@ -36,6 +36,9 @@ public class MockResult {
 
     public static final String TAG_RECOGNITION_RESULT_TYPE = "test_type";
 
+    private MockResult() {
+    }
+
     public static RunCelebrityRecognitionResponse getCelebrityRecognitionResponse() {
         Map<String, Integer> faceDetailMap = new HashMap<>();
         faceDetailMap.put("w", 300);
