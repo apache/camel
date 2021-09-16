@@ -132,6 +132,7 @@ public class KafkaRecordProcessor {
         // if not auto commit then we have additional information on the exchange
         if (!autoCommitEnabled) {
             message.setHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, !recordHasNext);
+            message.setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
         }
 
         if (configuration.isAllowManualCommit()) {
@@ -141,9 +142,6 @@ public class KafkaRecordProcessor {
             KafkaManualCommit manual = manualCommitFactory.newInstance(exchange, consumer, partition.topic(), threadId,
                     offsetRepository, partition, record.offset(), configuration.getCommitTimeoutMs());
             message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
-        }
-        // if commit management is on user side give additional info for the end of poll loop
-        if (!autoCommitEnabled || configuration.isAllowManualCommit()) {
             message.setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
         }
 
