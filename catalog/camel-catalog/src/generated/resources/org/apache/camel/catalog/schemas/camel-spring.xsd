@@ -158,7 +158,7 @@ Route messages based on a series of predicates
   <xs:element name="circuitBreaker" type="tns:circuitBreakerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Route messages in a fault tolerance way using Circuit Breaker
+null
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3219,7 +3219,7 @@ exchanges and newExchange is of course the new incoming Exchange.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 This option can be used to explicit declare the method name to use, when using
-beans as the AggregationStrategy.
+POJOs as the AggregationStrategy.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3228,7 +3228,7 @@ beans as the AggregationStrategy.
             <xs:documentation xml:lang="en"><![CDATA[
 If this option is false then the aggregate method is not used for the very first
 aggregation. If this option is true then null values is used as the oldExchange
-(at the very first aggregation), when using beans as the AggregationStrategy.
+(at the very first aggregation), when using POJOs as the AggregationStrategy.
 Default value: false
             ]]></xs:documentation>
           </xs:annotation>
