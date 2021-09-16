@@ -79,4 +79,22 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>jdk17-build</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>--add-opens java.desktop/sun.awt=ALL-UNNAMED --add-opens java.desktop/javax.print=ALL-UNNAMED</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
