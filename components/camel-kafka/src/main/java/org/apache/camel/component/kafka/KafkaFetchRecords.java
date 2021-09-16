@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -169,14 +170,11 @@ class KafkaFetchRecords implements Runnable {
         long partitionLastOffset = -1;
 
         try {
-            while (isKafkaConsumerRunnable() && isRetrying() && !isReconnecting()) {
-                long pollTimeoutMs = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
+            long pollTimeoutMs = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
+            LOG.trace("Polling {} from topic: {} with timeout: {}", threadId, topicName, pollTimeoutMs);
 
-                LOG.trace("Polling {} from topic: {} with timeout: {}", threadId, topicName, pollTimeoutMs);
+            while (isKafkaConsumerRunnable() && isRetrying() && !isReconnecting()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(Duration.ofMillis(pollTimeoutMs));
-                if (allRecords.isEmpty()) {
-                    LOG.debug("No records received when polling ... (continuing)");
-                }
 
                 partitionLastOffset = processPolledRecords(allRecords);
             }
@@ -310,34 +308,38 @@ class KafkaFetchRecords implements Runnable {
     private long processPolledRecords(ConsumerRecords<Object, Object> allRecords) {
         logRecords(allRecords);
 
-        Iterator<TopicPartition> partitionIterator = allRecords.partitions().iterator();
+        Set<TopicPartition> partitions = allRecords.partitions();
+        Iterator<TopicPartition> partitionIterator = partitions.iterator();
+
         KafkaRecordProcessor.ProcessResult lastResult = KafkaRecordProcessor.ProcessResult.newUnprocessed();
 
         while (partitionIterator.hasNext() && !isStopping()) {
             lastResult = KafkaRecordProcessor.ProcessResult.newUnprocessed();
             TopicPartition partition = partitionIterator.next();
 
-            Iterator<ConsumerRecord<Object, Object>> recordIterator = allRecords.records(partition).iterator();
+            List<ConsumerRecord<Object, Object>> partitionRecords = allRecords.records(partition);
+            Iterator<ConsumerRecord<Object, Object>> recordIterator = partitionRecords.iterator();
 
-            logRecordsInPartition(allRecords, partition);
+            logRecordsInPartition(partitionRecords, partition);
 
             KafkaRecordProcessor kafkaRecordProcessor = buildKafkaRecordProcessor();
 
-            while (!lastResult.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
-                ConsumerRecord<Object, Object> record = recordIterator.next();
+            try {
+                /*
+                 * We lock the processing of the record to avoid raising a WakeUpException as a result to a call
+                 * to stop() or shutdown().
+                 */
+                lock.lock();
 
-                try {
-                    /* 
-                     * We lock the processing of the record to avoid raising a WakeUpException as a result to a call 
-                     * to stop() or shutdown().  
-                     */
-                    lock.lock();
+                while (!lastResult.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
+                    ConsumerRecord<Object, Object> record = recordIterator.next();
 
                     lastResult = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(), lastResult,
                             kafkaRecordProcessor, record);
-                } finally {
-                    lock.unlock();
+
                 }
+            } finally {
+                lock.unlock();
             }
         }
 
@@ -351,9 +353,9 @@ class KafkaFetchRecords implements Runnable {
         return lastResult.getPartitionLastOffset();
     }
 
-    private void logRecordsInPartition(ConsumerRecords<Object, Object> allRecords, TopicPartition partition) {
+    private void logRecordsInPartition(List<ConsumerRecord<Object, Object>> partitionRecords, TopicPartition partition) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Records count {} received for partition {}", allRecords.records(partition).size(),
+            LOG.debug("Records count {} received for partition {}", partitionRecords.size(),
                     partition);
         }
     }
