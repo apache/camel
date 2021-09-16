@@ -192,6 +192,10 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "username":
         case "userName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": target.setWorkerPoolMaxSize(property(camelContext, int.class, value)); return true;
+        case "workerpoolsize":
+        case "workerPoolSize": target.setWorkerPoolSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -363,6 +367,10 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "useGlobalSslContextParameters": return boolean.class;
         case "username":
         case "userName": return java.lang.String.class;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": return int.class;
+        case "workerpoolsize":
+        case "workerPoolSize": return int.class;
         default: return null;
         }
     }
@@ -535,6 +543,10 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "username":
         case "userName": return target.getUserName();
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": return target.getWorkerPoolMaxSize();
+        case "workerpoolsize":
+        case "workerPoolSize": return target.getWorkerPoolSize();
         default: return null;
         }
     }

@@ -11,7 +11,7 @@ xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns].
 
 For example a router could implement the
-xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router] pattern, to route
+xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] pattern, to route
 from an endpoint to one or more destination endpoints using a
 xref:ROOT:predicate.adoc[Predicate] based on the message content.
 

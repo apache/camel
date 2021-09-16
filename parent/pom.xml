@@ -299,7 +299,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.6.3</jedis-client-version>
         <jersey-version>2.28</jersey-version>
-        <jetcd-version>0.5.7</jetcd-version>
+        <jetcd-version>0.5.10</jetcd-version>
         <jetty9-version>9.4.43.v20210629</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
@@ -317,7 +317,7 @@
         <jodatime2-version>2.10.10</jodatime2-version>
         <jota-version>1.0.0-beta9</jota-version>
         <jolokia-version>1.6.2</jolokia-version>
-        <jolt-version>0.1.1</jolt-version>
+        <jolt-version>0.1.5</jolt-version>
         <jool-version>0.9.12</jool-version>
         <jooq-version>3.14.14</jooq-version>
         <joor-version>0.9.14</joor-version>
@@ -562,7 +562,7 @@
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
         <zendesk-client-version>0.14.1</zendesk-client-version>
         <zipkin-reporter-version>2.16.3</zipkin-reporter-version>
-        <zipkin-version>2.23.2</zipkin-version>
+        <zipkin-version>2.23.4</zipkin-version>
         <zookeeper-version>3.5.9</zookeeper-version>
         <zxing-version>3.4.0</zxing-version>
 

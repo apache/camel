@@ -358,7 +358,7 @@ is processed before calling the splitter. This means the message body is appende
 The `weaveByToUri` is a handy method that makes it easy to _weave_ a Camel route that
 send messages to a given endpoint URI or pattern.
 
-Given the following route having two branches in the xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router] EIP:
+Given the following route having two branches in the xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] EIP:
 
 [source,java]
 ----

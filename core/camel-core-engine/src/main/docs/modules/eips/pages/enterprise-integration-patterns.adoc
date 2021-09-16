@@ -116,7 +116,7 @@ when a message should be considered stale and thus shouldn’t be processed?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/ContentBasedRouterIcon.gif[image]
-|xref:content-based-router-eip.adoc[Content Based Router] |How do we handle
+|xref:choice-eip.adoc[Content Based Router] |How do we handle
 a situation where the implementation of a single logical function (e.g.,
 inventory check) is spread across multiple physical systems?
 

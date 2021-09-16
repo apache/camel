@@ -1,45 +1,31 @@
-[[BacklogTracer-BacklogTracerInterceptor]]
-= BacklogTracer Interceptor
-
-*Since Camel 2.11*
+[[BacklogTracer-BacklogTracer]]
+= BacklogTracer
 
 Camel supports a backlog tracer interceptor that is used for capturing a
-trace message of each message as they are routed in Camel. +
- The trace message is stored in a backlog queue, which contains the last
+trace message of each message as they are routed in Camel.
+The trace message is stored in a backlog queue, which contains the last
 N messages for each node in the routes (by default 10).
 
-The BacklogTracer is an InterceptStrategy which can be applied to a
-DefaultCamelContext or SpringCamelContext to ensure that there is a
-TracerInterceptor created for every node in the DSL.
-
-You can enable or disable the BacklogTracer's logging dynamically, by
-calling the backlogTracer's `setEnabled` method.
-
-[[BacklogTracer-BacklogTracerDifference]]
 == What is the difference between BacklogTracer and Tracer
 
 Camel also provides a xref:tracer.adoc[Tracer] which has similar
 capabilities as this backlog tracer. The difference is that the backlog
-tracer is storing +
- a capture of the message in an internal backlog queue. Where as the
-xref:tracer.adoc[Tracer] is event based and logs the messages as they
-happen (or route to another Camel destination). Also the
-xref:tracer.adoc[Tracer] has more fine grained events where it dives
-into xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP]s such as the
-xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router] and traces the
-when/otherwise(s). Though the xref:tracer.adoc[Tracer] has much more
-complicated logic to handle this (there is some edge-cases where this
-may not work). The BacklogTracer allows you to pull the messages from
-the backlog queues on demand. The BacklogTracer works better with JMX
-capable tooling as it is simpler and allow to bulk dump all its traced
-messages in either a POJO or XML format. And there is a Karaf command
-for the BacklogTracer which allows you to control the tracing from a
-Karaf shell.
+tracer is storing a capture of the message in an internal backlog queue.
 
-[[BacklogTracer-Options]]
+The xref:tracer.adoc[Tracer] is event based and logs the messages as they
+happen (or route to another Camel destination).
+
+Use the xref:tracer.adoc[Tracer] when all you need is to log the traced messages
+as they happen.
+
+The backlog tracer allows you to pull the messages from
+the backlog queues on demand. The backlog tracer works better with JMX
+capable tooling as it is simpler, allowing to bulk dump all its traced
+messages in either a POJO or XML format.
+
 == Options
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,10%,80%",options="header",]
 |===
 
 |Option |Default |Description
@@ -78,7 +64,7 @@ is that the file content has to be read from the file.
 [[BacklogTracer-Operations]]
 == Operations
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,20%,70%",options="header",]
 |===
 
 |Option |Default |Description
@@ -98,8 +84,28 @@ format.
 
 |===
 
-[[BacklogTracer-Enabling]]
 == Enabling
 
-You would need to enable this using the JMX API.
+You can turn off backlog tracing on `CamelContext`
+
+[source,java]
+----
+camelContext.setBacklogTracing(true);
+----
+
+And in Spring XML
+
+[source,xml]
+----
+<camelContext backlogTrace="true">
+  ...
+</camelContext>
+----
+
+And in Spring Boot you can enable this in the `application.properties` file:
+
+[source,properties]
+----
+camel.springboot.backlog-tracing = true
+----
 

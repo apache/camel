@@ -851,6 +851,37 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Maximum size of the thread pool used to handle HTTP responses.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 20
+         * Group: common (advanced)
+         * 
+         * @param workerPoolMaxSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder workerPoolMaxSize(
+                int workerPoolMaxSize) {
+            doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
+            return this;
+        }
+        /**
+         * Size of the thread pool used to handle HTTP responses.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: common (advanced)
+         * 
+         * @param workerPoolSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder workerPoolSize(int workerPoolSize) {
+            doSetProperty("workerPoolSize", workerPoolSize);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -1517,6 +1548,8 @@ public interface SalesforceComponentBuilderFactory {
             case "config": ((SalesforceComponent) component).setConfig((org.apache.camel.component.salesforce.SalesforceEndpointConfig) value); return true;
             case "httpClientProperties": ((SalesforceComponent) component).setHttpClientProperties((java.util.Map) value); return true;
             case "longPollingTransportProperties": ((SalesforceComponent) component).setLongPollingTransportProperties((java.util.Map) value); return true;
+            case "workerPoolMaxSize": ((SalesforceComponent) component).setWorkerPoolMaxSize((int) value); return true;
+            case "workerPoolSize": ((SalesforceComponent) component).setWorkerPoolSize((int) value); return true;
             case "bridgeErrorHandler": ((SalesforceComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "allOrNone": getOrCreateConfiguration((SalesforceComponent) component).setAllOrNone((boolean) value); return true;
             case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;

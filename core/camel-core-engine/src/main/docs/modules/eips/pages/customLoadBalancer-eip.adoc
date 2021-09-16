@@ -5,7 +5,7 @@
 :since: 
 :supportLevel: Stable
 
-This EIP allows you to use your own Load Balancer implementation
+This EIP allows you to use your own xref:loadBalance-eip.adoc[Load Balancer] implementation.
 
 // eip options: START
 The Custom Load Balancer EIP supports 1 options which are listed below:
@@ -17,8 +17,10 @@ The Custom Load Balancer EIP supports 1 options which are listed below:
 |===
 // eip options: END
 
+== Example
 
 An example using Java DSL:
+
 [source,java]
 ----
 from("direct:start")
@@ -28,6 +30,7 @@ from("direct:start")
 ----
 
 And the same example using XML DSL:
+
 [source,xml]
 ----
 <!-- this is the implementation of our custom load balancer -->
@@ -48,19 +51,9 @@ And the same example using XML DSL:
 </camelContext>
 ----
 
-Notice in the XML DSL above we use `<custom>` which is only available in *Camel 2.8* onwards. In older releases you would have to do as follows instead:
-[source,xml]
-----
-<loadBalance ref="myBalancer">
-  <!-- these are the endpoints to balancer -->
-  <to uri="mock:x"/>
-  <to uri="mock:y"/>
-  <to uri="mock:z"/>
-</loadBalance>
-----
-
 To implement a custom load balancer you can extend some support classes such as `LoadBalancerSupport` and `SimpleLoadBalancerSupport`.
 The former supports the asynchronous routing engine, and the latter does not. Here is an example of a custom load balancer implementation:
+
 [source,java]
 ----
 public static class MyLoadBalancer extends LoadBalancerSupport {
