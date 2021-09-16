@@ -3,6 +3,8 @@
 Camel's tracer is used for logging message details during routing, where
 you can see the route path of each message as they happen. Details of the message is also logged such as the message body.
 
+TIP: There is an alternative tracer that captures the messages in a xref:backlog-tracer.adoc[Backlog Tracer].
+
 == Formatting
 
 The tracer formats the execution of exchanges to log lines. They are
