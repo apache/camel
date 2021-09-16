@@ -79,8 +79,8 @@ explicit Java to enrich the message:
 from("direct:start")
     .process(new Processor() {
         public void process(Exchange exchange) {
-            Message in = exchange.getIn();
-            in.setBody(in.getBody(String.class) + " World!");
+            Message msg = exchange.getMessage();
+            msg.setBody(msg.getBody(String.class) + " World!");
         }
     })
     .to("mock:result");
