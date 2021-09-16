@@ -53,6 +53,8 @@ public class KafkaRecordProcessor {
     private final String threadId;
 
     public static final class ProcessResult {
+        private static final ProcessResult UNPROCESSED_RESULT = new ProcessResult(false, START_OFFSET);
+
         private boolean breakOnErrorHit;
         private long partitionLastOffset;
 
@@ -70,7 +72,7 @@ public class KafkaRecordProcessor {
         }
 
         public static ProcessResult newUnprocessed() {
-            return new ProcessResult(false, START_OFFSET);
+            return UNPROCESSED_RESULT;
         }
     }
 
@@ -121,13 +123,15 @@ public class KafkaRecordProcessor {
             boolean recordHasNext, ConsumerRecord<Object, Object> record, ProcessResult lastResult,
             ExceptionHandler exceptionHandler) {
 
-        setupExchangeMessage(exchange.getMessage(), record);
+        Message message = exchange.getMessage();
+
+        setupExchangeMessage(message, record);
 
         propagateHeaders(record, exchange);
 
         // if not auto commit then we have additional information on the exchange
         if (!autoCommitEnabled) {
-            exchange.getIn().setHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, !recordHasNext);
+            message.setHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, !recordHasNext);
         }
 
         if (configuration.isAllowManualCommit()) {
@@ -136,11 +140,11 @@ public class KafkaRecordProcessor {
             // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
             KafkaManualCommit manual = manualCommitFactory.newInstance(exchange, consumer, partition.topic(), threadId,
                     offsetRepository, partition, record.offset(), configuration.getCommitTimeoutMs());
-            exchange.getIn().setHeader(KafkaConstants.MANUAL_COMMIT, manual);
+            message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
         }
         // if commit management is on user side give additional info for the end of poll loop
         if (!autoCommitEnabled || configuration.isAllowManualCommit()) {
-            exchange.getIn().setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
+            message.setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
         }
 
         try {
