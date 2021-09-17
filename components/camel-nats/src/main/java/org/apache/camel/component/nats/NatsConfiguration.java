@@ -388,7 +388,7 @@ public class NatsConfiguration {
         String prefix = "nats://";
 
         String srvspec = getServers();
-        ObjectHelper.notNull(srvspec, "No servers configured");
+        ObjectHelper.notNull(srvspec, "Servers");
 
         String[] pieces = srvspec.split(",");
         for (int i = 0; i < pieces.length; i++) {
