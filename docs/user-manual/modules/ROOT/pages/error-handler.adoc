@@ -174,7 +174,7 @@ Dead Letter Channel
 |=======================================================================
 
 See xref:exception-clause.adoc[Exception Clause] documentation for
-additional documentation of the faatures above.
+additional documentation of the features above.
 
 == Scopes
 
