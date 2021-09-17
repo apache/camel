@@ -7,32 +7,11 @@
 
 The
 http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic
-Router] from the EIP patterns
+Router] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
 allows you to route messages while avoiding the dependency of the router
 on all possible destinations while maintaining its efficiency.
 
 image::eip/DynamicRouter.gif[image]
-
-The `dynamicRouter` in the DSL is similar to
-a dynamic Routing Slip which evaluates the slip
-_on-the-fly_.
-
-WARNING: *Beware*
-You must ensure the expression used for the `dynamicRouter` such as a
-bean, will return `null` to indicate the end. Otherwise the
-`dynamicRouter` will keep repeating endlessly.
-
-[[DynamicRouter-DynamicRouterinCamel2.5onwards]]
-== Dynamic Router in Camel 2.5 onwards
-
-The Dynamic Router will set a
-property (Exchange.SLIP_ENDPOINT) on the Exchange
-which contains the current endpoint as it advanced though the slip. This
-allows you to know how far we have processed in the slip. (It's a slip
-because the Dynamic Router implementation is
-based on top of Routing Slip).
-
-TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
 
 == Options
 
@@ -48,8 +27,16 @@ The Dynamic Router EIP supports 3 options which are listed below:
 |===
 // eip options: END
 
-[[DynamicRouter-JavaDSL]]
-== Java DSL
+== Dynamic Router
+
+The Dynamic Router is similar to the xref:routingSlip-eip.adoc[Routing Slip] EIP,
+but with the slip evaluated dynamically _on-the-fly_. The xref:routingSlip-eip.adoc[Routing Slip]
+on the other hand evaluates the slip only once in the beginning.
+
+The Dynamic Router sets the exchange property (`Exchange.SLIP_ENDPOINT`)
+with the current slip. This allows you to know how far we have processed in the overall slip.
+
+== Example
 
 In Java DSL you can use the `dynamicRouter` as shown below:
 
@@ -57,11 +44,24 @@ In Java DSL you can use the `dynamicRouter` as shown below:
 ----
 from("direct:start")
     // use a bean as the dynamic router
-    .dynamicRouter(method(DynamicRouterTest.class, "slip"));
+    .dynamicRouter(method(MySlipBean.class, "slip"));
 ----
 
-Which will leverage a xref:components::bean-component.adoc[Bean] to compute the slip
-_on-the-fly_, which could be implemented as follows:
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <dynamicRouter>
+        <!-- use a method call on a bean as dynamic router -->
+        <method beanType="com.foo.MySlipBean" method="slip"/>
+    </dynamicRouter>
+</route>
+----
+
+Which will call a xref:components:languages:bean-language.adoc[Bean Method] to compute the slip
+_on-the-fly_. The bean could be implemented as follows:
 
 [source,java]
 ----
@@ -90,9 +90,16 @@ public String slip(String body) {
 }
 ----
 
+WARNING: *Beware*
+You must ensure the expression used for the `dynamicRouter` such as a
+bean, will return `null` to indicate the end. Otherwise, the
+`dynamicRouter` will keep repeating endlessly.
+
+=== Thread safety beans
+
 Mind that this example is only for show and tell. The current
 implementation is not thread safe. You would have to store the state on
-the Exchange, to ensure thread safety, as shown
+the `Exchange`, to ensure thread safety, as shown
 below:
 
 [source,java]
@@ -134,45 +141,19 @@ public String slip(String body, @ExchangeProperties Map<String, Object> properti
 ----
 
 You could also store state as message headers, but they are not
-guaranteed to be preserved during routing, where as properties on the
-Exchange are. Although there was a bug in the method
-call expression, see the warning below.
+guaranteed to be preserved during routing, whereas properties on the
+Exchange are.
 
-[[DynamicRouter-SpringXML]]
-== Spring XML
-
-The same example in Spring XML would be:
-
-[source,xml]
-----
-<bean id="mySlip" class="org.apache.camel.processor.DynamicRouterTest"/>
- 
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:start"/>
-        <dynamicRouter>
-            <!-- use a method call on a bean as dynamic router -->
-            <method ref="mySlip" method="slip"/>
-        </dynamicRouter>
-    </route>
- 
-    <route>
-        <from uri="direct:foo"/>
-        <transform><constant>Bye World</constant></transform>
-    </route>
- 
-</camelContext>
-----
-
-[[DynamicRouter-DynamicRouterannotation]]
 == @DynamicRouter annotation
 
-You can also use the `@DynamicRouter` annotation. The `route` method would
+You can also use xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] with the `@DynamicRouter` annotation,
+on a Java bean method.
+
+In the example below the `route` method would
 then be invoked repeatedly as the message is processed dynamically. The
-idea is to return the next endpoint uri where to go. Return `null` to
-indicate the end. You can return multiple endpoints if you like, just as
-the Routing Slip, where each endpoint is
-separated by a delimiter.
+idea is to return the next endpoint uri where to go, and to return `null` to end.
+You can return multiple endpoints if you like, just as
+the xref:routingSlip-eip.adoc[Routing Slip], where each endpoint is separated by a comma.
 
 [source,java]
 ----
@@ -181,21 +162,12 @@ public class MyDynamicRouter {
     @Consume(uri = "activemq:foo")
     @DynamicRouter
     public String route(@XPath("/customer/id") String customerId, @Header("Location") String location, Document body) {
-        // query a database to find the best match of the endpoint based on the input parameteres
+        // query a database to find the best match of the endpoint based on the input parameters
         // return the next endpoint uri, where to go. Return null to indicate the end.
     }
 }
 ----
 
-In the above we can use the
-Parameter Binding Annotations
-to bind different parts of the Message to method
-parameters or use an Expression such as using
-xref:components:languages:xpath-language.adoc[XPath] or xref:components:languages:xpath-language.adoc[XQuery].
+The parameters on the `route` method is bound to information from the Exchange using
+xref:latest@manual:ROOT:bean-binding.adoc[Bean Parameter Binding].
 
-The method can be invoked in a number of ways as described in the
-Bean Integration such as
-
-* POJO Producing
-* Spring Remoting
-* xref:components::bean-component.adoc[Bean] component

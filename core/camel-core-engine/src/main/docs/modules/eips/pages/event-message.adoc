@@ -17,37 +17,48 @@ xref:components::seda-component.adoc[SEDA]
 
 TIP: See the related xref:requestReply-eip.adoc[Request Reply] message.
 
-[[eventMessage-ExplicitlyspecifyingInOnly]]
-== Explicitly specifying InOnly
+== Using endpoint URI
 
-If you are using a component which defaults to InOut you can override
-the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] for an endpoint using
+If you are using a component which defaults to `InOut` you can override
+the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] for a *consumer* endpoint using
 the pattern property.
 
-[source]
+[source,text]
 ----
 foo:bar?exchangePattern=InOnly
 ----
 
+IMPORTANT: This is only possible on endpoints used by consumers (i.e. in `<from>`).
 
-== Samples
-
-From 2.0 onwards on Camel you can specify the
-xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] using the DSL.
-
-[source,java]
-----
-from("mq:someQueue").
-  setExchangePattern(ExchangePattern.InOnly).
-  bean(Foo.class);
-----
-
-or you can invoke an endpoint with an explicit pattern
+In the example below the message will be forced as an event message as the consumer
+is in `InOnly` mode.
 
 [source,java]
 ----
-from("mq:someQueue").
-  inOnly("mq:anotherQueue");
+from("mq:someQueue?exchangePattern=InOnly")
+  .to("activemq:queue:one-way");
+----
+
+And with XML:
+
+[source,xml]
+----
+<route>
+    <from uri="mq:someQueue?exchangePattern=InOnly"/>
+    <to uri="activemq:queue:one-way"/>
+</route>
+----
+
+== Using setExchangePattern EIP
+
+You can specify the
+xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
+
+[source,java]
+----
+from("mq:someQueue")
+  .setExchangePattern(ExchangePattern.InOnly)
+  .to("activemq:queue:one-way");
 ----
 
 And with XML:
@@ -56,15 +67,27 @@ And with XML:
 ----
 <route>
     <from uri="mq:someQueue"/>
-    <inOnly uri="bean:foo"/>
+    <setExchangePattern pattern="InOnly"/>
+    <to uri="activemq:queue:one-way"/>
 </route>
 ----
 
-[source,xml]
+When using `setExchangePattern` then the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+on the xref:latest@manual:ROOT:exchange.adoc[Exchange] is changed from this point onwards in the route.
+
+This means you can change the pattern back again at a later point:
+
+[source,java]
 ----
-<route>
-    <from uri="mq:someQueue"/>
-    <inOnly uri="mq:anotherQueue"/>
-</route>
+from("mq:someQueue")
+  .setExchangePattern(ExchangePattern.InOnly)
+  .to("activemq:queue:one-way");
+  .setExchangePattern(ExchangePattern.InOut)
+  .to("activemq:queue:in-and-out")
+  .log("InOut MEP received ${body}")
 ----
+
+NOTE: Using `setExchangePattern` to change the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+is often only used in special use-cases where you must
+force to be using either `InOnly` or `InOut` mode when using components that support both modes (such as messaging components like ActiveMQ, JMS, RabbitMQ etc.)
 

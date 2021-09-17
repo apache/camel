@@ -66,7 +66,7 @@
     <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.1.0</awaitility-version>
-    <aws-java-sdk2-version>2.17.40</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.41</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -179,7 +179,7 @@
     <dropbox-version>3.2.0</dropbox-version>
     <eddsa-version>0.3.0</eddsa-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
-    <ehcache3-version>3.9.5</ehcache3-version>
+    <ehcache3-version>3.9.6</ehcache3-version>
     <elasticsearch-rest-cluster-runner-version>7.8.0.0</elasticsearch-rest-cluster-runner-version>
     <elasticsearch-rest-sniffer-version>7.8.0</elasticsearch-rest-sniffer-version>
     <elasticsearch-rest-version>7.8.0</elasticsearch-rest-version>
@@ -522,7 +522,7 @@
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
     <spring-ws-version>3.1.1</spring-ws-version>
-    <spring5-version>5.3.9</spring5-version>
+    <spring5-version>5.3.10</spring5-version>
     <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
     <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
     <squareup-okio-version>1.17.2</squareup-okio-version>

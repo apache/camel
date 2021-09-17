@@ -5,10 +5,6 @@ Camel supports most of the
 http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns]
 from the excellent book by Gregor Hohpe and Bobby Woolf.
 
-If you are new to Camel you might want to try the xref:latest@manual:ROOT:getting-started.adoc[Getting Started] in the
-User Guide before attempting to implement these patterns.
-
-[[EnterpriseIntegrationPatterns-MessagingSystems]]
 == Messaging Systems
 
 [width="100%",cols="10%,10%,80%",]
@@ -40,7 +36,6 @@ a|image::eip/MessageEndpointIcon.gif[image]
 connect to a messaging channel to send and receive messages?
 |=======================================================================
 
-[[EnterpriseIntegrationPatterns-MessagingChannels]]
 == Messaging Channels
 
 [width="100%",cols="10%,10%,80%",]
@@ -82,7 +77,6 @@ a|image::eip/MessagingBridgeIcon.gif[image]
 changes made to a database, and apply those changes to another system.
 |=======================================================================
 
-[[EnterpriseIntegrationPatterns-MessageConstruction]]
 == Message Construction
 
 [width="100%",cols="10%,10%,80%",]
@@ -110,7 +104,6 @@ when a message should be considered stale and thus shouldn’t be processed?
 
 |=======================================================================
 
-[[EnterpriseIntegrationPatterns-MessageRouting]]
 == Message Routing
 
 [width="100%",cols="10%,10%,80%",]
@@ -211,7 +204,6 @@ a|image::eip/PollingConsumerIcon.gif[image]
 |xref:loop-eip.adoc[Loop] |How can I repeat processing a message in a loop?
 |=======================================================================
 
-[[EnterpriseIntegrationPatterns-MessageTransformation]]
 == Message Transformation
 
 [width="100%",cols="10%,10%,80%",]
@@ -244,7 +236,6 @@ a|image::eip/MessageSelectorIcon.gif[image]
 |xref:validate-eip.adoc[Validate] |How can I validate a message?
 |=======================================================================
 
-[[EnterpriseIntegrationPatterns-MessagingEndpoints]]
 == Messaging Endpoints
 
 [width="100%",cols="10%,10%,80%",]
@@ -297,7 +288,6 @@ design a service to be invoked both via various messaging technologies
 and via non-messaging techniques?
 |=======================================================================
 
-[[EnterpriseIntegrationPatterns-SystemManagement]]
 == System Management
 
 [width="100%",cols="10%,10%,80%",]
@@ -324,7 +314,7 @@ a|image::eip/ControlBusIcon.gif[image]
 |xref:log-eip.adoc[Log] |How can I log processing a message?
 
 a|image::eip/RoutingTableIcon.gif[image]
-|xref:step-eip.adoc[Step] | Steps groups together a set of EIPs into a composite logical unit for metrics and monitoring. |
+|xref:step-eip.adoc[Step] | Groups together a set of EIPs into a composite logical unit for metrics and monitoring. |
 
 |=======================================================================
 
