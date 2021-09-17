@@ -29,7 +29,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor.deserializeOffsetValue;
 import static org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor.serializeOffsetKey;
 
 public class PartitionAssignmentListener implements ConsumerRebalanceListener {
@@ -40,6 +39,7 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
     private final KafkaConfiguration configuration;
     private final KafkaConsumer consumer;
     private final Map<String, Long> lastProcessedOffset;
+    private final ResumeStrategy resumeStrategy;
     private Supplier<Boolean> stopStateSupplier;
 
     public PartitionAssignmentListener(String threadId, String topicName, KafkaConfiguration configuration,
@@ -51,13 +51,12 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
         this.consumer = consumer;
         this.lastProcessedOffset = lastProcessedOffset;
         this.stopStateSupplier = stopStateSupplier;
-    }
 
-    private void resumeFromOffset(TopicPartition topicPartition, String offsetState) {
-        // The state contains the last read offset, so you need to seek from the next one
-        long offset = deserializeOffsetValue(offsetState) + 1;
-        LOG.debug("Resuming partition {} from offset {} from state", topicPartition.partition(), offset);
-        consumer.seek(topicPartition, offset);
+        StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
+        String seekPolicy = configuration.getSeekTo();
+
+        LOG.info("Performing resume as {} ", seekPolicy);
+        resumeStrategy = ResumeStrategyFactory.newResumeStrategy(consumer, offsetRepository, seekPolicy);
     }
 
     @Override
@@ -92,15 +91,6 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
         LOG.debug("onPartitionsAssigned: {} from topic {}", threadId, topicName);
 
-        StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
-        if (offsetRepository != null) {
-            for (TopicPartition partition : partitions) {
-                String offsetState = offsetRepository.getState(serializeOffsetKey(partition));
-                if (offsetState != null && !offsetState.isEmpty()) {
-                    // The state contains the last read offset, so you need to seek from the next one
-                    resumeFromOffset(partition, offsetState);
-                }
-            }
-        }
+        resumeStrategy.resume();
     }
 }

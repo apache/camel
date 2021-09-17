@@ -17,8 +17,6 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-import java.time.Duration;
-
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,15 +39,9 @@ public class SeekPolicyResumeStrategy implements ResumeStrategy {
     public void resume() {
         if (seekPolicy.equals("beginning")) {
             LOG.debug("Seeking from the beginning of topic");
-            // This poll to ensure we have an assigned partition
-            // otherwise seek won't work
-            consumer.poll(Duration.ofMillis(100));
             consumer.seekToBeginning(consumer.assignment());
         } else if (seekPolicy.equals("end")) {
             LOG.debug("Seeking from the end off the topic");
-            // This poll to ensure we have an assigned partition
-            // otherwise seek won't work
-            consumer.poll(Duration.ofMillis(100));
             consumer.seekToEnd(consumer.assignment());
         }
     }
