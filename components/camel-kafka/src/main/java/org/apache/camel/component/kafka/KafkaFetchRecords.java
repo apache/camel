@@ -33,8 +33,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.PartitionAssignmentListener;
 import org.apache.camel.component.kafka.consumer.support.ResumeStrategy;
-import org.apache.camel.component.kafka.consumer.support.ResumeStrategyFactory;
-import org.apache.camel.spi.StateRepository;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.util.IOHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -80,10 +78,6 @@ class KafkaFetchRecords implements Runnable {
 
     void preInit() {
         createConsumer();
-
-        StateRepository<String, String> offsetRepository = kafkaConsumer.getEndpoint().getConfiguration().getOffsetRepository();
-        String seekPolicy = kafkaConsumer.getEndpoint().getConfiguration().getSeekTo();
-        resumeStrategy = ResumeStrategyFactory.newResumeStrategy(consumer, offsetRepository, seekPolicy);
     }
 
     @Override
@@ -134,9 +128,6 @@ class KafkaFetchRecords implements Runnable {
         if (isReconnecting()) {
             subscribe();
 
-            // on first run or reconnecting
-            resume();
-
             // set reconnect to false as the connection and resume is done at this point
             setReconnect(false);
 
@@ -146,10 +137,6 @@ class KafkaFetchRecords implements Runnable {
 
         // start polling
         startPolling();
-    }
-
-    protected void resume() {
-        resumeStrategy.resume();
     }
 
     private void subscribe() {

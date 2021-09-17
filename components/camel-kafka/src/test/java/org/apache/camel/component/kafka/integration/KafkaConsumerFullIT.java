@@ -35,7 +35,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -45,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "true",
                           disabledReason = "Runtime conflicts with the idempotency tests")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "test";
@@ -89,6 +93,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         };
     }
 
+    @Order(3)
     @Test
     public void kafkaMessageIsConsumedByCamel() throws InterruptedException, IOException {
         String propagatedHeaderKey = "PropagatedCustomHeader";
@@ -119,6 +124,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         assertTrue(headers.containsKey(propagatedHeaderKey), "Should receive propagated header");
     }
 
+    @Order(2)
     @Test
     public void kafkaRecordSpecificHeadersAreNotOverwritten() throws InterruptedException, IOException {
         String propagatedHeaderKey = KafkaConstants.TOPIC;
@@ -137,6 +143,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
     }
 
     @Test
+    @Order(1)
     public void kafkaMessageIsConsumedByCamelSeekedToBeginning() throws Exception {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
@@ -150,6 +157,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         to.reset();
 
         to.expectedMessageCount(5);
+
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
 
         // Restart endpoint,
@@ -164,6 +172,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         to.assertIsSatisfied(3000);
     }
 
+    @Order(4)
     @Test
     public void kafkaMessageIsConsumedByCamelSeekedToEnd() throws Exception {
         to.expectedMessageCount(5);
@@ -194,6 +203,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         to.assertIsSatisfied(3000);
     }
 
+    @Order(5)
     @Test
     public void headerDeserializerCouldBeOverridden() {
         KafkaEndpoint kafkaEndpoint
