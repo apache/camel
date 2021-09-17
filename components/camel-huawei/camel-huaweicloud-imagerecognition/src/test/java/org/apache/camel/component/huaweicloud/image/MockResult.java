@@ -25,7 +25,7 @@ import com.huaweicloud.sdk.image.v2.model.ImageTaggingResponseResult;
 import com.huaweicloud.sdk.image.v2.model.RunCelebrityRecognitionResponse;
 import com.huaweicloud.sdk.image.v2.model.RunImageTaggingResponse;
 
-public class MockResult {
+public final class MockResult {
     public static final String CELEBRITY_RECOGNITION_RESULT_LABEL = "test_label";
 
     public static final float CELEBRITY_RECOGNITION_RESULT_CONFIDENCE = 0.8f;
