@@ -1,8 +1,7 @@
 [[platform-http-vertx-other]]
 = Platform Http Vertx Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-platform-http-vertx/src/main/docs/platform-http-vertx.adoc
 :docTitle: Platform Http Vertx
+:shortName: platform-http-vertx
 :artifactId: camel-platform-http-vertx
 :description: Implementation of the Platform HTTP Engine based on Vert.x Web
 :since: 3.2

@@ -1,8 +1,7 @@
 [[yaml-snakeyaml-dataformat]]
 = YAML SnakeYAML DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc
 :docTitle: YAML SnakeYAML
+:shortName: yaml-snakeyaml
 :artifactId: camel-snakeyaml
 :description: Marshal and unmarshal Java objects to and from YAML using SnakeYAML
 :since: 2.17
@@ -26,26 +25,7 @@ SnakeYAML library.
 == YAML Options
 
 // dataformat options: START
-The YAML SnakeYAML dataformat supports 12 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| library | SnakeYAML | YAMLLibrary | Which yaml library to use. By default it is SnakeYAML. There are 1 enums and the value can be one of: snake-yaml
-| unmarshalType |  | String | Class name of the java type to use when unmarshalling
-| constructor |  | String | BaseConstructor to construct incoming documents.
-| representer |  | String | Representer to emit outgoing objects.
-| dumperOptions |  | String | DumperOptions to configure outgoing objects.
-| resolver |  | String | Resolver to detect implicit type
-| useApplicationContextClassLoader | true | Boolean | Use ApplicationContextClassLoader as custom ClassLoader
-| prettyFlow | false | Boolean | Force the emitter to produce a pretty YAML document when using the flow style.
-| allowAnyType | false | Boolean | Allow any class to be un-marshaled
-| typeFilter |  | List | Set the types SnakeYAML is allowed to un-marshall
-| maxAliasesForCollections | 50 | Integer | Set the maximum amount of aliases allowed for collections.
-| allowRecursiveKeys | false | Boolean | Set whether recursive keys are allowed.
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 WARNING: SnakeYAML can load any class from YAML definition which may lead to security breach so by default, SnakeYAML DataForma restrict the object it can load to standard Java objects like List or Long. If you want to load custom POJOs you need to add theirs type to SnakeYAML DataFormat type filter list. If your source is trusted, you can set the property allowAnyType to true so SnakeYAML DataForma won't perform any filter on the types.

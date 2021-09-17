@@ -1,8 +1,7 @@
 [[jta-other]]
 = JTA Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jta/src/main/docs/jta.adoc
 :docTitle: JTA
+:shortName: jta
 :artifactId: camel-jta
 :description: Using Camel With JTA Transaction Manager
 :since: 3.4

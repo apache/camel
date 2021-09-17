@@ -1,8 +1,7 @@
 [[hl7-dataformat]]
 = HL7 DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-hl7/src/main/docs/hl7-dataformat.adoc
 :docTitle: HL7
+:shortName: hl7
 :artifactId: camel-hl7
 :description: Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.
 :since: 2.0
@@ -219,15 +218,7 @@ The `camel-hl7` JAR ships with a HL7 data format that can
 be used to marshal or unmarshal HL7 model objects.
 
 // dataformat options: START
-The HL7 dataformat supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| validate | true | Boolean | Whether to validate the HL7 message Is by default true.
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 

@@ -1,8 +1,7 @@
 [[swagger-java-other]]
 = Swagger Java Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-swagger-java/src/main/docs/swagger-java.adoc
 :docTitle: Swagger Java
+:shortName: swagger-java
 :artifactId: camel-swagger-java
 :description: Rest-dsl support for using swagger api-doc
 :since: 2.16

@@ -1,6 +1,7 @@
 [[datasonnet-language]]
 = DataSonnet Language
 :docTitle: DataSonnet
+:shortName: datasonnet
 :artifactId: camel-datasonnet
 :description: To use DataSonnet scripts for message transformations.
 :since: 3.7
@@ -28,18 +29,7 @@ datasonnet("someDSExpression")
 == DataSonnet Options
 
 // language options: START
-The DataSonnet language supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| bodyMediaType |  | String | The String representation of the message's body MediaType
-| outputMediaType |  | String | The String representation of the MediaType to output
-| resultType |  | String | Sets the class name of the result type (type from output) The default result type is com.datasonnet.document.Document
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 == Example
