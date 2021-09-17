@@ -1,8 +1,7 @@
 [[grok-dataformat]]
 = Grok DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-grok/src/main/docs/grok-dataformat.adoc
 :docTitle: Grok
+:shortName: grok
 :artifactId: camel-grok
 :description: Unmarshal unstructured data to objects using Logstash based Grok patterns.
 :since: 3.0
@@ -98,18 +97,7 @@ public class MyRouteBuilder extends RouteBuilder {
 == Grok Dataformat Options
 
 // dataformat options: START
-The Grok dataformat supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| pattern |  | String | The grok pattern to match lines of input
-| flattened | false | Boolean | Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches with same key.
-| allowMultipleMatchesPerLine | true | Boolean | If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple times when non-terminal pattern is used.
-| namedOnly | false | Boolean | Whether to capture named expressions only or not (i.e. %{IP:ip} but not $\{IP})
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 include::{page-component-version}@camel-spring-boot::page$grok-starter.adoc[]

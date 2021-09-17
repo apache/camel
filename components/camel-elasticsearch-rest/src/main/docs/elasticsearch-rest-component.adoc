@@ -1,6 +1,7 @@
 [[elasticsearch-rest-component]]
 = Elasticsearch Rest Component
 :docTitle: Elasticsearch Rest
+:shortName: elasticsearch-rest
 :artifactId: camel-elasticsearch-rest
 :description: Send requests to ElasticSearch via REST API
 :since: 2.21
@@ -36,112 +37,16 @@ elasticsearch-rest://clusterName[?options]
 
 
 // component-configure options: START
-== Configuring Options
 
-Camel components are configured on two separate levels:
-
-- component level
-- endpoint level
-
-=== Configuring Component Options
-
-The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
-For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
-
-Some components only have a few options, and others may have many. Because components typically have pre configured defaults
-that are commonly used, then you may often only need to configure a few options on a component; or none at all.
-
-Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
-in a configuration file (application.properties|yaml), or directly with Java code.
-
-=== Configuring Endpoint Options
-
-Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
-configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
-or as a producer (to), or used for both.
-
-Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
-the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
-
-A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
-which allows to not hardcode urls, port numbers, sensitive information, and other settings.
-In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
-
-The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
 
 // component options: START
-== Component Options
-
-
-The Elasticsearch Rest component supports 13 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *client* (advanced) | *Autowired* To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allow to customize the client with specific settings. |  | RestClient
-| *connectionTimeout* (advanced) | The time in ms to wait before connection will timeout. | 30000 | int
-| *enableSniffer* (advanced) | Enable automatically discover nodes from a running Elasticsearch cluster | false | Boolean
-| *hostAddresses* (advanced) | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
-| *maxRetryTimeout* (advanced) | The time in ms before retry | 30000 | int
-| *sniffAfterFailureDelay* (advanced) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
-| *snifferInterval* (advanced) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int
-| *socketTimeout* (advanced) | The timeout in ms to wait before the socket will timeout. | 30000 | int
-| *enableSSL* (security) | Enable SSL | false | Boolean
-| *password* (security) | Password for authenticate |  | String
-| *user* (security) | Basic authenticate user |  | String
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-== Endpoint Options
 
-The Elasticsearch Rest endpoint is configured using URI syntax:
-
-----
-elasticsearch-rest:clusterName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *clusterName* | *Required* Name of the cluster |  | String
-|===
-
-
-=== Query Parameters (17 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *connectionTimeout* (producer) | The time in ms to wait before connection will timeout. | 30000 | int
-| *disconnect* (producer) | Disconnect after it finish calling the producer | false | boolean
-| *enableSniffer* (producer) | Enable automatically discover nodes from a running Elasticsearch cluster | false | boolean
-| *enableSSL* (producer) | Enable SSL | false | boolean
-| *from* (producer) | Starting index of the response. |  | Integer
-| *hostAddresses* (producer) | *Required* Comma separated list with ip:port formatted remote transport addresses to use. |  | String
-| *indexName* (producer) | The name of the index to act against |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *maxRetryTimeout* (producer) | The time in ms before retry | 30000 | int
-| *operation* (producer) | What operation to perform. There are 12 enums and the value can be one of: Index, Update, Bulk, BulkIndex, GetById, MultiGet, MultiSearch, Delete, DeleteIndex, Search, Exists, Ping |  | ElasticsearchOperation
-| *scrollKeepAliveMs* (producer) | Time in ms during which elasticsearch will keep search context alive | 60000 | int
-| *size* (producer) | Size of the response. |  | Integer
-| *sniffAfterFailureDelay* (producer) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
-| *snifferInterval* (producer) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int
-| *socketTimeout* (producer) | The timeout in ms to wait before the socket will timeout. | 30000 | int
-| *useScroll* (producer) | Enable scroll usage | false | boolean
-| *waitForActiveShards* (producer) | Index creation waits for the write consistency number of shards to be available | 1 | int
-|===
 // endpoint options: END
 
 

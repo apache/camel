@@ -1,8 +1,7 @@
 [[crypto-dataformat]]
 = Crypto (Java Cryptographic Extension) DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-crypto/src/main/docs/crypto-dataformat.adoc
 :docTitle: Crypto (Java Cryptographic Extension)
+:shortName: crypto
 :artifactId: camel-crypto
 :description: Encrypt and decrypt messages using Java Cryptography Extension (JCE).
 :since: 2.3
@@ -22,23 +21,7 @@ the original plaintext. This data format implements only symmetric
 == CryptoDataFormat Options
 
 // dataformat options: START
-The Crypto (Java Cryptographic Extension) dataformat supports 9 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| algorithm |  | String | The JCE algorithm name indicating the cryptographic algorithm that will be used.
-| cryptoProvider |  | String | The name of the JCE Security Provider that should be used.
-| keyRef |  | String | Refers to the secret key to lookup from the register to use.
-| initVectorRef |  | String | Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.
-| algorithmParameterRef |  | String | A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type.
-| buffersize |  | Integer | The size of the buffer used in the signature process.
-| macAlgorithm | HmacSHA1 | String | The JCE algorithm name indicating the Message Authentication algorithm.
-| shouldAppendHMAC | true | Boolean | Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.
-| inline | false | Boolean | Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false.
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 

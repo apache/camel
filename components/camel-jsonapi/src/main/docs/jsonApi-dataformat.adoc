@@ -1,8 +1,7 @@
 [[jsonApi-dataformat]]
 = JSonApi DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-jsonapi/src/main/docs/jsonApi-dataformat.adoc
 :docTitle: JSonApi
+:shortName: jsonApi
 :artifactId: camel-jsonapi
 :description: Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
 :since: 3.0
@@ -12,16 +11,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/jsonApi.a
 *Since Camel {since}*
 
 // dataformat options: START
-The JSonApi dataformat supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| dataFormatTypes |  | Class[] | The classes to take into account for the marshalling
-| mainFormatType |  | Class | The classes to take into account while unmarshalling
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 

@@ -1,8 +1,7 @@
 [[protobuf-dataformat]]
 = Protobuf DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-protobuf/src/main/docs/protobuf-dataformat.adoc
 :docTitle: Protobuf
+:shortName: protobuf
 :artifactId: camel-protobuf
 :description: Serialize and deserialize Java objects using Google's Protocol buffers.
 :since: 2.2
@@ -32,17 +31,7 @@ https://developers.google.com/protocol-buffers/docs/javatutorial[Protobuf Java T
 == Protobuf Options
 
 // dataformat options: START
-The Protobuf dataformat supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| instanceClass |  | String | Name of class to use when unmarshalling
-| contentTypeFormat | native | String | Defines a content type format in which protobuf message will be serialized/deserialized from(to) the Java been. The format can either be native or json for either native protobuf or json fields representation. The default value is native. There are 2 enums and the value can be one of: json, native
-| contentTypeHeader | true | Boolean | Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 

@@ -1,8 +1,7 @@
 [[reactive-executor-vertx-other]]
 = Reactive Executor Vert.x Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc
 :docTitle: Reactive Executor Vert.x
+:shortName: reactive-executor-vertx
 :artifactId: camel-reactive-executor-vertx
 :description: Reactive Executor for camel-core using Vert.x
 :since: 3.0

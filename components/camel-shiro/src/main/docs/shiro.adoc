@@ -1,8 +1,7 @@
 [[shiro-other]]
 = Shiro Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-shiro/src/main/docs/shiro.adoc
 :docTitle: Shiro
+:shortName: shiro
 :artifactId: camel-shiro
 :description: Security using Shiro
 :since: 2.5

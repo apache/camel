@@ -1,6 +1,7 @@
 [[aws2-athena-component]]
 = AWS Athena Component
 :docTitle: AWS Athena
+:shortName: aws2-athena
 :artifactId: camel-aws2-athena
 :description: Access AWS Athena service using AWS SDK version 2.x.
 :since: 3.4
@@ -33,140 +34,16 @@ You can append query options to the URI in the following format,
 
 
 // component-configure options: START
-== Configuring Options
 
-Camel components are configured on two separate levels:
-
-- component level
-- endpoint level
-
-=== Configuring Component Options
-
-The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
-For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
-
-Some components only have a few options, and others may have many. Because components typically have pre configured defaults
-that are commonly used, then you may often only need to configure a few options on a component; or none at all.
-
-Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
-in a configuration file (application.properties|yaml), or directly with Java code.
-
-=== Configuring Endpoint Options
-
-Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
-configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
-or as a producer (to), or used for both.
-
-Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
-the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
-
-A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
-which allows to not hardcode urls, port numbers, sensitive information, and other settings.
-In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
-
-The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
 
 // component options: START
-== Component Options
-
-
-The AWS Athena component supports 30 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *accessKey* (producer) | Amazon AWS Access Key. |  | String
-| *amazonAthenaClient* (producer) | *Autowired* The AmazonAthena instance to use as the client. |  | AthenaClient
-| *configuration* (producer) | The component configuration. |  | Athena2Configuration
-| *database* (producer) | The Athena database to use. |  | String
-| *delay* (producer) | Milliseconds before the next poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 2000 | long
-| *encryptionOption* (producer) | The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS. There are 4 enums and the value can be one of: SSE_S3, SSE_KMS, CSE_KMS, null |  | EncryptionOption
-| *includeTrace* (producer) | Include useful trace information at the beginning of queries as an SQL comment (prefixed with --). | false | boolean
-| *initialDelay* (producer) | Milliseconds before the first poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 1000 | long
-| *kmsKey* (producer) | For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *maxAttempts* (producer) | Maximum number of times to attempt a query. Set to 1 to disable retries. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 1 | int
-| *maxResults* (producer) | Max number of results to return for the given operation (if supported by the Athena API endpoint). If not set, will use the Athena API default for the given operation. |  | Integer
-| *nextToken* (producer) | Pagination token to use in the case where the response from the previous request was truncated. |  | String
-| *operation* (producer) | The Athena API function to call. There are 4 enums and the value can be one of: getQueryExecution, getQueryResults, listQueryExecutions, startQueryExecution | startQueryExecution | Athena2Operations
-| *outputLocation* (producer) | The location in Amazon S3 where query results are stored, such as s3://path/to/query/bucket/. Ensure this value ends with a forward slash ('/'). |  | String
-| *outputType* (producer) | How query results should be returned. One of StreamList (default - return a GetQueryResultsIterable that can page through all results), SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results), S3Pointer (return an S3 path pointing to the results). There are 3 enums and the value can be one of: StreamList, SelectList, S3Pointer | StreamList | Athena2OutputType
-| *proxyHost* (producer) | To define a proxy host when instantiating the Athena client. |  | String
-| *proxyPort* (producer) | To define a proxy port when instantiating the Athena client. |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Athena client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
-| *queryExecutionId* (producer) | The unique ID identifying the query execution. |  | String
-| *queryString* (producer) | The SQL query to run. Except for simple queries, prefer setting this as the body of the Exchange or as a header using Athena2Constants.QUERY_STRING to avoid having to deal with URL encoding issues. |  | String
-| *region* (producer) | The region in which Athena client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1). You'll need to use the name Region.EU_WEST_1.id(). |  | String
-| *resetWaitTimeoutOnRetry* (producer) | Reset the waitTimeout countdown in the event of a query retry. If set to true, potential max time spent waiting for queries is equal to waitTimeout x maxAttempts. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | true | boolean
-| *retry* (producer) | Optional comma separated list of error types to retry the query for. Use 'retryable' to retry all retryable failure conditions (e.g. generic errors and resources exhausted), 'generic' to retry 'GENERIC_INTERNAL_ERROR' failures, 'exhausted' to retry queries that have exhausted resource limits, 'always' to always retry regardless of failure condition, or 'never' or null to never retry (default). See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. There are 5 enums and the value can be one of: never, always, retryable, exhausted, generic | never | String
-| *secretKey* (producer) | Amazon AWS Secret Key. |  | String
-| *useDefaultCredentialsProvider* (producer) | Set whether the Athena client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in | false | boolean
-| *waitTimeout* (producer) | Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 0 | long
-| *workGroup* (producer) | The workgroup to use for running the query. |  | String
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-== Endpoint Options
 
-The AWS Athena endpoint is configured using URI syntax:
-
-----
-aws2-athena:label
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *label* | *Required* Logical name |  | String
-|===
-
-
-=== Query Parameters (28 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *accessKey* (producer) | Amazon AWS Access Key. |  | String
-| *amazonAthenaClient* (producer) | *Autowired* The AmazonAthena instance to use as the client. |  | AthenaClient
-| *database* (producer) | The Athena database to use. |  | String
-| *delay* (producer) | Milliseconds before the next poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 2000 | long
-| *encryptionOption* (producer) | The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS. There are 4 enums and the value can be one of: SSE_S3, SSE_KMS, CSE_KMS, null |  | EncryptionOption
-| *includeTrace* (producer) | Include useful trace information at the beginning of queries as an SQL comment (prefixed with --). | false | boolean
-| *initialDelay* (producer) | Milliseconds before the first poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 1000 | long
-| *kmsKey* (producer) | For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *maxAttempts* (producer) | Maximum number of times to attempt a query. Set to 1 to disable retries. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 1 | int
-| *maxResults* (producer) | Max number of results to return for the given operation (if supported by the Athena API endpoint). If not set, will use the Athena API default for the given operation. |  | Integer
-| *nextToken* (producer) | Pagination token to use in the case where the response from the previous request was truncated. |  | String
-| *operation* (producer) | The Athena API function to call. There are 4 enums and the value can be one of: getQueryExecution, getQueryResults, listQueryExecutions, startQueryExecution | startQueryExecution | Athena2Operations
-| *outputLocation* (producer) | The location in Amazon S3 where query results are stored, such as s3://path/to/query/bucket/. Ensure this value ends with a forward slash ('/'). |  | String
-| *outputType* (producer) | How query results should be returned. One of StreamList (default - return a GetQueryResultsIterable that can page through all results), SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results), S3Pointer (return an S3 path pointing to the results). There are 3 enums and the value can be one of: StreamList, SelectList, S3Pointer | StreamList | Athena2OutputType
-| *proxyHost* (producer) | To define a proxy host when instantiating the Athena client. |  | String
-| *proxyPort* (producer) | To define a proxy port when instantiating the Athena client. |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Athena client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
-| *queryExecutionId* (producer) | The unique ID identifying the query execution. |  | String
-| *queryString* (producer) | The SQL query to run. Except for simple queries, prefer setting this as the body of the Exchange or as a header using Athena2Constants.QUERY_STRING to avoid having to deal with URL encoding issues. |  | String
-| *region* (producer) | The region in which Athena client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1). You'll need to use the name Region.EU_WEST_1.id(). |  | String
-| *resetWaitTimeoutOnRetry* (producer) | Reset the waitTimeout countdown in the event of a query retry. If set to true, potential max time spent waiting for queries is equal to waitTimeout x maxAttempts. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | true | boolean
-| *retry* (producer) | Optional comma separated list of error types to retry the query for. Use 'retryable' to retry all retryable failure conditions (e.g. generic errors and resources exhausted), 'generic' to retry 'GENERIC_INTERNAL_ERROR' failures, 'exhausted' to retry queries that have exhausted resource limits, 'always' to always retry regardless of failure condition, or 'never' or null to never retry (default). See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. There are 5 enums and the value can be one of: never, always, retryable, exhausted, generic | never | String
-| *secretKey* (producer) | Amazon AWS Secret Key. |  | String
-| *useDefaultCredentialsProvider* (producer) | Set whether the Athena client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in | false | boolean
-| *waitTimeout* (producer) | Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 0 | long
-| *workGroup* (producer) | The workgroup to use for running the query. |  | String
-| *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String
-|===
 // endpoint options: END
 
 Required Athena component options

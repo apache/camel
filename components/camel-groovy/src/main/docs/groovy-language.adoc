@@ -1,6 +1,7 @@
 [[groovy-language]]
 = Groovy Language
 :docTitle: Groovy
+:shortName: groovy
 :artifactId: camel-groovy
 :description: Evaluates a Groovy script.
 :since: 1.3
@@ -23,15 +24,7 @@ groovy("someGroovyExpression")
 == Groovy Options
 
 // language options: START
-The Groovy language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 == Examples
