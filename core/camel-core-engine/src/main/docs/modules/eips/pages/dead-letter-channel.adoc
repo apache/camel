@@ -454,7 +454,7 @@ The `Exchange.FAILURE_ROUTE_ID` have the constant value `CamelFailureRouteId`.
 This allows for example you to fetch this information in your dead letter queue and use that for error reporting.
 
 
-== Control if redelivery is allowed during stopping/shutdown
+=== Control if redelivery is allowed during stopping/shutdown
 
 The option `allowRedeliveryWhileStopping` (default is `true`) controls whether redelivery is allowed or not,
 during stopping Camel or the route. This only applies for any potential new redelivery attempts;

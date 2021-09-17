@@ -5,6 +5,8 @@
 :since: 
 :supportLevel: Stable
 
+The Delay EIP is used for delaying messages during routing.
+
 == Options
 
 // eip options: START
