@@ -199,10 +199,10 @@ constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`
 
 |null |null |represents a *null*
 
-|random_(value)_ |Integer |returns a random Integer between 0 (included) and _value_
+|random(value) |Integer |returns a random Integer between 0 (included) and _value_
 (excluded)
 
-|random_(min,max)_ |Integer |returns a random Integer between _min_ (included) and
+|random(min,max) |Integer |returns a random Integer between _min_ (included) and
 _max_ (excluded)
 
 |collate(group) |List |The collate function iterates the message body and groups
