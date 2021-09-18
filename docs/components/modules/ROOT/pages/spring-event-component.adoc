@@ -20,8 +20,8 @@ The Spring Event component provides access to the Spring
 `ApplicationEvent` objects. This allows you to publish
 `ApplicationEvent` objects to a Spring `ApplicationContext` or to
 consume them. You can then use
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns] to process them such as xref:{eip-vc}:eips:filter-eip.adoc[Message
+xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns] to process them such as xref:eips:filter-eip.adoc[Message
 Filter].
 
 == URI format

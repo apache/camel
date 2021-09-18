@@ -167,7 +167,7 @@ Support for Endpoint DSL auto completion https://github.com/apache/camel-k-runti
 
 == Defining beans
 
-In addition to the general support for creating beans provided by xref:latest@components:others:main.adoc#_specifying_custom_beans[Camel Main], the YAML DSL provide a convenient syntax to define and configure them:
+In addition to the general support for creating beans provided by xref:others:main.adoc#_specifying_custom_beans[Camel Main], the YAML DSL provide a convenient syntax to define and configure them:
 
 [source,yaml]
 ----

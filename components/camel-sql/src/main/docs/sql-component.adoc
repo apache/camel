@@ -46,7 +46,7 @@ pattern. See further below.
 [TIP]
 ====
 This component can be used as a
-xref:{eip-vc}:eips:transactional-client.adoc[Transactional Client].
+xref:eips:transactional-client.adoc[Transactional Client].
 ====
 
 The SQL component uses the following endpoint URI notation:
