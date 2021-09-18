@@ -159,8 +159,8 @@ public class Main extends MainCommandLineSupport {
     }
 
     /**
-     * Enable this to allow multiple CamelContexts to be loaded by this Main class.
-     * By default only a single CamelContext is allowed.
+     * Enable this to allow multiple CamelContexts to be loaded by this Main class. By default only a single
+     * CamelContext is allowed.
      */
     public void setAllowMultipleCamelContexts(boolean allowMultipleCamelContexts) {
         this.allowMultipleCamelContexts = allowMultipleCamelContexts;
