@@ -77,7 +77,6 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         final List recentReports = template().requestBody("direct:getRecentReports", null, List.class);
 
         assertNotNull(recentReports, "getRecentReports");
-        assertFalse(recentReports.isEmpty(), "getRecentReports empty");
         LOG.debug("getRecentReports: {}", recentReports);
     }
 
