@@ -362,10 +362,10 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         final String newLineItemId = String.valueOf(NEW_LINE_ITEM_ID.incrementAndGet());
         lineItem.setName(newLineItemId);
 
-        result = template().requestBodyAndHeader("direct:upsertSObject", lineItem,
-                SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, newLineItemId, CreateSObjectResult.class);
-        assertNotNull(result);
-        assertTrue(result.getSuccess());
+        UpsertSObjectResult upsertResult = template().requestBodyAndHeader("direct:upsertSObject", lineItem,
+                SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, newLineItemId, UpsertSObjectResult.class);
+        assertNotNull(upsertResult);
+        assertTrue(upsertResult.getSuccess());
 
         // clear read only parent type fields
         lineItem.setMerchandise__c(null);
@@ -373,9 +373,9 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         lineItem.setUnits_Sold__c(25.0);
 
         // update line item with Name NEW_LINE_ITEM_ID
-        result = template().requestBodyAndHeader("direct:upsertSObject", lineItem,
-                SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, newLineItemId, CreateSObjectResult.class);
-        assertNull(result);
+        upsertResult = template().requestBodyAndHeader("direct:upsertSObject", lineItem,
+                SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, newLineItemId, UpsertSObjectResult.class);
+        assertNotNull(upsertResult);
 
         // delete the SObject with Name NEW_LINE_ITEM_ID
         assertNull(template().requestBody("direct:deleteSObjectWithId", newLineItemId));

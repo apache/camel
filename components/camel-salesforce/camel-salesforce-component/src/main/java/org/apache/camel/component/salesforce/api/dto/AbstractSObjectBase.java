@@ -76,6 +76,8 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
         LastModifiedById = null;
         SystemModstamp = null;
         LastActivityDate = null;
+        LastViewedDate = null;
+        LastReferencedDate = null;
     }
 
     @JsonProperty("attributes")
