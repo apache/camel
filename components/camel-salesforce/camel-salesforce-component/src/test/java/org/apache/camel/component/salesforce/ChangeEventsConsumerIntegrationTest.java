@@ -94,7 +94,9 @@ public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestB
     }
 
     @Override
-    protected RouteBuilder doCreateRouteBuilder() {
+    protected RouteBuilder doCreateRouteBuilder() throws InterruptedException {
+        // Let activity from prior tests clear out
+        Thread.sleep(2000);
         return new RouteBuilder() {
             @Override
             public void configure() {
