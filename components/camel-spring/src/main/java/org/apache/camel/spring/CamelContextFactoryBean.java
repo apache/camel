@@ -525,13 +525,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     protected SpringCamelContext newCamelContext() {
-        return new SpringCamelContext(getApplicationContext());
+        return new SpringCamelContext();
     }
 
     @Override
     public SpringCamelContext getContext(boolean create) {
         if (context == null && create) {
             context = createContext();
+            context.setApplicationContext(getApplicationContext());
             configure(context);
             context.build();
         }
