@@ -62,7 +62,7 @@ public class MainBeansClassStaticFactoryMethodTest {
         }
     }
 
-    public static class MyDriver {
+    public static final class MyDriver {
 
         private String url;
         private String username;
