@@ -4,7 +4,7 @@
     "name": "ribbon",
     "title": "Ribbon",
     "description": "Using Netflix Ribbon for client side load balancing",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.18.0",
     "label": "microservice",
     "supportLevel": "Stable",
