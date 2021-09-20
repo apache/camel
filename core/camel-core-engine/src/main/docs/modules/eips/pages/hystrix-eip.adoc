@@ -1,25 +1,11 @@
 [[hystrix-eip]]
 = Hystrix EIP (deprecated)
 
-The Hystrix EIP provides integration with Netflix https://github.com/Netflix/Hystrix[Hystrix] to be used as circuit breaker in the Camel routes. Hystrix is a latency and fault tolerance library designed to isolate points of access to remote systems, services and 3rd party libraries, stop cascading failure and enable resilience in complex distributed systems where failure is inevitable.
+The Hystrix EIP provides integration with Netflix https://github.com/Netflix/Hystrix[Hystrix]
+to be used as xref:circuitBreaker-eip.adoc[Circuit Breaker] in the Camel routes.
 
-
-[NOTE]
-====
-Camel provides the Circuit Breaker EIP in the route model, which allows to plugin different implementations.
-Hystrix is one such implementation.
-====
-
-Maven users will need to add the following dependency to their pom.xml to use this EIP:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-hystrix</artifactId>
-    <version>x.x.x</version><!-- use the same version as your Camel core version -->
-</dependency>
-----
+Hystrix is a latency and fault tolerance library designed to isolate points of access to remote systems,
+services and 3rd party libraries, stop cascading failure and enable resilience in complex distributed systems where failure is inevitable.
 
 == Configuration options
 
@@ -34,11 +20,14 @@ The Hystrix EIP supports 2 options which are listed below:
 |===
 // eip options: END
 
-See xref:hystrixConfiguration-eip.adoc[Hystrix Configuration] for all the configuration options on Hystrix EIP.
+See xref:hystrixConfiguration-eip.adoc[Hystrix Configuration] for all the configuration options
+on the Hystrix xref:circuitBreaker-eip.adoc[Circuit Breaker].
 
-== Samples
+== Using Hystrix EIP
 
-Below is an example route showing an Hystrix endpoint that protects against slow operation by falling back to the in-lined fallback route. By default the timeout request is just *1000ms* so the HTTP endpoint has to be fairly quick to succeed.
+Below is an example route showing a Hystrix EIP circuit breaker
+that protects against a downstream HTTP operation with fallback.
+
 [source,java]
 ----
 from("direct:start")
@@ -51,28 +40,35 @@ from("direct:start")
 ----
 
 And in XML DSL:
+
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-  <route>
+<route>
     <from uri="direct:start"/>
     <circuitBreaker>
-      <to uri="http://fooservice.com/slow"/>
-      <onFallback>
-        <transform>
-          <constant>Fallback message</constant>
-        </transform>
-      </onFallback>
+        <to uri="http://fooservice.com/faulty"/>
+        <onFallback>
+            <transform>
+                <constant>Fallback message</constant>
+            </transform>
+        </onFallback>
     </circuitBreaker>
     <to uri="mock:result"/>
-  </route>
-</camelContext>
+</route>
 ----
 
-== Configuring Hystrix
+In case the calling the downstream HTTP service is failing, and an exception is thrown
+then the circuit breaker will react and execute the fallback route instead.
 
-You can fine-tune Hystrix by the many xref:hystrixConfiguration-eip.adoc[Hystrix Configuration] options.
-For example to use a 2 second execution timeout, you can do as follows:
+If there was no fallback, then the circuit breaker will throw an exception.
+
+TIP: For more information about fallback see xref:onFallback-eip.adoc[onFallback].
+
+=== Configuring Hystrix
+
+You can fine-tune Hystrix EIP by the many xref:hystrixConfiguration-eip.adoc[Hystrix Configuration] options.
+
+For example to use 2 second execution timeout, you can do as follows:
 
 [source,java]
 ----
@@ -81,7 +77,7 @@ from("direct:start")
         // use 2 second timeout
         .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
         .log("Hystrix processing start: ${threadName}")
-        .toD("direct:${body}")
+        .to("http://fooservice.com/faulty")
         .log("Hystrix processing end: ${threadName}")
     .end()
     .log("After Hystrix ${body}");
@@ -96,30 +92,24 @@ And in XML:
   <circuitBreaker>
     <hystrixConfiguration executionTimeoutInMilliseconds="2000"/>
     <log message="Hystrix processing start: ${threadName}"/>
-    <toD uri="direct:${body}"/>
+    <to uri="http://fooservice.com/faulty"/>
     <log message="Hystrix processing end: ${threadName}"/>
   </circuitBreaker>
   <log message="After Hystrix: ${body}"/>
 </route>
 ----
 
-== Fallback
-
-See xref:onFallback-eip.adoc[onFallback].
-
-== Other examples
-
-You can find an example with the source code: https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-hystrix[camel-example-spring-boot-hystrix].
-
-== Using Hystrix with Spring Boot
-
-See the xref:components:others:hystrix.adoc[Hystrix Component].
+In this example if calling the downstream service does not return a response within 2 seconds,
+a timeout is triggered, and the exchange will fail with a TimeoutException.
 
 == Camel's Error Handler and Circuit Breaker EIP
 
-By default the Circuit Breaker EIP handles errors by itself. This means if the circuit breaker is open and
-the message fails, then Camel's error handler is not reacting also.
-However, you can enable Camels error handler with circuit breaker by enabling the `inheritErrorHandler` option, as shown:
+By default, the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP handles errors by itself.
+This means if the circuit breaker is open, and the message fails, then Camel's error handler
+is not reacting also.
+
+However, you can enable Camels error handler with circuit breaker by enabling
+the `inheritErrorHandler` option, as shown:
 
 [source,java]
 ----
@@ -137,7 +127,7 @@ from("direct:start")
     .to("mock:result");
 ----
 
-This example is from an unit test, where you can see the Circuit Breaker EIP block has been hardcoded
+This example is from a test, where you can see the Circuit Breaker EIP block has been hardcoded
 to always fail by throwing an exception. Because the `inheritErrorHandler` has been enabled,
 then Camel's error handler will attempt to call the Circuit Breaker EIP block again.
 
@@ -147,3 +137,21 @@ That means the `mock:a` endpoint will receive the message again, and a total of 
 If we turn off the `inheritErrorHandler` option (default) then the Circuit Breaker EIP will only be
 executed once because it handled the error itself.
 
+== Dependencies
+
+[NOTE]
+====
+Camel provides the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP in the route model, which allows to plugin different implementations.
+Hystrix is one such implementation.
+====
+
+Maven users will need to add the following dependency to their pom.xml to use this EIP:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-hystrix</artifactId>
+    <version>x.x.x</version><!-- use the same version as your Camel core version -->
+</dependency>
+----
