@@ -76,7 +76,7 @@ public class SalesforceConsumer extends DefaultConsumer {
     private final ObjectMapper objectMapper;
 
     private final boolean rawPayload;
-    private final Class<?> sObjectClass;
+    private Class<?> sObjectClass;
     private boolean subscribed;
     private final SubscriptionHelper subscriptionHelper;
     private final String topicName;
@@ -102,30 +102,6 @@ public class SalesforceConsumer extends DefaultConsumer {
         messageKind = MessageKind.fromTopicName(topicName);
 
         rawPayload = endpoint.getConfiguration().isRawPayload();
-
-        // get sObjectClass to convert to
-        if (!rawPayload) {
-            final String sObjectName = endpoint.getConfiguration().getSObjectName();
-            if (sObjectName != null) {
-                sObjectClass = endpoint.getComponent().getClassMap().get(sObjectName);
-                if (sObjectClass == null) {
-                    throw new IllegalArgumentException(String.format("SObject Class not found for %s", sObjectName));
-                }
-            } else {
-                final String className = endpoint.getConfiguration().getSObjectClass();
-                if (className != null) {
-                    sObjectClass = endpoint.getComponent().getCamelContext().getClassResolver().resolveClass(className);
-                    if (sObjectClass == null) {
-                        throw new IllegalArgumentException(String.format("SObject Class not found %s", className));
-                    }
-                } else {
-                    LOG.warn("Property sObjectName or sObjectClass NOT set, messages will be of type java.lang.Map");
-                    sObjectClass = null;
-                }
-            }
-        } else {
-            sObjectClass = null;
-        }
     }
 
     public String getTopicName() {
@@ -284,6 +260,7 @@ public class SalesforceConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
+        determineSObjectClass();
         final SalesforceEndpointConfig config = endpoint.getConfiguration();
 
         // is a query configured in the endpoint?
@@ -314,7 +291,6 @@ public class SalesforceConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-
         if (subscribed) {
             subscribed = false;
             // unsubscribe from topic
@@ -322,4 +298,30 @@ public class SalesforceConsumer extends DefaultConsumer {
         }
     }
 
+    // May be necessary to call from some unit tests.
+    void determineSObjectClass() {
+        // get sObjectClass to convert to
+        if (!rawPayload) {
+            final String sObjectName = endpoint.getConfiguration().getSObjectName();
+            if (sObjectName != null) {
+                sObjectClass = endpoint.getComponent().getClassMap().get(sObjectName);
+                if (sObjectClass == null) {
+                    throw new IllegalArgumentException(String.format("SObject Class not found for %s", sObjectName));
+                }
+            } else {
+                final String className = endpoint.getConfiguration().getSObjectClass();
+                if (className != null) {
+                    sObjectClass = endpoint.getComponent().getCamelContext().getClassResolver().resolveClass(className);
+                    if (sObjectClass == null) {
+                        throw new IllegalArgumentException(String.format("SObject Class not found %s", className));
+                    }
+                } else {
+                    LOG.warn("Property sObjectName or sObjectClass NOT set, messages will be of type java.lang.Map");
+                    sObjectClass = null;
+                }
+            }
+        } else {
+            sObjectClass = null;
+        }
+    }
 }
