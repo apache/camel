@@ -424,7 +424,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                     <includes>
                                         <include>**/*IntegrationTest.java</include>
                                     </includes>
-                                    <excludedGroups>org.apache.camel.component.salesforce.Standalone</excludedGroups>
+                                    <excludedGroups>standalone</excludedGroups>
                                 </configuration>
                             </execution>
                             <execution>
@@ -439,7 +439,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                     <includes>
                                         <include>**/*IntegrationTest.java</include>
                                     </includes>
-                                    <groups>org.apache.camel.component.salesforce.Standalone</groups>
+                                    <groups>standalone</groups>
                                 </configuration>
                             </execution>
                         </executions>

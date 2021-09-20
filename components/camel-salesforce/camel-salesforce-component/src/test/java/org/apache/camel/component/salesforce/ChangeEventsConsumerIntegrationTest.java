@@ -27,6 +27,7 @@ import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * During integration tests setup, Salesforce has been configured to fire change events for Account objects. This test
  * merely uses some API calls to trigger some change events, and then perform assertion on the received events.
  */
-@Standalone
+@Tag("standalone")
 public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final String ACCOUNT_NAME = "ChangeEventsConsumerIntegrationTest-TestAccount";
