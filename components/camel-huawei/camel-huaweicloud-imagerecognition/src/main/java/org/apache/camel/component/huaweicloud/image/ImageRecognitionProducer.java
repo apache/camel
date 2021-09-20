@@ -91,7 +91,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
      * @param  clientConfigurations
      * @return
      */
-    private ImageClient initializeClient(ImageRecognitionEndpoint endpoint, ClientConfigurations clientConfigurations) {
+    private ImageClient initializeSdkClient(ImageRecognitionEndpoint endpoint, ClientConfigurations clientConfigurations) {
         if (endpoint.getImageClient() != null) {
             LOG.info(
                     "Instance of ImageClient was set on the endpoint. Skipping creation of ImageClient from endpoint parameters");
@@ -132,7 +132,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
         ClientConfigurations clientConfigurations = initializeConfigurations(endpoint);
 
         if (imageClient == null) {
-            initializeClient(endpoint, clientConfigurations);
+            initializeSdkClient(endpoint, clientConfigurations);
         }
 
         String operation = ((ImageRecognitionEndpoint) super.getEndpoint()).getOperation();
@@ -204,7 +204,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
      * @param clientConfigurations
      */
     private void updateClientConfigurations(Exchange exchange, ClientConfigurations clientConfigurations) {
-        resetDynamicConfigurations(clientConfigurations);
 
         boolean isImageContentSet = true;
         boolean isImageUrlSet = true;
@@ -270,14 +269,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
                 throw new IllegalArgumentException("celebrity recognition threshold should be at 0~1");
             }
         }
-    }
-
-    /**
-     * Set all dynamic configurations to null
-     */
-    private void resetDynamicConfigurations(ClientConfigurations clientConfigurations) {
-        clientConfigurations.setImageContent(null);
-        clientConfigurations.setImageUrl(null);
     }
 
     private String getAccessKey(ImageRecognitionEndpoint endpoint) {
