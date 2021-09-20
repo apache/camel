@@ -5,6 +5,11 @@
 :since: 
 :supportLevel: Stable
 
+Every Camel xref:latest@manual:ROOT:routes.adoc[route] starts from an xref:latest@manual:ROOT:endpoint.adoc[Endpoint]
+as the input (source) to the route.
+
+The From EIP is the input.
+
 == Options
 
 // eip options: START
@@ -17,24 +22,23 @@ The From EIP supports 1 options which are listed below:
 |===
 // eip options: END
 
-== Samples
+== Example
 
-Start a route with the File endpoint. Each file in the directory creates an exchange that is put into the camel route.
-
-A camel route is started using from inside the configure method of the class *RouteBuilder*
+In the route below the route starts from
+a xref:components::file-component.adoc[File] endpoint.
 
 [source,java]
 ----
-from("file:c:/in")
+from("file:inbox")
+  .to("log:inbox");
 ----
 
-And examples in Spring XML Schema:
-
-The route is defined inside a CamelContext.
+And the same example in XML DSL:
 
 [source,xml]
 ----
 <route>
-  <from uri="file:c:/in" />
+  <from uri="file:inbox"/>
+  <to uri="log:inbox"/>
 </route>
 ----

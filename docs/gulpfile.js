@@ -180,6 +180,13 @@ const sources = {
         'reactive-threadpoolfactory-vertx.adoc', // not part of any component
       ],
     },
+    json: {
+      source: [
+        '../components/{*,*/*,*/*/*}/src/generated/resources/*.json',
+      ],
+      destination: 'components/modules/others/examples/json',
+      filter: (content) => JSON.parse(content).other, // check if there is a "other" key at the root
+    },
   },
   eips: {
     json: {
@@ -201,11 +208,8 @@ const sources = {
   },
 }
 
-// NOTE: json symlinks are currently disabled, pending work completion
-// on the jsonpath macro usage
-//
-// `symlinkTasks` is a tree of Gulp tasks it will be created from the
-// data structure above. For example given:
+// Generates a tree of Gulp tasks it will be created from the data
+// structure above. For example given:
 //
 // taskName: {
 //   asciidoc: {
@@ -425,10 +429,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
     )
   }
 
-  // NOTE: json symlinks are currently disabled, pending work completion
-  // on the jsonpath macro usage
-  const disabled = true // remove altogether
-  if (!disabled && json) {
+  if (json) {
     allTasks.push(
       series(
         named(`clean:json:${type}`, clean, json.destination, json.keep),

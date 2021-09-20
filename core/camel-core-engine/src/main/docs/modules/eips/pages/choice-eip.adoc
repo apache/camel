@@ -28,10 +28,6 @@ The Choice EIP supports 2 options which are listed below:
 
 == Example
 
-The following example shows how to route a request from an input
-*seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on
-the evaluation of various xref:latest@manual:ROOT:predicate.adoc[Predicate].
-
 The Camel xref:components:languages:simple-language.adoc[Simple] language
 is great to use with the Choice EIP when routing is based on the content of the message,
 such as checking message headers.

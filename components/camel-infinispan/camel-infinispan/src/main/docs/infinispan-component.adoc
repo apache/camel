@@ -1,6 +1,7 @@
 [[infinispan-component]]
 = Infinispan Component
 :docTitle: Infinispan
+:shortName: infinispan
 :artifactId: camel-infinispan
 :description: Read and write from/to Infinispan distributed key/value store and data grid.
 :since: 2.13
@@ -37,134 +38,16 @@ The producer allows sending messages to a remote cache using the HotRod protocol
 The consumer allows listening for events from a remote cache using the HotRod protocol.
 
 // component-configure options: START
-== Configuring Options
 
-Camel components are configured on two separate levels:
-
-- component level
-- endpoint level
-
-=== Configuring Component Options
-
-The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
-For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
-
-Some components only have a few options, and others may have many. Because components typically have pre configured defaults
-that are commonly used, then you may often only need to configure a few options on a component; or none at all.
-
-Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
-in a configuration file (application.properties|yaml), or directly with Java code.
-
-=== Configuring Endpoint Options
-
-Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
-configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
-or as a producer (to), or used for both.
-
-Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
-the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
-
-A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
-which allows to not hardcode urls, port numbers, sensitive information, and other settings.
-In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
-
-The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
 
 // component options: START
-== Component Options
-
-
-The Infinispan component supports 26 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *configuration* (common) | Component configuration |  | InfinispanRemoteConfiguration
-| *hosts* (common) | Specifies the host of the cache on Infinispan instance |  | String
-| *queryBuilder* (common) | Specifies the query builder. |  | InfinispanQueryBuilder
-| *secure* (common) | Define if we are connecting to a secured Infinispan instance | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *customListener* (consumer) | Returns the custom listener in use, if provided |  | InfinispanRemoteCustomListener
-| *eventTypes* (consumer) | Specifies the set of event types to register by the consumer.Multiple event can be separated by comma. The possible event types are: CLIENT_CACHE_ENTRY_CREATED, CLIENT_CACHE_ENTRY_MODIFIED, CLIENT_CACHE_ENTRY_REMOVED, CLIENT_CACHE_ENTRY_EXPIRED, CLIENT_CACHE_FAILOVER |  | String
-| *defaultValue* (producer) | Set a specific default value for some producer operations |  | Object
-| *key* (producer) | Set a specific key for producer operations |  | Object
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *oldValue* (producer) | Set a specific old value for some producer operations |  | Object
-| *operation* (producer) | The operation to perform. There are 21 enums and the value can be one of: PUT, PUTASYNC, PUTALL, PUTALLASYNC, PUTIFABSENT, PUTIFABSENTASYNC, GET, GETORDEFAULT, CONTAINSKEY, CONTAINSVALUE, REMOVE, REMOVEASYNC, REPLACE, REPLACEASYNC, SIZE, CLEAR, CLEARASYNC, QUERY, STATS, COMPUTE, COMPUTEASYNC | PUT | InfinispanOperation
-| *value* (producer) | Set a specific value for producer operations |  | Object
-| *password* ( security) | Define the password to access the infinispan instance |  | String
-| *saslMechanism* ( security) | Define the SASL Mechanism to access the infinispan instance |  | String
-| *securityRealm* ( security) | Define the security realm to access the infinispan instance |  | String
-| *securityServerName* ( security) | Define the security server name to access the infinispan instance |  | String
-| *username* ( security) | Define the username to access the infinispan instance |  | String
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *cacheContainer* (advanced) | *Autowired* Specifies the cache Container to connect |  | RemoteCacheManager
-| *cacheContainerConfiguration* (advanced) | *Autowired* The CacheContainer configuration. Used if the cacheContainer is not defined. |  | Configuration
-| *configurationProperties* (advanced) | Implementation specific properties for the CacheManager |  | Map
-| *configurationUri* (advanced) | An implementation specific URI for the CacheManager |  | String
-| *flags* (advanced) | A comma separated list of org.infinispan.client.hotrod.Flag to be applied by default on each cache invocation. |  | String
-| *remappingFunction* (advanced) | Set a specific remappingFunction to use in a compute operation. |  | BiFunction
-| *resultHeader* (advanced) | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | String
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-== Endpoint Options
 
-The Infinispan endpoint is configured using URI syntax:
-
-----
-infinispan:cacheName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *cacheName* | *Required* The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name. |  | String
-|===
-
-
-=== Query Parameters (26 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *hosts* (common) | Specifies the host of the cache on Infinispan instance |  | String
-| *queryBuilder* (common) | Specifies the query builder. |  | InfinispanQueryBuilder
-| *secure* (common) | Define if we are connecting to a secured Infinispan instance | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *customListener* (consumer) | Returns the custom listener in use, if provided |  | InfinispanRemoteCustomListener
-| *eventTypes* (consumer) | Specifies the set of event types to register by the consumer.Multiple event can be separated by comma. The possible event types are: CLIENT_CACHE_ENTRY_CREATED, CLIENT_CACHE_ENTRY_MODIFIED, CLIENT_CACHE_ENTRY_REMOVED, CLIENT_CACHE_ENTRY_EXPIRED, CLIENT_CACHE_FAILOVER |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *defaultValue* (producer) | Set a specific default value for some producer operations |  | Object
-| *key* (producer) | Set a specific key for producer operations |  | Object
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *oldValue* (producer) | Set a specific old value for some producer operations |  | Object
-| *operation* (producer) | The operation to perform. There are 21 enums and the value can be one of: PUT, PUTASYNC, PUTALL, PUTALLASYNC, PUTIFABSENT, PUTIFABSENTASYNC, GET, GETORDEFAULT, CONTAINSKEY, CONTAINSVALUE, REMOVE, REMOVEASYNC, REPLACE, REPLACEASYNC, SIZE, CLEAR, CLEARASYNC, QUERY, STATS, COMPUTE, COMPUTEASYNC | PUT | InfinispanOperation
-| *value* (producer) | Set a specific value for producer operations |  | Object
-| *password* ( security) | Define the password to access the infinispan instance |  | String
-| *saslMechanism* ( security) | Define the SASL Mechanism to access the infinispan instance |  | String
-| *securityRealm* ( security) | Define the security realm to access the infinispan instance |  | String
-| *securityServerName* ( security) | Define the security server name to access the infinispan instance |  | String
-| *username* ( security) | Define the username to access the infinispan instance |  | String
-| *cacheContainer* (advanced) | *Autowired* Specifies the cache Container to connect |  | RemoteCacheManager
-| *cacheContainerConfiguration* (advanced) | *Autowired* The CacheContainer configuration. Used if the cacheContainer is not defined. |  | Configuration
-| *configurationProperties* (advanced) | Implementation specific properties for the CacheManager |  | Map
-| *configurationUri* (advanced) | An implementation specific URI for the CacheManager |  | String
-| *flags* (advanced) | A comma separated list of org.infinispan.client.hotrod.Flag to be applied by default on each cache invocation. |  | String
-| *remappingFunction* (advanced) | Set a specific remappingFunction to use in a compute operation. |  | BiFunction
-| *resultHeader* (advanced) | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | String
-|===
 // endpoint options: END
 
 == Camel Operations

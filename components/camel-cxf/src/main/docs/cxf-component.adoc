@@ -1,6 +1,7 @@
 [[cxf-component]]
 = CXF Component
 :docTitle: CXF
+:shortName: cxf
 :artifactId: camel-cxf
 :description: Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
 :since: 1.0
@@ -63,124 +64,16 @@ cxf:bean:cxfEndpoint?wsdlURL=wsdl/hello_world.wsdl&dataFormat=PAYLOAD
 
 
 // component-configure options: START
-== Configuring Options
 
-Camel components are configured on two separate levels:
-
-- component level
-- endpoint level
-
-=== Configuring Component Options
-
-The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
-For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
-
-Some components only have a few options, and others may have many. Because components typically have pre configured defaults
-that are commonly used, then you may often only need to configure a few options on a component; or none at all.
-
-Configuring components can be done with the xref:latest@manual::component-dsl.adoc[Component DSL],
-in a configuration file (application.properties|yaml), or directly with Java code.
-
-=== Configuring Endpoint Options
-
-Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
-configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
-or as a producer (to), or used for both.
-
-Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
-the xref:latest@manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
-
-A good practice when configuring options is to use xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders],
-which allows to not hardcode urls, port numbers, sensitive information, and other settings.
-In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
-
-The following two sections lists all the options, firstly for the component followed by the endpoint.
 // component-configure options: END
 
 // component options: START
-== Component Options
-
-
-The CXF component supports 6 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *allowStreaming* (advanced) | This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases. |  | Boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-== Endpoint Options
 
-The CXF endpoint is configured using URI syntax:
-
-----
-cxf:beanId:address
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *beanId* | To lookup an existing configured CxfEndpoint. Must used bean: as prefix. |  | String
-| *address* | The service publish address. |  | String
-|===
-
-
-=== Query Parameters (35 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *dataFormat* (common) | The data type messages supported by the CXF endpoint. There are 5 enums and the value can be one of: PAYLOAD, RAW, MESSAGE, CXF_MESSAGE, POJO | POJO | DataFormat
-| *wrappedStyle* (common) | The WSDL style that describes how parameters are represented in the SOAP body. If the value is false, CXF will chose the document-literal unwrapped style, If the value is true, CXF will chose the document-literal wrapped style |  | Boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
-| *defaultOperationName* (producer) | This option will set the default operationName that will be used by the CxfProducer which invokes the remote service. |  | String
-| *defaultOperationNamespace* (producer) | This option will set the default operationNamespace that will be used by the CxfProducer which invokes the remote service. |  | String
-| *hostnameVerifier* (producer) | The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
-| *wrapped* (producer) | Which kind of operation that CXF endpoint producer will invoke | false | boolean
-| *synchronous* (producer) | Sets whether synchronous processing should be strictly used | false | boolean
-| *allowStreaming* (advanced) | This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases. |  | Boolean
-| *bus* (advanced) | To use a custom configured CXF Bus. |  | Bus
-| *continuationTimeout* (advanced) | This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the CXF server is using Jetty or Servlet transport. | 30000 | long
-| *cxfBinding* (advanced) | To use a custom CxfBinding to control the binding between Camel Message and CXF Message. |  | CxfBinding
-| *cxfConfigurer* (advanced) | This option could apply the implementation of org.apache.camel.component.cxf.CxfEndpointConfigurer which supports to configure the CXF endpoint in programmatic way. User can configure the CXF server and client by implementing configure\{ServerClient} method of CxfEndpointConfigurer. |  | CxfConfigurer
-| *defaultBus* (advanced) | Will set the default bus when CXF endpoint create a bus by itself | false | boolean
-| *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *mergeProtocolHeaders* (advanced) | Whether to merge protocol headers. If enabled then propagating headers between Camel and CXF becomes more consistent and similar. For more details see CAMEL-6393. | false | boolean
-| *mtomEnabled* (advanced) | To enable MTOM (attachments). This requires to use POJO or PAYLOAD data format mode. | false | boolean
-| *properties* (advanced) | To set additional CXF options using the key/value pairs from the Map. For example to turn on stacktraces in SOAP faults, properties.faultStackTraceEnabled=true |  | Map
-| *skipPayloadMessagePartCheck* (advanced) | Sets whether SOAP message validation should be disabled. | false | boolean
-| *loggingFeatureEnabled* (logging) | This option enables CXF Logging Feature which writes inbound and outbound SOAP messages to log. | false | boolean
-| *loggingSizeLimit* (logging) | To limit the total size of number of bytes the logger will output when logging feature has been enabled and -1 for no limit. | 49152 | int
-| *skipFaultLogging* (logging) | This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches. | false | boolean
-| *password* (security) | This option is used to set the basic authentication information of password for the CXF client. |  | String
-| *username* (security) | This option is used to set the basic authentication information of username for the CXF client. |  | String
-| *bindingId* (service) | The bindingId for the service model to use. |  | String
-| *portName* (service) | The endpoint name this service is implementing, it maps to the wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace prefix valid at this scope. |  | String
-| *publishedEndpointUrl* (service) | This option can override the endpointUrl that published from the WSDL which can be accessed with service address url plus wsd |  | String
-| *serviceClass* (service) | The class name of the SEI (Service Endpoint Interface) class which could have JSR181 annotation or not. |  | Class
-| *serviceName* (service) | The service name this service is implementing, it maps to the wsdl:servicename. |  | String
-| *wsdlURL* (service) | The location of the WSDL. Can be on the classpath, file system, or be hosted remotely. |  | String
-|===
 // endpoint options: END
 
 

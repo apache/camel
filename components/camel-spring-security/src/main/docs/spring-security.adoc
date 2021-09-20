@@ -1,8 +1,7 @@
 [[spring-security-other]]
 = Spring Security Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-spring-security/src/main/docs/spring-security.adoc
 :docTitle: Spring Security
+:shortName: spring-security
 :artifactId: camel-spring-security
 :description: Security using Spring Security
 :since: 2.3

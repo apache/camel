@@ -6,6 +6,7 @@
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
 
+This page documents all the specific options for the xref:hystrix-eip.adoc[Hystrix] EIP.
 
 // eip options: START
 The Hystrix Configuration EIP supports 31 options which are listed below:
@@ -46,3 +47,7 @@ The Hystrix Configuration EIP supports 31 options which are listed below:
 | *allowMaximumSizeToDivergeFrom{zwsp}CoreSize* | Allows the configuration for maximumSize to take effect. That value can then be equal to, or higher, than coreSize | false | Boolean
 |===
 // eip options: END
+
+== Example
+
+See xref:hystrix-eip.adoc[Hystrix] EIP for details how to use this EIP.

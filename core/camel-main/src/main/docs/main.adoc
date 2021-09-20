@@ -346,6 +346,42 @@ Then we can create a bean instance with name `foo` and provide parameters to the
 camel.beans.foo = #class:com.foo.MyBean("Hello World", true, 123)
 ----
 
+=== Creating custom beans with factory method
+
+When creating a bean then parameters to a factorty method can be provided.
+Suppose we have a class `MyFoo` with a static factory method:
+
+[source,java]
+----
+public class MyFoo {
+    private String name;
+    private boolean important;
+    private int id;
+
+    private MyFoo() {
+        // use factory method
+    }
+
+    public static MyFoo buildFoo(String name, boolean important, int id) {
+        MyFoo foo = new MyFoo();
+        foo.name = name;
+        foo.important = important;
+        foo.id = id;
+        return foo;
+    }
+}
+----
+
+Then we can create a bean instance with name `foo` and provide parameters to the static factory method as shown:
+
+[source,properties]
+----
+camel.beans.foo = #class:com.foo.MyBean#buildFoo("Hello World", true, 123)
+----
+
+IMPORTANT: The syntax must use `#factoryMethodName` to tell Camel that the bean
+should be created from a factory method.
+
 === Optional parameters on beans
 
 If a parameter on a bean is not mandatory then the parameter can be marked as optional using `?` syntax, as shown:
@@ -357,7 +393,7 @@ camel.beans.foo.?company = Acme
 ----
 
 Then the company parameter is only set if `MyBean` has this option (silent ignore if no option present).
-Otherwise if a parameter is set and the bean does not have such a parameter, then an exception is thrown by Camel.
+Otherwise, if a parameter is set, and the bean does not have such a parameter, then an exception is thrown by Camel.
 
 === Nested parameters on beans
 
@@ -391,7 +427,7 @@ camel.beans.foo.country.iso = USA
 camel.beans.foo.country.name = United States of America
 ----
 
-Camel will automatic create an instance of `Country` if `MyBean` has a getter/setter for this option, and that the `Country` bean
+Camel will automatically create an instance of `Country` if `MyBean` has a getter/setter for this option, and that the `Country` bean
 has a default no-arg constructor.
 
 === Configuring singleton beans by their type
@@ -417,7 +453,7 @@ camel.component.sql.dataSource = #autowired
 ----
 
 In this situation then `#autowrired` will make Camel detect the type of the `dataSource` option on the `SQL` component.
-As the type is a `javax.sql.DataSource` instance, then Camel will lookup in the registry if there is a single instance of the same type.
+Because type is a `javax.sql.DataSource` instance, then Camel will lookup in the registry if there is a single instance of the same type.
 If there is no such bean then the option isn't configured.
 
 == Defining a Map bean

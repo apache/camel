@@ -1,8 +1,7 @@
 [[test-cdi-other]]
 = Test CDI Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-test/camel-test-cdi/src/main/docs/test-cdi.adoc
 :docTitle: Test CDI
+:shortName: test-cdi
 :artifactId: camel-test-cdi
 :description: Camel unit testing with CDI
 :since: 2.17

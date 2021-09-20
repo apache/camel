@@ -1,8 +1,7 @@
 [[asn1-dataformat]]
 = ASN.1 File DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-asn1/src/main/docs/asn1-dataformat.adoc
 :docTitle: ASN.1 File
+:shortName: asn1
 :artifactId: camel-asn1
 :description: Encode and decode data structures using Abstract Syntax Notation One (ASN.1).
 :since: 2.20
@@ -16,16 +15,7 @@ The ASN.1 Data Format Data Format [Intoduction to ASN.1](https://www.itu.int/en/
 == ASN.1 Data Format Options
 
 // dataformat options: START
-The ASN.1 File dataformat supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| usingIterator | false | Boolean | If the asn1 file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode.
-| unmarshalType |  | String | Class to use when unmarshalling.
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == Unmarshal

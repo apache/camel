@@ -1,8 +1,7 @@
 [[avro-dataformat]]
 = Avro DataFormat
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-avro/src/main/docs/avro-dataformat.adoc
 :docTitle: Avro
+:shortName: avro
 :artifactId: camel-avro
 :description: Serialize and deserialize messages using Apache Avro binary data format.
 :since: 2.14
@@ -37,15 +36,7 @@ http://avro.apache.org/docs/current/[Apache Avro documentation].
 == Avro Dataformat Options
 
 // dataformat options: START
-The Avro dataformat supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| instanceClassName |  | String | Class name to use for marshal and unmarshalling
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == Examples

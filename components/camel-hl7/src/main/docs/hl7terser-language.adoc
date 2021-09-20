@@ -1,6 +1,7 @@
 [[hl7terser-language]]
 = HL7 Terser Language
 :docTitle: HL7 Terser
+:shortName: hl7terser
 :artifactId: camel-hl7
 :description: Get the value of a HL7 message field specified by terse location specification syntax.
 :since: 2.11
@@ -19,15 +20,7 @@ and predicates for filtering, content-based routing etc.
 == HL7 Terser Language options
 
 // language options: START
-The HL7 Terser language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 
