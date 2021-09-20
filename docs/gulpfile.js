@@ -27,10 +27,10 @@ const through2 = require('through2')
 const File = require('vinyl')
 
 function titleFrom (file) {
-  var maybeName = /(?::docTitle: )(.*)/.exec(file.contents.toString())
+  var maybeName = /(?::doctitle: )(.*)/.exec(file.contents.toString())
   if (maybeName === null) {
     //TODO investigate these... why dont they have them?
-    // console.warn(`${file.path} doesn't contain Asciidoc docTitle attribute (':docTitle: <Title>'`);
+    // console.warn(`${file.path} doesn't contain Asciidoc doctitle attribute (':doctitle: <Title>'`);
     maybeName = /(?:=|#) (.*)/.exec(file.contents.toString())
     if (maybeName === null) {
       throw new Error(
