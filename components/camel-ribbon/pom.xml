@@ -29,7 +29,7 @@
     <artifactId>camel-ribbon</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Ribbon</name>
+    <name>Camel :: Ribbon (deprecated)</name>
     <description>Using Netflix Ribbon for client side load balancing</description>
 
     <properties>
