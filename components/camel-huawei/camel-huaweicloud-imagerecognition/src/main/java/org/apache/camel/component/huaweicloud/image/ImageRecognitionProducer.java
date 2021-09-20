@@ -86,8 +86,9 @@ public class ImageRecognitionProducer extends DefaultProducer {
 
     /**
      * initialize image client. this is lazily initialized on the first message
-     * @param endpoint
-     * @param clientConfigurations
+     * 
+     * @param  endpoint
+     * @param  clientConfigurations
      * @return
      */
     private ImageClient initializeClient(ImageRecognitionEndpoint endpoint, ClientConfigurations clientConfigurations) {
@@ -130,7 +131,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
 
         ClientConfigurations clientConfigurations = initializeConfigurations(endpoint);
 
-        if(imageClient == null) {
+        if (imageClient == null) {
             initializeClient(endpoint, clientConfigurations);
         }
 
@@ -198,6 +199,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (imageContent, imageUrl, tagLanguage, tagLimit and
      * threshold) can also be passed via exchange properties, so they can be updated between each transaction. Since
      * they can change, we must clear the previous transaction and update these parameters with their new values
+     * 
      * @param exchange
      * @param clientConfigurations
      */
@@ -254,6 +256,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
     /**
      * validate threshold value. for tagRecognition, threshold should be at 0~100. for celebrityRecognition, threshold
      * should be at 0~1.
+     * 
      * @param threshold
      * @param operation
      */
