@@ -36,7 +36,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.AnnotationModel;
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -111,7 +110,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     /**
      * The EIP documentation directory
      */
-    @Parameter(defaultValue = "${project.basedir}/src/main/docs/modules/eips/pages")
+    @Parameter
     protected File eipDocDir;
 
     /**
@@ -142,8 +141,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         executeOther();
         executeDataFormat();
         executeLanguage();
-        File engine = findCamelDirectory(project.getBasedir(), "camel-core-engine");
-        eipDocDir = new File(engine, "/src/main/docs/modules/eips/pages");
         executeEips();
     }
 
@@ -171,34 +168,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     String title = asComponentTitle(model.getScheme(), model.getTitle());
                     model.setTitle(title);
 
-                    // we only want the first scheme as the alternatives do not
-                    // have their own readme file
-                    if (!Strings.isEmpty(model.getAlternativeSchemes())) {
-                        String first = model.getAlternativeSchemes().split(",")[0];
-                        if (!model.getScheme().equals(first)) {
-                            continue;
-                        }
-                    }
-
                     boolean updated = updateHeader(componentName, file, model, " Component", kind);
 
                     checkComponentHeader(file, model);
                     checkSince(file, model);
-
-                    // resolvePropertyPlaceholders is an option which only make
-                    // sense to use if the component has other options
-                    boolean hasOptions = model.getComponentOptions().stream()
-                            .anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
-                    if (!hasOptions) {
-                        model.getComponentOptions().clear();
-                    }
-
-                    // Fix description in options
-                    Stream.concat(model.getComponentOptions().stream(), model.getEndpointOptions().stream()).forEach(option -> {
-                        String desc = option.getDescription();
-                        desc = desc.replaceAll("\\\\n", "\n");
-                        option.setDescription(desc);
-                    });
 
                     updated |= updateOptionsIn(file, "component-configure", "");
                     String options = evaluateTemplate("component-options.mvel", model);
@@ -243,7 +216,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     File file = new File(componentDocDir, componentName + ".adoc");
                     boolean exists = file.exists();
 
-                    // we only want the first scheme as the alternatives do not
                     boolean updated = updateHeader(componentName, file, model, " Component", kind);
                     checkSince(file, model);
 
@@ -378,7 +350,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private void executeEips() throws MojoExecutionException {
         // only run if in camel-core-engine
-        String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
+        String currentDir = project.getBasedir().toString();
         if (!currentDir.endsWith("camel-core-engine")) {
             return;
         }
@@ -386,9 +358,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         final Set<File> jsonFiles = new TreeSet<>();
 
         // find all json files in camel-core
-        File coreDir = new File("./../camel-core-model");
+        File coreDir = findCamelDirectory(project.getBasedir(), "camel-core-model");
+
         if (coreDir.isDirectory()) {
-            File target = new File(coreDir, "target/classes/org/apache/camel/model");
+            File target = new File(coreDir, "src/generated/resources/org/apache/camel/model");
             PackageHelper.findJsonFiles(target, jsonFiles);
         }
 
@@ -498,26 +471,23 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
             List<String> newLines = new ArrayList<>(lines.length + 8);
 
-            //link
-            newLines.add("[[" + name + linkSuffix + "]]");
-
             //title
             String title = model.getTitle() + titleSuffix;
             if (model.isDeprecated()) {
                 title += " (deprecated)";
             }
             newLines.add("= " + title);
-            newLines.add(":docTitle: " + model.getTitle());
+            newLines.add(":doctitle: " + model.getTitle());
             String shortName = "mail".equals(name) ? "imap" : name;
-            newLines.add(":shortName: " + shortName);
+            newLines.add(":shortname: " + shortName);
 
             if (model instanceof ArtifactModel<?>) {
-                newLines.add(":artifactId: " + ((ArtifactModel<?>) model).getArtifactId());
+                newLines.add(":artifactid: " + ((ArtifactModel<?>) model).getArtifactId());
             }
             newLines.add(":description: " + model.getDescription());
             newLines.add(":since: " + model.getFirstVersionShort());
             //TODO put the deprecation into the actual support level.
-            newLines.add(":supportLevel: " + model.getSupportLevel().toString() + (model.isDeprecated() ? "-deprecated" : ""));
+            newLines.add(":supportlevel: " + model.getSupportLevel().toString() + (model.isDeprecated() ? "-deprecated" : ""));
             if (model.isDeprecated()) {
                 newLines.add(":deprecated: *deprecated*");
             }

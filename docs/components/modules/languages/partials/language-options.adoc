@@ -4,13 +4,13 @@
 |util.pascalCase(value.type) \
 |util.description(value)'
 :requires: 'util=util/jsonpath-util.js'
-include::jsonpathcount$example$json/{shortName}.json[queries='optioncount=nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]']
+include::jsonpathcount$example$json/{shortname}.json[queries='optioncount=nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]']
 
 ifeval::[{optioncount} == 0]
-The {docTitle} language has no options.
+The {doctitle} language has no options.
 endif::[]
 ifeval::[{optioncount} != 0]
-The {docTitle} language supports {optioncount} options, which are listed below.
+The {doctitle} language supports {optioncount} options, which are listed below.
 
 
 [{tablespec}]
@@ -18,6 +18,6 @@ The {docTitle} language supports {optioncount} options, which are listed below.
 | Name | Default | Java Type | Description
 |===
 
-jsonpathTable2::example$json/{shortName}.json['nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]',{cellformats},{requires}]
+jsonpathTable2::example$json/{shortname}.json['nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]',{cellformats},{requires}]
 endif::[]
 

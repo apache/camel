@@ -4,13 +4,13 @@
 | value.defaultValue ? `${value.defaultValue}` : "" \
 |util.javaSimpleName(value.javaType)'
 :requires: 'util=util/jsonpath-util.js'
-include::jsonpathcount$example$json/{shortName}.json[queries='optioncount=nodes$.properties[?(@.displayName!="Id" && @.displayName!="Description" && @.displayName!="Expression" && @.displayName!="Outputs")]']
+include::jsonpathcount$example$json/{shortname}.json[queries='optioncount=nodes$.properties[?(@.displayName!="Id" && @.displayName!="Description" && @.displayName!="Expression" && @.displayName!="Outputs")]']
 
 ifeval::[{optioncount} == 0]
-The {docTitle} eip has no options.
+The {doctitle} eip has no options.
 endif::[]
 ifeval::[{optioncount} != 0]
-The {docTitle} eip supports {optioncount} options, which are listed below.
+The {doctitle} eip supports {optioncount} options, which are listed below.
 
 
 [{tablespec}]
@@ -18,6 +18,6 @@ The {docTitle} eip supports {optioncount} options, which are listed below.
 | Name | Description | Default | Type
 |===
 
-jsonpathTable2::example$json/{shortName}.json['nodes$.properties[?(@.displayName!="Id")]',{cellformats},{requires}]
+jsonpathTable2::example$json/{shortname}.json['nodes$.properties[?(@.displayName!="Id")]',{cellformats},{requires}]
 endif::[]
 
