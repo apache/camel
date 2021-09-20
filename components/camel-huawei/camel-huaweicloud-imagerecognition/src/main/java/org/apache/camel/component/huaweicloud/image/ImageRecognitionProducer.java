@@ -40,8 +40,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
 
     private ImageClient imageClient;
 
-    private ClientConfigurations clientConfigurations;
-
     private ImageRecognitionEndpoint endpoint;
 
     public ImageRecognitionProducer(ImageRecognitionEndpoint endpoint) {
@@ -52,8 +50,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.clientConfigurations = initializeConfigurations(this.endpoint);
-        this.imageClient = initializeClient(this.endpoint);
     }
 
     /**
@@ -90,14 +86,15 @@ public class ImageRecognitionProducer extends DefaultProducer {
 
     /**
      * initialize image client. this is lazily initialized on the first message
-     *
-     * @param  endpoint ImageRecognitionEndpoint
-     * @return          ImageClient
+     * @param endpoint
+     * @param clientConfigurations
+     * @return
      */
-    private ImageClient initializeClient(ImageRecognitionEndpoint endpoint) {
+    private ImageClient initializeClient(ImageRecognitionEndpoint endpoint, ClientConfigurations clientConfigurations) {
         if (endpoint.getImageClient() != null) {
             LOG.info(
                     "Instance of ImageClient was set on the endpoint. Skipping creation of ImageClient from endpoint parameters");
+            this.imageClient = endpoint.getImageClient();
             return endpoint.getImageClient();
         }
         HttpConfig httpConfig = null;
@@ -117,7 +114,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
                 .withSk(clientConfigurations.getSecretKey())
                 .withProjectId(clientConfigurations.getProjectId());
 
-        ImageClient client = ImageClient.newBuilder()
+        imageClient = ImageClient.newBuilder()
                 .withCredential(credentials)
                 .withHttpConfig(httpConfig)
                 .withEndpoint(clientConfigurations.getEndpoint())
@@ -126,10 +123,17 @@ public class ImageRecognitionProducer extends DefaultProducer {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Successfully initialized Image client");
         }
-        return client;
+        return imageClient;
     }
 
     public void process(Exchange exchange) {
+
+        ClientConfigurations clientConfigurations = initializeConfigurations(endpoint);
+
+        if(imageClient == null) {
+            initializeClient(endpoint, clientConfigurations);
+        }
+
         String operation = ((ImageRecognitionEndpoint) super.getEndpoint()).getOperation();
         if (StringUtils.isEmpty(operation)) {
             throw new IllegalStateException("operation name cannot be empty");
@@ -139,13 +143,13 @@ public class ImageRecognitionProducer extends DefaultProducer {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Performing celebrity recognition");
                 }
-                performCelebrityRecognitionOperation(exchange);
+                performCelebrityRecognitionOperation(exchange, clientConfigurations);
                 break;
             case ImageRecognitionConstants.OPERATION_TAG_RECOGNITION:
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Performing tag recognition");
                 }
-                performTagRecognitionOperation(exchange);
+                performTagRecognitionOperation(exchange, clientConfigurations);
                 break;
             default:
                 throw new UnsupportedOperationException(
@@ -158,12 +162,12 @@ public class ImageRecognitionProducer extends DefaultProducer {
      *
      * @param exchange camel exchange
      */
-    private void performCelebrityRecognitionOperation(Exchange exchange) {
-        updateClientConfigurations(exchange);
+    private void performCelebrityRecognitionOperation(Exchange exchange, ClientConfigurations clientConfigurations) {
+        updateClientConfigurations(exchange, clientConfigurations);
 
-        CelebrityRecognitionReq reqBody = new CelebrityRecognitionReq().withImage(this.clientConfigurations.getImageContent())
-                .withUrl(this.clientConfigurations.getImageUrl())
-                .withThreshold(this.clientConfigurations.getThreshold());
+        CelebrityRecognitionReq reqBody = new CelebrityRecognitionReq().withImage(clientConfigurations.getImageContent())
+                .withUrl(clientConfigurations.getImageUrl())
+                .withThreshold(clientConfigurations.getThreshold());
 
         RunCelebrityRecognitionResponse response
                 = this.imageClient.runCelebrityRecognition(new RunCelebrityRecognitionRequest().withBody(reqBody));
@@ -176,14 +180,14 @@ public class ImageRecognitionProducer extends DefaultProducer {
      *
      * @param exchange camel exchange
      */
-    private void performTagRecognitionOperation(Exchange exchange) {
-        updateClientConfigurations(exchange);
+    private void performTagRecognitionOperation(Exchange exchange, ClientConfigurations clientConfigurations) {
+        updateClientConfigurations(exchange, clientConfigurations);
 
-        ImageTaggingReq reqBody = new ImageTaggingReq().withImage(this.clientConfigurations.getImageContent())
-                .withUrl(this.clientConfigurations.getImageUrl())
-                .withThreshold(this.clientConfigurations.getThreshold())
-                .withLanguage(this.clientConfigurations.getTagLanguage())
-                .withLimit(this.clientConfigurations.getTagLimit());
+        ImageTaggingReq reqBody = new ImageTaggingReq().withImage(clientConfigurations.getImageContent())
+                .withUrl(clientConfigurations.getImageUrl())
+                .withThreshold(clientConfigurations.getThreshold())
+                .withLanguage(clientConfigurations.getTagLanguage())
+                .withLimit(clientConfigurations.getTagLimit());
 
         RunImageTaggingResponse response = this.imageClient.runImageTagging(new RunImageTaggingRequest().withBody(reqBody));
 
@@ -194,11 +198,11 @@ public class ImageRecognitionProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (imageContent, imageUrl, tagLanguage, tagLimit and
      * threshold) can also be passed via exchange properties, so they can be updated between each transaction. Since
      * they can change, we must clear the previous transaction and update these parameters with their new values
-     *
-     * @param exchange camel exchange
+     * @param exchange
+     * @param clientConfigurations
      */
-    private void updateClientConfigurations(Exchange exchange) {
-        resetDynamicConfigurations();
+    private void updateClientConfigurations(Exchange exchange, ClientConfigurations clientConfigurations) {
+        resetDynamicConfigurations(clientConfigurations);
 
         boolean isImageContentSet = true;
         boolean isImageUrlSet = true;
@@ -250,9 +254,8 @@ public class ImageRecognitionProducer extends DefaultProducer {
     /**
      * validate threshold value. for tagRecognition, threshold should be at 0~100. for celebrityRecognition, threshold
      * should be at 0~1.
-     *
-     * @param threshold threshold value
-     * @param operation operation
+     * @param threshold
+     * @param operation
      */
     private void validateThresholdValue(float threshold, String operation) {
         if (ImageRecognitionConstants.OPERATION_TAG_RECOGNITION.equals(operation)) {
@@ -269,7 +272,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
     /**
      * Set all dynamic configurations to null
      */
-    private void resetDynamicConfigurations() {
+    private void resetDynamicConfigurations(ClientConfigurations clientConfigurations) {
         clientConfigurations.setImageContent(null);
         clientConfigurations.setImageUrl(null);
     }
