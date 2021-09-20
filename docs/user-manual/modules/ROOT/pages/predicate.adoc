@@ -1,4 +1,3 @@
-[[Predicate-Predicates]]
 = Predicates
 
 xref:expression.adoc[Expressions] and Predicates can then be used to

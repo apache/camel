@@ -1,11 +1,10 @@
-[[soroush-component]]
 = Soroush Component
-:docTitle: Soroush
-:shortName: soroush
-:artifactId: camel-soroush
+:doctitle: Soroush
+:shortname: soroush
+:artifactid: camel-soroush
 :description: Send and receive messages as a Soroush chat bot.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/soroush.adoc[opts=optional]
 

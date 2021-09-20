@@ -1,11 +1,10 @@
-[[cbor-dataformat]]
 = CBOR DataFormat
-:docTitle: CBOR
-:shortName: cbor
-:artifactId: camel-cbor
+:doctitle: CBOR
+:shortname: cbor
+:artifactid: camel-cbor
 :description: Unmarshal a CBOR payload to POJO and back.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/cbor.adoc[opts=optional]
 
 *Since Camel {since}*

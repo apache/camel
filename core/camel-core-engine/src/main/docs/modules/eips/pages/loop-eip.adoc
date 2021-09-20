@@ -1,9 +1,9 @@
-[[loop-eip]]
 = Loop EIP
-:docTitle: Loop
+:doctitle: Loop
+:shortname: loop
 :description: Processes a message multiple times
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The Loop allows for processing a message a number of times, possibly in a different way for each iteration. Useful mostly during testing.
 
@@ -16,15 +16,7 @@ Notice by default the loop uses the same exchange throughout the looping. So the
 == Options
 
 // eip options: START
-The Loop EIP supports 3 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *copy* | If the copy attribute is true, a copy of the input Exchange is used for each iteration. That means each iteration will start from a copy of the same message. By default loop will loop the same exchange all over, so each iteration may have different message content. | false | Boolean
-| *doWhile* | Enables the while loop that loops until the predicate evaluates to false or null. | false | Boolean
-| *breakOnShutdown* | If the breakOnShutdown attribute is true, then the loop will not iterate until it reaches the end when Camel is shut down. | false | Boolean
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 

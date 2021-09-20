@@ -1,11 +1,10 @@
-[[openapi-java-other]]
 = Openapi Java Component
-:docTitle: Openapi Java
-:shortName: openapi-java
-:artifactId: camel-openapi-java
+:doctitle: Openapi Java
+:shortname: openapi-java
+:artifactid: camel-openapi-java
 :description: Rest-dsl support for using openapi doc
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/openapi-java.adoc[opts=optional]
 
 *Since Camel {since}*

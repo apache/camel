@@ -1,11 +1,10 @@
-[[aws2-sqs-component]]
 = AWS Simple Queue Service (SQS) Component
-:docTitle: AWS Simple Queue Service (SQS)
-:shortName: aws2-sqs
-:artifactId: camel-aws2-sqs
+:doctitle: AWS Simple Queue Service (SQS)
+:shortname: aws2-sqs
+:artifactid: camel-aws2-sqs
 :description: Send and receive messages to/from AWS SQS service using AWS SDK version 2.x.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-sqs.adoc[opts=optional]
 //Manually maintained attributes

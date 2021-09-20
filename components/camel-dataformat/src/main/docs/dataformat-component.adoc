@@ -1,11 +1,10 @@
-[[dataformat-component]]
 = Data Format Component
-:docTitle: Data Format
-:shortName: dataformat
-:artifactId: camel-dataformat
+:doctitle: Data Format
+:shortname: dataformat
+:artifactid: camel-dataformat
 :description: Use a Camel Data Format as a regular Camel Component.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dataformat.adoc[opts=optional]

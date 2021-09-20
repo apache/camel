@@ -1,11 +1,10 @@
-[[bean-component]]
 = Bean Component
-:docTitle: Bean
-:shortName: bean
-:artifactId: camel-bean
+:doctitle: Bean
+:shortname: bean
+:artifactid: camel-bean
 :description: Invoke methods of Java beans stored in Camel registry.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/bean.adoc[opts=optional]

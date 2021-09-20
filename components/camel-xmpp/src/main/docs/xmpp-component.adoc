@@ -1,11 +1,10 @@
-[[xmpp-component]]
 = XMPP Component
-:docTitle: XMPP
-:shortName: xmpp
-:artifactId: camel-xmpp
+:doctitle: XMPP
+:shortname: xmpp
+:artifactid: camel-xmpp
 :description: Send and receive messages to/from an XMPP chat server.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xmpp.adoc[opts=optional]
 

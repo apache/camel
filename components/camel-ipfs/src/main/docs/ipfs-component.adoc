@@ -1,11 +1,10 @@
-[[ipfs-component]]
 = IPFS Component
-:docTitle: IPFS
-:shortName: ipfs
-:artifactId: camel-ipfs
+:doctitle: IPFS
+:shortname: ipfs
+:artifactid: camel-ipfs
 :description: Access the Interplanetary File System (IPFS).
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ipfs.adoc[opts=optional]
 

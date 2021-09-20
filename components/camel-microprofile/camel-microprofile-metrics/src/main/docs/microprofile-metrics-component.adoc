@@ -1,11 +1,10 @@
-[[microprofile-metrics-component]]
 = MicroProfile Metrics Component
-:docTitle: MicroProfile Metrics
-:shortName: microprofile-metrics
-:artifactId: camel-microprofile-metrics
+:doctitle: MicroProfile Metrics
+:shortname: microprofile-metrics
+:artifactid: camel-microprofile-metrics
 :description: Expose metrics from Camel routes.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/microprofile-metrics.adoc[opts=optional]
 

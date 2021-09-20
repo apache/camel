@@ -1,11 +1,10 @@
-[[etcd-stats-component]]
 = Etcd Stats Component
-:docTitle: Etcd Stats
-:shortName: etcd-stats
-:artifactId: camel-etcd
+:doctitle: Etcd Stats
+:shortname: etcd-stats
+:artifactid: camel-etcd
 :description: Access etcd cluster statistcs.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/etcd-stats.adoc[opts=optional]
 

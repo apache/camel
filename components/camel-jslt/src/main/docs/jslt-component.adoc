@@ -1,11 +1,10 @@
-[[jslt-component]]
 = JSLT Component
-:docTitle: JSLT
-:shortName: jslt
-:artifactId: camel-jslt
+:doctitle: JSLT
+:shortname: jslt
+:artifactid: camel-jslt
 :description: Query or transform JSON payloads using an JSLT.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jslt.adoc[opts=optional]
 

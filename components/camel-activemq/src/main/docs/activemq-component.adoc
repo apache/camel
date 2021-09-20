@@ -1,11 +1,10 @@
-[[activemq-component]]
 = ActiveMQ Component
-:docTitle: ActiveMQ
-:shortName: activemq
-:artifactId: camel-activemq
+:doctitle: ActiveMQ
+:shortname: activemq
+:artifactid: camel-activemq
 :description: Send messages to (or consume from) Apache ActiveMQ. This component extends the Camel JMS component.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/activemq.adoc[opts=optional]
 

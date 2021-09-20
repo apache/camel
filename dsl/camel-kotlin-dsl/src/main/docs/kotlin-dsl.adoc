@@ -1,11 +1,11 @@
-[[kotlin-dsl-other]]
-= Kotlin DSL
-:docTitle: Kotlin Dsl
-:artifactId: camel-kotlin-dsl
+= Kotlin Dsl Component
+//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
+//Header attributes written by hand.
+:doctitle: Kotlin Dsl
+:artifactid: camel-kotlin-dsl
 :description: Camel DSL with Kotlin
-:supportLevel: Experimental
-:since: 3.
-:supportLevel: Preview
+:supportlevel: Experimental/Preview
+:since: 3
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kotlin-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL

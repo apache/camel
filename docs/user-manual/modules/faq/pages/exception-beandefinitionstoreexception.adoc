@@ -1,4 +1,3 @@
-[[Exception-BeanDefinitionStoreException-BeanDefinitionStoreException]]
 = BeanDefinitionStoreException
 
 If you use ActiveMQ 5.x that ships with Camel 1.x and you upgrade it to

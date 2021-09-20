@@ -1,11 +1,10 @@
-[[cmis-component]]
 = CMIS Component
-:docTitle: CMIS
-:shortName: cmis
-:artifactId: camel-cmis
+:doctitle: CMIS
+:shortname: cmis
+:artifactid: camel-cmis
 :description: Read and write data from to/from a CMIS compliant content repositories.
 :since: 2.11
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cmis.adoc[opts=optional]
 

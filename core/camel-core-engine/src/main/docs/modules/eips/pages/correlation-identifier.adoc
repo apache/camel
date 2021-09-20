@@ -1,4 +1,3 @@
-[[CorrelationIdentifier-CorrelationIdentifier]]
 = Correlation Identifier
 
 Camel supports the

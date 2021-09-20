@@ -1,4 +1,3 @@
-[[GuaranteedDelivery-GuaranteedDelivery]]
 = Guaranteed Delivery
 
 Camel supports the

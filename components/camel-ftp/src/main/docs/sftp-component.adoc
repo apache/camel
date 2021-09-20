@@ -1,11 +1,10 @@
-[[sftp-component]]
 = SFTP Component
-:docTitle: SFTP
-:shortName: sftp
-:artifactId: camel-ftp
+:doctitle: SFTP
+:shortname: sftp
+:artifactid: camel-ftp
 :description: Upload and download files to/from SFTP servers.
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sftp.adoc[opts=optional]
 

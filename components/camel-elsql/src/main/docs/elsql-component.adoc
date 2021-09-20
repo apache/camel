@@ -1,11 +1,10 @@
-[[elsql-component]]
 = ElSQL Component
-:docTitle: ElSQL
-:shortName: elsql
-:artifactId: camel-elsql
+:doctitle: ElSQL
+:shortname: elsql
+:artifactid: camel-elsql
 :description: Use ElSql to define SQL queries. Extends the SQL Component.
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/elsql.adoc[opts=optional]
 

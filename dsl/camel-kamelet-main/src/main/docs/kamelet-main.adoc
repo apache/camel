@@ -1,11 +1,14 @@
-[[kamelet-main-other]]
 = Kamelet Main Component
-:docTitle: Kamelet Main
-:artifactId: camel-kamelet-main
+//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
+//Header attributes written by hand.
+:doctitle: Kamelet Main
+:artifactid: camel-kamelet-main
 :description: Main to run Kamelet standalone
 :since: 3.11
-:supportLevel: Preview
+:supportlevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/kamelet-main.adoc[opts=optional]
+//Manually maintained attributes
+:group: DSL
 
 *Since Camel {since}*
 

@@ -1,11 +1,10 @@
-[[aws2-cw-component]]
 = AWS CloudWatch Component
-:docTitle: AWS CloudWatch
-:shortName: aws2-cw
-:artifactId: camel-aws2-cw
+:doctitle: AWS CloudWatch
+:shortname: aws2-cw
+:artifactid: camel-aws2-cw
 :description: Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-cw.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[couchbase-component]]
 = Couchbase Component
-:docTitle: Couchbase
-:shortName: couchbase
-:artifactId: camel-couchbase
+:doctitle: Couchbase
+:shortname: couchbase
+:artifactid: camel-couchbase
 :description: Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/couchbase.adoc[opts=optional]
 

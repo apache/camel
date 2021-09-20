@@ -1,11 +1,10 @@
-[[netty-component]]
 = Netty Component
-:docTitle: Netty
-:shortName: netty
-:artifactId: camel-netty
+:doctitle: Netty
+:shortname: netty
+:artifactid: camel-netty
 :description: Socket level networking using TCP or UDP with Netty 4.x.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/netty.adoc[opts=optional]
 

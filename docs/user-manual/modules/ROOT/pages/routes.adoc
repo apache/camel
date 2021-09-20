@@ -1,4 +1,3 @@
-[[Routes-Routes]]
 = Routes
 
 A Camel _route_ is where the integration flow is defined.

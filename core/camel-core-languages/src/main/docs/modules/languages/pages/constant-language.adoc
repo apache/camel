@@ -1,11 +1,10 @@
-[[constant-language]]
 = Constant Language
-:docTitle: Constant
-:shortName: constant
-:artifactId: camel-core-languages
+:doctitle: Constant
+:shortname: constant
+:artifactid: camel-core-languages
 :description: A fixed value set only once during the route startup.
 :since: 1.5
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/constant.adoc[opts=optional]
 
 *Since Camel {since}*

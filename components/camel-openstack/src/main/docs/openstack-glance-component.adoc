@@ -1,11 +1,10 @@
-[[openstack-glance-component]]
 = OpenStack Glance Component
-:docTitle: OpenStack Glance
-:shortName: openstack-glance
-:artifactId: camel-openstack
+:doctitle: OpenStack Glance
+:shortname: openstack-glance
+:artifactid: camel-openstack
 :description: Manage VM images and metadata definitions in OpenStack Glance.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-glance.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[google-pubsub-component]]
 = Google Pubsub Component
-:docTitle: Google Pubsub
-:shortName: google-pubsub
-:artifactId: camel-google-pubsub
+:doctitle: Google Pubsub
+:shortname: google-pubsub
+:artifactid: camel-google-pubsub
 :description: Send and receive messages to/from Google Cloud Platform PubSub Service.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-pubsub.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[aws2-ddb-component]]
 = AWS DynamoDB Component
-:docTitle: AWS DynamoDB
-:shortName: aws2-ddb
-:artifactId: camel-aws2-ddb
+:doctitle: AWS DynamoDB
+:shortname: aws2-ddb
+:artifactid: camel-aws2-ddb
 :description: Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-ddb.adoc[opts=optional]
 //Manually maintained attributes

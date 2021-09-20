@@ -1,11 +1,10 @@
-[[cometd-component]]
 = CometD Component
-:docTitle: CometD
-:shortName: cometd
-:artifactId: camel-cometd
+:doctitle: CometD
+:shortname: cometd
+:artifactid: camel-cometd
 :description: Offers publish/subscribe, peer-to-peer (via a server), and RPC style messaging using the CometD/Bayeux protocol.
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cometd.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[ognl-language]]
 = OGNL Language
-:docTitle: OGNL
-:shortName: ognl
-:artifactId: camel-ognl
+:doctitle: OGNL
+:shortname: ognl
+:artifactid: camel-ognl
 :description: Evaluates an OGNL expression (Apache Commons OGNL).
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ognl.adoc[opts=optional]
 
 *Since Camel {since}*

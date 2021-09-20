@@ -1,11 +1,10 @@
-[[class-component]]
 = Class Component
-:docTitle: Class
-:shortName: class
-:artifactId: camel-bean
+:doctitle: Class
+:shortname: class
+:artifactid: camel-bean
 :description: Invoke methods of Java beans specified by class name.
 :since: 2.4
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/class.adoc[opts=optional]

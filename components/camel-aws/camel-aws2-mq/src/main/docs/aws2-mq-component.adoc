@@ -1,11 +1,10 @@
-[[aws2-mq-component]]
 = AWS MQ Component
-:docTitle: AWS MQ
-:shortName: aws2-mq
-:artifactId: camel-aws2-mq
+:doctitle: AWS MQ
+:shortname: aws2-mq
+:artifactid: camel-aws2-mq
 :description: Manage AWS MQ instances using AWS SDK version 2.x.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-mq.adoc[opts=optional]
 //Manually maintained attributes

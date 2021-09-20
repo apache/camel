@@ -1,11 +1,10 @@
-[[debezium-mysql-component]]
 = Debezium MySQL Connector Component
-:docTitle: Debezium MySQL Connector
-:shortName: debezium-mysql
-:artifactId: camel-debezium-mysql
+:doctitle: Debezium MySQL Connector
+:shortname: debezium-mysql
+:artifactid: camel-debezium-mysql
 :description: Capture changes from a MySQL database.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/debezium-mysql.adoc[opts=optional]
 //Manually maintained attributes

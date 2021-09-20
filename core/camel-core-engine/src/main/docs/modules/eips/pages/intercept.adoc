@@ -1,4 +1,3 @@
-[[Intercept-Intercept]]
 = Intercept
 
 The intercept feature in Camel supports intercepting

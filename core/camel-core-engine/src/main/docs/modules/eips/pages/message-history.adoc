@@ -1,4 +1,3 @@
-[[Message-History]]
 = Message History
 
 Camel supports the

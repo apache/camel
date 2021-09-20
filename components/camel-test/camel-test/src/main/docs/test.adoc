@@ -1,11 +1,10 @@
-[[test-other]]
 = Test Component (deprecated)
-:docTitle: Test
-:shortName: test
-:artifactId: camel-test
+:doctitle: Test
+:shortname: test
+:artifactid: camel-test
 :description: Camel unit testing
 :since: 2.9
-:supportLevel: Stable-deprecated
+:supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/test.adoc[opts=optional]
 

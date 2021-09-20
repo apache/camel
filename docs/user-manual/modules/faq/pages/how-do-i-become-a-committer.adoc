@@ -1,4 +1,3 @@
-[[HowdoIbecomeacommitter-HowcanIbecomeacommitter]]
 = How can I become a committer
 
 First of all you need to get involved and

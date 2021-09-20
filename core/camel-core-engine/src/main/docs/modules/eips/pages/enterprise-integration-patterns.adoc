@@ -1,4 +1,3 @@
-[[EnterpriseIntegrationPatterns-EnterpriseIntegrationPatterns]]
 = Enterprise Integration Patterns
 
 Camel supports most of the

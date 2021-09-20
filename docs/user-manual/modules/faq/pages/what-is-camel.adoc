@@ -1,4 +1,3 @@
-[[WhatisCamel-WhatisCamel]]
 = What is Camel?
 
 Apache Camel (TM) is a versatile open-source integration framework based on

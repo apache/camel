@@ -1,11 +1,10 @@
-[[kubernetes-hpa-component]]
 = Kubernetes HPA Component
-:docTitle: Kubernetes HPA
-:shortName: kubernetes-hpa
-:artifactId: camel-kubernetes
+:doctitle: Kubernetes HPA
+:shortname: kubernetes-hpa
+:artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-hpa.adoc[opts=optional]
 //Manually maintained attributes

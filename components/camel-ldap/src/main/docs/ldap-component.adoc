@@ -1,11 +1,10 @@
-[[ldap-component]]
 = LDAP Component
-:docTitle: LDAP
-:shortName: ldap
-:artifactId: camel-ldap
+:doctitle: LDAP
+:shortname: ldap
+:artifactid: camel-ldap
 :description: Perform searches on LDAP servers.
 :since: 1.5
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ldap.adoc[opts=optional]
 

@@ -1,4 +1,3 @@
-[[RouteBuilder-RouteBuilder]]
 = RouteBuilder
 
 The `RouteBuilder` is a base class which is derived from to create routing rules using the DSL.

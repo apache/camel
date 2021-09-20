@@ -1,11 +1,10 @@
-[[jetty-component]]
 = Jetty Component
-:docTitle: Jetty
-:shortName: jetty
-:artifactId: camel-jetty
+:doctitle: Jetty
+:shortname: jetty
+:artifactid: camel-jetty
 :description: Expose HTTP endpoints using Jetty 9.
 :since: 1.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jetty.adoc[opts=optional]
 

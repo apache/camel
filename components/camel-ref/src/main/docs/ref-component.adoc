@@ -1,11 +1,10 @@
-[[ref-component]]
 = Ref Component
-:docTitle: Ref
-:shortName: ref
-:artifactId: camel-ref
+:doctitle: Ref
+:shortname: ref
+:artifactid: camel-ref
 :description: Route messages to an endpoint looked up dynamically by name in the Camel Registry.
 :since: 1.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ref.adoc[opts=optional]

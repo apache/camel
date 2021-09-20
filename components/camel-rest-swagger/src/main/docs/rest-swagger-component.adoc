@@ -1,11 +1,10 @@
-[[rest-swagger-component]]
 = REST Swagger Component
-:docTitle: REST Swagger
-:shortName: rest-swagger
-:artifactId: camel-rest-swagger
+:doctitle: REST Swagger
+:shortname: rest-swagger
+:artifactid: camel-rest-swagger
 :description: Configure REST producers based on a Swagger (OpenAPI) specification document delegating to a component implementing the RestProducerFactory interface.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rest-swagger.adoc[opts=optional]
 

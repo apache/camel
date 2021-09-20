@@ -1,11 +1,10 @@
-[[kubernetes-replication-controllers-component]]
 = Kubernetes Replication Controller Component
-:docTitle: Kubernetes Replication Controller
-:shortName: kubernetes-replication-controllers
-:artifactId: camel-kubernetes
+:doctitle: Kubernetes Replication Controller
+:shortname: kubernetes-replication-controllers
+:artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Replication Controllers and get notified on Replication Controllers changes.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-replication-controllers.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[xslt-saxon-component]]
 = XSLT Saxon Component
-:docTitle: XSLT Saxon
-:shortName: xslt-saxon
-:artifactId: camel-xslt-saxon
+:doctitle: XSLT Saxon
+:shortname: xslt-saxon
+:artifactid: camel-xslt-saxon
 :description: Transform XML payloads using an XSLT template using Saxon.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xslt-saxon.adoc[opts=optional]

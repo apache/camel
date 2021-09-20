@@ -1,4 +1,3 @@
-[[CommercialCamelOfferings-CommercialCamelOfferings]]
 = Commercial Camel Offerings
 
 Apache Camel is a widely used project. As such, several companies have

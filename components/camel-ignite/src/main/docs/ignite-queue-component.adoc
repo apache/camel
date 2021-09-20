@@ -1,11 +1,10 @@
-[[ignite-queue-component]]
 = Ignite Queues Component
-:docTitle: Ignite Queues
-:shortName: ignite-queue
-:artifactId: camel-ignite
+:doctitle: Ignite Queues
+:shortname: ignite-queue
+:artifactid: camel-ignite
 :description: Interact with Ignite Queue data structures.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-queue.adoc[opts=optional]
 //Manually maintained attributes

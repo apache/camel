@@ -1,11 +1,10 @@
-[[sap-netweaver-component]]
 = SAP NetWeaver Component
-:docTitle: SAP NetWeaver
-:shortName: sap-netweaver
-:artifactId: camel-sap-netweaver
+:doctitle: SAP NetWeaver
+:shortname: sap-netweaver
+:artifactid: camel-sap-netweaver
 :description: Send requests to SAP NetWeaver Gateway using HTTP.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sap-netweaver.adoc[opts=optional]
 

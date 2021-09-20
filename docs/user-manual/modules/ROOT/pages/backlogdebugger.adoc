@@ -1,4 +1,3 @@
-[[BacklogDebugger-BacklogDebugger]]
 = BacklogDebugger
 
 Camel supports a backlog debugger that is used for live debugging of

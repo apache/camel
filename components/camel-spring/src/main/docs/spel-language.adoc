@@ -1,11 +1,10 @@
-[[spel-language]]
 = SpEL Language
-:docTitle: SpEL
-:shortName: spel
-:artifactId: camel-spring
+:doctitle: SpEL
+:shortname: spel
+:artifactid: camel-spring
 :description: Evaluates a Spring expression (SpEL).
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/spel.adoc[opts=optional]
 
 *Since Camel {since}*

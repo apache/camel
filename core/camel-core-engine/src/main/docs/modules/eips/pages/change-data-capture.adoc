@@ -1,4 +1,3 @@
-[[Change-Data-Capture]]
 = Change Data Capture
 
 Camel supports the https://en.wikipedia.org/wiki/Change_data_capture[Change Data Capture] pattern.

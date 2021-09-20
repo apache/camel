@@ -1,4 +1,3 @@
-[[CamelBoot-CamelBoot]]
 = Camel Boot
 
 Camel lets you boot up a JVM process and configure Camel nicely using

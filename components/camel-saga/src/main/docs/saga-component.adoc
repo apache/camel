@@ -1,11 +1,10 @@
-[[saga-component]]
 = Saga Component
-:docTitle: Saga
-:shortName: saga
-:artifactId: camel-saga
+:doctitle: Saga
+:shortname: saga
+:artifactid: camel-saga
 :description: Execute custom actions within a route using the Saga EIP.
 :since: 2.21
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/saga.adoc[opts=optional]

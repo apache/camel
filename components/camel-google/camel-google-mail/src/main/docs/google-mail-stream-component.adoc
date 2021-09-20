@@ -1,11 +1,10 @@
-[[google-mail-stream-component]]
 = Google Mail Stream Component
-:docTitle: Google Mail Stream
-:shortName: google-mail-stream
-:artifactId: camel-google-mail
+:doctitle: Google Mail Stream
+:shortname: google-mail-stream
+:artifactid: camel-google-mail
 :description: Poll for incoming messages in Google Mail.
 :since: 2.22
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-mail-stream.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[ignite-messaging-component]]
 = Ignite Messaging Component
-:docTitle: Ignite Messaging
-:shortName: ignite-messaging
-:artifactId: camel-ignite
+:doctitle: Ignite Messaging
+:shortname: ignite-messaging
+:artifactid: camel-ignite
 :description: Send and receive messages from an Ignite topic.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-messaging.adoc[opts=optional]
 //Manually maintained attributes

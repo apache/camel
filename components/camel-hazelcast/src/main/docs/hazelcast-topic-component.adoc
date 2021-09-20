@@ -1,11 +1,10 @@
-[[hazelcast-topic-component]]
 = Hazelcast Topic Component
-:docTitle: Hazelcast Topic
-:shortName: hazelcast-topic
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast Topic
+:shortname: hazelcast-topic
+:artifactid: camel-hazelcast
 :description: Send and receive messages to/from Hazelcast distributed topic.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-topic.adoc[opts=optional]
 //Manually maintained attributes

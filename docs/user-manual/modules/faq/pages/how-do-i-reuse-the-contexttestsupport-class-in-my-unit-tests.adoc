@@ -1,4 +1,3 @@
-[[HowdoIreusetheContextTestSupportclassinmyunittests-HowdoIreusetheContextTestSupportclassinmyunittests]]
 = How do I reuse the ContextTestSupport class in my unit tests?
 
 You might want to look at the various xref:ROOT:testing.adoc[Testing]

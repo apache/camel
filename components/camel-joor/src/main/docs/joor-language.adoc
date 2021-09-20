@@ -1,11 +1,10 @@
-[[joor-language]]
 = jOOR Language
-:docTitle: jOOR
-:shortName: joor
-:artifactId: camel-joor
+:doctitle: jOOR
+:shortname: joor
+:artifactid: camel-joor
 :description: Evaluates a jOOR (Java compiled once at runtime) expression.
 :since: 3.7
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[opts=optional]
 
 *Since Camel {since}*

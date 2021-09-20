@@ -1,11 +1,10 @@
-[[string-template-component]]
 = String Template Component
-:docTitle: String Template
-:shortName: string-template
-:artifactId: camel-stringtemplate
+:doctitle: String Template
+:shortname: string-template
+:artifactid: camel-stringtemplate
 :description: Transform messages using StringTemplate engine.
 :since: 1.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/string-template.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[mongodb-component]]
 = MongoDB Component
-:docTitle: MongoDB
-:shortName: mongodb
-:artifactId: camel-mongodb
+:doctitle: MongoDB
+:shortname: mongodb
+:artifactid: camel-mongodb
 :description: Perform operations on MongoDB documents and collections.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mongodb.adoc[opts=optional]
 

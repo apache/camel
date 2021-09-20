@@ -1,11 +1,10 @@
-[[direct-component]]
 = Direct Component
-:docTitle: Direct
-:shortName: direct
-:artifactId: camel-direct
+:doctitle: Direct
+:shortname: direct
+:artifactid: camel-direct
 :description: Call another endpoint from the same Camel Context synchronously.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/direct.adoc[opts=optional]

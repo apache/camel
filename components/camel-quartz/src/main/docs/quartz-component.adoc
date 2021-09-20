@@ -1,11 +1,10 @@
-[[quartz-component]]
 = Quartz Component
-:docTitle: Quartz
-:shortName: quartz
-:artifactId: camel-quartz
+:doctitle: Quartz
+:shortname: quartz
+:artifactid: camel-quartz
 :description: Schedule sending of messages using the Quartz 2.x scheduler.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/quartz.adoc[opts=optional]
 

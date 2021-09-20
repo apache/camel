@@ -1,11 +1,10 @@
-[[groovy-language]]
 = Groovy Language
-:docTitle: Groovy
-:shortName: groovy
-:artifactId: camel-groovy
+:doctitle: Groovy
+:shortname: groovy
+:artifactid: camel-groovy
 :description: Evaluates a Groovy script.
 :since: 1.3
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/groovy.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -1,11 +1,10 @@
-[[pgevent-component]]
 = PostgresSQL Event Component
-:docTitle: PostgresSQL Event
-:shortName: pgevent
-:artifactId: camel-pgevent
+:doctitle: PostgresSQL Event
+:shortname: pgevent
+:artifactid: camel-pgevent
 :description: Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pgevent.adoc[opts=optional]
 

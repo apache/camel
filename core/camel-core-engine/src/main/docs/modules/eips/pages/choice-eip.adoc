@@ -1,9 +1,9 @@
-[[choice-eip]]
 = Choice EIP
-:docTitle: Choice
+:doctitle: Choice
+:shortname: choice
 :description: Route messages based on a series of predicates
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
@@ -16,14 +16,7 @@ image::eip/ContentBasedRouter.gif[image]
 == Choice options
 
 // eip options: START
-The Choice EIP supports 2 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *whenClauses* | Sets the when clauses |  | List
-| *otherwise* | Sets the otherwise node |  | OtherwiseDefinition
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Example

@@ -1,11 +1,10 @@
-[[atmos-component]]
 = Atmos Component
-:docTitle: Atmos
-:shortName: atmos
-:artifactId: camel-atmos
+:doctitle: Atmos
+:shortname: atmos
+:artifactid: camel-atmos
 :description: Integrate with EMC's ViPR object data services using the Atmos Client.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atmos.adoc[opts=optional]
 

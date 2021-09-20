@@ -1,11 +1,10 @@
-[[asterisk-component]]
 = Asterisk Component
-:docTitle: Asterisk
-:shortName: asterisk
-:artifactId: camel-asterisk
+:doctitle: Asterisk
+:shortname: asterisk
+:artifactid: camel-asterisk
 :description: Interact with Asterisk PBX Server.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/asterisk.adoc[opts=optional]
 

@@ -1,4 +1,3 @@
-[[Component-DSL]]
 = Component DSL
 
 Component-DSL is a new API that allows using type safe construction of Camel components and inject them directly to Camel Context instead of initializing through a constructor.

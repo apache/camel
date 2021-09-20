@@ -1,11 +1,10 @@
-[[ftp-component]]
 = FTP Component
-:docTitle: FTP
-:shortName: ftp
-:artifactId: camel-ftp
+:doctitle: FTP
+:shortname: ftp
+:artifactid: camel-ftp
 :description: Upload and download files to/from FTP servers.
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ftp.adoc[opts=optional]
 

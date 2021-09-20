@@ -1,4 +1,3 @@
-[[Durable-Subscriber]]
 = Durable Subscriber
 
 Camel supports the

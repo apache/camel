@@ -1,11 +1,10 @@
-[[aws2-ddbstream-component]]
 = AWS DynamoDB Streams Component
-:docTitle: AWS DynamoDB Streams
-:shortName: aws2-ddbstream
-:artifactId: camel-aws2-ddb
+:doctitle: AWS DynamoDB Streams
+:shortname: aws2-ddbstream
+:artifactid: camel-aws2-ddb
 :description: Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-ddbstream.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[chatscript-component]]
 = ChatScript Component
-:docTitle: ChatScript
-:shortName: chatscript
-:artifactId: camel-chatscript
+:doctitle: ChatScript
+:shortname: chatscript
+:artifactid: camel-chatscript
 :description: Chat with a ChatScript Server.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/chatscript.adoc[opts=optional]
 

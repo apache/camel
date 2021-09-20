@@ -1,11 +1,10 @@
-[[redis-other]]
 = Redis Component
-:docTitle: Redis
-:shortName: redis
-:artifactId: camel-redis
+:doctitle: Redis
+:shortname: redis
+:artifactid: camel-redis
 :description: Aggregation repository using Redis as datastore
 :since: 3.5
-:supportLevel: Preview
+:supportlevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/redis.adoc[opts=optional]
 
 *Since Camel {since}*

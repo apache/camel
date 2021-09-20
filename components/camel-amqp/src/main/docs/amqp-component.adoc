@@ -1,11 +1,10 @@
-[[amqp-component]]
 = AMQP Component
-:docTitle: AMQP
-:shortName: amqp
-:artifactId: camel-amqp
+:doctitle: AMQP
+:shortname: amqp
+:artifactid: camel-amqp
 :description: Messaging with AMQP protocol using Apache QPid Client.
 :since: 1.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/amqp.adoc[opts=optional]
 

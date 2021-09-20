@@ -1,11 +1,10 @@
-[[jing-component]]
 = Jing Component
-:docTitle: Jing
-:shortName: jing
-:artifactId: camel-jing
+:doctitle: Jing
+:shortname: jing
+:artifactid: camel-jing
 :description: Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax) using Jing library.
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jing.adoc[opts=optional]
 

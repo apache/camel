@@ -1,6 +1,6 @@
 = Hazelcast Component
 //attributes written by hand, not generated
-:docTitle: Hazelcast
+:doctitle: Hazelcast
 :since: 2.7
 
 *Since Camel {since}*
@@ -18,11 +18,11 @@ persistence, network configuration (if needed), near cache, eviction
 and so on. For more information consult the Hazelcast documentation on
 http://www.hazelcast.com/docs.jsp[http://www.hazelcast.com/docs.jsp].
 
-== {docTitle} components
+== {doctitle} components
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={doctitle}',descAttribute=description]
 
 == Installation
 

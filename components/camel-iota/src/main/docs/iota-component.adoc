@@ -1,11 +1,10 @@
-[[iota-component]]
 = IOTA Component
-:docTitle: IOTA
-:shortName: iota
-:artifactId: camel-iota
+:doctitle: IOTA
+:shortname: iota
+:artifactid: camel-iota
 :description: Manage financial transactions using IOTA distributed ledger.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/iota.adoc[opts=optional]
 

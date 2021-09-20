@@ -1,11 +1,10 @@
-[[google-calendar-component]]
 = Google Calendar Component
-:docTitle: Google Calendar
-:shortName: google-calendar
-:artifactId: camel-google-calendar
+:doctitle: Google Calendar
+:shortname: google-calendar
+:artifactid: camel-google-calendar
 :description: Perform various operations on a Google Calendar.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-calendar.adoc[opts=optional]
 //Manually maintained attributes

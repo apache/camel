@@ -1,11 +1,10 @@
-[[websocket-jsr356-component]]
 = Javax Websocket Component
-:docTitle: Javax Websocket
-:shortName: websocket-jsr356
-:artifactId: camel-websocket-jsr356
+:doctitle: Javax Websocket
+:shortname: websocket-jsr356
+:artifactid: camel-websocket-jsr356
 :description: Expose websocket endpoints using JSR356.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/websocket-jsr356.adoc[opts=optional]
 

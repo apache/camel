@@ -1,11 +1,10 @@
-[[shiro-other]]
 = Shiro Component
-:docTitle: Shiro
-:shortName: shiro
-:artifactId: camel-shiro
+:doctitle: Shiro
+:shortname: shiro
+:artifactid: camel-shiro
 :description: Security using Shiro
 :since: 2.5
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/shiro.adoc[opts=optional]
 
 *Since Camel {since}*

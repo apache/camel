@@ -1,11 +1,10 @@
-[[fhirJson-dataformat]]
 = FHIR JSon DataFormat
-:docTitle: FHIR JSon
-:shortName: fhirJson
-:artifactId: camel-fhir
+:doctitle: FHIR JSon
+:shortname: fhirJson
+:artifactid: camel-fhir
 :description: Marshall and unmarshall FHIR objects to/from JSON.
 :since: 2.21
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/fhirJson.adoc[opts=optional]
 
 *Since Camel {since}*

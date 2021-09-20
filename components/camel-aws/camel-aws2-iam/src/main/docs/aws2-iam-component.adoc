@@ -1,11 +1,10 @@
-[[aws2-iam-component]]
 = AWS Identity and Access Management (IAM) Component
-:docTitle: AWS Identity and Access Management (IAM)
-:shortName: aws2-iam
-:artifactId: camel-aws2-iam
+:doctitle: AWS Identity and Access Management (IAM)
+:shortname: aws2-iam
+:artifactid: camel-aws2-iam
 :description: Manage AWS IAM instances using AWS SDK version 2.x.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-iam.adoc[opts=optional]
 //Manually maintained attributes

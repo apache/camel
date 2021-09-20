@@ -1,11 +1,10 @@
-[[json-jackson-dataformat]]
 = JSON Jackson DataFormat
-:docTitle: JSON Jackson
-:shortName: json-jackson
-:artifactId: camel-jackson
+:doctitle: JSON Jackson
+:shortname: json-jackson
+:artifactid: camel-jackson
 :description: Marshal POJOs to JSON and back using Jackson
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-jackson.adoc[opts=optional]
 
 *Since Camel {since}*

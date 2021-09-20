@@ -1,11 +1,10 @@
-[[hazelcast-multimap-component]]
 = Hazelcast Multimap Component
-:docTitle: Hazelcast Multimap
-:shortName: hazelcast-multimap
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast Multimap
+:shortname: hazelcast-multimap
+:artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed multimap.
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-multimap.adoc[opts=optional]
 //Manually maintained attributes

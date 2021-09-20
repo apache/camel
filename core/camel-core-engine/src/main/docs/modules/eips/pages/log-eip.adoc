@@ -1,9 +1,9 @@
-[[log-eip]]
 = Log EIP
-:docTitle: Log
+:doctitle: Log
+:shortname: log
 :description: Logs the defined message to the logger
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 How can I log the processing of a xref:message.adoc[Message]?
 
@@ -16,17 +16,7 @@ Camel provides many ways to log the fact that you are processing a message. Here
 == Options
 
 // eip options: START
-The Log EIP supports 5 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *message* | *Required* Sets the log message (uses simple language) |  | String
-| *loggingLevel* | Sets the logging level. The default value is INFO | INFO | LoggingLevel
-| *logName* | Sets the name of the logger |  | String
-| *marker* | To use slf4j marker |  | String
-| *loggerRef* | To refer to a custom logger instance to lookup from the registry. |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 
@@ -224,4 +214,3 @@ formatter.addKeyword("verySecret");
 
 camelContext.getRegistry().bind(MaskingFormatter.CUSTOM_LOG_MASK_REF, formatter);
 ----
-

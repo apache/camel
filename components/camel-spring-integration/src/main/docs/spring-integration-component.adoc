@@ -1,11 +1,10 @@
-[[spring-integration-component]]
 = Spring Integration Component
-:docTitle: Spring Integration
-:shortName: spring-integration
-:artifactId: camel-spring-integration
+:doctitle: Spring Integration
+:shortname: spring-integration
+:artifactid: camel-spring-integration
 :description: Bridge Camel with Spring Integration.
 :since: 1.4
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-integration.adoc[opts=optional]
 //Manually maintained attributes

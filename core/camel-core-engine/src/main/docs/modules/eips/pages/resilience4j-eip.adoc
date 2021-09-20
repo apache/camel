@@ -1,4 +1,3 @@
-[[resilience4j-eip]]
 = Resilience4j EIP
 
 This component supports the Circuit Breaker EIP with the Resilience4j library.

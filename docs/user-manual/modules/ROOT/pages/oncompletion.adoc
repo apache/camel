@@ -1,4 +1,3 @@
-[[OnCompletion-OnCompletion]]
 = OnCompletion
 
 Camel has this concept of a _Unit of Work_ that encompass the

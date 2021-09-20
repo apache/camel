@@ -1,4 +1,3 @@
-[[Howtosendthesamemessagetomultipleendpoints-Howtosendthesamemessagetomultipleendpoints]]
 = How to send the same message to multiple endpoints?
 
 When you need to send the *same* message to multiple endpoints then you

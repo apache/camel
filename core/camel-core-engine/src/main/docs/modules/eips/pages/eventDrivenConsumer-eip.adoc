@@ -1,4 +1,3 @@
-[[eventDrivenConsumer-eip]]
 = Event Driven Consumer
 
 Camel supports the

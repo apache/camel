@@ -1,10 +1,13 @@
-[[main-component]]
 = Main Component
-:docTitle: Main
-:artifactId: camel-main
+//TODO the json file camel-main-configuration-metadata.json for this .adoc does not have a `model` section, so the UpdateReadmeMojo does not update this file.
+//Therefore the header is updated manually.
+//In addition, this has plenty of options, but the 'other' category does not generate option tables.
+//Should the 'other' categary generate option tables from the .json?
+:doctitle: Main
+:artifactid: camel-main
 :description: Camel Main support
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 
 *Since Camel {since}*
 

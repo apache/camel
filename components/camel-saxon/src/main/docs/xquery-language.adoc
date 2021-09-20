@@ -1,11 +1,10 @@
-[[xquery-language]]
 = XQuery Language
-:docTitle: XQuery
-:shortName: xquery
-:artifactId: camel-saxon
+:doctitle: XQuery
+:shortname: xquery
+:artifactid: camel-saxon
 :description: Evaluates an XQuery expressions against an XML payload.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xquery.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -1,11 +1,10 @@
-[[spring-rabbitmq-component]]
 = Spring RabbitMQ Component
-:docTitle: Spring RabbitMQ
-:shortName: spring-rabbitmq
-:artifactId: camel-spring-rabbitmq
+:doctitle: Spring RabbitMQ
+:shortname: spring-rabbitmq
+:artifactid: camel-spring-rabbitmq
 :description: Send and receive messages from RabbitMQ using Spring RabbitMQ client.
 :since: 3.8
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-rabbitmq.adoc[opts=optional]
 //Manually maintained attributes

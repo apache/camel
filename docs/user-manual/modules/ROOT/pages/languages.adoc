@@ -1,4 +1,3 @@
-[[Languages-Languages]]
 = Languages
 
 To support flexible and powerful

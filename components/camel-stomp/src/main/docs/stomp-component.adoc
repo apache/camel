@@ -1,11 +1,10 @@
-[[stomp-component]]
 = Stomp Component
-:docTitle: Stomp
-:shortName: stomp
-:artifactId: camel-stomp
+:doctitle: Stomp
+:shortname: stomp
+:artifactid: camel-stomp
 :description: Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stomp.adoc[opts=optional]
 

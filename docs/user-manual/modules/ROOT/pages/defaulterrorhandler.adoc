@@ -1,4 +1,3 @@
-[[DefaultErrorHandler-DefaultErrorHandler]]
 = DefaultErrorHandler
 
 This is the default error handler in Camel.

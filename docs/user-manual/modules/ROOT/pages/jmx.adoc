@@ -1,4 +1,3 @@
-[[JMX]]
 = JMX
 
 Camel has optional support for JMX management which are

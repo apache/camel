@@ -1,11 +1,10 @@
-[[json-johnzon-dataformat]]
 = JSON Johnzon DataFormat
-:docTitle: JSON Johnzon
-:shortName: json-johnzon
-:artifactId: camel-johnzon
+:doctitle: JSON Johnzon
+:shortname: json-johnzon
+:artifactid: camel-johnzon
 :description: Marshal POJOs to JSON and back using Johnzon
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-johnzon.adoc[opts=optional]
 
 *Since Camel {since}*

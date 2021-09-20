@@ -1,11 +1,10 @@
-[[spring-main-other]]
 = Spring Main Component
-:docTitle: Spring Main
-:shortName: spring-main
-:artifactId: camel-spring-main
+:doctitle: Spring Main
+:shortname: spring-main
+:artifactid: camel-spring-main
 :description: Camel Spring Main support
 :since: 3.2
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-main.adoc[opts=optional]
 
 *Since Camel {since}*

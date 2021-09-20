@@ -1,11 +1,10 @@
-[[arangodb-component]]
 = ArangoDb Component
-:docTitle: ArangoDb
-:shortName: arangodb
-:artifactId: camel-arangodb
+:doctitle: ArangoDb
+:shortname: arangodb
+:artifactid: camel-arangodb
 :description: Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
 :since: 3.5
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/arangodb.adoc[opts=optional]
 

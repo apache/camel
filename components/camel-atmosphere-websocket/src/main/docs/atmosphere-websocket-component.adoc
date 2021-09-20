@@ -1,11 +1,10 @@
-[[atmosphere-websocket-component]]
 = Atmosphere Websocket Component
-:docTitle: Atmosphere Websocket
-:shortName: atmosphere-websocket
-:artifactId: camel-atmosphere-websocket
+:doctitle: Atmosphere Websocket
+:shortname: atmosphere-websocket
+:artifactid: camel-atmosphere-websocket
 :description: Expose WebSocket endpoints using the Atmosphere framework.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atmosphere-websocket.adoc[opts=optional]
 

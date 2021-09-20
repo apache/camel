@@ -1,11 +1,10 @@
-[[infinispan-component]]
 = Infinispan Component
-:docTitle: Infinispan
-:shortName: infinispan
-:artifactId: camel-infinispan
+:doctitle: Infinispan
+:shortname: infinispan
+:artifactid: camel-infinispan
 :description: Read and write from/to Infinispan distributed key/value store and data grid.
 :since: 2.13
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/infinispan.adoc[opts=optional]
 

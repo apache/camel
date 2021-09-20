@@ -1,11 +1,10 @@
-[[vertx-component]]
 = Vert.x Component
-:docTitle: Vert.x
-:shortName: vertx
-:artifactId: camel-vertx
+:doctitle: Vert.x
+:shortname: vertx
+:artifactid: camel-vertx
 :description: Send and receive messages to/from Vert.x Event Bus.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx.adoc[opts=optional]
 

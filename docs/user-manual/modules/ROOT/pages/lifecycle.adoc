@@ -1,4 +1,3 @@
-[[Lifecycle-CamelLifecycle]]
 = Camel Lifecycle
 
 Camel uses a simple _lifecycle_ interface called

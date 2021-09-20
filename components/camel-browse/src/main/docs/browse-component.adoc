@@ -1,11 +1,10 @@
-[[browse-component]]
 = Browse Component
-:docTitle: Browse
-:shortName: browse
-:artifactId: camel-browse
+:doctitle: Browse
+:shortname: browse
+:artifactid: camel-browse
 :description: Inspect the messages received on endpoints supporting BrowsableEndpoint.
 :since: 1.3
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/browse.adoc[opts=optional]

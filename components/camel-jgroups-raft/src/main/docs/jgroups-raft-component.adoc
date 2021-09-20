@@ -1,11 +1,10 @@
-[[jgroups-raft-component]]
 = JGroups raft Component
-:docTitle: JGroups raft
-:shortName: jgroups-raft
-:artifactId: camel-jgroups-raft
+:doctitle: JGroups raft
+:shortname: jgroups-raft
+:artifactid: camel-jgroups-raft
 :description: Exchange messages with JGroups-raft clusters.
 :since: 2.24
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jgroups-raft.adoc[opts=optional]
 

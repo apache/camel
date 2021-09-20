@@ -1,11 +1,10 @@
-[[cm-sms-component]]
 = CM SMS Gateway Component
-:docTitle: CM SMS Gateway
-:shortName: cm-sms
-:artifactId: camel-cm-sms
+:doctitle: CM SMS Gateway
+:shortname: cm-sms
+:artifactid: camel-cm-sms
 :description: Send SMS messages via CM SMS Gateway.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cm-sms.adoc[opts=optional]
 

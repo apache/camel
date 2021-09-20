@@ -1,11 +1,10 @@
-[[bean-validator-component]]
 = Bean Validator Component
-:docTitle: Bean Validator
-:shortName: bean-validator
-:artifactId: camel-bean-validator
+:doctitle: Bean Validator
+:shortname: bean-validator
+:artifactid: camel-bean-validator
 :description: Validate the message body using the Java Bean Validation API.
 :since: 2.3
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/bean-validator.adoc[opts=optional]
 

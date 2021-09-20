@@ -1,11 +1,10 @@
-[[google-sheets-stream-component]]
 = Google Sheets Stream Component
-:docTitle: Google Sheets Stream
-:shortName: google-sheets-stream
-:artifactId: camel-google-sheets
+:doctitle: Google Sheets Stream
+:shortname: google-sheets-stream
+:artifactid: camel-google-sheets
 :description: Poll for changes in Google Sheets.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-sheets-stream.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[jdbc-component]]
 = JDBC Component
-:docTitle: JDBC
-:shortName: jdbc
-:artifactId: camel-jdbc
+:doctitle: JDBC
+:shortname: jdbc
+:artifactid: camel-jdbc
 :description: Access databases through SQL and JDBC.
 :since: 1.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jdbc.adoc[opts=optional]
 

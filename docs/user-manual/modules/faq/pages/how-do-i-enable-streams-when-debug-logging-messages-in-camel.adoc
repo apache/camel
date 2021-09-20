@@ -1,4 +1,3 @@
-[[HowdoIenablestreamswhendebugloggingmessagesinCamel-HowdoIenablestreamswhendebugloggingmessagesinCamel]]
 = How do I enable streams when debug logging messages in Camel
 
 *Since Camel 2.1*

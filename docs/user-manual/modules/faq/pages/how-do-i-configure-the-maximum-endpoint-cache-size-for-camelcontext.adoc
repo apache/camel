@@ -1,4 +1,3 @@
-[[HowdoIconfigurethemaximumendpointcachesizeforCamelContext-HowdoIconfigurethemaximumendpointcachesizeforCamelContext]]
 = How do I configure the maximum endpoint cache size for CamelContext?
 
 xref:ROOT:camelcontext.adoc[CamelContext] will by default cache the last 1000

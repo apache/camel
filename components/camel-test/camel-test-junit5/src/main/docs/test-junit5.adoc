@@ -1,11 +1,10 @@
-[[test-junit5-other]]
 = Test JUnit5 Component
-:docTitle: Test JUnit5
-:shortName: test-junit5
-:artifactId: camel-test-junit5
+:doctitle: Test JUnit5
+:shortname: test-junit5
+:artifactid: camel-test-junit5
 :description: Camel unit testing with JUnit 5
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/test-junit5.adoc[opts=optional]
 
 *Since Camel {since}*

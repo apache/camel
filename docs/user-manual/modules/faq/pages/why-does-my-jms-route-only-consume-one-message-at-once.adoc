@@ -1,4 +1,3 @@
-[[WhydoesmyJMSrouteonlyconsumeonemessageatonce-WhydoesmyJMSrouteonlyconsumeonemessageatonce]]
 = Why does my JMS route only consume one message at once?
 
 The default xref:components::jms-component.adoc[JMS] endpoint configuration defines

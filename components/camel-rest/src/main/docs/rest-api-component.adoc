@@ -1,11 +1,10 @@
-[[rest-api-component]]
 = REST API Component
-:docTitle: REST API
-:shortName: rest-api
-:artifactId: camel-rest
+:doctitle: REST API
+:shortname: rest-api
+:artifactid: camel-rest
 :description: Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rest-api.adoc[opts=optional]

@@ -1,4 +1,3 @@
-[[TryCatchFinally-TryCatchFinally]]
 = Try ... Catch ... Finally
 
 Camel supports the Java equivalent of try ... catch ... finally directly in the DSL.

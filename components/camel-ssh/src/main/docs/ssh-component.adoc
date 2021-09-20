@@ -1,11 +1,10 @@
-[[ssh-component]]
 = SSH Component
-:docTitle: SSH
-:shortName: ssh
-:artifactId: camel-ssh
+:doctitle: SSH
+:shortname: ssh
+:artifactid: camel-ssh
 :description: Execute commands on remote hosts using SSH.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ssh.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[google-drive-component]]
 = Google Drive Component
-:docTitle: Google Drive
-:shortName: google-drive
-:artifactId: camel-google-drive
+:doctitle: Google Drive
+:shortname: google-drive
+:artifactid: camel-google-drive
 :description: Manage files in Google Drive.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-drive.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[lucene-component]]
 = Lucene Component
-:docTitle: Lucene
-:shortName: lucene
-:artifactId: camel-lucene
+:doctitle: Lucene
+:shortname: lucene
+:artifactid: camel-lucene
 :description: Perform inserts or queries against Apache Lucene databases.
 :since: 2.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/lucene.adoc[opts=optional]
 

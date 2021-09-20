@@ -1,10 +1,11 @@
-[[yaml-dsl-other]]
 = Yaml Dsl Component
-:docTitle: Yaml Dsl
-:artifactId: camel-yaml-dsl
+//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
+//Header attributes written by hand.
+:doctitle: Yaml Dsl
+:artifactid: camel-yaml-dsl
 :description: Camel DSL with YAML
 :since: 3.9
-:supportLevel: Preview
+:supportlevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/yaml-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL

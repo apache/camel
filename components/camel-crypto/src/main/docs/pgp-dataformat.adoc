@@ -1,11 +1,10 @@
-[[pgp-dataformat]]
 = PGP DataFormat
-:docTitle: PGP
-:shortName: pgp
-:artifactId: camel-crypto
+:doctitle: PGP
+:shortname: pgp
+:artifactid: camel-crypto
 :description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.
 :since: 2.9
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/pgp.adoc[opts=optional]
 
 *Since Camel {since}*

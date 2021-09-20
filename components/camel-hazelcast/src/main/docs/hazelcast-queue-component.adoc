@@ -1,11 +1,10 @@
-[[hazelcast-queue-component]]
 = Hazelcast Queue Component
-:docTitle: Hazelcast Queue
-:shortName: hazelcast-queue
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast Queue
+:shortname: hazelcast-queue
+:artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed queue.
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-queue.adoc[opts=optional]
 //Manually maintained attributes

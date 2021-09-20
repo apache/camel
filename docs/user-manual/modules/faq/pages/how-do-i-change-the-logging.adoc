@@ -1,4 +1,3 @@
-[[HowdoIchangethelogging-HowdoIchangethelogging]]
 = How do I change the logging?
 
 We use https://commons.apache.org/proper/commons-logging/[commons-logging] to

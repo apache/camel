@@ -1,11 +1,10 @@
-[[jsonata-component]]
 = JSONata Component
-:docTitle: JSONata
-:shortName: jsonata
-:artifactId: camel-jsonata
+:doctitle: JSONata
+:shortname: jsonata
+:artifactid: camel-jsonata
 :description: Transforms JSON payload using JSONata transformation.
 :since: 3.5
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jsonata.adoc[opts=optional]
 

@@ -1,24 +1,16 @@
-[[delay-eip]]
 = Delay EIP
-:docTitle: Delay
+:doctitle: Delay
+:shortname: delay
 :description: Delays processing for a specified length of time
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The Delay EIP is used for delaying messages during routing.
 
 == Options
 
 // eip options: START
-The Delay EIP supports 3 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *executorServiceRef* | Refers to a custom Thread Pool if asyncDelay has been enabled. |  | String
-| *asyncDelayed* | Enables asynchronous delay which means the thread will not block while delaying. | true | Boolean
-| *callerRunsWhenRejected* | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true | true | Boolean
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Example
@@ -121,4 +113,3 @@ In XML DSL you use the `asyncDelayed` attribute to enable the async mode:
    <to uri="activemq:aDealyedQueue"/>
 </route>
 ----
-

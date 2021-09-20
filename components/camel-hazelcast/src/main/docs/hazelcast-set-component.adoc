@@ -1,11 +1,10 @@
-[[hazelcast-set-component]]
 = Hazelcast Set Component
-:docTitle: Hazelcast Set
-:shortName: hazelcast-set
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast Set
+:shortname: hazelcast-set
+:artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed set.
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-set.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,4 +1,3 @@
-[[IsthereanIDE-IsthereanIDEforeditingCamelroutes]]
 = Is there an IDE for editing Camel routes?
 
 Apache Camel offers no IDE out of the box.

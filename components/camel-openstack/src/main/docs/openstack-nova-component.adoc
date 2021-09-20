@@ -1,11 +1,10 @@
-[[openstack-nova-component]]
 = OpenStack Nova Component
-:docTitle: OpenStack Nova
-:shortName: openstack-nova
-:artifactId: camel-openstack
+:doctitle: OpenStack Nova
+:shortname: openstack-nova
+:artifactid: camel-openstack
 :description: Access OpenStack to manage compute resources.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-nova.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,4 +1,3 @@
-[[WhydoesuseOriginalMessagewitherrorhandlernotworkasexpected-WhydoesuseOriginalMessagewitherrorhandlernotworkasexpected]]
 = Why does useOriginalMessage with error handler not work as expected?
 
 If you use the xref:ROOT:exception-clause.adoc[useOriginalMessage] option

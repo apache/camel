@@ -1,11 +1,10 @@
-[[grape-component]]
 = Grape Component
-:docTitle: Grape
-:shortName: grape
-:artifactId: camel-grape
+:doctitle: Grape
+:shortname: grape
+:artifactid: camel-grape
 :description: Fetch, load and manage additional jars dynamically after Camel Context was started.
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/grape.adoc[opts=optional]
 

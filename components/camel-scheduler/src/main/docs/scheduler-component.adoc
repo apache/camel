@@ -1,11 +1,10 @@
-[[scheduler-component]]
 = Scheduler Component
-:docTitle: Scheduler
-:shortName: scheduler
-:artifactId: camel-scheduler
+:doctitle: Scheduler
+:shortname: scheduler
+:artifactid: camel-scheduler
 :description: Generate messages in specified intervals using java.util.concurrent.ScheduledExecutorService.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/scheduler.adoc[opts=optional]

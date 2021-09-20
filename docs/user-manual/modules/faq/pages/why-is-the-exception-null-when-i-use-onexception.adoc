@@ -1,4 +1,3 @@
-[[WhyistheexceptionnullwhenIuseonException-WhyistheexceptionnullwhenIuseonException]]
 = Why is the exception null when I use onException?
 
 If you use `onException` to handle exceptions, such as shown below:

@@ -1,11 +1,10 @@
-[[kubernetes-custom-resources-component]]
 = Kubernetes Custom Resources Component
-:docTitle: Kubernetes Custom Resources
-:shortName: kubernetes-custom-resources
-:artifactId: camel-kubernetes
+:doctitle: Kubernetes Custom Resources
+:shortname: kubernetes-custom-resources
+:artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Custom Resources and get notified on Deployment changes.
 :since: 3.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-custom-resources.adoc[opts=optional]
 //Manually maintained attributes

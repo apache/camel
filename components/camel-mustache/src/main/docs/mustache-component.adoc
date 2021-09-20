@@ -1,11 +1,10 @@
-[[mustache-component]]
 = Mustache Component
-:docTitle: Mustache
-:shortName: mustache
-:artifactId: camel-mustache
+:doctitle: Mustache
+:shortname: mustache
+:artifactid: camel-mustache
 :description: Transform messages using a Mustache template.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mustache.adoc[opts=optional]
 

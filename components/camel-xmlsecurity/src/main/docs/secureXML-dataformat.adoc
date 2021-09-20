@@ -1,11 +1,10 @@
-[[secureXML-dataformat]]
 = XML Security DataFormat
-:docTitle: XML Security
-:shortName: secureXML
-:artifactId: camel-xmlsecurity
+:doctitle: XML Security
+:shortname: secureXML
+:artifactid: camel-xmlsecurity
 :description: Encrypt and decrypt XML payloads using Apache Santuario.
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/secureXML.adoc[opts=optional]
 
 *Since Camel {since}*

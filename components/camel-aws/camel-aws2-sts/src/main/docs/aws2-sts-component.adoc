@@ -1,11 +1,10 @@
-[[aws2-sts-component]]
 = AWS Security Token Service (STS) Component
-:docTitle: AWS Security Token Service (STS)
-:shortName: aws2-sts
-:artifactId: camel-aws2-sts
+:doctitle: AWS Security Token Service (STS)
+:shortname: aws2-sts
+:artifactid: camel-aws2-sts
 :description: Manage AWS STS cluster instances using AWS SDK version 2.x.
 :since: 3.5
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-sts.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,4 +1,3 @@
-[[HowdoIletJettymatchwildcards-HowdoIletJettymatchwildcards]]
 = How do I let Jetty match wildcards?
 
 By default xref:components::jetty-component.adoc[Jetty] will only match on exact uri's. But

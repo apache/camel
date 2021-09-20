@@ -1,11 +1,10 @@
-[[http-component]]
 = HTTP Component
-:docTitle: HTTP
-:shortName: http
-:artifactId: camel-http
+:doctitle: HTTP
+:shortname: http
+:artifactid: camel-http
 :description: Send requests to external HTTP servers using Apache HTTP Client 4.x.
 :since: 2.3
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/http.adoc[opts=optional]
 

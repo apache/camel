@@ -1,11 +1,10 @@
-[[rabbitmq-component]]
 = RabbitMQ Component
-:docTitle: RabbitMQ
-:shortName: rabbitmq
-:artifactId: camel-rabbitmq
+:doctitle: RabbitMQ
+:shortname: rabbitmq
+:artifactid: camel-rabbitmq
 :description: Send and receive messages from RabbitMQ instances.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rabbitmq.adoc[opts=optional]
 

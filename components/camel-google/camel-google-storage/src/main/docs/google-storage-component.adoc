@@ -1,11 +1,10 @@
-[[google-storage-component]]
 = Google Storage Component
-:docTitle: Google Storage
-:shortName: google-storage
-:artifactId: camel-google-storage
+:doctitle: Google Storage
+:shortname: google-storage
+:artifactid: camel-google-storage
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
 :since: 3.9
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-storage.adoc[opts=optional]
 //Manually maintained attributes

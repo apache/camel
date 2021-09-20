@@ -1,11 +1,10 @@
-[[milo-server-component]]
 = OPC UA Server Component
-:docTitle: OPC UA Server
-:shortName: milo-server
-:artifactId: camel-milo
+:doctitle: OPC UA Server
+:shortname: milo-server
+:artifactid: camel-milo
 :description: Make telemetry data available as an OPC UA server.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-server.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[zendesk-component]]
 = Zendesk Component
-:docTitle: Zendesk
-:shortName: zendesk
-:artifactId: camel-zendesk
+:doctitle: Zendesk
+:shortname: zendesk
+:artifactid: camel-zendesk
 :description: Manage Zendesk tickets, users, organizations, etc.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/zendesk.adoc[opts=optional]
 

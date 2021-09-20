@@ -1,11 +1,10 @@
-[[beanstalk-component]]
 = Beanstalk Component
-:docTitle: Beanstalk
-:shortName: beanstalk
-:artifactId: camel-beanstalk
+:doctitle: Beanstalk
+:shortname: beanstalk
+:artifactid: camel-beanstalk
 :description: Retrieve and post-process Beanstalk jobs.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/beanstalk.adoc[opts=optional]
 

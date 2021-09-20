@@ -1,4 +1,3 @@
-[[messageEndpoint-eip]]
 = Message Endpoint
 
 Camel supports the

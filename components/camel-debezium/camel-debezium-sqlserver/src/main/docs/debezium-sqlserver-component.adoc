@@ -1,11 +1,10 @@
-[[debezium-sqlserver-component]]
 = Debezium SQL Server Connector Component
-:docTitle: Debezium SQL Server Connector
-:shortName: debezium-sqlserver
-:artifactId: camel-debezium-sqlserver
+:doctitle: Debezium SQL Server Connector
+:shortname: debezium-sqlserver
+:artifactid: camel-debezium-sqlserver
 :description: Capture changes from an SQL Server database.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/debezium-sqlserver.adoc[opts=optional]
 //Manually maintained attributes

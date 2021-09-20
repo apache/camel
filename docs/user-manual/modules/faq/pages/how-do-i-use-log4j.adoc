@@ -1,4 +1,3 @@
-[[HowdoIuselog4j-HowdoIuseLog4j]]
 = How do I use Log4j?
 
 Camel uses http://www.slf4j.org/[sfl4j] which allows you to configure

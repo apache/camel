@@ -1,11 +1,10 @@
-[[kubernetes-persistent-volumes-component]]
 = Kubernetes Persistent Volume Component
-:docTitle: Kubernetes Persistent Volume
-:shortName: kubernetes-persistent-volumes
-:artifactId: camel-kubernetes
+:doctitle: Kubernetes Persistent Volume
+:shortname: kubernetes-persistent-volumes
+:artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Persistent Volumes and get notified on Persistent Volume changes.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-persistent-volumes.adoc[opts=optional]
 //Manually maintained attributes

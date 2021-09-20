@@ -1,11 +1,10 @@
-[[datasonnet-language]]
 = DataSonnet Language
-:docTitle: DataSonnet
-:shortName: datasonnet
-:artifactId: camel-datasonnet
+:doctitle: DataSonnet
+:shortname: datasonnet
+:artifactid: camel-datasonnet
 :description: To use DataSonnet scripts for message transformations.
 :since: 3.7
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/datasonnet.adoc[opts=optional]
 
 *Since Camel {since}*

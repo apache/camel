@@ -1,4 +1,3 @@
-[[HowdoIwriteacustomProcessorwhichsendsmultiplemessages-HowdoIwriteacustomProcessorwhichsendsmultiplemessages]]
 = How do I write a custom Processor which sends multiple messages?
 
 You could use a xref:{eip-vc}:eips:split-eip.adoc[Splitter] or use multiple

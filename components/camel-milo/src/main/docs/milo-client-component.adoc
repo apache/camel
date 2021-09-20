@@ -1,11 +1,10 @@
-[[milo-client-component]]
 = OPC UA Client Component
-:docTitle: OPC UA Client
-:shortName: milo-client
-:artifactId: camel-milo
+:doctitle: OPC UA Client
+:shortname: milo-client
+:artifactid: camel-milo
 :description: Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/milo-client.adoc[opts=optional]
 

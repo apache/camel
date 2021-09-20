@@ -1,4 +1,3 @@
-[[MessageRouter-MessageRouter]]
 = Message Router
 
 The

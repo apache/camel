@@ -1,4 +1,3 @@
-[[DataFormat-DataFormat]]
 = Data Format
 
 Camel supports a pluggable `DataFormat` to allow messages to be marshalled

@@ -1,4 +1,3 @@
-[[WritingComponents-WritingComponents]]
 = Writing Components
 
 Apache Camel is designed to make it very easy to drop in new components

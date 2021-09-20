@@ -1,9 +1,9 @@
-[[kamelet-eip]]
 = Kamelet EIP
-:docTitle: Kamelet
+:doctitle: Kamelet
+:shortname: kamelet
 :description: To call Kamelets
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 Kamelets (Kamel route snippets) allow users to connect to external systems via a simplified interface,
 hiding all the low level details about how those connections are implemented.
@@ -36,13 +36,7 @@ Camel will then, when starting:
 
 == Options
 // eip options: START
-The Kamelet EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *name* | *Required* Name of the Kamelet (templateId/routeId) to call. Options for the kamelet can be specified using uri syntax, eg mynamecount=4&type=gold. |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Dependency

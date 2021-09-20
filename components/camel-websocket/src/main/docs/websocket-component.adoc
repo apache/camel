@@ -1,11 +1,10 @@
-[[websocket-component]]
 = Jetty Websocket Component
-:docTitle: Jetty Websocket
-:shortName: websocket
-:artifactId: camel-websocket
+:doctitle: Jetty Websocket
+:shortname: websocket
+:artifactid: camel-websocket
 :description: Expose websocket endpoints using Jetty.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/websocket.adoc[opts=optional]
 

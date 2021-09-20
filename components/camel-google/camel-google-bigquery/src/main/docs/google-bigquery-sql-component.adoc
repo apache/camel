@@ -1,11 +1,10 @@
-[[google-bigquery-sql-component]]
 = Google BigQuery Standard SQL Component
-:docTitle: Google BigQuery Standard SQL
-:shortName: google-bigquery-sql
-:artifactId: camel-google-bigquery
+:doctitle: Google BigQuery Standard SQL
+:shortname: google-bigquery-sql
+:artifactid: camel-google-bigquery
 :description: Access Google Cloud BigQuery service using SQL queries.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-bigquery-sql.adoc[opts=optional]
 //Manually maintained attributes

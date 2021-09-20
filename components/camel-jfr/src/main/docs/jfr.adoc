@@ -1,11 +1,10 @@
-[[jfr-other]]
 = Jfr Component
-:docTitle: Jfr
-:shortName: jfr
-:artifactId: camel-jfr
+:doctitle: Jfr
+:shortname: jfr
+:artifactid: camel-jfr
 :description: Diagnose Camel applications with Java Flight Recorder
 :since: 3.8
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jfr.adoc[opts=optional]
 
 *Since Camel {since}*

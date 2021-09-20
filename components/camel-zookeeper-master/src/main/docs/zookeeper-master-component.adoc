@@ -1,11 +1,10 @@
-[[zookeeper-master-component]]
 = ZooKeeper Master Component
-:docTitle: ZooKeeper Master
-:shortName: zookeeper-master
-:artifactId: camel-zookeeper-master
+:doctitle: ZooKeeper Master
+:shortname: zookeeper-master
+:artifactid: camel-zookeeper-master
 :description: Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/zookeeper-master.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[irc-component]]
 = IRC Component
-:docTitle: IRC
-:shortName: irc
-:artifactId: camel-irc
+:doctitle: IRC
+:shortname: irc
+:artifactid: camel-irc
 :description: Send and receive messages to/from and IRC chat.
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/irc.adoc[opts=optional]
 

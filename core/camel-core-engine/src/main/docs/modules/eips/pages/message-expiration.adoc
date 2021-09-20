@@ -1,4 +1,3 @@
-[[Message-Expiration]]
 = Message Expiration
 
 Camel supports the

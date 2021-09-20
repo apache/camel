@@ -1,22 +1,16 @@
-[[setProperty-eip]]
 = Set Property EIP
-:docTitle: Set Property
+:doctitle: Set Property
+:shortname: setProperty
 :description: Sets a named property on the message exchange
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The SetProperty EIP allows you to set a property on your exchange.
 
 == Options
 
 // eip options: START
-The Set Property EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *name* | *Required* Name of exchange property to set a new value. The simple language can be used to define a dynamic evaluated exchange property name to be used. Otherwise a constant name will be used. |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Examples

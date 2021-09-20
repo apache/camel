@@ -1,11 +1,10 @@
-[[nsq-component]]
 = NSQ Component
-:docTitle: NSQ
-:shortName: nsq
-:artifactId: camel-nsq
+:doctitle: NSQ
+:shortname: nsq
+:artifactid: camel-nsq
 :description: Send and receive messages from NSQ realtime distributed messaging platform.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nsq.adoc[opts=optional]
 

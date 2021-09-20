@@ -1,4 +1,3 @@
-[[SimpleScheduledRoutePolicy-SimpleScheduledRoutePolicy]]
 = SimpleScheduledRoutePolicy
 
 `SimpleScheduledRoutePolicy` is a xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy]

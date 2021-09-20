@@ -1,11 +1,10 @@
-[[schematron-component]]
 = Schematron Component
-:docTitle: Schematron
-:shortName: schematron
-:artifactId: camel-schematron
+:doctitle: Schematron
+:shortname: schematron
+:artifactid: camel-schematron
 :description: Validate XML payload using the Schematron Library.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/schematron.adoc[opts=optional]
 

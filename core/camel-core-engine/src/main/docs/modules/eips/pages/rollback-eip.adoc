@@ -1,9 +1,9 @@
-[[rollback-eip]]
 = Rollback EIP
-:docTitle: Rollback
+:doctitle: Rollback
+:shortname: rollback
 :description: Forces a rollback by stopping routing the message
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 Camel recommends supporting the
 http://www.enterpriseintegrationpatterns.com/TransactionalClient.html[Transactional
@@ -59,15 +59,7 @@ ctx.addComponent("activemq", component);
 
 == Options
 // eip options: START
-The Rollback EIP supports 3 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *markRollbackOnly* | Mark the transaction for rollback only (cannot be overruled to commit) | false | Boolean
-| *markRollbackOnlyLast* | Mark only last sub transaction for rollback only. When using sub transactions (if the transaction manager support this) | false | Boolean
-| *message* | Message to use in rollback exception |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 === Transaction Policies

@@ -1,11 +1,10 @@
-[[splunk-component]]
 = Splunk Component
-:docTitle: Splunk
-:shortName: splunk
-:artifactId: camel-splunk
+:doctitle: Splunk
+:shortname: splunk
+:artifactid: camel-splunk
 :description: Publish or search for events in Splunk.
 :since: 2.13
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/splunk.adoc[opts=optional]
 

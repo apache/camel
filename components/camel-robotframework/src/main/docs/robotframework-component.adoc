@@ -1,11 +1,10 @@
-[[robotframework-component]]
 = Robot Framework Component
-:docTitle: Robot Framework
-:shortName: robotframework
-:artifactId: camel-robotframework
+:doctitle: Robot Framework
+:shortname: robotframework
+:artifactid: camel-robotframework
 :description: Pass camel exchanges to acceptence test written in Robot DSL.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/robotframework.adoc[opts=optional]
 
