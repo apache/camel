@@ -170,7 +170,7 @@ public class CsvDataFormatTest {
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
         assertTrue(dataFormat.isHeaderDisabled());
-        assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getHeader());
+        assertEquals("a,b,c", dataFormat.getHeader());
 
         // Properly used
         assertNull(dataFormat.getActiveFormat().getHeader());
@@ -179,11 +179,11 @@ public class CsvDataFormatTest {
     @Test
     void shouldOverrideHeader() {
         CsvDataFormat dataFormat = new CsvDataFormat()
-                .setHeader(new String[] { "a", "b", "c" });
+                .setHeader("a,b,c");
 
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-        assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getHeader());
+        assertEquals("a,b,c", dataFormat.getHeader());
 
         // Properly used
         assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getActiveFormat().getHeader());

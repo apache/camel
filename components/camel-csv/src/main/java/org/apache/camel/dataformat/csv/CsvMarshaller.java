@@ -58,9 +58,10 @@ public abstract class CsvMarshaller {
             format = format.withHeader((String[]) null);
         }
 
-        String[] fixedColumns = dataFormat.getHeader();
-        if (fixedColumns != null && fixedColumns.length > 0) {
-            return new FixedColumnsMarshaller(format, fixedColumns);
+        String header = dataFormat.getHeader();
+        if (header != null) {
+            String[] columns = header.split(",");
+            return new FixedColumnsMarshaller(format, columns);
         }
         return new DynamicColumnsMarshaller(format);
     }

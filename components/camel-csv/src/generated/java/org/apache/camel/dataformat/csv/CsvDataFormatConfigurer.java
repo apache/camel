@@ -28,7 +28,7 @@ public class CsvDataFormatConfigurer extends PropertyConfigurerSupport implement
         case "escape": dataformat.setEscape(property(camelContext, java.lang.Character.class, value)); return true;
         case "headerdisabled":
         case "headerDisabled": dataformat.setHeaderDisabled(property(camelContext, boolean.class, value)); return true;
-        case "header": dataformat.setHeader(property(camelContext, java.lang.String[].class, value)); return true;
+        case "header": dataformat.setHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "allowmissingcolumnnames":
         case "allowMissingColumnNames": dataformat.setAllowMissingColumnNames(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "ignoreemptylines":

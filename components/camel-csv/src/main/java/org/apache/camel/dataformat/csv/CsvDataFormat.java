@@ -18,7 +18,7 @@ package org.apache.camel.dataformat.csv;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
+import java.util.StringJoiner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -45,7 +45,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private boolean escapeDisabled;
     private Character escape;
     private boolean headerDisabled;
-    private String[] header;
+    private String header;
     private Boolean allowMissingColumnNames;
     private Boolean ignoreEmptyLines;
     private Boolean ignoreSurroundingSpaces;
@@ -129,7 +129,11 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         if (headerDisabled) {
             answer = answer.withHeader((String[]) null); // null disables the header
         } else if (header != null) {
-            answer = answer.withHeader(header);
+            if (header.indexOf(',') != -1) {
+                answer = answer.withHeader(header.split(","));
+            } else {
+                answer = answer.withHeader(header);
+            }
         }
 
         if (allowMissingColumnNames != null) {
@@ -386,25 +390,36 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Gets the header. If {@code null} then the default one of the format used. If empty then it will be automatically
-     * handled.
+     * Gets the header. Multiple values can be separated by comma.
+     *
+     * If {@code null} then the default one of the format used. If empty then it will be automatically handled.
      *
      * @return Header
      */
-    public String[] getHeader() {
+    public String getHeader() {
         return header;
     }
 
     /**
-     * Gets the header. If {@code null} then the default one of the format used. If empty then it will be automatically
-     * handled.
+     * Gets the header. Multiple values can be separated by comma.
+     *
+     * If {@code null} then the default one of the format used. If empty then it will be automatically handled.
      *
      * @param  header Header
      * @return        Current {@code CsvDataFormat}, fluent API
      * @see           org.apache.commons.csv.CSVFormat#withHeader(String...)
      */
+    public CsvDataFormat setHeader(String header) {
+        this.header = header;
+        return this;
+    }
+
     public CsvDataFormat setHeader(String[] header) {
-        this.header = Arrays.copyOf(header, header.length);
+        StringJoiner sj = new StringJoiner(",");
+        for (String s : header) {
+            sj.add(s);
+        }
+        this.header = sj.toString();
         return this;
     }
 

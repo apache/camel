@@ -44,12 +44,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CsvMarshalHeaderTest extends CamelTestSupport {
 
     @TempDir
-    public File folder;
+    File folder;
 
     @Produce("direct:start")
-    private ProducerTemplate producerTemplate;
+    ProducerTemplate producerTemplate;
 
-    private File outputFile;
+    File outputFile;
 
     @Override
     protected void doPreSetup() throws Exception {
