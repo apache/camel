@@ -19,7 +19,9 @@ package org.apache.camel.component.dataformat;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -52,8 +54,16 @@ public class DataFormatComponent extends DefaultComponent {
         if (df == null) {
             throw new IllegalArgumentException("Cannot find data format with name: " + name);
         }
-        PropertyBindingSupport.bindProperties(getCamelContext(), df, parameters);
 
+        // find configurer if any
+        PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                .resolvePropertyConfigurer(name + "-dataformat", getCamelContext());
+        // bind properties to data format
+        PropertyBindingSupport.Builder builder = new PropertyBindingSupport.Builder();
+        builder.withConfigurer(configurer);
+        builder.bind(getCamelContext(), df, parameters);
+
+        // create endpoint
         DataFormatEndpoint endpoint = new DataFormatEndpoint(uri, this, df);
         endpoint.setOperation(operation);
         setProperties(endpoint, parameters);
