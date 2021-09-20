@@ -5,7 +5,7 @@
     "title": "Huawei Cloud Image Recognition",
     "description": "component to connect to image recognition service",
     "deprecated": false,
-    "firstVersion": "3.12.0-SNAPSHOT",
+    "firstVersion": "3.12.0",
     "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.huaweicloud.image.ImageRecognitionComponent",
     "supportLevel": "Preview",

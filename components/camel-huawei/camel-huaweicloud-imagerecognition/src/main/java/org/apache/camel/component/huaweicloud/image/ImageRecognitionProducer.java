@@ -72,7 +72,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
 
         if (StringUtils.isEmpty(endpoint.getImageContent()) && StringUtils.isEmpty(endpoint.getImageUrl())) {
             if (StringUtils.isEmpty(endpoint.getRegion())) {
-                LOG.error("image and url not found");
                 throw new IllegalArgumentException("either image or url should be set");
             }
         }
@@ -97,7 +96,7 @@ public class ImageRecognitionProducer extends DefaultProducer {
      */
     private ImageClient initializeClient(ImageRecognitionEndpoint endpoint) {
         if (endpoint.getImageClient() != null) {
-            LOG.warn(
+            LOG.info(
                     "Instance of ImageClient was set on the endpoint. Skipping creation of ImageClient from endpoint parameters");
             return endpoint.getImageClient();
         }
@@ -133,7 +132,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
     public void process(Exchange exchange) {
         String operation = ((ImageRecognitionEndpoint) super.getEndpoint()).getOperation();
         if (StringUtils.isEmpty(operation)) {
-            LOG.error("Operation is empty");
             throw new IllegalStateException("operation name cannot be empty");
         }
         switch (operation) {
@@ -150,7 +148,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
                 performTagRecognitionOperation(exchange);
                 break;
             default:
-                LOG.error("Unsupported operation: {}", operation);
                 throw new UnsupportedOperationException(
                         "operation can only be either tagRecognition or celebrityRecognition");
         }
@@ -224,7 +221,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
             isImageUrlSet = false;
         }
         if (!isImageContentSet && !isImageUrlSet) {
-            LOG.error("Image content and url are not set");
             throw new IllegalArgumentException("either image content or image url should be set");
         }
 
@@ -233,7 +229,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
                 StringUtils.isEmpty(tagLanguageProperty) ? this.endpoint.getTagLanguage() : tagLanguageProperty);
         if (!ImageRecognitionConstants.TAG_LANGUAGE_ZH.equals(clientConfigurations.getTagLanguage())
                 && !ImageRecognitionConstants.TAG_LANGUAGE_EN.equals(clientConfigurations.getTagLanguage())) {
-            LOG.error("Tag language is invalid: {}", clientConfigurations.getTagLanguage());
             throw new IllegalArgumentException("tag language can only be 'zh' or 'en'");
         }
 
@@ -262,12 +257,10 @@ public class ImageRecognitionProducer extends DefaultProducer {
     private void validateThresholdValue(float threshold, String operation) {
         if (ImageRecognitionConstants.OPERATION_TAG_RECOGNITION.equals(operation)) {
             if (threshold < 0 || threshold > ImageRecognitionConstants.TAG_RECOGNITION_THRESHOLD_MAX) {
-                LOG.error("Tag threshold is invalid: {}", threshold);
                 throw new IllegalArgumentException("tag recognition threshold should be at 0~100");
             }
         } else {
             if (threshold < 0 || threshold > ImageRecognitionConstants.CELEBRITY_RECOGNITION_THRESHOLD_MAX) {
-                LOG.error("Celebrity recognition threshold is invalid: {}", threshold);
                 throw new IllegalArgumentException("celebrity recognition threshold should be at 0~1");
             }
         }
@@ -288,7 +281,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
                 && !StringUtils.isEmpty(endpoint.getServiceKeys().getAccessKey())) {
             return endpoint.getServiceKeys().getAccessKey();
         } else {
-            LOG.error("Access key (AK) not found");
             throw new IllegalArgumentException("authentication parameter 'access key (AK)' not found");
         }
     }
@@ -300,14 +292,12 @@ public class ImageRecognitionProducer extends DefaultProducer {
                 && !StringUtils.isEmpty(endpoint.getServiceKeys().getSecretKey())) {
             return endpoint.getServiceKeys().getSecretKey();
         } else {
-            LOG.error("Secret key (SK) not found");
             throw new IllegalArgumentException("authentication parameter 'secret key (SK)' not found");
         }
     }
 
     private String getProjectId(ImageRecognitionEndpoint endpoint) {
         if (StringUtils.isEmpty(endpoint.getProjectId())) {
-            LOG.error("Project id not found");
             throw new IllegalArgumentException("Project id not found");
         }
         return endpoint.getProjectId();
@@ -318,7 +308,6 @@ public class ImageRecognitionProducer extends DefaultProducer {
             return endpoint.getEndpoint();
         }
         if (StringUtils.isEmpty(endpoint.getRegion())) {
-            LOG.error("endpoint and region not found");
             throw new IllegalArgumentException("either endpoint or region should be set");
         }
         return ImageRegion.valueOf(endpoint.getRegion()).getEndpoint();

@@ -2056,7 +2056,7 @@ public interface ComponentsBuilderFactory {
      * component to connect to image recognition service
      * 
      * Category: cloud,messaging
-     * Since: 3.12.0-SNAPSHOT
+     * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-huaweicloud-imagerecognition
      * 
      * @return the dsl builder
