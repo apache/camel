@@ -1,11 +1,10 @@
-[[hdfs-component]]
 = HDFS Component
-:docTitle: HDFS
-:shortName: hdfs
-:artifactId: camel-hdfs
+:doctitle: HDFS
+:shortname: hdfs
+:artifactid: camel-hdfs
 :description: Read and write from/to an HDFS filesystem using Hadoop 2.x.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hdfs.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[controlbus-component]]
 = Control Bus Component
-:docTitle: Control Bus
-:shortName: controlbus
-:artifactId: camel-controlbus
+:doctitle: Control Bus
+:shortname: controlbus
+:artifactid: camel-controlbus
 :description: Manage and monitor Camel routes.
 :since: 2.11
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/controlbus.adoc[opts=optional]

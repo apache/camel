@@ -1,11 +1,10 @@
-[[kamelet-reify-component]]
 = Kamelet Reify Component (deprecated)
-:docTitle: Kamelet Reify
-:shortName: kamelet-reify
-:artifactId: camel-kamelet-reify
+:doctitle: Kamelet Reify
+:shortname: kamelet-reify
+:artifactid: camel-kamelet-reify
 :description: To call Kamelets (indirectly)
 :since: 3.6
-:supportLevel: Stable-deprecated
+:supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 :core:

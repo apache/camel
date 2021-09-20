@@ -1,4 +1,3 @@
-[[Endpoint-Endpoints]]
 = Endpoints
 
 Camel supports the xref:{eip-vc}:eips:message-endpoint.adoc[Message Endpoint] pattern

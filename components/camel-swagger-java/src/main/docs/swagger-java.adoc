@@ -1,11 +1,10 @@
-[[swagger-java-other]]
 = Swagger Java Component
-:docTitle: Swagger Java
-:shortName: swagger-java
-:artifactId: camel-swagger-java
+:doctitle: Swagger Java
+:shortname: swagger-java
+:artifactid: camel-swagger-java
 :description: Rest-dsl support for using swagger api-doc
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/swagger-java.adoc[opts=optional]
 
 *Since Camel {since}*

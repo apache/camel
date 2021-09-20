@@ -1,11 +1,10 @@
-[[jta-other]]
 = JTA Component
-:docTitle: JTA
-:shortName: jta
-:artifactId: camel-jta
+:doctitle: JTA
+:shortname: jta
+:artifactid: camel-jta
 :description: Using Camel With JTA Transaction Manager
 :since: 3.4
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jta.adoc[opts=optional]
 
 *Since Camel {since}*

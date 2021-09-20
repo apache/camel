@@ -1,22 +1,16 @@
-[[sticky-eip]]
 = Sticky EIP
-:docTitle: Sticky
+:doctitle: Sticky
+:shortname: sticky
 :description: Sticky load balancer Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 Sticky Load Balancer. Sticky load balancing uses an Expression to calculate a correlation key to perform the sticky load balancing.
 
 == Options
 
 // eip options: START
-The Sticky EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *correlationExpression* | *Required* The correlation expression to use to calculate the correlation key |  | ExpressionSubElementDefinition
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Examples

@@ -1,11 +1,10 @@
-[[ignite-idgen-component]]
 = Ignite ID Generator Component
-:docTitle: Ignite ID Generator
-:shortName: ignite-idgen
-:artifactId: camel-ignite
+:doctitle: Ignite ID Generator
+:shortname: ignite-idgen
+:artifactid: camel-ignite
 :description: Interact with Ignite Atomic Sequences and ID Generators .
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-idgen.adoc[opts=optional]
 //Manually maintained attributes

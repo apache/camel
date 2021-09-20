@@ -1,4 +1,3 @@
-[[BeanInjection-BeanInjection]]
 = Bean Injection
 
 We support the injection of various resources using `@EndpointInject` or

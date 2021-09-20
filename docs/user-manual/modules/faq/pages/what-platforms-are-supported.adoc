@@ -1,4 +1,3 @@
-[[Whatplatformsaresupported-Whatplatformsaresupported]]
 = What platforms are supported?
 
 - Camel 2.x supports JDK 8

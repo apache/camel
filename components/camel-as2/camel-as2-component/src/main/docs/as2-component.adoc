@@ -1,11 +1,10 @@
-[[as2-component]]
 = AS2 Component
-:docTitle: AS2
-:shortName: as2
-:artifactId: camel-as2
+:doctitle: AS2
+:shortname: as2
+:artifactid: camel-as2
 :description: Transfer data securely and reliably using the AS2 protocol (RFC4130).
 :since: 2.22
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/as2.adoc[opts=optional]
 

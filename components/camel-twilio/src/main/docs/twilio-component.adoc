@@ -1,11 +1,10 @@
-[[twilio-component]]
 = Twilio Component
-:docTitle: Twilio
-:shortName: twilio
-:artifactId: camel-twilio
+:doctitle: Twilio
+:shortname: twilio
+:artifactid: camel-twilio
 :description: Interact with Twilio REST APIs using Twilio Java SDK.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twilio.adoc[opts=optional]
 

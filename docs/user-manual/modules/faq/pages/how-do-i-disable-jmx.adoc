@@ -1,4 +1,3 @@
-[[HowdoIdisableJMX-HowdoIdisableJMX]]
 = How do I disable JMX?
 
 == How do I disable JMX in Camel 3.x

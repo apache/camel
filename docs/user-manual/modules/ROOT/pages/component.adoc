@@ -1,4 +1,3 @@
-[[Component-Components]]
 = Components
 
 A Component is essentially a factory of xref:endpoint.adoc[Endpoint] instances.

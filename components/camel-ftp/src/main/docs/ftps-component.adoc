@@ -1,11 +1,10 @@
-[[ftps-component]]
 = FTPS Component
-:docTitle: FTPS
-:shortName: ftps
-:artifactId: camel-ftp
+:doctitle: FTPS
+:shortname: ftps
+:artifactid: camel-ftp
 :description: Upload and download files to/from FTP servers supporting the FTPS protocol.
 :since: 2.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ftps.adoc[opts=optional]
 

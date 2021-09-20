@@ -1,4 +1,3 @@
-[[deadLetterChannel-eip]]
 = Dead Letter Channel
 
 Camel supports the

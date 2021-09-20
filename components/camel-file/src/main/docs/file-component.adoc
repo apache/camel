@@ -1,11 +1,10 @@
-[[file-component]]
 = File Component
-:docTitle: File
-:shortName: file
-:artifactId: camel-file
+:doctitle: File
+:shortname: file
+:artifactid: camel-file
 :description: Read and write files.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/file.adoc[opts=optional]

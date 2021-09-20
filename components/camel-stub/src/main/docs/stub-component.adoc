@@ -1,11 +1,10 @@
-[[stub-component]]
 = Stub Component
-:docTitle: Stub
-:shortName: stub
-:artifactId: camel-stub
+:doctitle: Stub
+:shortname: stub
+:artifactid: camel-stub
 :description: Stub out any physical endpoints while in development or testing.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stub.adoc[opts=optional]

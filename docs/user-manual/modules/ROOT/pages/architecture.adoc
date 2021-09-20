@@ -1,4 +1,3 @@
-[[Architecture-Architecture]]
 = Architecture
 
 Camel uses a Java based xref:dsl.adoc[Routing Domain Specific Language (DSL)] 

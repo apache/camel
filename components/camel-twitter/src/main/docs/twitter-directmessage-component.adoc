@@ -1,11 +1,10 @@
-[[twitter-directmessage-component]]
 = Twitter Direct Message Component
-:docTitle: Twitter Direct Message
-:shortName: twitter-directmessage
-:artifactId: camel-twitter
+:doctitle: Twitter Direct Message
+:shortname: twitter-directmessage
+:artifactid: camel-twitter
 :description: Send and receive Twitter direct messages.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twitter-directmessage.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[jms-component]]
 = JMS Component
-:docTitle: JMS
-:shortName: jms
-:artifactId: camel-jms
+:doctitle: JMS
+:shortname: jms
+:artifactid: camel-jms
 :description: Sent and receive messages to/from a JMS Queue or Topic.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jms.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[docker-component]]
 = Docker Component
-:docTitle: Docker
-:shortName: docker
-:artifactId: camel-docker
+:doctitle: Docker
+:shortname: docker
+:artifactid: camel-docker
 :description: Manage Docker containers.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/docker.adoc[opts=optional]
 

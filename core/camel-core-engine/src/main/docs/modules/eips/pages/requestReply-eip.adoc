@@ -1,4 +1,3 @@
-[[requestReply-eip]]
 = Request Reply
 
 Camel supports the

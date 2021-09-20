@@ -1,11 +1,10 @@
-[[corda-component]]
 = Corda Component
-:docTitle: Corda
-:shortName: corda
-:artifactId: camel-corda
+:doctitle: Corda
+:shortname: corda
+:artifactid: camel-corda
 :description: Perform operations against Corda blockchain platform using corda-rpc library.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/corda.adoc[opts=optional]
 

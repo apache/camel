@@ -1,11 +1,10 @@
-[[hazelcast-atomicvalue-component]]
 = Hazelcast Atomic Number Component
-:docTitle: Hazelcast Atomic Number
-:shortName: hazelcast-atomicvalue
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast Atomic Number
+:shortname: hazelcast-atomicvalue
+:artifactid: camel-hazelcast
 :description: Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-atomicvalue.adoc[opts=optional]
 //Manually maintained attributes

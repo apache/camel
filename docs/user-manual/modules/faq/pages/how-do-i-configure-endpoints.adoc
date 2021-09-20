@@ -1,4 +1,3 @@
-[[HowdoIconfigureendpoints-HowdoIconfigureendpoints]]
 = How do I configure endpoints?
 
 There are a few different approaches to configuring components and

@@ -1,11 +1,10 @@
-[[crypto-dataformat]]
 = Crypto (Java Cryptographic Extension) DataFormat
-:docTitle: Crypto (Java Cryptographic Extension)
-:shortName: crypto
-:artifactId: camel-crypto
+:doctitle: Crypto (Java Cryptographic Extension)
+:shortname: crypto
+:artifactid: camel-crypto
 :description: Encrypt and decrypt messages using Java Cryptography Extension (JCE).
 :since: 2.3
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/crypto.adoc[opts=optional]
 
 *Since Camel {since}*

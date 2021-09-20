@@ -1,4 +1,3 @@
-[[hystrix-eip]]
 = Hystrix EIP (deprecated)
 
 The Hystrix EIP provides integration with Netflix https://github.com/Netflix/Hystrix[Hystrix]

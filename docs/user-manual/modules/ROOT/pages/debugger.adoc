@@ -1,4 +1,3 @@
-[[Debugger-Debugger]]
 = Debugger
 
 The Camel Debugger is intended for 3rd party tooling to make it possible to

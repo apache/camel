@@ -1,11 +1,10 @@
-[[wordpress-component]]
 = Wordpress Component
-:docTitle: Wordpress
-:shortName: wordpress
-:artifactId: camel-wordpress
+:doctitle: Wordpress
+:shortname: wordpress
+:artifactid: camel-wordpress
 :description: Manage posts and users using Wordpress API.
 :since: 2.21
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/wordpress.adoc[opts=optional]
 

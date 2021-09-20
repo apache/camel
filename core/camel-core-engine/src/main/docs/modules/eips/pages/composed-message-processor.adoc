@@ -1,4 +1,3 @@
-[[Composed-Message-Processor]]
 = Composed Message Processor
 
 Camel supports the

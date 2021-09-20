@@ -1,4 +1,3 @@
-[[ErrorHandler-ErrorHandler]]
 = Error Handler
 
 Camel supports pluggable

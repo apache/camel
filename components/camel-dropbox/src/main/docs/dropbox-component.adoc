@@ -1,11 +1,10 @@
-[[dropbox-component]]
 = Dropbox Component
-:docTitle: Dropbox
-:shortName: dropbox
-:artifactId: camel-dropbox
+:doctitle: Dropbox
+:shortname: dropbox
+:artifactid: camel-dropbox
 :description: Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dropbox.adoc[opts=optional]
 

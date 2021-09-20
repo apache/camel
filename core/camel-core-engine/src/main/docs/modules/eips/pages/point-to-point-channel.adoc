@@ -1,4 +1,3 @@
-[[PointtoPointChannel-PointtoPointChannel]]
 = Point to Point Channel
 
 Camel supports the

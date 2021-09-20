@@ -1,4 +1,3 @@
-[[URIs-URIs]]
 = URIs
 
 Camel makes extensive use of URIs to allow you to refer to xref:endpoint.adoc[Endpoint]s.

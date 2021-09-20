@@ -1,11 +1,10 @@
-[[mail-component]]
 = Mail Component
-:docTitle: Mail
-:shortName: imap
-:artifactId: camel-mail
+:doctitle: Mail
+:shortname: imap
+:artifactid: camel-mail
 :description: Send and receive emails using imap, pop3 and smtp protocols.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mail.adoc[opts=optional]
 

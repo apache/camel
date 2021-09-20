@@ -1,11 +1,10 @@
-[[jgroups-component]]
 = JGroups Component
-:docTitle: JGroups
-:shortName: jgroups
-:artifactId: camel-jgroups
+:doctitle: JGroups
+:shortname: jgroups
+:artifactid: camel-jgroups
 :description: Exchange messages with JGroups clusters.
 :since: 2.13
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jgroups.adoc[opts=optional]
 

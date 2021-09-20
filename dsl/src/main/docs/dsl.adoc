@@ -1,8 +1,8 @@
 = Domain Specific Languages
-:docTitle: DSL
+:doctitle: DSL
 
-== {docTitle} components
+== {doctitle} components
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={doctitle}',descAttribute=description]

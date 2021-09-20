@@ -1,4 +1,3 @@
-[[HowdoIsettheMEPwheninteractingwithJBI-HowdoIsettheMEPwheninteractingwithJBI]]
 = How do I set the MEP when interacting with JBI?
 
 [[HowdoIsettheMEPwheninteractingwithJBI-Problem]]

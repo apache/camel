@@ -1,11 +1,10 @@
-[[aws2-ses-component]]
 = AWS Simple Email Service (SES) Component
-:docTitle: AWS Simple Email Service (SES)
-:shortName: aws2-ses
-:artifactId: camel-aws2-ses
+:doctitle: AWS Simple Email Service (SES)
+:shortname: aws2-ses
+:artifactid: camel-aws2-ses
 :description: Send e-mails through AWS SES service using AWS SDK version 2.x.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-ses.adoc[opts=optional]
 //Manually maintained attributes

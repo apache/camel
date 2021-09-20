@@ -1,11 +1,10 @@
-[[hazelcast-list-component]]
 = Hazelcast List Component
-:docTitle: Hazelcast List
-:shortName: hazelcast-list
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast List
+:shortname: hazelcast-list
+:artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed list.
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-list.adoc[opts=optional]
 //Manually maintained attributes

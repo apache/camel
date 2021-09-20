@@ -1,4 +1,3 @@
-[[ExchangePattern-ExchangePattern]]
 = Exchange Pattern
 
 There are two _Message Exchange Patterns_ you can use in

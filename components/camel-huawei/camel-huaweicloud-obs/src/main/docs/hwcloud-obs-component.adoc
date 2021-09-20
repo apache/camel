@@ -1,11 +1,10 @@
-[[hwcloud-obs-component]]
 = Huawei Object Storage Service (OBS) Component
-:docTitle: Huawei Object Storage Service (OBS)
-:shortName: hwcloud-obs
-:artifactId: camel-huaweicloud-obs
+:doctitle: Huawei Object Storage Service (OBS)
+:shortname: hwcloud-obs
+:artifactid: camel-huaweicloud-obs
 :description: To provide stable, secure, efficient, and easy-to-use cloud storage service on Huawei Cloud
 :since: 3.12
-:supportLevel: Preview
+:supportlevel: Preview
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-obs.adoc[opts=optional]
 //Manually maintained attributes

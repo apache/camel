@@ -1,5 +1,3 @@
-[[chapter-getting-started]]
-[[BookGettingStarted-GettingStartedwithApacheCamel]]
 = Getting Started with Apache Camel
 
 [[BookGettingStarted-eip-book]]

@@ -1,11 +1,10 @@
-[[zipkin-other]]
 = Zipkin Component
-:docTitle: Zipkin
-:shortName: zipkin
-:artifactId: camel-zipkin
+:doctitle: Zipkin
+:shortname: zipkin
+:artifactid: camel-zipkin
 :description: Distributed message tracing using Zipkin
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/zipkin.adoc[opts=optional]
 
 *Since Camel {since}*

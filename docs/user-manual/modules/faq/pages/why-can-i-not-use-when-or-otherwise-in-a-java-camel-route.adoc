@@ -1,4 +1,3 @@
-[[WhycanInotusewhenorotherwiseinaJavaCamelroute-WhycanInotusewhenotherwiseinaJavaCamelroute]]
 = Why can I not use when/otherwise in a Java Camel route?
 
 When using the xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] in

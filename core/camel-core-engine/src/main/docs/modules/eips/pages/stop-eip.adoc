@@ -1,14 +1,14 @@
-[[stop-eip]]
 = Stop EIP
-:docTitle: Stop
+:doctitle: Stop
+:shortname: stop
 :description: Stops the processing of the current message
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 == Options
 
 // eip options: START
-The Stop EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Examples

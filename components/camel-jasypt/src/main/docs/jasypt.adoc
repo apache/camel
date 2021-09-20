@@ -1,11 +1,10 @@
-[[jasypt-other]]
 = Jasypt Component
-:docTitle: Jasypt
-:shortName: jasypt
-:artifactId: camel-jasypt
+:doctitle: Jasypt
+:shortname: jasypt
+:artifactid: camel-jasypt
 :description: Security using Jasypt
 :since: 2.5
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jasypt.adoc[opts=optional]
 
 *Since Camel {since}*

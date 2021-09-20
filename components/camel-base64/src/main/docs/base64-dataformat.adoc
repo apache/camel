@@ -1,11 +1,10 @@
-[[base64-dataformat]]
 = Base64 DataFormat
-:docTitle: Base64
-:shortName: base64
-:artifactId: camel-base64
+:doctitle: Base64
+:shortname: base64
+:artifactid: camel-base64
 :description: Encode and decode data using Base64.
 :since: 2.11
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/base64.adoc[opts=optional]
 
 *Since Camel {since}*

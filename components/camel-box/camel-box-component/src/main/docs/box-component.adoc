@@ -1,11 +1,10 @@
-[[box-component]]
 = Box Component
-:docTitle: Box
-:shortName: box
-:artifactId: camel-box
+:doctitle: Box
+:shortname: box
+:artifactid: camel-box
 :description: Upload, download and manage files, folders, groups, collaborations, etc. on box.com.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/box.adoc[opts=optional]
 

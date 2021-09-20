@@ -1,11 +1,10 @@
-[[cxfrs-component]]
 = CXF-RS Component
-:docTitle: CXF-RS
-:shortName: cxfrs
-:artifactId: camel-cxf
+:doctitle: CXF-RS
+:shortname: cxfrs
+:artifactid: camel-cxf
 :description: Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cxfrs.adoc[opts=optional]
 

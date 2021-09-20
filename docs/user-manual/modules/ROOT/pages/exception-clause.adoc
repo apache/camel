@@ -1,4 +1,3 @@
-[[ExceptionClause-ExceptionClause]]
 = Exception Clause
 
 You can use the _Exception Clause_ in the Java xref:dsl.adoc[DSL] to

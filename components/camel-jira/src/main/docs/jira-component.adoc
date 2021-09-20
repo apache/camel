@@ -1,11 +1,10 @@
-[[jira-component]]
 = Jira Component
-:docTitle: Jira
-:shortName: jira
-:artifactId: camel-jira
+:doctitle: Jira
+:shortname: jira
+:artifactid: camel-jira
 :description: Interact with JIRA issue tracker.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jira.adoc[opts=optional]
 

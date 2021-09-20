@@ -1,11 +1,10 @@
-[[openshift-builds-component]]
 = Openshift Builds Component
-:docTitle: Openshift Builds
-:shortName: openshift-builds
-:artifactId: camel-kubernetes
+:doctitle: Openshift Builds
+:shortname: openshift-builds
+:artifactid: camel-kubernetes
 :description: Perform operations on OpenShift Builds.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openshift-builds.adoc[opts=optional]
 //Manually maintained attributes

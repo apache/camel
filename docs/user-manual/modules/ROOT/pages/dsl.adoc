@@ -1,4 +1,3 @@
-[[DSL-DSL]]
 = DSL
 
 Camel uses a Java _Domain Specific Language_ or DSL for creating

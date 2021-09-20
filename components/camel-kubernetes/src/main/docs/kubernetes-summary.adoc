@@ -1,6 +1,6 @@
 = Kubernetes Components
 //attributes written by hand, not generated
-:docTitle: Kubernetes
+:doctitle: Kubernetes
 :since: 2.17
 
 *Since Camel {since}*
@@ -8,11 +8,11 @@
 The Kubernetes components integrate your application with Kubernetes standalone or on top of Openshift.
 
 
-== {docTitle} components
+== {doctitle} components
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={doctitle}',descAttribute=description]
 
 == Installation
 

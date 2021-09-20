@@ -1,11 +1,10 @@
-[[testcontainers-junit5-other]]
 = Testcontainers JUnit5 Component
-:docTitle: Testcontainers JUnit5
-:shortName: testcontainers-junit5
-:artifactId: camel-testcontainers-junit5
+:doctitle: Testcontainers JUnit5
+:shortname: testcontainers-junit5
+:artifactid: camel-testcontainers-junit5
 :description: Camel support for testcontainers with JUnit 5
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/testcontainers-junit5.adoc[opts=optional]
 
 *Since Camel {since}*

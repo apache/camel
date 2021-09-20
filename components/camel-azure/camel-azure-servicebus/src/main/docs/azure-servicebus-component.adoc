@@ -1,11 +1,10 @@
-[[azure-servicebus-component]]
 = Azure ServiceBus Component
-:docTitle: Azure ServiceBus
-:shortName: azure-servicebus
-:artifactId: camel-azure-servicebus
+:doctitle: Azure ServiceBus
+:shortname: azure-servicebus
+:artifactid: camel-azure-servicebus
 :description: The azure-servicebus component that integrates Azure ServiceBus. Azure ServiceBus is a fully managed enterprise integration message broker. Service Bus can decouple applications and services. Service Bus offers a reliable and secure platform for asynchronous transfer of data and state. Data is transferred between different applications and services using messages.
 :since: 3.12
-:supportLevel: Preview
+:supportlevel: Preview
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-servicebus.adoc[opts=optional]
 //Manually maintained attributes

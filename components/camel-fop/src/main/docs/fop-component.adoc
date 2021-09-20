@@ -1,11 +1,10 @@
-[[fop-component]]
 = FOP Component
-:docTitle: FOP
-:shortName: fop
-:artifactId: camel-fop
+:doctitle: FOP
+:shortname: fop
+:artifactid: camel-fop
 :description: Render messages into PDF and other output formats supported by Apache FOP.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/fop.adoc[opts=optional]
 

@@ -1,4 +1,3 @@
-[[CamelJBang]]
 = Camel JBang
 
 A JBang-based Camel app for searching for kamelets, components, languages,  running routes. This component is available from *Camel 3.12* and newer versions.

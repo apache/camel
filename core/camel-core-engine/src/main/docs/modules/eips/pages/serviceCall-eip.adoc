@@ -1,9 +1,9 @@
-[[serviceCall-eip]]
 = Service Call EIP
-:docTitle: Service Call
+:doctitle: Service Call
+:shortname: serviceCall
 :description: To call remote services
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The Service Call EIP allows to call remote services in a distributed system.
 The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Etcd, Zookeeper, DNS.
@@ -96,25 +96,7 @@ from("direct:start")
 
 == Options
 // eip options: START
-The Service Call EIP supports 13 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *name* | *Required* Sets the name of the service to use |  | String
-| *uri* | The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression. |  | String
-| *component* | The component to use. | http | String
-| *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
-| *configurationRef* | Refers to a ServiceCall configuration to use |  | String
-| *serviceDiscoveryRef* | Sets a reference to a custom ServiceDiscovery to use. |  | String
-| *serviceFilterRef* | Sets a reference to a custom ServiceFilter to use. |  | String
-| *serviceChooserRef* | Sets a reference to a custom ServiceChooser to use. |  | String
-| *loadBalancerRef* | Sets a reference to a custom ServiceLoadBalancer to use. |  | String
-| *expressionRef* | Set a reference to a custom Expression to use. |  | String
-| *serviceDiscoveryConfiguration* | *Required* Configures the ServiceDiscovery using the given configuration. |  | ServiceCallServiceDiscoveryConfiguration
-| *serviceFilterConfiguration* | *Required* Configures the ServiceFilter using the given configuration. |  | ServiceCallServiceFilterConfiguration
-| *loadBalancerConfiguration* | *Required* Configures the LoadBalancer using the given configuration. |  | ServiceCallServiceLoadBalancerConfiguration
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 In addition to ref/binding configuration style you can leverage specific configuration DSL to customize specific options:

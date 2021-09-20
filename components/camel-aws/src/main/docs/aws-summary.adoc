@@ -1,5 +1,5 @@
 = AWS Component
-:docTitle: AWS
+:doctitle: AWS
 
 The *aws-* component allows you to work with the
 https://aws.amazon.com/[AWS].
@@ -7,8 +7,8 @@ AWS offers a great palette of different components like cloudwatch, DynamoDB str
 storage service, email and queue services. The main reason to use AWS is its cloud computing platform.
 
 
-== {docTitle} components
+== {doctitle} components
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={doctitle}',descAttribute=description]

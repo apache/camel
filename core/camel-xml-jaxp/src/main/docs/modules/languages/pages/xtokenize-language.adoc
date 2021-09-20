@@ -1,11 +1,10 @@
-[[xtokenize-language]]
 = XML Tokenize Language
-:docTitle: XML Tokenize
-:shortName: xtokenize
-:artifactId: camel-xml-jaxp
+:doctitle: XML Tokenize
+:shortname: xtokenize
+:artifactid: camel-xml-jaxp
 :description: Tokenize XML payloads.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xtokenize.adoc[opts=optional]
 
 *Since Camel {since}*

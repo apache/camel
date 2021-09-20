@@ -1,4 +1,3 @@
-[[ExchangePooling-ExchangePooling]]
 = Exchange Pooling
 
 Apache Camel requires a tiny resource overhead when routing message.

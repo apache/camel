@@ -1,4 +1,3 @@
-[[Building-BuildingCamelfromSource]]
 = Building Camel from Source
 
 Camel uses http://maven.apache.org/[Maven] as its build and management

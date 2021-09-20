@@ -1,11 +1,10 @@
-[[cdi-other]]
 = CDI Component
-:docTitle: CDI
-:shortName: cdi
-:artifactId: camel-cdi
+:doctitle: CDI
+:shortname: cdi
+:artifactid: camel-cdi
 :description: Using Camel with CDI
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/cdi.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -1,4 +1,3 @@
-[[BacklogTracer-BacklogTracer]]
 = BacklogTracer
 
 Camel supports a backlog tracer interceptor that is used for capturing a

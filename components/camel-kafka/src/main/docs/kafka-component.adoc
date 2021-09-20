@@ -1,11 +1,10 @@
-[[kafka-component]]
 = Kafka Component
-:docTitle: Kafka
-:shortName: kafka
-:artifactId: camel-kafka
+:doctitle: Kafka
+:shortname: kafka
+:artifactid: camel-kafka
 :description: Sent and receive messages to/from an Apache Kafka broker.
 :since: 2.13
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kafka.adoc[opts=optional]
 

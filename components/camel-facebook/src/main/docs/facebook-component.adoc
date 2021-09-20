@@ -1,11 +1,10 @@
-[[facebook-component]]
 = Facebook Component
-:docTitle: Facebook
-:shortName: facebook
-:artifactId: camel-facebook
+:doctitle: Facebook
+:shortname: facebook
+:artifactid: camel-facebook
 :description: Send requests to Facebook APIs supported by Facebook4J.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/facebook.adoc[opts=optional]
 

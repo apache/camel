@@ -1,11 +1,10 @@
-[[xchange-component]]
 = XChange Component
-:docTitle: XChange
-:shortName: xchange
-:artifactId: camel-xchange
+:doctitle: XChange
+:shortname: xchange
+:artifactid: camel-xchange
 :description: Access market data and trade on Bitcoin and Altcoin exchanges.
 :since: 2.21
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xchange.adoc[opts=optional]
 

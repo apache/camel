@@ -1,4 +1,3 @@
-[[Validator-Validator]]
 = Validator
 
 Validator performs declarative validation of the message according to the declared

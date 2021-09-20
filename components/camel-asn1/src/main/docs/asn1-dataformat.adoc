@@ -1,11 +1,10 @@
-[[asn1-dataformat]]
 = ASN.1 File DataFormat
-:docTitle: ASN.1 File
-:shortName: asn1
-:artifactId: camel-asn1
+:doctitle: ASN.1 File
+:shortname: asn1
+:artifactid: camel-asn1
 :description: Encode and decode data structures using Abstract Syntax Notation One (ASN.1).
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/asn1.adoc[opts=optional]
 
 *Since Camel {since}*

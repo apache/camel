@@ -1,11 +1,10 @@
-[[aws2-s3-component]]
 = AWS S3 Storage Service Component
-:docTitle: AWS S3 Storage Service
-:shortName: aws2-s3
-:artifactId: camel-aws2-s3
+:doctitle: AWS S3 Storage Service
+:shortname: aws2-s3
+:artifactid: camel-aws2-s3
 :description: Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.
 :since: 3.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-s3.adoc[opts=optional]
 //Manually maintained attributes

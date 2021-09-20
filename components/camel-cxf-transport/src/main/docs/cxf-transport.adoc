@@ -1,11 +1,10 @@
-[[cxf-transport-other]]
 = CXF Transport Component
-:docTitle: CXF Transport
-:shortName: cxf-transport
-:artifactId: camel-cxf-transport
+:doctitle: CXF Transport
+:shortname: cxf-transport
+:artifactid: camel-cxf-transport
 :description: Camel Transport for Apache CXF
 :since: 2.8
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/cxf-transport.adoc[opts=optional]
 
 *Since Camel {since}*

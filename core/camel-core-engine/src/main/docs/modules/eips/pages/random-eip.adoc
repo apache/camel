@@ -1,11 +1,11 @@
-[[random-eip]]
 = Random EIP
-:docTitle: Random
+:doctitle: Random
+:shortname: random
 :description: Random load balancer The random load balancer selects a random endpoint for each exchange.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 
 // eip options: START
-The Random EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END

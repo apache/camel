@@ -1,11 +1,10 @@
-[[hazelcast-seda-component]]
 = Hazelcast SEDA Component
-:docTitle: Hazelcast SEDA
-:shortName: hazelcast-seda
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast SEDA
+:shortname: hazelcast-seda
+:artifactid: camel-hazelcast
 :description: Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-seda.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,16 +1,16 @@
-[[setBody-eip]]
 = Set Body EIP
-:docTitle: Set Body
+:doctitle: Set Body
+:shortname: setBody
 :description: Sets the contents of the message body
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The SetBody EIP allows you to set the body of your exchange.
 
 == Options
 
 // eip options: START
-The Set Body EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Examples

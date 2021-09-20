@@ -1,11 +1,10 @@
-[[azure-storage-datalake-component]]
 = Azure storage datalake service Component
-:docTitle: Azure storage datalake service
-:shortName: azure-storage-datalake
-:artifactId: camel-azure-storage-datalake
+:doctitle: Azure storage datalake service
+:shortname: azure-storage-datalake
+:artifactid: camel-azure-storage-datalake
 :description: Camel Azure Datalake Gen2 Component
 :since: 3.8
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-datalake.adoc[opts=optional]
 //Manually maintained attributes

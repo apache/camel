@@ -1,11 +1,10 @@
-[[protobuf-dataformat]]
 = Protobuf DataFormat
-:docTitle: Protobuf
-:shortName: protobuf
-:artifactId: camel-protobuf
+:doctitle: Protobuf
+:shortname: protobuf
+:artifactid: camel-protobuf
 :description: Serialize and deserialize Java objects using Google's Protocol buffers.
 :since: 2.2
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/protobuf.adoc[opts=optional]
 
 *Since Camel {since}*

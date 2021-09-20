@@ -1,11 +1,11 @@
-[[groovy-dsl-other]]
-= Groovy DSL
-:docTitle: Groovy Dsl
-:artifactId: camel-groovy-dsl
+= Groovy Dsl Component
+//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
+//Header attributes written by hand.
+:doctitle: Groovy Dsl
+:artifactid: camel-groovy-dsl
 :description: Camel DSL with Groovy
-:supportLevel: Experimental
-:since: 3.
-:supportLevel: Preview
+:supportlevel: Experimental/Preview
+:since: 3
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/groovy-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL

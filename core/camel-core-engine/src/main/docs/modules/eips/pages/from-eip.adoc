@@ -1,9 +1,9 @@
-[[from-eip]]
 = From EIP
-:docTitle: From
+:doctitle: From
+:shortname: from
 :description: Act as a message source as input to a route
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 Every Camel xref:latest@manual:ROOT:routes.adoc[route] starts from an xref:latest@manual:ROOT:endpoint.adoc[Endpoint]
 as the input (source) to the route.
@@ -13,13 +13,7 @@ The From EIP is the input.
 == Options
 
 // eip options: START
-The From EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *uri* | *Required* Sets the URI of the endpoint to use |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Example

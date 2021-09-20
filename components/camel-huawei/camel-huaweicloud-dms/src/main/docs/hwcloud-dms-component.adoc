@@ -1,11 +1,10 @@
-[[hwcloud-dms-component]]
 = Huawei Distributed Message Service (DMS) Component
-:docTitle: Huawei Distributed Message Service (DMS)
-:shortName: hwcloud-dms
-:artifactId: camel-huaweicloud-dms
+:doctitle: Huawei Distributed Message Service (DMS)
+:shortname: hwcloud-dms
+:artifactid: camel-huaweicloud-dms
 :description: To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
 :since: 3.12
-:supportLevel: Preview
+:supportlevel: Preview
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-dms.adoc[opts=optional]
 //Manually maintained attributes

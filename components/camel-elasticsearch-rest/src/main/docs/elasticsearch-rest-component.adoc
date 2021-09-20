@@ -1,11 +1,10 @@
-[[elasticsearch-rest-component]]
 = Elasticsearch Rest Component
-:docTitle: Elasticsearch Rest
-:shortName: elasticsearch-rest
-:artifactId: camel-elasticsearch-rest
+:doctitle: Elasticsearch Rest
+:shortname: elasticsearch-rest
+:artifactid: camel-elasticsearch-rest
 :description: Send requests to ElasticSearch via REST API
 :since: 2.21
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/elasticsearch-rest.adoc[opts=optional]
 

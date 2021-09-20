@@ -1,11 +1,10 @@
-[[salesforce-component]]
 = Salesforce Component
-:docTitle: Salesforce
-:shortName: salesforce
-:artifactId: camel-salesforce
+:doctitle: Salesforce
+:shortname: salesforce
+:artifactid: camel-salesforce
 :description: Communicate with Salesforce using Java DTOs.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/salesforce.adoc[opts=optional]
 

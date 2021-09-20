@@ -1,4 +1,3 @@
-[[HowdoIdebugmyroute-HowdoIdebugmyroute]]
 = How do I debug my route?
 
 If you've created a route and its not doing what you think it is you

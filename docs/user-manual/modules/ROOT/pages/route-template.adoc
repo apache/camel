@@ -1,4 +1,3 @@
-[[RouteTemplate]]
 = Route Template
 
 A Route template is as its name implies a template for a route, which are used

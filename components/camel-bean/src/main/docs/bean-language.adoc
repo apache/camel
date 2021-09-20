@@ -1,11 +1,10 @@
-[[bean-language]]
 = Bean Method Language
-:docTitle: Bean Method
-:shortName: bean
-:artifactId: camel-bean
+:doctitle: Bean Method
+:shortname: bean
+:artifactid: camel-bean
 :description: Calls a Java bean method.
 :since: 1.3
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/bean.adoc[opts=optional]
 
 *Since Camel {since}*

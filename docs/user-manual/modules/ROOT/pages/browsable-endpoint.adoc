@@ -1,4 +1,3 @@
-[[BrowsableEndpoint-BrowsableEndpoint]]
 = BrowsableEndpoint
 
 The `BrowseableEndpoint` is an extension interface an `Endpoint` may implement

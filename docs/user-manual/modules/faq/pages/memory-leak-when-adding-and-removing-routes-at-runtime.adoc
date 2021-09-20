@@ -1,4 +1,3 @@
-[[Memoryleakwhenaddingandremovingroutesatruntime-Memoryleakwhenaddingandremovingroutesatruntime]]
 = Memory leak when adding and removing routes at runtime
 
 If you add and remove many routes at runtime, then take notice that

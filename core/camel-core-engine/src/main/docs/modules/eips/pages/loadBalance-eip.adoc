@@ -1,9 +1,9 @@
-[[loadBalance-eip]]
 = Load Balance EIP
-:docTitle: Load Balance
+:doctitle: Load Balance
+:shortname: loadBalance
 :description: Balances message processing among a number of nodes
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The Load Balancer Pattern allows you to delegate to one of a number of endpoints using a variety of different load balancing policies.
 
@@ -27,14 +27,7 @@ Camel provides the following policies out-of-the-box:
 == Options
 
 // eip options: START
-The Load Balance EIP supports 2 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *loadBalancerType* | *Required* The load balancer to be used |  | LoadBalancerDefinition
-| *inheritErrorHandler* | Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy. | false | Boolean
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 

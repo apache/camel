@@ -1,11 +1,10 @@
-[[language-component]]
 = Language Component
-:docTitle: Language
-:shortName: language
-:artifactId: camel-language
+:doctitle: Language
+:shortname: language
+:artifactid: camel-language
 :description: Execute scripts in any of the languages supported by Camel.
 :since: 2.5
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/language.adoc[opts=optional]

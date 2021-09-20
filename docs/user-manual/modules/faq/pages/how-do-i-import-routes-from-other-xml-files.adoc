@@ -1,4 +1,3 @@
-[[HowDoIImportRoutesFromOtherXMLFiles-HowDoIImportRoutesFromOtherXMLFiles]]
 = How Do I Import Routes From Other XML Files?
 
 *Since Camel 2.3*

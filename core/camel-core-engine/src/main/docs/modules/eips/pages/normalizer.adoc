@@ -1,4 +1,3 @@
-[[Normalizer]]
 = Normalizer
 
 Camel supports the

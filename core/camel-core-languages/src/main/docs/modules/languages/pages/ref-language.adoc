@@ -1,11 +1,10 @@
-[[ref-language]]
 = Ref Language
-:docTitle: Ref
-:shortName: ref
-:artifactId: camel-core-languages
+:doctitle: Ref
+:shortname: ref
+:artifactid: camel-core-languages
 :description: Uses an existing expression from the registry.
 :since: 2.8
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ref.adoc[opts=optional]
 
 *Since Camel {since}*

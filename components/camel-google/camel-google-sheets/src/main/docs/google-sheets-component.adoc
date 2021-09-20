@@ -1,11 +1,10 @@
-[[google-sheets-component]]
 = Google Sheets Component
-:docTitle: Google Sheets
-:shortName: google-sheets
-:artifactId: camel-google-sheets
+:doctitle: Google Sheets
+:shortname: google-sheets
+:artifactid: camel-google-sheets
 :description: Manage spreadsheets in Google Sheets.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-sheets.adoc[opts=optional]
 //Manually maintained attributes

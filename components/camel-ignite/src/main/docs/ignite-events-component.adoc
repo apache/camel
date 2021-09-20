@@ -1,11 +1,10 @@
-[[ignite-events-component]]
 = Ignite Events Component
-:docTitle: Ignite Events
-:shortName: ignite-events
-:artifactId: camel-ignite
+:doctitle: Ignite Events
+:shortname: ignite-events
+:artifactid: camel-ignite
 :description: Receive events from an Ignite cluster by creating a local event listener.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-events.adoc[opts=optional]
 //Manually maintained attributes

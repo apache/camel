@@ -1,11 +1,10 @@
-[[tidyMarkup-dataformat]]
 = TidyMarkup DataFormat
-:docTitle: TidyMarkup
-:shortName: tidyMarkup
-:artifactId: camel-tagsoup
+:doctitle: TidyMarkup
+:shortname: tidyMarkup
+:artifactid: camel-tagsoup
 :description: Parse (potentially invalid) HTML into valid HTML or DOM.
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/tidyMarkup.adoc[opts=optional]
 
 *Since Camel {since}*

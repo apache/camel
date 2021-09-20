@@ -1,9 +1,9 @@
-[[when-eip]]
 = When EIP
-:docTitle: When
+:doctitle: When
+:shortname: when
 :description: Triggers a route when an expression evaluates to true
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The When EIP is related to http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
 Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
@@ -14,7 +14,7 @@ image::eip/ContentBasedRouter.gif[image]
 == Options
 
 // eip options: START
-The When EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Examples

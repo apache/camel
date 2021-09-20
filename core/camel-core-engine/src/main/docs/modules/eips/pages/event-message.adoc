@@ -1,4 +1,3 @@
-[[eventMessage-eip]]
 = Event Message
 
 Camel supports the

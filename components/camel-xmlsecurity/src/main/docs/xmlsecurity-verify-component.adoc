@@ -1,11 +1,10 @@
-[[xmlsecurity-verify-component]]
 = XML Security Verify Component
-:docTitle: XML Security Verify
-:shortName: xmlsecurity-verify
-:artifactId: camel-xmlsecurity
+:doctitle: XML Security Verify
+:shortname: xmlsecurity-verify
+:artifactid: camel-xmlsecurity
 :description: Verify XML payloads using the XML signature specification.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xmlsecurity-verify.adoc[opts=optional]
 

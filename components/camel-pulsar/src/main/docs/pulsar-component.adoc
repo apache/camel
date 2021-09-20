@@ -1,11 +1,10 @@
-[[pulsar-component]]
 = Pulsar Component
-:docTitle: Pulsar
-:shortName: pulsar
-:artifactId: camel-pulsar
+:doctitle: Pulsar
+:shortname: pulsar
+:artifactid: camel-pulsar
 :description: Send and receive messages from/to Apache Pulsar messaging system.
 :since: 2.24
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pulsar.adoc[opts=optional]
 

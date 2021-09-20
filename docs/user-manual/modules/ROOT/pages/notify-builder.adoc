@@ -1,4 +1,3 @@
-[[NotifyBuilder-NotifyBuilder]]
 = Notify Builder
 
 The `NotifyBuilder` is a builder from the `org.apache.camel.builder` package which allows you to build expressions and then test or wait for that condition to occur.

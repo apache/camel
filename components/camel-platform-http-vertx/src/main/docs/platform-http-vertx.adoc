@@ -1,11 +1,10 @@
-[[platform-http-vertx-other]]
 = Platform Http Vertx Component
-:docTitle: Platform Http Vertx
-:shortName: platform-http-vertx
-:artifactId: camel-platform-http-vertx
+:doctitle: Platform Http Vertx
+:shortname: platform-http-vertx
+:artifactid: camel-platform-http-vertx
 :description: Implementation of the Platform HTTP Engine based on Vert.x Web
 :since: 3.2
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/platform-http-vertx.adoc[opts=optional]
 
 *Since Camel {since}*

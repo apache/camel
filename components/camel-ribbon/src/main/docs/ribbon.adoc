@@ -1,11 +1,10 @@
-[[ribbon-other]]
 = Ribbon Component (deprecated)
-:docTitle: Ribbon
-:shortName: ribbon
-:artifactId: camel-ribbon
+:doctitle: Ribbon
+:shortname: ribbon
+:artifactid: camel-ribbon
 :description: Using Netflix Ribbon for client side load balancing
 :since: 2.18
-:supportLevel: Stable-deprecated
+:supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/ribbon.adoc[opts=optional]
 

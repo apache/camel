@@ -1,11 +1,10 @@
-[[exchangeProperty-language]]
 = ExchangeProperty Language
-:docTitle: ExchangeProperty
-:shortName: exchangeProperty
-:artifactId: camel-core-languages
+:doctitle: ExchangeProperty
+:shortname: exchangeProperty
+:artifactid: camel-core-languages
 :description: Gets a property from the Exchange.
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/exchangeProperty.adoc[opts=optional]
 
 *Since Camel {since}*

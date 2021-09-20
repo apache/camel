@@ -1,11 +1,10 @@
-[[couchdb-component]]
 = CouchDB Component
-:docTitle: CouchDB
-:shortName: couchdb
-:artifactId: camel-couchdb
+:doctitle: CouchDB
+:shortname: couchdb
+:artifactid: camel-couchdb
 :description: Consume changesets for inserts, updates and deletes in a CouchDB database, as well as get, save, update and delete documents from a CouchDB database.
 :since: 2.11
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/couchdb.adoc[opts=optional]
 

@@ -1,4 +1,3 @@
-[[HowDoIMakeMyJMSEndpointTransactional-HowDoIMakeMyJMSEndpointTransactional]]
 = How Do I Make My JMS Endpoint Transactional?
 
 I have a JMS route like this:

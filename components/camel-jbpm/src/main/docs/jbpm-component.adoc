@@ -1,11 +1,10 @@
-[[jbpm-component]]
 = JBPM Component
-:docTitle: JBPM
-:shortName: jbpm
-:artifactId: camel-jbpm
+:doctitle: JBPM
+:shortname: jbpm
+:artifactid: camel-jbpm
 :description: Interact with jBPM workflow engine over REST.
 :since: 2.6
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jbpm.adoc[opts=optional]
 

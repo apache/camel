@@ -1,11 +1,10 @@
-[[seda-component]]
 = SEDA Component
-:docTitle: SEDA
-:shortName: seda
-:artifactId: camel-seda
+:doctitle: SEDA
+:shortname: seda
+:artifactid: camel-seda
 :description: Asynchronously call another endpoint from any Camel Context in the same JVM.
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/seda.adoc[opts=optional]

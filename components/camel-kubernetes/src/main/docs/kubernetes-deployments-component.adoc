@@ -1,11 +1,10 @@
-[[kubernetes-deployments-component]]
 = Kubernetes Deployments Component
-:docTitle: Kubernetes Deployments
-:shortName: kubernetes-deployments
-:artifactId: camel-kubernetes
+:doctitle: Kubernetes Deployments
+:shortname: kubernetes-deployments
+:artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Deployments and get notified on Deployment changes.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-deployments.adoc[opts=optional]
 //Manually maintained attributes

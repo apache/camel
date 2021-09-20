@@ -1,11 +1,10 @@
-[[dozer-component]]
 = Dozer Component
-:docTitle: Dozer
-:shortName: dozer
-:artifactId: camel-dozer
+:doctitle: Dozer
+:shortname: dozer
+:artifactid: camel-dozer
 :description: Map between Java beans using the Dozer mapping library.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dozer.adoc[opts=optional]
 

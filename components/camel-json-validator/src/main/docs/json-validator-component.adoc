@@ -1,11 +1,10 @@
-[[json-validator-component]]
 = JSON Schema Validator Component
-:docTitle: JSON Schema Validator
-:shortName: json-validator
-:artifactId: camel-json-validator
+:doctitle: JSON Schema Validator
+:shortname: json-validator
+:artifactid: camel-json-validator
 :description: Validate JSON payloads using NetworkNT JSON Schema.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/json-validator.adoc[opts=optional]
 

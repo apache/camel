@@ -1,11 +1,10 @@
-[[ganglia-component]]
 = Ganglia Component
-:docTitle: Ganglia
-:shortName: ganglia
-:artifactId: camel-ganglia
+:doctitle: Ganglia
+:shortname: ganglia
+:artifactid: camel-ganglia
 :description: Send metrics to Ganglia monitoring system.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ganglia.adoc[opts=optional]
 

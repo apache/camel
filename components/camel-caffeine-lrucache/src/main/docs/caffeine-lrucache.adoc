@@ -1,11 +1,10 @@
-[[caffeine-lrucache-other]]
 = Caffeine Lrucache Component (deprecated)
-:docTitle: Caffeine Lrucache
-:shortName: caffeine-lrucache
-:artifactId: camel-caffeine-lrucache
+:doctitle: Caffeine Lrucache
+:shortname: caffeine-lrucache
+:artifactid: camel-caffeine-lrucache
 :description: Camel Caffeine LRUCache support
 :since: 3.0
-:supportLevel: Stable-deprecated
+:supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/caffeine-lrucache.adoc[opts=optional]
 

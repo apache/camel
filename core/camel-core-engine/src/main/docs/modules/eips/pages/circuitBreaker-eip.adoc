@@ -1,9 +1,9 @@
-[[circuitBreaker-eip]]
 = Circuit Breaker EIP
-:docTitle: Circuit Breaker
-:description: null
+:doctitle: Circuit Breaker
+:shortname: circuitBreaker
+:description: Route messages in a fault tolerance way using Circuit Breaker
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The Circuit Breaker pattern is inspired by the real-world electrical circuit breaker,
 which is used to detect excessive current draw and fail fast to protect electrical equipment.
@@ -24,16 +24,7 @@ The states are as follows:
   transfer to either open or closed state.
 
 // eip options: START
-The Circuit Breaker EIP supports 4 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *hystrixConfiguration* | Configures the circuit breaker to use Hystrix with the given configuration. |  | HystrixConfigurationDefinition
-| *resilience4jConfiguration* | Configures the circuit breaker to use Resilience4j with the given configuration. |  | Resilience4jConfigurationDefinition
-| *faultToleranceConfiguration* | Configures the circuit breaker to use MicroProfile Fault Tolerance with the given configuration. |  | FaultToleranceConfigurationDefinition
-| *configurationRef* | Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance) to use for configuring the circuit breaker EIP. |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Example

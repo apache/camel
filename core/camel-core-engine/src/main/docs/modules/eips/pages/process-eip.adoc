@@ -1,22 +1,16 @@
-[[process-eip]]
 = Process EIP
-:docTitle: Process
+:doctitle: Process
+:shortname: process
 :description: Calls a Camel processor
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a xref:message-translator.adoc[Message Translator]
 
 == Options
 
 // eip options: START
-The Process EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *ref* | *Required* Reference to the Processor to lookup in the registry to use. |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Samples

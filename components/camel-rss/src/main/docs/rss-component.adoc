@@ -1,11 +1,10 @@
-[[rss-component]]
 = RSS Component
-:docTitle: RSS
-:shortName: rss
-:artifactId: camel-rss
+:doctitle: RSS
+:shortname: rss
+:artifactid: camel-rss
 :description: Poll RSS feeds.
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/rss.adoc[opts=optional]
 

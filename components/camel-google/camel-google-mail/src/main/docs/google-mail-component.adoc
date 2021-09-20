@@ -1,11 +1,10 @@
-[[google-mail-component]]
 = Google Mail Component
-:docTitle: Google Mail
-:shortName: google-mail
-:artifactId: camel-google-mail
+:doctitle: Google Mail
+:shortname: google-mail
+:artifactid: camel-google-mail
 :description: Manage messages in Google Mail.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-mail.adoc[opts=optional]
 //Manually maintained attributes

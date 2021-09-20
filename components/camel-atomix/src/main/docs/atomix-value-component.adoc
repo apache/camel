@@ -1,11 +1,10 @@
-[[atomix-value-component]]
 = Atomix Value Component
-:docTitle: Atomix Value
-:shortName: atomix-value
-:artifactId: camel-atomix
+:doctitle: Atomix Value
+:shortname: atomix-value
+:artifactid: camel-atomix
 :description: Access Atomix's distributed value.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-value.adoc[opts=optional]
 

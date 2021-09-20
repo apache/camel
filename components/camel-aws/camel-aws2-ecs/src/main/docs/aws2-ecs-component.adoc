@@ -1,11 +1,10 @@
-[[aws2-ecs-component]]
 = AWS Elastic Container Service (ECS) Component
-:docTitle: AWS Elastic Container Service (ECS)
-:shortName: aws2-ecs
-:artifactId: camel-aws2-ecs
+:doctitle: AWS Elastic Container Service (ECS)
+:shortname: aws2-ecs
+:artifactid: camel-aws2-ecs
 :description: Manage AWS ECS cluster instances using AWS SDK version 2.x.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-ecs.adoc[opts=optional]
 //Manually maintained attributes

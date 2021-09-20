@@ -1,11 +1,10 @@
-[[atlasmap-component]]
 = AtlasMap Component
-:docTitle: AtlasMap
-:shortName: atlasmap
-:artifactId: camel-atlasmap
+:doctitle: AtlasMap
+:shortname: atlasmap
+:artifactid: camel-atlasmap
 :description: Transforms the message using an AtlasMap transformation.
 :since: 3.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atlasmap.adoc[opts=optional]
 

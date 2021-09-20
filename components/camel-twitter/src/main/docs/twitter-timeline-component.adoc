@@ -1,11 +1,10 @@
-[[twitter-timeline-component]]
 = Twitter Timeline Component
-:docTitle: Twitter Timeline
-:shortName: twitter-timeline
-:artifactId: camel-twitter
+:doctitle: Twitter Timeline
+:shortname: twitter-timeline
+:artifactid: camel-twitter
 :description: Send tweets and receive tweets from user's timeline.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twitter-timeline.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[beanio-dataformat]]
 = BeanIO DataFormat
-:docTitle: BeanIO
-:shortName: beanio
-:artifactId: camel-beanio
+:doctitle: BeanIO
+:shortname: beanio
+:artifactid: camel-beanio
 :description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/beanio.adoc[opts=optional]
 
 *Since Camel {since}*

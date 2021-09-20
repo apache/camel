@@ -1,11 +1,10 @@
-[[scp-component]]
 = SCP Component
-:docTitle: SCP
-:shortName: scp
-:artifactId: camel-jsch
+:doctitle: SCP
+:shortname: scp
+:artifactid: camel-jsch
 :description: Copy files to/from remote hosts using the secure copy protocol (SCP).
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/scp.adoc[opts=optional]
 

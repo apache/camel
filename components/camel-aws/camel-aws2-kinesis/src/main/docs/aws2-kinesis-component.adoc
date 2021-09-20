@@ -1,11 +1,10 @@
-[[aws2-kinesis-component]]
 = AWS Kinesis Component
-:docTitle: AWS Kinesis
-:shortName: aws2-kinesis
-:artifactId: camel-aws2-kinesis
+:doctitle: AWS Kinesis
+:shortname: aws2-kinesis
+:artifactid: camel-aws2-kinesis
 :description: Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
 :since: 3.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-kinesis.adoc[opts=optional]
 //Manually maintained attributes

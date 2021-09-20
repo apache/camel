@@ -1,11 +1,10 @@
-[[twitter-search-component]]
 = Twitter Search Component
-:docTitle: Twitter Search
-:shortName: twitter-search
-:artifactId: camel-twitter
+:doctitle: Twitter Search
+:shortname: twitter-search
+:artifactid: camel-twitter
 :description: Access Twitter Search.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twitter-search.adoc[opts=optional]
 

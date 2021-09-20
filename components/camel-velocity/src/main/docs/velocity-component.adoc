@@ -1,11 +1,10 @@
-[[velocity-component]]
 = Velocity Component
-:docTitle: Velocity
-:shortName: velocity
-:artifactId: camel-velocity
+:doctitle: Velocity
+:shortname: velocity
+:artifactid: camel-velocity
 :description: Transform messages using a Velocity template.
 :since: 1.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/velocity.adoc[opts=optional]
 

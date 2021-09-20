@@ -1,11 +1,10 @@
-[[nagios-component]]
 = Nagios Component
-:docTitle: Nagios
-:shortName: nagios
-:artifactId: camel-nagios
+:doctitle: Nagios
+:shortname: nagios
+:artifactid: camel-nagios
 :description: Send passive checks to Nagios using JSendNSCA.
 :since: 2.3
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nagios.adoc[opts=optional]
 

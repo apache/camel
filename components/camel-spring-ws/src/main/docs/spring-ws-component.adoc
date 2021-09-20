@@ -1,11 +1,10 @@
-[[spring-ws-component]]
 = Spring WebService Component
-:docTitle: Spring WebService
-:shortName: spring-ws
-:artifactId: camel-spring-ws
+:doctitle: Spring WebService
+:shortname: spring-ws
+:artifactid: camel-spring-ws
 :description: Access external web services as a client or expose your own web services.
 :since: 2.6
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-ws.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[soapjaxb-dataformat]]
 = SOAP DataFormat
-:docTitle: SOAP
-:shortName: soapjaxb
-:artifactId: camel-soap
+:doctitle: SOAP
+:shortname: soapjaxb
+:artifactid: camel-soap
 :description: Marshal Java objects to SOAP messages and back.
 :since: 2.3
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/soapjaxb.adoc[opts=optional]
 
 *Since Camel {since}*

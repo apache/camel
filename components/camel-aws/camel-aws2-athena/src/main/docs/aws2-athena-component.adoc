@@ -1,11 +1,10 @@
-[[aws2-athena-component]]
 = AWS Athena Component
-:docTitle: AWS Athena
-:shortName: aws2-athena
-:artifactId: camel-aws2-athena
+:doctitle: AWS Athena
+:shortname: aws2-athena
+:artifactid: camel-aws2-athena
 :description: Access AWS Athena service using AWS SDK version 2.x.
 :since: 3.4
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-athena.adoc[opts=optional]
 //Manually maintained attributes

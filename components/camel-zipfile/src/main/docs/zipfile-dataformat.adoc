@@ -1,11 +1,10 @@
-[[zipfile-dataformat]]
 = Zip File DataFormat
-:docTitle: Zip File
-:shortName: zipfile
-:artifactId: camel-zipfile
+:doctitle: Zip File
+:shortname: zipfile
+:artifactid: camel-zipfile
 :description: Compression and decompress streams using java.util.zip.ZipStream.
 :since: 2.11
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/zipfile.adoc[opts=optional]
 
 *Since Camel {since}*

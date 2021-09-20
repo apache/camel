@@ -1,11 +1,10 @@
-[[caffeine-cache-component]]
 = Caffeine Cache Component
-:docTitle: Caffeine Cache
-:shortName: caffeine-cache
-:artifactId: camel-caffeine
+:doctitle: Caffeine Cache
+:shortname: caffeine-cache
+:artifactid: camel-caffeine
 :description: Perform caching operations using Caffeine Cache.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/caffeine-cache.adoc[opts=optional]
 

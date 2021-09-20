@@ -1,9 +1,9 @@
-[[validate-eip]]
 = Validate EIP
-:docTitle: Validate
+:doctitle: Validate
+:shortname: validate
 :description: Validates a message based on an expression
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 Validate uses an expression or predicates to validate the contents of a message.
 It is useful for ensuring that messages are valid before attempting to process them.
@@ -14,7 +14,7 @@ If it is true message processing continues.
 == Options
 
 // eip options: START
-The Validate EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Samples

@@ -1,11 +1,10 @@
-[[fhirXml-dataformat]]
 = FHIR XML DataFormat
-:docTitle: FHIR XML
-:shortName: fhirXml
-:artifactId: camel-fhir
+:doctitle: FHIR XML
+:shortname: fhirXml
+:artifactid: camel-fhir
 :description: Marshall and unmarshall FHIR objects to/from XML.
 :since: 2.21
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/fhirXml.adoc[opts=optional]
 
 *Since Camel {since}*

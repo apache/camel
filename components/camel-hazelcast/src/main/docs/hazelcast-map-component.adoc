@@ -1,11 +1,10 @@
-[[hazelcast-map-component]]
 = Hazelcast Map Component
-:docTitle: Hazelcast Map
-:shortName: hazelcast-map
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast Map
+:shortname: hazelcast-map
+:artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed map.
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-map.adoc[opts=optional]
 //Manually maintained attributes

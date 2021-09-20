@@ -1,4 +1,3 @@
-[[CamelContext-CamelContext]]
 = CamelContext
 
 The

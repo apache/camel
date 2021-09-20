@@ -1,11 +1,10 @@
-[[jsonApi-dataformat]]
 = JSonApi DataFormat
-:docTitle: JSonApi
-:shortName: jsonApi
-:artifactId: camel-jsonapi
+:doctitle: JSonApi
+:shortname: jsonApi
+:artifactid: camel-jsonapi
 :description: Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/jsonApi.adoc[opts=optional]
 
 *Since Camel {since}*

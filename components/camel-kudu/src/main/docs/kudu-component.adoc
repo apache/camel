@@ -1,11 +1,10 @@
-[[kudu-component]]
 = Kudu Component
-:docTitle: Kudu
-:shortName: kudu
-:artifactId: camel-kudu
+:doctitle: Kudu
+:shortname: kudu
+:artifactid: camel-kudu
 :description: Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kudu.adoc[opts=optional]
 

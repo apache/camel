@@ -1,11 +1,10 @@
-[[reactive-executor-vertx-other]]
 = Reactive Executor Vert.x Component
-:docTitle: Reactive Executor Vert.x
-:shortName: reactive-executor-vertx
-:artifactId: camel-reactive-executor-vertx
+:doctitle: Reactive Executor Vert.x
+:shortname: reactive-executor-vertx
+:artifactid: camel-reactive-executor-vertx
 :description: Reactive Executor for camel-core using Vert.x
 :since: 3.0
-:supportLevel: Experimental
+:supportlevel: Experimental
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/reactive-executor-vertx.adoc[opts=optional]
 
 *Since Camel {since}*

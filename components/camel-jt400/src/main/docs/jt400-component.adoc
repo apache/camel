@@ -1,11 +1,10 @@
-[[jt400-component]]
 = JT400 Component
-:docTitle: JT400
-:shortName: jt400
-:artifactId: camel-jt400
+:doctitle: JT400
+:shortname: jt400
+:artifactid: camel-jt400
 :description: Exchanges messages with an IBM i system using data queues, message queues, or program call. IBM i is the replacement for AS/400 and iSeries servers.
 :since: 1.5
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jt400.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[jsonpath-language]]
 = JSONPath Language
-:docTitle: JSONPath
-:shortName: jsonpath
-:artifactId: camel-jsonpath
+:doctitle: JSONPath
+:shortname: jsonpath
+:artifactid: camel-jsonpath
 :description: Evaluates a JSONPath expression against a JSON message body.
 :since: 2.13
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/jsonpath.adoc[opts=optional]
 
 *Since Camel {since}*

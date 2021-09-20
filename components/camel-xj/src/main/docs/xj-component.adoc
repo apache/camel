@@ -1,11 +1,10 @@
-[[xj-component]]
 = XJ Component
-:docTitle: XJ
-:shortName: xj
-:artifactId: camel-xj
+:doctitle: XJ
+:shortname: xj
+:artifactid: camel-xj
 :description: Transform JSON and XML message using a XSLT.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xj.adoc[opts=optional]
 

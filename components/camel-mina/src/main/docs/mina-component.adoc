@@ -1,11 +1,10 @@
-[[mina-component]]
 = Mina Component
-:docTitle: Mina
-:shortName: mina
-:artifactId: camel-mina
+:doctitle: Mina
+:shortname: mina
+:artifactid: camel-mina
 :description: Socket level networking using TCP or UDP with Apache Mina 2.x.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mina.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[openstack-cinder-component]]
 = OpenStack Cinder Component
-:docTitle: OpenStack Cinder
-:shortName: openstack-cinder
-:artifactId: camel-openstack
+:doctitle: OpenStack Cinder
+:shortname: openstack-cinder
+:artifactid: camel-openstack
 :description: Access data in OpenStack Cinder block storage.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-cinder.adoc[opts=optional]
 //Manually maintained attributes

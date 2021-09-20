@@ -1,4 +1,3 @@
-[[UsingPropertyPlaceholder-UsingPropertyPlaceholder]]
 = Property placeholders
 
 Camel has extensive support for property placeholders, which

@@ -1,11 +1,10 @@
-[[kubernetes-nodes-component]]
 = Kubernetes Nodes Component
-:docTitle: Kubernetes Nodes
-:shortName: kubernetes-nodes
-:artifactId: camel-kubernetes
+:doctitle: Kubernetes Nodes
+:shortname: kubernetes-nodes
+:artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Nodes and get notified on Node changes.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-nodes.adoc[opts=optional]
 //Manually maintained attributes

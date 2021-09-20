@@ -1,4 +1,3 @@
-[[faulttolerance-eip]]
 = Fault Tolerance EIP
 
 This component supports the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP with the

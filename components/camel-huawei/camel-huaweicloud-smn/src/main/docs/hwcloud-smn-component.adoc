@@ -1,11 +1,10 @@
-[[hwcloud-smn-component]]
 = Huawei Simple Message Notification (SMN) Component
-:docTitle: Huawei Simple Message Notification (SMN)
-:shortName: hwcloud-smn
-:artifactId: camel-huaweicloud-smn
+:doctitle: Huawei Simple Message Notification (SMN)
+:shortname: hwcloud-smn
+:artifactid: camel-huaweicloud-smn
 :description: To broadcast messages and connect cloud services through notifications on Huawei Cloud
 :since: 3.8
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-smn.adoc[opts=optional]
 //Manually maintained attributes

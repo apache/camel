@@ -1,4 +1,3 @@
-[[HowtocreateexecutableJARcamelmain-HowtocreateexecutableJARcamelmain]]
 = How to create executable JAR for camel-main project
 
 == Fat jar with camel-maven-plugin

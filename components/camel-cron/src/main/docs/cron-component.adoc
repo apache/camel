@@ -1,11 +1,10 @@
-[[cron-component]]
 = Cron Component
-:docTitle: Cron
-:shortName: cron
-:artifactId: camel-cron
+:doctitle: Cron
+:shortname: cron
+:artifactid: camel-cron
 :description: A generic interface for triggering events at times specified through the Unix cron syntax.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cron.adoc[opts=optional]
 

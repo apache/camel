@@ -1,4 +1,3 @@
-[[CamelConfigurationUtilities-JSSEUtility]]
 = JSSE Utility
 
 The JSSE Utility allows you to easily configure aspects of the

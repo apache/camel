@@ -1,4 +1,3 @@
-[[WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler-WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler]]
 = Why does my file consumer not pick up the file, and how do I let the file consumer use the Camel error handler?
 
 There could be several reasons why the xref:components::file-component.adoc[File] consumer is

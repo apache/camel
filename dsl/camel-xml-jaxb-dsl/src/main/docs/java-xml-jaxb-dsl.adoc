@@ -1,9 +1,10 @@
-[[xml-jaxb-dsl-other]]
 = Jaxb Xml Dsl Component
-:docTitle: Jaxb XML Dsl
-:artifactId: camel-xml-jaxb-dsl
+//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
+//Header attributes written by hand.
+:doctitle: Jaxb XML Dsl
+:artifactid: camel-xml-jaxb-dsl
 :description: Camel DSL with YAML
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/xml-jaxb-dsl.adoc[opts=optional]
 //Manually maintained attributes
 :group: DSL

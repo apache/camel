@@ -1,4 +1,3 @@
-[[HowdoIretryprocessingamessagefromacertainpointbackoranentireroute-HowdoIretryprocessingamessagefromacertainpointbackoranentireroute]]
 = How do I retry processing a message from a certain point back or an entire route
 
 By default Apache Camel will perform any redelivery (retry) attempts

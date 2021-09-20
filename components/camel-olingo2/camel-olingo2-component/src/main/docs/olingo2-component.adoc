@@ -1,11 +1,10 @@
-[[olingo2-component]]
 = Olingo2 Component
-:docTitle: Olingo2
-:shortName: olingo2
-:artifactId: camel-olingo2
+:doctitle: Olingo2
+:shortname: olingo2
+:artifactid: camel-olingo2
 :description: Communicate with OData 2.0 services using Apache Olingo.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/olingo2.adoc[opts=optional]
 

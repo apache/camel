@@ -1,4 +1,3 @@
-[[Message-Broker]]
 = Message Broker
 
 Camel supports the

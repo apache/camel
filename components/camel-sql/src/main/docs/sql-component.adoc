@@ -1,11 +1,10 @@
-[[sql-component]]
 = SQL Component
-:docTitle: SQL
-:shortName: sql
-:artifactId: camel-sql
+:doctitle: SQL
+:shortname: sql
+:artifactid: camel-sql
 :description: Perform SQL queries using Spring JDBC.
 :since: 1.4
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sql.adoc[opts=optional]
 

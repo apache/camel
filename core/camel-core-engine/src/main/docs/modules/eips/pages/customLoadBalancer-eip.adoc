@@ -1,20 +1,14 @@
-[[customLoadBalancer-eip]]
 = Custom Load Balancer EIP
-:docTitle: Custom Load Balancer
+:doctitle: Custom Load Balancer
+:shortname: customLoadBalancer
 :description: Custom load balancer
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 This EIP allows you to use your own xref:loadBalance-eip.adoc[Load Balancer] implementation.
 
 // eip options: START
-The Custom Load Balancer EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *ref* | *Required* Refers to the custom load balancer to lookup from the registry |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Example
