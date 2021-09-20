@@ -163,6 +163,15 @@ public class RestModelConverters {
             model.required = new ArrayList<String>(schema.getRequired());
         }
 
+        String description = schema.getDescription();
+        if (description != null) {
+            model.description = description;
+        }
+        Object example = schema.getExample();
+        if (example != null) {
+            model.example = example;
+        }
+
         if (schema.getAdditionalProperties() instanceof Schema) {
             OasSchema additionalProperties = model.createAdditionalPropertiesSchema();
             model.additionalProperties = additionalProperties;
