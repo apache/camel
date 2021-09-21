@@ -22,7 +22,7 @@ This component uses `spring-jdbc` behind the scenes for the actual SQL
 handling.
 
 This component can be used as a
-xref:{eip-vc}:eips:transactional-client.adoc[Transactional Client].
+xref:eips:transactional-client.adoc[Transactional Client].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

@@ -77,7 +77,7 @@ The OGNL language supports 1 options, which are listed below.
 
 == Samples
 
-For example you could use OGNL inside a xref:{eip-vc}:eips:filter-eip.adoc[Message
+For example you could use OGNL inside a xref:eips:filter-eip.adoc[Message
 Filter] in XML
 
 [source,java]

@@ -202,7 +202,7 @@ without incurring significant latency spikes.
 
 == Use of Request Reply
 
-The Disruptor component supports using xref:{eip-vc}:eips:requestReply-eip.adoc[Request
+The Disruptor component supports using xref:eips:requestReply-eip.adoc[Request
 Reply], where the caller will wait for the Async route to complete. For
 instance:
 
