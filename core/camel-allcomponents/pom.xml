@@ -631,6 +631,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-huaweicloud-imagerecognition</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-obs</artifactId>
 		</dependency>
 		<dependency>

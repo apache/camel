@@ -6937,6 +6937,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
+     * component to connect to image recognition service
+     * 
+     * Category: cloud,messaging
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-imagerecognition
+     * 
+     * Syntax: <code>hwcloud-image:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Name of Image Recognition operation to perform, including
+     * celebrityRecognition and tagRecognition
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ImageRecognitionEndpointBuilderFactory.ImageRecognitionEndpointBuilder hwcloudImage(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ImageRecognitionEndpointBuilderFactory.endpointBuilder("hwcloud-image", path);
+    }
+    /**
+     * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
+     * component to connect to image recognition service
+     * 
+     * Category: cloud,messaging
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-imagerecognition
+     * 
+     * Syntax: <code>hwcloud-image:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Name of Image Recognition operation to perform, including
+     * celebrityRecognition and tagRecognition
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ImageRecognitionEndpointBuilderFactory.ImageRecognitionEndpointBuilder hwcloudImage(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ImageRecognitionEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
      * To provide stable, secure, efficient, and easy-to-use cloud storage
      * service on Huawei Cloud
