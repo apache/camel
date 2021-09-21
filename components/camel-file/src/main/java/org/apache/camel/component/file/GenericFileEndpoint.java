@@ -275,7 +275,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                                                       + "use the file name and file size, you can do: idempotentKey=${file:name}-${file:size}")
     protected Expression idempotentKey;
     @UriParam(label = "consumer,filter", description = "A pluggable repository org.apache.camel.spi.IdempotentRepository "
-                                                       + "which by default use MemoryMessageIdRepository if none is specified and idempotent is true.")
+                                                       + "which by default use MemoryIdempotentRepository if none is specified and idempotent is true.")
     protected IdempotentRepository idempotentRepository;
     @UriParam(label = "consumer,filter",
               description = "Pluggable filter as a org.apache.camel.component.file.GenericFileFilter "
@@ -909,7 +909,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryMessageIdRepository
+     * A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryIdempotentRepository
      * if none is specified and idempotent is true.
      */
     public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
