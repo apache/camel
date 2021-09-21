@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.processor.AnalyticsApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.BulkApiProcessor;
@@ -31,7 +30,6 @@ import org.apache.camel.component.salesforce.internal.processor.CompositeSObject
 import org.apache.camel.component.salesforce.internal.processor.JsonRestProcessor;
 import org.apache.camel.component.salesforce.internal.processor.RawProcessor;
 import org.apache.camel.component.salesforce.internal.processor.SalesforceProcessor;
-import org.apache.camel.component.salesforce.internal.processor.XmlRestProcessor;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -50,7 +48,6 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         super(endpoint);
 
         final SalesforceEndpointConfig endpointConfig = endpoint.getConfiguration();
-        final PayloadFormat payloadFormat = endpointConfig.getFormat();
 
         // check if its a Bulk Operation
         final OperationName operationName = endpoint.getOperationName();
@@ -67,17 +64,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         } else if (isRawOperation(operationName)) {
             processor = new RawProcessor(endpoint);
         } else {
-            // create an appropriate processor
-            if (payloadFormat == PayloadFormat.JSON) {
-                // create a JSON exchange processor
-                processor = new JsonRestProcessor(endpoint);
-            } else {
-                processor = new XmlRestProcessor(endpoint);
-            }
-        }
-        if (!isRawOperation(operationName) && endpointConfig.getFormat() == PayloadFormat.XML) {
-            LOG.warn("XML format is deprecated for all operations other than the Raw operation" +
-                     " and will be removed in a future release.");
+            processor = new JsonRestProcessor(endpoint);
         }
     }
 

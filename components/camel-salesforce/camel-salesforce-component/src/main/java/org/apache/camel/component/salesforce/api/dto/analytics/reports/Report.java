@@ -19,16 +19,12 @@ package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
 /**
  * Salesforce DTO for SObject Report
  */
 //CHECKSTYLE:OFF
-@XStreamAlias("Report")
 public class Report extends AbstractSObjectBase {
 
     // Description
@@ -44,7 +40,6 @@ public class Report extends AbstractSObjectBase {
     private ZonedDateTime LastRunDate;
 
     // Format
-    @XStreamConverter(PicklistEnumConverter.class)
     private FormatEnum Format;
 
     @JsonProperty("Description")

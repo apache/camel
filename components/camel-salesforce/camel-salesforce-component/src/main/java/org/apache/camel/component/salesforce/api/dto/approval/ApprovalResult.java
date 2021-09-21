@@ -29,13 +29,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult.ApprovalResultDeserializer;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult.Result;
 
-@XStreamAlias("ProcessApprovalResult")
 @JsonDeserialize(using = ApprovalResultDeserializer.class)
 public final class ApprovalResult implements Serializable, Iterable<Result> {
 
@@ -54,24 +51,20 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
 
     }
 
-    @XStreamAlias("ProcessApprovalResult")
     public static final class Result implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
-        @XStreamImplicit(itemFieldName = "actorIds")
         private final List<String> actorIds;
 
         private final String entityId;
 
-        @XStreamImplicit(itemFieldName = "errors")
         private final List<RestError> errors;
 
         private final String instanceId;
 
         private final String instanceStatus;
 
-        @XStreamImplicit(itemFieldName = "newWorkitemIds")
         private final List<String> newWorkitemIds;
 
         private final boolean success;
@@ -123,7 +116,6 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
 
     private static final long serialVersionUID = 1L;
 
-    @XStreamImplicit(itemFieldName = "ProcessApprovalResult")
     private final List<Result> results;
 
     public ApprovalResult() {

@@ -26,7 +26,6 @@ package org.apache.camel.component.salesforce.api.dto;
  * {
  *     &#64;code
  *     public class QueryResultMySObject extends AbstractQueryRecordsBase {
- *         &#64;XStreamImplicit
  *         private List<MySObject> records;
  *
  *         public List<MySObject> getRecords() {

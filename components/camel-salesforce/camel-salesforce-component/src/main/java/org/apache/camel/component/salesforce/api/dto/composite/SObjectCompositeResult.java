@@ -21,18 +21,14 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * Contains the individual result of Composite API request.
  */
-@XStreamAlias("batchResult")
 public final class SObjectCompositeResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XStreamConverter(MapOfMapsConverter.class)
     private final Object body;
 
     private final Map<String, String> httpHeaders;

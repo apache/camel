@@ -24,7 +24,6 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 //CHECKSTYLE:OFF
 @JsonFilter("fieldsToNull")
@@ -33,7 +32,6 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     // WARNING: these fields have case sensitive names,
     // the field name MUST match the field name used by Salesforce
     // DO NOT change these field names to camel case!!!
-    @XStreamOmitField
     private Attributes attributes;
     private String Id;
     private String OwnerId;
@@ -48,7 +46,6 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     private ZonedDateTime LastViewedDate;
     private ZonedDateTime LastReferencedDate;
 
-    @XStreamOmitField
     private Set<String> fieldsToNull = new HashSet<>();
 
     public AbstractSObjectBase() {

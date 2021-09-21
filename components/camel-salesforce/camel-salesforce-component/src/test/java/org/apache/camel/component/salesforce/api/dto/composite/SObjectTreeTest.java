@@ -23,9 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Asset;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
@@ -89,53 +87,6 @@ public class SObjectTreeTest extends CompositeTestBase {
                                 + "\"attributes\":{" + "\"referenceId\":\"ref4\"," + "\"type\":\"Account\"," + "\"url\":null"
                                 + "}" + "}" + "]" + "}";
         assertEquals(expected, json, "Should serialize to JSON as in Salesforce example");
-    }
-
-    @Test
-    public void shouldSerializeToXml() {
-        final SObjectTree tree = new SObjectTree();
-
-        final SObjectNode account1 = new SObjectNode(tree, simpleAccount);
-        account1.addChild("Contacts", smith);
-        account1.addChild("Contacts", evans);
-        tree.addNode(account1);
-
-        final SObjectNode account2 = new SObjectNode(tree, simpleAccount2);
-        tree.addNode(account2);
-
-        final XStream xStream = XStreamUtils.createXStream(SObjectTree.class, Account.class, Contact.class, Asset.class);
-
-        final String xml = xStream.toXML(tree);
-
-        assertEquals("<SObjectTreeRequest>"//
-                     + "<records type=\"Account\" referenceId=\"ref1\">"//
-                     + "<Name>SampleAccount</Name>"//
-                     + "<Phone>1234567890</Phone>"//
-                     + "<Website>www.salesforce.com</Website>"//
-                     + "<Industry>Banking</Industry>"//
-                     + "<NumberOfEmployees>100</NumberOfEmployees>"//
-                     + "<Contacts>"//
-                     + "<records type=\"Contact\" referenceId=\"ref2\">"//
-                     + "<LastName>Smith</LastName>"//
-                     + "<Email>sample@salesforce.com</Email>"//
-                     + "<Title>President</Title>"//
-                     + "</records>"//
-                     + "<records type=\"Contact\" referenceId=\"ref3\">"//
-                     + "<LastName>Evans</LastName>"//
-                     + "<Email>sample@salesforce.com</Email>"//
-                     + "<Title>Vice President</Title>"//
-                     + "</records>"//
-                     + "</Contacts>"//
-                     + "</records>"//
-                     + "<records type=\"Account\" referenceId=\"ref4\">"//
-                     + "<Name>SampleAccount2</Name>"//
-                     + "<Phone>1234567890</Phone>"//
-                     + "<Website>www.salesforce2.com</Website>"//
-                     + "<Industry>Banking</Industry>"//
-                     + "<NumberOfEmployees>100</NumberOfEmployees>"//
-                     + "</records>"//
-                     + "</SObjectTreeRequest>",
-                xml, "Should serialize to XML as in Salesforce example");
     }
 
     @Test

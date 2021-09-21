@@ -19,9 +19,6 @@ package org.apache.camel.component.salesforce.dto.generated;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistSerializer;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -30,14 +27,12 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
  * Sample POJO for MSP tests using Strings instead of Constants.
  */
 //CHECKSTYLE:OFF
-@XStreamAlias("MSPTest")
 public class StringMSPTest extends AbstractSObjectBase {
 
     public StringMSPTest() {
         getAttributes().setType("MSPTest");
     }
 
-    @XStreamConverter(StringMultiSelectPicklistConverter.class)
     private java.lang.String[] MspField;
 
     @JsonProperty("MspField")

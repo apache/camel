@@ -35,7 +35,6 @@
     <properties>
         <camel.osgi.import.additional>
             javax.xml.bind*;version="[2.2,3.0)",
-            com.thoughtworks.xstream.*;version="[1.4.7,2)",
             org.eclipse.jetty.*;version="[9.4,10)",
             org.mortbay.cometd.*;version="[6.1,7)"
         </camel.osgi.import.additional>
@@ -108,10 +107,6 @@
                     <artifactId>validation-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -366,7 +361,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
-                                <phase>pre-integration-test</phase>
+<!--                                <phase>pre-integration-test</phase>-->
                                 <configuration>
                                     <target xmlns:if="ant:if" xmlns:unless="ant:unless">
                                         <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">

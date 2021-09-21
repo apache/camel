@@ -21,16 +21,13 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * Contains the individual result of Composite API batch request. As batch requests can partially succeed or fail make
  * sure you check the {@link #getStatusCode()} for status of the specific request. The result of the request can vary
  * from API to API so here it is given as {@link Object}, in most cases it will be a {@link Map} with string keys and
- * values or other {@link Map} as value. Requests made in JSON format hold some type information (i.e. it is known what
- * values are strings and what values are numbers), so in general those will be more type friendly. Note that the
- * responses will vary between XML and JSON, this is due to the responses from Salesforce API being different.
+ * values or other {@link Map} as value. Requests are made in JSON format hold some type information (i.e. it is known
+ * what values are strings and what values are numbers).
  * <p>
  * For example response for SObject record creation in JSON will be: <blockquote>
  *
@@ -59,22 +56,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * }
  * </pre>
  *
- * </blockquote>
- * <p>
- * Whereas using XML format the response will be: <blockquote>
- *
- * <pre>
- * {@code
- * <Result>
- *   <id>0010Y00000AryACQAZ</id>
- *   <success>true</success>
- * </Result>
- * }
- * </pre>
- *
- * </blockquote>
- * <p>
- * And that results in {@link #getResult()} returning {@link Map} created like: <blockquote>
+ * </blockquote> And that results in {@link #getResult()} returning {@link Map} created like: <blockquote>
  *
  * <pre>
  * {
@@ -93,12 +75,10 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * <p>
  * Note the differences between type and nested {@link Map} one level deeper in the case of XML.
  */
-@XStreamAlias("batchResult")
 public final class SObjectBatchResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XStreamConverter(MapOfMapsConverter.class)
     private final Object result;
 
     private final int statusCode;

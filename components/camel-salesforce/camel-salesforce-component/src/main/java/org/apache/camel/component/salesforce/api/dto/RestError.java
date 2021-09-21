@@ -20,16 +20,12 @@ import java.util.List;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 //CHECKSTYLE:OFF
 public class RestError extends AbstractDTOBase {
 
-    @XStreamAlias("statusCode")
     private String errorCode;
     private String message;
-    @XStreamImplicit
     private List<String> fields;
 
     // default ctor for unmarshalling

@@ -553,11 +553,7 @@ list of responses with the order preserved, so that the n-th requests response i
 [NOTE]
 ====
 The results can vary from API to API so the result of the request is given as a `java.lang.Object`. In most cases
-the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests made in
-JSON format hold some type information (i.e. it is known what values are strings and what values are numbers), so in
-general those will be more type friendly. Note that the responses will vary between XML and JSON, this is due to the
-responses from Salesforce API being different. So be careful if you switch between formats without changing the response
-handling code.
+the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests are made in JSON format and hold some type information (i.e. it is known what values are strings and what values are numbers).
 ====
 
 Lets look at an example:
@@ -579,7 +575,7 @@ batch.addGet("Account", accountId, "Name", "BillingPostalCode");
 
 batch.addDelete("Account", accountId);
 
-final SObjectBatchResponse response = template.requestBody("salesforce:composite-batch?format=JSON", batch, SObjectBatchResponse.class);
+final SObjectBatchResponse response = template.requestBody("salesforce:composite-batch", batch, SObjectBatchResponse.class);
 
 boolean hasErrors = response.hasErrors(); // if any of the requests has resulted in either 4xx or 5xx HTTP status
 final List<SObjectBatchResult> results = response.getResults(); // results of three operations sent in batch
@@ -618,8 +614,8 @@ Composite API supports only JSON payloads.
 ====
 As with the batch API the results can vary from API to API so the result of the request is given as a
 `java.lang.Object`. In most cases the result will be a `java.util.Map` with string keys and values or other
-`java.util.Map` as value. Requests made in JSON format hold some type information (i.e. it is known what values are
-strings and what values are numbers), so in general those will be more type friendly.
+`java.util.Map` as value. Requests are made in JSON format hold some type information (i.e. it is known what values are
+strings and what values are numbers).
 ====
 
 Lets look at an example:
@@ -647,7 +643,7 @@ junction.setAccount__c("001xx000003DIpcAAG");
 junction.setContactId__c("@{NewContact.id}");
 composite.addCreate(junction, "JunctionRecord");
 
-final SObjectCompositeResponse response = template.requestBody("salesforce:composite?format=JSON", composite, SObjectCompositeResponse.class);
+final SObjectCompositeResponse response = template.requestBody("salesforce:composite", composite, SObjectCompositeResponse.class);
 final List<SObjectCompositeResult> results = response.getCompositeResponse();
 
 final SObjectCompositeResult accountUpdateResult = results.stream().filter(r -> "UpdatedAccount".equals(r.getReferenceId())).findFirst().get()
@@ -822,7 +818,7 @@ mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSales
     -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
 ----
 
-The generated DTOs use Jackson and XStream annotations. All Salesforce
+The generated DTOs use Jackson annotations. All Salesforce
 field types are supported. Date and time fields are mapped to
 `java.time.ZonedDateTime` by default, and picklist fields are mapped to
 generated Java Enumerations.

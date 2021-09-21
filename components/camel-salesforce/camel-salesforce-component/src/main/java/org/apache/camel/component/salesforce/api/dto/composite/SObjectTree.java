@@ -35,9 +35,6 @@ import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;
@@ -89,19 +86,15 @@ import static java.util.Objects.requireNonNull;
  * @see AbstractSObjectBase
  * @see AbstractDescribedSObjectBase
  */
-@XStreamAlias("SObjectTreeRequest")
 public final class SObjectTree implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XStreamImplicit
     @JsonProperty
     final List<SObjectNode> records = new CopyOnWriteArrayList<>();
 
-    @XStreamOmitField
     final ReferenceGenerator referenceGenerator;
 
-    @XStreamOmitField
     private String objectType;
 
     /**

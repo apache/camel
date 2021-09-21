@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
@@ -51,7 +50,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase {
-        @XStreamImplicit
         private List<Account> records;
 
         public List<Account> getRecords() {

@@ -22,19 +22,15 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 
-@XStreamAlias("results")
 public final class ReferenceId implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @XStreamImplicit
     private final List<RestError> errors;
 
     private final String id;

@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.utils.UrlUtils;
@@ -66,7 +64,6 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * </blockquote> This will build a batch of three operations, one to create new Account, one to delete an Account, and
  * one to get two fields from an Account.
  */
-@XStreamAlias("batch")
 public final class SObjectBatch implements Serializable {
 
     private static final String SOBJECT_TYPE_PARAM = "type";
@@ -82,12 +79,10 @@ public final class SObjectBatch implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XStreamOmitField
     private final String apiPrefix;
 
     private final List<BatchRequest> batchRequests = new ArrayList<>();
 
-    @XStreamOmitField
     private final Version version;
 
     /**

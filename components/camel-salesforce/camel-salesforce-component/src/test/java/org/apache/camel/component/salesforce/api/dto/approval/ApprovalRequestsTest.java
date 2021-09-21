@@ -20,10 +20,8 @@ import java.util.Arrays;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -83,35 +81,5 @@ public class ApprovalRequestsTest {
         final String serialized = mapper.writerFor(ApprovalRequests.class).writeValueAsString(requests);
 
         assertEquals(json, serialized, "Approval requests should serialize as JSON");
-    }
-
-    @Test
-    public void shouldSerializeAsXml() {
-        final String xml = "<ProcessApprovalRequest>"//
-                           + "<requests>"//
-                           + "<actionType>Submit</actionType>"//
-                           + "<contextActorId>005D00000015rZy</contextActorId>"//
-                           + "<contextId>001D000000I8mIm</contextId>"//
-                           + "<comments>this is a test 1</comments>"//
-                           + "<nextApproverIds>005D00000015rY9</nextApproverIds>"//
-                           + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
-                           + "<skipEntryCriteria>true</skipEntryCriteria>"//
-                           + "</requests>"//
-                           + "<requests>"//
-                           + "<actionType>Submit</actionType>"//
-                           + "<contextActorId>005D00000015rZy</contextActorId>"//
-                           + "<contextId>001D000000I8dIm</contextId>"//
-                           + "<comments>this is a test 2</comments>"//
-                           + "<nextApproverIds>005D00000015xY9</nextApproverIds>"//
-                           + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
-                           + "<skipEntryCriteria>true</skipEntryCriteria>"//
-                           + "</requests>"//
-                           + "</ProcessApprovalRequest>";
-
-        final XStream xStream = XStreamUtils.createXStream(ApprovalRequests.class);
-
-        final String serialized = xStream.toXML(requests);
-
-        assertEquals(xml, serialized, "Approval requests should serialize as XML");
     }
 }

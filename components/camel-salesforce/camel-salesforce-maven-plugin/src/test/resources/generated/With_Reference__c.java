@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
@@ -26,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Salesforce DTO for SObject With_Reference__c
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-@XStreamAlias("With_Reference__c")
 public class With_Reference__c extends AbstractDescribedSObjectBase {
 
     public With_Reference__c() {
@@ -47,7 +44,6 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
         this.account_ref__c = account_ref__c;
     }
 
-     @XStreamAlias("account_ref__r")
     private Account account_ref__r;
 
     @JsonProperty("account_ref__r")

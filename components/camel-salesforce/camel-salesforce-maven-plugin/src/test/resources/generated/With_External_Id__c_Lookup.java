@@ -7,14 +7,12 @@ import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 
 /**
  * Salesforce Lookup class for SObject With_External_Id__c_Lookup
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-@XStreamAlias("With_External_Id__c_Lookup")
 @JsonInclude(Include.NON_NULL)
 public class With_External_Id__c_Lookup {
     class Attributes {

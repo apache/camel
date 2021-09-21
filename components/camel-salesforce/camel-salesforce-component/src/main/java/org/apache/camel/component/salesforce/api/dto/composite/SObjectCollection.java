@@ -20,10 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 
-@XStreamAlias("batch")
 public class SObjectCollection implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -19,14 +19,12 @@ package org.apache.camel.component.salesforce.dto.generated;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
 /**
  * Salesforce DTO for SObject Task
  */
 //CHECKSTYLE:OFF
-@XStreamAlias("Task")
 public class Task extends AbstractSObjectBase {
 
     public Task() {
@@ -57,7 +55,6 @@ public class Task extends AbstractSObjectBase {
         Description = description;
     }
 
-    @XStreamAlias("What")
     private AbstractSObjectBase What;
 
     @JsonProperty("What")

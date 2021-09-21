@@ -29,7 +29,6 @@ import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
@@ -209,7 +208,7 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
 
             // create rest client
 
-            restClient = new DefaultRestClient(httpClient, version, PayloadFormat.JSON, session, new SalesforceLoginConfig());
+            restClient = new DefaultRestClient(httpClient, version, session, new SalesforceLoginConfig());
             // remember to start the active client object
             ((DefaultRestClient) restClient).start();
 

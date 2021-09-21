@@ -35,7 +35,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.xstream.XStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
@@ -45,7 +44,6 @@ import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.dto.RestErrors;
 import org.apache.camel.support.service.ServiceSupport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpContentResponse;
@@ -281,21 +279,14 @@ public abstract class AbstractClientBase extends ServiceSupport
     final List<RestError> readErrorsFrom(
             final InputStream responseContent, final PayloadFormat format, final ObjectMapper objectMapper)
             throws IOException {
-        return readErrorsFrom(responseContent, format, objectMapper, null);
+        return readErrorsFrom(responseContent, objectMapper);
     }
 
     final List<RestError> readErrorsFrom(
-            final InputStream responseContent, final PayloadFormat format, final ObjectMapper objectMapper,
-            final XStream xStream)
+            final InputStream responseContent, final ObjectMapper objectMapper)
             throws IOException {
         final List<RestError> restErrors;
-        if (PayloadFormat.JSON.equals(format)) {
-            restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
-        } else {
-            RestErrors errors = new RestErrors();
-            xStream.fromXML(responseContent, errors);
-            restErrors = errors.getErrors();
-        }
+        restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
         return restErrors;
     }
 
