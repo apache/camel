@@ -62,8 +62,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "connectionMaxIdleMs": getOrCreateConfiguration(target).setConnectionMaxIdleMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "consumerrequesttimeoutms":
         case "consumerRequestTimeoutMs": getOrCreateConfiguration(target).setConsumerRequestTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "consumerstreams":
-        case "consumerStreams": getOrCreateConfiguration(target).setConsumerStreams(property(camelContext, int.class, value)); return true;
         case "consumerscount":
         case "consumersCount": getOrCreateConfiguration(target).setConsumersCount(property(camelContext, int.class, value)); return true;
         case "deliverytimeoutms":
@@ -276,8 +274,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "connectionMaxIdleMs": return java.lang.Integer.class;
         case "consumerrequesttimeoutms":
         case "consumerRequestTimeoutMs": return java.lang.Integer.class;
-        case "consumerstreams":
-        case "consumerStreams": return int.class;
         case "consumerscount":
         case "consumersCount": return int.class;
         case "deliverytimeoutms":
@@ -486,8 +482,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "connectionMaxIdleMs": return getOrCreateConfiguration(target).getConnectionMaxIdleMs();
         case "consumerrequesttimeoutms":
         case "consumerRequestTimeoutMs": return getOrCreateConfiguration(target).getConsumerRequestTimeoutMs();
-        case "consumerstreams":
-        case "consumerStreams": return getOrCreateConfiguration(target).getConsumerStreams();
         case "consumerscount":
         case "consumersCount": return getOrCreateConfiguration(target).getConsumersCount();
         case "deliverytimeoutms":
