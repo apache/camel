@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 public class IAMProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(IAMProducer.class);
     private IAMEndpoint endpoint;
-    private ClientConfigurations clientConfigurations;
     private IamClient iamClient;
     private Gson gson;
 
@@ -60,32 +59,39 @@ public class IAMProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.clientConfigurations = new ClientConfigurations();
-        this.iamClient = this.endpoint.initClient();
         this.gson = new Gson();
     }
 
     public void process(Exchange exchange) throws Exception {
-        updateClientConfigs(exchange);
+
+        ClientConfigurations clientConfigurations = new ClientConfigurations();
+
+        if (this.iamClient == null) {
+            LOG.info("Initializing SDK client");
+            this.iamClient = endpoint.initClient();
+            LOG.info("IAM client initialized");
+        }
+
+        updateClientConfigs(exchange, clientConfigurations);
 
         switch (clientConfigurations.getOperation()) {
             case IAMOperations.LIST_USERS:
                 listUsers(exchange);
                 break;
             case IAMOperations.GET_USER:
-                getUser(exchange);
+                getUser(exchange, clientConfigurations);
                 break;
             case IAMOperations.UPDATE_USER:
-                updateUser(exchange);
+                updateUser(exchange, clientConfigurations);
                 break;
             case IAMOperations.LIST_GROUPS:
                 listGroups(exchange);
                 break;
             case IAMOperations.GET_GROUP_USERS:
-                getGroupUsers(exchange);
+                getGroupUsers(exchange, clientConfigurations);
                 break;
             case IAMOperations.UPDATE_GROUP:
-                updateGroup(exchange);
+                updateGroup(exchange, clientConfigurations);
                 break;
             default:
                 throw new UnsupportedOperationException(
@@ -107,10 +113,11 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform get user operation
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void getUser(Exchange exchange) {
+    private void getUser(Exchange exchange, ClientConfigurations clientConfigurations) {
         // check for user id, which is mandatory to get user
         if (ObjectHelper.isEmpty(clientConfigurations.getUserId())) {
             if (LOG.isErrorEnabled()) {
@@ -128,10 +135,11 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform update user operation
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void updateUser(Exchange exchange) {
+    private void updateUser(Exchange exchange, ClientConfigurations clientConfigurations) {
         // checking for valid exchange body containing user information. Body must be an UpdateUserOption object or a JSON string
         Object body = exchange.getMessage().getBody();
         UpdateUserOption userOption;
@@ -169,7 +177,7 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform list groups operation
-     *
+     * 
      * @param exchange
      */
     private void listGroups(Exchange exchange) {
@@ -181,10 +189,11 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform get group users operation
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void getGroupUsers(Exchange exchange) {
+    private void getGroupUsers(Exchange exchange, ClientConfigurations clientConfigurations) {
         // check for group id, which is mandatory for getting group users
         if (ObjectHelper.isEmpty(clientConfigurations.getGroupId())) {
             if (LOG.isErrorEnabled()) {
@@ -202,10 +211,11 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform update group operation
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void updateGroup(Exchange exchange) {
+    private void updateGroup(Exchange exchange, ClientConfigurations clientConfigurations) {
         // checking for valid exchange body containing group information. Body must be an KeystoneUpdateGroupOption object or a JSON string
         Object body = exchange.getMessage().getBody();
         KeystoneUpdateGroupOption groupOption;
@@ -245,11 +255,11 @@ public class IAMProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (operation, user ID, and group ID) can also be
      * passed via exchange properties, so they can be updated between each transaction. Since they can change, we must
      * clear the previous transaction and update these parameters with their new values
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void updateClientConfigs(Exchange exchange) {
-        resetDynamicConfigs();
+    private void updateClientConfigs(Exchange exchange, ClientConfigurations clientConfigurations) {
 
         // checking for required operation (exchange overrides endpoint operation if both are provided)
         if (ObjectHelper.isEmpty(exchange.getProperty(IAMProperties.OPERATION))
@@ -282,14 +292,5 @@ public class IAMProducer extends DefaultProducer {
                             ? (String) exchange.getProperty(IAMProperties.GROUP_ID)
                             : endpoint.getGroupId());
         }
-    }
-
-    /**
-     * Set all dynamic configurations to null
-     */
-    private void resetDynamicConfigs() {
-        clientConfigurations.setOperation(null);
-        clientConfigurations.setUserId(null);
-        clientConfigurations.setGroupId(null);
     }
 }

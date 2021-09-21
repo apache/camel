@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 public class OBSProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OBSProducer.class);
     private OBSEndpoint endpoint;
-    private ClientConfigurations clientConfigurations;
     private ObsClient obsClient;
     private Gson gson;
 
@@ -60,32 +59,37 @@ public class OBSProducer extends DefaultProducer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        this.clientConfigurations = new ClientConfigurations();
-        this.obsClient = this.endpoint.initClient();
         this.gson = new Gson();
     }
 
     public void process(Exchange exchange) throws Exception {
-        updateClientConfigs(exchange);
+
+        ClientConfigurations clientConfigurations = new ClientConfigurations();
+
+        if (obsClient == null) {
+            this.obsClient = endpoint.initClient();
+        }
+
+        updateClientConfigs(exchange, clientConfigurations);
 
         switch (clientConfigurations.getOperation()) {
             case OBSOperations.LIST_BUCKETS:
                 listBuckets(exchange);
                 break;
             case OBSOperations.CREATE_BUCKET:
-                createBucket(exchange);
+                createBucket(exchange, clientConfigurations);
                 break;
             case OBSOperations.DELETE_BUCKET:
-                deleteBucket(exchange);
+                deleteBucket(exchange, clientConfigurations);
                 break;
             case OBSOperations.CHECK_BUCKET_EXISTS:
-                checkBucketExists(exchange);
+                checkBucketExists(exchange, clientConfigurations);
                 break;
             case OBSOperations.GET_BUCKET_METADATA:
-                getBucketMetadata(exchange);
+                getBucketMetadata(exchange, clientConfigurations);
                 break;
             case OBSOperations.LIST_OBJECTS:
-                listObjects(exchange);
+                listObjects(exchange, clientConfigurations);
                 break;
             default:
                 throw new UnsupportedOperationException(
@@ -95,8 +99,9 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform list buckets operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @throws ObsException
      */
     private void listBuckets(Exchange exchange) throws ObsException {
         // invoke list buckets method and map response object to exchange body
@@ -107,10 +112,12 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform create bucket operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws ObsException
      */
-    private void createBucket(Exchange exchange) throws ObsException {
+    private void createBucket(Exchange exchange, ClientConfigurations clientConfigurations) throws ObsException {
         CreateBucketRequest request = null;
 
         // checking if user inputted exchange body containing bucket information. Body must be a CreateBucketRequest or a valid JSON string (Advanced users)
@@ -153,10 +160,12 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform delete bucket operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws ObsException
      */
-    private void deleteBucket(Exchange exchange) throws ObsException {
+    private void deleteBucket(Exchange exchange, ClientConfigurations clientConfigurations) throws ObsException {
         // check for bucket name, which is mandatory to delete a bucket
         if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
             LOG.error("No bucket name given");
@@ -170,10 +179,12 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform check bucket exists operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws ObsException
      */
-    private void checkBucketExists(Exchange exchange) throws ObsException {
+    private void checkBucketExists(Exchange exchange, ClientConfigurations clientConfigurations) throws ObsException {
         // check for bucket name, which is mandatory to check if a bucket exists
         if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
             LOG.error("No bucket name given");
@@ -187,10 +198,12 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform get bucket metadata operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws ObsException
      */
-    private void getBucketMetadata(Exchange exchange) throws ObsException {
+    private void getBucketMetadata(Exchange exchange, ClientConfigurations clientConfigurations) throws ObsException {
         // check for bucket name, which is mandatory to get bucket metadata
         if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
             LOG.error("No bucket name given");
@@ -205,10 +218,12 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform list objects operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws ObsException
      */
-    private void listObjects(Exchange exchange) throws ObsException {
+    private void listObjects(Exchange exchange, ClientConfigurations clientConfigurations) throws ObsException {
         ListObjectsRequest request = null;
 
         // checking if user inputted exchange body containing list objects information. Body must be a ListObjectsRequest or a valid JSON string (Advanced users)
@@ -251,11 +266,11 @@ public class OBSProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (operation, and bucket name and location) can also
      * be passed via exchange properties, so they can be updated between each transaction. Since they can change, we
      * must clear the previous transaction and update these parameters with their new values
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void updateClientConfigs(Exchange exchange) {
-        resetDynamicConfigs();
+    private void updateClientConfigs(Exchange exchange, ClientConfigurations clientConfigurations) {
 
         // checking for required operation (exchange overrides endpoint operation if both are provided)
         if (ObjectHelper.isEmpty(exchange.getProperty(OBSProperties.OPERATION))
@@ -286,14 +301,5 @@ public class OBSProducer extends DefaultProducer {
                             ? (String) exchange.getProperty(OBSProperties.BUCKET_LOCATION)
                             : endpoint.getBucketLocation());
         }
-    }
-
-    /**
-     * Set all dynamic configurations to null
-     */
-    private void resetDynamicConfigs() {
-        clientConfigurations.setOperation(null);
-        clientConfigurations.setBucketName(null);
-        clientConfigurations.setBucketLocation(null);
     }
 }

@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
 public class DMSProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(DMSProducer.class);
     private DMSEndpoint endpoint;
-    private ClientConfigurations clientConfigurations;
     private DmsClient dmsClient;
     private ObjectMapper mapper;
 
@@ -57,29 +56,36 @@ public class DMSProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.clientConfigurations = new ClientConfigurations();
-        this.dmsClient = this.endpoint.initClient();
         this.mapper = new ObjectMapper();
     }
 
     public void process(Exchange exchange) throws Exception {
-        updateClientConfigs(exchange);
+
+        ClientConfigurations clientConfigurations = new ClientConfigurations();
+
+        if (dmsClient == null) {
+            LOG.debug("Initializing SDK client");
+            this.dmsClient = endpoint.initClient();
+            LOG.debug("Successfully initialized SDK client");
+        }
+
+        updateClientConfigs(exchange, clientConfigurations);
 
         switch (clientConfigurations.getOperation()) {
             case DMSOperations.CREATE_INSTANCE:
-                createInstance(exchange);
+                createInstance(exchange, clientConfigurations);
                 break;
             case DMSOperations.DELETE_INSTANCE:
-                deleteInstance(exchange);
+                deleteInstance(exchange, clientConfigurations);
                 break;
             case DMSOperations.LIST_INSTANCES:
-                listInstances(exchange);
+                listInstances(exchange, clientConfigurations);
                 break;
             case DMSOperations.QUERY_INSTANCE:
-                queryInstance(exchange);
+                queryInstance(exchange, clientConfigurations);
                 break;
             case DMSOperations.UPDATE_INSTANCE:
-                updateInstance(exchange);
+                updateInstance(exchange, clientConfigurations);
                 break;
             default:
                 throw new UnsupportedOperationException(
@@ -89,10 +95,12 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform create instance operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws JsonProcessingException
      */
-    private void createInstance(Exchange exchange) throws JsonProcessingException {
+    private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
         CreateInstanceRequestBody body = null;
 
         // checking if user inputted exchange body containing instance information. Body must be a CreateInstanceRequestBody or a valid JSON String (Advanced users)
@@ -197,10 +205,11 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform delete instance operation
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void deleteInstance(Exchange exchange) {
+    private void deleteInstance(Exchange exchange, ClientConfigurations clientConfigurations) {
         // check for instance id, which is mandatory to delete an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to delete an instance");
@@ -214,10 +223,12 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform list instances operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws JsonProcessingException
      */
-    private void listInstances(Exchange exchange) throws JsonProcessingException {
+    private void listInstances(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
         ListInstancesRequest request = new ListInstancesRequest()
                 .withEngine(clientConfigurations.getEngine());
         ListInstancesResponse response = dmsClient.listInstances(request);
@@ -226,10 +237,12 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform query instance operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws JsonProcessingException
      */
-    private void queryInstance(Exchange exchange) throws JsonProcessingException {
+    private void queryInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
         // check for instance id, which is mandatory to query an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to query an instance");
@@ -243,10 +256,12 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform update instance operation
-     *
-     * @param exchange
+     * 
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws JsonProcessingException
      */
-    private void updateInstance(Exchange exchange) throws JsonProcessingException {
+    private void updateInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
         // check for instance id, which is mandatory to update an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to update an instance");
@@ -276,11 +291,11 @@ public class DMSProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (operation, user ID, and group ID) can also be
      * passed via exchange properties, so they can be updated between each transaction. Since they can change, we must
      * clear the previous transaction and update these parameters with their new values
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void updateClientConfigs(Exchange exchange) {
-        resetDynamicConfigs();
+    private void updateClientConfigs(Exchange exchange, ClientConfigurations clientConfigurations) {
 
         // checking for required operation (exchange overrides endpoint operation if both are provided)
         if (ObjectHelper.isEmpty(exchange.getProperty(DMSProperties.OPERATION))
@@ -399,29 +414,5 @@ public class DMSProducer extends DefaultProducer {
                 ObjectHelper.isNotEmpty(exchange.getProperty(DMSProperties.STORAGE_SPEC_CODE))
                         ? (String) exchange.getProperty(DMSProperties.STORAGE_SPEC_CODE)
                         : endpoint.getStorageSpecCode());
-    }
-
-    /**
-     * Set all dynamic configurations to null
-     */
-    private void resetDynamicConfigs() {
-        clientConfigurations.setOperation(null);
-        clientConfigurations.setEngine(null);
-        clientConfigurations.setInstanceId(null);
-        clientConfigurations.setName(null);
-        clientConfigurations.setEngineVersion(null);
-        clientConfigurations.setSpecification(null);
-        clientConfigurations.setStorageSpace(null);
-        clientConfigurations.setPartitionNum(null);
-        clientConfigurations.setAccessUser(null);
-        clientConfigurations.setPassword(null);
-        clientConfigurations.setVpcId(null);
-        clientConfigurations.setSecurityGroupId(null);
-        clientConfigurations.setSubnetId(null);
-        clientConfigurations.setAvailableZones(null);
-        clientConfigurations.setProductId(null);
-        clientConfigurations.setKafkaManagerUser(null);
-        clientConfigurations.setKafkaManagerPassword(null);
-        clientConfigurations.setStorageSpecCode(null);
     }
 }
