@@ -2061,8 +2061,8 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
-    static org.apache.camel.builder.component.dsl.HwcloudImageComponentBuilderFactory.HwcloudImageComponentBuilder hwcloudImage() {
-        return org.apache.camel.builder.component.dsl.HwcloudImageComponentBuilderFactory.hwcloudImage();
+    static org.apache.camel.builder.component.dsl.HwcloudImagerecognitionComponentBuilderFactory.HwcloudImagerecognitionComponentBuilder hwcloudImagerecognition() {
+        return org.apache.camel.builder.component.dsl.HwcloudImagerecognitionComponentBuilderFactory.hwcloudImagerecognition();
     }
     /**
      * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)

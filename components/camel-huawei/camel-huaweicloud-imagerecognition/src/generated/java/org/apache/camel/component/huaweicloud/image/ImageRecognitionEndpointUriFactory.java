@@ -51,7 +51,7 @@ public class ImageRecognitionEndpointUriFactory extends org.apache.camel.support
 
     @Override
     public boolean isEnabled(String scheme) {
-        return "hwcloud-image".equals(scheme);
+        return "hwcloud-imagerecognition".equals(scheme);
     }
 
     @Override

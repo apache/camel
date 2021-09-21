@@ -1,8 +1,9 @@
-[[hwcloud-image-recognitioncomponent]]
+[[hwcloud-imagerecognition-component]]
 = Huawei Cloud Image Recognition Component
 :docTitle: Huawei Cloud Image Recognition
+:shortName: hwcloud-imagerecognition
 :artifactId: camel-huaweicloud-imagerecognition
-:description: Image Recognition uses deep learning technologies to accurately identify objects, scenes, and concepts in images using a pool of visual content tags.
+:description: To identify objects, scenes, and concepts in images on Huawei Cloud
 :since: 3.12
 :supportLevel: Preview
 :component-header: Only producer is supported
@@ -33,7 +34,7 @@ for this component:
 
 [source,text]
 ------------------------
-hwcloud-image:operation[?options]
+hwcloud-imagerecognition:operation[?options]
 ------------------------
 
 // component-configure options: START
@@ -90,7 +91,7 @@ Java DSL
 from("direct:triggerRoute")
   .setProperty(ImageRecognitionProperties.IMAGE_URL, constant("https://xxxx"))
   .setProperty(ImageRecognitionProperties.THRESHOLD,constant(0.5))
-  .to("hwcloud-image:celebrityRecognition?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
+  .to("hwcloud-imagerecognition:celebrityRecognition?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 ----
 
 XML DSL
@@ -105,7 +106,7 @@ XML DSL
    <setProperty name="CamelHwCloudImageThreshold">
       <constant>0.5</constant>
    </setProperty>
-   <to uri="hwcloud-image:celebrityRecognition?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+   <to uri="hwcloud-imagerecognition:celebrityRecognition?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
 </route>
 ----
 
@@ -120,7 +121,7 @@ from("direct:triggerRoute")
   .setProperty(ImageRecognitionProperties.THRESHOLD,constant(60))
   .setProperty(ImageRecognitionProperties.TAG_LANGUAGE,constant("en"))
   .setProperty(ImageRecognitionProperties.TAG_LIMIT,constant(50))
-  .to("hwcloud-image:tagRecognition?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
+  .to("hwcloud-imagerecognition:tagRecognition?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 ----
 
 XML DSL
@@ -141,7 +142,7 @@ XML DSL
     <setProperty name="CamelHwCloudImageTagLimit">
         <constant>50</constant>
     </setProperty>
-    <to uri="hwcloud-image:tagRecognition?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+    <to uri="hwcloud-imagerecognition:tagRecognition?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
 </route>
 ----
 

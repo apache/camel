@@ -1,7 +1,7 @@
 {
   "component": {
     "kind": "component",
-    "name": "hwcloud-image",
+    "name": "hwcloud-imagerecognition",
     "title": "Huawei Cloud Image Recognition",
     "description": "To identify objects, scenes, and concepts in images on Huawei Cloud",
     "deprecated": false,
@@ -12,9 +12,9 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-huaweicloud-imagerecognition",
     "version": "3.12.0-SNAPSHOT",
-    "scheme": "hwcloud-image",
+    "scheme": "hwcloud-imagerecognition",
     "extendsScheme": "",
-    "syntax": "hwcloud-image:operation",
+    "syntax": "hwcloud-imagerecognition:operation",
     "async": false,
     "api": false,
     "consumerOnly": false,

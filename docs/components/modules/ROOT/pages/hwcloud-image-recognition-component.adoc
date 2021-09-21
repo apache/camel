@@ -1,1 +1,0 @@
-../../../../../components/camel-huawei/camel-huaweicloud-imagerecognition/src/main/docs/hwcloud-image-recognition-component.adoc

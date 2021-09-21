@@ -436,7 +436,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * Maven coordinates:
          * org.apache.camel:camel-huaweicloud-imagerecognition
          * 
-         * Syntax: <code>hwcloud-image:operation</code>
+         * Syntax: <code>hwcloud-imagerecognition:operation</code>
          * 
          * Path parameter: operation (required)
          * Name of Image Recognition operation to perform, including
@@ -445,8 +445,9 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * @param path operation
          * @return the dsl builder
          */
-        default ImageRecognitionEndpointBuilder hwcloudImage(String path) {
-            return ImageRecognitionEndpointBuilderFactory.endpointBuilder("hwcloud-image", path);
+        default ImageRecognitionEndpointBuilder hwcloudImagerecognition(
+                String path) {
+            return ImageRecognitionEndpointBuilderFactory.endpointBuilder("hwcloud-imagerecognition", path);
         }
         /**
          * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
@@ -457,7 +458,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * Maven coordinates:
          * org.apache.camel:camel-huaweicloud-imagerecognition
          * 
-         * Syntax: <code>hwcloud-image:operation</code>
+         * Syntax: <code>hwcloud-imagerecognition:operation</code>
          * 
          * Path parameter: operation (required)
          * Name of Image Recognition operation to perform, including
@@ -468,7 +469,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * @param path operation
          * @return the dsl builder
          */
-        default ImageRecognitionEndpointBuilder hwcloudImage(
+        default ImageRecognitionEndpointBuilder hwcloudImagerecognition(
                 String componentName,
                 String path) {
             return ImageRecognitionEndpointBuilderFactory.endpointBuilder(componentName, path);

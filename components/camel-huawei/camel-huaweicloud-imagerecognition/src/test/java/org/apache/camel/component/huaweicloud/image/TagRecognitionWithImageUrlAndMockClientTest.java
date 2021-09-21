@@ -43,7 +43,7 @@ public class TagRecognitionWithImageUrlAndMockClientTest extends CamelTestSuppor
                                 constant(testConfiguration.getProperty("imageUrl")))
                         .setProperty(ImageRecognitionProperties.THRESHOLD,
                                 constant(testConfiguration.getProperty("tagThreshold")))
-                        .to("hwcloud-image:tagRecognition?accessKey=" + testConfiguration.getProperty("accessKey")
+                        .to("hwcloud-imagerecognition:tagRecognition?accessKey=" + testConfiguration.getProperty("accessKey")
                             + "&secretKey=" + testConfiguration.getProperty("secretKey") + "&projectId="
                             + testConfiguration.getProperty("projectId") + "&region="
                             + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"

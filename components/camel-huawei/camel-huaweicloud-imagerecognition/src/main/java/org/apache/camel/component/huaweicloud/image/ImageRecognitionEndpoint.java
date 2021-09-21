@@ -32,8 +32,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * To identify objects, scenes, and concepts in images on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-image", title = "Huawei Cloud Image Recognition",
-             syntax = "hwcloud-image:operation",
+@UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-imagerecognition", title = "Huawei Cloud Image Recognition",
+             syntax = "hwcloud-imagerecognition:operation",
              category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true)
 public class ImageRecognitionEndpoint extends DefaultEndpoint {
     @UriPath(

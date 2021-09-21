@@ -152,7 +152,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "hwcloud-dms":
             case "hwcloud-functiongraph":
             case "hwcloud-iam":
-            case "hwcloud-image":
+            case "hwcloud-imagerecognition":
             case "hwcloud-obs":
             case "hwcloud-smn":
             case "iec60870-client":

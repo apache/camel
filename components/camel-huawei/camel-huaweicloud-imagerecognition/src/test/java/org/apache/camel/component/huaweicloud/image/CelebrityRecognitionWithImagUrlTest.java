@@ -39,7 +39,8 @@ public class CelebrityRecognitionWithImagUrlTest extends CamelTestSupport {
                                 constant(testConfiguration.getProperty("imageUrl")))
                         .setProperty(ImageRecognitionProperties.THRESHOLD,
                                 constant(testConfiguration.getProperty("celebrityThreshold")))
-                        .to("hwcloud-image:celebrityRecognition?accessKey=" + testConfiguration.getProperty("accessKey")
+                        .to("hwcloud-imagerecognition:celebrityRecognition?accessKey="
+                            + testConfiguration.getProperty("accessKey")
                             + "&secretKey=" + testConfiguration.getProperty("secretKey") + "&projectId="
                             + testConfiguration.getProperty("projectId") + "&region="
                             + testConfiguration.getProperty("region") + "&ignoreSslVerification=true")
