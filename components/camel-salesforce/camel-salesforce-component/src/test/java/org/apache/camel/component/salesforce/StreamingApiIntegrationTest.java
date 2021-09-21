@@ -24,6 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tag("standalone")
 public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test

@@ -172,6 +172,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.IgniteMessagingEndpointBuilderFactory.IgniteMessagingBuilders,
             org.apache.camel.builder.endpoint.dsl.IgniteQueueEndpointBuilderFactory.IgniteQueueBuilders,
             org.apache.camel.builder.endpoint.dsl.IgniteSetEndpointBuilderFactory.IgniteSetBuilders,
+            org.apache.camel.builder.endpoint.dsl.ImageRecognitionEndpointBuilderFactory.ImageRecognitionBuilders,
             org.apache.camel.builder.endpoint.dsl.InfinispanEmbeddedEndpointBuilderFactory.InfinispanEmbeddedBuilders,
             org.apache.camel.builder.endpoint.dsl.InfinispanRemoteEndpointBuilderFactory.InfinispanRemoteBuilders,
             org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory.InfluxDbBuilders,

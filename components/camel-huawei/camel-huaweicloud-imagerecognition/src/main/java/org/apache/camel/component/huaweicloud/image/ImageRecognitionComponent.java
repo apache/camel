@@ -14,14 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce;
+package org.apache.camel.component.huaweicloud.image;
 
-import org.junit.jupiter.api.Tag;
+import java.util.Map;
 
-/**
- * JUnit group tag interface for tests that need to be run standalone, i.e. not in parallel with other tests.
- */
-@Tag("standalone")
-public @interface Standalone {
-    // tag interface
+import org.apache.camel.Endpoint;
+import org.apache.camel.support.DefaultComponent;
+
+@org.apache.camel.spi.annotations.Component("hwcloud-imagerecognition")
+public class ImageRecognitionComponent extends DefaultComponent {
+
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        Endpoint endpoint = new ImageRecognitionEndpoint(uri, remaining, this);
+        setProperties(endpoint, parameters);
+        return endpoint;
+    }
 }

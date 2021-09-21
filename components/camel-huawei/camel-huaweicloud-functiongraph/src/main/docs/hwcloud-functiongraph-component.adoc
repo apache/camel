@@ -108,3 +108,5 @@ from("direct:triggerRoute")
  .setProperty(FunctionGraphProperties.FUNCTION_PACKAGE, constant("your_function_package"))
  .to("hwcloud-functiongraph:invokeFunction?projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 ----
+
+include::{page-component-version}@camel-spring-boot::page$huaweicloud-functiongraph-starter.adoc[]

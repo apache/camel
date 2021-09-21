@@ -44,7 +44,6 @@ import org.apache.camel.cdi.xml.RestContextDefinition;
 import org.apache.camel.cdi.xml.RouteContextDefinition;
 import org.apache.camel.cdi.xml.RouteTemplateContextDefinition;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
-import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.IdentifiedType;
@@ -66,7 +65,6 @@ import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 import static org.apache.camel.cdi.ResourceHelper.getResource;
 import static org.apache.camel.cdi.Startup.Literal.STARTUP;
-import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @Vetoed
@@ -233,13 +231,6 @@ final class XmlCdiBeanFactory {
                     .forEach(beans::add);
         }
 
-        if (factory.getProxies() != null) {
-            factory.getProxies().stream()
-                    .filter(XmlCdiBeanFactory::hasId)
-                    .map(proxy -> proxyFactoryBean(context, proxy, url))
-                    .forEach(beans::add);
-        }
-
         // TODO: define in beans
         if (factory.getRedeliveryPolicies() != null) {
             factory.getRedeliveryPolicies().stream()
@@ -276,24 +267,6 @@ final class XmlCdiBeanFactory {
                 bean -> "imported bean [" + factory.getId() + "] "
                         + "from resource [" + url + "] "
                         + "with qualifiers " + bean.getQualifiers());
-    }
-
-    private SyntheticBean<?> proxyFactoryBean(Bean<?> context, CamelProxyFactoryDefinition proxy, URL url) {
-        if (isEmpty(proxy.getServiceUrl())) {
-            throw new CreationException(
-                    format("Missing serviceUrl attribute for imported bean [%s] from resource [%s]", proxy.getId(), url));
-        }
-
-        return new XmlProxyFactoryBean<>(
-                manager,
-                new SyntheticAnnotated(
-                        proxy.getServiceInterface(),
-                        manager.createAnnotatedType(proxy.getServiceInterface()).getTypeClosure(),
-                        APPLICATION_SCOPED, ANY, NamedLiteral.of(proxy.getId())),
-                proxy.getServiceInterface(), bean -> "imported bean [" + proxy.getId() + "] "
-                                                     + "from resource [" + url + "] "
-                                                     + "with qualifiers " + bean.getQualifiers(),
-                context, proxy);
     }
 
     private SyntheticBean<?> serviceExporterBean(Bean<?> context, CamelServiceExporterDefinition exporter, URL url) {

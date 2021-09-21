@@ -30,9 +30,7 @@ import org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@EnabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "true")
 public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempotentTestSupport {
     public static final String TOPIC = "testidemp3";
 
@@ -48,7 +46,7 @@ public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempot
                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
-    @EndpointInject("mock:result")
+    @EndpointInject("mock:resulti")
     private MockEndpoint to;
 
     private int size = 200;
@@ -72,7 +70,7 @@ public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempot
 
             @Override
             public void configure() throws Exception {
-                from(from).routeId("foo")
+                from(from).routeId("idemp-with-prop")
                         .process(exchange -> {
                             byte[] id = exchange.getIn().getHeader("id", byte[].class);
 

@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 
 public class KafkaConsumerBatchSizeIT extends BaseEmbeddedKafkaTestSupport {
 
-    public static final String TOPIC = "test";
+    public static final String TOPIC = "test-batch";
 
-    @EndpointInject("kafka:" + TOPIC + "?autoOffsetReset=earliest" + "&autoCommitEnable=false" + "&consumerStreams=10")
+    @EndpointInject("kafka:" + TOPIC + "?autoOffsetReset=earliest&autoCommitEnable=false&consumersCount=1")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -75,6 +75,7 @@ public class KafkaConsumerBatchSizeIT extends BaseEmbeddedKafkaTestSupport {
             ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
             producer.send(data);
         }
+
         to.assertIsSatisfied();
 
         to.reset();

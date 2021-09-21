@@ -3348,6 +3348,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "HwcloudImagerecognitionComponentBuilderFactory": {
+    "kind": "component",
+    "name": "hwcloud-imagerecognition",
+    "title": "Huawei Cloud Image Recognition",
+    "description": "To identify objects, scenes, and concepts in images on Huawei Cloud",
+    "deprecated": false,
+    "firstVersion": "3.12.0",
+    "label": "cloud,messaging",
+    "javaType": "org.apache.camel.component.huaweicloud.image.ImageRecognitionComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-huaweicloud-imagerecognition",
+    "version": "3.12.0-SNAPSHOT",
+    "scheme": "hwcloud-imagerecognition",
+    "extendsScheme": "",
+    "syntax": "hwcloud-imagerecognition:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "HwcloudObsComponentBuilderFactory": {
     "kind": "component",
     "name": "hwcloud-obs",

@@ -2052,6 +2052,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudIamComponentBuilderFactory.hwcloudIam();
     }
     /**
+     * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
+     * To identify objects, scenes, and concepts in images on Huawei Cloud
+     * 
+     * Category: cloud,messaging
+     * Since: 3.12
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-imagerecognition
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HwcloudImagerecognitionComponentBuilderFactory.HwcloudImagerecognitionComponentBuilder hwcloudImagerecognition() {
+        return org.apache.camel.builder.component.dsl.HwcloudImagerecognitionComponentBuilderFactory.hwcloudImagerecognition();
+    }
+    /**
      * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
      * To provide stable, secure, efficient, and easy-to-use cloud storage
      * service on Huawei Cloud

@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.PartitionAssignmentListener;
-import org.apache.camel.component.kafka.consumer.support.ResumeStrategy;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.util.IOHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -60,9 +59,8 @@ class KafkaFetchRecords implements Runnable {
     private final ReentrantLock lock = new ReentrantLock();
     private final AtomicBoolean stopping = new AtomicBoolean(false);
 
-    private volatile boolean retry = true;
-    private volatile boolean reconnect = true;
-    private ResumeStrategy resumeStrategy;
+    private boolean retry = true;
+    private boolean reconnect = true;
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer, PollExceptionStrategy pollExceptionStrategy,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
@@ -157,13 +155,22 @@ class KafkaFetchRecords implements Runnable {
         long partitionLastOffset = -1;
 
         try {
+            /*
+             * We lock the processing of the record to avoid raising a WakeUpException as a result to a call
+             * to stop() or shutdown().
+             */
+            lock.lock();
+
             long pollTimeoutMs = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
             LOG.trace("Polling {} from topic: {} with timeout: {}", threadId, topicName, pollTimeoutMs);
 
-            while (isKafkaConsumerRunnable() && isRetrying() && !isReconnecting()) {
-                ConsumerRecords<Object, Object> allRecords = consumer.poll(Duration.ofMillis(pollTimeoutMs));
+            KafkaRecordProcessor kafkaRecordProcessor = buildKafkaRecordProcessor();
 
-                partitionLastOffset = processPolledRecords(allRecords);
+            Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
+            while (isKafkaConsumerRunnable() && isRetrying() && !isReconnecting()) {
+                ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
+
+                partitionLastOffset = processPolledRecords(allRecords, kafkaRecordProcessor);
             }
 
             if (!isReconnecting()) {
@@ -195,6 +202,8 @@ class KafkaFetchRecords implements Runnable {
 
             handleAccordingToStrategy(partitionLastOffset, e);
         } finally {
+            lock.unlock();
+
             // only close if not retry
             if (!isRetrying()) {
                 LOG.debug("Closing consumer {}", threadId);
@@ -292,7 +301,7 @@ class KafkaFetchRecords implements Runnable {
         return kafkaConsumer.getEndpoint().getCamelContext().isStopping() && !kafkaConsumer.isRunAllowed();
     }
 
-    private long processPolledRecords(ConsumerRecords<Object, Object> allRecords) {
+    private long processPolledRecords(ConsumerRecords<Object, Object> allRecords, KafkaRecordProcessor kafkaRecordProcessor) {
         logRecords(allRecords);
 
         Set<TopicPartition> partitions = allRecords.partitions();
@@ -309,24 +318,17 @@ class KafkaFetchRecords implements Runnable {
 
             logRecordsInPartition(partitionRecords, partition);
 
-            KafkaRecordProcessor kafkaRecordProcessor = buildKafkaRecordProcessor();
+            while (!lastResult.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
+                ConsumerRecord<Object, Object> record = recordIterator.next();
 
-            try {
-                /*
-                 * We lock the processing of the record to avoid raising a WakeUpException as a result to a call
-                 * to stop() or shutdown().
-                 */
-                lock.lock();
+                lastResult = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(), lastResult,
+                        kafkaRecordProcessor, record);
+            }
 
-                while (!lastResult.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
-                    ConsumerRecord<Object, Object> record = recordIterator.next();
-
-                    lastResult = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(), lastResult,
-                            kafkaRecordProcessor, record);
-
-                }
-            } finally {
-                lock.unlock();
+            if (!lastResult.isBreakOnErrorHit()) {
+                LOG.debug("Committing offset on successful execution");
+                // all records processed from partition so commit them
+                kafkaRecordProcessor.commitOffset(partition, lastResult.getPartitionLastOffset(), false, false);
             }
         }
 
@@ -357,7 +359,7 @@ class KafkaFetchRecords implements Runnable {
             TopicPartition partition,
             boolean partitionHasNext,
             boolean recordHasNext,
-            KafkaRecordProcessor.ProcessResult lastResult,
+            final KafkaRecordProcessor.ProcessResult lastResult,
             KafkaRecordProcessor kafkaRecordProcessor,
             ConsumerRecord<Object, Object> record) {
 
@@ -365,23 +367,18 @@ class KafkaFetchRecords implements Runnable {
 
         Exchange exchange = kafkaConsumer.createExchange(false);
 
-        lastResult = kafkaRecordProcessor.processExchange(exchange, partition, partitionHasNext,
-                recordHasNext, record, lastResult, kafkaConsumer.getExceptionHandler());
+        KafkaRecordProcessor.ProcessResult currentResult
+                = kafkaRecordProcessor.processExchange(exchange, partition, partitionHasNext,
+                        recordHasNext, record, lastResult, kafkaConsumer.getExceptionHandler());
 
-        if (!lastResult.isBreakOnErrorHit()) {
-            lastProcessedOffset.put(serializeOffsetKey(partition), lastResult.getPartitionLastOffset());
+        if (!currentResult.isBreakOnErrorHit()) {
+            lastProcessedOffset.put(serializeOffsetKey(partition), currentResult.getPartitionLastOffset());
         }
 
         // success so release the exchange
         kafkaConsumer.releaseExchange(exchange, false);
 
-        if (!lastResult.isBreakOnErrorHit()) {
-            LOG.debug("Committing offset on successful execution");
-            // all records processed from partition so commit them
-            kafkaRecordProcessor.commitOffset(partition, lastResult.getPartitionLastOffset(), false, false,
-                    threadId);
-        }
-        return lastResult;
+        return currentResult;
     }
 
     private void logRecord(ConsumerRecord<Object, Object> record) {

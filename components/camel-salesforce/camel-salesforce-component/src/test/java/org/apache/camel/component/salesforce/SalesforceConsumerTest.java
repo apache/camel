@@ -154,6 +154,7 @@ public class SalesforceConsumerTest {
         configuration.setSObjectClass(AccountUpdates.class.getName());
 
         final SalesforceConsumer consumer = new SalesforceConsumer(endpoint, processor, NOT_USED);
+        consumer.determineSObjectClass();
 
         consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
 

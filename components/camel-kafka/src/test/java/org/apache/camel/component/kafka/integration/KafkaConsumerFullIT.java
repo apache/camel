@@ -39,19 +39,19 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "true",
-                          disabledReason = "Runtime conflicts with the idempotency tests")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
+    public static final String TOPIC = "test-full";
 
-    public static final String TOPIC = "test";
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerFullIT.class);
 
     @BindToRegistry("myHeaderDeserializer")
     private MyKafkaHeaderDeserializer deserializer = new MyKafkaHeaderDeserializer();
@@ -71,6 +71,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
     public void before() {
         Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        MockConsumerInterceptor.recordsCaptured.clear();
     }
 
     @AfterEach
@@ -87,8 +88,9 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
-                from(from).routeId("foo").to(to);
+            public void configure() {
+                from(from).process(exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
+                        .routeId("full-it").to(to);
             }
         };
     }
@@ -116,6 +118,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         to.assertIsSatisfied(3000);
 
+        Thread.sleep(1000);
         assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
                 .count());
 
@@ -161,12 +164,12 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
 
         // Restart endpoint,
-        context.getRouteController().stopRoute("foo");
+        context.getRouteController().stopRoute("full-it");
 
         KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
         kafkaEndpoint.getConfiguration().setSeekTo("beginning");
 
-        context.getRouteController().startRoute("foo");
+        context.getRouteController().startRoute("full-it");
 
         // As wee set seek to beginning we should re-consume all messages
         to.assertIsSatisfied(3000);
@@ -189,12 +192,12 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         to.expectedMessageCount(0);
 
         // Restart endpoint,
-        context.getRouteController().stopRoute("foo");
+        context.getRouteController().stopRoute("full-it");
 
         KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
         kafkaEndpoint.getConfiguration().setSeekTo("end");
 
-        context.getRouteController().startRoute("foo");
+        context.getRouteController().startRoute("full-it");
 
         // As wee set seek to end we should not re-consume any messages
         synchronized (this) {

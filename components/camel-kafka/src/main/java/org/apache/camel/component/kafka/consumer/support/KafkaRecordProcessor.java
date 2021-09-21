@@ -159,7 +159,7 @@ public class KafkaRecordProcessor {
         return new ProcessResult(false, record.offset());
     }
 
-    public boolean processException(
+    private boolean processException(
             Exchange exchange, TopicPartition partition, long partitionLastOffset,
             ExceptionHandler exceptionHandler) {
 
@@ -170,7 +170,7 @@ public class KafkaRecordProcessor {
             LOG.warn("Will seek consumer to offset {} and start polling again.", partitionLastOffset);
 
             // force commit, so we resume on next poll where we failed
-            commitOffset(partition, partitionLastOffset, false, true, threadId);
+            commitOffset(partition, partitionLastOffset, false, true);
 
             // continue to next partition
             return true;
@@ -183,7 +183,7 @@ public class KafkaRecordProcessor {
     }
 
     public void commitOffset(
-            TopicPartition partition, long partitionLastOffset, boolean stopping, boolean forceCommit, String threadId) {
+            TopicPartition partition, long partitionLastOffset, boolean stopping, boolean forceCommit) {
         commitOffset(configuration, consumer, partition, partitionLastOffset, stopping, forceCommit, threadId);
     }
 

@@ -134,3 +134,5 @@ from("direct:triggerRoute")
  .setProperty(IAMPropeties.GROUP_ID, constant("your_group_id))
  .to("hwcloud-iam:listUsers?region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 ----
+
+include::{page-component-version}@camel-spring-boot::page$huaweicloud-iam-starter.adoc[]
