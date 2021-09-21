@@ -16,7 +16,7 @@ MVEL is powerful for templates, but can also be used for
 xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
 
 For example, you can use MVEL in a xref:manual::predicate.adoc[Predicate]
-with the xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] EIP.
+with the xref:eips:choice-eip.adoc[Content Based Router] EIP.
 
 You can use MVEL dot notation to invoke operations. If you for instance
 have a body that contains a POJO that has a `getFamilyName` method then
@@ -65,7 +65,7 @@ The following Camel related variables are made available:
 
 == Example
 
-For example, you could use MVEL inside a xref:{eip-vc}:eips:filter-eip.adoc[Message
+For example, you could use MVEL inside a xref:eips:filter-eip.adoc[Message
 Filter]
 
 [source,java]

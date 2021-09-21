@@ -96,7 +96,7 @@ a message header. This allows Camel to reuse the same endpoint, but send
 to different destinations. This greatly reduces the number of endpoints
 created and economizes on memory and thread resources.
 
-TIP: Using xref:{eip-vc}:eips:toD-eip.adoc[toD] is easier than specifying the dynamic destination with a header
+TIP: Using xref:eips:toD-eip.adoc[toD] is easier than specifying the dynamic destination with a header
 
 You can specify the destination in the following headers:
 
@@ -145,7 +145,7 @@ another JMS endpoint).
 
 If you need to send messages to a lot of different JMS destinations, it
 makes sense to reuse a SJMS2 endpoint and specify the dynamic destinations
-with simple language using xref:{eip-vc}:eips:toD-eip.adoc[toD].
+with simple language using xref:eips:toD-eip.adoc[toD].
 
 For example suppose you need to send messages to queues with order types,
 then using toD could for example be done as follows:

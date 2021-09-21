@@ -82,7 +82,7 @@ public boolean isGoldCustomer(@Header(name = "foo") Integer fooHeader) {...}
 ----
 
 So you can bind parameters of the method to the `Exchange`, the
-xref:{eip-vc}:eips:message.adoc[Message] or individual headers, properties, the body
+xref:eips:message.adoc[Message] or individual headers, properties, the body
 or other expressions.
 
 === Non-Registry Beans

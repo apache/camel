@@ -14,7 +14,7 @@ used as an xref:manual::expression.adoc[Expression] or xref:manual::predicate.ad
 in Camel routes.
 
 For example, you can use MVEL in a xref:manual::predicate.adoc[Predicate]
-with the xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] EIP.
+with the xref:eips:choice-eip.adoc[Content Based Router] EIP.
 
 You can use OGNL dot notation to invoke operations. If you for instance
 have a body that contains a POJO that has a `getFamilyName` method then
@@ -64,7 +64,7 @@ include::partial$language-options.adoc[]
 
 == Example
 
-For example, you could use OGNL inside a xref:{eip-vc}:eips:filter-eip.adoc[Message
+For example, you could use OGNL inside a xref:eips:filter-eip.adoc[Message
 Filter]
 
 [source,java]

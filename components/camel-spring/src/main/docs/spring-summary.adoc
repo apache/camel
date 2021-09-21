@@ -24,7 +24,7 @@ components like xref:jms-component.adoc[JMS] and xref:jms-component.adoc[JPA]
 Type Converter support for Spring Resources etc
 * Allows you to reuse the Spring Testing
 framework to simplify your unit and integration testing using
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's powerful xref:mock-component.adoc[Mock] and
 xref:others:test.adoc[Test] endpoints
 

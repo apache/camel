@@ -23,7 +23,7 @@ include::partial$language-options.adoc[]
 == Examples
 
 For example, you can use JSONPath in a xref:manual::predicate.adoc[Predicate]
-with the xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] EIP.
+with the xref:eips:choice-eip.adoc[Content Based Router] EIP.
 
 [source,java]
 ----

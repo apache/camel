@@ -49,8 +49,8 @@ The following Camel related variables are made available:
 
 == Example
 
-You can use SpEL as an expression for xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient
-List] or as a predicate inside a xref:{eip-vc}:eips:filter-eip.adoc[Message
+You can use SpEL as an expression for xref:eips:recipientList-eip.adoc[Recipient
+List] or as a predicate inside a xref:eips:filter-eip.adoc[Message
 Filter]:
 
 [source,xml]

@@ -10,7 +10,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/tokenize.ad
 *Since Camel {since}*
 
 The tokenizer language is a built-in language in `camel-core`, which is
-most often used with the xref:{eip-vc}:eips:split-eip.adoc[Split] EIP
+most often used with the xref:eips:split-eip.adoc[Split] EIP
 to split a message using a token-based strategy.
 
 The tokenizer language is intended to tokenize text documents using a
@@ -54,4 +54,4 @@ from("direct:a")
         .to("direct:b");
 ----
 
-For more examples see xref:{eip-vc}:eips:split-eip.adoc[Split] EIP.
+For more examples see xref:eips:split-eip.adoc[Split] EIP.

@@ -12,7 +12,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/groovy.adoc
 Camel has support for using http://www.groovy-lang.org/[Groovy].
 
 For example, you can use Groovy in a xref:manual::predicate.adoc[Predicate]
-with the xref:{eip-vc}:eips:filter-eip.adoc[Message
+with the xref:eips:filter-eip.adoc[Message
 Filter] EIP.
 
 [source,java]

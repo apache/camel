@@ -22,3 +22,7 @@ nav:
 - modules/ROOT/nav.adoc
 - modules/faq/nav.adoc
 - modules/ROOT/references.adoc
+
+asciidoc:
+  attributes:
+    eip-vc: latest@components
