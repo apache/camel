@@ -14,9 +14,9 @@ xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicat
 used in the xref:manual::dsl.adoc[DSL].
 
 For example you could use XPath to create an
-Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
+Predicate in a xref:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a
-xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List].
+xref:eips:recipientList-eip.adoc[Recipient List].
 
 *Streams*
 
