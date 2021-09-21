@@ -65,6 +65,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -914,11 +915,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 sc.reset();
                 return sc;
             }
-            // cache the body and if we could do that replace it as the new body
-            boolean failed = exchange.getException(StreamCacheException.class) != null
-                    || exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, StreamCacheException.class) != null;
+            // check if we somewhere failed due to a stream caching exception
+            Throwable cause = exchange.getException();
+            if (cause == null) {
+                cause = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+            }
+            boolean failed = cause != null && ObjectHelper.getException(StreamCacheException.class, cause) != null;
             if (!failed) {
                 try {
+                    // cache the body and if we could do that replace it as the new body
                     StreamCache sc = strategy.cache(exchange);
                     if (sc != null) {
                         exchange.getIn().setBody(sc);
