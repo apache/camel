@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * component to connect to image recognition service
+ * To identify objects, scenes, and concepts in images on Huawei Cloud
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-image", title = "Huawei Cloud Image Recognition",
              syntax = "hwcloud-image:operation",

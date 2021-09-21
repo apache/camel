@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hwcloud-image",
     "title": "Huawei Cloud Image Recognition",
-    "description": "component to connect to image recognition service",
+    "description": "To identify objects, scenes, and concepts in images on Huawei Cloud",
     "deprecated": false,
     "firstVersion": "3.12.0",
     "label": "cloud,messaging",

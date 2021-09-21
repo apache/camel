@@ -6938,7 +6938,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
-     * component to connect to image recognition service
+     * To identify objects, scenes, and concepts in images on Huawei Cloud
      * 
      * Category: cloud,messaging
      * Since: 3.12
@@ -6959,7 +6959,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
-     * component to connect to image recognition service
+     * To identify objects, scenes, and concepts in images on Huawei Cloud
      * 
      * Category: cloud,messaging
      * Since: 3.12
