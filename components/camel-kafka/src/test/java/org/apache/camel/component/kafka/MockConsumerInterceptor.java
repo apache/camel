@@ -23,13 +23,17 @@ import org.apache.kafka.clients.consumer.ConsumerInterceptor;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MockConsumerInterceptor implements ConsumerInterceptor<String, String> {
-
     public static ArrayList<ConsumerRecords<String, String>> recordsCaptured = new ArrayList<>();
+
+    private static final Logger LOG = LoggerFactory.getLogger(MockConsumerInterceptor.class);
 
     @Override
     public ConsumerRecords<String, String> onConsume(ConsumerRecords<String, String> consumerRecords) {
+        consumerRecords.forEach(r -> LOG.trace("Captured on mock: {}", r.value()));
         recordsCaptured.add(consumerRecords);
         return consumerRecords;
     }
