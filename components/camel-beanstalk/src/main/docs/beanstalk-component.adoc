@@ -97,7 +97,7 @@ Be careful when specifying `release`, as the failed job will immediately
 become available in the same tube and your consumer will try to acquire
 it again. You can `release` and specify _jobDelay_ though.
 
-The beanstalk consumer is a Scheduled xref:{eip-vc}:eips:polling-consumer.adoc[Polling
+The beanstalk consumer is a Scheduled xref:eips:polling-consumer.adoc[Polling
 Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
 see Polling Consumer.

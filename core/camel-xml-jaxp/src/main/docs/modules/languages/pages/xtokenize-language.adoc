@@ -10,7 +10,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xtokenize.a
 *Since Camel {since}*
 
 The XML Tokenize language is a built-in language in `camel-xml-jaxp`, which
-is a truly XML-aware tokenizer that can be used with the xref:{eip-vc}:eips:split-eip.adoc[Split] EIP
+is a truly XML-aware tokenizer that can be used with the xref:eips:split-eip.adoc[Split] EIP
 as the conventional xref:tokenize-language.adoc[Tokenize] to efficiently and
 effectively tokenize XML documents.
 
@@ -25,4 +25,4 @@ include::partial$language-options.adoc[]
 
 == Example
 
-See xref:{eip-vc}:eips:split-eip.adoc[Split] EIP which has examples using the XML Tokenize language.
+See xref:eips:split-eip.adoc[Split] EIP which has examples using the XML Tokenize language.

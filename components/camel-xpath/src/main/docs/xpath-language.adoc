@@ -14,8 +14,8 @@ xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicat
 used in the xref:manual::dsl.adoc[DSL].
 
 For example, you could use XPath to create a
-predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message Filter]
-or as an expression for a xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List].
+predicate in a xref:eips:filter-eip.adoc[Message Filter]
+or as an expression for a xref:eips:recipientList-eip.adoc[Recipient List].
 
 == XPath Language options
 
@@ -82,7 +82,7 @@ exchange:
 |===
 
 CAUTION: `function:properties` and `function:simple` is not supported
-when the return type is a `NodeSet`, such as when using with a xref:{eip-vc}:eips:split-eip.adoc[Split] EIP.
+when the return type is a `NodeSet`, such as when using with a xref:eips:split-eip.adoc[Split] EIP.
 
 Here's an example showing some of these functions in use.
 
@@ -195,7 +195,7 @@ xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
 
 
 Here is a simple example using an XPath expression as a predicate in a
-xref:{eip-vc}:eips:filter-eip.adoc[Message Filter]:
+xref:eips:filter-eip.adoc[Message Filter]:
 
 [source,java]
 ----
