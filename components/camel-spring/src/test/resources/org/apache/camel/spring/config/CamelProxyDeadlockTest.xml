@@ -35,18 +35,13 @@
             <from uri="direct-vm:start"/>
 
             <bean ref="c"/> <!-- This must be proxy "c" to trigger CAMEL-16927 -->
-
-            <to uri="mock:result"/>
         </route>
 
-        <route id="a">
+        <route id="routeBehindProxy">
             <from uri="direct-vm:a"/>
 
             <!-- With CAMEL-16927 unfixed, this route would never be reached -->
-            <setBody>
-                <constant>Hello from Piotr Klimczak</constant>
-            </setBody>
-            <log message="CAMEL-16927 is fixed if you see this"/>
+            <to uri="mock:result"/>
         </route>
     </camelContext>
 

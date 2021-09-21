@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringTestSupport;
@@ -39,12 +39,16 @@ public class CamelProxyDeadlockTest extends SpringTestSupport {
         DefaultProducerTemplate producer = new DefaultProducerTemplate(scc);
         producer.start();
 
-        Object reply = producer.requestBody("direct-vm:start", "Hello!");
+        MockEndpoint result = resolveMandatoryEndpoint(scc, "mock:result", MockEndpoint.class);
+        result.expectedBodiesReceived("Camel");
 
-        assertEquals("Hello from Piotr Klimczak", reply);
+        String reply = (String) producer.requestBody("direct-vm:start", "Camel");
+
+        result.assertIsSatisfied();
+        assertEquals("Camel", reply);
     }
 
     interface TestProcessor {
-        Object test(Exchange exchange);
+        String test(String body);
     }
 }
