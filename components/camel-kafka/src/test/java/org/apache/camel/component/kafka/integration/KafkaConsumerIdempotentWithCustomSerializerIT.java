@@ -29,9 +29,7 @@ import org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@EnabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "true")
 public class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumerIdempotentTestSupport {
 
     public static final String TOPIC = "idempt2";

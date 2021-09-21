@@ -107,9 +107,6 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
         // start a new route in order to rebalance kafka
         context.getRouteController().startRoute("bar");
         toBar.expectedMessageCount(1);
-        synchronized (this) {
-            Thread.sleep(1000);
-        }
 
         toBar.assertIsSatisfied();
 
@@ -119,11 +116,6 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
         context.getRouteController().startRoute("foo");
         to.expectedMessageCount(1);
         to.expectedBodiesReceivedInAnyOrder("message-1");
-
-        // give some time for the route to start again
-        synchronized (this) {
-            Thread.sleep(1000);
-        }
 
         to.assertIsSatisfied(3000);
     }
@@ -146,8 +138,6 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
 
         to.reset();
 
-        //        Thread.sleep(5000);
-
         // Second step: We shut down our route, we expect nothing will be recovered by our route
         context.getRouteController().stopRoute("foo");
         to.expectedMessageCount(0);
@@ -167,11 +157,6 @@ public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
         // we will expect to consume from the latest committed offset e.g from offset 5
         context.getRouteController().startRoute("foo");
         to.expectedMessageCount(3);
-
-        // give some time for the route to start again
-        synchronized (this) {
-            Thread.sleep(1000);
-        }
 
         to.assertIsSatisfied(3000);
     }
