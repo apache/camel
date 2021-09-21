@@ -41,7 +41,6 @@ import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
-import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelRouteControllerDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
@@ -242,9 +241,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "export", type = CamelServiceExporterDefinition.class)
     private List<CamelServiceExporterDefinition> exports;
-
-    @XmlElement(name = "proxy")
-    private List<CamelProxyFactoryDefinition> proxies;
 
     @XmlElement(name = "routeTemplateContextRef")
     private List<RouteTemplateContextRefDefinition> routeTemplateRefs = new ArrayList<>();
@@ -1057,14 +1053,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setDependsOn(String dependsOn) {
         this.dependsOn = dependsOn;
-    }
-
-    public List<CamelProxyFactoryDefinition> getProxies() {
-        return proxies;
-    }
-
-    public void setProxies(List<CamelProxyFactoryDefinition> proxies) {
-        this.proxies = proxies;
     }
 
     public List<CamelServiceExporterDefinition> getExports() {
