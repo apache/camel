@@ -144,3 +144,5 @@ XML DSL
     <to uri="hwcloud-image:tagRecognition?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
 </route>
 ----
+
+include::{page-component-version}@camel-spring-boot::page$huaweicloud-imagerecognition-starter.adoc[]
