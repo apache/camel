@@ -73,8 +73,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private String groupId;
     @UriParam(label = "consumer")
     private String groupInstanceId;
-    @UriParam(label = "consumer", defaultValue = "10")
-    private int consumerStreams = 10;
+
     @UriParam(label = "consumer", defaultValue = "1")
     private int consumersCount = 1;
     @UriParam(label = "consumer", description = "To use a custom KafkaHeaderDeserializer to deserialize kafka headers values")
@@ -628,23 +627,13 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.topic = topic;
     }
 
-    public int getConsumerStreams() {
-        return consumerStreams;
-    }
-
-    /**
-     * Number of concurrent consumers on the consumer
-     */
-    public void setConsumerStreams(int consumerStreams) {
-        this.consumerStreams = consumerStreams;
-    }
-
     public int getConsumersCount() {
         return consumersCount;
     }
 
     /**
-     * The number of consumers that connect to kafka server
+     * The number of consumers that connect to kafka server. Each consumer is run on a separate thread, that retrieves
+     * and process the incoming data.
      */
     public void setConsumersCount(int consumersCount) {
         this.consumersCount = consumersCount;

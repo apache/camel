@@ -367,7 +367,9 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * The number of consumers that connect to kafka server.
+         * The number of consumers that connect to kafka server. Each consumer
+         * is run on a separate thread, that retrieves and process the incoming
+         * data.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -379,21 +381,6 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder consumersCount(int consumersCount) {
             doSetProperty("consumersCount", consumersCount);
-            return this;
-        }
-        /**
-         * Number of concurrent consumers on the consumer.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 10
-         * Group: consumer
-         * 
-         * @param consumerStreams the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder consumerStreams(int consumerStreams) {
-            doSetProperty("consumerStreams", consumerStreams);
             return this;
         }
         /**
@@ -2015,7 +2002,6 @@ public interface KafkaComponentBuilderFactory {
             case "commitTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setCommitTimeoutMs((java.lang.Long) value); return true;
             case "consumerRequestTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setConsumerRequestTimeoutMs((java.lang.Integer) value); return true;
             case "consumersCount": getOrCreateConfiguration((KafkaComponent) component).setConsumersCount((int) value); return true;
-            case "consumerStreams": getOrCreateConfiguration((KafkaComponent) component).setConsumerStreams((int) value); return true;
             case "fetchMaxBytes": getOrCreateConfiguration((KafkaComponent) component).setFetchMaxBytes((java.lang.Integer) value); return true;
             case "fetchMinBytes": getOrCreateConfiguration((KafkaComponent) component).setFetchMinBytes((java.lang.Integer) value); return true;
             case "fetchWaitMaxMs": getOrCreateConfiguration((KafkaComponent) component).setFetchWaitMaxMs((java.lang.Integer) value); return true;

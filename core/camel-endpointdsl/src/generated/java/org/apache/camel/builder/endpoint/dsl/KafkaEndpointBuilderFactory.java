@@ -594,7 +594,9 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of consumers that connect to kafka server.
+         * The number of consumers that connect to kafka server. Each consumer
+         * is run on a separate thread, that retrieves and process the incoming
+         * data.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -609,7 +611,9 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of consumers that connect to kafka server.
+         * The number of consumers that connect to kafka server. Each consumer
+         * is run on a separate thread, that retrieves and process the incoming
+         * data.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -622,37 +626,6 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointConsumerBuilder consumersCount(
                 String consumersCount) {
             doSetProperty("consumersCount", consumersCount);
-            return this;
-        }
-        /**
-         * Number of concurrent consumers on the consumer.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 10
-         * Group: consumer
-         * 
-         * @param consumerStreams the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointConsumerBuilder consumerStreams(int consumerStreams) {
-            doSetProperty("consumerStreams", consumerStreams);
-            return this;
-        }
-        /**
-         * Number of concurrent consumers on the consumer.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 10
-         * Group: consumer
-         * 
-         * @param consumerStreams the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointConsumerBuilder consumerStreams(
-                String consumerStreams) {
-            doSetProperty("consumerStreams", consumerStreams);
             return this;
         }
         /**
