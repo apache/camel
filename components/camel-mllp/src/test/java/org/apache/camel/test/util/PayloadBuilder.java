@@ -19,6 +19,8 @@ package org.apache.camel.test.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.camel.RuntimeCamelException;
+
 public class PayloadBuilder {
     ByteArrayOutputStream builderStream = new ByteArrayOutputStream();
 
@@ -45,7 +47,7 @@ public class PayloadBuilder {
         try {
             return new PayloadBuilder(b).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(byte) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(byte) failure", e);
         }
     }
 
@@ -53,7 +55,7 @@ public class PayloadBuilder {
         try {
             return new PayloadBuilder(b).append(bytes).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(byte) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(byte) failure", e);
         }
     }
 
@@ -61,7 +63,7 @@ public class PayloadBuilder {
         try {
             return new PayloadBuilder(bytes).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(byte[]) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(byte[]) failure", e);
         }
     }
 
@@ -69,7 +71,7 @@ public class PayloadBuilder {
         try {
             return new PayloadBuilder(c).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(char...) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(char...) failure", e);
         }
     }
 
@@ -77,7 +79,7 @@ public class PayloadBuilder {
         try {
             return new PayloadBuilder(c).append(chars).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(char...) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(char...) failure", e);
         }
     }
 
@@ -85,7 +87,7 @@ public class PayloadBuilder {
         try {
             return new PayloadBuilder(chars).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(char...) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(char...) failure", e);
         }
     }
 
@@ -93,7 +95,7 @@ public class PayloadBuilder {
         try {
             return new PayloadBuilder(s).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(String) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(String) failure", e);
         }
     }
 
@@ -101,7 +103,7 @@ public class PayloadBuilder {
         try {
             return new PayloadBuilder(strings).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(String[]) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(String[]) failure", e);
         }
     }
 
@@ -111,7 +113,7 @@ public class PayloadBuilder {
                     .append(s)
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(String) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(String) failure", e);
         }
     }
 
@@ -122,7 +124,7 @@ public class PayloadBuilder {
                     .append(end)
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(char, String, char...) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(char, String, char...) failure", e);
         }
     }
 
@@ -132,7 +134,7 @@ public class PayloadBuilder {
                     .append(bytes)
                     .append(end).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(char, byte[], char...) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(char, byte[], char...) failure", e);
         }
     }
 
@@ -141,7 +143,7 @@ public class PayloadBuilder {
             return new PayloadBuilder(s)
                     .append(end).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(String, char...) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(String, char...) failure", e);
         }
     }
 
@@ -150,7 +152,7 @@ public class PayloadBuilder {
             return new PayloadBuilder(bytes)
                     .append(end).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(byte[], char...) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(byte[], char...) failure", e);
         }
     }
 
@@ -159,7 +161,7 @@ public class PayloadBuilder {
             return new PayloadBuilder(bytes)
                     .append(s).build();
         } catch (IOException e) {
-            throw new RuntimeException("PayloadBuilder.build(byte[], String) failure", e);
+            throw new RuntimeCamelException("PayloadBuilder.build(byte[], String) failure", e);
         }
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.tika;
 
 import java.nio.charset.Charset;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -107,7 +108,7 @@ public class TikaConfiguration {
         try {
             this.tikaConfig = new TikaConfig(tikaConfigUri);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 }

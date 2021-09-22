@@ -22,6 +22,7 @@ import java.util.TimerTask;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.RuntimeCamelException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -140,7 +141,7 @@ public class QuickfixjProducerTest {
                         quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID,
                                 outboundFixMessage);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeCamelException(e);
                     }
                 }
             }, 10);
@@ -181,7 +182,7 @@ public class QuickfixjProducerTest {
                         quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID,
                                 outboundFixMessage);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeCamelException(e);
                     }
                 }
             }, 10);

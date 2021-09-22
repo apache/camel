@@ -21,6 +21,7 @@ import java.security.GeneralSecurityException;
 import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.test.AvailablePortFinder;
@@ -127,7 +128,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
             loader.setKeyPassword("test");
             return loader.load();
         } catch (final GeneralSecurityException | IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
 
     }

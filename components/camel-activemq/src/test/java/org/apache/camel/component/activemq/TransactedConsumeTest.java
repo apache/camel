@@ -36,6 +36,7 @@ import org.apache.activemq.store.kahadb.disk.journal.Journal;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
@@ -125,7 +126,7 @@ public class TransactedConsumeTest extends ActiveMQSpringTestSupport {
         try {
             sendJMSMessageToKickOffRoute();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fill q", e);
+            throw new RuntimeCamelException("Failed to fill q", e);
         }
 
         return super.createApplicationContext();

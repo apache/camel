@@ -25,6 +25,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -53,7 +54,7 @@ public class SolrEndpoint extends DefaultEndpoint {
             String decoded = URLDecoder.decode(zkHost, "UTF-8");
             this.solrConfiguration.setZkHost(decoded);
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 

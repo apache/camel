@@ -17,6 +17,7 @@
 package org.apache.camel.component.reactive.streams.tck;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -51,7 +52,7 @@ public class CamelPublisherConversionVerificationTest extends PublisherVerificat
             builder.addRoutesToCamelContext(context);
             context.start();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
 
         Publisher<Long> pub = CamelReactiveStreams.get(context).fromStream("prod", Long.class);

@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -82,7 +83,7 @@ public final class TelegramTestUtil {
                 TelegramTestUtil.class.getClassLoader().getResourceAsStream(path), StandardCharsets.UTF_8)) {
             return IOHelper.toString(r);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 
@@ -90,7 +91,7 @@ public final class TelegramTestUtil {
         try {
             return new ObjectMapper().writeValueAsString(result);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 }

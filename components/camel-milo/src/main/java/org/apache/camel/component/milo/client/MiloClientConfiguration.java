@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Supplier;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.KeyStoreLoader.Result;
 import org.apache.camel.spi.UriParam;
@@ -369,7 +370,7 @@ public class MiloClientConfiguration implements Cloneable {
             }
 
             if (adding == null) {
-                throw new RuntimeException("Unknown security policy: " + policy);
+                throw new RuntimeCamelException("Unknown security policy: " + policy);
             }
 
             this.allowedSecurityPolicies.add(adding);

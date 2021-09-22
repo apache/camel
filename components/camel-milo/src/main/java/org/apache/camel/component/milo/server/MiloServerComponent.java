@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.server.internal.CamelNamespace;
 import org.apache.camel.spi.Metadata;
@@ -593,7 +594,7 @@ public class MiloServerComponent extends DefaultComponent {
             DefaultTrustListManager trustListManager = new DefaultTrustListManager(new File(defaultCertificateValidator));
             this.certificateValidator = new DefaultCertificateValidator(trustListManager);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 
