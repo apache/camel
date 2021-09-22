@@ -412,7 +412,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             return null;
         }
 
-        // use a routes definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
 
