@@ -1,4 +1,3 @@
-[[Process-Manager]]
 = Process Manager
 
 Camel supports the

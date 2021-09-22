@@ -1,11 +1,10 @@
-[[testcontainers-spring-other]]
 = Testcontainers Spring Component (deprecated)
-:docTitle: Testcontainers Spring
-:shortName: testcontainers-spring
-:artifactId: camel-testcontainers-spring
+:doctitle: Testcontainers Spring
+:shortname: testcontainers-spring
+:artifactid: camel-testcontainers-spring
 :description: Camel unit testing with Spring and testcontainers
 :since: 2.22
-:supportLevel: Stable-deprecated
+:supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/testcontainers-spring.adoc[opts=optional]
 

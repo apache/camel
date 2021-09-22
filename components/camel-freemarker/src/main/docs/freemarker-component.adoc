@@ -1,11 +1,10 @@
-[[freemarker-component]]
 = Freemarker Component
-:docTitle: Freemarker
-:shortName: freemarker
-:artifactId: camel-freemarker
+:doctitle: Freemarker
+:shortname: freemarker
+:artifactid: camel-freemarker
 :description: Transform messages using FreeMarker templates.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/freemarker.adoc[opts=optional]
 

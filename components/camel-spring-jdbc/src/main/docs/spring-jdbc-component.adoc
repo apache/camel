@@ -1,11 +1,10 @@
-[[spring-jdbc-component]]
 = Spring JDBC Component
-:docTitle: Spring JDBC
-:shortName: spring-jdbc
-:artifactId: camel-spring-jdbc
+:doctitle: Spring JDBC
+:shortname: spring-jdbc
+:artifactid: camel-spring-jdbc
 :description: Access databases through SQL and JDBC with Spring Transaction support.
 :since: 3.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-jdbc.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[json-xstream-dataformat]]
 = JSON XStream DataFormat
-:docTitle: JSON XStream
-:shortName: json-xstream
-:artifactId: camel-xstream
+:doctitle: JSON XStream
+:shortname: json-xstream
+:artifactid: camel-xstream
 :description: Marshal POJOs to JSON and back using XStream
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-xstream.adoc[opts=optional]
 
 *Since Camel {since}*

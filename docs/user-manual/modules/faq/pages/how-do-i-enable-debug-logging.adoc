@@ -1,4 +1,3 @@
-[[HowdoIenabledebuglogging-HowdoIenabledebuglogging]]
 = How do I enable debug logging?
 
 Camel uses convention over configuration so sometimes it's useful to turn

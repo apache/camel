@@ -1,11 +1,10 @@
-[[hazelcast-instance-component]]
 = Hazelcast Instance Component
-:docTitle: Hazelcast Instance
-:shortName: hazelcast-instance
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast Instance
+:shortname: hazelcast-instance
+:artifactid: camel-hazelcast
 :description: Consume join/leave events of a cache instance in a Hazelcast cluster.
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-instance.adoc[opts=optional]
 //Manually maintained attributes

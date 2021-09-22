@@ -1,11 +1,10 @@
-[[guava-eventbus-component]]
 = Guava EventBus Component
-:docTitle: Guava EventBus
-:shortName: guava-eventbus
-:artifactId: camel-guava-eventbus
+:doctitle: Guava EventBus
+:shortname: guava-eventbus
+:artifactid: camel-guava-eventbus
 :description: Send and receive messages to/from Guava EventBus.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/guava-eventbus.adoc[opts=optional]
 

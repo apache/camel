@@ -1,11 +1,10 @@
-[[weka-component]]
 = Weka Component
-:docTitle: Weka
-:shortName: weka
-:artifactId: camel-weka
+:doctitle: Weka
+:shortname: weka
+:artifactid: camel-weka
 :description: Perform machine learning tasks using Weka.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/weka.adoc[opts=optional]
 

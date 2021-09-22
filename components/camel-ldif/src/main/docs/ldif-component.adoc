@@ -1,11 +1,10 @@
-[[ldif-component]]
 = LDIF Component
-:docTitle: LDIF
-:shortName: ldif
-:artifactId: camel-ldif
+:doctitle: LDIF
+:shortname: ldif
+:artifactid: camel-ldif
 :description: Perform updates on an LDAP server from an LDIF body content.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ldif.adoc[opts=optional]
 

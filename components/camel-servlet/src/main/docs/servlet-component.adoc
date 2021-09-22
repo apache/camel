@@ -1,11 +1,10 @@
-[[servlet-component]]
 = Servlet Component
-:docTitle: Servlet
-:shortName: servlet
-:artifactId: camel-servlet
+:doctitle: Servlet
+:shortname: servlet
+:artifactid: camel-servlet
 :description: Serve HTTP requests by a Servlet.
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/servlet.adoc[opts=optional]
 

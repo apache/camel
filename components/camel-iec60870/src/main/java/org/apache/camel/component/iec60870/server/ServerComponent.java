@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.iec60870.AbstractIecComponent;
 import org.apache.camel.component.iec60870.ConnectionId;
 import org.apache.camel.component.iec60870.Constants;
@@ -52,7 +53,7 @@ public class ServerComponent extends AbstractIecComponent<ServerConnectionMultip
         try {
             return new ServerConnectionMultiplexor(new ServerInstance(id.getHost(), id.getPort(), options));
         } catch (final UnknownHostException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 

@@ -1,4 +1,3 @@
-[[Registry-Registry]]
 = Registry
 
 The `org.apache.camel.spi.Registry` API is a common API to lookup beans in any kind of runtime platform,

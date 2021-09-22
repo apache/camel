@@ -3,7 +3,6 @@
  */
 package $packageName;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 
 import java.util.List;
@@ -15,7 +14,6 @@ import javax.annotation.Generated;
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
 public class QueryRecordsComplexCalculatedFormula extends AbstractQueryRecordsBase {
 
-    @XStreamImplicit
     private List<ComplexCalculatedFormula> records;
 
     public List<ComplexCalculatedFormula> getRecords() {

@@ -1,11 +1,10 @@
-[[rss-dataformat]]
 = RSS DataFormat
-:docTitle: RSS
-:shortName: rss
-:artifactId: camel-rss
+:doctitle: RSS
+:shortname: rss
+:artifactid: camel-rss
 :description: Transform from ROME SyndFeed Java Objects to XML and vice-versa.
 :since: 2.1
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/rss.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -1,22 +1,16 @@
-[[removeProperty-eip]]
 = Remove Property EIP
-:docTitle: Remove Property
+:doctitle: Remove Property
+:shortname: removeProperty
 :description: Removes a named property from the message exchange
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The RemoveProperty EIP allows you to remove a Property from your exchange.
 
 == Options
 
 // eip options: START
-The Remove Property EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *propertyName* | *Required* Name of property to remove |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Examples

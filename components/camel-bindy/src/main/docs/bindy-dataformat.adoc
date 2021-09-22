@@ -1,11 +1,10 @@
-[[bindy-dataformat]]
 = Bindy DataFormat
-:docTitle: Bindy
-:shortName: bindy
-:artifactId: camel-bindy
+:doctitle: Bindy
+:shortname: bindy
+:artifactid: camel-bindy
 :description: Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/bindy.adoc[opts=optional]
 
 *Since Camel {since}*

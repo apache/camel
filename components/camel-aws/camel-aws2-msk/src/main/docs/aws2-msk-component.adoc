@@ -1,11 +1,10 @@
-[[aws2-msk-component]]
 = AWS Managed Streaming for Apache Kafka (MSK) Component
-:docTitle: AWS Managed Streaming for Apache Kafka (MSK)
-:shortName: aws2-msk
-:artifactId: camel-aws2-msk
+:doctitle: AWS Managed Streaming for Apache Kafka (MSK)
+:shortname: aws2-msk
+:artifactid: camel-aws2-msk
 :description: Manage AWS MSK instances using AWS SDK version 2.x.
 :since: 3.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-msk.adoc[opts=optional]
 //Manually maintained attributes

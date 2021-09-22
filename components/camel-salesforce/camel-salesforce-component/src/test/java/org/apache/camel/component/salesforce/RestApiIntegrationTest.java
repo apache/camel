@@ -19,14 +19,12 @@ package org.apache.camel.component.salesforce;
 import java.io.InputStream;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -52,10 +50,6 @@ import org.apache.camel.component.salesforce.dto.generated.QueryRecordsContact;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Task;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.test.junit5.params.Parameter;
-import org.apache.camel.test.junit5.params.Parameterized;
-import org.apache.camel.test.junit5.params.Parameters;
-import org.apache.camel.test.junit5.params.Test;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
@@ -65,6 +59,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -74,14 +69,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("standalone")
-@Parameterized
 public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     /**
      * Request DTO for Salesforce APEX REST calls. See
      * https://www.salesforce.com/us/developer/docs/apexcode/Content/apex_rest_methods.htm.
      */
-    @XStreamAlias("request")
     public static class MerchandiseRequest extends AbstractDTOBase {
         private Merchandise__c merchandise;
 
@@ -102,7 +95,6 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
      * Response DTO for Salesforce APEX REST calls. See
      * https://www.salesforce.com/us/developer/docs/apexcode/Content/apex_rest_methods.htm.
      */
-    @XStreamAlias("response")
     public static class MerchandiseResponse extends Merchandise__c {
         // XML response contains a type string with the SObject type name
         private String type;
@@ -121,9 +113,6 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     private static final String TEST_DOCUMENT_ID = "Test Document";
 
     private static final AtomicInteger TEST_LINE_ITEM_ID = new AtomicInteger(1);
-
-    @Parameter
-    protected String format;
 
     private String merchandiseId;
     private String accountId;
@@ -682,39 +671,38 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
             public void configure() {
 
                 // testGetVersion
-                from("direct:getVersions").to("salesforce:getVersions?format=" + format);
+                from("direct:getVersions").to("salesforce:getVersions");
 
                 // testGetResources
-                from("direct:getResources").to("salesforce:getResources?format=" + format);
+                from("direct:getResources").to("salesforce:getResources");
 
                 // testGetGlobalObjects
-                from("direct:getGlobalObjects").to("salesforce:getGlobalObjects?format=" + format);
+                from("direct:getGlobalObjects").to("salesforce:getGlobalObjects");
 
                 // testGetBasicInfo
-                from("direct:getBasicInfo").to("salesforce:getBasicInfo?sObjectName=Merchandise__c&format=" + format);
+                from("direct:getBasicInfo").to("salesforce:getBasicInfo?sObjectName=Merchandise__c");
 
                 // testGetDescription
-                from("direct:getDescription").to("salesforce:getDescription?sObjectName=Merchandise__c&format=" + format);
+                from("direct:getDescription").to("salesforce:getDescription?sObjectName=Merchandise__c");
 
                 // testGetSObject
                 from("direct:getSObject")
-                        .to("salesforce:getSObject?sObjectName=Merchandise__c&sObjectFields=Description__c,Price__c&format="
-                            + format);
+                        .to("salesforce:getSObject?sObjectName=Merchandise__c&sObjectFields=Description__c,Price__c");
 
                 // testCreateSObject
-                from("direct:createSObject").to("salesforce:createSObject?sObjectName=Merchandise__c&format=" + format);
+                from("direct:createSObject").to("salesforce:createSObject?sObjectName=Merchandise__c");
 
                 // testUpdateSObject
-                from("direct:updateSObject").to("salesforce:updateSObject?sObjectName=Merchandise__c&format=" + format);
+                from("direct:updateSObject").to("salesforce:updateSObject?sObjectName=Merchandise__c");
 
                 // testDeleteSObject
-                from("direct:deleteSObject").to("salesforce:deleteSObject?sObjectName=Merchandise__c&format=" + format);
+                from("direct:deleteSObject").to("salesforce:deleteSObject?sObjectName=Merchandise__c");
 
-                from("direct:deleteSObjectTaken").to("salesforce:deleteSObject?sObjectName=Task&format=" + format);
+                from("direct:deleteSObjectTaken").to("salesforce:deleteSObject?sObjectName=Task");
 
                 // testGetSObjectWithId
                 from("direct:getSObjectWithId")
-                        .to("salesforce:getSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name&format=" + format);
+                        .to("salesforce:getSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 // testUpsertSObject
                 from("direct:deleteLineItems")
@@ -726,38 +714,38 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 from("direct:createLineItem").to("salesforce:createSObject?sObjectName=Line_Item__c");
 
                 from("direct:upsertSObject")
-                        .to("salesforce:upsertSObject?sObjectName=Line_Item__c&sObjectIdName=Name&format=" + format);
+                        .to("salesforce:upsertSObject?sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 // testDeleteSObjectWithId
                 from("direct:deleteSObjectWithId")
-                        .to("salesforce:deleteSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name&format=" + format);
+                        .to("salesforce:deleteSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 // testGetBlobField
                 from("direct:getBlobField")
-                        .to("salesforce:getBlobField?sObjectName=Document&sObjectBlobFieldName=Body&format=" + format);
+                        .to("salesforce:getBlobField?sObjectName=Document&sObjectBlobFieldName=Body");
 
                 // testQuery
                 from("direct:query")
                         .to("salesforce:query?sObjectQuery=SELECT name from Line_Item__c&sObjectClass="
-                            + QueryRecordsLine_Item__c.class.getName() + "&format=" + format);
+                            + QueryRecordsLine_Item__c.class.getName() + "");
 
                 // testParentRelationshipQuery
                 from("direct:parentRelationshipQuery")
                         .process(exchange -> exchange.getIn()
                                 .setBody("SELECT LastName, Account.Name FROM Contact WHERE Id = '" + contactId + "'"))
-                        .to("salesforce:query?sObjectClass=" + QueryRecordsContact.class.getName() + "&format=" + format);
+                        .to("salesforce:query?sObjectClass=" + QueryRecordsContact.class.getName() + "");
 
                 // testChildRelationshipQuery
                 from("direct:childRelationshipQuery")
                         .process(exchange -> exchange.getIn()
                                 .setBody("SELECT Id, Name, (SELECT Id, LastName FROM Contacts)" + " FROM Account WHERE Id = '"
                                          + accountId + "'"))
-                        .to("salesforce:query?sObjectClass=" + QueryRecordsAccount.class.getName() + "&format=" + format);
+                        .to("salesforce:query?sObjectClass=" + QueryRecordsAccount.class.getName() + "");
 
                 // testQueryAll
                 from("direct:queryAll")
                         .to("salesforce:queryAll?sObjectQuery=SELECT name from Line_Item__c&sObjectClass="
-                            + QueryRecordsLine_Item__c.class.getName() + "&format=" + format);
+                            + QueryRecordsLine_Item__c.class.getName() + "");
 
                 from("direct:querySyncAsync")
                         .to("direct:querySync")
@@ -770,25 +758,19 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                         .to("salesforce:query?rawPayload=true&sObjectQuery=Select Id From Contact  Where Name = 'Sync'");
 
                 // testSearch
-                from("direct:search").to("salesforce:search?sObjectSearch=FIND {Wee}&format=" + format);
+                from("direct:search").to("salesforce:search?sObjectSearch=FIND {Wee}");
 
                 // testApexCall
                 from("direct:apexCallGet")
-                        .to("salesforce:apexCall?apexMethod=GET&apexUrl=Merchandise/{id}&sObjectName=Merchandise__c&format="
-                            + format);
+                        .to("salesforce:apexCall?apexMethod=GET&apexUrl=Merchandise/{id}&sObjectName=Merchandise__c");
 
                 from("direct:apexCallGetWithId")
-                        .to("salesforce:apexCall/Merchandise/?apexMethod=GET&id=dummyId&format=" + format + "&sObjectClass="
+                        .to("salesforce:apexCall/Merchandise/?apexMethod=GET&id=dummyId" + "&sObjectClass="
                             + Merchandise__c.class.getName());
 
-                from("direct:apexCallPatch").to("salesforce:apexCall/Merchandise/?format=" + format
+                from("direct:apexCallPatch").to("salesforce:apexCall/Merchandise/"
                                                 + "&apexMethod=PATCH&sObjectClass=" + MerchandiseResponse.class.getName());
             }
         };
-    }
-
-    @Parameters
-    public static Iterable<String> parameters() {
-        return Arrays.asList("XML", "JSON");
     }
 }

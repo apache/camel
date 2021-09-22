@@ -1,11 +1,10 @@
-[[vertx-http-component]]
 = Vert.x HTTP Client Component
-:docTitle: Vert.x HTTP Client
-:shortName: vertx-http
-:artifactId: camel-vertx-http
+:doctitle: Vert.x HTTP Client
+:shortname: vertx-http
+:artifactid: camel-vertx-http
 :description: Send requests to external HTTP servers using Vert.x
 :since: 3.5
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-http.adoc[opts=optional]
 

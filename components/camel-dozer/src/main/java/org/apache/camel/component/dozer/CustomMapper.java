@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
 
 /**
@@ -99,7 +100,7 @@ public class CustomMapper extends BaseConverter {
                 String prm = prms[ndx + 2];
                 String[] parts = prm.split("=");
                 if (parts.length != 2) {
-                    throw new RuntimeException("Value missing for parameter " + prm);
+                    throw new RuntimeCamelException("Value missing for parameter " + prm);
                 }
                 prmTypesAndValues[ndx][0] = parts[0];
                 prmTypesAndValues[ndx][1] = parts[1];
@@ -123,12 +124,12 @@ public class CustomMapper extends BaseConverter {
                 method = selectMethod(customClass, sourceClass);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load custom function", e);
+            throw new RuntimeCamelException("Failed to load custom function", e);
         }
 
         // Verify that we found a matching method
         if (method == null) {
-            throw new RuntimeException("No eligible custom function methods in " + className);
+            throw new RuntimeCamelException("No eligible custom function methods in " + className);
         }
 
         // Invoke the custom mapping method
@@ -139,7 +140,7 @@ public class CustomMapper extends BaseConverter {
                 return method.invoke(customObj, source);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error while invoking custom function", e);
+            throw new RuntimeCamelException("Error while invoking custom function", e);
         }
     }
 

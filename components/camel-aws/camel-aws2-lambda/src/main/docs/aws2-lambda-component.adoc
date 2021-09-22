@@ -1,11 +1,10 @@
-[[aws2-lambda-component]]
 = AWS Lambda Component
-:docTitle: AWS Lambda
-:shortName: aws2-lambda
-:artifactId: camel-aws2-lambda
+:doctitle: AWS Lambda
+:shortname: aws2-lambda
+:artifactid: camel-aws2-lambda
 :description: Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
 :since: 3.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-lambda.adoc[opts=optional]
 //Manually maintained attributes

@@ -35,6 +35,7 @@ import org.apache.activemq.broker.ProducerBrokerExchange;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ConnectionInfo;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
@@ -121,7 +122,7 @@ public class JmsBridge extends ActiveMQSpringTestSupport {
                     org.apache.activemq.command.Message messageSend)
                     throws Exception {
                 if (sendCount.incrementAndGet() <= errorLimit) {
-                    throw new RuntimeException("You need to try send " + errorLimit + " times!");
+                    throw new RuntimeCamelException("You need to try send " + errorLimit + " times!");
                 }
                 super.send(producerExchange, messageSend);
             }

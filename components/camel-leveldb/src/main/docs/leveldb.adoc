@@ -1,11 +1,10 @@
-[[leveldb-other]]
 = LevelDB Component
-:docTitle: LevelDB
-:shortName: leveldb
-:artifactId: camel-leveldb
+:doctitle: LevelDB
+:shortname: leveldb
+:artifactid: camel-leveldb
 :description: Using LevelDB as persistent EIP store
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/leveldb.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -1,11 +1,10 @@
-[[jacksonxml-dataformat]]
 = JacksonXML DataFormat
-:docTitle: JacksonXML
-:shortName: jacksonxml
-:artifactId: camel-jacksonxml
+:doctitle: JacksonXML
+:shortname: jacksonxml
+:artifactid: camel-jacksonxml
 :description: Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/jacksonxml.adoc[opts=optional]
 
 *Since Camel {since}*

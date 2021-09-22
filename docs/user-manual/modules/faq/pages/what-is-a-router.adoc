@@ -1,4 +1,3 @@
-[[Whatisarouter-Whatisarouter]]
 = What is a router?
 
 We often talk about that Camel is a mediation and routing framework; so

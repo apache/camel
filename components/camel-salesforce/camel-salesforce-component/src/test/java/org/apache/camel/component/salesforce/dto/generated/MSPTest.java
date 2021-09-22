@@ -23,9 +23,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -34,14 +31,12 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
  * Sample POJO for MSP tests.
  */
 //CHECKSTYLE:OFF
-@XStreamAlias("MSPTest")
 public class MSPTest extends AbstractSObjectBase {
 
     public MSPTest() {
         getAttributes().setType("MSPTest");
     }
 
-    @XStreamConverter(MultiSelectPicklistConverter.class)
     private MSPEnum[] MspField;
 
     @JsonProperty("MspField")

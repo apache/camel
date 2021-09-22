@@ -1,11 +1,10 @@
-[[spring-batch-component]]
 = Spring Batch Component
-:docTitle: Spring Batch
-:shortName: spring-batch
-:artifactId: camel-spring-batch
+:doctitle: Spring Batch
+:shortname: spring-batch
+:artifactid: camel-spring-batch
 :description: Send messages to Spring Batch for further processing.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-batch.adoc[opts=optional]
 //Manually maintained attributes

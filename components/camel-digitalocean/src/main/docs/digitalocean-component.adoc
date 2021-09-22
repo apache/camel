@@ -1,11 +1,10 @@
-[[digitalocean-component]]
 = DigitalOcean Component
-:docTitle: DigitalOcean
-:shortName: digitalocean
-:artifactId: camel-digitalocean
+:doctitle: DigitalOcean
+:shortname: digitalocean
+:artifactid: camel-digitalocean
 :description: Manage Droplets and resources within the DigitalOcean cloud.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/digitalocean.adoc[opts=optional]
 

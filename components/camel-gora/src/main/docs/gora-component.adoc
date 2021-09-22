@@ -1,11 +1,10 @@
-[[gora-component]]
 = Gora Component
-:docTitle: Gora
-:shortName: gora
-:artifactId: camel-gora
+:doctitle: Gora
+:shortname: gora
+:artifactid: camel-gora
 :description: Access NoSQL databases using the Apache Gora framework.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/gora.adoc[opts=optional]
 

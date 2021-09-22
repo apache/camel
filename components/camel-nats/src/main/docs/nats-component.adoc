@@ -1,11 +1,10 @@
-[[nats-component]]
 = Nats Component
-:docTitle: Nats
-:shortName: nats
-:artifactId: camel-nats
+:doctitle: Nats
+:shortname: nats
+:artifactid: camel-nats
 :description: Send and receive messages from NATS messaging system.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nats.adoc[opts=optional]
 

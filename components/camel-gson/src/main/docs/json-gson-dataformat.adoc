@@ -1,11 +1,10 @@
-[[json-gson-dataformat]]
 = JSON Gson DataFormat
-:docTitle: JSON Gson
-:shortName: json-gson
-:artifactId: camel-gson
+:doctitle: JSON Gson
+:shortname: json-gson
+:artifactid: camel-gson
 :description: Marshal POJOs to JSON and back using Gson
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-gson.adoc[opts=optional]
 
 *Since Camel {since}*

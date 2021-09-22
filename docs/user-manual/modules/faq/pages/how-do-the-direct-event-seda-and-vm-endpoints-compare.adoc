@@ -1,4 +1,3 @@
-[[Howdothedirecteventsedaandvmendpointscompare-Howdothedirecteventsedaandvmendpointscompare]]
 = How do the `direct`, `event`, `seda`, and `vm` endpoints compare?
 
 * xref:components::vm-component.adoc[VM] and xref:components::seda-component.adoc[SEDA] endpoints are basically the

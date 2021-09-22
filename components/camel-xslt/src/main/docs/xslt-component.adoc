@@ -1,11 +1,10 @@
-[[xslt-component]]
 = XSLT Component
-:docTitle: XSLT
-:shortName: xslt
-:artifactId: camel-xslt
+:doctitle: XSLT
+:shortname: xslt
+:artifactid: camel-xslt
 :description: Transforms XML payload using an XSLT template.
 :since: 1.3
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xslt.adoc[opts=optional]

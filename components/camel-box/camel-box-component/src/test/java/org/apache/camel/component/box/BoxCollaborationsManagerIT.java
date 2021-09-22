@@ -26,6 +26,7 @@ import com.box.sdk.BoxCollaboration;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxUser;
 import com.box.sdk.CreateUserParams;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxCollaborationsManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
@@ -102,7 +103,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
             assertNotNull(result, "addFolderCollaboration result");
             LOG.debug("addFolderCollaboration: " + result);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
         } finally {
             if (user != null) {

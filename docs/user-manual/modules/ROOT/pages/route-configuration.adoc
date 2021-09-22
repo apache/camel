@@ -1,4 +1,3 @@
-[[RouteConfiguration]]
 = Route Configuration
 
 Camel 3.12 introduces route configuration which is used for separating configurations

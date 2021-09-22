@@ -21,10 +21,8 @@ import java.util.Iterator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult.Result;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,28 +50,6 @@ public class ApprovalResultTest {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final ApprovalResult results = mapper.readerFor(ApprovalResult.class).readValue(json);
-
-        assertResponseReadCorrectly(results);
-    }
-
-    @Test
-    public void shouldDeserializeFromXml() throws InstantiationException, IllegalAccessException {
-        final ApprovalResult results = new ApprovalResult();
-
-        final XStream xStream = XStreamUtils.createXStream(ApprovalResult.class);
-
-        xStream.fromXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"//
-                        + "<ProcessApprovalResult>"//
-                        + "<ProcessApprovalResult>"//
-                        + "<actorIds>0050Y000000u5NOQAY</actorIds>"//
-                        + "<entityId>0010Y000005BYrZQAW</entityId>"//
-                        + "<instanceId>04g0Y000000PL53QAG</instanceId>"//
-                        + "<instanceStatus>Pending</instanceStatus>"//
-                        + "<newWorkitemIds>04i0Y000000L0fkQAC</newWorkitemIds>"//
-                        + "<success>true</success>"//
-                        + "</ProcessApprovalResult>"//
-                        + "</ProcessApprovalResult>",
-                results);
 
         assertResponseReadCorrectly(results);
     }

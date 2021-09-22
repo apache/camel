@@ -1,11 +1,10 @@
-[[flink-component]]
 = Flink Component
-:docTitle: Flink
-:shortName: flink
-:artifactId: camel-flink
+:doctitle: Flink
+:shortname: flink
+:artifactid: camel-flink
 :description: Send DataSet jobs to an Apache Flink cluster.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/flink.adoc[opts=optional]
 

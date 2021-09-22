@@ -1,11 +1,10 @@
-[[slack-component]]
 = Slack Component
-:docTitle: Slack
-:shortName: slack
-:artifactId: camel-slack
+:doctitle: Slack
+:shortname: slack
+:artifactid: camel-slack
 :description: Send and receive messages to/from Slack.
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/slack.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[google-bigquery-component]]
 = Google BigQuery Component
-:docTitle: Google BigQuery
-:shortName: google-bigquery
-:artifactId: camel-google-bigquery
+:doctitle: Google BigQuery
+:shortname: google-bigquery
+:artifactid: camel-google-bigquery
 :description: Google BigQuery data warehouse for analytics.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-bigquery.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[kubernetes-job-component]]
 = Kubernetes Job Component
-:docTitle: Kubernetes Job
-:shortName: kubernetes-job
-:artifactId: camel-kubernetes
+:doctitle: Kubernetes Job
+:shortname: kubernetes-job
+:artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Jobs.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-job.adoc[opts=optional]
 //Manually maintained attributes

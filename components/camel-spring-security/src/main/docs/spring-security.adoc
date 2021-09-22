@@ -1,11 +1,10 @@
-[[spring-security-other]]
 = Spring Security Component
-:docTitle: Spring Security
-:shortName: spring-security
-:artifactId: camel-spring-security
+:doctitle: Spring Security
+:shortname: spring-security
+:artifactid: camel-spring-security
 :description: Security using Spring Security
 :since: 2.3
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-security.adoc[opts=optional]
 
 *Since Camel {since}*

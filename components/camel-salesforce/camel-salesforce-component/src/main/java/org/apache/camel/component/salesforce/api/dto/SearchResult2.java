@@ -19,16 +19,12 @@ package org.apache.camel.component.salesforce.api.dto;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * DTO for Salesforce SOSL Search result record for v37 and later
  */
-@XStreamAlias("SearchResultWithMetadata")
 public final class SearchResult2 extends AbstractDTOBase {
 
-    @XStreamImplicit(itemFieldName = "searchRecords")
     private List<SearchResult> searchRecords;
 
     @JsonProperty("searchRecords")

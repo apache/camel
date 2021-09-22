@@ -1,11 +1,10 @@
-[[hazelcast-ringbuffer-component]]
 = Hazelcast Ringbuffer Component
-:docTitle: Hazelcast Ringbuffer
-:shortName: hazelcast-ringbuffer
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast Ringbuffer
+:shortname: hazelcast-ringbuffer
+:artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed ringbuffer.
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-ringbuffer.adoc[opts=optional]
 //Manually maintained attributes

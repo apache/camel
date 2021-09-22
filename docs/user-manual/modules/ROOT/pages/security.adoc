@@ -1,4 +1,3 @@
-[[Security-Security]]
 = Security
 
 Camel offers several forms & levels of security capabilities that can be

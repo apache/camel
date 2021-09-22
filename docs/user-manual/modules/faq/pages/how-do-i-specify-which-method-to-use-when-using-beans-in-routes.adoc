@@ -1,4 +1,3 @@
-[[HodoIspecifywhichmethodtousewhenusingbeansinroutes-HodoIspecifywhichmethodtousewhenusingbeansinroutes]]
 = Ho do I specify which method to use when using beans in routes?
 
 See xref:components::bean-component.adoc[Bean], xref:ROOT:bean-integration.adoc[Bean Integration]

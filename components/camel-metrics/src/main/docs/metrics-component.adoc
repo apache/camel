@@ -1,11 +1,10 @@
-[[metrics-component]]
 = Metrics Component
-:docTitle: Metrics
-:shortName: metrics
-:artifactId: camel-metrics
+:doctitle: Metrics
+:shortname: metrics
+:artifactid: camel-metrics
 :description: Collect various metrics directly from Camel routes using the DropWizard metrics library.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/metrics.adoc[opts=optional]
 

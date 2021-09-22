@@ -25,20 +25,13 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
-## add imports for XStreamConverter and PicklistEnumConverter if needed
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-#if ( ($hasPicklists && !$useStringsForPicklists) || $hasMultiSelectPicklists )
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-#end
-
 #if ( $hasPicklists && !$useStringsForPicklists )
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 #end
 #if ( $hasMultiSelectPicklists )
 #if ( $useStringsForPicklists )
-import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistSerializer;
 #else
@@ -69,7 +62,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * Salesforce DTO for SObject $desc.Name
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-@XStreamAlias("$desc.Name")
 public class $desc.Name extends AbstractDescribedSObjectBase {
 
     public ${desc.Name}() {
@@ -87,22 +79,6 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
 #set ( $propertyName = $fieldName + "Url" )
 #else
 #set ( $propertyName = $fieldName )
-#end
-## add a converter annotation if needed
-#if ( !$useStringsForPicklists && !$isMultiSelectPicklist && $utility.isPicklist($field) )
-    @XStreamConverter(PicklistEnumConverter.class)
-#elseif ( $isMultiSelectPicklist )
-#if ( $useStringsForPicklists )
-    @XStreamConverter(StringMultiSelectPicklistConverter.class)
-#else
-    @XStreamConverter(MultiSelectPicklistConverter.class)
-#end
-#else
-## add an alias for blob field url if needed
-#if ( $propertyName != $fieldName )
-    // blob field url, use getBlobField to get the content
-    @XStreamAlias("$fieldName")
-#end
 #end
     private $fieldType $propertyName;
 
@@ -131,7 +107,7 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
     }
 
 #if ( $field.type == "reference" && $utility.notNull($field.relationshipName)
-    && $utility.hasDescription($field.getReferenceTo().get(0)) ) ## IS LOOKUP $hasDescription
+    && $utility.hasDescription($field.getReferenceTo().get(0)) )## IS LOOKUP $hasDescription
 #if ( $field.getReferenceTo().size() > 1)
 #set ( $propertyType = "AbstractDescribedSObjectBase")
 #set ( $needed = true )
@@ -143,7 +119,6 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
 #set( $fieldName = $field.getName() )
 #set( $jsonPropertyName = $field.relationshipName )
 #set( $lookupObjectType = $reference )
-    @XStreamAlias("${jsonPropertyName}")
     private $propertyType $jsonPropertyName;
 
     @JsonProperty("${jsonPropertyName}")

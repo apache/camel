@@ -30,9 +30,6 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -57,8 +54,6 @@ import static java.util.Objects.requireNonNull;
  * @see SObjectTree
  * @see RestError
  */
-@XStreamAlias("records")
-@XStreamConverter(SObjectNodeXStreamConverter.class)
 public final class SObjectNode implements Serializable {
 
     private static final String CHILD_PARAM = "child";
@@ -74,7 +69,6 @@ public final class SObjectNode implements Serializable {
 
     private List<RestError> errors;
 
-    @XStreamOmitField
     private final ReferenceGenerator referenceGenerator;
 
     SObjectNode(final SObjectTree tree, final AbstractSObjectBase object) {

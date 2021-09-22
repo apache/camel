@@ -1,11 +1,10 @@
-[[service-component]]
 = Service Component
-:docTitle: Service
-:shortName: service
-:artifactId: camel-service
+:doctitle: Service
+:shortname: service
+:artifactid: camel-service
 :description: Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.
 :since: 2.22
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/service.adoc[opts=optional]
 

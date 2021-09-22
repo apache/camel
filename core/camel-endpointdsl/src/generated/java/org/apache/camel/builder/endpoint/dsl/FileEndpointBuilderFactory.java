@@ -772,7 +772,7 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
-         * which by default use MemoryMessageIdRepository if none is specified
+         * which by default use MemoryIdempotentRepository if none is specified
          * and idempotent is true.
          * 
          * The option is a:
@@ -791,7 +791,7 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
-         * which by default use MemoryMessageIdRepository if none is specified
+         * which by default use MemoryIdempotentRepository if none is specified
          * and idempotent is true.
          * 
          * The option will be converted to a

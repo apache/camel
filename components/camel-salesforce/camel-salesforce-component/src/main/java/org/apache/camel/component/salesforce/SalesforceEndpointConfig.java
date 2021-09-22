@@ -253,7 +253,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON
+     * Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. As of Camel 3.12, this
+     * option only applies to the Raw operation.
      */
     public void setFormat(PayloadFormat format) {
         this.format = format;

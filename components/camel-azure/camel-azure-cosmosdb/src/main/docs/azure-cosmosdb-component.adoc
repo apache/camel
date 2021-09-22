@@ -1,11 +1,10 @@
-[[azure-cosmosdb-component]]
 = Azure CosmosDB Component
-:docTitle: Azure CosmosDB
-:shortName: azure-cosmosdb
-:artifactId: camel-azure-cosmosdb
+:doctitle: Azure CosmosDB
+:shortname: azure-cosmosdb
+:artifactid: camel-azure-cosmosdb
 :description: To read and write records to the CosmosDB database on Azure cloud platform.
 :since: 3.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-cosmosdb.adoc[opts=optional]
 //Manually maintained attributes

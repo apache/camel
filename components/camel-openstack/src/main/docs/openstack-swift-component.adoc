@@ -1,11 +1,10 @@
-[[openstack-swift-component]]
 = OpenStack Swift Component
-:docTitle: OpenStack Swift
-:shortName: openstack-swift
-:artifactId: camel-openstack
+:doctitle: OpenStack Swift
+:shortname: openstack-swift
+:artifactid: camel-openstack
 :description: Access OpenStack Swift object/blob store.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-swift.adoc[opts=optional]
 //Manually maintained attributes

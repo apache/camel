@@ -1,11 +1,10 @@
-[[aws-xray-other]]
 = AWS XRay Component
-:docTitle: AWS XRay
-:shortName: aws-xray
-:artifactId: camel-aws-xray
+:doctitle: AWS XRay
+:shortname: aws-xray
+:artifactid: camel-aws-xray
 :description: Distributed tracing using AWS XRay
 :since: 2.21
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/aws-xray.adoc[opts=optional]
 
 *Since Camel {since}*

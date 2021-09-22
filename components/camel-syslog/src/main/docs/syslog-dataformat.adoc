@@ -1,11 +1,10 @@
-[[syslog-dataformat]]
 = Syslog DataFormat
-:docTitle: Syslog
-:shortName: syslog
-:artifactId: camel-syslog
+:doctitle: Syslog
+:shortname: syslog
+:artifactid: camel-syslog
 :description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
 :since: 2.6
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/syslog.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -1,11 +1,10 @@
-[[attachments-other]]
 = Attachments Component
-:docTitle: Attachments
-:shortName: attachments
-:artifactId: camel-attachments
+:doctitle: Attachments
+:shortname: attachments
+:artifactid: camel-attachments
 :description: Support for attachments on Camel messages
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/attachments.adoc[opts=optional]
 
 *Since Camel {since}*

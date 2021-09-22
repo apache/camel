@@ -1,11 +1,10 @@
-[[smpp-component]]
 = SMPP Component
-:docTitle: SMPP
-:shortName: smpp
-:artifactId: camel-smpp
+:doctitle: SMPP
+:shortname: smpp
+:artifactid: camel-smpp
 :description: Send and receive SMS messages using a SMSC (Short Message Service Center).
 :since: 2.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/smpp.adoc[opts=optional]
 

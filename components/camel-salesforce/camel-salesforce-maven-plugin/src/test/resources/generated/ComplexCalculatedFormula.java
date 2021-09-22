@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
@@ -26,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Salesforce DTO for SObject ComplexCalculatedFormula
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-@XStreamAlias("ComplexCalculatedFormula")
 public class ComplexCalculatedFormula extends AbstractDescribedSObjectBase {
 
     public ComplexCalculatedFormula() {

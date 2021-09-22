@@ -1,11 +1,10 @@
-[[hazelcast-replicatedmap-component]]
 = Hazelcast Replicated Map Component
-:docTitle: Hazelcast Replicated Map
-:shortName: hazelcast-replicatedmap
-:artifactId: camel-hazelcast
+:doctitle: Hazelcast Replicated Map
+:shortname: hazelcast-replicatedmap
+:artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast replicated map.
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hazelcast-replicatedmap.adoc[opts=optional]
 //Manually maintained attributes

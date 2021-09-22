@@ -1,4 +1,3 @@
-[[HowcanIgetthesourcecode-HowcanIgetthesourcecode]]
 = How can I get the source code?
 
 The source code is at https://github.com/apache/camel/ 

@@ -1,4 +1,3 @@
-[[HowdoIuseURIswithparametersinXML-HowdoIuseURIswithparametersinXML]]
 = How do I use URIs with parameters in XML?
 
 If you try and use one of the Camel xref:ROOT:uris.adoc[URIs] in an

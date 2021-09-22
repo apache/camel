@@ -1,4 +1,3 @@
-[[BatchConsumer-BatchConsumer]]
 = Batch Consumer
 
 Batch Consumer is basically a xref:{eip-vc}:eips:polling-consumer.adoc[Polling

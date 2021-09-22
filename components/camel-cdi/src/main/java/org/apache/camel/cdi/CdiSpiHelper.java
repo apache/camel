@@ -45,6 +45,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.Nonbinding;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 
 import static java.security.AccessController.doPrivileged;
 import static java.util.Comparator.comparing;
@@ -216,9 +217,10 @@ final class CdiSpiHelper {
                                 joiner.add(method.getName() + "=" + method.invoke(annotation).toString());
                             } catch (NullPointerException | IllegalArgumentException | IllegalAccessException
                                      | InvocationTargetException cause) {
-                                throw new RuntimeException(
+                                throw new RuntimeCamelException(
                                         "Error while accessing member [" + method.getName() + "]"
-                                                           + " of annotation [" + annotation.annotationType().getName() + "]",
+                                                                + " of annotation [" + annotation.annotationType().getName()
+                                                                + "]",
                                         cause);
                             }
                         },

@@ -1,11 +1,10 @@
-[[spring-javaconfig-other]]
 = Spring Java Configuration Component (deprecated)
-:docTitle: Spring Java Configuration
-:shortName: spring-javaconfig
-:artifactId: camel-spring-javaconfig
+:doctitle: Spring Java Configuration
+:shortname: spring-javaconfig
+:artifactid: camel-spring-javaconfig
 :description: Using Camel with Spring Java Configuration
 :since: 2.0
-:supportLevel: Stable-deprecated
+:supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-javaconfig.adoc[opts=optional]
 

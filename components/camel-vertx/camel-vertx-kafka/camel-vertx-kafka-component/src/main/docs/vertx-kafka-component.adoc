@@ -1,11 +1,10 @@
-[[vertx-kafka-component]]
 = Vert.x Kafka Component
-:docTitle: Vert.x Kafka
-:shortName: vertx-kafka
-:artifactId: camel-vertx-kafka
+:doctitle: Vert.x Kafka
+:shortname: vertx-kafka
+:artifactid: camel-vertx-kafka
 :description: Sent and receive messages to/from an Apache Kafka broker using vert.x Kafka client
 :since: 3.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-kafka.adoc[opts=optional]
 

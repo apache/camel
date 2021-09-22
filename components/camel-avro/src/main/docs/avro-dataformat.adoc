@@ -1,11 +1,10 @@
-[[avro-dataformat]]
 = Avro DataFormat
-:docTitle: Avro
-:shortName: avro
-:artifactId: camel-avro
+:doctitle: Avro
+:shortname: avro
+:artifactid: camel-avro
 :description: Serialize and deserialize messages using Apache Avro binary data format.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro.adoc[opts=optional]
 
 *Since Camel {since}*

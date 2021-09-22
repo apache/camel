@@ -1,4 +1,3 @@
-[[Delayer-Delayer]]
 = Delayer
 
 The Delayer is used for slowing processing of messages down.

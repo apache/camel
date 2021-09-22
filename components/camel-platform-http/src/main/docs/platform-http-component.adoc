@@ -1,11 +1,10 @@
-[[platform-http-component]]
 = Platform HTTP Component
-:docTitle: Platform HTTP
-:shortName: platform-http
-:artifactId: camel-platform-http
+:doctitle: Platform HTTP
+:shortname: platform-http
+:artifactid: camel-platform-http
 :description: Expose HTTP endpoints using the HTTP server available in the current platform.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/platform-http.adoc[opts=optional]
 

@@ -1,4 +1,3 @@
-[[Competing-Consumers]]
 = Competing Consumers
 
 Camel supports the

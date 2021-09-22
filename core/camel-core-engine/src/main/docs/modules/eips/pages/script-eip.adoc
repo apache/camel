@@ -1,9 +1,9 @@
-[[script-eip]]
 = Script EIP
-:docTitle: Script
+:doctitle: Script
+:shortname: script
 :description: Executes a script from a language which does not change the message body.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 Is used to execute a script which does not change the message (by default).
 This is useful when you need to invoke some logic that are not in Java code such as JavaScript,
@@ -15,7 +15,7 @@ If the return value should be used as a changed message body then use xref:messa
 == Options
 
 // eip options: START
-The Script EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Samples

@@ -1,4 +1,3 @@
-[[CamelContextAutoConfiguration-CamelContextAutoConfiguration]]
 = CamelContext Auto Configuration
 
 The xref:camelcontext.adoc[CamelContext] is autoconfigured when running Camel with either

@@ -21,6 +21,7 @@ import java.util.UUID;
 import io.atomix.catalyst.transport.Address;
 import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
@@ -50,7 +51,7 @@ public final class AtomixClientClusteredRoutePolicyFactoryMain {
                     context.addService(service);
                     context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeCamelException(e);
                 }
             }
         });

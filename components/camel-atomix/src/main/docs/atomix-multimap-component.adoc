@@ -1,11 +1,10 @@
-[[atomix-multimap-component]]
 = Atomix MultiMap Component
-:docTitle: Atomix MultiMap
-:shortName: atomix-multimap
-:artifactId: camel-atomix
+:doctitle: Atomix MultiMap
+:shortname: atomix-multimap
+:artifactid: camel-atomix
 :description: Access Atomix's distributed multi map.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-multimap.adoc[opts=optional]
 

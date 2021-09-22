@@ -1,4 +1,3 @@
-[[Selective-Consumer]]
 = Selective Consumer
 
 Camel supports the

@@ -1,11 +1,10 @@
-[[grpc-component]]
 = gRPC Component
-:docTitle: gRPC
-:shortName: grpc
-:artifactId: camel-grpc
+:doctitle: gRPC
+:shortname: grpc
+:artifactid: camel-grpc
 :description: Expose gRPC endpoints and access external gRPC endpoints.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/grpc.adoc[opts=optional]
 

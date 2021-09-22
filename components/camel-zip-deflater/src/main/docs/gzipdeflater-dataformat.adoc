@@ -1,11 +1,10 @@
-[[gzipdeflater-dataformat]]
 = GZip Deflater DataFormat
-:docTitle: GZip Deflater
-:shortName: gzipdeflater
-:artifactId: camel-zip-deflater
+:doctitle: GZip Deflater
+:shortname: gzipdeflater
+:artifactid: camel-zip-deflater
 :description: Compress and decompress messages using java.util.zip.GZIPStream.
 :since: 2.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/gzipdeflater.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 public class SimpleNotificationProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleNotificationProducer.class);
     private SmnClient smnClient;
-    private ClientConfigurations clientConfigurations;
 
     public SimpleNotificationProducer(SimpleNotificationEndpoint endpoint) {
         super(endpoint);
@@ -48,10 +47,15 @@ public class SimpleNotificationProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        validateAndInitializeSmnClient((SimpleNotificationEndpoint) super.getEndpoint());
     }
 
     public void process(Exchange exchange) throws Exception {
+
+        ClientConfigurations clientConfigurations = new ClientConfigurations();
+
+        if (smnClient == null) {
+            validateAndInitializeSmnClient((SimpleNotificationEndpoint) super.getEndpoint(), clientConfigurations);
+        }
 
         String service = ((SimpleNotificationEndpoint) super.getEndpoint()).getSmnService();
 
@@ -61,7 +65,8 @@ public class SimpleNotificationProducer extends DefaultProducer {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using message publishing service");
                     }
-                    performPublishMessageServiceOperations((SimpleNotificationEndpoint) super.getEndpoint(), exchange);
+                    performPublishMessageServiceOperations((SimpleNotificationEndpoint) super.getEndpoint(), exchange,
+                            clientConfigurations);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Completed publishing message");
                     }
@@ -82,15 +87,19 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     /**
      * Publish message service operations
-     *
+     * 
      * @param endpoint
      * @param exchange
+     * @param clientConfigurations
      */
-    private void performPublishMessageServiceOperations(SimpleNotificationEndpoint endpoint, Exchange exchange) {
+    private void performPublishMessageServiceOperations(
+            SimpleNotificationEndpoint endpoint,
+            Exchange exchange,
+            ClientConfigurations clientConfigurations) {
         PublishMessageResponse response;
 
         PublishMessageRequestBody apiBody;
-        this.clientConfigurations = validateServiceConfigurations(endpoint, exchange);
+        validateServiceConfigurations(endpoint, exchange, clientConfigurations);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Checking operation name");
@@ -156,10 +165,13 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     /**
      * validation and initialization of SmnClient object
-     *
+     * 
      * @param simpleNotificationEndpoint
+     * @param clientConfigurations
      */
-    private void validateAndInitializeSmnClient(SimpleNotificationEndpoint simpleNotificationEndpoint) {
+    private void validateAndInitializeSmnClient(
+            SimpleNotificationEndpoint simpleNotificationEndpoint,
+            ClientConfigurations clientConfigurations) {
         if (simpleNotificationEndpoint.getSmnClient() != null) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn(
@@ -168,7 +180,6 @@ public class SimpleNotificationProducer extends DefaultProducer {
             this.smnClient = simpleNotificationEndpoint.getSmnClient();
             return;
         }
-        this.clientConfigurations = new ClientConfigurations();
 
         //checking for cloud SK (secret key)
         if (ObjectHelper.isEmpty(simpleNotificationEndpoint.getSecretKey()) &&
@@ -292,15 +303,15 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     /**
      * validation of all user inputs before attempting to invoke a service operation
-     *
-     * @param  simpleNotificationEndpoint
-     * @param  exchange
-     * @return
+     * 
+     * @param simpleNotificationEndpoint
+     * @param exchange
+     * @param clientConfigurations
      */
-    private ClientConfigurations validateServiceConfigurations(
-            SimpleNotificationEndpoint simpleNotificationEndpoint, Exchange exchange) {
+    private void validateServiceConfigurations(
+            SimpleNotificationEndpoint simpleNotificationEndpoint, Exchange exchange,
+            ClientConfigurations clientConfigurations) {
 
-        ClientConfigurations clientConfigurations = new ClientConfigurations();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Inspecting exchange body");
         }
@@ -369,7 +380,5 @@ public class SimpleNotificationProducer extends DefaultProducer {
         } else {
             clientConfigurations.setMessageTtl((int) exchange.getProperty(SmnProperties.NOTIFICATION_TTL));
         }
-
-        return clientConfigurations;
     }
 }

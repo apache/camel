@@ -1,11 +1,10 @@
-[[yammer-component]]
 = Yammer Component
-:docTitle: Yammer
-:shortName: yammer
-:artifactId: camel-yammer
+:doctitle: Yammer
+:shortname: yammer
+:artifactid: camel-yammer
 :description: Interact with the Yammer enterprise social network.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/yammer.adoc[opts=optional]
 

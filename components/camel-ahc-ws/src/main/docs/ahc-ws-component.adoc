@@ -1,11 +1,10 @@
-[[ahc-ws-component]]
 = Async HTTP Client (AHC) Websocket Component
-:docTitle: Async HTTP Client (AHC) Websocket
-:shortName: ahc-ws
-:artifactId: camel-ahc-ws
+:doctitle: Async HTTP Client (AHC) Websocket
+:shortname: ahc-ws
+:artifactid: camel-ahc-ws
 :description: Exchange data with external Websocket servers using Async Http Client.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ahc-ws.adoc[opts=optional]
 

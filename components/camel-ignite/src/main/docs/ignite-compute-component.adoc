@@ -1,11 +1,10 @@
-[[ignite-compute-component]]
 = Ignite Compute Component
-:docTitle: Ignite Compute
-:shortName: ignite-compute
-:artifactId: camel-ignite
+:doctitle: Ignite Compute
+:shortname: ignite-compute
+:artifactid: camel-ignite
 :description: Run compute operations on an Ignite cluster.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-compute.adoc[opts=optional]
 //Manually maintained attributes

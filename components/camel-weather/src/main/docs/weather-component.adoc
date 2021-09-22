@@ -1,11 +1,10 @@
-[[weather-component]]
 = Weather Component
-:docTitle: Weather
-:shortName: weather
-:artifactId: camel-weather
+:doctitle: Weather
+:shortname: weather
+:artifactid: camel-weather
 :description: Poll the weather information from Open Weather Map.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/weather.adoc[opts=optional]
 

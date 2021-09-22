@@ -1,11 +1,10 @@
-[[mongodb-gridfs-component]]
 = MongoDB GridFS Component
-:docTitle: MongoDB GridFS
-:shortName: mongodb-gridfs
-:artifactId: camel-mongodb-gridfs
+:doctitle: MongoDB GridFS
+:shortname: mongodb-gridfs
+:artifactid: camel-mongodb-gridfs
 :description: Interact with MongoDB GridFS.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mongodb-gridfs.adoc[opts=optional]
 

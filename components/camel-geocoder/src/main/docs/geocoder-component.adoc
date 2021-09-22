@@ -1,11 +1,10 @@
-[[geocoder-component]]
 = Geocoder Component
-:docTitle: Geocoder
-:shortName: geocoder
-:artifactId: camel-geocoder
+:doctitle: Geocoder
+:shortname: geocoder
+:artifactid: camel-geocoder
 :description: Find geocodes (latitude and longitude) for a given address or the other way round.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/geocoder.adoc[opts=optional]
 

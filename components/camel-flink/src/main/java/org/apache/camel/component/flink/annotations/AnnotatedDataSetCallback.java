@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.flink.api.java.DataSet;
 
 import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
@@ -75,7 +76,7 @@ public class AnnotatedDataSetCallback implements org.apache.camel.component.flin
             Object[] args = arguments.toArray(new Object[arguments.size()]);
             return invokeMethodSafe(callbackMethod, objectWithCallback, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 }

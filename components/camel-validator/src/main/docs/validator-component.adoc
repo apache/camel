@@ -1,11 +1,10 @@
-[[validator-component]]
 = Validator Component
-:docTitle: Validator
-:shortName: validator
-:artifactId: camel-validator
+:doctitle: Validator
+:shortname: validator
+:artifactid: camel-validator
 :description: Validate the payload using XML Schema and JAXP Validation.
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/validator.adoc[opts=optional]

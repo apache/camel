@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -87,7 +88,7 @@ public class PdfAppendTest extends CamelTestSupport {
                     assertThat(text, containsString(originalText));
                     assertThat(text, containsString(textToAppend));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeCamelException(e);
                 }
                 return true;
             }
@@ -147,7 +148,7 @@ public class PdfAppendTest extends CamelTestSupport {
                     assertThat(text, containsString(originalText));
                     assertThat(text, containsString(textToAppend));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeCamelException(e);
                 }
                 return true;
             }

@@ -1,11 +1,10 @@
-[[lumberjack-component]]
 = Lumberjack Component
-:docTitle: Lumberjack
-:shortName: lumberjack
-:artifactId: camel-lumberjack
+:doctitle: Lumberjack
+:shortname: lumberjack
+:artifactid: camel-lumberjack
 :description: Receive logs messages using the Lumberjack protocol.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/lumberjack.adoc[opts=optional]
 

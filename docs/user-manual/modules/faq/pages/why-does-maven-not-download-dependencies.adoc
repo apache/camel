@@ -1,4 +1,3 @@
-[[Whydoesmavennotdownloaddependencies-Whydoesmavennotdownloaddependencies]]
 = Why does Maven not download dependencies?
 
 Maven uses HTTP to download its dependencies along with the dependencies

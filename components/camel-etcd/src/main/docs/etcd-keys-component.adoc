@@ -1,11 +1,10 @@
-[[etcd-keys-component]]
 = Etcd Keys Component
-:docTitle: Etcd Keys
-:shortName: etcd-keys
-:artifactId: camel-etcd
+:doctitle: Etcd Keys
+:shortname: etcd-keys
+:artifactid: camel-etcd
 :description: Get, set or delete keys in etcd key-value store.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/etcd-keys.adoc[opts=optional]
 

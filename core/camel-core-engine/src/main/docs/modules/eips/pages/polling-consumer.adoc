@@ -1,4 +1,3 @@
-[[PollingConsumer-PollingConsumer]]
 = Polling Consumer
 
 Camel supports implementing the

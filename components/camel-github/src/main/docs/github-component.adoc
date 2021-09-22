@@ -1,11 +1,10 @@
-[[github-component]]
 = GitHub Component
-:docTitle: GitHub
-:shortName: github
-:artifactId: camel-github
+:doctitle: GitHub
+:shortname: github
+:artifactid: camel-github
 :description: Interact with the GitHub API.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/github.adoc[opts=optional]
 

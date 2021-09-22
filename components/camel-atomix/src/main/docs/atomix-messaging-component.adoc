@@ -1,11 +1,10 @@
-[[atomix-messaging-component]]
 = Atomix Messaging Component
-:docTitle: Atomix Messaging
-:shortName: atomix-messaging
-:artifactId: camel-atomix
+:doctitle: Atomix Messaging
+:shortname: atomix-messaging
+:artifactid: camel-atomix
 :description: Access Atomix's group messaging.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-messaging.adoc[opts=optional]
 

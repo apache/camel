@@ -30,8 +30,6 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.utils.UrlUtils;
@@ -70,7 +68,6 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  *
  * </blockquote> This will build a composite of two insert operations.
  */
-@XStreamAlias("batch")
 public final class SObjectComposite implements Serializable {
 
     public enum Method {
@@ -90,12 +87,10 @@ public final class SObjectComposite implements Serializable {
 
     private final boolean allOrNone;
 
-    @XStreamOmitField
     private final String apiPrefix;
 
     private final List<CompositeRequest> compositeRequests = new ArrayList<>();
 
-    @XStreamOmitField
     private final Version version;
 
     /**

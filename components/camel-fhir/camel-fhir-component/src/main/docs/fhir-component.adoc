@@ -1,11 +1,10 @@
-[[fhir-component]]
 = FHIR Component
-:docTitle: FHIR
-:shortName: fhir
-:artifactId: camel-fhir
+:doctitle: FHIR
+:shortname: fhir
+:artifactid: camel-fhir
 :description: Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.
 :since: 2.23
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/fhir.adoc[opts=optional]
 

@@ -1,11 +1,10 @@
-[[file-watch-component]]
 = File Watch Component
-:docTitle: File Watch
-:shortName: file-watch
-:artifactId: camel-file-watch
+:doctitle: File Watch
+:shortname: file-watch
+:artifactid: camel-file-watch
 :description: Get notified about file events in a directory using java.nio.file.WatchService.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/file-watch.adoc[opts=optional]
 

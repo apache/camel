@@ -1,11 +1,10 @@
-[[rxjava-other]]
 = RxJava Component
-:docTitle: RxJava
-:shortName: rxjava
-:artifactId: camel-rxjava
+:doctitle: RxJava
+:shortname: rxjava
+:artifactid: camel-rxjava
 :description: RxJava based back-end for Camel's reactive streams component
 :since: 2.22
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/rxjava.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -1,11 +1,10 @@
-[[graphql-component]]
 = GraphQL Component
-:docTitle: GraphQL
-:shortName: graphql
-:artifactId: camel-graphql
+:doctitle: GraphQL
+:shortname: graphql
+:artifactid: camel-graphql
 :description: Send GraphQL queries and mutations to external systems.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/graphql.adoc[opts=optional]
 

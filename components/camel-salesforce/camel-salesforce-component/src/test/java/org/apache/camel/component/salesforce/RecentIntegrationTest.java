@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.RecentItem;
@@ -36,7 +35,6 @@ import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 public class RecentIntegrationTest extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase {
-        @XStreamImplicit
         private List<Account> records;
 
         public List<Account> getRecords() {

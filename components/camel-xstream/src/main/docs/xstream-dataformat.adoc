@@ -1,11 +1,10 @@
-[[xstream-dataformat]]
 = XStream DataFormat
-:docTitle: XStream
-:shortName: xstream
-:artifactId: camel-xstream
+:doctitle: XStream
+:shortname: xstream
+:artifactid: camel-xstream
 :description: Marshal and unmarshal POJOs to/from XML using XStream library.
 :since: 1.3
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/xstream.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -1,4 +1,3 @@
-[[HowcanIstoparoutefromaroute-HowcanIstoparoutefromaroute]]
 = How can I stop a route from a route
 
 The xref:ROOT:camelcontext.adoc[CamelContext] provides API for managing

@@ -1,11 +1,10 @@
-[[ehcache-component]]
 = Ehcache Component
-:docTitle: Ehcache
-:shortName: ehcache
-:artifactId: camel-ehcache
+:doctitle: Ehcache
+:shortname: ehcache
+:artifactid: camel-ehcache
 :description: Perform caching operations using Ehcache.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ehcache.adoc[opts=optional]
 

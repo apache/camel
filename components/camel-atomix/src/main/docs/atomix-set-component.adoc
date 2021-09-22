@@ -1,11 +1,10 @@
-[[atomix-set-component]]
 = Atomix Set Component
-:docTitle: Atomix Set
-:shortName: atomix-set
-:artifactId: camel-atomix
+:doctitle: Atomix Set
+:shortname: atomix-set
+:artifactid: camel-atomix
 :description: Access Atomix's distributed set.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-set.adoc[opts=optional]
 

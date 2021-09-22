@@ -1,11 +1,10 @@
-[[resteasy-component]]
 = Resteasy Component
-:docTitle: Resteasy
-:shortName: resteasy
-:artifactId: camel-resteasy
+:doctitle: Resteasy
+:shortname: resteasy
+:artifactid: camel-resteasy
 :description: Expose REST endpoints and access external REST servers.
 :since: 3.4
-:supportLevel: Preview
+:supportlevel: Preview
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/resteasy.adoc[opts=optional]
 

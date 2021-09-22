@@ -1,11 +1,10 @@
-[[cxf-component]]
 = CXF Component
-:docTitle: CXF
-:shortName: cxf
-:artifactId: camel-cxf
+:doctitle: CXF
+:shortname: cxf
+:artifactid: camel-cxf
 :description: Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cxf.adoc[opts=optional]
 

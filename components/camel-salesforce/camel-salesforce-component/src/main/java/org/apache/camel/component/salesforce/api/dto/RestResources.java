@@ -17,12 +17,10 @@
 package org.apache.camel.component.salesforce.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * DTO for Salesforce Resources.
  */
-@XStreamAlias("urls")
 public class RestResources extends AbstractDTOBase {
 
     private String sobjects;
@@ -48,10 +46,8 @@ public class RestResources extends AbstractDTOBase {
     private String tabs;
     private String wave;
     @JsonProperty("async-queries")
-    @XStreamAlias("async-queries")
     private String asyncQueries;
     @JsonProperty("exchange-connect")
-    @XStreamAlias("exchange-connect")
     private String exchangeConnect;
 
     public String getSobjects() {

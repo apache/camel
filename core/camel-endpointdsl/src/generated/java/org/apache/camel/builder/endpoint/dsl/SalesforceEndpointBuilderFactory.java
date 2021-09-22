@@ -218,7 +218,8 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Payload format to use for Salesforce API calls, either JSON or XML,
-         * defaults to JSON.
+         * defaults to JSON. As of Camel 3.12, this option only applies to the
+         * Raw operation.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
@@ -234,7 +235,8 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Payload format to use for Salesforce API calls, either JSON or XML,
-         * defaults to JSON.
+         * defaults to JSON. As of Camel 3.12, this option only applies to the
+         * Raw operation.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
@@ -1422,7 +1424,8 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Payload format to use for Salesforce API calls, either JSON or XML,
-         * defaults to JSON.
+         * defaults to JSON. As of Camel 3.12, this option only applies to the
+         * Raw operation.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
@@ -1438,7 +1441,8 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Payload format to use for Salesforce API calls, either JSON or XML,
-         * defaults to JSON.
+         * defaults to JSON. As of Camel 3.12, this option only applies to the
+         * Raw operation.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
@@ -2651,7 +2655,8 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Payload format to use for Salesforce API calls, either JSON or XML,
-         * defaults to JSON.
+         * defaults to JSON. As of Camel 3.12, this option only applies to the
+         * Raw operation.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
@@ -2667,7 +2672,8 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Payload format to use for Salesforce API calls, either JSON or XML,
-         * defaults to JSON.
+         * defaults to JSON. As of Camel 3.12, this option only applies to the
+         * Raw operation.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.

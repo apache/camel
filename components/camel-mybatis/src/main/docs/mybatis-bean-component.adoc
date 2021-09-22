@@ -1,11 +1,10 @@
-[[mybatis-bean-component]]
 = MyBatis Bean Component
-:docTitle: MyBatis Bean
-:shortName: mybatis-bean
-:artifactId: camel-mybatis
+:doctitle: MyBatis Bean
+:shortname: mybatis-bean
+:artifactid: camel-mybatis
 :description: Perform queries, inserts, updates or deletes in a relational database using MyBatis.
 :since: 2.22
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mybatis-bean.adoc[opts=optional]
 

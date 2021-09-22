@@ -1,11 +1,10 @@
-[[file-language]]
 = File Language
-:docTitle: File
-:shortName: file
-:artifactId: camel-core-languages
+:doctitle: File
+:shortname: file
+:artifactid: camel-core-languages
 :description: File related capabilities for the Simple language
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/file.adoc[opts=optional]
 
 *Since Camel {since}*

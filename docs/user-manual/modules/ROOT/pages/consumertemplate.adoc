@@ -1,4 +1,3 @@
-[[ConsumerTemplate-ConsumerTemplate]]
 = ConsumerTemplate
 
 The `ConsumerTemplate` interface allows you to receive message exchanges from

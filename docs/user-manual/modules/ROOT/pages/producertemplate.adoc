@@ -1,4 +1,3 @@
-[[ProducerTemplate-ProducerTemplate]]
 = ProducerTemplate
 
 The `ProducerTemplate` interface allows you to send message exchanges to

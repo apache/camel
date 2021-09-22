@@ -1,9 +1,9 @@
-[[filter-eip]]
 = Filter EIP
-:docTitle: Filter
+:doctitle: Filter
+:shortname: filter
 :description: Filter out messages based using a predicate
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
@@ -17,7 +17,7 @@ image::eip/MessageFilter.gif[image]
 == EIP options
 
 // eip options: START
-The Filter EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Example
@@ -149,4 +149,3 @@ To do this, you can use the xref:stop-eip.adoc[Stop] EIP as shown:
     <to uri="mock:all"/>
 </route>
 ----
-

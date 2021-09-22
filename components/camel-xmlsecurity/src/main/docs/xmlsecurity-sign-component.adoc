@@ -1,11 +1,10 @@
-[[xmlsecurity-sign-component]]
 = XML Security Sign Component
-:docTitle: XML Security Sign
-:shortName: xmlsecurity-sign
-:artifactId: camel-xmlsecurity
+:doctitle: XML Security Sign
+:shortname: xmlsecurity-sign
+:artifactid: camel-xmlsecurity
 :description: Sign XML payloads using the XML signature specification.
 :since: 2.12
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xmlsecurity-sign.adoc[opts=optional]
 

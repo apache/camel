@@ -1,11 +1,10 @@
-[[sql-stored-component]]
 = SQL Stored Procedure Component
-:docTitle: SQL Stored Procedure
-:shortName: sql-stored
-:artifactId: camel-sql
+:doctitle: SQL Stored Procedure
+:shortname: sql-stored
+:artifactid: camel-sql
 :description: Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/sql-stored.adoc[opts=optional]
 

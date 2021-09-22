@@ -1,11 +1,10 @@
-[[netty-http-component]]
 = Netty HTTP Component
-:docTitle: Netty HTTP
-:shortName: netty-http
-:artifactId: camel-netty-http
+:doctitle: Netty HTTP
+:shortname: netty-http
+:artifactid: camel-netty-http
 :description: Netty HTTP server and client using the Netty 4.x.
 :since: 2.14
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/netty-http.adoc[opts=optional]
 

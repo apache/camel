@@ -1,11 +1,10 @@
-[[cql-component]]
 = Cassandra CQL Component
-:docTitle: Cassandra CQL
-:shortName: cql
-:artifactId: camel-cassandraql
+:doctitle: Cassandra CQL
+:shortname: cql
+:artifactid: camel-cassandraql
 :description: Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API). Based on Cassandra Java Driver provided by DataStax.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cql.adoc[opts=optional]
 

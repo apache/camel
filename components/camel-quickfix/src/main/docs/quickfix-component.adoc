@@ -1,11 +1,10 @@
-[[quickfix-component]]
 = QuickFix Component
-:docTitle: QuickFix
-:shortName: quickfix
-:artifactId: camel-quickfix
+:doctitle: QuickFix
+:shortname: quickfix
+:artifactid: camel-quickfix
 :description: Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
 :since: 2.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/quickfix.adoc[opts=optional]
 

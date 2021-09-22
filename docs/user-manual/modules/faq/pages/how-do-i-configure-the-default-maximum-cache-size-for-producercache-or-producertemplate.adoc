@@ -1,4 +1,3 @@
-[[HowdoIconfigurethedefaultmaximumcachesizeforProducerCacheorProducerTemplate-HowdoIconfigurethedefaultmaximumcachesizeforProducerCacheorProducerTemplate]]
 = How do I configure the default maximum cache size for ProducerCache or ProducerTemplate?
 
 *Since Camel 2.3*

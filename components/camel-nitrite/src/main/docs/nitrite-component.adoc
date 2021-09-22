@@ -1,11 +1,10 @@
-[[nitrite-component]]
 = Nitrite Component
-:docTitle: Nitrite
-:shortName: nitrite
-:artifactId: camel-nitrite
+:doctitle: Nitrite
+:shortname: nitrite
+:artifactid: camel-nitrite
 :description: Access Nitrite databases.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/nitrite.adoc[opts=optional]
 

@@ -1,4 +1,3 @@
-[[Howcanwebserviceclientsseeremotefaultswithstacktraceswhenusingcamel-cxf-Howcanwebserviceclientsseeremotefaultswithstacktraceswhenusingcamel-cxf]]
 = How can webservice clients see remote faults with stacktraces when using camel-cxf?
 
 See Apache CXF documentation about

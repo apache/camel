@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
@@ -30,7 +29,6 @@ import org.apache.camel.component.salesforce.api.dto.SObjectField;
 /**
  * Salesforce DTO for SObject Contact
  */
-@XStreamAlias("Contact")
 public class Contact extends AbstractDescribedSObjectBase {
 
     public Contact() {
@@ -51,7 +49,6 @@ public class Contact extends AbstractDescribedSObjectBase {
         this.MasterRecordId = MasterRecordId;
     }
 
-    @XStreamAlias("MasterRecord")
     private Contact MasterRecord;
 
     @JsonProperty("MasterRecord")
@@ -76,7 +73,6 @@ public class Contact extends AbstractDescribedSObjectBase {
         this.AccountId = AccountId;
     }
 
-    @XStreamAlias("Account")
     private Account Account;
 
     @JsonProperty("Account")
@@ -389,7 +385,6 @@ public class Contact extends AbstractDescribedSObjectBase {
         this.ReportsToId = ReportsToId;
     }
 
-    @XStreamAlias("ReportsTo")
     private Contact ReportsTo;
 
     @JsonProperty("ReportsTo")

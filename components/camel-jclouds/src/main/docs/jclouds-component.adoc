@@ -1,11 +1,10 @@
-[[jclouds-component]]
 = JClouds Component
-:docTitle: JClouds
-:shortName: jclouds
-:artifactId: camel-jclouds
+:doctitle: JClouds
+:shortname: jclouds
+:artifactid: camel-jclouds
 :description: Interact with jclouds compute and blobstore service.
 :since: 2.9
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jclouds.adoc[opts=optional]
 

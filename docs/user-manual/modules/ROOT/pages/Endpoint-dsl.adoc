@@ -1,4 +1,3 @@
-[[Endpoint-DSL]]
 = Endpoint DSL
 
 Endpoint-dsl is a new API that allows using type-safe endpoint xref:uris.adoc[URL] configurations.

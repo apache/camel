@@ -20,10 +20,8 @@ import java.util.Collections;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -84,24 +82,6 @@ public class ApprovalRequestTest {
                      + "\"processDefinitionNameOrId\":\"PTO_Request_Process\",\"skipEntryCriteria\":true}",
                 json,
                 "ApprovalRequest should serialize as JSON from Salesforce examples");
-    }
-
-    @Test
-    public void shouldSerializeAsXml() {
-        final XStream xStream = XStreamUtils.createXStream(ApprovalRequest.class);
-
-        final String xml = xStream.toXML(sampleRequest);
-
-        assertEquals("<requests>"//
-                     + "<actionType>Submit</actionType>"//
-                     + "<contextActorId>005D00000015rZy</contextActorId>"//
-                     + "<contextId>001D000000I8mIm</contextId>"//
-                     + "<comments>this is a test</comments>"//
-                     + "<nextApproverIds>005D00000015rY9</nextApproverIds>"//
-                     + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
-                     + "<skipEntryCriteria>true</skipEntryCriteria>"//
-                     + "</requests>",
-                xml, "ApprovalRequest should serialize as XML");
     }
 
     @Test

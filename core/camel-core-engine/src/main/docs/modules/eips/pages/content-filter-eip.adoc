@@ -1,4 +1,3 @@
-[[ContentFilter-eip]]
 = Content Filter
 
 Camel supports the

@@ -1,11 +1,10 @@
-[[webhook-component]]
 = Webhook Component
-:docTitle: Webhook
-:shortName: webhook
-:artifactId: camel-webhook
+:doctitle: Webhook
+:shortname: webhook
+:artifactid: camel-webhook
 :description: Expose webhook endpoints to receive push notifications for other Camel components.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/webhook.adoc[opts=optional]
 

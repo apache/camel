@@ -1,11 +1,10 @@
-[[hl7terser-language]]
 = HL7 Terser Language
-:docTitle: HL7 Terser
-:shortName: hl7terser
-:artifactId: camel-hl7
+:doctitle: HL7 Terser
+:shortname: hl7terser
+:artifactid: camel-hl7
 :description: Get the value of a HL7 message field specified by terse location specification syntax.
 :since: 2.11
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/hl7terser.adoc[opts=optional]
 
 *Since Camel {since}*

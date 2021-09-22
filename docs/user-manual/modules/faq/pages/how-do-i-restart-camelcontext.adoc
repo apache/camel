@@ -1,4 +1,3 @@
-[[HowdoIrestartCamelContext-HowdoIrestartCamelContext]]
 = How do I restart CamelContext?
 
 A xref:ROOT:camelcontext.adoc[CamelContext] provides operations to control

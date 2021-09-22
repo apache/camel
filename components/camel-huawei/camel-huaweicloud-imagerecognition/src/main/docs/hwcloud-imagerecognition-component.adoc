@@ -1,11 +1,10 @@
-[[hwcloud-imagerecognition-component]]
 = Huawei Cloud Image Recognition Component
-:docTitle: Huawei Cloud Image Recognition
-:shortName: hwcloud-imagerecognition
-:artifactId: camel-huaweicloud-imagerecognition
+:doctitle: Huawei Cloud Image Recognition
+:shortname: hwcloud-imagerecognition
+:artifactid: camel-huaweicloud-imagerecognition
 :description: To identify objects, scenes, and concepts in images on Huawei Cloud
 :since: 3.12
-:supportLevel: Preview
+:supportlevel: Preview
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-imagerecognition.adoc[opts=optional]
 //Manually maintained attributes

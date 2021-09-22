@@ -1,11 +1,10 @@
-[[json-jsonb-dataformat]]
 = JSON JSON-B DataFormat
-:docTitle: JSON JSON-B
-:shortName: json-jsonb
-:artifactId: camel-jsonb
+:doctitle: JSON JSON-B
+:shortname: json-jsonb
+:artifactid: camel-jsonb
 :description: Marshal POJOs to JSON and back using JSON-B.
 :since: 3.7
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-jsonb.adoc[opts=optional]
 
 *Since Camel {since}*

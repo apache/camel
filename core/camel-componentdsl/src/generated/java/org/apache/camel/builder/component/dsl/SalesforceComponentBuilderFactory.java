@@ -162,7 +162,8 @@ public interface SalesforceComponentBuilderFactory {
         }
         /**
          * Payload format to use for Salesforce API calls, either JSON or XML,
-         * defaults to JSON.
+         * defaults to JSON. As of Camel 3.12, this option only applies to the
+         * Raw operation.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
@@ -484,10 +485,10 @@ public interface SalesforceComponentBuilderFactory {
         }
         /**
          * In what packages are the generated DTO classes. Typically the classes
-         * would be generated using camel-salesforce-maven-plugin. This must be
-         * set if using the XML format. Also, set it if using the generated DTOs
-         * to gain the benefit of using short SObject names in parameters/header
-         * values. Multiple packages can be separated by comma.
+         * would be generated using camel-salesforce-maven-plugin. Set it if
+         * using the generated DTOs to gain the benefit of using short SObject
+         * names in parameters/header values. Multiple packages can be separated
+         * by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

@@ -1,11 +1,10 @@
-[[msv-component]]
 = MSV Component
-:docTitle: MSV
-:shortName: msv
-:artifactId: camel-msv
+:doctitle: MSV
+:shortname: msv
+:artifactid: camel-msv
 :description: Validate XML payloads using Multi-Schema Validator (MSV).
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/msv.adoc[opts=optional]
 

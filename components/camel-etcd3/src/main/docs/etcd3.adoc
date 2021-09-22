@@ -1,11 +1,10 @@
-[[etcd3-other]]
 = Etcd3 Component
-:docTitle: Etcd3
-:shortName: etcd3
-:artifactId: camel-etcd3
+:doctitle: Etcd3
+:shortname: etcd3
+:artifactid: camel-etcd3
 :description: Aggregation repository using EtcD as datastore
 :since: 3.5
-:supportLevel: Preview
+:supportlevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/etcd3.adoc[opts=optional]
 
 *Since Camel {since}*

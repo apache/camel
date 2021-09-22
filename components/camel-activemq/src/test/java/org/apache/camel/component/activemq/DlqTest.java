@@ -24,6 +24,7 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.util.Wait;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
@@ -76,7 +77,7 @@ public class DlqTest extends ActiveMQSpringTestSupport {
     public static class CanError {
         public String enrich(String body) {
             LOG.info("Got body: " + body);
-            throw new RuntimeException("won't enrich today!");
+            throw new RuntimeCamelException("won't enrich today!");
         }
     }
 }

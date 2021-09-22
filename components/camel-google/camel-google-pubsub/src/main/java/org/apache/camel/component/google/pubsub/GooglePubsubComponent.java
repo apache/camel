@@ -40,6 +40,7 @@ import com.google.common.cache.RemovalListener;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -95,7 +96,7 @@ public class GooglePubsubComponent extends DefaultComponent {
         try {
             publisher.awaitTermination(publisherTerminationTimeout, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     };
 

@@ -1,11 +1,10 @@
-[[atomix-map-component]]
 = Atomix Map Component
-:docTitle: Atomix Map
-:shortName: atomix-map
-:artifactId: camel-atomix
+:doctitle: Atomix Map
+:shortname: atomix-map
+:artifactid: camel-atomix
 :description: Access Atomix's distributed map.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-map.adoc[opts=optional]
 

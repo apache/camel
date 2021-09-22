@@ -1,9 +1,9 @@
-[[step-eip]]
 = Step EIP
-:docTitle: Step
+:doctitle: Step
+:shortname: step
 :description: Routes the message to a sequence of processors which is grouped together as one logical name
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the xref:enterprise-integration-patterns.adoc[EIP patterns] in various ways.
 
@@ -38,7 +38,7 @@ by the `dumpStepStatsAsXml` operations on the CamelContext or Route mbeans.
 == Options
 
 // eip options: START
-The Step EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
 [[step-Examples]]

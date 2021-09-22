@@ -1,4 +1,3 @@
-[[TypeConverter-TypeConverter]]
 = Type Converter
 
 Converting body payloads from one type to another is common when routing messages between endpoints.

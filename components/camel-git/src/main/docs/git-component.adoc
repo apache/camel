@@ -1,11 +1,10 @@
-[[git-component]]
 = Git Component
-:docTitle: Git
-:shortName: git
-:artifactId: camel-git
+:doctitle: Git
+:shortname: git
+:artifactid: camel-git
 :description: Perform operations on git repositories.
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/git.adoc[opts=optional]
 

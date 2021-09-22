@@ -1,4 +1,3 @@
-[[BeanBinding-BeanBinding]]
 = Bean Binding
 
 Bean Binding in Camel defines both which methods are invoked and also

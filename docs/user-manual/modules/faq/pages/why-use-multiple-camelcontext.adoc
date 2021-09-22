@@ -1,4 +1,3 @@
-[[WhyusemultipleCamelContext-WhyusemultipleCamelContext]]
 = Why use multiple CamelContext?
 
 In general, you don't tend to want multiple camel contexts in your

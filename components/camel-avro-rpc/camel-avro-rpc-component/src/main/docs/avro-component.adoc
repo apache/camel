@@ -1,11 +1,10 @@
-[[avro-component]]
 = Avro RPC Component
-:docTitle: Avro RPC
-:shortName: avro
-:artifactId: camel-avro-rpc
+:doctitle: Avro RPC
+:shortname: avro
+:artifactid: camel-avro-rpc
 :description: Produce or consume Apache Avro RPC services.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/avro.adoc[opts=optional]
 

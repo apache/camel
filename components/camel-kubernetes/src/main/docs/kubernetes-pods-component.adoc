@@ -1,11 +1,10 @@
-[[kubernetes-pods-component]]
 = Kubernetes Pods Component
-:docTitle: Kubernetes Pods
-:shortName: kubernetes-pods
-:artifactId: camel-kubernetes
+:doctitle: Kubernetes Pods
+:shortname: kubernetes-pods
+:artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Pods and get notified on Pod changes.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/kubernetes-pods.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,11 +1,10 @@
-[[test-cdi-other]]
 = Test CDI Component
-:docTitle: Test CDI
-:shortName: test-cdi
-:artifactId: camel-test-cdi
+:doctitle: Test CDI
+:shortname: test-cdi
+:artifactid: camel-test-cdi
 :description: Camel unit testing with CDI
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/test-cdi.adoc[opts=optional]
 
 *Since Camel {since}*

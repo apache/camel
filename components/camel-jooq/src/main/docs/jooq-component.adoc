@@ -1,11 +1,10 @@
-[[jooq-component]]
 = JOOQ Component
-:docTitle: JOOQ
-:shortName: jooq
-:artifactId: camel-jooq
+:doctitle: JOOQ
+:shortname: jooq
+:artifactid: camel-jooq
 :description: Store and retrieve Java objects from an SQL database using JOOQ.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jooq.adoc[opts=optional]
 

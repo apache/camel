@@ -1,11 +1,10 @@
-[[any23-dataformat]]
 = Any23 DataFormat
-:docTitle: Any23
-:shortName: any23
-:artifactId: camel-any23
+:doctitle: Any23
+:shortname: any23
+:artifactid: camel-any23
 :description: Extract RDF data from HTML documents.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/any23.adoc[opts=optional]
 
 

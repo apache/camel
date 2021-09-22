@@ -1,11 +1,10 @@
-[[master-component]]
 = Master Component
-:docTitle: Master
-:shortName: master
-:artifactId: camel-master
+:doctitle: Master
+:shortname: master
+:artifactid: camel-master
 :description: Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/master.adoc[opts=optional]
 

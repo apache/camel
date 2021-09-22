@@ -1,11 +1,10 @@
-[[reactive-streams-component]]
 = Reactive Streams Component
-:docTitle: Reactive Streams
-:shortName: reactive-streams
-:artifactId: camel-reactive-streams
+:doctitle: Reactive Streams
+:shortname: reactive-streams
+:artifactid: camel-reactive-streams
 :description: Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/reactive-streams.adoc[opts=optional]
 

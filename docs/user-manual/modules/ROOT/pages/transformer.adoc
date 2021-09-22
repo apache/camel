@@ -1,4 +1,3 @@
-[[Transformer-Transformer]]
 = Transformer
 
 Transformer (`org.apache.camel.spi.Transformer`) performs declarative transformation of the message according

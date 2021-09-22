@@ -1,4 +1,3 @@
-[[GracefulShutdown-GracefulShutdown]]
 = Graceful Shutdown
 
 Camel supports a pluggable shutdown strategy using

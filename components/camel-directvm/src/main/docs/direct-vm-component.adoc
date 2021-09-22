@@ -1,11 +1,10 @@
-[[direct-vm-component]]
 = Direct VM Component
-:docTitle: Direct VM
-:shortName: direct-vm
-:artifactId: camel-directvm
+:doctitle: Direct VM
+:shortname: direct-vm
+:artifactid: camel-directvm
 :description: Call another endpoint from any Camel Context in the same JVM synchronously.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/direct-vm.adoc[opts=optional]

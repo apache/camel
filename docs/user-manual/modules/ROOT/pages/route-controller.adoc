@@ -1,4 +1,3 @@
-[[RouteController]]
 = Route Controller
 
 Camel uses a `RouteController` for managing the lifecycle of all the routes.

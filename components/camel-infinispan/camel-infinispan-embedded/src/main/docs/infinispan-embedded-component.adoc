@@ -1,11 +1,10 @@
-[[infinispan-embedded-component]]
 = Infinispan Embedded Component
-:docTitle: Infinispan Embedded
-:shortName: infinispan-embedded
-:artifactId: camel-infinispan-embedded
+:doctitle: Infinispan Embedded
+:shortname: infinispan-embedded
+:artifactid: camel-infinispan-embedded
 :description: Read and write from/to Infinispan distributed key/value store and data grid.
 :since: 2.13
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/infinispan-embedded.adoc[opts=optional]
 

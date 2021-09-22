@@ -1,4 +1,3 @@
-[[UsinggetInorgetOutmethodsonExchange-MessageexchangepatternsandtheExchangeobject]]
 = Message Exchange Patterns and the Exchange object
 
 The Camel API is influenced by APIs such as

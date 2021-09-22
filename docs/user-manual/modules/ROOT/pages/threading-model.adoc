@@ -1,4 +1,3 @@
-[[ThreadingModel-ThreadingModel]]
 = Threading Model
 
 The threading model in Camel is based on a pluggable reactive routing engine,

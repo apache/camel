@@ -1,11 +1,10 @@
-[[spring-redis-component]]
 = Spring Redis Component
-:docTitle: Spring Redis
-:shortName: spring-redis
-:artifactId: camel-spring-redis
+:doctitle: Spring Redis
+:shortname: spring-redis
+:artifactid: camel-spring-redis
 :description: Send and receive messages from Redis.
 :since: 2.11
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-redis.adoc[opts=optional]
 //Manually maintained attributes

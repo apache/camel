@@ -1,11 +1,10 @@
-[[ignite-set-component]]
 = Ignite Sets Component
-:docTitle: Ignite Sets
-:shortName: ignite-set
-:artifactId: camel-ignite
+:doctitle: Ignite Sets
+:shortname: ignite-set
+:artifactid: camel-ignite
 :description: Interact with Ignite Set data structures.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ignite-set.adoc[opts=optional]
 //Manually maintained attributes

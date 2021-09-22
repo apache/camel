@@ -1,11 +1,10 @@
-[[servicenow-component]]
 = ServiceNow Component
-:docTitle: ServiceNow
-:shortName: servicenow
-:artifactId: camel-servicenow
+:doctitle: ServiceNow
+:shortname: servicenow
+:artifactid: camel-servicenow
 :description: Interact with ServiceNow via its REST API.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/servicenow.adoc[opts=optional]
 

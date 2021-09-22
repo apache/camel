@@ -1,11 +1,10 @@
-[[vertx-websocket-component]]
 = Vert.x WebSocket Component
-:docTitle: Vert.x WebSocket
-:shortName: vertx-websocket
-:artifactId: camel-vertx-websocket
+:doctitle: Vert.x WebSocket
+:shortname: vertx-websocket
+:artifactid: camel-vertx-websocket
 :description: Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x
 :since: 3.5
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-websocket.adoc[opts=optional]
 

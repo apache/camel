@@ -1,11 +1,10 @@
-[[flatpack-component]]
 = Flatpack Component
-:docTitle: Flatpack
-:shortName: flatpack
-:artifactId: camel-flatpack
+:doctitle: Flatpack
+:shortname: flatpack
+:artifactid: camel-flatpack
 :description: Parse fixed width and delimited files using the FlatPack library.
 :since: 1.4
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/flatpack.adoc[opts=optional]
 

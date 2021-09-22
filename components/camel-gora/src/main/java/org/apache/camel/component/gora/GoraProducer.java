@@ -19,6 +19,7 @@ package org.apache.camel.component.gora;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
@@ -63,7 +64,7 @@ public class GoraProducer extends DefaultProducer {
         final String operation = (String) exchange.getIn().getHeader(GoraAttribute.GORA_OPERATION.value);
 
         if (operation == null || operation.isEmpty()) {
-            throw new RuntimeException("Gora operation is null or empty!");
+            throw new RuntimeCamelException("Gora operation is null or empty!");
         }
 
         Object result = 0; // 0 used as default response in order to avoid null body exception
@@ -89,7 +90,7 @@ public class GoraProducer extends DefaultProducer {
         } else if (GoraOperation.SCHEMA_EXIST.value.equalsIgnoreCase(operation)) {
             result = dataStore.schemaExists();
         } else {
-            throw new RuntimeException("Unknown operation: " + operation);
+            throw new RuntimeCamelException("Unknown operation: " + operation);
         }
 
         /*

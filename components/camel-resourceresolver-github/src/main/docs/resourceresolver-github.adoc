@@ -1,11 +1,10 @@
-[[resourceresolver-github-other]]
 = Resourceresolver Github Component
-:docTitle: Resourceresolver Github
-:shortName: resourceresolver-github
-:artifactId: camel-resourceresolver-github
+:doctitle: Resourceresolver Github
+:shortname: resourceresolver-github
+:artifactid: camel-resourceresolver-github
 :description: Resource resolver to load files from GitHub
 :since: 3.11
-:supportLevel: Preview
+:supportlevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/resourceresolver-github.adoc[opts=optional]
 
 *Since Camel {since}*

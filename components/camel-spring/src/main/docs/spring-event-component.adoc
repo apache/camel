@@ -1,11 +1,10 @@
-[[spring-event-component]]
 = Spring Event Component
-:docTitle: Spring Event
-:shortName: spring-event
-:artifactId: camel-spring
+:doctitle: Spring Event
+:shortname: spring-event
+:artifactid: camel-spring
 :description: Listen for Spring Application Events.
 :since: 1.4
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-event.adoc[opts=optional]
 //Manually maintained attributes

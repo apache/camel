@@ -1,11 +1,10 @@
-[[vm-component]]
 = VM Component
-:docTitle: VM
-:shortName: vm
-:artifactId: camel-vm
+:doctitle: VM
+:shortname: vm
+:artifactid: camel-vm
 :description: Call another endpoint in the same CamelContext asynchronously.
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vm.adoc[opts=optional]

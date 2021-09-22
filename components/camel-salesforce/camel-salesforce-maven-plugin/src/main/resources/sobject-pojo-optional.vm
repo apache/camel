@@ -24,23 +24,13 @@ import java.util.Optional;
 
 import javax.annotation.Generated;
 
-## add imports for XStreamConverter and PicklistEnumConverter if needed
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-#if ( ($hasPicklists && !$useStringsForPicklists) || $hasMultiSelectPicklists )
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-#end
-#if ( $hasPicklists && !$useStringsForPicklists )
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
-#end
 #if ( $hasMultiSelectPicklists )
 #if ( $useStringsForPicklists )
-import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistSerializer;
 #else
-import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
 #end
@@ -56,7 +46,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * Salesforce DTO for SObject $desc.Name
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-@XStreamAlias("${desc.Name}Optional")
 public class ${desc.Name}Optional extends AbstractSObjectBase {
 
 #foreach ( $field in $desc.Fields )
@@ -70,21 +59,7 @@ public class ${desc.Name}Optional extends AbstractSObjectBase {
 #else
 #set ( $propertyName = $fieldName )
 #end
-## add a converter annotation if needed
-#if ( !$useStringsForPicklists && !$isMultiSelectPicklist && $utility.isPicklist($field) )
-    @XStreamConverter(PicklistEnumConverter.class)
-#elseif ( $isMultiSelectPicklist )
-#if ( $useStringsForPicklists )
-    @XStreamConverter(StringMultiSelectPicklistConverter.class)
 #else
-    @XStreamConverter(MultiSelectPicklistConverter.class)
-#end
-#else
-## add an alias for blob field url if needed
-#if ( $propertyName != $fieldName )
-    // blob field url, use getBlobField to get the content
-    @XStreamAlias("$fieldName")
-#end
 #end
     private Optional<$fieldType> $propertyName;
 

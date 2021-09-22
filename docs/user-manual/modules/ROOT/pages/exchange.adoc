@@ -1,4 +1,3 @@
-[[Exchange-MessageExchange]]
 = Message Exchange
 
 To support various message exchange patterns

@@ -1,11 +1,10 @@
-[[lzf-dataformat]]
 = LZF Deflate Compression DataFormat
-:docTitle: LZF Deflate Compression
-:shortName: lzf
-:artifactId: camel-lzf
+:doctitle: LZF Deflate Compression
+:shortname: lzf
+:artifactid: camel-lzf
 :description: Compress and decompress streams using LZF deflate algorithm.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/lzf.adoc[opts=optional]
 
 *Since Camel {since}*

@@ -1,11 +1,10 @@
-[[xquery-component]]
 = XQuery Component
-:docTitle: XQuery
-:shortName: xquery
-:artifactId: camel-saxon
+:doctitle: XQuery
+:shortname: xquery
+:artifactid: camel-saxon
 :description: Query and/or transform XML payloads using XQuery and Saxon.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xquery.adoc[opts=optional]
 

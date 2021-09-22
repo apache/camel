@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -84,7 +85,7 @@ public class CMISTestSupport extends CamelTestSupport {
                 List<String> notDeltedIdList = ((Folder) cmisObject)
                         .deleteTree(true, UnfileObject.DELETE, true);
                 if (notDeltedIdList != null && notDeltedIdList.size() > 0) {
-                    throw new RuntimeException("Cannot empty repo");
+                    throw new RuntimeCamelException("Cannot empty repo");
                 }
             } else {
                 cmisObject.delete(true);

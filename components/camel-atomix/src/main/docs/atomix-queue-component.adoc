@@ -1,11 +1,10 @@
-[[atomix-queue-component]]
 = Atomix Queue Component
-:docTitle: Atomix Queue
-:shortName: atomix-queue
-:artifactId: camel-atomix
+:doctitle: Atomix Queue
+:shortname: atomix-queue
+:artifactid: camel-atomix
 :description: Access Atomix's distributed queue.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atomix-queue.adoc[opts=optional]
 

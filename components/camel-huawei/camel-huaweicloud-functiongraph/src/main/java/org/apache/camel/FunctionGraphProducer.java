@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 public class FunctionGraphProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(FunctionGraphProducer.class);
     private FunctionGraphEndpoint endpoint;
-    private ClientConfigurations clientConfigurations;
     private FunctionGraphClient functionGraphClient;
 
     public FunctionGraphProducer(FunctionGraphEndpoint endpoint) {
@@ -47,16 +46,22 @@ public class FunctionGraphProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.clientConfigurations = new ClientConfigurations(this.endpoint);
-        this.functionGraphClient = this.endpoint.initClient();
     }
 
     public void process(Exchange exchange) throws Exception {
-        updateClientConfigs(exchange);
+        ClientConfigurations clientConfigurations = new ClientConfigurations(endpoint);
+
+        if (functionGraphClient == null) {
+            LOG.debug("Initializing SDK client");
+            this.functionGraphClient = endpoint.initClient();
+            LOG.debug("Successfully initialized SDK client");
+        }
+
+        updateClientConfigs(exchange, clientConfigurations);
 
         switch (clientConfigurations.getOperation()) {
             case FunctionGraphOperations.INVOKE_FUNCTION:
-                invokeFunction(exchange);
+                invokeFunction(exchange, clientConfigurations);
                 break;
             default:
                 throw new UnsupportedOperationException(
@@ -66,10 +71,11 @@ public class FunctionGraphProducer extends DefaultProducer {
 
     /**
      * Perform invoke function operation and map return object to exchange body
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void invokeFunction(Exchange exchange) {
+    private void invokeFunction(Exchange exchange, ClientConfigurations clientConfigurations) {
 
         // convert exchange body to Map object
         Object body = exchange.getMessage().getBody();
@@ -117,11 +123,11 @@ public class FunctionGraphProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (operation, function name, package, and
      * XCFFLogType) can also be passed via exchange properties, so they can be updated between each transaction. Since
      * they can change, we must clear the previous transaction and update these parameters with their new values
-     *
+     * 
      * @param exchange
+     * @param clientConfigurations
      */
-    private void updateClientConfigs(Exchange exchange) {
-        resetDynamicConfigs();
+    private void updateClientConfigs(Exchange exchange, ClientConfigurations clientConfigurations) {
 
         // checking for required operation
         if (ObjectHelper.isEmpty(exchange.getProperty(FunctionGraphProperties.OPERATION))
@@ -162,15 +168,5 @@ public class FunctionGraphProducer extends DefaultProducer {
         } else {
             clientConfigurations.setXCffLogType((String) exchange.getProperty(FunctionGraphProperties.XCFFLOGTYPE));
         }
-    }
-
-    /**
-     * Set all dynamic configurations to null
-     */
-    private void resetDynamicConfigs() {
-        clientConfigurations.setOperation(null);
-        clientConfigurations.setFunctionName(null);
-        clientConfigurations.setFunctionPackage(null);
-        clientConfigurations.setXCffLogType(null);
     }
 }

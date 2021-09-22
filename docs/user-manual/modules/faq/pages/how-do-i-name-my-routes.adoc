@@ -1,4 +1,3 @@
-[[HowdoInamemyroutes-HowdoInamemyroutes]]
 = How do I name my routes?
 
 You can assign names to your routes in Java DSL using `routeId`:

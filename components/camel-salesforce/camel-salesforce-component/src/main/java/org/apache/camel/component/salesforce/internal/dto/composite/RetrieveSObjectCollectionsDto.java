@@ -19,9 +19,6 @@ package org.apache.camel.component.salesforce.internal.dto.composite;
 import java.io.Serializable;
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
-@XStreamAlias("batch")
 public class RetrieveSObjectCollectionsDto implements Serializable {
 
     private static final long serialVersionUID = 1L;

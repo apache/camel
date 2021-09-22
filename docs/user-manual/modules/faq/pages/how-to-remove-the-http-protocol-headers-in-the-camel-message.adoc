@@ -1,4 +1,3 @@
-[[Howtoremovethehttpprotocolheadersinthecamelmessage-Howtoremovethehttpprotocolheadersinthecamelmessage]]
 = How to remove the http protocol headers in the camel message?
 
 In camel there are a number of components that use the http protocol

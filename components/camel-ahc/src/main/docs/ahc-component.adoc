@@ -1,11 +1,10 @@
-[[ahc-component]]
 = Async HTTP Client (AHC) Component
-:docTitle: Async HTTP Client (AHC)
-:shortName: ahc
-:artifactId: camel-ahc
+:doctitle: Async HTTP Client (AHC)
+:shortname: ahc
+:artifactid: camel-ahc
 :description: Call external HTTP services using Async Http Client.
 :since: 2.8
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ahc.adoc[opts=optional]
 

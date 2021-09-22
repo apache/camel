@@ -1,4 +1,3 @@
-[[GettingStarted-GettingStarted]]
 = Getting Started
 
 First you need to Download the Camel distribution;

@@ -18,20 +18,13 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 public class SObjectDescription extends SObject {
 
-    @XStreamImplicit
     private List<ActionOverride> actionOverrides;
-    @XStreamImplicit
     private List<SObjectField> fields;
     private SObjectDescriptionUrls urls;
-    @XStreamImplicit
     private List<ChildRelationShip> childRelationships;
-    @XStreamImplicit
     private List<RecordTypeInfo> recordTypeInfos;
-    @XStreamImplicit
     private List<NamedLayoutInfo> namedLayoutInfos;
 
     public List<ActionOverride> getActionOverrides() {

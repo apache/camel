@@ -1,4 +1,3 @@
-[[Messaging-Bridge]]
 = Messaging Bridge
 
 Camel supports the

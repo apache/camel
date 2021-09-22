@@ -1,4 +1,3 @@
-[[ServiceRegistry-ServiceRegistry]]
 = Service Registry
 
 Service registration is a key part of service discovery which Camel leverages through

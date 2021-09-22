@@ -1,11 +1,10 @@
-[[etcd-watch-component]]
 = Etcd Watch Component
-:docTitle: Etcd Watch
-:shortName: etcd-watch
-:artifactId: camel-etcd
+:doctitle: Etcd Watch
+:shortname: etcd-watch
+:artifactid: camel-etcd
 :description: Watch specific etcd keys or directories for changes.
 :since: 2.18
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/etcd-watch.adoc[opts=optional]
 

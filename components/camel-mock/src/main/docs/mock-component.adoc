@@ -1,11 +1,10 @@
-[[mock-component]]
 = Mock Component
-:docTitle: Mock
-:shortName: mock
-:artifactId: camel-mock
+:doctitle: Mock
+:shortname: mock
+:artifactid: camel-mock
 :description: Test routes and mediation rules using mocks.
 :since: 1.0
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 :core:
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mock.adoc[opts=optional]

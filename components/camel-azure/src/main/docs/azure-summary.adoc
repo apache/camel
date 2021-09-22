@@ -1,14 +1,13 @@
-[[Azure-CamelComponentsforMicrosoftAzureServices]]
 = Camel Components for Microsoft Azure Services
 //attributes written by hand, not generated
-:docTitle: Azure
+:doctitle: Azure
 
 The Camel Components for https://azure.microsoft.com/[Microsoft Azure Services]
 provide connectivity to Azure services from Camel.
 
-== {docTitle} components
+== {doctitle} components
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={doctitle}',descAttribute=description]
 

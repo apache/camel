@@ -18,14 +18,12 @@ package org.apache.camel.component.salesforce.internal.dto;
 
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 
 /**
  * Salesforce Query Records DTO for PushTopic
  */
 public class QueryRecordsPushTopic extends AbstractQueryRecordsBase {
-    @XStreamImplicit
     private List<PushTopic> records;
 
     public List<PushTopic> getRecords() {

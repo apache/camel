@@ -1,11 +1,10 @@
-[[aws2-kinesis-firehose-component]]
 = AWS Kinesis Firehose Component
-:docTitle: AWS Kinesis Firehose
-:shortName: aws2-kinesis-firehose
-:artifactId: camel-aws2-kinesis
+:doctitle: AWS Kinesis Firehose
+:shortname: aws2-kinesis-firehose
+:artifactid: camel-aws2-kinesis
 :description: Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
 :since: 3.2
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-kinesis-firehose.adoc[opts=optional]
 //Manually maintained attributes

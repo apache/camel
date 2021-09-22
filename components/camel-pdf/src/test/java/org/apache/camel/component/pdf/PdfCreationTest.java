@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -68,7 +69,7 @@ public class PdfCreationTest extends CamelTestSupport {
                     assertEquals(1, doc.getNumberOfPages());
                     assertThat(text, containsString(expectedText));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeCamelException(e);
                 }
                 return true;
             }
@@ -106,7 +107,7 @@ public class PdfCreationTest extends CamelTestSupport {
                     assertEquals(1, doc.getNumberOfPages());
                     assertThat(text, containsString(expectedText));
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeCamelException(e);
                 }
                 return true;
             }

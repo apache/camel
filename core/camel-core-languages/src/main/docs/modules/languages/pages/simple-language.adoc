@@ -1,11 +1,10 @@
-[[simple-language]]
 = Simple Language
-:docTitle: Simple
-:shortName: simple
-:artifactId: camel-core-languages
+:doctitle: Simple
+:shortname: simple
+:artifactid: camel-core-languages
 :description: Evaluates a Camel simple expression.
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/simple.adoc[opts=optional]
 
 *Since Camel {since}*

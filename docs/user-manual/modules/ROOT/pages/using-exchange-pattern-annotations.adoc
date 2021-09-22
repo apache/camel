@@ -1,4 +1,3 @@
-[[UsingExchangePatternAnnotations-UsingExchangePatternAnnotations]]
 = Using Exchange Pattern Annotations
 
 When working with xref:pojo-producing.adoc[POJO Producing] you invoke methods which

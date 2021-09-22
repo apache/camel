@@ -1,4 +1,3 @@
-[[Injector-Injector]]
 = Injector
 
 The

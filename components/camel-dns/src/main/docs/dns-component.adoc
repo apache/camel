@@ -1,11 +1,10 @@
-[[dns-component]]
 = DNS Component
-:docTitle: DNS
-:shortName: dns
-:artifactId: camel-dns
+:doctitle: DNS
+:shortname: dns
+:artifactid: camel-dns
 :description: Perform DNS queries using DNSJava.
 :since: 2.7
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dns.adoc[opts=optional]
 

@@ -1,4 +1,3 @@
-[[PropertyBinding-PropertyBinding]]
 = Property binding in Camel
 
 Camel supports binding property values (key=value) in many places such as configuration of Camel

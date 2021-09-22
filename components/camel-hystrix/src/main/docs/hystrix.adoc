@@ -1,11 +1,10 @@
-[[hystrix-other]]
 = Hystrix Component (deprecated)
-:docTitle: Hystrix
-:shortName: hystrix
-:artifactId: camel-hystrix
+:doctitle: Hystrix
+:shortname: hystrix
+:artifactid: camel-hystrix
 :description: Circuit Breaker EIP using Netflix Hystrix
 :since: 2.18
-:supportLevel: Stable-deprecated
+:supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/hystrix.adoc[opts=optional]
 

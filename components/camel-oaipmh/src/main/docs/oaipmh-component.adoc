@@ -1,11 +1,10 @@
-[[oaipmh-component]]
 = OAI-PMH Component
-:docTitle: OAI-PMH
-:shortName: oaipmh
-:artifactId: camel-oaipmh
+:doctitle: OAI-PMH
+:shortname: oaipmh
+:artifactid: camel-oaipmh
 :description: Harvest metadata using OAI-PMH protocol
 :since: 3.5
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/oaipmh.adoc[opts=optional]
 

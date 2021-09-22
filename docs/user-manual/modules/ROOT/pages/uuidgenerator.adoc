@@ -1,4 +1,3 @@
-[[UuidGenerator-UuidGenerator]]
 = UuidGenerator
 
 Camel supports 3rd party UUID generator(s).

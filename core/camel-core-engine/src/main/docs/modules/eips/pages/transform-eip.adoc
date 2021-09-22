@@ -1,9 +1,9 @@
-[[transform-eip]]
 = Transform EIP
-:docTitle: Transform
+:doctitle: Transform
+:shortname: transform
 :description: Transforms the message body based on an expression
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
 
 See below for details
 
@@ -12,5 +12,5 @@ See below for details
 == Options
 
 // eip options: START
-The Transform EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END

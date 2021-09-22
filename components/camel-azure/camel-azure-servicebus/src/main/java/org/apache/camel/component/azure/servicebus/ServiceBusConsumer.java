@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusReceiverAsyncClientWrapper;
 import org.apache.camel.component.azure.servicebus.operations.ServiceBusReceiverOperations;
@@ -120,7 +121,7 @@ public class ServiceBusConsumer extends DefaultConsumer {
         if (fnToInvoke != null) {
             fnToInvoke.run();
         } else {
-            throw new RuntimeException("Operation not supported. Value: " + operationsToInvoke);
+            throw new RuntimeCamelException("Operation not supported. Value: " + operationsToInvoke);
         }
     }
 

@@ -1,11 +1,10 @@
-[[braintree-component]]
 = Braintree Component
-:docTitle: Braintree
-:shortName: braintree
-:artifactId: camel-braintree
+:doctitle: Braintree
+:shortname: braintree
+:artifactid: camel-braintree
 :description: Process payments using Braintree Payments.
 :since: 2.17
-:supportLevel: Stable
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/braintree.adoc[opts=optional]
 
