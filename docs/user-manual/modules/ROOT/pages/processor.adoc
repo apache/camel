@@ -3,7 +3,7 @@
 The
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
 interface is used for implement consumers of message exchanges or to
-implement a xref:{eip-vc}:eips:message-translator.adoc[Message Translator],
+implement a xref:components:eips:message-translator.adoc[Message Translator],
 and other use-cases.
 
 == Using a processor in a route

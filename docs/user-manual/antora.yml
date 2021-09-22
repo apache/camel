@@ -25,4 +25,4 @@ nav:
 
 asciidoc:
   attributes:
-    eip-vc: latest@components
+    eip-vc: components

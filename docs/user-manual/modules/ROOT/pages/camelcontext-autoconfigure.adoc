@@ -43,10 +43,10 @@ The following SPI services, can only a single instance (singleton) be in the xre
 | InflightRepository | To use a custom inflight repository
 | ManagementObjectNameStrategy | To use a custom JMX MBean object naming
 | ManagementStrategy | To use a custom JMX management strategy
-| MessageHistoryFactory | To use a custom factory for xref:{eip-vc}:eips:message-history.adoc[message history]
+| MessageHistoryFactory | To use a custom factory for xref:components:eips:message-history.adoc[message history]
 | ModelJAXBContextFactory | To use a custom `JAXBContext` factory (only needed if you run Camel on a special application server to deal with JAXB classloading)
 | NodeIdFactory | To use a custom factory for creating auto generated node ids
-| ProcessorFactory | To use a custom factory for creating xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP] processors
+| ProcessorFactory | To use a custom factory for creating xref:components:eips:enterprise-integration-patterns.adoc[EIP] processors
 | PropertiesComponent | To use a custom properties component
 | ReactiveExecutor | To use a custom reactive engine in the Camel routing engine
 | RouteController | To use a custom xref:route-controller.adoc[route controller]

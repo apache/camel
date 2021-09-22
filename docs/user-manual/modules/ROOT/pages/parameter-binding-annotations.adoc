@@ -31,7 +31,7 @@ component or when invoking beans in the xref:dsl.adoc[DSL]
 
 Annotations can be used to define an xref:expression.adoc[Expression] or
 to extract various headers, properties or payloads from a
-xref:{eip-vc}:eips:message.adoc[Message] when invoking a bean method (see
+xref:components:eips:message.adoc[Message] when invoking a bean method (see
 xref:bean-integration.adoc[Bean Integration] for more detail of how to
 invoke bean methods) together with being useful to help disambiguate
 which method to invoke.
@@ -153,7 +153,7 @@ any of these annotations:
 |=======================================================================
 
 The table above only list some of the commonly used languages. You can find
-a list of all supported xref:latest@components:languages:index.adoc[Languages]
+a list of all supported xref:components:languages:index.adoc[Languages]
 which each have their own annotation that can be used.
 
 It is required to include the JAR of the language, for example `camel-groovy`,

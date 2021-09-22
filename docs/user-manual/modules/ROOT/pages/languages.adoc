@@ -1,14 +1,14 @@
 = Languages
 
 To support flexible and powerful
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns], Camel supports various Languages to create an
 xref:expression.adoc[Expression] or xref:predicate.adoc[Predicate]
 within the xref:routes.adoc[Routes] and xref:dsl.adoc[DSL]..
 
 == Supported languages
 
-There are about 20 different xref:latest@components:languages:index.adoc[Languages] such
+There are about 20 different xref:components:languages:index.adoc[Languages] such
 as scripted programming languages such as Groovy, and template based languages like Velocity and Freemarker,
 and XML/JSon languages, and many others.
 

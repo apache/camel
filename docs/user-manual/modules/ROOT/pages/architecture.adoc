@@ -5,7 +5,7 @@ or an XML Configuration to configure
 routing and mediation rules which are added to a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext]
 to implement the various
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns].
+xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns].
 
 At a high level Camel consists of a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext]

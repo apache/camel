@@ -215,7 +215,7 @@ Camel a bit more time, and hence added 15 seconds so the default is 45 seconds.
 === Message History
 
 The message history is now default disabled (due to optimize core for lower footprint out of the box).
-See the xref:{eip-vc}:eips:message-history.adoc[Message History] documentation for how to enabled message history.
+See the xref:components:eips:message-history.adoc[Message History] documentation for how to enabled message history.
 
 === Inflight Repository
 

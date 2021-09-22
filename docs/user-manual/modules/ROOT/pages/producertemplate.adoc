@@ -34,8 +34,8 @@ You can also supply an `Exchange` or a `Processor` to customize the exchange.
 The `ProducerTemplate` supports xref:exchange-pattern.adoc[Message Exchange Patterns] (MEP)
 that are used to control the messaging style to use:
 
-* _send methods_ - xref:{eip-vc}:eips:event-message.adoc[Event Message] (InOnly)
-* _request methods_ - xref:{eip-vc}:eips:requestReply-eip.adoc[Request Reply] (InOut)
+* _send methods_ - xref:components:eips:event-message.adoc[Event Message] (InOnly)
+* _request methods_ - xref:components:eips:requestReply-eip.adoc[Request Reply] (InOut)
 
 In other words, all the methods on the `ProducerTemplate` that starts with `sendXXX` are for InOnly messaging,
 and all the methods starting with `requestXXX` are for InOut messaging.

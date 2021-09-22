@@ -50,7 +50,7 @@ In the example above we have a single route, which pickup files (the `from`).
 from("file:src/data?noop=true")
 ---------------------------------------
 
-Then we use the xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] EIP
+Then we use the xref:components:eips:choice-eip.adoc[Content Based Router] EIP
 (the `choice`) to route the message whether the person is from London or not.
 
 [source,java]

@@ -1,12 +1,12 @@
 = Predicates
 
 xref:expression.adoc[Expressions] and Predicates can then be used to
-create the various xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
-Integration Patterns] in the xref:dsl.adoc[DSL] like with the xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] EIP.
+create the various xref:components:eips:enterprise-integration-patterns.adoc[Enterprise
+Integration Patterns] in the xref:dsl.adoc[DSL] like with the xref:components:eips:choice-eip.adoc[Content Based Router] EIP.
 
 To support dynamic rules Camel supports pluggable
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Predicate.html[Predicate]
-strategies using a variety of different xref:latest@components:languages:index.adoc[Languages].
+strategies using a variety of different xref:components:languages:index.adoc[Languages].
 
 == Predicate API
 
@@ -35,7 +35,7 @@ powerful as it is often used to control the routing of message in which
 path they should be routed.
 
 A simple example is to route an xref:exchange.adoc[Exchange] based on a
-header value with the xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] EIP:
+header value with the xref:components:eips:choice-eip.adoc[Content Based Router] EIP:
 
 [source,java]
 ----

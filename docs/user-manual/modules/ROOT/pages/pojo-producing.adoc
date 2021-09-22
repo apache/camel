@@ -69,7 +69,7 @@ When we invoke methods on this interface the method call is
 turned into an object and is sent to the
 endpoint; in this case the xref:components::activemq-component.adoc[ActiveMQ] endpoint to
 queue *`foo`*. Because the `sayHello` method has a return type (`String`) then Camel
-will use xref:{eip-vc}:eips:requestReply-eip.adoc[Request Reply] (InOut) messaging.
+will use xref:components:eips:requestReply-eip.adoc[Request Reply] (InOut) messaging.
 
 [source,java]
 ----
@@ -78,4 +78,4 @@ public interface MyListener {
 }
 ----
 
-If the method is a `void` method, then Camel will use xref:{eip-vc}:eips:event-message.adoc[Event Message] (InOnly) messaging.
+If the method is a `void` method, then Camel will use xref:components:eips:event-message.adoc[Event Message] (InOnly) messaging.

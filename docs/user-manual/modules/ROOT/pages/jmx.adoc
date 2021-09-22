@@ -135,7 +135,7 @@ you for example add and remove temporary routes where management is not
 needed.
 
 CAUTION: Be a bit careful to use the `registerAlways` option when using dynamic
-EIP patterns such as the xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List] having unique endpoints. If so
+EIP patterns such as the xref:components:eips:recipientList-eip.adoc[Recipient List] having unique endpoints. If so
 then each unique endpoint and its associated services/producers would
 also be registered. This could potentially lead to system degradation due
 the rising number of mbeans in the registry. A MBean is not a
