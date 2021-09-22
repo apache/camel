@@ -16,14 +16,17 @@
  */
 package org.apache.camel.component.aws2.ddbstream;
 
-import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeStreamResponse;
 import software.amazon.awssdk.services.dynamodb.model.GetShardIteratorRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetShardIteratorResponse;
 import software.amazon.awssdk.services.dynamodb.model.ListStreamsRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListStreamsResponse;
 import software.amazon.awssdk.services.dynamodb.model.Shard;
@@ -34,111 +37,108 @@ class ShardIteratorHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ShardIteratorHandler.class);
 
     private final Ddb2StreamEndpoint endpoint;
-    private final ShardList shardList = new ShardList();
+    private final ShardTree shardTree = new ShardTree();
 
-    private String currentShardIterator;
-    private Shard currentShard;
+    private String streamArn;
+    private Map<String, String> currentShardIterators = new HashMap<>();
 
     ShardIteratorHandler(Ddb2StreamEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 
-    String getShardIterator(String resumeFromSequenceNumber) {
-        ShardIteratorType iteratorType = getEndpoint().getConfiguration().getIteratorType();
-        String sequenceNumber = getEndpoint().getSequenceNumber();
-        if (resumeFromSequenceNumber != null) {
-            // Reset things as we're in an error condition.
-            currentShard = null;
-            currentShardIterator = null;
-            iteratorType = ShardIteratorType.AFTER_SEQUENCE_NUMBER;
-            sequenceNumber = resumeFromSequenceNumber;
+    Map<String, String> getShardIterators() {
+        if (streamArn == null) {
+            streamArn = getStreamArn();
         }
-        // either return a cached one or get a new one via a GetShardIterator
-        // request.
-        if (currentShardIterator == null) {
-            ListStreamsResponse streamsListResult = getClient().listStreams(
-                    ListStreamsRequest.builder().tableName(getEndpoint().getConfiguration().getTableName()).build());
-            if (streamsListResult.streams().isEmpty()) {
-                throw new IllegalArgumentException(
-                        "There is no stream associated with table configured. Please create one.");
-            }
-            final String streamArn = streamsListResult.streams().get(0).streamArn(); // XXX
-            // assumes
-            // there
-            // is
-            // only
-            // one
-            // stream
+        // Either return cached ones or get new ones via GetShardIterator requests.
+        if (currentShardIterators.isEmpty()) {
             DescribeStreamResponse streamDescriptionResult
                     = getClient().describeStream(DescribeStreamRequest.builder().streamArn(streamArn).build());
-            shardList.addAll(streamDescriptionResult.streamDescription().shards());
+            shardTree.populate(streamDescriptionResult.streamDescription().shards());
 
-            LOG.trace("Current shard is: {} (in {})", currentShard, shardList);
-            if (currentShard == null) {
-                currentShard = resolveNewShard(iteratorType, resumeFromSequenceNumber);
-            } else {
-                currentShard = shardList.nextAfter(currentShard);
-            }
-            shardList.removeOlderThan(currentShard);
-            LOG.trace("Next shard is: {} (in {})", currentShard, shardList);
-
-            GetShardIteratorResponse result
-                    = getClient().getShardIterator(buildGetShardIteratorRequest(streamArn, iteratorType, sequenceNumber));
-            currentShardIterator = result.shardIterator();
-        }
-        LOG.trace("Shard Iterator is: {}", currentShardIterator);
-        return currentShardIterator;
-    }
-
-    private GetShardIteratorRequest buildGetShardIteratorRequest(
-            final String streamArn, ShardIteratorType iteratorType, String sequenceNumber) {
-        GetShardIteratorRequest.Builder req = GetShardIteratorRequest.builder().streamArn(streamArn)
-                .shardId(currentShard.shardId()).shardIteratorType(iteratorType);
-        switch (iteratorType) {
-            case AFTER_SEQUENCE_NUMBER:
-            case AT_SEQUENCE_NUMBER:
-                // if you request with a sequence number that is LESS than the
-                // start of the shard, you get a HTTP 400 from AWS.
-                // So only add the sequence number if the endpoints
-                // sequence number is less than or equal to the starting
-                // sequence for the shard.
-                // Otherwise change the shart iterator type to trim_horizon
-                // because we get a 400 when we use one of the
-                // {at,after}_sequence_number iterator types and don't supply
-                // a sequence number.
-                if (BigIntComparisons.Conditions.LTEQ.matches(
-                        new BigInteger(currentShard.sequenceNumberRange().startingSequenceNumber()),
-                        new BigInteger(sequenceNumber))) {
-                    req.sequenceNumber(sequenceNumber);
+            StreamIteratorType streamIteratorType = getEndpoint().getConfiguration().getStreamIteratorType();
+            currentShardIterators = getCurrentShardIterators(streamIteratorType);
+        } else {
+            Map<String, String> childShardIterators = new HashMap<>();
+            for (Entry<String, String> currentShardIterator : currentShardIterators.entrySet()) {
+                List<Shard> children = shardTree.getChildren(currentShardIterator.getKey());
+                if (children.isEmpty()) { // This is still an active leaf shard, reuse it.
+                    childShardIterators.put(currentShardIterator.getKey(), currentShardIterator.getValue());
                 } else {
-                    req.shardIteratorType(ShardIteratorType.TRIM_HORIZON);
+                    for (Shard child : children) { // Inactive shard, move down to its children.
+                        String shardIterator = getShardIterator(child.shardId(), ShardIteratorType.TRIM_HORIZON);
+                        childShardIterators.put(child.shardId(), shardIterator);
+                    }
                 }
-                break;
-            default:
+            }
+            currentShardIterators = childShardIterators;
         }
-        return req.build();
+        LOG.trace("Shard Iterators are: {}", currentShardIterators);
+        return currentShardIterators;
     }
 
-    private Shard resolveNewShard(ShardIteratorType type, String resumeFrom) {
-        switch (type) {
-            case AFTER_SEQUENCE_NUMBER:
-                return shardList.afterSeq(resumeFrom != null ? resumeFrom : getEndpoint().getSequenceNumber());
-            case AT_SEQUENCE_NUMBER:
-                return shardList.atSeq(getEndpoint().getSequenceNumber());
-            case TRIM_HORIZON:
-                return shardList.first();
-            case LATEST:
-            default:
-                return shardList.last();
+    void updateShardIterator(String shardId, String nextShardIterator) {
+        if (nextShardIterator == null) { // Shard has become inactive and all records have been consumed.
+            currentShardIterators.remove(shardId);
+        } else {
+            currentShardIterators.put(shardId, nextShardIterator);
         }
     }
 
-    void updateShardIterator(String nextShardIterator) {
-        this.currentShardIterator = nextShardIterator;
+    String requestFreshShardIterator(String shardId, String lastSeenSequenceNumber) {
+        String shardIterator = getShardIterator(shardId, ShardIteratorType.AFTER_SEQUENCE_NUMBER, lastSeenSequenceNumber);
+        currentShardIterators.put(shardId, shardIterator);
+        return shardIterator;
     }
 
     Ddb2StreamEndpoint getEndpoint() {
         return endpoint;
+    }
+
+    private String getStreamArn() {
+        ListStreamsResponse streamsListResult = getClient().listStreams(
+                ListStreamsRequest.builder().tableName(getEndpoint().getConfiguration().getTableName()).build());
+        if (streamsListResult.streams().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "There is no stream associated with table configured. Please create one.");
+        }
+        return streamsListResult.streams().get(0).streamArn(); // XXX assumes there is only one stream
+    }
+
+    private Map<String, String> getCurrentShardIterators(StreamIteratorType streamIteratorType) {
+        List<Shard> currentShards;
+        ShardIteratorType shardIteratorType;
+        switch (streamIteratorType) {
+            case FROM_START:
+                currentShards = shardTree.getRoots();
+                shardIteratorType = ShardIteratorType.TRIM_HORIZON;
+                break;
+            case FROM_LATEST:
+            default:
+                currentShards = shardTree.getLeaves();
+                shardIteratorType = ShardIteratorType.LATEST;
+        }
+
+        Map<String, String> shardIterators = new HashMap<>();
+        for (Shard currentShard : currentShards) {
+            String shardIterator = getShardIterator(currentShard.shardId(), shardIteratorType);
+            shardIterators.put(currentShard.shardId(), shardIterator);
+        }
+        return shardIterators;
+    }
+
+    private String getShardIterator(String shardId, ShardIteratorType shardIteratorType) {
+        return getShardIterator(shardId, shardIteratorType, null);
+    }
+
+    private String getShardIterator(String shardId, ShardIteratorType shardIteratorType, String lastSeenSequenceNumber) {
+        GetShardIteratorRequest request = GetShardIteratorRequest.builder()
+                .streamArn(streamArn)
+                .shardId(shardId)
+                .shardIteratorType(shardIteratorType)
+                .sequenceNumber(lastSeenSequenceNumber)
+                .build();
+        return getClient().getShardIterator(request).shardIterator();
     }
 
     private DynamoDbStreamsClient getClient() {

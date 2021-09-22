@@ -16,17 +16,24 @@
  */
 package org.apache.camel.component.aws2.ddbstream;
 
-import org.apache.camel.Converter;
+import software.amazon.awssdk.services.dynamodb.model.ListStreamsRequest;
+import software.amazon.awssdk.services.dynamodb.model.ListStreamsResponse;
+import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
-// Allow to ignore this type converter if the ddbstream JARs are not present on the classpath
-@Converter(generateLoader = true, ignoreOnLoadError = true)
-public final class StringSequenceNumberConverter {
+class AmazonDDBStreamlessClientMock implements DynamoDbStreamsClient {
 
-    private StringSequenceNumberConverter() {
+    @Override
+    public ListStreamsResponse listStreams(ListStreamsRequest listStreamsRequest) {
+        return ListStreamsResponse.builder().build();
     }
 
-    @Converter
-    public static SequenceNumberProvider toSequenceNumberProvider(String sequenceNumber) {
-        return new StaticSequenceNumberProvider(sequenceNumber);
+    @Override
+    public String serviceName() {
+        return DynamoDbStreamsClient.SERVICE_NAME;
     }
+
+    @Override
+    public void close() {
+    }
+
 }
