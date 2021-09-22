@@ -22,6 +22,7 @@ import java.util.List;
 import com.google.cloud.pubsub.v1.stub.SubscriberStub;
 import com.google.pubsub.v1.AcknowledgeRequest;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.spi.Synchronization;
 
@@ -43,7 +44,7 @@ public class AcknowledgeSync implements Synchronization {
         try {
             subscriber.acknowledgeCallable().call(ackRequest);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 

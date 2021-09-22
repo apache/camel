@@ -32,6 +32,7 @@ import com.azure.cosmos.models.ThroughputResponse;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbContainerOperations;
@@ -122,7 +123,7 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
         if (fnToInvoke != null) {
             fnToInvoke.accept(exchange, callback);
         } else {
-            throw new RuntimeException("Operation not supported. Value: " + operationsToInvoke);
+            throw new RuntimeCamelException("Operation not supported. Value: " + operationsToInvoke);
         }
     }
 

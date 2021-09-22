@@ -35,6 +35,7 @@ import org.apache.activemq.broker.ConnectionContext;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.TransactionId;
 import org.apache.activemq.util.Wait;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
@@ -210,7 +211,7 @@ public class JmsJdbcXATest extends ActiveMQSpringTestSupport {
             } });
             broker.start();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to start broker", e);
+            throw new RuntimeCamelException("Failed to start broker", e);
         }
 
         return super.createApplicationContext();

@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.iec60870.DiscardAckModule;
 import org.apache.camel.component.iec60870.ObjectAddress;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.ASDUAddress;
@@ -156,7 +157,7 @@ public class ServerInstance {
             if (e instanceof RuntimeException) {
                 re = (RuntimeException) e;
             } else {
-                re = new RuntimeException(e);
+                re = new RuntimeCamelException(e);
             }
             ex.forEach(re::addSuppressed);
             throw re;

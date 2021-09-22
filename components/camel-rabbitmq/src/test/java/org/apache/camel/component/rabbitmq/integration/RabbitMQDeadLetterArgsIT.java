@@ -25,6 +25,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
@@ -86,7 +87,7 @@ public class RabbitMQDeadLetterArgsIT extends AbstractRabbitMQIT {
                         .routeId("consumer")
                         .convertBodyTo(String.class)
                         .to(receivedEndpoint)
-                        .throwException(new RuntimeException("Simulated"));
+                        .throwException(new RuntimeCamelException("Simulated"));
 
                 final String endpointUri2 = String.format(
                         "rabbitmq:anotherExchange?%s&queue=%s&deadLetterQueue=%s&autoAck=false&durable=true&deadLetterExchange=anotherExchange&skipDlqDeclare=true",
@@ -94,7 +95,7 @@ public class RabbitMQDeadLetterArgsIT extends AbstractRabbitMQIT {
                 from("direct:start_skip_dlq_declare")
                         .to(endpointUri2);
                 from(endpointUri2)
-                        .throwException(new RuntimeException("Simulated"));
+                        .throwException(new RuntimeCamelException("Simulated"));
                 fromF("rabbitmq:anotherExchange?%s&queue=%s&args=#args", localRabbitmqParams, DLQ_SKIP_DECLARE)
                         .convertBodyTo(String.class)
                         .to(receivedDlqEndpoint);

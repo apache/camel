@@ -24,6 +24,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bonita.api.model.CaseCreationResponse;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
@@ -58,7 +59,7 @@ public class BonitaAPI {
         if (!listProcess.isEmpty()) {
             return listProcess.get(0);
         } else {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     "The process with name " + processName + " has not been retrieved");
         }
     }

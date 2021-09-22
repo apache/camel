@@ -28,6 +28,7 @@ import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncClientWrapper;
 import org.apache.camel.component.azure.servicebus.operations.ServiceBusSenderOperations;
@@ -134,7 +135,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
         if (fnToInvoke != null) {
             fnToInvoke.accept(exchange, callback);
         } else {
-            throw new RuntimeException("Operation not supported. Value: " + operationsToInvoke);
+            throw new RuntimeCamelException("Operation not supported. Value: " + operationsToInvoke);
         }
     }
 

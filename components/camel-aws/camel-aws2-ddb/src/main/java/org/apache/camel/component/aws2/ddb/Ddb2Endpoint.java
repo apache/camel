@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -155,7 +156,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
             }
         }
 
-        throw new RuntimeException("Table " + tableName + " never went active");
+        throw new RuntimeCamelException("Table " + tableName + " never went active");
     }
 
     private boolean isTableActive(TableDescription tableDescription) {
