@@ -6,10 +6,10 @@ and thread pools from the JDK concurrency API.
 This page focuses on thread pools.
 Camel leverages thread pools in several places such as:
 
-* several xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP] patterns supports using thread pools for
+* several xref:components:eips:enterprise-integration-patterns.adoc[EIP] patterns supports using thread pools for
 concurrency
 * xref:components::seda-component.adoc[SEDA] component for asynchronous connectivity
-* xref:{eip-vc}:eips:threads-eip.adoc[Threads] EIP in Camel routes
+* xref:components:eips:threads-eip.adoc[Threads] EIP in Camel routes
 * Some components use thread pools out of the box, such as
 xref:components::jms-component.adoc[JMS] or xref:components::jetty-component.adoc[Jetty]
 
@@ -33,7 +33,7 @@ The default profile is pre-configured out of the box with the following settings
 |===
 
 What that means is that for example when you use
-xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
+xref:components:eips:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
 then it would create a thread pool based on the profile above.
 
 You can define as many thread pool profiles as you like. But there must
@@ -99,7 +99,7 @@ xref:registry.adoc[Registry] for a `ExecutorService` with the id `fooProfile`.
 If none found it will fallback and see if there is a
 `ThreadPoolProfile` defined with that id. In this example there is a profile,
 so the profile is used as base settings for creating a new `ExecutorService` which is
-handed back to the xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] EIP to use in the
+handed back to the xref:components:eips:multicast-eip.adoc[Multicast] EIP to use in the
 Camel route.
 
 In Java DSL you can use `ThreadPoolProfileBuilder` to create a profile and then register the profile:

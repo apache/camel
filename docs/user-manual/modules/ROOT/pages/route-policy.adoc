@@ -85,16 +85,16 @@ again in case it has been suspended.
 === ThrottlingInflightRoutePolicy compared to the Throttler EIP
 
 The `ThrottlingInflightRoutePolicy` compared to
-xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] EIP is that it does *not* block during
+xref:components:eips:throttle-eip.adoc[Throttler] EIP is that it does *not* block during
 throttling. It does throttling that is approximate based, meaning that
 its more coarse grained and not explicit precise as the
-xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] EIP.
+xref:components:eips:throttle-eip.adoc[Throttler] EIP.
 
-The xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] EIP can
+The xref:components:eips:throttle-eip.adoc[Throttler] EIP can
 be much more accurate and only allow a specific number of messages being
 passed per a given time unit. Also the `ThrottlingInflightRoutePolicy`
 is based its metrics on number of inflight exchanges where as
-xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] EIP is based on number o
+xref:components:eips:throttle-eip.adoc[Throttler] EIP is based on number o
 messages per time unit.
 
 == ScheduledRoutePolicy

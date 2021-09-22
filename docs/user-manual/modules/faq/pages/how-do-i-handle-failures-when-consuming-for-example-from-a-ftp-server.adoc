@@ -19,7 +19,7 @@ and delay in between.
 
 But you can also plugin your own implementation and determine what to do
 using the `pollStrategy` option which has more documentation
-xref:{eip-vc}:eips:polling-consumer.adoc[Polling Consumer].
+xref:components:eips:polling-consumer.adoc[Polling Consumer].
 Notice that the option `pollStrategy` applies for all consumers which is
 a `ScheduledPollConsumer` consumer. The page lists those.
 

@@ -281,7 +281,7 @@ In the example below we use the `prop` prefix for the namespace
 to configure any kind of XML attributes in Spring XML files.
 
 In the example below we want to use a placeholder for the `stopOnException` option in
-the xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] EIP. The `stopOnException` is a `xs:boolean` type,
+the xref:components:eips:multicast-eip.adoc[Multicast] EIP. The `stopOnException` is a `xs:boolean` type,
 so we cannot configure this as:
 
 [source,xml]

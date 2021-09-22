@@ -19,7 +19,7 @@ The following annotations is supported and inject by Camel's
 |`@EndpointInject` |To inject an endpoint, see more details at xref:pojo-producing.adoc[POJO Producing].
 |`@BeanInject` |To inject a bean obtained from the Registry. See xref:bean-injection.adoc[Bean Injection].
 |`@BeanConfigInject` |To inject a configuration bean obtained from the Registry. The bean is a POJO that represents
-a set of configuration options, which is automatic configured with values loaded via Camel xref:latest@manual::using-propertyplaceholder.adoc[Property Placeholders].
+a set of configuration options, which is automatic configured with values loaded via Camel xref:using-propertyplaceholder.adoc[Property Placeholders].
 |`@PropertyInject` |To inject a value using property placeholder.
 |`@Produce` |To inject a producer to send message to an endpoint. See xref:pojo-producing.adoc[POJO Producing].
 |`@Consume` |To inject a consumer on a method. See xref:pojo-consuming.adoc[POJO Consuming].
@@ -33,9 +33,9 @@ See more details at:
 
 * xref:pojo-consuming.adoc[POJO Consuming] to consume and possibly route messages from Camel
 * xref:pojo-producing.adoc[POJO Producing] to make it easy to produce camel messages from your POJOs
-* `@DynamicRouter` Annotation for creating a xref:{eip-vc}:eips:dynamicRouter-eip.adoc[Dynamic Router] from a POJO method
-* `@RecipientList` Annotation for creating a xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List] from a POJO method
-* `@RoutingSlip` Annotation for creating a xref:{eip-vc}:eips:routingSlip-eip.adoc[Routing Slip] for a POJO method
+* `@DynamicRouter` Annotation for creating a xref:components:eips:dynamicRouter-eip.adoc[Dynamic Router] from a POJO method
+* `@RecipientList` Annotation for creating a xref:components:eips:recipientList-eip.adoc[Recipient List] from a POJO method
+* `@RoutingSlip` Annotation for creating a xref:components:eips:routingSlip-eip.adoc[Routing Slip] for a POJO method
 * xref:bean-injection.adoc[Bean Injection] to inject Camel related resources into your POJOs
 * xref:using-exchange-pattern-annotations.adoc[Using Exchange Pattern Annotations]
   describes how the pattern annotations can be used to change

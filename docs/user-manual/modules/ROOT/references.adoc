@@ -1,5 +1,5 @@
 * *Reference*
-* xref:latest@components::index.adoc[Components]
-* xref:latest@components:dataformats:index.adoc[Data Formats]
-* xref:latest@components:languages:index.adoc[Languages]
-* xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIPs]
+* xref:components::index.adoc[Components]
+* xref:components:dataformats:index.adoc[Data Formats]
+* xref:components:languages:index.adoc[Languages]
+* xref:components:eips:enterprise-integration-patterns.adoc[EIPs]

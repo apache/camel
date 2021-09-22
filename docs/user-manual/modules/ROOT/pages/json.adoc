@@ -11,4 +11,4 @@ popular JSON libraries such as:
 - Johnzon
 
 How to use JSon with Camel then see the documentation (for the JSon data library of choice)
-in the list of xref:latest@components:dataformats:index.adoc[Data Formats].
+in the list of xref:components:dataformats:index.adoc[Data Formats].

@@ -31,7 +31,7 @@ When implementing an xref:endpoint.adoc[Endpoint] you typically may
 implement one or more of the following methods:
 
 * `createProducer` will create a producer for sending message exchanges to the endpoint
-* `createConsumer` implements the xref:{eip-vc}:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer]
+* `createConsumer` implements the xref:components:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer]
 pattern for consuming message exchanges from the endpoint.
 
 Typically, you just derive from `DefaultEndpoint`

@@ -2,7 +2,7 @@
 
 Camel supports pluggable
 https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/ErrorHandler.html[ErrorHandler]
-strategies to deal with errors processing an xref:{eip-vc}:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer].
+strategies to deal with errors processing an xref:components:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer].
 
 An alternative is to specify the error handling directly in the xref:dsl.adoc[DSL]
 using the xref:exception-clause.adoc[Exception Clause].
@@ -51,7 +51,7 @@ a single RouteBuilder
 === DefaultErrorHandler
 
 The DefaultErrorHandler is the default
-error handler in Camel. Unlike xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter
+error handler in Camel. Unlike xref:components:eips:dead-letter-channel.adoc[Dead Letter
 Channel] it does not have any dead letter queue, and do *not* handle
 exceptions by default.
 
@@ -238,7 +238,7 @@ and use another error handler.
 
 === Spring based configuration sample
 
-In this sample we configure a xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter
+In this sample we configure a xref:components:eips:dead-letter-channel.adoc[Dead Letter
 Channel] on the route that should redeliver at most 3 times and use a
 little delay before retrying. First we configure the reference to *myDeadLetterErrorHandler* using
 the `errorHandlerRef` attribute on the `route` tag.
@@ -287,7 +287,7 @@ etc.
 The transactional error handler is based on spring transaction. This
 requires the usage of the camel-spring or camel-jta component.
 
-See xref:{eip-vc}:eips:transactional-client.adoc[Transactional Client] that has many
+See xref:components:eips:transactional-client.adoc[Transactional Client] that has many
 samples for how to use and transactional behavior and configuration with
 this error handler.
 

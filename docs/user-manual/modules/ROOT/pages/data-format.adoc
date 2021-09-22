@@ -2,11 +2,11 @@
 
 Camel supports a pluggable `DataFormat` to allow messages to be marshalled
 to and from binary or text formats to support a kind of
-xref:{eip-vc}:eips:message-translator.adoc[Message Translator].
+xref:components:eips:message-translator.adoc[Message Translator].
 
 == Supported data formats
 
-There are more than 40 different xref:latest@components:dataformats:index.adoc[Data Formats] that
+There are more than 40 different xref:components:dataformats:index.adoc[Data Formats] that
 supports formats such as XML, CSV, JSon, YAML, Avro, Protobuf, and many more.
 
 == Unmarshalling
@@ -48,7 +48,7 @@ xref:registry.adoc[Registry].
 
 The following example marshals using a
 named JAXB data format to perform a kind of
-xref:{eip-vc}:eips:message-translator.adoc[Message Translator]:
+xref:components:eips:message-translator.adoc[Message Translator]:
 
 [source,java]
 ----

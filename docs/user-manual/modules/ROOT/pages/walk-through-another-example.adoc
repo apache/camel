@@ -8,7 +8,7 @@ routing and explain a few pointers - so you won't walk into a bear trap,
 but can enjoy an after-hours walk to the local pub for a large beer.
 
 First we take a moment to look at the
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] - the base pattern catalog for integration scenarios. In
 particular we focus on http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] -
 a central pattern. This is used to route messages through a sequence of
@@ -156,7 +156,7 @@ sendConfirmEmai bean
 
 What to notice here is that the `to` is not the end of the route (the
 world) in this example it's used in the middle of the
-xref:{eip-vc}:eips:pipeline-eip.adoc[Pipes and filters]. In fact we can change
+xref:components:eips:pipeline-eip.adoc[Pipes and filters]. In fact we can change
 the `bean` types to `to` as well:
 
 [source,syntaxhighlighter-pre]

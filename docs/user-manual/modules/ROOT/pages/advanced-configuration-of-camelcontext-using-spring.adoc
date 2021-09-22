@@ -38,7 +38,7 @@ tooling.
 |TraceFormatter |0..1 |To use a bean that has the tracing options
 configured.
 
-|Delayer |0..1 |To use a 3rd part xref:{eip-vc}:eips:delay-eip.adoc[Delayer].
+|Delayer |0..1 |To use a 3rd part xref:components:eips:delay-eip.adoc[Delayer].
 
 |ManagementStrategy |0..1 |To use a 3rd part strategy for
 xref:jmx.adoc[management], for example JMX management.
@@ -86,7 +86,7 @@ xref:stream-caching.adoc[Stream caching] strategy.
 RuntimeEndpointRegistry implementation.
 
 |Logger |0..1 |To use provided org.slf4j.Logger
-for xref:components::log-component.adoc[Log] component and xref:{eip-vc}:eips:log-eip.adoc[log() EIP].
+for xref:components::log-component.adoc[Log] component and xref:components:eips:log-eip.adoc[log() EIP].
 
 |AsyncProcessorAwaitManager |0..1 |To use a 3rd part async
 process await manager.
@@ -103,7 +103,7 @@ And the following options have support for any number of beans defined.
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Type |Number of beans |Description
-|InterceptStrategy |0..n |To use your own xref:{eip-vc}:eips:intercept.adoc[Intercept]
+|InterceptStrategy |0..n |To use your own xref:components:eips:intercept.adoc[Intercept]
 that intercepts every processing steps in all routes in the
 xref:camelcontext.adoc[CamelContext]. For instance you can use this to
 do an AOP like performance timer interceptor.

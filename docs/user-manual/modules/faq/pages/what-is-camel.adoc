@@ -1,7 +1,7 @@
 = What is Camel?
 
 Apache Camel (TM) is a versatile open-source integration framework based on
-known xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
+known xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns].
 
 Camel empowers you to define routing and mediation rules in a variety of

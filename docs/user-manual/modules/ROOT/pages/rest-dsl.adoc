@@ -167,8 +167,8 @@ For example:
 
 == Using Dynamic To in Rest DSL
 
-The Rest DSL supports xref:{eip-vc}:eips:toD-eip.adoc[Dynamic To] EIP (`toD`)
-to in the rest-dsl. For example to do a xref:{eip-vc}:eips:requestReply-eip.adoc[Request Reply]
+The Rest DSL supports xref:components:eips:toD-eip.adoc[Dynamic To] EIP (`toD`)
+to in the rest-dsl. For example to do a xref:components:eips:requestReply-eip.adoc[Request Reply]
 over xref:components::jms-component.adoc[JMS] where the queue name is dynamic defined
 
 [source,java]

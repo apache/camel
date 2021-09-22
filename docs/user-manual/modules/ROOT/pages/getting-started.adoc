@@ -8,7 +8,7 @@ Then come back here, and you might want to read the following
 documentation before continuing:
 
 * Longer xref:book-getting-started.adoc[Getting Started Guide]
-* Find out about xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+* Find out about xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
   and how to implement them with Camel
 * Review the xref:architecture.adoc[Architecture guide] to see how to build Routes using the xref:dsl.adoc[DSL].
 

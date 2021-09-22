@@ -35,7 +35,7 @@ the most commonly used methods:
 
 === Pattern matching
 
-The pattern option is used for matching. It uses the same rules as xref:{eip-vc}:eips:intercept.adoc[Intercept], which is applied in the following order:
+The pattern option is used for matching. It uses the same rules as xref:components:eips:intercept.adoc[Intercept], which is applied in the following order:
 
 * match exact
 * match by wildcard (`*`)
@@ -325,7 +325,7 @@ That means the message being sent after mock:bar would have been transformed to 
 When weaving a route, you need to use one of the `weaveBy` methods
 as criteria to select one or more nodes in the route graph.
 
-Suppose you use the xref:{eip-vc}:eips:split-eip.adoc[Split] EIP in a route; then you can use `weaveByType` to select this EIP.
+Suppose you use the xref:components:eips:split-eip.adoc[Split] EIP in a route; then you can use `weaveByType` to select this EIP.
 Given the following route:
 
 [source,java]
@@ -338,7 +338,7 @@ from("file:inbox").routeId("inbox")
     .to("mock:combined");
 ----
 
-Due to that route has only one xref:{eip-vc}:eips:split-eip.adoc[Split] EIP, you can use `weaveByType` to find this single
+Due to that route has only one xref:components:eips:split-eip.adoc[Split] EIP, you can use `weaveByType` to find this single
 splitter in the route. Using `weaveByType` requires you to pass in the model type of
 the EIP. The name of the model type is using the pattern _name_Definition.
 
@@ -349,7 +349,7 @@ weaveByType(SplitDefinition.class)
         .transform(simple("${body},Camel is awesome"));
 ----
 
-Here we weave and select the xref:{eip-vc}:eips:split-eip.adoc[Split] EIP and weave in a message transformation, that
+Here we weave and select the xref:components:eips:split-eip.adoc[Split] EIP and weave in a message transformation, that
 is processed before calling the splitter. This means the message body is appended with _Camel is awesome_.
 
 === weaveByToUri
@@ -357,7 +357,7 @@ is processed before calling the splitter. This means the message body is appende
 The `weaveByToUri` is a handy method that makes it easy to _weave_ a Camel route that
 send messages to a given endpoint URI or pattern.
 
-Given the following route having two branches in the xref:{eip-vc}:eips:choice-eip.adoc[Content Based Router] EIP:
+Given the following route having two branches in the xref:components:eips:choice-eip.adoc[Content Based Router] EIP:
 
 [source,java]
 ----
@@ -401,7 +401,7 @@ the selection to a specific node. This can be done by using the select methods:
 - `selectRange(from, to)` Selects the nodes within the given range. The index is zero based.
 - `maxDeep(level)` Limits the selection to at most N levels deep in the Camel route tree. The first level is number 1. So number 2 is the children of the first-level nodes.
 
-Given the following route which has multiple xref:{eip-vc}:eips:filter-eip.adoc[Filter] EIP,
+Given the following route which has multiple xref:components:eips:filter-eip.adoc[Filter] EIP,
 then we want to only advice the 2nd filter.
 
 [source,java]

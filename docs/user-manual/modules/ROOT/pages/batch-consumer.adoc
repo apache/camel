@@ -1,6 +1,6 @@
 = Batch Consumer
 
-Batch Consumer is basically a xref:{eip-vc}:eips:polling-consumer.adoc[Polling
+Batch Consumer is basically a xref:components:eips:polling-consumer.adoc[Polling
 Consumer] that is capable of polling multiple
 Exchanges in a single pool.
 

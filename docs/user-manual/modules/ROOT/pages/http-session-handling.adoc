@@ -107,7 +107,7 @@ cookies. Default is `CookiePolicy.ACCEPT_ORIGINAL_SERVER`.
 
 == Cookies and EIPs
 
-Some EIPs like xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] or xref:{eip-vc}:eips:split-eip.adoc[Split]
+Some EIPs like xref:components:eips:multicast-eip.adoc[Multicast] or xref:components:eips:split-eip.adoc[Split]
 create multiple exchanges from a single one. If no `org.apache.camel.http.common.cookie.ExchangeCookieHandler`
 is used before this, each multicast or splitter branch will have its own cookie store. This will not be the case
 if the first invocation of one of the endpoints using the cookie handler is before the multicast, because in

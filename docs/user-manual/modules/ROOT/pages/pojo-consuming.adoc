@@ -23,7 +23,7 @@ public class Foo {
 ----
 
 The xref:bean-binding.adoc[Bean Binding] is then used to convert the
-inbound xref:{eip-vc}:eips:message.adoc[Message] to the parameter list used to invoke
+inbound xref:components:eips:message.adoc[Message] to the parameter list used to invoke
 the method .
 
 This basically creates a route that looks kinda like this:
