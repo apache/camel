@@ -65,6 +65,11 @@ which used to be query parameter.
 Kamelet parameters that are named such as `host`, `port` are now always used with their configured value.
 Before the value in use may be from an ENV variable with the same name.
 
+=== camel-kafka
+
+The `camel-kafka` component was refactored to avoid blocking API calls in the Kafka consumer. As part of the refactoring the configuration `consumerStreams` was removed. In previous versions this setting configured the size thread pool used by the component to create Kafka consumers. As of 3.12, the size of the thread pool is set to be the same as the number of concurrent consumers (set by `consumersCount`).
+
+
 === camel-spark
 
 The `camel-spark` component has been upgraded from Spark 2.x to 3.x.
