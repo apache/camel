@@ -28,15 +28,13 @@ public class SeekPolicyResumeStrategy implements ResumeStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyResumeStrategy.class);
 
     private final String seekPolicy;
-    private final KafkaConsumer<?, ?> consumer;
 
-    public SeekPolicyResumeStrategy(KafkaConsumer<?, ?> consumer, String seekPolicy) {
+    public SeekPolicyResumeStrategy(String seekPolicy) {
         this.seekPolicy = seekPolicy;
-        this.consumer = consumer;
     }
 
     @Override
-    public void resume() {
+    public void resume(final KafkaConsumer<?, ?> consumer) {
         if (seekPolicy.equals("beginning")) {
             LOG.debug("Seeking from the beginning of topic");
             consumer.seekToBeginning(consumer.assignment());

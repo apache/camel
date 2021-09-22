@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
-import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
@@ -52,11 +51,7 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
         this.lastProcessedOffset = lastProcessedOffset;
         this.stopStateSupplier = stopStateSupplier;
 
-        StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
-        String seekPolicy = configuration.getSeekTo();
-
-        LOG.info("Performing resume as {} ", seekPolicy);
-        resumeStrategy = ResumeStrategyFactory.newResumeStrategy(consumer, offsetRepository, seekPolicy);
+        resumeStrategy = ResumeStrategyFactory.newResumeStrategy(configuration);
     }
 
     @Override
@@ -91,6 +86,6 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
         LOG.debug("onPartitionsAssigned: {} from topic {}", threadId, topicName);
 
-        resumeStrategy.resume();
+        resumeStrategy.resume(consumer);
     }
 }
