@@ -148,6 +148,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "requestRequiredAcks": target.getConfiguration().setRequestRequiredAcks(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeoutms":
         case "requestTimeoutMs": target.getConfiguration().setRequestTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "resumestrategy":
+        case "resumeStrategy": target.getConfiguration().setResumeStrategy(property(camelContext, org.apache.camel.component.kafka.consumer.support.ResumeStrategy.class, value)); return true;
         case "retries": target.getConfiguration().setRetries(property(camelContext, java.lang.Integer.class, value)); return true;
         case "retrybackoffms":
         case "retryBackoffMs": target.getConfiguration().setRetryBackoffMs(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -348,6 +350,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "requestRequiredAcks": return java.lang.String.class;
         case "requesttimeoutms":
         case "requestTimeoutMs": return java.lang.Integer.class;
+        case "resumestrategy":
+        case "resumeStrategy": return org.apache.camel.component.kafka.consumer.support.ResumeStrategy.class;
         case "retries": return java.lang.Integer.class;
         case "retrybackoffms":
         case "retryBackoffMs": return java.lang.Integer.class;
@@ -549,6 +553,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "requestRequiredAcks": return target.getConfiguration().getRequestRequiredAcks();
         case "requesttimeoutms":
         case "requestTimeoutMs": return target.getConfiguration().getRequestTimeoutMs();
+        case "resumestrategy":
+        case "resumeStrategy": return target.getConfiguration().getResumeStrategy();
         case "retries": return target.getConfiguration().getRetries();
         case "retrybackoffms":
         case "retryBackoffMs": return target.getConfiguration().getRetryBackoffMs();

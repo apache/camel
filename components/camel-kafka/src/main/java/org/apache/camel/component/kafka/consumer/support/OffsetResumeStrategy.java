@@ -34,15 +34,13 @@ import static org.apache.camel.component.kafka.consumer.support.KafkaRecordProce
 public class OffsetResumeStrategy implements ResumeStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(OffsetResumeStrategy.class);
 
-    private final KafkaConsumer<?, ?> consumer;
     private final StateRepository<String, String> offsetRepository;
 
-    public OffsetResumeStrategy(KafkaConsumer<?, ?> consumer, StateRepository<String, String> offsetRepository) {
-        this.consumer = consumer;
+    public OffsetResumeStrategy(StateRepository<String, String> offsetRepository) {
         this.offsetRepository = offsetRepository;
     }
 
-    private void resumeFromOffset(TopicPartition topicPartition, String offsetState) {
+    private void resumeFromOffset(final KafkaConsumer<?, ?> consumer, TopicPartition topicPartition, String offsetState) {
         // The state contains the last read offset, so you need to seek from the next one
         long offset = deserializeOffsetValue(offsetState) + 1;
         LOG.debug("Resuming partition {} from offset {} from state", topicPartition.partition(), offset);
@@ -50,12 +48,12 @@ public class OffsetResumeStrategy implements ResumeStrategy {
     }
 
     @Override
-    public void resume() {
+    public void resume(final KafkaConsumer<?, ?> consumer) {
         Set<TopicPartition> assignments = consumer.assignment();
         for (TopicPartition topicPartition : assignments) {
             String offsetState = offsetRepository.getState(serializeOffsetKey(topicPartition));
             if (offsetState != null && !offsetState.isEmpty()) {
-                resumeFromOffset(topicPartition, offsetState);
+                resumeFromOffset(consumer, topicPartition, offsetState);
             }
         }
     }
