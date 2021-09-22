@@ -17,6 +17,7 @@
 package org.apache.camel.component.reactor.engine;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
@@ -111,7 +112,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
 
         context.start();
 
-        RuntimeException ex = new RuntimeException("1");
+        RuntimeException ex = new RuntimeCamelException("1");
 
         Flux.just(1)
                 .map(n -> {
@@ -145,7 +146,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
 
         context.start();
 
-        RuntimeException ex = new RuntimeException("1");
+        RuntimeException ex = new RuntimeCamelException("1");
 
         Flux.just(1)
                 .map(n -> {

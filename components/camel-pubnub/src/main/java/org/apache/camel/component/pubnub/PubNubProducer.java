@@ -31,6 +31,7 @@ import com.pubnub.api.models.consumer.presence.PNWhereNowResult;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -102,7 +103,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
     private void doPublish(Exchange exchange, AsyncCallback callback) {
         Object body = exchange.getIn().getBody();
         if (ObjectHelper.isEmpty(body)) {
-            throw new RuntimeException("Can not publish empty message");
+            throw new RuntimeCamelException("Can not publish empty message");
         }
         LOG.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
@@ -224,9 +225,9 @@ public class PubNubProducer extends DefaultAsyncProducer {
             exchange.setException(errorData.getThrowable());
             if (errorData != null && errorData.getThrowable() instanceof PubNubException) {
                 PubNubException pubNubException = (PubNubException) errorData.getThrowable();
-                throw new RuntimeException(pubNubException.getPubnubError().getMessage(), errorData.getThrowable());
+                throw new RuntimeCamelException(pubNubException.getPubnubError().getMessage(), errorData.getThrowable());
             }
-            throw new RuntimeException(status.getErrorData().getThrowable());
+            throw new RuntimeCamelException(status.getErrorData().getThrowable());
         }
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().copyFrom(exchange.getIn());

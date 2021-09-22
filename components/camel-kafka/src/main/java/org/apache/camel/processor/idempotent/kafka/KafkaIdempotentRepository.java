@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
@@ -365,7 +366,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
             producer.send(new ProducerRecord<>(topic, key, action.toString())).get(); // sync
                                                                                      // send
         } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 

@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.client.MiloClientConfiguration;
 import org.apache.camel.component.milo.client.MonitorFilterConfiguration;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
@@ -92,7 +93,7 @@ public class SubscriptionManager {
             LOG.info("Transfer failed {} : {}", subscription.getSubscriptionId(), statusCode);
 
             // we simply tear it down and build it up again
-            handleConnectionFailue(new RuntimeException("Subscription failed to reconnect"));
+            handleConnectionFailue(new RuntimeCamelException("Subscription failed to reconnect"));
         }
 
         @Override

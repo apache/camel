@@ -19,6 +19,7 @@ package org.apache.camel.component.xmpp;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DefaultProducer;
 import org.jivesoftware.smack.SmackException;
@@ -104,7 +105,8 @@ public class XmppGroupChatProducer extends DefaultProducer {
                 connection = endpoint.createConnection();
             } catch (SmackException e) {
                 if (endpoint.isTestConnectionOnStartup()) {
-                    throw new RuntimeException("Could not connect to XMPP server:  " + endpoint.getConnectionDescription(), e);
+                    throw new RuntimeCamelException(
+                            "Could not connect to XMPP server:  " + endpoint.getConnectionDescription(), e);
                 } else {
                     LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.",
                             e.getMessage());

@@ -40,6 +40,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -505,7 +506,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             acknowledgementMessageType
                                     = new String(acknowledgmentTypeBytes, ExchangeHelper.getCharsetName(exchange));
                         } catch (IOException ioEx) {
-                            throw new RuntimeException("Failed to convert acknowledgement message to string", ioEx);
+                            throw new RuntimeCamelException("Failed to convert acknowledgement message to string", ioEx);
                         }
 
                         // Verify it's a valid acknowledgement code

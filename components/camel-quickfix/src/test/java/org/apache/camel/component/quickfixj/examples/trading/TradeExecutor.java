@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.ConfigError;
@@ -181,7 +182,7 @@ public class TradeExecutor {
             price = new Price(message.getDouble(Price.FIELD));
         } else {
             if (marketQuoteProvider == null) {
-                throw new RuntimeException("No market data provider specified for market order");
+                throw new RuntimeCamelException("No market data provider specified for market order");
             }
             char side = message.getChar(Side.FIELD);
             if (side == Side.BUY) {
@@ -189,7 +190,7 @@ public class TradeExecutor {
             } else if (side == Side.SELL || side == Side.SELL_SHORT) {
                 price = new Price(marketQuoteProvider.getBid(message.getString(Symbol.FIELD)));
             } else {
-                throw new RuntimeException("Invalid order side: " + side);
+                throw new RuntimeCamelException("Invalid order side: " + side);
             }
         }
         return price;

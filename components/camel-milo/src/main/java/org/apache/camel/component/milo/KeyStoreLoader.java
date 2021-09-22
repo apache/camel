@@ -29,6 +29,8 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.NoSuchElementException;
 
+import org.apache.camel.RuntimeCamelException;
+
 public class KeyStoreLoader {
     public static final String DEFAULT_KEY_STORE_TYPE = "PKCS12";
 
@@ -122,7 +124,7 @@ public class KeyStoreLoader {
             try {
                 effectiveKeyAlias = keyStore.aliases().nextElement();
             } catch (final NoSuchElementException e) {
-                throw new RuntimeException("Failed to enumerate key alias", e);
+                throw new RuntimeCamelException("Failed to enumerate key alias", e);
             }
         }
 

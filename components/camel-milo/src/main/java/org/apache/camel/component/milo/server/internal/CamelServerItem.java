@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Consumer;
 
+import org.apache.camel.RuntimeCamelException;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaNodeContext;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaObjectNode;
@@ -129,7 +130,7 @@ public class CamelServerItem {
             return;
         }
 
-        final RuntimeException ex = new RuntimeException(errors.pollFirst());
+        final RuntimeException ex = new RuntimeCamelException(errors.pollFirst());
         errors.forEach(ex::addSuppressed);
         throw ex;
     }

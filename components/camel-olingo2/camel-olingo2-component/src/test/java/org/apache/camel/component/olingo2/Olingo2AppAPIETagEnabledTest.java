@@ -27,6 +27,7 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import okio.Buffer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.olingo2.api.Olingo2App;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
@@ -133,7 +134,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
                             }
 
                         } catch (Exception ex) {
-                            throw new RuntimeException(ex);
+                            throw new RuntimeCamelException(ex);
                         }
                         break;
                     case HttpMethod.PATCH:
