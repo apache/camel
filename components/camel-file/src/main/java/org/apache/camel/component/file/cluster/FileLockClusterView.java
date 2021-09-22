@@ -30,6 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.apache.camel.util.IOHelper;
@@ -153,7 +154,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             } catch (OverlappingFileLockException e) {
                 LOGGER.debug("Lock on file {} not acquired ", path);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
     }

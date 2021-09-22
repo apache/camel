@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -56,7 +57,7 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
             properties.load(inStream);
             return properties;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 

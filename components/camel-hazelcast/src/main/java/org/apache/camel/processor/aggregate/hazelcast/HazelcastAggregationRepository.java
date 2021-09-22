@@ -31,6 +31,7 @@ import com.hazelcast.transaction.TransactionOptions;
 import com.hazelcast.transaction.TransactionalMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
@@ -388,7 +389,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
                             "Transaction with ID %s was rolled back for remove operation with a key %s and an Exchange ID %s.",
                             tCtx.getTxnId(), key, exchange.getExchangeId());
                     LOG.warn(msg, throwable);
-                    throw new RuntimeException(msg, throwable);
+                    throw new RuntimeCamelException(msg, throwable);
                 }
             } else {
                 cache.remove(key);

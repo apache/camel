@@ -25,6 +25,7 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxUser;
 import com.box.sdk.CreateUserParams;
 import com.box.sdk.EmailAlias;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxUsersManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
@@ -187,7 +188,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         try {
             emailAlias = testUser.addEmailAlias(CAMEL_TEST_USER_EMAIL_ALIAS);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
         }
 

@@ -36,6 +36,7 @@ import com.google.cloud.bigquery.TableInfo;
 import com.google.cloud.bigquery.TableResult;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryComponent;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent;
@@ -72,7 +73,7 @@ public class BigQueryITSupport extends CamelTestSupport {
             testProperties.load(fileIn);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
 
         return testProperties;

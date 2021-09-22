@@ -29,6 +29,7 @@ import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.model.File;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
@@ -64,7 +65,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     private static Properties loadProperties() {
         final InputStream in = AbstractGoogleDriveTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES);
         if (in == null) {
-            throw new RuntimeException(TEST_OPTIONS_PROPERTIES + " could not be found");
+            throw new RuntimeCamelException(TEST_OPTIONS_PROPERTIES + " could not be found");
         }
 
         final StringBuilder builder = new StringBuilder();
@@ -82,7 +83,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
 
             return properties;
         } catch (IOException e) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
                     e);
         }

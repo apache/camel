@@ -36,6 +36,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubService;
 import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -59,7 +60,7 @@ public class PubsubTestSupport extends CamelTestSupport {
             testProperties.load(fileIn);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
 
         return testProperties;
@@ -150,7 +151,7 @@ public class PubsubTestSupport extends CamelTestSupport {
                             .setCredentialsProvider(credentialsProvider)
                             .build());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 
@@ -165,7 +166,7 @@ public class PubsubTestSupport extends CamelTestSupport {
                             .setCredentialsProvider(credentialsProvider)
                             .build());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 }

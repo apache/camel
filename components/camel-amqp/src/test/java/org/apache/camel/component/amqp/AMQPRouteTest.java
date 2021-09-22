@@ -27,6 +27,7 @@ import javax.jms.TextMessage;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -112,7 +113,7 @@ public class AMQPRouteTest extends CamelTestSupport {
                         facade.setApplicationProperty("cheese", 123);
                         facade.setTracingAnnotation("cheese", 456);
                     } catch (JMSException e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeCamelException(e);
                     }
                 });
         resultEndpoint.assertIsSatisfied();
@@ -129,7 +130,7 @@ public class AMQPRouteTest extends CamelTestSupport {
                         facade.setApplicationProperty("cheese", 123);
                         facade.setTracingAnnotation("cheese", 456);
                     } catch (JMSException e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeCamelException(e);
                     }
                 });
         resultEndpoint.assertIsSatisfied();

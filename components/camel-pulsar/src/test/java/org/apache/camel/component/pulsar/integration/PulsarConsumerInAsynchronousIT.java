@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.PulsarComponent;
@@ -108,7 +109,7 @@ public class PulsarConsumerInAsynchronousIT extends PulsarITSupport {
 
                 from(synchronousFalseThrowsException)
                         .threads(2)
-                        .throwException(new RuntimeException("Processor throws exception."))
+                        .throwException(new RuntimeCamelException("Processor throws exception."))
                         .end()
                         .to(to);
 
