@@ -46,7 +46,7 @@ The parameters to the SQL queries are named parameters in the elsql
 mapping files, and maps to corresponding keys from the Camel message, in
 the given precedence:
 
-1. from message body if xref:latest@components:languages:simple-language.adoc[Simple]
+1. from message body if xref:languages:simple-language.adoc[Simple]
 expression.
 
 2. from message body if its a `java.util.Map`
