@@ -95,22 +95,6 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
         return ddbStreamClient;
     }
 
-    public String getSequenceNumber() {
-        switch (configuration.getIteratorType()) {
-            case AFTER_SEQUENCE_NUMBER:
-            case AT_SEQUENCE_NUMBER:
-                if (null == configuration.getSequenceNumberProvider()) {
-                    throw new IllegalStateException(
-                            "sequenceNumberProvider must be" + " provided, either as an implementation of"
-                                                    + " SequenceNumberProvider or a literal String.");
-                } else {
-                    return configuration.getSequenceNumberProvider().getSequenceNumber();
-                }
-            default:
-                return "";
-        }
-    }
-
     DynamoDbStreamsClient createDdbStreamClient() {
         DynamoDbStreamsClient client = null;
         DynamoDbStreamsClientBuilder clientBuilder = DynamoDbStreamsClient.builder();
@@ -161,8 +145,7 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
     public String toString() {
         return "DdbStreamEndpoint{" + "tableName=" + configuration.getTableName()
                + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest="
-               + configuration.getMaxResultsPerRequest() + ", iteratorType=" + configuration.getIteratorType()
-               + ", sequenceNumberProvider="
-               + configuration.getSequenceNumberProvider() + ", uri=" + getEndpointUri() + '}';
+               + configuration.getMaxResultsPerRequest() + ", streamIteratorType=" + configuration.getStreamIteratorType()
+               + ", uri=" + getEndpointUri() + '}';
     }
 }

@@ -41,8 +41,6 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "iteratortype":
-        case "iteratorType": target.getConfiguration().setIteratorType(property(camelContext, software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": target.getConfiguration().setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
         case "overrideendpoint":
@@ -69,10 +67,10 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "sequencenumberprovider":
-        case "sequenceNumberProvider": target.getConfiguration().setSequenceNumberProvider(property(camelContext, org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "streamiteratortype":
+        case "streamIteratorType": target.getConfiguration().setStreamIteratorType(property(camelContext, org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "trustallcertificates":
@@ -115,8 +113,6 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
-        case "iteratortype":
-        case "iteratorType": return software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return int.class;
         case "overrideendpoint":
@@ -143,10 +139,10 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "secretKey": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
-        case "sequencenumberprovider":
-        case "sequenceNumberProvider": return org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
+        case "streamiteratortype":
+        case "streamIteratorType": return org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "trustallcertificates":
@@ -185,8 +181,6 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
-        case "iteratortype":
-        case "iteratorType": return target.getConfiguration().getIteratorType();
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return target.getConfiguration().getMaxResultsPerRequest();
         case "overrideendpoint":
@@ -213,10 +207,10 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
-        case "sequencenumberprovider":
-        case "sequenceNumberProvider": return target.getConfiguration().getSequenceNumberProvider();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
+        case "streamiteratortype":
+        case "streamIteratorType": return target.getConfiguration().getStreamIteratorType();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "trustallcertificates":

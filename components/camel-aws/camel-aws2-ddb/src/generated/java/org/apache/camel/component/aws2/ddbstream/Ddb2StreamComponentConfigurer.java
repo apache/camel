@@ -37,8 +37,6 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.class, value)); return true;
-        case "iteratortype":
-        case "iteratorType": getOrCreateConfiguration(target).setIteratorType(property(camelContext, software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": getOrCreateConfiguration(target).setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
         case "overrideendpoint":
@@ -52,8 +50,8 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "sequencenumberprovider":
-        case "sequenceNumberProvider": getOrCreateConfiguration(target).setSequenceNumberProvider(property(camelContext, org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class, value)); return true;
+        case "streamiteratortype":
+        case "streamIteratorType": getOrCreateConfiguration(target).setStreamIteratorType(property(camelContext, org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -81,8 +79,6 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.class;
-        case "iteratortype":
-        case "iteratorType": return software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return int.class;
         case "overrideendpoint":
@@ -96,8 +92,8 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
-        case "sequencenumberprovider":
-        case "sequenceNumberProvider": return org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class;
+        case "streamiteratortype":
+        case "streamIteratorType": return org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -121,8 +117,6 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
-        case "iteratortype":
-        case "iteratorType": return getOrCreateConfiguration(target).getIteratorType();
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return getOrCreateConfiguration(target).getMaxResultsPerRequest();
         case "overrideendpoint":
@@ -136,8 +130,8 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
-        case "sequencenumberprovider":
-        case "sequenceNumberProvider": return getOrCreateConfiguration(target).getSequenceNumberProvider();
+        case "streamiteratortype":
+        case "streamIteratorType": return getOrCreateConfiguration(target).getStreamIteratorType();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "uriendpointoverride":

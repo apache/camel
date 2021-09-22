@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.aws2.ddbstream;
 
-import java.math.BigInteger;
 import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 
 import org.apache.camel.AsyncCallback;
@@ -33,14 +35,13 @@ import software.amazon.awssdk.services.dynamodb.model.ExpiredIteratorException;
 import software.amazon.awssdk.services.dynamodb.model.GetRecordsRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetRecordsResponse;
 import software.amazon.awssdk.services.dynamodb.model.Record;
-import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Ddb2StreamConsumer.class);
 
     private final ShardIteratorHandler shardIteratorHandler;
-    private String lastSeenSequenceNumber;
+    private final Map<String, String> lastSeenSequenceNumbers = new HashMap<>();
 
     public Ddb2StreamConsumer(Ddb2StreamEndpoint endpoint, Processor processor) {
         this(endpoint, processor, new ShardIteratorHandler(endpoint));
@@ -53,29 +54,41 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected int poll() throws Exception {
-        GetRecordsResponse result;
-        try {
-            GetRecordsRequest.Builder req
-                    = GetRecordsRequest.builder().shardIterator(shardIteratorHandler.getShardIterator(null))
-                            .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
-            result = getClient().getRecords(req.build());
-        } catch (ExpiredIteratorException e) {
-            LOG.warn("Expired Shard Iterator, attempting to resume from {}", lastSeenSequenceNumber, e);
-            GetRecordsRequest.Builder req
-                    = GetRecordsRequest.builder().shardIterator(shardIteratorHandler.getShardIterator(lastSeenSequenceNumber))
-                            .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
-            result = getClient().getRecords(req.build());
+        int processedExchangeCount = 0;
+        Map<String, String> shardIterators = shardIteratorHandler.getShardIterators();
+        for (Entry<String, String> shardIteratorEntry : shardIterators.entrySet()) {
+            int limitPerRecordsRequest = Math.max(1,
+                    getEndpoint().getConfiguration().getMaxResultsPerRequest() / shardIterators.size());
+            String shardId = shardIteratorEntry.getKey();
+            String shardIterator = shardIteratorEntry.getValue();
+            GetRecordsResponse result;
+            try {
+                GetRecordsRequest req = GetRecordsRequest.builder()
+                        .shardIterator(shardIterator)
+                        .limit(limitPerRecordsRequest)
+                        .build();
+                result = getEndpoint().getClient().getRecords(req);
+            } catch (ExpiredIteratorException e) {
+                String lastSeenSequenceNumber = lastSeenSequenceNumbers.get(shardId);
+                LOG.warn("Expired Shard Iterator, attempting to resume from {}", lastSeenSequenceNumber, e);
+                GetRecordsRequest req = GetRecordsRequest.builder()
+                        .shardIterator(shardIteratorHandler.requestFreshShardIterator(shardId, lastSeenSequenceNumber))
+                        .limit(limitPerRecordsRequest)
+                        .build();
+                result = getEndpoint().getClient().getRecords(req);
+            }
+            List<Record> records = result.records();
+            Queue<Exchange> exchanges = new ArrayDeque<>();
+            for (Record record : records) {
+                exchanges.add(createExchange(record));
+            }
+            processedExchangeCount += processBatch(CastUtils.cast(exchanges));
+
+            shardIteratorHandler.updateShardIterator(shardId, result.nextShardIterator());
+            if (!records.isEmpty()) {
+                lastSeenSequenceNumbers.put(shardId, records.get(records.size() - 1).dynamodb().sequenceNumber());
+            }
         }
-        List<Record> records = result.records();
-
-        Queue<Exchange> exchanges = createExchanges(records, lastSeenSequenceNumber);
-        int processedExchangeCount = processBatch(CastUtils.cast(exchanges));
-
-        shardIteratorHandler.updateShardIterator(result.nextShardIterator());
-        if (!records.isEmpty()) {
-            lastSeenSequenceNumber = records.get(records.size() - 1).dynamodb().sequenceNumber();
-        }
-
         return processedExchangeCount;
     }
 
@@ -99,42 +112,8 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         return ex;
     }
 
-    private DynamoDbStreamsClient getClient() {
-        return getEndpoint().getClient();
-    }
-
     @Override
     public Ddb2StreamEndpoint getEndpoint() {
         return (Ddb2StreamEndpoint) super.getEndpoint();
-    }
-
-    private Queue<Exchange> createExchanges(List<Record> records, String lastSeenSequenceNumber) {
-        Queue<Exchange> exchanges = new ArrayDeque<>();
-        BigIntComparisons condition = null;
-        BigInteger providedSeqNum = null;
-        if (lastSeenSequenceNumber != null) {
-            providedSeqNum = new BigInteger(lastSeenSequenceNumber);
-            condition = BigIntComparisons.Conditions.LT;
-        }
-        switch (getEndpoint().getConfiguration().getIteratorType()) {
-            case AFTER_SEQUENCE_NUMBER:
-                condition = BigIntComparisons.Conditions.LT;
-                providedSeqNum
-                        = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
-                break;
-            case AT_SEQUENCE_NUMBER:
-                condition = BigIntComparisons.Conditions.LTEQ;
-                providedSeqNum
-                        = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
-                break;
-            default:
-        }
-        for (Record record : records) {
-            BigInteger recordSeqNum = new BigInteger(record.dynamodb().sequenceNumber());
-            if (condition == null || condition.matches(providedSeqNum, recordSeqNum)) {
-                exchanges.add(createExchange(record));
-            }
-        }
-        return exchanges;
     }
 }

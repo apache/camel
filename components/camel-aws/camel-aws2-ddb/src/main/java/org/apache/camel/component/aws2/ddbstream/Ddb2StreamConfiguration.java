@@ -22,7 +22,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
-import software.amazon.awssdk.services.dynamodb.model.ShardIteratorType;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 @UriParams
@@ -47,18 +46,12 @@ public class Ddb2StreamConfiguration implements Cloneable {
     private int maxResultsPerRequest = 100;
 
     @UriParam(label = "consumer",
-              description = "Defines where in the DynaboDB stream"
-                            + " to start getting records. Note that using TRIM_HORIZON can cause a"
-                            + " significant delay before the stream has caught up to real-time."
-                            + " if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider" + " MUST be supplied.",
-              defaultValue = "LATEST")
-    private ShardIteratorType iteratorType = ShardIteratorType.LATEST;
+              description = "Defines where in the DynamoDB stream"
+                            + " to start getting records. Note that using FROM_START can cause a"
+                            + " significant delay before the stream has caught up to real-time.",
+              defaultValue = "FROM_LATEST")
+    private StreamIteratorType streamIteratorType = StreamIteratorType.FROM_LATEST;
 
-    @UriParam(label = "consumer",
-              description = "Provider for the sequence number when"
-                            + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
-                            + " iterator types. Can be a registry reference or a literal sequence number.")
-    private SequenceNumberProvider sequenceNumberProvider;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the DDBStreams client")
     private Protocol proxyProtocol = Protocol.HTTPS;
@@ -127,20 +120,12 @@ public class Ddb2StreamConfiguration implements Cloneable {
         this.tableName = tableName;
     }
 
-    public ShardIteratorType getIteratorType() {
-        return iteratorType;
+    public StreamIteratorType getStreamIteratorType() {
+        return streamIteratorType;
     }
 
-    public void setIteratorType(ShardIteratorType iteratorType) {
-        this.iteratorType = iteratorType;
-    }
-
-    public SequenceNumberProvider getSequenceNumberProvider() {
-        return sequenceNumberProvider;
-    }
-
-    public void setSequenceNumberProvider(SequenceNumberProvider sequenceNumberProvider) {
-        this.sequenceNumberProvider = sequenceNumberProvider;
+    public void setStreamIteratorType(StreamIteratorType streamIteratorType) {
+        this.streamIteratorType = streamIteratorType;
     }
 
     public Protocol getProxyProtocol() {
@@ -209,5 +194,10 @@ public class Ddb2StreamConfiguration implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    public enum StreamIteratorType {
+        FROM_LATEST,
+        FROM_START
     }
 }

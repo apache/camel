@@ -124,45 +124,6 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Defines where in the DynaboDB stream to start getting records. Note
-         * that using TRIM_HORIZON can cause a significant delay before the
-         * stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are
-         * used, then a sequenceNumberProvider MUST be supplied.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.model.ShardIteratorType&lt;/code&gt; type.
-         * 
-         * Default: LATEST
-         * Group: consumer
-         * 
-         * @param iteratorType the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder iteratorType(
-                ShardIteratorType iteratorType) {
-            doSetProperty("iteratorType", iteratorType);
-            return this;
-        }
-        /**
-         * Defines where in the DynaboDB stream to start getting records. Note
-         * that using TRIM_HORIZON can cause a significant delay before the
-         * stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are
-         * used, then a sequenceNumberProvider MUST be supplied.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.model.ShardIteratorType&lt;/code&gt; type.
-         * 
-         * Default: LATEST
-         * Group: consumer
-         * 
-         * @param iteratorType the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder iteratorType(String iteratorType) {
-            doSetProperty("iteratorType", iteratorType);
-            return this;
-        }
-        /**
          * Maximum number of records that will be fetched in each poll.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -352,39 +313,41 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Provider for the sequence number when using one of the two
-         * ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a
-         * registry reference or a literal sequence number.
+         * Defines where in the DynamoDB stream to start getting records. Note
+         * that using FROM_START can cause a significant delay before the stream
+         * has caught up to real-time.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration$StreamIteratorType&lt;/code&gt; type.
          * 
+         * Default: FROM_LATEST
          * Group: consumer
          * 
-         * @param sequenceNumberProvider the value to set
+         * @param streamIteratorType the value to set
          * @return the dsl builder
          */
-        default Ddb2StreamEndpointBuilder sequenceNumberProvider(
-                Object sequenceNumberProvider) {
-            doSetProperty("sequenceNumberProvider", sequenceNumberProvider);
+        default Ddb2StreamEndpointBuilder streamIteratorType(
+                StreamIteratorType streamIteratorType) {
+            doSetProperty("streamIteratorType", streamIteratorType);
             return this;
         }
         /**
-         * Provider for the sequence number when using one of the two
-         * ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a
-         * registry reference or a literal sequence number.
+         * Defines where in the DynamoDB stream to start getting records. Note
+         * that using FROM_START can cause a significant delay before the stream
+         * has caught up to real-time.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration$StreamIteratorType&lt;/code&gt; type.
          * 
+         * Default: FROM_LATEST
          * Group: consumer
          * 
-         * @param sequenceNumberProvider the value to set
+         * @param streamIteratorType the value to set
          * @return the dsl builder
          */
-        default Ddb2StreamEndpointBuilder sequenceNumberProvider(
-                String sequenceNumberProvider) {
-            doSetProperty("sequenceNumberProvider", sequenceNumberProvider);
+        default Ddb2StreamEndpointBuilder streamIteratorType(
+                String streamIteratorType) {
+            doSetProperty("streamIteratorType", streamIteratorType);
             return this;
         }
         /**
@@ -1097,23 +1060,20 @@ public interface Ddb2StreamEndpointBuilderFactory {
     }
 
     /**
-     * Proxy enum for
-     * <code>software.amazon.awssdk.services.dynamodb.model.ShardIteratorType</code> enum.
-     */
-    enum ShardIteratorType {
-        TRIM_HORIZON,
-        LATEST,
-        AT_SEQUENCE_NUMBER,
-        AFTER_SEQUENCE_NUMBER,
-        UNKNOWN_TO_SDK_VERSION;
-    }
-
-    /**
      * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
      */
     enum Protocol {
         HTTP,
         HTTPS;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration$StreamIteratorType</code> enum.
+     */
+    enum StreamIteratorType {
+        FROM_LATEST,
+        FROM_START;
     }
 
     public interface Ddb2StreamBuilders {

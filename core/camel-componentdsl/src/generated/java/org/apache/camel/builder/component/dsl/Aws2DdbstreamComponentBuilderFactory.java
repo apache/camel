@@ -106,26 +106,6 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Defines where in the DynaboDB stream to start getting records. Note
-         * that using TRIM_HORIZON can cause a significant delay before the
-         * stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are
-         * used, then a sequenceNumberProvider MUST be supplied.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.model.ShardIteratorType&lt;/code&gt; type.
-         * 
-         * Default: LATEST
-         * Group: consumer
-         * 
-         * @param iteratorType the value to set
-         * @return the dsl builder
-         */
-        default Aws2DdbstreamComponentBuilder iteratorType(
-                software.amazon.awssdk.services.dynamodb.model.ShardIteratorType iteratorType) {
-            doSetProperty("iteratorType", iteratorType);
-            return this;
-        }
-        /**
          * Maximum number of records that will be fetched in each poll.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -219,21 +199,22 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Provider for the sequence number when using one of the two
-         * ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a
-         * registry reference or a literal sequence number.
+         * Defines where in the DynamoDB stream to start getting records. Note
+         * that using FROM_START can cause a significant delay before the stream
+         * has caught up to real-time.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType&lt;/code&gt; type.
          * 
+         * Default: FROM_LATEST
          * Group: consumer
          * 
-         * @param sequenceNumberProvider the value to set
+         * @param streamIteratorType the value to set
          * @return the dsl builder
          */
-        default Aws2DdbstreamComponentBuilder sequenceNumberProvider(
-                org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider sequenceNumberProvider) {
-            doSetProperty("sequenceNumberProvider", sequenceNumberProvider);
+        default Aws2DdbstreamComponentBuilder streamIteratorType(
+                org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType streamIteratorType) {
+            doSetProperty("streamIteratorType", streamIteratorType);
             return this;
         }
         /**
@@ -365,14 +346,13 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             case "amazonDynamoDbStreamsClient": getOrCreateConfiguration((Ddb2StreamComponent) component).setAmazonDynamoDbStreamsClient((software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient) value); return true;
             case "bridgeErrorHandler": ((Ddb2StreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((Ddb2StreamComponent) component).setConfiguration((org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration) value); return true;
-            case "iteratorType": getOrCreateConfiguration((Ddb2StreamComponent) component).setIteratorType((software.amazon.awssdk.services.dynamodb.model.ShardIteratorType) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((Ddb2StreamComponent) component).setMaxResultsPerRequest((int) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Ddb2StreamComponent) component).setOverrideEndpoint((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Ddb2StreamComponent) component).setRegion((java.lang.String) value); return true;
-            case "sequenceNumberProvider": getOrCreateConfiguration((Ddb2StreamComponent) component).setSequenceNumberProvider((org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider) value); return true;
+            case "streamIteratorType": getOrCreateConfiguration((Ddb2StreamComponent) component).setStreamIteratorType((org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Ddb2StreamComponent) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Ddb2StreamComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Ddb2StreamComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
