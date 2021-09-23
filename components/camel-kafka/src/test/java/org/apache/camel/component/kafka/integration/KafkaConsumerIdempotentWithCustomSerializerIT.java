@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.kafka.integration;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -54,14 +54,14 @@ public class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumer
 
     @BeforeEach
     public void before() throws ExecutionException, InterruptedException, TimeoutException {
+        kafkaIdempotentRepository.clear();
+        kafkaAdminClient.deleteTopics(Arrays.asList(TOPIC, "TEST_IDEMPOTENT")).all();
         doSend(size, TOPIC);
     }
 
     @AfterEach
     public void after() {
-
-        // clean all test topics
-        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
+        kafkaAdminClient.deleteTopics(Arrays.asList(TOPIC, "TEST_IDEMPOTENT")).all();
     }
 
     @Override

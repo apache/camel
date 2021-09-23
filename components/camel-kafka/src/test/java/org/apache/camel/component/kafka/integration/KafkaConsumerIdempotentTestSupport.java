@@ -21,8 +21,6 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class KafkaConsumerIdempotentTestSupport extends BaseEmbeddedKafkaTestSupport {
 
-    protected void doSend(int size, String topic) throws ExecutionException, InterruptedException, TimeoutException {
+    protected void doSend(int size, String topic) {
         Properties props = getDefaultProperties();
         org.apache.kafka.clients.producer.KafkaProducer<String, String> producer
                 = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
@@ -58,6 +56,8 @@ public abstract class KafkaConsumerIdempotentTestSupport extends BaseEmbeddedKaf
         mockEndpoint.expectedMessageCount(size);
 
         List<Exchange> exchangeList = mockEndpoint.getReceivedExchanges();
+
+        Thread.sleep(5000);
 
         mockEndpoint.assertIsSatisfied(10000);
 

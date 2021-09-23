@@ -16,16 +16,20 @@
  */
 package org.apache.camel.processor.idempotent.kafka;
 
+import java.util.Arrays;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -41,7 +45,7 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
 
     // Every instance of the repository must use a different topic to guarantee isolation between tests
     @BindToRegistry("kafkaIdempotentRepository")
-    private KafkaIdempotentRepository kafkaIdempotentRepository
+    private final KafkaIdempotentRepository kafkaIdempotentRepository
             = new KafkaIdempotentRepository("TEST_PERSISTENCE", getBootstrapServers());
 
     @EndpointInject("mock:out")
@@ -49,6 +53,11 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
 
     @EndpointInject("mock:before")
     private MockEndpoint mockBefore;
+
+    @BeforeEach
+    void clearTopics() {
+        kafkaAdminClient.deleteTopics(Arrays.asList("TEST_PERSISTENCE")).all();
+    }
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
@@ -63,7 +72,7 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
 
     @Order(1)
     @Test
-    public void testFirstPassFiltersAsExpected() throws InterruptedException {
+    public void testFirstPassFiltersAsExpected() {
         for (int i = 0; i < 10; i++) {
             template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
         }
@@ -80,7 +89,9 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
 
     @Order(2)
     @Test
-    public void testSecondPassFiltersEverything() throws InterruptedException {
+    @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "remote",
+                              disabledReason = "Remote may not allow deleting the topic, may contain data, etc")
+    public void testSecondPassFiltersEverything() {
         for (int i = 0; i < 10; i++) {
             template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
         }

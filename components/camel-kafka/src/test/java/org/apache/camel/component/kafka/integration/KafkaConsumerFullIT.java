@@ -80,7 +80,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
             producer.close();
         }
         // clean all test topics
-        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
+        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC)).all();
     }
 
     @Override
