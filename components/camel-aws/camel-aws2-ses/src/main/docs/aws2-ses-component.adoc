@@ -108,7 +108,9 @@ from("direct:start")
 
 The `#client` refers to a `SesClient` in the Registry.
 
-== Producer Examples
+== Examples
+
+=== Producer Examples
 
 [source,java]
 --------------------------------------------------------------------------------
