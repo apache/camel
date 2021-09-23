@@ -21,12 +21,7 @@ by default perform these actions
 using the JMSCorrelationID (as you may be performing many concurrent
 request/responses).
 
-[TIP]
-====
-*Related* 
-
-See the related xref:eips:event-message.adoc[Event Message] message
-====
+TIP: See the related xref:eips:event-message.adoc[Event Message].
 
 [[RequestReply-ExplicitlyspecifyingInOut]]
 == Explicitly specifying InOut

@@ -8,6 +8,8 @@
 
 The *inOnly:* EIP define an InOnly ExchangePattern.
 
+WARNING: inOnly is deprecated. Use xref:event-message.adoc[setExchangePattern] instead.
+
 == EIP options
 
 // eip options: START

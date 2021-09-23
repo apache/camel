@@ -8,6 +8,9 @@
 
 The *inOut:* EIP define an InOut ExchangePattern.
 
+WARNING: inOut is deprecated. Use xref:event-message.adoc[setExchangePattern] instead.
+
+
 == EIP options
 
 // eip options: START

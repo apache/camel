@@ -14,26 +14,43 @@ The Idempotent Consumer essentially acts like a
 xref:filter-eip.adoc[Message Filter] to filter out duplicates.
 
 Camel will add the message id eagerly to the repository to detect
-duplication also for Exchanges currently in progress. 
- On completion Camel will remove the message id from the repository if
-the Exchange failed, otherwise it stays there.
-
-Camel provides the following Idempotent Consumer implementations:
-
-* MemoryIdempotentRepository
-* xref:components::file-component.adoc[FileIdempotentRepository]
-* xref:components::hazelcast-summary.adoc[HazelcastIdempotentRepository]
-* xref:components::sql-component.adoc[JdbcMessageIdRepository]
-* xref:components::jpa-component.adoc[JpaMessageIdRepository]
-* xref:components::infinispan-component.adoc[InfinispanIdempotentRepository]
-* xref:components::jcache-component.adoc[JCacheIdempotentRepository]
-* xref:latest@manual:ROOT:spring.adoc[SpringCacheIdempotentRepository]
-* xref:components::ehcache-component.adoc[EhcacheIdempotentRepository]
-* xref:components::kafka-component.adoc[KafkaIdempotentRepository]
-* xref:components::hbase-component.adoc[HbaseIdempotentRepository]
+duplication also for xref:latest@manual:ROOT:exchange.adoc[Exchange]'s' currently in progress.
+On completion Camel will remove the message id from the repository if
+the xref:latest@manual:ROOT:exchange.adoc[Exchange] failed, otherwise it stays there.
 
 == Options
 
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Idempotent Consumer implementations
+
+The idempotent consumer provides a pluggable repository which you can implement
+your own `org.apache.camel.spi.IdempotentRepository`.
+
+Camel provides the following Idempotent Consumer implementations:
+
+* MemoryIdempotentRepository from `camel-support` JAR
+* xref:components::caffeine-cache-component.adoc[CaffeineIdempotentRepository]
+* xref:components::cql-component.adoc[CassandraIdempotentRepository]
+xref:components::cql-component.adoc[NamedCassandraIdempotentRepository]
+* xref:components::ehcache-component.adoc[EHCacheIdempotentRepository]
+* xref:components::hazelcast-summary.adoc[HazelcastIdempotentRepository]
+* xref:components::hbase-component.adoc[HBaseIdempotentRepository]
+* xref:components::infinispan-component.adoc[InfinispanIdempotentRepository]
+xref:components::infinispan-component.adoc[InfinispanEmbeddedIdempotentRepository]
+xref:components::infinispan-component.adoc[InfinispanRemoteIdempotentRepository]
+* xref:components::jcache-component.adoc[JCacheIdempotentRepository]
+* xref:components::jpa-component.adoc[JpaMessageIdRepository]
+* xref:components::kafka-component.adoc[KafkaIdempotentRepository]
+* xref:components::mongodb-component.adoc[MongoDbIdempotentRepository]
+* xref:components::spring-redis-component.adoc[RedisIdempotentRepository]
+xref:components::spring-redis-component.adoc[RedisStringIdempotentRepository]
+* xref:latest@manual:ROOT:spring.adoc[SpringCacheIdempotentRepository]
+* xref:components::sql-component.adoc[JdbcMessageIdRepository]
+xref:components::sql-component.adoc[JdbcOrphanLockAwareIdempotentRepository]
+
+== Example
+
+For example see the above implementations for more details.
