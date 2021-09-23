@@ -182,6 +182,18 @@ When sending something to the FIFO topic you'll need to always set up a message 
 
 If the content-based message deduplication has been enabled on the SNS Fifo topic, where won't be the need of setting a message deduplication id strategy, otherwise you'll have to set it.
 
+== Examples
+
+=== Producer Examples
+
+Sending to a topic
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .to("aws2-sns://camel-topic?subject=The+subject+message&autoCreateTopic=true");
+--------------------------------------------------------------------------------
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
