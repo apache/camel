@@ -52,7 +52,6 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
                 .optProgress(new ProgressBar())
                 .build();
         this.model = ModelZoo.loadModel(criteria);
-        //        model.save(Paths.get("src/test/resources/models/mnist"), "mlp");
     }
 
     @Override
