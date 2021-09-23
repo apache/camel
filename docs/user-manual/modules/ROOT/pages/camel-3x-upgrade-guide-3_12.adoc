@@ -38,6 +38,12 @@ The `camel-protobuf` data format has renamed the option `jsonViewTypeName` to `j
 The `camel-protobuf` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
 The `camel-yaml` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
 
+=== camel-aws2-ddb
+
+The `iteratorType` option has been dropped in favour of the `streamIteratorType` option. Possible values are `FROM_LATEST` and `FROM_START`.
+
+The `sequencenumberprovider` functionality is no longer supported.
+
 === camel-catalog
 
 Remove the APIs to return the website documentation in ascii doc and html format, it is the methods
