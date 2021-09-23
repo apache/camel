@@ -13,15 +13,14 @@ When using the xref:latest@manual:ROOT:dsl.adoc[DSL] to create xref:latest@manua
 typically refer to Message Endpoints by their xref:latest@manual:ROOT:uris.adoc[URIs]
 rather than directly using the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
-interface. Its then a responsibility of the
+interface. It's then a responsibility of the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext]
 to create and activate the necessary Endpoint instances using the
 available
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Component.html[Component]
 implementations.
 
-[[messageEndpoint-Example]]
-== Samples
+== Example
 
-See first example in xref:to-eip.adoc[To EIP]
+See first example in xref:to-eip.adoc[To] EIP
 
