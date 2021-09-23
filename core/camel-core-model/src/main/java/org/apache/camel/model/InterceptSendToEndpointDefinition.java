@@ -111,7 +111,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     /**
      * After sending to the endpoint then send the message to this url which allows to process its result.
      *
-     * @return the builder
+     * @return     the builder
      * @deprecated use {@link #afterUri(String)}
      */
     @Deprecated
