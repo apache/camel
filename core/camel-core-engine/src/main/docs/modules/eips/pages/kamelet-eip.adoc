@@ -11,6 +11,13 @@ hiding all the low level details about how those connections are implemented.
 The Kamelet EIP allows to call Kamelets (route templates).
 When calling a Kamelet you may just refer to the name (template id) of the Kamelet in the EIP as shown below:
 
+== Options
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Using Kamelet EIP
+
 [source,java]
 ----
 from("direct:start")
@@ -18,26 +25,21 @@ from("direct:start")
     .to("mock:result");
 ----
 
+And in XML
+
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-  <route>
+<route>
     <from uri="direct:start"/>
     <kamelet name="foo"/>
     <to uri="mock:result"/>
-  </route>
-</camelContext>
+</route>
 ----
 
 Camel will then, when starting:
 
 * lookup the route template with the given id (i.e. foo) from the Camel context
 * create a new route based on the route template
-
-== Options
-// eip options: START
-include::partial$eip-options.adoc[]
-// eip options: END
 
 == Dependency
 
