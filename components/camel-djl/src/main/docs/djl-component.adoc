@@ -109,7 +109,7 @@ It will automatically determine the appropriate jars for your system based on th
     </dependency>
 ----
 
-More information about https://github.com/awslabs/djl/blob/master/mxnet/mxnet-engine/README.md#installation[MxNet engine installation]
+More information about https://docs.djl.ai/engines/mxnet/index.html[MxNet engine installation]
 
 === PyTorch engine
 
@@ -138,7 +138,7 @@ It will automatically determine the appropriate jars for your system based on th
     </dependency>
 ----
 
-More information about https://github.com/awslabs/djl/blob/master/pytorch/pytorch-engine/README.md#installation[PyTorch engine installation]
+More information about https://docs.djl.ai/engines/pytorch/index.html[PyTorch engine installation]
 
 === Tensorflow engine
 
@@ -167,7 +167,7 @@ It will automatically determine the appropriate jars for your system based on th
     </dependency>
 ----
 
-More information about https://github.com/awslabs/djl/tree/master/tensorflow#installation[Tensorflow engine installation]
+More information about https://docs.djl.ai/engines/tensorflow/index.html[Tensorflow engine installation]
 
 
 
