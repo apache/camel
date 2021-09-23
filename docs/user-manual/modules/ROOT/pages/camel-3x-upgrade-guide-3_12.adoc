@@ -21,22 +21,18 @@ use the methods that take `String` as type.
 
 === Data Formats
 
-The `camel-asn1` data format has renamed the option `clazzName` to `unmarshalType`.
-The `camel-avro` data format has renamed the option `collectionTypeName` to `collectionType`.
-The `camel-avro` data format has renamed the option `jsonViewTypeName` to `jsonView`.
-The `camel-avro` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
-The `camel-cbor` data format has renamed the option `collectionTypeName` to `collectionType`.
-The `camel-cbor` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
-The `camel-jacksonxml` data format has renamed the option `collectionTypeName` to `collectionType`.
-The `camel-jacksonxml` data format has renamed the option `jsonViewTypeName` to `jsonView`.
-The `camel-jacksonxml` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
-The `camel-json` data format has renamed the option `collectionTypeName` to `collectionType`.
-The `camel-json` data format has renamed the option `jsonViewTypeName` to `jsonView`.
-The `camel-json` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
-The `camel-protobuf` data format has renamed the option `collectionTypeName` to `collectionType`.
-The `camel-protobuf` data format has renamed the option `jsonViewTypeName` to `jsonView`.
-The `camel-protobuf` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
-The `camel-yaml` data format has renamed the option `unmarshalTypeName` to `unmarshalType`.
+We had to fix all the data-formats options that take a Java classname to support
+using the `.class` type in Java vs using a string value in XML/YAML.
+
+This means the following options has been renamed:
+
+- `camel-asn1` renamed `clazzName` to `unmarshalType`
+- `camel-avro` renamed `collectionTypeName` to `collectionType`, and `jsonViewTypeName` to `jsonView`, and `unmarshalTypeName` to `unmarshalType`
+- `camel-cbor` renamed `collectionTypeName` to `collectionType`, and `unmarshalTypeName` to `unmarshalType`
+- `camel-jacksonxml` renamed `collectionTypeName` to `collectionType`, and `jsonViewTypeName` to `jsonView`, and `unmarshalTypeName` to `unmarshalType`
+- `camel-json` renamed `collectionTypeName` to `collectionType`, and `jsonViewTypeName` to `jsonView`, and `unmarshalTypeName` to `unmarshalType`
+- `camel-protobuf` renamed `collectionTypeName` to `collectionType`, and `jsonViewTypeName` to `jsonView`, and `unmarshalTypeName` to `unmarshalType`
+- `camel-yaml` renamed `unmarshalTypeName` to `unmarshalType`
 
 === camel-catalog
 
@@ -68,7 +64,6 @@ Before the value in use may be from an ENV variable with the same name.
 === camel-kafka
 
 The `camel-kafka` component was refactored to avoid blocking API calls in the Kafka consumer. As part of the refactoring the configuration `consumerStreams` was removed. In previous versions this setting configured the size thread pool used by the component to create Kafka consumers. As of 3.12, the size of the thread pool is set to be the same as the number of concurrent consumers (set by `consumersCount`).
-
 
 === camel-spark
 
