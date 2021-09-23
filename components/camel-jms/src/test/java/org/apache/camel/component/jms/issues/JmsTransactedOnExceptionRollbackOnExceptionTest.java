@@ -21,6 +21,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
@@ -35,7 +36,7 @@ public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSu
     public static class BadErrorHandler {
         @Handler
         public void onException(Exchange exchange, Exception exception) throws Exception {
-            throw new RuntimeException("error in errorhandler");
+            throw new RuntimeCamelException("error in errorhandler");
         }
     }
 
@@ -52,7 +53,7 @@ public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSu
 
                 from(testingEndpoint)
                         .log("Incoming JMS message ${body}")
-                        .throwException(new RuntimeException("bad error"));
+                        .throwException(new RuntimeCamelException("bad error"));
             }
         };
     }

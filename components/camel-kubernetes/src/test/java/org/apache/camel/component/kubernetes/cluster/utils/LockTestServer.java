@@ -34,6 +34,7 @@ import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.utils.ResponseProvider;
 import okhttp3.Headers;
 import okhttp3.mockwebserver.RecordedRequest;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,7 +273,7 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
             try {
                 Thread.sleep(delayRequests);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
     }

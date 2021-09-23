@@ -32,6 +32,7 @@ import javax.jcr.Value;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -83,7 +84,7 @@ public class JcrProducer extends DefaultProducer {
                     message.setHeader(property.getName(), value);
                 }
             } else {
-                throw new RuntimeException("Unsupported operation: " + operation);
+                throw new RuntimeCamelException("Unsupported operation: " + operation);
             }
         } finally {
             if (session != null && session.isLive()) {

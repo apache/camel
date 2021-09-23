@@ -18,6 +18,7 @@ package org.apache.camel.service.lra;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -70,7 +71,7 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
                         .saga()
                         .compensation("direct:compensate")
                         .process(x -> {
-                            throw new RuntimeException("fail");
+                            throw new RuntimeCamelException("fail");
                         });
 
                 from("direct:saga-complete")
@@ -82,7 +83,7 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
                         .process(x -> {
                             int current = maxFailures.decrementAndGet();
                             if (current >= 0) {
-                                throw new RuntimeException("compensation failure");
+                                throw new RuntimeCamelException("compensation failure");
                             }
                         })
                         .to("mock:compensate");
@@ -91,7 +92,7 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
                         .process(x -> {
                             int current = maxFailures.decrementAndGet();
                             if (current >= 0) {
-                                throw new RuntimeException("completion failure");
+                                throw new RuntimeCamelException("completion failure");
                             }
                         })
                         .to("mock:complete");
