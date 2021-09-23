@@ -35,6 +35,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.ssl.SslHandler;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
@@ -106,7 +107,7 @@ final class LumberjackUtil {
             }
             return wrappedBuffer(output.toByteArray());
         } catch (IOException e) {
-            throw new RuntimeException("Cannot read sample data", e);
+            throw new RuntimeCamelException("Cannot read sample data", e);
         }
     }
 }

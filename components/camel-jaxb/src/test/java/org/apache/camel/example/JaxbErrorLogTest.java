@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Body;
 import org.apache.camel.Handler;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,7 @@ public class JaxbErrorLogTest extends CamelTestSupport {
         public void handle(@Body CannotMarshal body) {
             if (body.getMessageNo() == 2) {
                 // fail on second message
-                throw new RuntimeException("Kaboom");
+                throw new RuntimeCamelException("Kaboom");
             }
         }
     }
@@ -88,7 +89,7 @@ public class JaxbErrorLogTest extends CamelTestSupport {
         }
 
         public String getUhoh() {
-            throw new RuntimeException("Can't marshal this");
+            throw new RuntimeCamelException("Can't marshal this");
         }
 
         @Override

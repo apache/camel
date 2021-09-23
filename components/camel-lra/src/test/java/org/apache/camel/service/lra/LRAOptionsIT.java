@@ -80,7 +80,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
                         .choice()
                         .when(body().isEqualTo("compensate"))
                         .process(ex -> {
-                            throw new RuntimeException("forced compensate");
+                            throw new RuntimeCamelException("forced compensate");
                         })
                         .end()
                         .setHeader("myname", constant("TryToOverride"))

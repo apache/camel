@@ -24,6 +24,7 @@ import java.util.TreeSet;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.SagaPropagation;
 import org.junit.jupiter.api.Test;
@@ -143,7 +144,7 @@ public class LRACreditIT extends AbstractLRATestSupport {
                         .choice()
                         .when(header("fail").isEqualTo(true))
                         .process(x -> {
-                            throw new RuntimeException("fail");
+                            throw new RuntimeCamelException("fail");
                         })
                         .end();
 

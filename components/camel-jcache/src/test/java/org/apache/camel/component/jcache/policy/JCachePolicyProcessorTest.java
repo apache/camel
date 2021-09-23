@@ -23,6 +23,7 @@ import javax.cache.configuration.MutableConfiguration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
@@ -249,7 +250,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
         mock.whenAnyExchangeReceived(e -> {
-            throw new RuntimeException("unexpected");
+            throw new RuntimeCamelException("unexpected");
         });
 
         Cache cache = lookupCache("simple");

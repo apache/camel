@@ -32,6 +32,7 @@ import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -81,7 +82,7 @@ public final class MockOaipmhServer {
                 responseCache = Collections.unmodifiableMap(cache);
             }
         } catch (IOException ioex) {
-            throw new RuntimeException("An issue occured while initializing the OAI-PMH mock server reponse cache", ioex);
+            throw new RuntimeCamelException("An issue occured while initializing the OAI-PMH mock server reponse cache", ioex);
         }
         return responseCache;
     }

@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.coordination.v1.LeaseBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cluster.CamelPreemptiveClusterService;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.cluster.utils.ConfigMapLockSimulator;
@@ -445,7 +446,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
             try {
                 context().addService(member);
             } catch (Exception ex) {
-                throw new RuntimeException(ex);
+                throw new RuntimeCamelException(ex);
             }
 
             clusterServices.put(name, member);
@@ -455,7 +456,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         try {
             member.getView(namespace).addEventListener(recorder);
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeCamelException(ex);
         }
 
         for (String pod : this.lockServers.keySet()) {

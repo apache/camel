@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -79,7 +80,7 @@ public class LumberjackDisconnectionTest extends CamelTestSupport {
         public void process(Exchange exchange) throws Exception {
             count++;
             if (count == 4) {
-                throw new RuntimeException("Ooops");
+                throw new RuntimeCamelException("Ooops");
             }
         }
     }

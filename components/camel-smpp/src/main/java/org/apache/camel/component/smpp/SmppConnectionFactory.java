@@ -181,7 +181,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             throw re;
         } catch (Exception e) {
             closeSocket(socket);
-            throw new RuntimeException("SmppConnectionFactory: " + e.getMessage(), e);
+            throw new RuntimeCamelException("SmppConnectionFactory: " + e.getMessage(), e);
         }
     }
 

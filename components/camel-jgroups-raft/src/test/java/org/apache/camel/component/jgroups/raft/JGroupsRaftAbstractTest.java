@@ -19,6 +19,7 @@ package org.apache.camel.component.jgroups.raft;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jgroups.Address;
 import org.jgroups.raft.RaftHandle;
@@ -45,7 +46,7 @@ public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
             attempts--;
         }
         if (attempts <= 0) {
-            throw new RuntimeException("No leader in time!");
+            throw new RuntimeCamelException("No leader in time!");
         }
     }
 }
