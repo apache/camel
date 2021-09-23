@@ -105,7 +105,9 @@ Camel-AWS MQ component provides the following operation on the producer side:
 - updateBroker
 - describeBroker
 
-== Producer Examples
+== Examples
+
+=== Producer Examples
 
 - listBrokers: this operation will list the available MQ Brokers in AWS
 
