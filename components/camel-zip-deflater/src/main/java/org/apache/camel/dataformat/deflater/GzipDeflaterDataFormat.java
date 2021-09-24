@@ -18,8 +18,6 @@ package org.apache.camel.dataformat.deflater;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -28,6 +26,8 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
 /**
  * GZip {@link org.apache.camel.spi.DataFormat} for reading/writing data using gzip.
@@ -44,7 +44,7 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
-        GZIPOutputStream zipOutput = new GZIPOutputStream(stream);
+        GzipCompressorOutputStream zipOutput = new GzipCompressorOutputStream(stream);
         try {
             IOHelper.copy(is, zipOutput);
         } finally {
@@ -55,11 +55,11 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
-        GZIPInputStream unzipInput = null;
+        GzipCompressorInputStream unzipInput = null;
 
         OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
         try {
-            unzipInput = new GZIPInputStream(inputStream);
+            unzipInput = new GzipCompressorInputStream(inputStream);
             IOHelper.copy(unzipInput, osb);
             return osb.build();
         } finally {
