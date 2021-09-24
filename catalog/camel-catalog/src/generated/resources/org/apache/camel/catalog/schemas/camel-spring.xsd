@@ -265,7 +265,7 @@ registry.
   <xs:element name="customLoadBalancer" type="tns:customLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Custom load balancer
+To use a custom load balancer implementation.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -428,12 +428,7 @@ A useful base class for an expression
   <xs:element name="failover" type="tns:failoverLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Failover load balancer The failover load balancer is capable of trying the next
-processor in case an Exchange failed with an exception during processing. You
-can constrain the failover to activate only when one exception of a list you
-specify occurs. If you do not specify a list any exception will cause fail over
-to occur. This balancer uses the same strategy for matching exceptions as the
-Exception Clause does for the onException.
+In case of failures the exchange will be tried on the next endpoint.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1055,8 +1050,7 @@ Rest PUT command
   <xs:element name="random" type="tns:randomLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Random load balancer The random load balancer selects a random endpoint for each
-exchange.
+A random endpoint is selected for each exchange.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1232,9 +1226,8 @@ Forces a rollback by stopping routing the message
   <xs:element name="roundRobin" type="tns:roundRobinLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Round robin load balancer The round robin load balancer will use the next
-endpoint for each message. This load balancer is not meant to work with
-failover, for that you should use the dedicated failover load balancer.
+The exchanges are selected in a round robin fashion. This is a well known and
+classic policy, which spreads the load evenly.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1354,7 +1347,7 @@ Transform from ROME SyndFeed Java Objects to XML and vice-versa.
   <xs:element name="saga" type="tns:sagaDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Enables sagas on the route
+Enables Sagas on the route
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1563,9 +1556,8 @@ logical name
   <xs:element name="sticky" type="tns:stickyLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Sticky load balancer Sticky load balancing using an Expression to calculate a
-correlation key to perform the sticky load balancing; rather like jsessionid in
-the web or JMSXGroupID in JMS.
+Sticky load balancing using an expression to calculate a correlation key to
+perform the sticky load balancing.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1710,10 +1702,7 @@ Sends the message to a static endpoint
   <xs:element name="toD" type="tns:toDynamicDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Sends the message to a dynamic endpoint You can specify multiple languages in
-the uri separated by the plus sign, such as mock:language:xpath:/order/uri where
-mock: would be a prefix to a xpath expression. For more dynamic behavior use
-Recipient List or Dynamic Router EIP instead.
+Sends the message to a dynamic endpoint
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1729,8 +1718,7 @@ Tokenize text payloads using delimiter patterns.
   <xs:element name="topic" type="tns:topicLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Topic load balancer The topic load balancer sends to all destinations (rather
-like JMS Topics)
+Topic which sends to all destinations.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1838,10 +1826,7 @@ Rest command
   <xs:element name="weighted" type="tns:weightedLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Weighted load balancer The weighted load balancing policy allows you to specify
-a processing load distribution ratio for each server with respect to others. In
-addition to the weight, endpoint selection is then further refined using random
-distribution based on weight.
+Uses a weighted load distribution ratio for each server with respect to others.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
