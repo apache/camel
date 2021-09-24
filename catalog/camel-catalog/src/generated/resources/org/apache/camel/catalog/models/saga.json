@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "saga",
     "title": "Saga",
-    "description": "Enables sagas on the route",
+    "description": "Enables Sagas on the route",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.SagaDefinition",

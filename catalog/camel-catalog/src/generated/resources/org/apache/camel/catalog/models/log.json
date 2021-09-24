@@ -5,7 +5,7 @@
     "title": "Log",
     "description": "Logs the defined message to the logger",
     "deprecated": false,
-    "label": "eip,configuration",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.LogDefinition",
     "input": true,
     "output": false

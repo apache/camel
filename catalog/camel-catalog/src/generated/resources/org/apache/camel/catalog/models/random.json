@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "random",
     "title": "Random",
-    "description": "Random load balancer The random load balancer selects a random endpoint for each exchange.",
+    "description": "A random endpoint is selected for each exchange.",
     "deprecated": false,
-    "label": "eip,routing,loadbalance",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition",
     "input": false,
     "output": false

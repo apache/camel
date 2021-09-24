@@ -5,7 +5,7 @@
     "title": "In Only",
     "description": "Marks the exchange pattern for the route to one way",
     "deprecated": true,
-    "label": "eip,endpoint,routing",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.InOnlyDefinition",
     "input": true,
     "output": false
