@@ -139,8 +139,7 @@ public final class HttpHelper {
      */
     public static Object readRequestBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
         InputStream is = HttpConverter.toInputStream(request, exchange);
-        // TODO should readRequestBodyFromInputStream() be invoked instead?
-        return readResponseBodyFromInputStream(is, exchange);
+        return readRequestBodyFromInputStream(is, exchange);
     }
 
     /**
