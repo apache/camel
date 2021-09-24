@@ -49,6 +49,12 @@ with naming pattern `...AsciiDoc` and `...HtmlDoc`.
 
 The XML DSL with `camel-cdi` has removed the deprecated `<proxy>` functionality.
 
+=== camel-http-common
+
+The method `org.apache.camel.http.common.HttpHelper.readResponseBodyFromInputStream` is renamed to `cacheResponseBodyFromInputStream`,
+because it must cache the response body as it is used with the `PollingConsumer` in `camel-http`,
+that otherwise may fail if the original `InputStream` is closed by the underlying HTTP client.
+
 === camel-jms
 
 The `camel-jms` component now better support Apache Artemis in streaming mode for large messages support,

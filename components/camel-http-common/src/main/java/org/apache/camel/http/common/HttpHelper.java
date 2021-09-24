@@ -139,8 +139,7 @@ public final class HttpHelper {
      */
     public static Object readRequestBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
         InputStream is = HttpConverter.toInputStream(request, exchange);
-        // TODO should readRequestBodyFromInputStream() be invoked instead?
-        return readResponseBodyFromInputStream(is, exchange);
+        return readRequestBodyFromInputStream(is, exchange);
     }
 
     /**
@@ -148,7 +147,7 @@ public final class HttpHelper {
      *
      * @param  is          the input stream
      * @param  exchange    the exchange
-     * @return             the request body, can be <tt>null</tt> if no body
+     * @return             the request body, can be <tt>null</tt> if there is no request body
      * @throws IOException is thrown if error reading request body
      */
     public static Object readRequestBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
@@ -167,25 +166,21 @@ public final class HttpHelper {
     }
 
     /**
-     * Reads the response body from the given input stream.
+     * Caches the response body from the given input stream, which is needed by
+     * {@link org.apache.camel.PollingConsumer}.
      *
      * @param  is          the input stream
      * @param  exchange    the exchange
-     * @return             the response body, can be <tt>null</tt> if no body
+     * @return             the cached response body
      * @throws IOException is thrown if error reading response body
      */
-    public static Object readResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
+    public static Object cacheResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
         if (is == null) {
             return null;
         }
-        // convert the input stream to StreamCache if the stream cache is not disabled
-        if (exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.FALSE, Boolean.class)) {
-            return is;
-        } else {
-            CachedOutputStream cos = new CachedOutputStream(exchange);
-            IOHelper.copyAndCloseInput(is, cos);
-            return cos.newStreamCache();
-        }
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        IOHelper.copyAndCloseInput(is, cos);
+        return cos.newStreamCache();
     }
 
     /**
