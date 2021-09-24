@@ -5,7 +5,7 @@
     "title": "Poll Enrich",
     "description": "Enriches messages with data polled from a secondary resource",
     "deprecated": false,
-    "label": "eip,transformation",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.PollEnrichDefinition",
     "input": true,
     "output": false

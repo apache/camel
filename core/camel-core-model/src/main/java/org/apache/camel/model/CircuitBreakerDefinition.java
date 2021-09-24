@@ -33,7 +33,7 @@ import org.apache.camel.spi.annotations.DslProperty;
 /**
  * Route messages in a fault tolerance way using Circuit Breaker
  */
-@Metadata(label = "eip,routing,circuitbreaker")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {

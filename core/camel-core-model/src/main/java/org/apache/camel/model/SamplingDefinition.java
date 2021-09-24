@@ -35,9 +35,6 @@ import org.apache.camel.util.TimeUtils;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
-    // use Long to let it be optional in JAXB so when using XML the default is 1
-    // second
-
     @XmlAttribute
     @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
     private String samplePeriod;

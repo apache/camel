@@ -1,7 +1,7 @@
 = Topic EIP
 :doctitle: Topic
 :shortname: topic
-:description: Topic load balancer The topic load balancer sends to all destinations (rather like JMS Topics)
+:description: Topic which sends to all destinations.
 :since: 
 :supportlevel: Stable
 

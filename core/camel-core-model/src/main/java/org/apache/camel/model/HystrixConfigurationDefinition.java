@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Hystrix Circuit Breaker EIP configuration
  */
-@Metadata(label = "eip,routing,circuitbreaker")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "hystrixConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)

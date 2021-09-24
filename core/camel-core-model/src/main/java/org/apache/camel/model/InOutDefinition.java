@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marks the exchange pattern for the route to request/reply
  */
-@Metadata(label = "eip,endpoint,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "inOut")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated

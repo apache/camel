@@ -29,14 +29,8 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Sends the message to a dynamic endpoint
- * <p/>
- * You can specify multiple languages in the uri separated by the plus sign, such as
- * <tt>mock:+language:xpath:/order/@uri</tt> where <tt>mock:</tt> would be a prefix to a xpath expression.
- * <p/>
- * For more dynamic behavior use <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> or
- * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> EIP instead.
  */
-@Metadata(label = "eip,endpoint,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "toD")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> {

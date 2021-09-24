@@ -5,7 +5,7 @@
     "title": "Kamelet",
     "description": "To call Kamelets",
     "deprecated": false,
-    "label": "eip,routing,kamelet",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.KameletDefinition",
     "input": true,
     "output": false

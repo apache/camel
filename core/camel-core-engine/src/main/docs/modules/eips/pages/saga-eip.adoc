@@ -1,7 +1,7 @@
 = Saga EIP
 :doctitle: Saga
 :shortname: saga
-:description: Enables sagas on the route
+:description: Enables Sagas on the route
 :since: 
 :supportlevel: Stable
 

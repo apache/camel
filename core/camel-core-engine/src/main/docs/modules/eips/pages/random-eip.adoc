@@ -1,7 +1,7 @@
 = Random EIP
 :doctitle: Random
 :shortname: random
-:description: Random load balancer The random load balancer selects a random endpoint for each exchange.
+:description: A random endpoint is selected for each exchange.
 :since: 
 :supportlevel: Stable
 

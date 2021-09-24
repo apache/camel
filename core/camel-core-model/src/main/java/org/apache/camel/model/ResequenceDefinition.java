@@ -43,7 +43,6 @@ import org.apache.camel.util.TimeUtils;
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> implements HasExpressionType {
-    @Metadata(required = false)
     @XmlElements({
             @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
             @XmlElement(name = "stream-config", type = StreamResequencerConfig.class) })

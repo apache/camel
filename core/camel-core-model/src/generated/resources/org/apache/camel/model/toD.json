@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "toD",
     "title": "To D",
-    "description": "Sends the message to a dynamic endpoint You can specify multiple languages in the uri separated by the plus sign, such as mock:language:xpath:\/order\/uri where mock: would be a prefix to a xpath expression. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.",
+    "description": "Sends the message to a dynamic endpoint",
     "deprecated": false,
-    "label": "eip,endpoint,routing",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.ToDynamicDefinition",
     "input": true,
     "output": false

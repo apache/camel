@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 /**
  * Logs the defined message to the logger
  */
-@Metadata(label = "eip,configuration")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {

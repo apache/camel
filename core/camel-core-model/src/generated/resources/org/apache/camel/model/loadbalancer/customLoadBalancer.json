@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "customLoadBalancer",
     "title": "Custom Load Balancer",
-    "description": "Custom load balancer",
+    "description": "To use a custom load balancer implementation.",
     "deprecated": false,
-    "label": "eip,routing,loadbalance",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition",
     "input": false,
     "output": false

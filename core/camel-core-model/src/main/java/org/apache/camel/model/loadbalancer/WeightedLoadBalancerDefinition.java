@@ -25,11 +25,9 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Weighted load balancer The weighted load balancing policy allows you to specify a processing load distribution ratio
- * for each server with respect to others. In addition to the weight, endpoint selection is then further refined using
- * random distribution based on weight.
+ * Uses a weighted load distribution ratio for each server with respect to others.
  */
-@Metadata(label = "eip,routing,loadbalance")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "weighted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {

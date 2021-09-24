@@ -1,7 +1,7 @@
 = Custom Load Balancer EIP
 :doctitle: Custom Load Balancer
 :shortname: customLoadBalancer
-:description: Custom load balancer
+:description: To use a custom load balancer implementation.
 :since: 
 :supportlevel: Stable
 

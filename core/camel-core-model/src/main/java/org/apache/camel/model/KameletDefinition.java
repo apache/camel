@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * To call Kamelets
  */
-@Metadata(label = "eip,routing,kamelet")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "kamelet")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class KameletDefinition extends OutputDefinition<KameletDefinition> {

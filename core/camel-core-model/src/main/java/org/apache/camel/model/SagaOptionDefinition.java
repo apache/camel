@@ -26,9 +26,9 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Allows to declare options on sagas
+ * Allows declaring options on Sagas
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SagaOptionDefinition implements HasExpressionType {
 

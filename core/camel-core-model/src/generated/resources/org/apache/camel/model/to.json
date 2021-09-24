@@ -5,7 +5,7 @@
     "title": "To",
     "description": "Sends the message to a static endpoint",
     "deprecated": false,
-    "label": "eip,endpoint,routing",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.ToDefinition",
     "input": true,
     "output": false

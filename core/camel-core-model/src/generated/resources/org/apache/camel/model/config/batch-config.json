@@ -5,7 +5,7 @@
     "title": "Batch-config",
     "description": "Configures batch-processing resequence eip.",
     "deprecated": false,
-    "label": "eip,routing,resequence",
+    "label": "configuration",
     "javaType": "org.apache.camel.model.config.BatchResequencerConfig",
     "input": false,
     "output": false

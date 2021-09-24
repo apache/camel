@@ -37,7 +37,7 @@ import org.apache.camel.spi.Metadata;
  * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original
  * message.
  */
-@Metadata(label = "eip,endpoint,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition

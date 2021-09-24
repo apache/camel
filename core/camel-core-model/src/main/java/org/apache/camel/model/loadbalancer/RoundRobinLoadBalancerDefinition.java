@@ -24,10 +24,10 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Round robin load balancer The round robin load balancer will use the next endpoint for each message. This load
- * balancer is not meant to work with failover, for that you should use the dedicated failover load balancer.
+ * The exchanges are selected in a round robin fashion. This is a well known and classic policy, which spreads the load
+ * evenly.
  */
-@Metadata(label = "eip,routing,loadbalance")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "roundRobin")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoundRobinLoadBalancerDefinition extends LoadBalancerDefinition {

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Sends the message to a static endpoint
  */
-@Metadata(label = "eip,endpoint,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {

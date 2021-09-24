@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "failover",
     "title": "Failover",
-    "description": "Failover load balancer The failover load balancer is capable of trying the next processor in case an Exchange failed with an exception during processing. You can constrain the failover to activate only when one exception of a list you specify occurs. If you do not specify a list any exception will cause fail over to occur. This balancer uses the same strategy for matching exceptions as the Exception Clause does for the onException.",
+    "description": "In case of failures the exchange will be tried on the next endpoint.",
     "deprecated": false,
-    "label": "eip,routing,loadbalance",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition",
     "input": false,
     "output": false

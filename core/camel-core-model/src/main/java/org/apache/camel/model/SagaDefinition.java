@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
 
 /**
- * Enables sagas on the route
+ * Enables Sagas on the route
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "saga")

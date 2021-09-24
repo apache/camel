@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Route messages to a number of dynamically specified recipients (dynamic to)
  */
-@Metadata(label = "eip,endpoint,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode
