@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -167,36 +166,26 @@ public final class VertxPlatformHttpSupport {
         } else if (body instanceof String) {
             response.end((String) body);
         } else if (body instanceof InputStream) {
-            writeResponseAs(response, (InputStream) body);
+            final byte[] bytes = new byte[4096];
+            try (InputStream in = (InputStream) body) {
+                int len;
+                while ((len = in.read(bytes)) >= 0) {
+                    final Buffer b = Buffer.buffer(len);
+                    b.appendBytes(bytes, 0, len);
+                    response.write(b);
+                }
+            }
+            response.end();
         } else if (body instanceof Buffer) {
             response.end((Buffer) body);
         } else {
             final TypeConverter tc = camelExchange.getContext().getTypeConverter();
-            // Try to convert to ByteBuffer for performance reason
-            final ByteBuffer bb = tc.tryConvertTo(ByteBuffer.class, camelExchange, body);
-            if (bb != null) {
-                final Buffer b = Buffer.buffer(bb.capacity());
-                b.setBytes(0, bb);
-                response.end(b);
-            } else {
-                // Otherwise fallback to most generic InputStream conversion
-                final InputStream is = tc.mandatoryConvertTo(InputStream.class, camelExchange, body);
-                writeResponseAs(response, is);
-            }
-        }
-    }
+            final ByteBuffer bb = tc.mandatoryConvertTo(ByteBuffer.class, camelExchange, body);
+            final Buffer b = Buffer.buffer(bb.capacity());
 
-    private static void writeResponseAs(HttpServerResponse response, InputStream is) throws IOException {
-        final byte[] bytes = new byte[4096];
-        try (InputStream in = is) {
-            int len;
-            while ((len = in.read(bytes)) >= 0) {
-                final Buffer b = Buffer.buffer(len);
-                b.appendBytes(bytes, 0, len);
-                response.write(b);
-            }
+            b.setBytes(0, bb);
+            response.end(b);
         }
-        response.end();
     }
 
     static void populateCamelHeaders(

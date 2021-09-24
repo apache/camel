@@ -486,11 +486,11 @@ public class VertxPlatformHttpEngineTest {
         }
     }
 
-    static CamelContext createCamelContext() throws Exception {
+    private CamelContext createCamelContext() throws Exception {
         return createCamelContext(null);
     }
 
-    private static CamelContext createCamelContext(ServerConfigurationCustomizer customizer) throws Exception {
+    private CamelContext createCamelContext(ServerConfigurationCustomizer customizer) throws Exception {
         int port = AvailablePortFinder.getNextAvailable();
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
         conf.setBindPort(port);

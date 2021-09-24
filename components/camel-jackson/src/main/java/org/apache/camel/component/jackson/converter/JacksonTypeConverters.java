@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jackson.converter;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
@@ -101,7 +100,8 @@ public final class JacksonTypeConverters {
             // favor use write/read operations as they are higher level than the
             // convertValue
 
-            // if we want to convert to a String, byte[] or byte buffer/stream
+            // if we want to convert to a String or byte[] then use write
+            // operation
             if (String.class.isAssignableFrom(type)) {
                 String out = mapper.writeValueAsString(value);
                 return type.cast(out);
@@ -111,9 +111,6 @@ public final class JacksonTypeConverters {
             } else if (ByteBuffer.class.isAssignableFrom(type)) {
                 byte[] out = mapper.writeValueAsBytes(value);
                 return type.cast(ByteBuffer.wrap(out));
-            } else if (InputStream.class.isAssignableFrom(type)) {
-                byte[] out = mapper.writeValueAsBytes(value);
-                return type.cast(new ByteArrayInputStream(out));
             } else if (mapper.canSerialize(type) && !Enum.class.isAssignableFrom(type)) {
                 // if the source value type is readable by the mapper then use
                 // its read operation
