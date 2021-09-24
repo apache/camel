@@ -79,6 +79,8 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     // cached property names and values
     private Set<String> endpointPropertyNames;
     private Map<String, Object> endpointProperties;
+    private Set<String> configurationPropertyNames;
+    private Map<String, Object> configurationProperties;
 
     public AbstractApiEndpoint(String endpointUri, Component component,
                                E apiName, String methodName, ApiMethodHelper<? extends ApiMethod> methodHelper,
@@ -146,13 +148,18 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
      */
     private void initState() {
 
-        // compute endpoint property names and values
-        final HashMap<String, Object> properties = new HashMap<>();
+        // compute configuration & endpoint property names and values
+        HashMap<String, Object> properties = new HashMap<>();
+        getPropertiesHelper().getConfigurationProperties(getCamelContext(), configuration, properties);
+        this.configurationProperties = Collections.unmodifiableMap(properties);
+        this.configurationPropertyNames = Collections.unmodifiableSet(properties.keySet());
+
+        properties = new HashMap<>();
         getPropertiesHelper().getEndpointProperties(getCamelContext(), configuration, properties);
         this.endpointProperties = Collections.unmodifiableMap(properties);
         this.endpointPropertyNames = Collections.unmodifiableSet(properties.keySet());
 
-        // get endpoint property names
+        // use only endpoint property names when looking for candidate methods
         final Set<String> arguments = new HashSet<>(endpointPropertyNames);
         // add inBody argument for producers
         if (inBody != null) {
@@ -277,6 +284,14 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     public final Map<String, Object> getEndpointProperties() {
         return endpointProperties;
+    }
+
+    public Set<String> getConfigurationPropertyNames() {
+        return configurationPropertyNames;
+    }
+
+    public final Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
     }
 
     /**

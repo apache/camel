@@ -58,8 +58,9 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // properties for method arguments
+        // properties for method arguments should let exchange override
         final Map<String, Object> properties = new HashMap<>();
+        properties.putAll(endpoint.getConfigurationProperties());
         properties.putAll(endpoint.getEndpointProperties());
         propertiesHelper.getExchangeProperties(exchange, properties);
 
@@ -147,10 +148,12 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
 
             // get the method to call
             if (filteredMethods.isEmpty()) {
+                Set<String> missing = methodHelper.getMissingProperties(endpoint.getMethodName(), argNames);
                 throw new RuntimeCamelException(
-                        String.format("Missing properties for %s, need one or more from %s",
+                        String.format("Missing properties for %s, need one or more from (%s args) %s",
                                 endpoint.getMethodName(),
-                                methodHelper.getMissingProperties(endpoint.getMethodName(), argNames)));
+                                missing.size(),
+                                missing));
             } else if (filteredMethods.size() == 1) {
                 // found an exact match
                 method = filteredMethods.get(0);
