@@ -25,8 +25,8 @@ choose a more expressive and powerful language such as:
 * xref:ognl-language.adoc[OGNL]
 * xref:el-language.adoc[EL]
 
-The simple language uses `${body}` placeholders for complex expressions
-where the expression contains constant literals. The ${ } placeholders
+The simple language uses `$\{body}` placeholders for complex expressions
+where the expression contains constant literals. The $\{ } placeholders
 can be omitted if the expression is only the token itself.
 
 TIP: *Alternative syntax* From Camel 2.5 onwards you can also use the alternative syntax which
@@ -48,20 +48,20 @@ language as a Predicate then the literal text
 `"$\{body} == 'Camel'"`. Notice how we have single quotes around the
 literal. The old style of using `"body"` and `"header.foo"` to refer to
 the message body and header is @deprecated, and it is encouraged to
-always use ${ } tokens for the built-in functions.
+always use $\{ } tokens for the built-in functions.
 The range operator now requires the range to be in single quote as well
 as shown: `"${header.zip} between '30000..39999'"`.
 
 To get the body of the in message: `"body"`, or `"in.body"` or
 `"$\{body}"`.
 
-A complex expression must use ${ } placeholders, such as:
+A complex expression must use $\{ } placeholders, such as:
 `"Hello ${in.header.name} how are you?"`.
 
 You can have multiple functions in the same expression:
 `"Hello ${in.header.name} this is ${in.header.me} speaking"`. +
  However you can *not* nest functions in Camel 2.8.x or older (i.e.
-having another ${ } placeholder in an existing, is not allowed). +
+having another $\{ } placeholder in an existing, is not allowed). +
  From *Camel 2.9* onwards you can nest functions.
 
 == Simple Language options
@@ -411,7 +411,7 @@ simple("${body.address.zip} > 1000")
 
 The parser is limited to only support a single operator.
 
-To enable it the left value must be enclosed in ${ }. The syntax is:
+To enable it the left value must be enclosed in $\{ }. The syntax is:
 
 [source]
 --------------------------
@@ -419,7 +419,7 @@ ${leftValue} OP rightValue
 --------------------------
 
 Where the `rightValue` can be a String literal enclosed in `' '`,
-`null`, a constant value or another expression enclosed in ${ }.
+`null`, a constant value or another expression enclosed in $\{ }.
 
 IMPORTANT: There *must* be spaces around the operator.
 
@@ -921,7 +921,7 @@ And in XML DSL
 
 *Since Camel 2.9.1*
 
-You can configure the function start and end tokens - ${ } using the
+You can configure the function start and end tokens - $\{ } using the
 setters `changeFunctionStartToken` and `changeFunctionEndToken` on
 `SimpleLanguage`, using Java code. From Spring XML you can define a
 <bean> tag with the new changed tokens in the properties as shown below:
