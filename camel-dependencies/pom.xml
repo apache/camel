@@ -353,7 +353,7 @@
     <jsoup-version>1.14.2</jsoup-version>
     <jt400-version>10.6</jt400-version>
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
-    <junit-jupiter-version>5.8.1</junit-jupiter-version>
+    <junit-jupiter-version>5.7.1</junit-jupiter-version>
     <junit-toolbox-version>2.3</junit-toolbox-version>
     <junit-version>4.13.1</junit-version>
     <jxmpp-version>0.6.4</jxmpp-version>
