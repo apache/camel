@@ -278,6 +278,43 @@ To
 
 And the same for `<completionTimeout>`.
 
+=== <threads> <delay> <sample> <throttle> EIP in XML
+
+These EIPs have been improved to no longer use children for routing, instead they
+are collapsed as a single element like other EIPs.
+
+So before you may have
+
+[source,xml]
+----
+<route>
+    <from uri="jms:cheese"/>
+    <to uri="log:before"/>
+    <threads poolSize="2">
+        <to uri="bean:foo"/>
+        <to uri="bean:bar"/>
+    </threads>
+    <to uri="log:after"/>
+</route>
+----
+
+And now you would do:
+
+[source,xml]
+----
+<route>
+    <from uri="jms:cheese"/>
+    <to uri="log:before"/>
+    <threads poolSize="2"/>
+    <to uri="bean:foo"/>
+    <to uri="bean:bar"/>
+    <to uri="log:after"/>
+</route>
+----
+
+It is the same for the other EIPs `<delay>`, `<sample>`, and `<throttle>`.
+
+
 ==== camel-cdi
 
 Support for multiple CamelContexts has been removed, and therefore `@ContextName` has been removed. Instead use standard CDI annotations such as `@Named` and `@ApplicationScoped`.
