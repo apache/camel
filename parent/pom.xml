@@ -512,7 +512,7 @@
         <spring-ldap-version>2.3.4.RELEASE</spring-ldap-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.8</spring5-version>
+        <spring5-version>5.3.10</spring5-version>
         <spring-security-version>5.4.7</spring-security-version>
         <spring-ws-version>3.0.10.RELEASE</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
