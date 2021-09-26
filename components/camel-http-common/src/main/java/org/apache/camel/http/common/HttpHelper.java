@@ -164,7 +164,9 @@ public final class HttpHelper {
             return null;
         }
         CachedOutputStream cos = new CachedOutputStream(exchange);
-        IOHelper.copyAndCloseInput(is, cos);
+        // do not close IS as it comes from http server such as servlet and the
+        // servlet input stream may be used by others besides Camel
+        IOHelper.copy(is, cos);
         return cos.newStreamCache();
     }
 
