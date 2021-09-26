@@ -139,7 +139,38 @@ public final class HttpHelper {
      */
     public static Object readRequestBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
         InputStream is = HttpConverter.toInputStream(request, exchange);
-        return readRequestBodyFromInputStream(is, exchange);
+        // when using servlet (camel-servlet and camel-jetty) then they should always use stream caching
+        // as the message body is parsed for url-form and other things, so we need to be able to re-read the message body
+        // however there is an option to turn this off, which is set as exchange property
+        boolean streamCaching = !exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, false, boolean.class);
+        if (streamCaching) {
+            return cacheResponseBodyFromInputStream(is, exchange);
+        } else {
+            return is;
+        }
+    }
+
+    /**
+     * Caches the response body from the given input stream, which is needed by
+     * {@link org.apache.camel.PollingConsumer}.
+     *
+     * @param  is          the input stream
+     * @param  exchange    the exchange
+     * @return             the cached response body
+     * @throws IOException is thrown if error reading response body
+     */
+    public static Object cacheResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
+        if (is == null) {
+            return null;
+        }
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        IOHelper.copyAndCloseInput(is, cos);
+        return cos.newStreamCache();
+    }
+
+    @Deprecated
+    public static Object readResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
+        return cacheResponseBodyFromInputStream(is, exchange);
     }
 
     /**
@@ -150,6 +181,7 @@ public final class HttpHelper {
      * @return             the request body, can be <tt>null</tt> if no body
      * @throws IOException is thrown if error reading request body
      */
+    @Deprecated
     public static Object readRequestBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
         if (is == null) {
             return null;
@@ -157,28 +189,6 @@ public final class HttpHelper {
         boolean disableStreamCaching = !exchange.getContext().isStreamCaching();
         // convert the input stream to StreamCache if the stream cache is not disabled
         if (exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, disableStreamCaching, Boolean.class)) {
-            return is;
-        } else {
-            CachedOutputStream cos = new CachedOutputStream(exchange);
-            IOHelper.copyAndCloseInput(is, cos);
-            return cos.newStreamCache();
-        }
-    }
-
-    /**
-     * Reads the response body from the given input stream.
-     *
-     * @param  is          the input stream
-     * @param  exchange    the exchange
-     * @return             the response body, can be <tt>null</tt> if no body
-     * @throws IOException is thrown if error reading response body
-     */
-    public static Object readResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
-        if (is == null) {
-            return null;
-        }
-        // convert the input stream to StreamCache if the stream cache is not disabled
-        if (exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.FALSE, Boolean.class)) {
             return is;
         } else {
             CachedOutputStream cos = new CachedOutputStream(exchange);
