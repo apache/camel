@@ -67,7 +67,7 @@ public class HttpConverterTest extends BaseJettyTest {
     }
 
     @Test
-    public void testToServletInputStream() throws Exception {
+    public void testToServletInputStreamWithStreamCaching() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -75,12 +75,37 @@ public class HttpConverterTest extends BaseJettyTest {
                     public void process(Exchange exchange) throws Exception {
                         HttpMessage msg = exchange.getIn(HttpMessage.class);
 
+                        // The ServletInputStream should be cached, and you can't read message here
                         ServletInputStream sis = HttpConverter.toServletInputStream(msg);
                         assertNotNull(sis);
-                        // The ServletInputStream should be cached and you can't
-                        // read message here
                         assertEquals(0, sis.available());
                         String s = msg.getBody(String.class);
+
+                        assertEquals("Hello World", s);
+                    }
+                }).transform(constant("Bye World"));
+            }
+        });
+        context.start();
+
+        String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
+        assertEquals("Bye World", out);
+    }
+
+    @Test
+    public void testToServletInputDisableStreamStreamCaching() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("jetty://http://localhost:{{port}}/test?disableStreamCache=true").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpMessage msg = exchange.getIn(HttpMessage.class);
+
+                        // The ServletInputStream should not be cached
+                        ServletInputStream sis = HttpConverter.toServletInputStream(msg);
+                        assertNotNull(sis);
+                        assertEquals(11, sis.available());
+                        String s = context.getTypeConverter().convertTo(String.class, sis);
 
                         assertEquals("Hello World", s);
                     }
