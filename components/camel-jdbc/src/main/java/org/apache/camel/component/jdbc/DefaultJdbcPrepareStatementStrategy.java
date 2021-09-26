@@ -41,7 +41,7 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
         String answer;
         if (allowNamedParameters && hasNamedParameters(query)) {
             // replace all :?word with just ?
-            answer = query.replaceAll("\\:\\?\\w+", "\\?");
+            answer = query.replaceAll("\\:\\?[\\w\\u4E00-\\u9FA5]+", "\\?");
         } else {
             answer = query;
         }
@@ -149,7 +149,7 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
 
     private static final class NamedQueryParser {
 
-        private static final Pattern PATTERN = Pattern.compile("\\:\\?(\\w+)");
+        private static final Pattern PATTERN = Pattern.compile("\\:\\?([\\w\\u4E00-\\u9FA5]+)");
         private final Matcher matcher;
 
         private NamedQueryParser(String query) {
