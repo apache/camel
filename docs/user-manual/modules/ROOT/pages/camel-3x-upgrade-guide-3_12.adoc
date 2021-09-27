@@ -8,7 +8,7 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 === API changes
 
-The method `getComponentNames` and `getLanguageNames` on `CamelContext` has changed to
+The methods `getComponentNames` and `getLanguageNames` on `CamelContext` have been changed to
 return `Set<String>` instead of `List<String>`.
 
 Added `getExchangePattern` to `Endpoint` which is a method that already exists on `DefaultEndpoint`.
@@ -24,7 +24,7 @@ use the methods that take `String` as type.
 We had to fix all the data-formats options that take a Java classname to support
 using the `.class` type in Java vs using a string value in XML/YAML.
 
-This means the following options has been renamed:
+This means the following options have been renamed:
 
 - `camel-asn1` renamed `clazzName` to `unmarshalType`
 - `camel-avro` renamed `collectionTypeName` to `collectionType`, and `jsonViewTypeName` to `jsonView`, and `unmarshalTypeName` to `unmarshalType`
@@ -71,7 +71,7 @@ which used to be query parameter.
 === camel-kamelet / route templates
 
 Kamelet parameters that are named such as `host`, `port` are now always used with their configured value.
-Before the value in use may be from an ENV variable with the same name.
+Before the value in use may have been from an ENV variable with the same name.
 
 === camel-kafka
 
@@ -85,8 +85,12 @@ The `camel-spark` component has been upgraded from Spark 2.x to 3.x.
 
 The `camel-influxdb` won't autocreate the database if not present anymore.
 With CAMEL-16892 we introduced the checkDatabaseExistence and autoCreateDatabase options for this purpose. 
-Both of the options are false by default. So, you'll need to set both to true if you want to have the older releases behavior, or create the database yourself before using the camel component.
+Both of the options are false by default. So, you'll need to set both to true if you want to have the older releases' behavior, or create the database yourself before using the camel component.
 
 === camel-huawei
 
 All Huawei Cloud components use AK/SK as security keys to authenticate against the hauwei cloud backend services. Initally AK was mapped to authenticationKey in the endpoint class. To be in-line with Huawei Cloud's naming conventions, we have renamed this option from `authenticationKey` to `accessKey` for all components. This is a breaking change for users who are already using huawei cloud components until version 3.11.x. 
+
+=== camel-spring-cloud-*-starter
+
+The deprecated camel-spring-boot cloud-starter components camel-spring-cloud-starter, camel-spring-cloud-consul-starter, camel-spring-cloud-netflix-starter and camel-spring-cloud-zookeeper-starter have been removed.
