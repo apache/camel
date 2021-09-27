@@ -30,6 +30,7 @@ A route is collection of elements defined as follows:
       - to:
           uri: "log:original"
 ----
+
 <1> route entry point, by default `from` and `rest` are supported
 <2> processing steps
 
@@ -161,6 +162,7 @@ To define an endpoint with the YAML dsl you have three options:
 ====
 Support for the Endpoint DSL with YAML is experimental and subject to changes.
 ====
+
 [NOTE]
 ====
 Support for Endpoint DSL auto completion https://github.com/apache/camel-k-runtime/issues/485[is not yet available].
@@ -178,6 +180,7 @@ In addition to the general support for creating beans provided by xref:others:ma
     properties: # <3>
       foo: bar
 ----
+
 <1> the name of the bean which will be used to bound the instance to the Camel Registry
 <2> the full qualified class name of the bean
 <3> the properties of the bean to be set
@@ -211,7 +214,60 @@ The properties of the bean can be defined using either a map or properties style
 The `beans` elements can only be used as root element
 ====
 
-== Examples
+== Configuring options on languages
+
+Some of the xref:components:languages:index.adoc[Languages] have additional configurations
+you may need to use.
+
+For example the xref:components:languages:jsonpath-language.adoc[JSONPath]
+can be configured to ignore JSon parsing errors. This is intended when you use a
+xref:components:eips:choice-eip.adoc[Content Based Router] and want to route the message
+to different endpoints, but the JSon payload of the message can be in different forms;
+meaning that the JSonPath expressions in some cases would fail with an exceptions,
+and other times not. In this situation you need to set `suppress-exception` to true,
+as shown belo:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - choice:
+          when:
+          - jsonpath:
+              expression: "person.middlename"
+              suppress-exceptions: true
+            steps:
+            - to: "mock:middle"
+          - jsonpath:
+              expression: "person.lastname"
+              suppress-exceptions: true
+            steps:
+            - to: "mock:last"
+          otherwise:
+            steps:
+              - to: "mock:other"
+----
+
+In the route above, the following message
+
+[source,json]
+----
+{
+  "person": {
+    "firstname": "John",
+    "lastname": "Doe"
+  }
+}
+----
+
+Would have failed the JSonPath expression `person.middlename` because the JSon payload
+does not have a `middlename` field. To remedy this we have suppressed the exception.
+
+== External examples
 
 You can find a set of examples using `camel-yaml-dsl` in https://github.com/apache/camel-examples[Camel Examples]
 which demonstrate creating Camel Routes with YAML.
+
+Another way to find examples of YAML DSL is to look in https://github.com/apache/camel-kamelets[Camel Kamelets]
+where each Kamelet is defined using YAML.
