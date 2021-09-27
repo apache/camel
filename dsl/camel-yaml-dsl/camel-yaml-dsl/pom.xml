@@ -149,6 +149,11 @@
             <artifactId>camel-mustache</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jsonpath</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
