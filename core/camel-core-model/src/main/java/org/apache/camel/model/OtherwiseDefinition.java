@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Route to be executed when all other choices evaluate to <tt>false</tt>
+ * Route to be executed when all other choices evaluate to false
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "otherwise")

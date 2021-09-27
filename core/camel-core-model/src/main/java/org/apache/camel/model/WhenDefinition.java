@@ -24,7 +24,7 @@ import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Triggers a route when an expression evaluates to <tt>true</tt>
+ * Triggers a route when the expression evaluates to true
  */
 @Metadata(label = "eip,routing")
 @AsPredicate

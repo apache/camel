@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> implements OutputNode {
-    @XmlElementRef
+    @XmlElementRef(name = "when")
     @AsPredicate
     private List<WhenDefinition> whenClauses = new ArrayList<>();
     @XmlElement
@@ -231,7 +231,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
     }
 
     /**
-     * Sets the when clauses
+     * Sets the when nodes
      */
     public void setWhenClauses(List<WhenDefinition> whenClauses) {
         this.whenClauses = whenClauses;
@@ -259,14 +259,10 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
             if (pre instanceof ExpressionClause) {
                 ExpressionClause<?> clause = (ExpressionClause<?>) pre;
                 if (clause.getExpressionType() != null) {
-                    // if using the Java DSL then the expression may have been
-                    // set using the
-                    // ExpressionClause which is a fancy builder to define
-                    // expressions and predicates
-                    // using fluent builders in the DSL. However we need
-                    // afterwards a callback to
-                    // reset the expression to the expression type the
-                    // ExpressionClause did build for us
+                    // if using the Java DSL then the expression may have been set using the
+                    // ExpressionClause which is a fancy builder to define expressions and predicates
+                    // using fluent builders in the DSL. However, we need afterwards a callback to
+                    // reset the expression to the expression type the ExpressionClause did build for us
                     ExpressionFactory model = clause.getExpressionType();
                     if (model instanceof ExpressionDefinition) {
                         when.setExpression((ExpressionDefinition) model);
