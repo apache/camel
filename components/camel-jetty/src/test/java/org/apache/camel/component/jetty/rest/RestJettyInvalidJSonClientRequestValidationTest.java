@@ -41,7 +41,7 @@ public class RestJettyInvalidJSonClientRequestValidationTest extends BaseJettyTe
 
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
         assertEquals(400, cause.getStatusCode());
-        assertEquals("Invalid JSon payload", cause.getResponseBody());
+        assertEquals("Invalid JSon payload.", cause.getResponseBody());
     }
 
     @Override
