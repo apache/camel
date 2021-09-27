@@ -684,6 +684,7 @@ public class Lambda2Producer extends DefaultProducer {
                 throw new IllegalArgumentException("Function alias must be specified to get an alias");
             }
             builder.name(aliasName);
+            request = builder.build();
         }
         try {
             result = lambdaClient.getAlias(request);
