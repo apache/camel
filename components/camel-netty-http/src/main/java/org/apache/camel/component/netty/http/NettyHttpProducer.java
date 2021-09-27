@@ -57,8 +57,13 @@ public class NettyHttpProducer extends NettyProducer {
         String range = getEndpoint().getConfiguration().getOkStatusCodeRange();
         if (!range.contains(",")) {
             // default is 200-299 so lets optimize for this
-            minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
-            maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
+            if (range.contains("-")) {
+                minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
+                maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
+            } else {
+                minOkRange = Integer.parseInt(range);
+                maxOkRange = minOkRange;
+            }
         }
     }
 

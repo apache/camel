@@ -115,8 +115,13 @@ public class HttpProducer extends DefaultProducer {
         String range = getEndpoint().getOkStatusCodeRange();
         if (!range.contains(",")) {
             // default is 200-299 so lets optimize for this
-            minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
-            maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
+            if (range.contains("-")) {
+                minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
+                maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
+            } else {
+                minOkRange = Integer.parseInt(range);
+                maxOkRange = minOkRange;
+            }
         }
 
         // optimize and build default url when there are no override headers

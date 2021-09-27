@@ -40,6 +40,18 @@ public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
     }
 
     @Test
+    public void testNoOkSingleValue() throws Exception {
+        byte[] data = "Hello World".getBytes();
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200", data,
+                        String.class));
+        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        assertEquals(209, cause.getStatusCode());
+        String body = cause.getContentAsString();
+        assertEquals("Not allowed", body);
+    }
+
+    @Test
     public void testNoOkComplexRange() throws Exception {
         byte[] data = "Hello World".getBytes();
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
