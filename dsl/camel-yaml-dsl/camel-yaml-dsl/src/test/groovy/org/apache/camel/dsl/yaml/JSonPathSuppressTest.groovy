@@ -18,7 +18,6 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
-import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.model.ChoiceDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.model.WhenDefinition
@@ -74,8 +73,6 @@ class JSonPathSuppressTest extends YamlTestSupport {
             ]
     }
 
-    // TODO: CAMEL-16951
-    /*
     def "supress-test-middle"() {
         setup:
         loadRoutes """
@@ -84,11 +81,11 @@ class JSonPathSuppressTest extends YamlTestSupport {
                     steps:    
                       - choice:  
                           when:
-                            - expression:
-                                - jsonpath: "person.middlename"
-                                - suppress-exceptions: true
+                          - jsonpath: 
+                              expression: "person.middlename"
+                              suppress-exceptions: true
                             steps:
-                              - to: "mock:middle"
+                            - to: "mock:middle"
                           otherwise:
                             steps:
                               - to: "mock:other"
@@ -119,10 +116,11 @@ class JSonPathSuppressTest extends YamlTestSupport {
                     steps:    
                       - choice:  
                           when:
-                            - jsonpath: "person.middlename"
+                          - jsonpath: 
+                              expression: "person.middlename"
                               suppress-exceptions: true
-                            - steps:
-                                - to: "mock:middle"
+                            steps:
+                            - to: "mock:middle"
                           otherwise:
                             steps:
                               - to: "mock:other"
@@ -143,5 +141,48 @@ class JSonPathSuppressTest extends YamlTestSupport {
         }
         then:
         MockEndpoint.assertIsSatisfied(context)
-    }*/
+    }
+
+    def "supress-test-last"() {
+        setup:
+        loadRoutes """
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - choice:  
+                          when:
+                          - jsonpath: 
+                              expression: "person.middlename"
+                              suppress-exceptions: true
+                            steps:
+                            - to: "mock:middle"
+                          - jsonpath: 
+                              expression: "person.lastname"
+                              suppress-exceptions: true
+                            steps:
+                            - to: "mock:last"
+                          otherwise:
+                            steps:
+                              - to: "mock:other"
+            """
+
+        withMock('mock:middle') {
+            expectedMessageCount(0)
+        }
+        withMock('mock:last') {
+            expectedMessageCount(1)
+        }
+        withMock('mock:other') {
+            expectedMessageCount(0)
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody("{\"person\" : {\"firstname\" : \"foo\", \"lastname\" : \"bar\"}}").send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
 }
