@@ -465,6 +465,7 @@
         <rhino-js-version>1.7R2</rhino-js-version>
         <ribbon-version>2.3.0</ribbon-version>
         <servo-version>0.10.1</servo-version>
+        <!-- roaster 2.23.x does not work with java 8 -->
         <roaster-version>2.22.0.Final</roaster-version>
         <robotframework-version>4.1</robotframework-version>
         <rome-version>1.16.0</rome-version>
