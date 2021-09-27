@@ -58,10 +58,16 @@ public class VertxHttpEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doInit() throws Exception {
-        if (!configuration.getOkStatusCodeRange().contains(",")) {
+        String range = configuration.getOkStatusCodeRange();
+        if (!range.contains(",")) {
             // default is 200-299 so lets optimize for this
-            minOkRange = Integer.parseInt(StringHelper.before(configuration.getOkStatusCodeRange(), "-"));
-            maxOkRange = Integer.parseInt(StringHelper.after(configuration.getOkStatusCodeRange(), "-"));
+            if (range.contains("-")) {
+                minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
+                maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
+            } else {
+                minOkRange = Integer.parseInt(range);
+                maxOkRange = minOkRange;
+            }
         }
     }
 

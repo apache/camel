@@ -75,6 +75,20 @@ public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
     }
 
     @Test
+    public void testThrowExceptionOnFailureWithStatusCodeRangeSingleValue() {
+        Exchange exchange = template.request(getProducerUri() + "/badstatus?okStatusCodeRange=205", null);
+        assertTrue(exchange.isFailed());
+
+        Map<String, Object> headers = exchange.getMessage().getHeaders();
+        assertTrue(headers.isEmpty());
+
+        HttpOperationFailedException exception = exchange.getException(HttpOperationFailedException.class);
+        assertEquals(201, exception.getStatusCode());
+        assertEquals("Created", exception.getStatusText());
+        assertEquals(getTestServerUrl() + "/badstatus", exception.getUri());
+    }
+
+    @Test
     public void testThrowExceptionOnFailureWithOverriddenUri() {
         Exchange exchange = template.request(getProducerUri(), new Processor() {
             @Override
