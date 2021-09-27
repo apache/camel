@@ -272,10 +272,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     /**
      * Whether to enable validation of the client request to check:
      *
-     * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error.
-     * 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error.
-     * 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error.
-     * 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
+     * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
+     * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
+     * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
+     * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
      */
     public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
