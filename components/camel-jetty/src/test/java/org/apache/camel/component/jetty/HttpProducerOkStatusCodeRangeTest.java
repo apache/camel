@@ -42,6 +42,19 @@ public class HttpProducerOkStatusCodeRangeTest extends BaseJettyTest {
     }
 
     @Test
+    public void testNoOkSingleValue() throws Exception {
+        byte[] data = "Hello World".getBytes();
+        try {
+            template.requestBody("http://localhost:{{port}}/test?okStatusCodeRange=200", data, String.class);
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+            assertEquals(209, cause.getStatusCode());
+            assertEquals("Not allowed", cause.getResponseBody());
+        }
+    }
+
+    @Test
     public void testOk() throws Exception {
         byte[] data = "Hello World".getBytes();
         String out = template.requestBody("http://localhost:{{port}}/test?okStatusCodeRange=200-209", data, String.class);
