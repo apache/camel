@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "when",
     "title": "When",
-    "description": "Triggers a route when an expression evaluates to true",
+    "description": "Triggers a route when the expression evaluates to true",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.WhenDefinition",
