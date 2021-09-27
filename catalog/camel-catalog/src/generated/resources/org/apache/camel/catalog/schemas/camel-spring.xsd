@@ -1834,16 +1834,7 @@ Uses a weighted load distribution ratio for each server with respect to others.
   <xs:element name="when" type="tns:whenDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Triggers a route when an expression evaluates to true
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
-  <xs:element name="whenSkipSendToEndpoint" type="tns:whenSkipSendToEndpointDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Predicate to determine if the message should be sent or not to the endpoint,
-when using interceptSentToEndpoint.
+Triggers a route when the expression evaluates to true
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3084,7 +3075,6 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -3564,7 +3554,6 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -3664,7 +3653,6 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -3677,10 +3665,7 @@ should be intercepted by this exception type or not.
     <xs:complexContent>
       <xs:extension base="tns:processorDefinition">
         <xs:sequence>
-          <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element ref="tns:when"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
-          </xs:choice>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:when"/>
           <xs:element minOccurs="0" ref="tns:otherwise"/>
         </xs:sequence>
       </xs:extension>
@@ -3755,7 +3740,6 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -3835,7 +3819,6 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -4908,7 +4891,6 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -4985,7 +4967,6 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -5124,7 +5105,6 @@ Global option value.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -5303,7 +5283,6 @@ Set if validation is required for this input type. Default value: false
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -5396,7 +5375,6 @@ configured, then all incoming messages is intercepted.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -5496,7 +5474,6 @@ process its result.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -5590,7 +5567,6 @@ specified using uri syntax, eg mynamecount=4&type=gold.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -5884,7 +5860,6 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -8918,7 +8893,6 @@ decompressed size. Default value: 1073741824
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -9130,7 +9104,6 @@ should be invoked or not.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -9298,7 +9271,6 @@ failure. If this option is enabled then its considered handled as well.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -9660,7 +9632,6 @@ generate the log message from exchange.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -9797,7 +9768,6 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -9874,7 +9844,6 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -10413,7 +10382,6 @@ Name of property to remove.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -10682,7 +10650,6 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -11078,7 +11045,6 @@ compensation/completion exchange.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -11473,7 +11439,6 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -11693,7 +11658,6 @@ backward compatibility. Default value: false
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -12117,7 +12081,6 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -12231,7 +12194,6 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:whenSkipSendToEndpoint"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
@@ -12318,14 +12280,6 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="whenSkipSendToEndpointDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:whenDefinition">
-        <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
