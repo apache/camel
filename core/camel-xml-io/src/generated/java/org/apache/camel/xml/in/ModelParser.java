@@ -204,15 +204,14 @@ public class ModelParser extends BaseParser {
         }, noValueHandler());
     }
     protected WhenDefinition doParseWhenDefinition() throws IOException, XmlPullParserException {
-        return doParse(new WhenDefinition(), 
-            processorDefinitionAttributeHandler(),  outputExpressionNodeElementHandler(), noValueHandler());
+        return doParse(new WhenDefinition(),
+            processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
     }
     protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
         return doParse(new ChoiceDefinition(),
             processorDefinitionAttributeHandler(), (def, key) -> {
             switch (key) {
                 case "when": doAdd(doParseWhenDefinition(), def.getWhenClauses(), def::setWhenClauses); break;
-                case "whenSkipSendToEndpoint": doAdd(doParseWhenSkipSendToEndpointDefinition(), def.getWhenClauses(), def::setWhenClauses); break;
                 case "otherwise": def.setOtherwise(doParseOtherwiseDefinition()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
@@ -1451,10 +1450,6 @@ public class ModelParser extends BaseParser {
     protected ValidateDefinition doParseValidateDefinition() throws IOException, XmlPullParserException {
         return doParse(new ValidateDefinition(),
             processorDefinitionAttributeHandler(), expressionNodeElementHandler(), noValueHandler());
-    }
-    protected WhenSkipSendToEndpointDefinition doParseWhenSkipSendToEndpointDefinition() throws IOException, XmlPullParserException {
-        return doParse(new WhenSkipSendToEndpointDefinition(),
-            processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
     }
     protected WireTapDefinition doParseWireTapDefinition() throws IOException, XmlPullParserException {
         return doParse(new WireTapDefinition(), (def, key, val) -> {
@@ -3206,7 +3201,6 @@ public class ModelParser extends BaseParser {
             case "doTry": return doParseTryDefinition();
             case "unmarshal": return doParseUnmarshalDefinition();
             case "validate": return doParseValidateDefinition();
-            case "whenSkipSendToEndpoint": return doParseWhenSkipSendToEndpointDefinition();
             case "wireTap": return doParseWireTapDefinition();
             case "serviceCall": return doParseServiceCallDefinition();
             default: return null;

@@ -100,5 +100,4 @@ TryDefinition
 UnmarshalDefinition
 ValidateDefinition
 WhenDefinition
-WhenSkipSendToEndpointDefinition
 WireTapDefinition

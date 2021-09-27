@@ -99,14 +99,19 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     private void processClasses(IndexView index) {
         Map<String, Set<String>> byPackage = new HashMap<>();
 
-        Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class).map(Class::getName).map(DotName::createSimple)
+        Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class)
+                .map(Class::getName).map(DotName::createSimple)
                 .map(index::getAnnotations).flatMap(Collection::stream)
                 .map(AnnotationInstance::target).map(AnnotationTarget::asClass).map(ClassInfo::name).map(DotName::toString)
                 .forEach(name -> {
                     int idx = name.lastIndexOf('.');
                     String p = name.substring(0, idx);
                     String c = name.substring(idx + 1);
-                    byPackage.computeIfAbsent(p, s -> new TreeSet<>()).add(c);
+                    // we should skip this model as we do not want this in the JAXB model
+                    boolean skip = "WhenSkipSendToEndpointDefinition".equals(c);
+                    if (!skip) {
+                        byPackage.computeIfAbsent(p, s -> new TreeSet<>()).add(c);
+                    }
                 });
 
         Path jaxbIndexDir = jaxbIndexOutDir.toPath();

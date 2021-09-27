@@ -154,7 +154,10 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 .map(DotName::createSimple).map(index::getAnnotations)
                 .flatMap(Collection::stream).map(AnnotationInstance::target).map(AnnotationTarget::asClass).map(ClassInfo::name)
                 .map(DotName::toString).sorted().distinct()
-                .map(name -> loadClass(classLoader, name)).flatMap(this::references).flatMap(this::fieldReferences).distinct()
+                // we should skip this model as we do not want this in the JAXB model
+                .filter(n -> !n.equals("org.apache.camel.model.WhenSkipSendToEndpointDefinition"))
+                .map(name -> loadClass(classLoader, name))
+                .flatMap(this::references).flatMap(this::fieldReferences).distinct()
                 .collect(Collectors.toList());
 
         JavaClass parser = generateParser(model, classLoader);
