@@ -34,6 +34,13 @@ This means the following options has been renamed:
 - `camel-protobuf` renamed `collectionTypeName` to `collectionType`, and `jsonViewTypeName` to `jsonView`, and `unmarshalTypeName` to `unmarshalType`
 - `camel-yaml` renamed `unmarshalTypeName` to `unmarshalType`
 
+=== Rest DSL
+
+The `clientRequestValidation` now includes one more check:
+
+- Parsing error of the message body (JSon, XML or Auto binding mode must be enabled). (Returns HTTP Status 400)
+
+
 === camel-aws2-ddb
 
 The `iteratorType` option has been dropped in favour of the `streamIteratorType` option. Possible values are `FROM_LATEST` and `FROM_START`.

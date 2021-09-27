@@ -307,6 +307,16 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 jsonUnmarshal.process(exchange);
                 ExchangeHelper.prepareOutToIn(exchange);
             }
+            if (clientRequestValidation && exchange.isFailed()) {
+                // this is a bad request, the client included message body that cannot be parsed to json
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                exchange.getMessage().setBody("Invalid JSon payload.");
+                // clear exception
+                exchange.setException(null);
+                // stop routing and return
+                exchange.setRouteStop(true);
+                return;
+            }
             return;
         } else if (isXml && xmlUnmarshal != null) {
             // add reverse operation
@@ -314,6 +324,16 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             if (ObjectHelper.isNotEmpty(body)) {
                 xmlUnmarshal.process(exchange);
                 ExchangeHelper.prepareOutToIn(exchange);
+            }
+            if (clientRequestValidation && exchange.isFailed()) {
+                // this is a bad request, the client included message body that cannot be parsed to XML
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                exchange.getMessage().setBody("Invalid XML payload.");
+                // clear exception
+                exchange.setException(null);
+                // stop routing and return
+                exchange.setRouteStop(true);
+                return;
             }
             return;
         }

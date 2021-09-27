@@ -562,9 +562,9 @@ public interface Exchange {
     void setException(Throwable t);
 
     /**
-     * Returns true if this exchange failed due to either an exception or fault
+     * Returns true if this exchange failed due to an exception
      *
-     * @return true if this exchange failed due to either an exception or fault
+     * @return true if this exchange failed due to an exception
      * @see    Exchange#getException()
      */
     boolean isFailed();
