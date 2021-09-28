@@ -36,6 +36,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     protected RemoteFileProducer(RemoteFileEndpoint<T> endpoint, RemoteFileOperations<T> operations) {
         super(endpoint, operations);
+        LOG.debug("Creating RemoteFileProducer");
     }
 
     @Override
