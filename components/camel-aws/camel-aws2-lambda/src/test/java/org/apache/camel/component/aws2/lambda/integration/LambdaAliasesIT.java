@@ -22,18 +22,21 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.lambda.Lambda2Constants;
+import org.apache.camel.component.aws2.lambda.Lambda2Operations;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.lambda.model.CreateAliasResponse;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.GetAliasResponse;
+import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class LambdaCreateGetAliasIT extends Aws2LambdaBase {
+public class LambdaAliasesIT extends Aws2LambdaBase {
 
     @Test
-    public void createAliasThenGetAliasShouldSucceed() {
+    public void createGetDeleteAndListAliasesShouldSucceed() {
         Map<String, Object> headers = new HashMap<>();
         headers.put(Lambda2Constants.RUNTIME, "nodejs6.10");
         headers.put(Lambda2Constants.HANDLER, "GetHelloWithName.handler");
@@ -59,6 +62,18 @@ public class LambdaCreateGetAliasIT extends Aws2LambdaBase {
         assertEquals("GetHelloWithNameAlias", aliasGot.name());
         assertEquals("$LATEST", aliasGot.functionVersion());
 
+        ListAliasesResponse aliasesListed = template.requestBody("direct:listAliases", null, ListAliasesResponse.class);
+        assertNotNull(aliasesListed.aliases());
+        aliasesListed.aliases().stream().anyMatch(a -> "GetHelloWithNameAlias".equals(a.name()));
+
+        headers = new HashMap<>();
+        headers.put(Lambda2Constants.FUNCTION_ALIAS_NAME, "GetHelloWithNameAlias");
+        template.requestBodyAndHeaders("direct:deleteAlias", null, headers);
+
+        aliasesListed = template.requestBody("direct:listAliases", null, ListAliasesResponse.class);
+        assertNotNull(aliasesListed.aliases());
+        aliasesListed.aliases().stream().noneMatch(a -> "GetHelloWithNameAlias".equals(a.name()));
+
         template.requestBody("direct:deleteFunction", null, DeleteFunctionResponse.class);
     }
 
@@ -67,17 +82,14 @@ public class LambdaCreateGetAliasIT extends Aws2LambdaBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsCreateFunctionEndpoint = "aws2-lambda://GetHelloWithName?operation=createFunction";
-                from("direct:createFunction").to(awsCreateFunctionEndpoint);
+                String endpointUriFormat = "aws2-lambda://GetHelloWithName?operation=%s";
 
-                String awsCreateAliasEndpoint = "aws2-lambda://GetHelloWithName?operation=createAlias";
-                from("direct:createAlias").to(awsCreateAliasEndpoint);
-
-                String awsGetAliasEndpoint = "aws2-lambda://GetHelloWithName?operation=getAlias";
-                from("direct:getAlias").to(awsGetAliasEndpoint);
-
-                String awsDeleteFunctionEndpoint = "aws2-lambda://GetHelloWithName?operation=deleteFunction";
-                from("direct:deleteFunction").to(awsDeleteFunctionEndpoint);
+                from("direct:createFunction").toF(endpointUriFormat, Lambda2Operations.createFunction);
+                from("direct:createAlias").toF(endpointUriFormat, Lambda2Operations.createAlias);
+                from("direct:listAliases").toF(endpointUriFormat, Lambda2Operations.listAliases);
+                from("direct:getAlias").toF(endpointUriFormat, Lambda2Operations.getAlias);
+                from("direct:deleteAlias").toF(endpointUriFormat, Lambda2Operations.deleteAlias);
+                from("direct:deleteFunction").toF(endpointUriFormat, Lambda2Operations.deleteFunction);
             }
         };
     }

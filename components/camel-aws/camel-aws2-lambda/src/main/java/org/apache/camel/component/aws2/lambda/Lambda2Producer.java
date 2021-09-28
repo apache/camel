@@ -705,10 +705,10 @@ public class Lambda2Producer extends DefaultProducer {
             ListAliasesRequest.Builder builder = ListAliasesRequest.builder();
             builder.functionName(getEndpoint().getFunction());
             String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
-            if (ObjectHelper.isEmpty(version)) {
-                throw new IllegalArgumentException("Function Version must be specified to list aliases for a function");
+            if (!ObjectHelper.isEmpty(version)) {
+                builder.functionVersion(version);
             }
-            builder.functionVersion(version);
+            request = builder.build();
         }
         try {
             result = lambdaClient.listAliases(request);
