@@ -64,14 +64,6 @@ It is an error to provide a sequence number that is greater than the
 largest sequence number in the describe-streams result, as this will
 lead to the AWS call returning an HTTP 400.
 
-== Batch Consumer
-
-This component implements the Batch Consumer.
-
-This allows you for instance to know how many messages exists in this
-batch and for instance let the Aggregator
-aggregate this number of messages.
-
 == Usage
 
 === Static credentials vs Default Credential Provider
