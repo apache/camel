@@ -21,17 +21,15 @@ import java.util.Map;
 
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.baggage.BaggageBuilder;
-import io.opentelemetry.api.baggage.EntryMetadata;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
-import io.opentelemetry.api.trace.attributes.SemanticAttributes;
-import io.opentelemetry.context.Context;
+import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
 public class OpenTelemetrySpanAdapter implements SpanAdapter {
     private static final String DEFAULT_EVENT_NAME = "log";
-    private static EnumMap<Tag, String> tagMap = new EnumMap<>(Tag.class);
+    private static final EnumMap<Tag, String> tagMap = new EnumMap<>(Tag.class);
 
     static {
         tagMap.put(Tag.COMPONENT, "component");
@@ -45,7 +43,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     }
 
     private Baggage baggage;
-    private io.opentelemetry.api.trace.Span span;
+    private final io.opentelemetry.api.trace.Span span;
 
     OpenTelemetrySpanAdapter(io.opentelemetry.api.trace.Span span) {
         this.span = span;
@@ -145,9 +143,9 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     public void setCorrelationContextItem(String key, String value) {
         BaggageBuilder builder = Baggage.builder();
         if (baggage != null) {
-            builder = builder.setParent(Context.current().with(baggage));
+            builder = Baggage.current().toBuilder();
         }
-        baggage = builder.put(key, value, EntryMetadata.EMPTY).build();
+        baggage = builder.put(key, value).build();
     }
 
     public String getContextPropagationItem(String key) {

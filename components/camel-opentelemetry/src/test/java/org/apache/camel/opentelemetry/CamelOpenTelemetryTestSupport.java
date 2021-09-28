@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
-import io.opentelemetry.sdk.trace.TracerSdkProvider;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
@@ -47,11 +47,9 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     static final AttributeKey<String> POST_KEY = AttributeKey.stringKey("post");
     static final AttributeKey<String> MESSAGE_KEY = AttributeKey.stringKey("message");
 
-    private InMemorySpanExporter inMemorySpanExporter = InMemorySpanExporter.create();
-    private SpanTestData[] testdata;
+    private final InMemorySpanExporter inMemorySpanExporter = InMemorySpanExporter.create();
+    private final SpanTestData[] testdata;
     private Tracer tracer;
-    private OpenTelemetryTracer ottracer;
-    private TracerSdkProvider tracerFactory = TracerSdkProvider.builder().build();
 
     public CamelOpenTelemetryTestSupport(SpanTestData[] testdata) {
         this.testdata = testdata;
@@ -60,8 +58,9 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        ottracer = new OpenTelemetryTracer();
-        tracerFactory.addSpanProcessor(SimpleSpanProcessor.builder(inMemorySpanExporter).build());
+        OpenTelemetryTracer ottracer = new OpenTelemetryTracer();
+        SdkTracerProvider tracerFactory = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter)).build();
         tracer = tracerFactory.get("tracerTest");
         ottracer.setTracer(tracer);
         ottracer.setExcludePatterns(getExcludePatterns());
@@ -173,7 +172,7 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     }
 
     protected void verifySameTrace() {
-        assertEquals(1, inMemorySpanExporter.getFinishedSpanItems().stream().map(s -> s.getTraceId()).distinct().count());
+        assertEquals(1, inMemorySpanExporter.getFinishedSpanItems().stream().map(SpanData::getTraceId).distinct().count());
     }
 
 }
