@@ -151,10 +151,6 @@ public class OAIPMHEndpoint extends ScheduledPollEndpoint {
         this.ssl = ssl;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getFrom() {
         return from;
     }

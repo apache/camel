@@ -152,11 +152,6 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
                 "GooglePubsubConsumer[" + getDestinationName() + "]", concurrentConsumers);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     public String getProjectId() {
         return projectId;
     }
