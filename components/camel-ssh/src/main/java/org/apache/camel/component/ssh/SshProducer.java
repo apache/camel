@@ -54,7 +54,7 @@ public class SshProducer extends DefaultProducer {
     @Override
     public boolean isSingleton() {
         // SshClient is not thread-safe to be shared
-        return true;
+        return false;
     }
 
     @Override
