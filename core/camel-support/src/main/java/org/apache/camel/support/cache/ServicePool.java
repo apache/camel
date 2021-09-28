@@ -321,9 +321,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                             queue.remove(evict);
                         }
                         evicts.clear();
-                        if (queue.isEmpty()) {
-                            pool.remove(endpoint);
-                        }
                     }
                 }
             }
@@ -333,10 +330,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         public S acquire() throws Exception {
             cleanupEvicts();
 
-            S s = queue.poll();
-            if (s == null) {
-                s = creator.apply(endpoint);
-                s.start();
+            S s;
+            synchronized (lock) {
+                s = queue.poll();
+                if (s == null) {
+                    s = creator.apply(endpoint);
+                    s.start();
+                }
             }
             return s;
         }
@@ -345,9 +345,11 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         public void release(S s) {
             cleanupEvicts();
 
-            if (!queue.offer(s)) {
-                // there is no room so lets just stop and discard this
-                doStop(s);
+            synchronized (lock) {
+                if (!queue.offer(s)) {
+                    // there is no room so lets just stop and discard this
+                    doStop(s);
+                }
             }
         }
 
@@ -358,9 +360,11 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public void stop() {
-            queue.forEach(this::doStop);
-            queue.clear();
-            pool.remove(endpoint);
+            synchronized (lock) {
+                queue.forEach(this::doStop);
+                queue.clear();
+                pool.remove(endpoint);
+            }
         }
 
         @Override
@@ -380,7 +384,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             if (s != null) {
                 ServicePool.stop(s);
                 try {
-                    endpoint.getCamelContext().removeService(s);
+                    if (endpoint != null) {
+                        endpoint.getCamelContext().removeService(s);
+                    }
                 } catch (Exception e) {
                     LOG.debug("Error removing service: {}. This exception is ignored.", s, e);
                 }
