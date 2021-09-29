@@ -503,7 +503,7 @@ public class NettyHttpComponent extends NettyComponent
         } catch (IllegalArgumentException e) {
             // if there's a mismatch between the component and the rest-configuration,
             // then getRestConfiguration throws IllegalArgumentException which can be
-            // safely ignored as it means there's no special conf for this componet.
+            // safely ignored as it means there's no special conf for this component.
         }
     }
 

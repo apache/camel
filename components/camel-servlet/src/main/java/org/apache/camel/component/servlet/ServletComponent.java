@@ -300,7 +300,6 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         }
 
         Map<String, Object> map = RestComponentHelper.initRestEndpointProperties("servlet", config);
-
         boolean cors = config.isEnableCORS();
         if (cors) {
             // allow HTTP Options as we want to handle CORS in rest-dsl
@@ -338,20 +337,20 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         try {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "servlet");
 
-            // configure additional options on jetty configuration
+            // configure additional options on servlet configuration
             if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
                 setProperties(this, config.getComponentProperties());
             }
         } catch (IllegalArgumentException e) {
             // if there's a mismatch between the component and the rest-configuration,
             // then getRestConfiguration throws IllegalArgumentException which can be
-            // safely ignored as it means there's no special conf for this componet.
+            // safely ignored as it means there's no special conf for this component.
         }
     }
 }
