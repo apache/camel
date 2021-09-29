@@ -18,15 +18,15 @@
  */
 
 //REPOS mavencentral,apache=https://repository.apache.org/snapshots
-//DEPS org.apache.camel:camel-bom:3.12.0-SNAPSHOT@pom
+//DEPS org.apache.camel:camel-bom:${camel.jbang.version:RELEASE}@pom
 //DEPS org.apache.camel:camel-core
-//DEPS org.apache.camel:camel-core-model
 //DEPS org.apache.camel:camel-api
+//DEPS org.apache.camel:camel-core-model
 //DEPS org.apache.camel:camel-main
 //DEPS org.apache.camel:camel-kamelet-main
 //DEPS org.apache.camel:camel-file-watch
 //DEPS org.apache.camel:camel-resourceresolver-github
-//DEPS org.apache.camel:camel-jbang-core:3.12.0-SNAPSHOT
+//DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:RELEASE}
 //DEPS org.apache.logging.log4j:log4j-api:2.13.3
 //DEPS org.apache.logging.log4j:log4j-core:2.13.3
 //DEPS org.apache.logging.log4j:log4j-slf4j-impl:2.13.3
@@ -287,7 +287,7 @@ class SearchComponents extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    @Option(names = { "--branch" }, defaultValue = "camel-3.12.0-SNAPSHOT", hidden = true,
+    @Option(names = { "--branch" }, defaultValue = "main", hidden = true,
             description = "The branch to use when downloading or searching resources (mostly used for development/testing)")
     private String branch;
 
@@ -343,7 +343,7 @@ class SearchLanguages extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    @Option(names = { "--branch" }, defaultValue = "camel-3.12.0-SNAPSHOT", hidden = true,
+    @Option(names = { "--branch" }, defaultValue = "main", hidden = true,
             description = "The branch to use when downloading or searching resources (mostly used for development/testing)")
     private String branch;
 
@@ -398,7 +398,7 @@ class SearchOthers extends AbstractSearch implements Callable<Integer> {
             description = "Where to download the resources from")
     private String resourceLocation;
 
-    @Option(names = { "--branch" }, defaultValue = "camel-3.12.0-SNAPSHOT", hidden = true,
+    @Option(names = { "--branch" }, defaultValue = "main", hidden = true,
             description = "The branch to use when downloading or searching resources (mostly used for development/testing)")
     private String branch;
 
@@ -582,7 +582,7 @@ class InitBinding extends AbstractInitKamelet implements Callable<Integer> {
     }
 }
 
-@Command(name = "CamelJBang", mixinStandardHelpOptions = true, version = "CamelJBang 3.12.0-SNAPSHOT",
+@Command(name = "CamelJBang", mixinStandardHelpOptions = true, version = "CamelJBang",
          description = "A JBang-based Camel app for running Kamelets")
 public class CamelJBang implements Callable<Integer> {
     private static CommandLine commandLine;

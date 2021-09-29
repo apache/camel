@@ -124,9 +124,6 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <tasks>
-                                <replace token="${camel.jbang.version}" value="${project.version}" dir="${dist.dir}">
-                                    <include name="**/*.java"/>
-                                </replace>
                                 <replace token="${camel.jbang.log4j2.version}" value="${log4j2-version}" dir="${dist.dir}">
                                     <include name="**/*.java"/>
                                 </replace>
