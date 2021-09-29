@@ -52,11 +52,11 @@ public final class RestComponentHelper {
 
     /**
      * 
-     * Creates an Endpoint Property Map based on properies set in the component's RestConfiguration.
+     * Creates an endpoint properties based on properties set in the component's RestConfiguration.
      * 
      * @param  componentName the Rest Component name
      * @param  config        the RestConfiguration
-     * @return               the map of Endpoint Properties set in the RestConfiguration
+     * @return               the map of endpoint properties set in the RestConfiguration
      */
     public static Map<String, Object> initRestEndpointProperties(String componentName, RestConfiguration config) {
         Map<String, Object> map = new HashMap<>();
