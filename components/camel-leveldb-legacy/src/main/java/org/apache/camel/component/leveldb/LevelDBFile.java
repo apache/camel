@@ -198,7 +198,8 @@ public class LevelDBFile implements Service {
                     LOG.debug("Using {} implementation of org.iq80.leveldb.DBFactory", factory.getClass().getName());
                 }
                 return factory;
-            } catch (Exception ignored) {
+            } catch (Throwable ignored) {
+                // must be throwable
             }
         }
         throw new IllegalStateException("Can't find implementation of org.iq80.leveldb.DBFactory");
