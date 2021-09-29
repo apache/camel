@@ -243,7 +243,7 @@ public final class AdviceWith {
         if (beforeAsXml != null && logRoutesAsXml && LOG.isInfoEnabled()) {
             try {
                 String afterAsXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, merged);
-                LOG.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
+                LOG.info("Adviced route before/after as XML:\n{}\n\n{}", beforeAsXml, afterAsXml);
             } catch (Throwable e) {
                 // ignore, it may be due jaxb is not on classpath etc
             }
