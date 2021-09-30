@@ -29,6 +29,17 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+Optionally you can include the DFDL module, which is a POC for https://daffodil.apache.org/[Apache Daffodil]:
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>io.atlasmap</groupId>
+    <artifactId>atlas-dfdl-module</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as atlasmap-core in camel-atlasmap -->
+</dependency>
+------------------------------------------------------------
+
 == URI format
 
 [source,java]
