@@ -14,7 +14,7 @@ https://www.openstack.org//[OpenStack] applications.
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={doctitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]
 
 == Installation
 
