@@ -7,4 +7,4 @@ The Camel components for https://www.huaweicloud.com/intl/en-us/[Huawei Cloud Se
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={doctitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]
