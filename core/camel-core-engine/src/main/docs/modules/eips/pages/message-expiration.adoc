@@ -10,7 +10,7 @@ image::eip/MessageExpirationSolution.gif[image]
 
 Set the Message Expiration to specify a time limit how long the message is viable.
 
-Message expiration is supported by some Camel components such as xref:components::jms-component.adoc[JMS],
+Message expiration is supported by some Camel components such as xref:ROOT:jms-component.adoc[JMS],
 which uses _time-to-live_ to specify for how long the message is valid.
 
 IMPORTANT: When using message expiration then mind about keeping clock's synchronized among the systems.

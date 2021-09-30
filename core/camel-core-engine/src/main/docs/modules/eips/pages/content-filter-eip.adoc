@@ -11,12 +11,12 @@ image::eip/ContentFilter.gif[image]
 
 * Using a xref:message-translator.adoc[Message Translator]
 * Invoking a xref:bean-eip.adoc[Bean] with the filtering programmed in Java
-* Using a xref:latest@manual:ROOT:processor.adoc[Processor] with the filtering programmed in Java
-* Using an xref:latest@manual:ROOT:expression.adoc[Expression]
+* Using a xref:manual::processor.adoc[Processor] with the filtering programmed in Java
+* Using an xref:manual::expression.adoc[Expression]
 
 == Message Content filtering using a Processor
 
-In this example we add our own xref:latest@manual:ROOT:processor.adoc[Processor] using
+In this example we add our own xref:manual::processor.adoc[Processor] using
 explicit Java to filter the message:
 
 [source,java]
@@ -58,7 +58,7 @@ And in XML DSL:
 
 == Message Content filtering using expression
 
-Some languages like xref:components:languages:xpath-language.adoc[XPath], and xref:components:languages:xquery-language.adoc[XQuery]
+Some languages like xref:languages:xpath-language.adoc[XPath], and xref:languages:xquery-language.adoc[XQuery]
 can be used to transform and filter content from messages.
 
 In the example we use xpath to filter a XML message to select all the `<foo><bar>` elements:

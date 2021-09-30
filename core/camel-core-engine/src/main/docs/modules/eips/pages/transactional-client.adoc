@@ -19,18 +19,18 @@ a 3rd-party JTA transaction manager can be embedded and used.
 
 In Camel transactions are supported by JMS messaging components:
 
-- xref:components::activemq-component.adoc[ActiveMQ]
-- xref:components::jms-component.adoc[JMS]
-- xref:components::sjms-component.adoc[Simple JMS]
-- xref:components::sjms2-component.adoc[Simple JMS 2.x]
+- xref:ROOT:activemq-component.adoc[ActiveMQ]
+- xref:ROOT:jms-component.adoc[JMS]
+- xref:ROOT:sjms-component.adoc[Simple JMS]
+- xref:ROOT:sjms2-component.adoc[Simple JMS 2.x]
 
 And all the SQL database components, such as:
 
-- xref:components::elsql-component.adoc[ElSQL]
-- xref:components::jdbc-component.adoc[JDBC]
-- xref:components::jpa-component.adoc[JPA]
-- xref:components::sql-component.adoc[SQL]
-- xref:components::mybatis-component.adoc[MyBatis]
+- xref:ROOT:elsql-component.adoc[ElSQL]
+- xref:ROOT:jdbc-component.adoc[JDBC]
+- xref:ROOT:jpa-component.adoc[JPA]
+- xref:ROOT:sql-component.adoc[SQL]
+- xref:ROOT:mybatis-component.adoc[MyBatis]
 
 == Understanding Transactions
 

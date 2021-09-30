@@ -13,7 +13,7 @@ A messaging system such as Apache ActiveMQ can be used as Message Bus.
 == Example
 
 The following demonstrates how the Camel message bus can be used to
-ingest message into the bus with the xref:components::jms-component.adoc[JMS] component.
+ingest message into the bus with the xref:ROOT:jms-component.adoc[JMS] component.
 
 [source,java]
 ----

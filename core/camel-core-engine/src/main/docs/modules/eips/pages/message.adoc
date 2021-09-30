@@ -9,7 +9,7 @@ interface.
 image::eip/MessageSolution.gif[image]
 
 The `org.apache.camel.Message` is the _data record_ that represents the message part
-of the xref:latest@manual:ROOT:exchange.adoc[Exchange].
+of the xref:manual::exchange.adoc[Exchange].
 
 The message contains the following information:
 

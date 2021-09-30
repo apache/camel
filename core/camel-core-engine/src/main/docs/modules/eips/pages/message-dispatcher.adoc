@@ -8,7 +8,7 @@ image::eip/MessageDispatcher.gif[image]
 
 In Camel the Message Dispatcher can be archived in different ways such as:
 
-* You can use a component like xref:components::jms-component.adoc[JMS] with selectors
+* You can use a component like xref:ROOT:jms-component.adoc[JMS] with selectors
 to implement a xref:selective-consumer.adoc[Selective Consumer] as the Message Dispatcher implementation.
 
 * Or you can use a xref:message-endpoint.adoc[Message Endpoint] as the Message Dispatcher itself, or

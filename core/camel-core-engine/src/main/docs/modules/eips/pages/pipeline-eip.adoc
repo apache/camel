@@ -11,7 +11,7 @@ from the xref:enterprise-integration-patterns.adoc[EIP patterns] in various ways
 image::eip/PipesAndFilters.gif[image]
 
 With Camel, you can separate your processing across multiple independent
-xref:latest@manual:ROOT:endpoint.adoc[Endpoint]'s which can then be chained
+xref:manual::endpoint.adoc[Endpoint]'s which can then be chained
 together.
 
 == Options
@@ -23,7 +23,7 @@ include::partial$eip-options.adoc[]
 == Using pipeline
 
 You can create pipelines of logic using multiple
-xref:latest@manual:ROOT:endpoint.adoc[Endpoint] or
+xref:manual::endpoint.adoc[Endpoint] or
 xref:message-translator.adoc[Message Translator] instances as follows:
 
 [source,java]

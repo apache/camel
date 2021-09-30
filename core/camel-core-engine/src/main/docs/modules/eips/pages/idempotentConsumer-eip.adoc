@@ -14,9 +14,9 @@ The Idempotent Consumer essentially acts like a
 xref:filter-eip.adoc[Message Filter] to filter out duplicates.
 
 Camel will add the message id eagerly to the repository to detect
-duplication also for xref:latest@manual:ROOT:exchange.adoc[Exchange]'s' currently in progress.
+duplication also for xref:manual::exchange.adoc[Exchange]'s' currently in progress.
 On completion Camel will remove the message id from the repository if
-the xref:latest@manual:ROOT:exchange.adoc[Exchange] failed, otherwise it stays there.
+the xref:manual::exchange.adoc[Exchange] failed, otherwise it stays there.
 
 == Options
 
@@ -32,24 +32,24 @@ your own `org.apache.camel.spi.IdempotentRepository`.
 Camel provides the following Idempotent Consumer implementations:
 
 * MemoryIdempotentRepository from `camel-support` JAR
-* xref:components::caffeine-cache-component.adoc[CaffeineIdempotentRepository]
-* xref:components::cql-component.adoc[CassandraIdempotentRepository]
-xref:components::cql-component.adoc[NamedCassandraIdempotentRepository]
-* xref:components::ehcache-component.adoc[EHCacheIdempotentRepository]
-* xref:components::hazelcast-summary.adoc[HazelcastIdempotentRepository]
-* xref:components::hbase-component.adoc[HBaseIdempotentRepository]
-* xref:components::infinispan-component.adoc[InfinispanIdempotentRepository]
-xref:components::infinispan-component.adoc[InfinispanEmbeddedIdempotentRepository]
-xref:components::infinispan-component.adoc[InfinispanRemoteIdempotentRepository]
-* xref:components::jcache-component.adoc[JCacheIdempotentRepository]
-* xref:components::jpa-component.adoc[JpaMessageIdRepository]
-* xref:components::kafka-component.adoc[KafkaIdempotentRepository]
-* xref:components::mongodb-component.adoc[MongoDbIdempotentRepository]
-* xref:components::spring-redis-component.adoc[RedisIdempotentRepository]
-xref:components::spring-redis-component.adoc[RedisStringIdempotentRepository]
-* xref:latest@manual:ROOT:spring.adoc[SpringCacheIdempotentRepository]
-* xref:components::sql-component.adoc[JdbcMessageIdRepository]
-xref:components::sql-component.adoc[JdbcOrphanLockAwareIdempotentRepository]
+* xref:ROOT:caffeine-cache-component.adoc[CaffeineIdempotentRepository]
+* xref:ROOT:cql-component.adoc[CassandraIdempotentRepository]
+xref:ROOT:cql-component.adoc[NamedCassandraIdempotentRepository]
+* xref:ROOT:ehcache-component.adoc[EHCacheIdempotentRepository]
+* xref:ROOT:hazelcast-summary.adoc[HazelcastIdempotentRepository]
+* xref:ROOT:hbase-component.adoc[HBaseIdempotentRepository]
+* xref:ROOT:infinispan-component.adoc[InfinispanIdempotentRepository]
+xref:ROOT:infinispan-component.adoc[InfinispanEmbeddedIdempotentRepository]
+xref:ROOT:infinispan-component.adoc[InfinispanRemoteIdempotentRepository]
+* xref:ROOT:jcache-component.adoc[JCacheIdempotentRepository]
+* xref:ROOT:jpa-component.adoc[JpaMessageIdRepository]
+* xref:ROOT:kafka-component.adoc[KafkaIdempotentRepository]
+* xref:ROOT:mongodb-component.adoc[MongoDbIdempotentRepository]
+* xref:ROOT:spring-redis-component.adoc[RedisIdempotentRepository]
+xref:ROOT:spring-redis-component.adoc[RedisStringIdempotentRepository]
+* xref:manual::spring.adoc[SpringCacheIdempotentRepository]
+* xref:ROOT:sql-component.adoc[JdbcMessageIdRepository]
+xref:ROOT:sql-component.adoc[JdbcOrphanLockAwareIdempotentRepository]
 
 == Example
 

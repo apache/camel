@@ -25,14 +25,14 @@ You can get hold of a `PollingConsumer` in several ways in Camel:
 https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/Endpoint.java[Endpoint.createPollingConsumer()]
 method.
 
-- Use the xref:latest@manual:ROOT:consumertemplate.adoc[ConsumerTemplate] to poll on demand.
+- Use the xref:manual::consumertemplate.adoc[ConsumerTemplate] to poll on demand.
 
 == Using Polling Consumer
 
 If you need to use Polling Consumer from within a route, then the xref:pollEnrich-eip.adoc[Poll Enrich] EIP can be used.
 
 On the other hand if you need to use Polling Consumer programmatically,
-then using xref:latest@manual:ROOT:consumertemplate.adoc[ConsumerTemplate] is a good choice.
+then using xref:manual::consumertemplate.adoc[ConsumerTemplate] is a good choice.
 
 And if you want to use the lower level Camel APIs then you can create the `PollingConsumer` instance to be used.
 
@@ -88,7 +88,7 @@ if the internal queue is full. If the value is `0` or negative then no timeout i
 timeout is triggered then a `ExchangeTimedOutException` is thrown.
 |=======================================================================
 
-You can configure these options in endpoints xref:latest@manual:ROOT:uris.adoc[URIs], such
+You can configure these options in endpoints xref:manual::uris.adoc[URIs], such
 as shown below:
 
 [source,java]

@@ -21,7 +21,7 @@ include::partial$eip-options.adoc[]
 
 == Example
 
-The Camel xref:components:languages:simple-language.adoc[Simple] language
+The Camel xref:languages:simple-language.adoc[Simple] language
 is great to use with the Choice EIP when routing is based on the content of the message,
 such as checking message headers.
 
@@ -106,7 +106,7 @@ from("direct:start")
 However, the code will still not compile.
 
 The reason is we have stretched how far we can take the good old Java language in terms of
-xref:latest@manual:ROOT:dsl.adoc[DSL]. In a more dynamic or modern language such as Kotlin or Groovy
+xref:manual::dsl.adoc[DSL]. In a more dynamic or modern language such as Kotlin or Groovy
 you would be able to let it be stack based, so the `.end()` will pop the last type of the
 stack, and you would return to the scope of the Choice EIP.
 
@@ -137,7 +137,7 @@ to the Choice EIP.
 ==== Still problems
 
 If there are still problems, then you can split your route into multiple
-routes, and link them together using the xref:components::direct-component.adoc[Direct]
+routes, and link them together using the xref:ROOT:direct-component.adoc[Direct]
 component.
 
 There can be some combinations of xref:eips:enterprise-integration-patterns.adoc[EIP]s

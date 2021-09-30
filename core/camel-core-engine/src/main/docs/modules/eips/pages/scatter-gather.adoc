@@ -153,7 +153,7 @@ And are loaded up in XML like this:
 Each bean is loaded with a different price for beer. When the message is sent to each bean endpoint,
 it will arrive at the `MyVendor.quote` method. This method does a simple check whether this quote
 request is for beer and then sets the price of beer on the exchange for retrieval at a later step.
-The message is forwarded on to the next step using xref:latest@manual:ROOT:pojo-producing.adoc[POJO Producing]
+The message is forwarded on to the next step using xref:manual::pojo-producing.adoc[POJO Producing]
 (see the `@Produce` annotation).
 
 At the next step we want to take the beer quotes from all vendors and find out which one was the best

@@ -29,7 +29,7 @@ from("direct:start")
     .to("mock:result");
 ----
 
-In this case we're using a Java xref:components::bean-component.adoc[Bean] as the normalizer.
+In this case we're using a Java xref:ROOT:bean-component.adoc[Bean] as the normalizer.
 
 The class looks like this:
 
@@ -78,5 +78,5 @@ The same example in XML:
 
 In case there are many incoming formats, then the xref:choice-eip.adoc[Content Based Router]
 may end up with too many choices. In this situation then an alternative is to use xref:toD-eip.adoc[Dynamic to]
-that computes a xref:components::bean-component.adoc[Bean] endpoint, to be called that acts as
+that computes a xref:ROOT:bean-component.adoc[Bean] endpoint, to be called that acts as
 xref:message-translator.adoc[Message Translator].

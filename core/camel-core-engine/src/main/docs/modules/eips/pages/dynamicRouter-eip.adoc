@@ -52,7 +52,7 @@ And in XML:
 </route>
 ----
 
-Which will call a xref:components:languages:bean-language.adoc[Bean Method] to compute the slip
+Which will call a xref:languages:bean-language.adoc[Bean Method] to compute the slip
 _on-the-fly_. The bean could be implemented as follows:
 
 [source,java]
@@ -138,7 +138,7 @@ Exchange are.
 
 == @DynamicRouter annotation
 
-You can also use xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] with the `@DynamicRouter` annotation,
+You can also use xref:manual::bean-integration.adoc[Bean Integration] with the `@DynamicRouter` annotation,
 on a Java bean method.
 
 In the example below the `route` method would
@@ -161,4 +161,4 @@ public class MyDynamicRouter {
 ----
 
 The parameters on the `route` method is bound to information from the Exchange using
-xref:latest@manual:ROOT:bean-binding.adoc[Bean Parameter Binding].
+xref:manual::bean-binding.adoc[Bean Parameter Binding].

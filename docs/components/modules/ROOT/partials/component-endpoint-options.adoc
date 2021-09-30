@@ -5,21 +5,21 @@
 :endpoint-path-option-name: util.boldLink(path[2], "endpoint_path_option", value.group)
 :endpoint-query-option-name: util.boldLink(path[2], "endpoint_query_option", value.group)
 :last-cell-formats: |util.description(value) \
-|util.defaultValue(value.defaultValue) \
+|util.valueAsString(value.defaultValue) \
 |util.javaSimpleName(value.javaType)
 include::jsonpath$example$json/{shortname}.json[query='$.component',formats='name,scheme,pascalcasescheme=util.pascalCase(scheme),syntax,apiSyntax', requires={requires}]
-include::jsonpathcount$example$json/{shortname}.json[queries='pathparametercount=nodes$.properties[?(@.kind=="path")],queryparametercount=nodes$.properties[?(@.kind=="parameter")],apicount=nodes$.apis.*']
+include::jsonpathcount$example$json/{shortname}.json[queries='propertycount=nodes$.componentProperties.*,pathparametercount=nodes$.properties[?(@.kind=="path")],queryparametercount=nodes$.properties[?(@.kind=="parameter")],apicount=nodes$.apis.*']
 
 == Component Options
 
-The {doctitle} component supports jsonpathCount:example$json/{shortname}.json['nodes$.componentProperties.*'] options, which are listed below.
+The {doctitle} component supports {propertycount} options, which are listed below.
 
 [{tablespec}]
 |===
 | Name | Description | Default | Type
 |===
 
-jsonpathTable2::example$json/{shortname}.json['nodes$.componentProperties.*','{component-option-name}{last-cell-formats}',{requires}]
+jsonpathTable::example$json/{shortname}.json['nodes$.componentProperties.*','{component-option-name}{last-cell-formats}',{requires}]
 
 
 // endpoint options: START
@@ -46,7 +46,7 @@ ifeval::[{pathparametercount} != 0]
 | Name | Description | Default | Type
 |===
 
-jsonpathTable2::example$json/{shortname}.json['nodes$.properties[?(@.kind=="path")]','{endpoint-path-option-name}{last-cell-formats}',{requires}]
+jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.kind=="path")]','{endpoint-path-option-name}{last-cell-formats}',{requires}]
 
 endif::[]
 
@@ -63,7 +63,7 @@ ifeval::[{queryparametercount} != 0]
 | Name | Description | Default | Type
 |===
 
-jsonpathTable2::example$json/{shortname}.json['nodes$.properties[?(@.kind=="parameter")]','{endpoint-query-option-name}{last-cell-formats}',{requires}]
+jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.kind=="parameter")]','{endpoint-query-option-name}{last-cell-formats}',{requires}]
 endif::[]
 
 ifeval::[{apicount} != 0]
@@ -85,11 +85,11 @@ There are {apicount} API names as listed in the table below:
 | API Name | Type | Description
 |===
 
-jsonpathTable2::example$json/{shortname}.json['nodes$.apis.*','`<<#_api_${path[2]},*${path[2]}*>>`| value.consumerOnly ? "Consumer" : value.producerOnly ? "Producer" : "Both" | value.description']
+jsonpathTable::example$json/{shortname}.json['nodes$.apis.*','`<<#_api_${path[2]},*${path[2]}*>>`| value.consumerOnly ? "Consumer" : value.producerOnly ? "Producer" : "Both" | value.description']
 
 Each API is documented in the following sections to come.
 
-[jsonpathBlock2, example$json/{shortname}.json, 'nodes$.apis.*','apiname=path[2], producer-consumer = util.producerConsumerLong(value.consumerOnly\, value.producerOnly), methodcount=Object.keys(value.methods).length, aliases=value.aliases', {requires}]
+[jsonpathBlock, example$json/{shortname}.json, 'nodes$.apis.*','apiname=path[2], producer-consumer = util.producerConsumerLong(value.consumerOnly\, value.producerOnly), methodcount=Object.keys(value.methods).length, aliases=value.aliases', {requires}]
 ----
 
 [#_api_{apiname}]
@@ -118,16 +118,16 @@ The {methodcount} method(s) is listed in the table below, followed by detailed s
 | Method | Alias | Description
 |===
 
-jsonpathTable2::example$json/{shortname}.json['nodes$.apis["{apiname}"].methods.*','`<<#_api_{apiname}_method_${path[4]},*${path[4]}*>>`|util.alias(path[4], "{aliases}")|value.description', {requires}]
+jsonpathTable::example$json/{shortname}.json['nodes$.apis["{apiname}"].methods.*','`<<#_api_{apiname}_method_${path[4]},*${path[4]}*>>`|util.alias(path[4], "{aliases}")|value.description', {requires}]
 
-[jsonpathBlock2, example$json/{shortname}.json, 'nodes$.apis["{apiname}"].methods.*','methodname=path[4]', {requires}]
+[jsonpathBlock, example$json/{shortname}.json, 'nodes$.apis["{apiname}"].methods.*','methodname=path[4]', {requires}]
 ------
 [#_api_{apiname}_method_{methodname}]
 ==== Method {methodname}
 
 Signatures:
 
-jsonpathList2::example$json/{shortname}.json['nodes$.apis["{apiname}"].methods["{methodname}"].signatures.*','util.formatSignature(value)', {requires}]
+jsonpathList::example$json/{shortname}.json['nodes$.apis["{apiname}"].methods["{methodname}"].signatures.*','util.formatSignature(value)', {requires}]
 
 The {name}/{methodname} API method has the parameters listed in the table below:
 
@@ -136,7 +136,7 @@ The {name}/{methodname} API method has the parameters listed in the table below:
 | Parameter | Description | Type
 |===
 
-jsonpathTable2::example$json/{shortname}.json['nodes$.apiProperties["{apiname}"].methods["{methodname}"].properties.*','`*${path[6]}*`|`${util.strong(value, "Required")} ${value.description}`|util.javaSimpleName(value.javaType)', {requires}]
+jsonpathTable::example$json/{shortname}.json['nodes$.apiProperties["{apiname}"].methods["{methodname}"].properties.*','`*${path[6]}*`|`${util.strong(value, "Required")} ${value.description}`|util.javaSimpleName(value.javaType)', {requires}]
 
 ------
 

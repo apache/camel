@@ -19,10 +19,10 @@ Use a special filter, a Message Translator, between other filters or application
 The xref:message-translator.adoc[Message Translator] can be done in different ways in Camel:
 
 * Using xref:transform-eip.adoc[Transform] or xref:setBody-eip.adoc[Set Body] in the DSL
-* Calling a xref:latest@manual:ROOT:processor.adoc[Processor] or xref:latest@manual:ROOT:bean-integration.adoc[bean]
+* Calling a xref:manual::processor.adoc[Processor] or xref:manual::bean-integration.adoc[bean]
 to perform the transformation
-* Using template-based xref:components::index.adoc[Components], with the template being the source for how the message is translated
-* Messages can also be transformed using xref:latest@manual:ROOT:data-format.adoc[Data Format]
+* Using template-based xref:ROOT:index.adoc[Components], with the template being the source for how the message is translated
+* Messages can also be transformed using xref:manual::data-format.adoc[Data Format]
 to marshal and unmarshal messages in different encodings.
 
 This page is documenting the first approach by using Transform EIP.
@@ -36,7 +36,7 @@ include::partial$eip-options.adoc[]
 === Using Transform EIP
 
 You can use a xref:transform-eip.adoc[Transform] which uses an
-xref:latest@manual:ROOT:expression.adoc[Expression] to do the transformation:
+xref:manual::expression.adoc[Expression] to do the transformation:
 
 In the example below we prepend Hello to the message body using the
 xref:components:languages:simple-language.adoc[Simple] language:
@@ -65,5 +65,5 @@ And in XML DSL:
 
 The Transform EIP always sets the result on the OUT message body.
 
-Set Body sets the result accordingly to the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+Set Body sets the result accordingly to the xref:manual::exchange-pattern.adoc[Exchange Pattern]
 on the `Exchange`.
