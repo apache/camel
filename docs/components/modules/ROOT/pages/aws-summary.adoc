@@ -13,4 +13,4 @@ storage service, email and queue services. The main reason to use AWS is its clo
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={docTitle}',descriptionformat=description]

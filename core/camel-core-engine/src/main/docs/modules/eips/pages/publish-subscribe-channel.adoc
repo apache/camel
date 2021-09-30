@@ -7,13 +7,13 @@ Subscribe Channel] from the
 xref:enterprise-integration-patterns.adoc[EIP patterns] using for
 example the following components:
 
-* xref:components::jms-component.adoc[JMS] for working with JMS Topics for high performance,
+* xref:ROOT:jms-component.adoc[JMS] for working with JMS Topics for high performance,
 clustering and load balancing
-* xref:components::xmpp-component.adoc[XMPP] when using rooms for group communication
-* xref:components::seda-component.adoc[SEDA] for working with SEDA in the same
-xref:latest@manual:ROOT:camelcontext.adoc[CamelContext] which can work in pub-sub, but
+* xref:ROOT:xmpp-component.adoc[XMPP] when using rooms for group communication
+* xref:ROOT:seda-component.adoc[SEDA] for working with SEDA in the same
+xref:manual:ROOT:camelcontext.adoc[CamelContext] which can work in pub-sub, but
 allowing multiple consumers.
-* xref:components::vm-component.adoc[VM] as SEDA but for intra-JVM.
+* xref:ROOT:vm-component.adoc[VM] as SEDA but for intra-JVM.
 
 image::eip/PublishSubscribeSolution.gif[image]
 
@@ -23,7 +23,7 @@ image::eip/PublishSubscribeSolution.gif[image]
 Another option is to explicitly list the publish-subscribe relationship
 in your routing logic; this keeps the producer and consumer decoupled
 but lets you control the fine grained routing configuration using the
-xref:latest@manual:ROOT:dsl.adoc[DSL].
+xref:manual:ROOT:dsl.adoc[DSL].
 
 In Java code:
 

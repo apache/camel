@@ -144,5 +144,5 @@ allows you to do this using the processor
 interface.
 
 Notice the `onPrepare` can be used for any kind of custom logic which
-you would like to execute before the xref:latest@manual:ROOT:exchange.adoc[Exchange] is
+you would like to execute before the xref:manual:ROOT:exchange.adoc[Exchange] is
 being multicasted.

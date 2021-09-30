@@ -60,7 +60,7 @@ from("direct:start")
     .dynamicRouter(method(DynamicRouterTest.class, "slip"));
 ----
 
-Which will leverage a xref:components::bean-component.adoc[Bean] to compute the slip
+Which will leverage a xref:ROOT:bean-component.adoc[Bean] to compute the slip
 _on-the-fly_, which could be implemented as follows:
 
 [source,java]
@@ -198,4 +198,4 @@ Bean Integration such as
 
 * POJO Producing
 * Spring Remoting
-* xref:components::bean-component.adoc[Bean] component
+* xref:ROOT:bean-component.adoc[Bean] component

@@ -9,7 +9,7 @@
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={docTitle}',descriptionformat=description]
 
 Apache Camel is designed to work nicely with the
 Spring Framework in a number of ways.
