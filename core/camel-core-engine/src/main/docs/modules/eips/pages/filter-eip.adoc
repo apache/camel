@@ -13,7 +13,7 @@ image::eip/MessageFilter.gif[image]
 
 The following example shows how to create a Message Filter route
 consuming messages from an endpoint called *queue:a*, which if the
-xref:latest@manual:ROOT:predicate.adoc[Predicate] is true will be dispatched to *queue:b*
+xref:manual:ROOT:predicate.adoc[Predicate] is true will be dispatched to *queue:b*
 
 == EIP options
 
@@ -90,15 +90,15 @@ the when predicate by using the `.stop()`.
 == Knowing if Exchange was filtered or not
 
 The xref:filter-eip.adoc[Message Filter] EIP will add a property on
-the xref:latest@manual:ROOT:exchange.adoc[Exchange] that states if it was filtered or not.
+the xref:manual:ROOT:exchange.adoc[Exchange] that states if it was filtered or not.
 
 The property has the key `Exchange.FILTER_MATCHED`, which has the String
 value of `CamelFilterMatched`. Its value is a boolean indicating `true`
-or `false`. If the value is `true` then the xref:latest@manual:ROOT:exchange.adoc[Exchange]
+or `false`. If the value is `true` then the xref:manual:ROOT:exchange.adoc[Exchange]
 was routed in the filter block. This property will be visible within the
 xref:filter-eip.adoc[Message Filter] block who's
-xref:latest@manual:ROOT:predicate.adoc[Predicate] matches (value set to `true`), and to the
+xref:manual:ROOT:predicate.adoc[Predicate] matches (value set to `true`), and to the
 steps immediately following the xref:filter-eip.adoc[Message Filter]
 with the value set based on the results of the last
-xref:filter-eip.adoc[Message Filter] xref:latest@manual:ROOT:predicate.adoc[Predicate]
+xref:filter-eip.adoc[Message Filter] xref:manual:ROOT:predicate.adoc[Predicate]
 evaluated.

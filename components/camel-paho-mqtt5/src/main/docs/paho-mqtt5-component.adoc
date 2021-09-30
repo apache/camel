@@ -9,7 +9,7 @@
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/paho-mqtt5.adoc[opts=optional]
 //Manually maintained attributes
-:camel-spring-boot-name: paho
+:camel-spring-boot-name: paho-mqtt5
 
 *Since Camel {since}*
 
