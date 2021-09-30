@@ -7,7 +7,7 @@ using spring transactions.
 
 image::eip/TransactionalClientSolution.gif[image]
 
-Transaction Oriented Endpoints like xref:components::jms-component.adoc[JMS] support using a
+Transaction Oriented Endpoints like xref:ROOT:jms-component.adoc[JMS] support using a
 transaction for both inbound and outbound message exchanges. Endpoints
 that support transactions will participate in the current transaction
 context that they are called from.

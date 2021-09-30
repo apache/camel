@@ -40,7 +40,7 @@ And in XML:
 The delayed value can be a dynamic xref:latest@manual:ROOT:expression.adoc[Expression].
 
 For example to delay a random between 1 and 5 seconds, we can use
-the xref:components:languages:simple-language.adoc[Simple] language:
+the xref:languages:simple-language.adoc[Simple] language:
 
 [source,java]
 ----
@@ -62,7 +62,7 @@ And in XML DSL:
 </route>
 ----
 
-You can also call a xref:components:languages:bean-language.adoc[Bean Method] to compute the
+You can also call a xref:languages:bean-language.adoc[Bean Method] to compute the
 delayed value from Java code:
 
 [source,java]

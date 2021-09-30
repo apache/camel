@@ -53,7 +53,7 @@ invoke a bean
 
 You can also consume a message
 from one destination, transform it with something like
-xref:components::velocity-component.adoc[Velocity] or xref:components::xquery-component.adoc[XQuery] and then send
+xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery] and then send
 it on to another destination. For example using InOnly (one way
 messaging)
 
@@ -65,7 +65,7 @@ from("activemq:My.Queue")
 ----
 
 If you want to use InOut (request-reply) semantics to process requests
-on the *My.Queue* queue on xref:components::activemq-component.adoc[ActiveMQ] with a template
+on the *My.Queue* queue on xref:ROOT:activemq-component.adoc[ActiveMQ] with a template
 generated response, then sending responses back to the JMSReplyTo
 Destination you could use this.
 

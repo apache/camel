@@ -19,7 +19,7 @@ include::partial$eip-options.adoc[]
 == Example
 
 In the route below the route starts from
-a xref:components::file-component.adoc[File] endpoint.
+a xref:ROOT:file-component.adoc[File] endpoint.
 
 [source,java]
 ----

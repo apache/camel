@@ -8,7 +8,7 @@
 The Bean EIP is used for invoking a method on a bean, and the returned value
 is the new message body.
 
-The Bean EIP is similar to the xref:components::bean-component.adoc[Bean] component
+The Bean EIP is similar to the xref:ROOT:bean-component.adoc[Bean] component
 which also is used for invoking beans, but in the form as a Camel component.
 
 == URI Format

@@ -9,7 +9,7 @@ How can I log the processing of a xref:message.adoc[Message]?
 
 Camel provides many ways to log the fact that you are processing a message. Here are just a few examples:
 
-* You can use the xref:components::log-component.adoc[Log] component which logs the Message content.
+* You can use the xref:ROOT:log-component.adoc[Log] component which logs the Message content.
 * You can use the xref:latest@manual:ROOT:tracer.adoc[Tracer] which trace logs message flow.
 * You can also use a xref:latest@manual:ROOT:processor.adoc[Processor] or xref:latest@manual:ROOT:bean-binding.adoc[Bean] and log from Java code.
 * You can use this log EIP.
@@ -23,14 +23,14 @@ include::partial$eip-options.adoc[]
 === Difference between Log EIP and Log component
 
 This log EIP is much lighter and meant for logging human logs such as `Starting to do ...` etc.
-It can only log a message based on the xref:components:languages:simple-language.adoc[Simple] language.
+It can only log a message based on the xref:languages:simple-language.adoc[Simple] language.
 
-The xref:components::log-component.adoc[log] component is meant for logging the message content (body, headers, etc.).
+The xref:ROOT:log-component.adoc[log] component is meant for logging the message content (body, headers, etc.).
 There are many options on the log component to configure what content to log.
 
 == Example
 
-You can use the log EIP which allows you to use xref:components:languages:simple-language.adoc[Simple] language to construct a dynamic message which gets logged.
+You can use the log EIP which allows you to use xref:languages:simple-language.adoc[Simple] language to construct a dynamic message which gets logged.
 
 For example, you can do
 
@@ -52,7 +52,7 @@ And in XML:
 </route>
 ----
 
-This will be evaluated using the xref:components:languages:simple-language.adoc[Simple]
+This will be evaluated using the xref:languages:simple-language.adoc[Simple]
 to construct the `String` containg the message to be logged.
 
 === Logging message body with streaming
@@ -188,7 +188,7 @@ And in XML:
 == Masking sensitive information like password
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
-Note that this option also affects xref:components::log-component.adoc[Log] component.
+Note that this option also affects xref:ROOT:log-component.adoc[Log] component.
 
 To enable mask in Java DSL at CamelContext level:
 

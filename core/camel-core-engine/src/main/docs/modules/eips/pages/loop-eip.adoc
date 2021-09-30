@@ -66,7 +66,7 @@ from("direct:b")
         .to("mock:result");
 ----
 
-And with the xref:components:languages:xpath-language.adoc[XPath] language:
+And with the xref:languages:xpath-language.adoc[XPath] language:
 
 [source,java]
 ----

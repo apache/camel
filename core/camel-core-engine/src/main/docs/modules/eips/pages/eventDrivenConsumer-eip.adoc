@@ -21,7 +21,7 @@ when a xref:message.adoc[Message] is available for processing.
 == Example
 
 The following demonstrates a xref:bean-eip.adoc[Bean] being invoked when
-an event occurs from a xref:components::jms-component.adoc[JMS] queue.
+an event occurs from a xref:ROOT:jms-component.adoc[JMS] queue.
 
 [source,java]
 ----
