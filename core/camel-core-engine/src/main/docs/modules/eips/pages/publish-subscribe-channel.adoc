@@ -10,12 +10,12 @@ image::eip/PublishSubscribeSolution.gif[image]
 
 Send the event on a Publish-Subscribe Channel, which delivers a copy of a particular event to each receiver.
 
-The Publish-Subscribe Channel is supported in Camel by messaging based xref:components::index.adoc[Components], such as:
+The Publish-Subscribe Channel is supported in Camel by messaging based xref:ROOT:index.adoc[Components], such as:
 
-* xref:components::amqp-component.adoc[AMQP] for working with AMQP Queues
-* xref:components::jms-component.adoc[ActiveMQ], or xref:components::jms-component.adoc[JMS] for working with JMS Queues
-* xref:components::seda-component.adoc[SEDA] for internal Camel seda queue based messaging
-* xref:components::spring-rabbitmq-component.adoc[Spring RabbitMQ] for working with AMQP Queues (RabbitMQ)
+* xref:ROOT:amqp-component.adoc[AMQP] for working with AMQP Queues
+* xref:ROOT:jms-component.adoc[ActiveMQ], or xref:ROOT:jms-component.adoc[JMS] for working with JMS Queues
+* xref:ROOT:seda-component.adoc[SEDA] for internal Camel seda queue based messaging
+* xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ] for working with AMQP Queues (RabbitMQ)
 
 There are also messaging based in the cloud from cloud providers such as Amazon, Google and Azure.
 
@@ -24,7 +24,7 @@ TIP: See also the related xref:point-to-point-channel.adoc[Point to Point Channe
 == Example
 
 The following example demonstrates publish sbuscriber messaging using
-the xref:components::jms-component.adoc[JMS] component with JMS topics:
+the xref:ROOT:jms-component.adoc[JMS] component with JMS topics:
 
 [source,java]
 ----

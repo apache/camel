@@ -21,20 +21,20 @@ include::partial$eip-options.adoc[]
 == WireTap Nodes
 
 Camel's Wire Tap node supports two modes when wire tapping an
-xref:latest@manual:ROOT:exchange.adoc[Exchange]:
+xref:manual::exchange.adoc[Exchange]:
 
 - _Default mode_: Camel will copy the original
-xref:latest@manual:ROOT:exchange.adoc[Exchange] and set its
-xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] to *`InOnly`*, as we want
-the tapped xref:latest@manual:ROOT:exchange.adoc[Exchange] to be sent in a fire and forget
-style. The tapped xref:latest@manual:ROOT:exchange.adoc[Exchange] is then sent in a
+xref:manual::exchange.adoc[Exchange] and set its
+xref:manual::exchange-pattern.adoc[Exchange Pattern] to *`InOnly`*, as we want
+the tapped xref:manual::exchange.adoc[Exchange] to be sent in a fire and forget
+style. The tapped xref:manual::exchange.adoc[Exchange] is then sent in a
 separate thread, so it can run in parallel with the original. Beware that
 only the `Exchange` is copied - Wire Tap won't do a deep clone (unless you
 specify a custom processor via *`onPrepareRef`* which does that). So all
 copies could share objects from the original `Exchange`.
 
 - _New mode_: Camel also provides an option of sending a new
-xref:latest@manual:ROOT:exchange.adoc[Exchange] allowing you to populate it with new
+xref:manual::exchange.adoc[Exchange] allowing you to populate it with new
 values.
 
 === Using Wire Tap
@@ -155,7 +155,7 @@ to construct the message, instead of using a `Processor`:
 
 The WireTap uses a thread pool to process the
 tapped messages. This thread pool will by default use the settings
-detailed at xref:latest@manual:ROOT:threading-model.adoc[Threading Model].
+detailed at xref:manual::threading-model.adoc[Threading Model].
 
 In particular, when the pool is exhausted (with all threads utilized), further wiretaps
 will be executed synchronously by the calling thread. To remedy this,
@@ -165,8 +165,8 @@ a different rejection policy, a larger worker queue, or more worker threads.
 == Wire tapping Streaming based messages
 
 If you Wire Tap a stream message body then you
-should consider enabling xref:latest@manual:ROOT:stream-caching.adoc[Stream caching] to
+should consider enabling xref:manual::stream-caching.adoc[Stream caching] to
 ensure the message body can be read at each endpoint.
 
-See more details at xref:latest@manual:ROOT:stream-caching.adoc[Stream caching].
+See more details at xref:manual::stream-caching.adoc[Stream caching].
 

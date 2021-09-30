@@ -40,8 +40,8 @@ the dynamic endpoint URI.
 
 == Using To
 
-The following example route demonstrates the use of a xref:components::file-component.adoc[File] consumer endpoint and a xref:components::jms-component.adoc[JMS] producer endpoint,
-by their xref:latest@manual:ROOT:uris.adoc[URIs]:
+The following example route demonstrates the use of a xref:ROOT:file-component.adoc[File] consumer endpoint and a xref:ROOT:jms-component.adoc[JMS] producer endpoint,
+by their xref:manual::uris.adoc[URIs]:
 
 [source,java]
 ----

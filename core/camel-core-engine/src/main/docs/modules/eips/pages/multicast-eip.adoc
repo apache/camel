@@ -5,7 +5,7 @@
 :since: 
 :supportlevel: Stable
 
-The Multicast EIP allows to route *the same* message to a number of xref:latest@manual:ROOT:endpoint.adoc[endpoints]
+The Multicast EIP allows to route *the same* message to a number of xref:manual::endpoint.adoc[endpoints]
 and process them in a different way.
 
 image::eip/RecipientListIcon.gif[image]
@@ -183,7 +183,7 @@ process the remainder destinations. You have the chance to deal with the excepti
 when aggregating using an `AggregationStrategy`.
 
 But sometimes you just want Camel to stop and let the exception be
-propagated back, and let the Camel xref:latest@manual:ROOT:error-handler.adoc[Error Handler]
+propagated back, and let the Camel xref:manual::error-handler.adoc[Error Handler]
 handle it. You can do this by specifying that it should stop in case of an
 exception occurred. This is done by the `stopOnException` option as
 shown below:
@@ -249,7 +249,7 @@ use a deep clone copy then you need to use a custom `onPrepare` which
 allows you to create a deep copy of the message body in the `Processor`.
 
 Notice the `onPrepare` can be used for any kind of custom logic which
-you would like to execute before the xref:latest@manual:ROOT:exchange.adoc[Exchange] is
+you would like to execute before the xref:manual::exchange.adoc[Exchange] is
 being multicasted.
 
 == See Also

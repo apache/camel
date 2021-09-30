@@ -11,8 +11,8 @@ image::eip/ReturnAddressSolution.gif[image]
 
 The request message should contain a Return Address that indicates where to send the reply message.
 
-Camel supports Return Address by messaging xref:components::index.adoc[Components]
-that provides this functionality such as the xref:components::jms-component.adoc[JMS]
+Camel supports Return Address by messaging xref:ROOT:index.adoc[Components]
+that provides this functionality such as the xref:ROOT:jms-component.adoc[JMS]
 component via the `JMSReplyTo` header.
 
 == Example

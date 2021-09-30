@@ -10,4 +10,4 @@ Camel includes individual components for each Debezium connector which allows fo
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={doctitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]

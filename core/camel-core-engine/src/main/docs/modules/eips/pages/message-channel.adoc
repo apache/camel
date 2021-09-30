@@ -13,7 +13,7 @@ image::eip/MessageChannelSolution.gif[image]
 
 == Example
 
-In xref:components::jms-component.adoc[JMS], Message Channels are represented by topics and queues such as
+In xref:ROOT:jms-component.adoc[JMS], Message Channels are represented by topics and queues such as
 the following:
 
 [source,text]

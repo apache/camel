@@ -5,11 +5,11 @@ http://www.enterpriseintegrationpatterns.com/CorrelationIdentifier.html[Correlat
 Identifier] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] by getting or setting a header on the xref:message.adoc[Message].
 
-When working with the xref:components::activemq-component.adoc[ActiveMQ] or xref:components::jms-component.adoc[JMS]
+When working with the xref:ROOT:activemq-component.adoc[ActiveMQ] or xref:ROOT:jms-component.adoc[JMS]
 components the correlation identifier header is called
 *JMSCorrelationID*, and they handle the correlation automatically.
 
-Other messaging systems, such as xref:components::rabbitmq-component.adoc[RabbitMQ] also handles this automatic,
+Other messaging systems, such as xref:ROOT:rabbitmq-component.adoc[RabbitMQ] also handles this automatic,
 and you should generally not have a need for using custom correlation IDs with these systems.
 
 image::eip/CorrelationIdentifierSolution.gif[image]
@@ -18,18 +18,18 @@ You can use your own correlation identifier to any
 message exchange to help correlate messages together to a single
 conversation (or business process). For example if you need to correlation messages when using web services.
 
-The use of a correlation identifier is key to working with xref:components:others:tracing.adoc[Distributed Tracing]
+The use of a correlation identifier is key to working with xref:others:tracing.adoc[Distributed Tracing]
 and be useful when using xref:latest@manual::tracer.adoc[Tracer] messages to log,
-or testing with simulation or canned data such as with the xref:components::mock-component.adoc[Mock] testing framework.
+or testing with simulation or canned data such as with the xref:ROOT:mock-component.adoc[Mock] testing framework.
 
 
 == EIPs using correlation identifiers
 
 Some xref:enterprise-integration-patterns.adoc[EIP] patterns will spin off a sub message, and in
 those cases, Camel will add a correlation id on the
-xref:latest@manual:ROOT:exchange.adoc[Exchange] as a property with they key
+xref:manual::exchange.adoc[Exchange] as a property with they key
 `Exchange.CORRELATION_ID`, which links back to the source
-xref:latest@manual:ROOT:exchange.adoc[Exchange] and its exchange id.
+xref:manual::exchange.adoc[Exchange] and its exchange id.
 
 The following EIPs does this:
 
@@ -42,7 +42,7 @@ The following EIPs does this:
 == Example
 
 The following example uses a request/reply pattern in
-the xref:components::jms-component.adoc[JMS] component, where correlation identifiers are automatically handled:
+the xref:ROOT:jms-component.adoc[JMS] component, where correlation identifiers are automatically handled:
 
 [source,java]
 ----

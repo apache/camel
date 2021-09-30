@@ -1,7 +1,7 @@
 = Fault Tolerance EIP
 
 This component supports the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP with the
-xref:components:others:microprofile-fault-tolerance.adoc[MicroProfile Fault Tolerance] library.
+xref:others:microprofile-fault-tolerance.adoc[MicroProfile Fault Tolerance] library.
 
 == Options
 

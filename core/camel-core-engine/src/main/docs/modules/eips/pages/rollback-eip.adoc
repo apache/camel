@@ -5,7 +5,7 @@
 :since: 
 :supportlevel: Stable
 
-The Rollback EIP is used for marking an xref:latest@manual:ROOT:exchange.adoc[Exchange]
+The Rollback EIP is used for marking an xref:manual::exchange.adoc[Exchange]
 to rollback and stop continue routing the message.
 
 == Options

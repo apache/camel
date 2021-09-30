@@ -10,16 +10,16 @@ image::eip/EventMessageSolution.gif[image]
 
 Use an Event Message for reliable, asynchronous event notification between applications.
 
-Camel supports Event Message by the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+Camel supports Event Message by the xref:manual::exchange-pattern.adoc[Exchange Pattern]
 on a xref:message.adoc[Message] which can be set to `InOnly` to indicate
-a oneway event message. Camel xref:components::index.adoc[Components] then
+a oneway event message. Camel xref:ROOT:index.adoc[Components] then
 implement this pattern using the underlying transport or protocols.
 
-The default behaviour of many xref:components::index.adoc[Components] is `InOnly`
-such as for xref:components::jms-component.adoc[JMS], xref:components::jms-component.adoc[File] or
-xref:components::seda-component.adoc[SEDA].
+The default behaviour of many xref:ROOT:index.adoc[Components] is `InOnly`
+such as for xref:ROOT:jms-component.adoc[JMS], xref:ROOT:jms-component.adoc[File] or
+xref:ROOT:seda-component.adoc[SEDA].
 
-Some components support both `InOnly` and `InOut` and act accordingly. For example the xref:components::jms-component.adoc[JMS]
+Some components support both `InOnly` and `InOut` and act accordingly. For example the xref:ROOT:jms-component.adoc[JMS]
 can send messages as one-way (`InOnly`) or use request/reply messaging (`InOut`).
 
 TIP: See the related xref:requestReply-eip.adoc[Request Reply] message.
@@ -27,7 +27,7 @@ TIP: See the related xref:requestReply-eip.adoc[Request Reply] message.
 == Using endpoint URI
 
 If you are using a component which defaults to `InOut` you can override
-the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] for a *consumer* endpoint using
+the xref:manual::exchange-pattern.adoc[Exchange Pattern] for a *consumer* endpoint using
 the pattern property.
 
 [source,text]
@@ -59,7 +59,7 @@ And with XML:
 == Using setExchangePattern EIP
 
 You can specify the
-xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
+xref:manual::exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
 
 [source,java]
 ----
@@ -79,8 +79,8 @@ And with XML:
 </route>
 ----
 
-When using `setExchangePattern` then the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
-on the xref:latest@manual:ROOT:exchange.adoc[Exchange] is changed from this point onwards in the route.
+When using `setExchangePattern` then the xref:manual::exchange-pattern.adoc[Exchange Pattern]
+on the xref:manual::exchange.adoc[Exchange] is changed from this point onwards in the route.
 
 This means you can change the pattern back again at a later point:
 
@@ -94,16 +94,16 @@ from("mq:someQueue")
   .log("InOut MEP received ${body}")
 ----
 
-NOTE: Using `setExchangePattern` to change the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+NOTE: Using `setExchangePattern` to change the xref:manual::exchange-pattern.adoc[Exchange Pattern]
 is often only used in special use-cases where you must
 force to be using either `InOnly` or `InOut` mode when using components that support both modes (such as messaging components like ActiveMQ, JMS, RabbitMQ etc.)
 
 == JMS component and InOnly vs InOut
 
-When consuming messages from xref:components::jms-component.adoc[JMS] a Request Reply is
+When consuming messages from xref:ROOT:jms-component.adoc[JMS] a Request Reply is
 indicated by the presence of the `JMSReplyTo` header. This means the JMS component automatic
 detects whether to use `InOnly` or `InOut` in the consumer.
 
-Likewise, the JMS producer will check the current xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
-on the xref:latest@manual:ROOT:exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e. one-way vs request/reply messaging)
+Likewise, the JMS producer will check the current xref:manual::exchange-pattern.adoc[Exchange Pattern]
+on the xref:manual::exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e. one-way vs request/reply messaging)
 

@@ -17,6 +17,6 @@ The {doctitle} language supports {optioncount} options, which are listed below.
 | Name | Default | Java Type | Description
 |===
 
-jsonpathTable2::example$json/{shortname}.json['nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]',{cellformats},{requires}]
+jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]',{cellformats},{requires}]
 endif::[]
 

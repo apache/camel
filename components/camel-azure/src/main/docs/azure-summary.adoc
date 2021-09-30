@@ -9,5 +9,5 @@ provide connectivity to Azure services from Camel.
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={doctitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]
 

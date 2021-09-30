@@ -9,8 +9,8 @@ For example from SEDA, JMS, Kafka, and various AWS components.
 
 image::eip/CompetingConsumers.gif[image]
 
-- xref:components::seda-component.adoc[SEDA] for SEDA based concurrent processing using a thread pool
-- xref:components::jms-component.adoc[JMS] for distributed SEDA based concurrent processing with queues which support reliable load balancing, failover and clustering.
+- xref:ROOT:seda-component.adoc[SEDA] for SEDA based concurrent processing using a thread pool
+- xref:ROOT:jms-component.adoc[JMS] for distributed SEDA based concurrent processing with queues which support reliable load balancing, failover and clustering.
 
 For components which does not allow concurrent consumers, then Camel allows routeing from the consumer
 to a thread-pool which can then further process the message concurrently,

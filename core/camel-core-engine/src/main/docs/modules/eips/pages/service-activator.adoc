@@ -10,19 +10,19 @@ image::eip/MessagingAdapterSolution.gif[image]
 
 Design a Service Activator that connects the messages on the channel to the service being accessed.
 
-Camel has several xref:components::index.adoc[Components] that support the Service Activator EIP.
+Camel has several xref:ROOT:index.adoc[Components] that support the Service Activator EIP.
 
-Components like xref:components::bean-component.adoc[Bean] and xref:components::bean-component.adoc[CXF]
-provide a way to bind the message xref:latest@manual:ROOT:exchange.adoc[Exchange] to a Java interface/service
+Components like xref:ROOT:bean-component.adoc[Bean] and xref:ROOT:bean-component.adoc[CXF]
+provide a way to bind the message xref:manual::exchange.adoc[Exchange] to a Java interface/service
 where the route defines the endpoints and wires it up to the bean.
 
-In addition, you can use the xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to wire messages
+In addition, you can use the xref:manual::bean-integration.adoc[Bean Integration] to wire messages
 to a bean using Java annotation.
 
 == Example
 
-Here is a simple example of using a xref:components::direct-component.adoc[Direct] endpoint
-to create a messaging interface to a POJO xref:components::bean-component.adoc[Bean] service.
+Here is a simple example of using a xref:ROOT:direct-component.adoc[Direct] endpoint
+to create a messaging interface to a POJO xref:ROOT:bean-component.adoc[Bean] service.
 
 Using Java DSL:
 

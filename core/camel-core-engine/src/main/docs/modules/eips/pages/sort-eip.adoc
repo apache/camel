@@ -24,7 +24,7 @@ or uses the `String` representation.
 
 You can also configure a custom `Comparator` to control the sorting.
 
-An xref:latest@manual:ROOT:expression.adoc[Expression] can also be used, which performs the sorting, and return the sorted message body.
+An xref:manual::expression.adoc[Expression] can also be used, which performs the sorting, and return the sorted message body.
 The value returned from the `Expression` must be convertible to `java.util.List` as this is required by the JDK sort operation.
 
 === Using Sort EIP
