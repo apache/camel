@@ -78,6 +78,7 @@ in the `<configuration>` tag.
 | `destinationToSyntax` | `direct:${operationId}` | The default to syntax for the to uri, which is to use the direct component. |
 | `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used. 
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
+| `clientRequestValidation` | `false` | Whether to enable request validation.
 | `basePath` | | Overrides the api base path as defined in the OpenAPI specification. 
 | `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as:
 ``
@@ -163,6 +164,7 @@ in the `<configuration>` tag.
 | `destinationToSyntax` | `direct:${operationId}` | The default to syntax for the to uri, which is to use the direct component. |
 | `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used.
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
+| `clientRequestValidation` | `false` | Whether to enable request validation.
 | `basePath` | | Overrides the api base path as defined in the OpenAPI specification. 
 | `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as:
 ``
@@ -240,6 +242,7 @@ in the `<configuration>` tag.
 | `destinationToSyntax` | `direct:${operationId}` | The default to syntax for the to uri, which is to use the direct component. |
 | `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used.
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
+| `clientRequestValidation` | `false` | Whether to enable request validation.
 | `basePath` | | Overrides the api base path as defined in the OpenAPI specification.
 | `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as:
 ``

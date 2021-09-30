@@ -109,6 +109,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     boolean restConfiguration;
 
     @Parameter(defaultValue = "false")
+    boolean clientRequestValidation;
+
+    @Parameter(defaultValue = "false")
     boolean skip;
 
     @Parameter(defaultValue = "${project.basedir}/src/spec/openapi.json", required = true)

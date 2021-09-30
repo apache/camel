@@ -81,6 +81,12 @@ public class GenerateYamlMojo extends AbstractGenerateMojo {
 
         if (restConfiguration) {
             generator.withRestComponent(findAppropriateComponent());
+            if (clientRequestValidation) {
+                generator.withClientRequestValidation();
+            }
+            if (ObjectHelper.isNotEmpty(apiContextPath)) {
+                generator.withApiContextPath(apiContextPath);
+            }
         }
 
         try {

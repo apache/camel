@@ -103,6 +103,10 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                 configuration.setAttribute("apiContextPath", apiContextPath);
             }
 
+            if (clientRequestValidation) {
+                configuration.setAttribute("clientRequestValidation", "true");
+            }
+
             root.insertBefore(configuration, root.getFirstChild());
         }
 

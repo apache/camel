@@ -81,6 +81,9 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
 
         if (restConfiguration) {
             generator.withRestComponent(findAppropriateComponent());
+            if (ObjectHelper.isNotEmpty(apiContextPath)) {
+                generator.withApiContextPath(apiContextPath);
+            }
             if (clientRequestValidation) {
                 generator.withClientRequestValidation();
             }
