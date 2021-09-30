@@ -118,7 +118,6 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         to.assertIsSatisfied(3000);
 
-        Thread.sleep(1000);
         assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
                 .count());
 
@@ -199,10 +198,6 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         context.getRouteController().startRoute("full-it");
 
-        // As wee set seek to end we should not re-consume any messages
-        synchronized (this) {
-            Thread.sleep(1000);
-        }
         to.assertIsSatisfied(3000);
     }
 
