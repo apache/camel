@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.aws2.s3.utils;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -80,14 +80,26 @@ public final class AWS2S3Utils {
         }
     }
 
-    public static ByteArrayOutputStream determineLengthInputStream(InputStream is) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] bytes = new byte[1024];
-        int count;
-        while ((count = is.read(bytes)) > 0) {
-            out.write(bytes, 0, count);
+    public static long determineLengthInputStream(InputStream is) throws IOException {
+        if (!is.markSupported()) {
+            return -1;
         }
-        return out;
+        if (is instanceof ByteArrayInputStream) {
+            return is.available();
+        }
+        long size = 0;
+        try {
+            is.mark(1024);
+            int i = is.available();
+            while (i > 0) {
+                long skip = is.skip(i);
+                size += skip;
+                i = is.available();
+            }
+        } finally {
+            is.reset();
+        }
+        return size;
     }
 
     public static String determineKey(final Exchange exchange, AWS2S3Configuration configuration) {
