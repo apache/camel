@@ -8,7 +8,7 @@
 :supportLevel: Preview
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/joor.adoc[opts=optional]
 //Manually maintained attributes
-:camel-spring-boot-name: core
+:camel-spring-boot-name: joor
 
 *Since Camel {since}*
 

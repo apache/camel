@@ -13,4 +13,4 @@ provides streaming for Apache Kafka and more. The main reason to use AWS is its 
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={docTitle}',descriptionformat=description]
