@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
@@ -288,7 +287,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 }
             }
 
-            doPutObject(exchange, putObjectRequest, objectMetadata, inputStream);
+            doPutObject(exchange, putObjectRequest, objectMetadata, inputStream, contentLength);
         } finally {
             IOHelper.close(inputStream);
         }
@@ -300,7 +299,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
     private void doPutObject(
             Exchange exchange, PutObjectRequest.Builder putObjectRequest, Map<String, String> objectMetadata,
-            InputStream inputStream) {
+            InputStream inputStream, long contentLength) {
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         final String key = AWS2S3Utils.determineKey(exchange, getConfiguration());
         putObjectRequest.bucket(bucketName).key(key).metadata(objectMetadata);
@@ -350,8 +349,9 @@ public class AWS2S3Producer extends DefaultProducer {
 
         LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);
 
-        PutObjectResponse putObjectResult = getEndpoint().getS3Client().putObject(putObjectRequest.build(),
-                RequestBody.fromBytes(SdkBytes.fromInputStream(inputStream).asByteArray()));
+        RequestBody rb = RequestBody.fromInputStream(inputStream, contentLength);
+
+        PutObjectResponse putObjectResult = getEndpoint().getS3Client().putObject(putObjectRequest.build(), rb);
 
         LOG.trace("Received result [{}]", putObjectResult);
 
