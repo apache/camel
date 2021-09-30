@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +35,14 @@ import org.slf4j.MDC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MdcClearingTest extends ContextTestSupport {
+@Disabled("TODO: CAMEL-17009")
+public class MDCClearingTest extends ContextTestSupport {
 
     public static final String CAMEL_BREADCRUMB_ID = "camel.breadcrumbId";
     public static final String BREADCRUMB_ID = "breadcrumbId";
     public static final String MY_BREADCRUMB = "my breadcrumb";
 
-    private static final Logger LOG = LoggerFactory.getLogger(MdcClearingTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MDCClearingTest.class);
     private final ExecutorService executorService = Executors.newFixedThreadPool(16);
 
     @Test
