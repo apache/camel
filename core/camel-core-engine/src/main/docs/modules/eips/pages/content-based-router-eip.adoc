@@ -11,7 +11,7 @@ image::eip/ContentBasedRouter.gif[image]
 
 The following example shows how to route a request from an input
 *seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on
-the evaluation of various xref:latest@manual:ROOT:predicate.adoc[Predicate] expressions
+the evaluation of various xref:manual:ROOT:predicate.adoc[Predicate] expressions
 
 [source,java]
 ----
@@ -34,12 +34,12 @@ RouteBuilder builder = new RouteBuilder() {
 [TIP]
 ====
 See
-xref:latest@manual:faq:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
+xref:manual:faq:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
 can I not use when or otherwise in a Java Camel route] if you have
 problems with the Java DSL, accepting using `when` or `otherwise`.
 ====
 
-== Using the xref:latest@manual:ROOT:spring-xml-extensions.adoc[Spring XML Extensions]
+== Using the xref:manual:ROOT:spring-xml-extensions.adoc[Spring XML Extensions]
 
 [source,java]
 ----
@@ -70,8 +70,8 @@ https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/ap
 == Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
-xref:latest@manual:ROOT:getting-started.adoc[Getting Started]. You may also find the
-xref:latest@manual:ROOT:architecture.adoc[Architecture] useful particularly the description
-of xref:latest@manual:ROOT:endpoint.adoc[Endpoint] and xref:latest@manual:ROOT:uris.adoc[URIs]. Then you could
-try out some of the xref:latest@manual:ROOT:examples.adoc[Examples] first before trying
+xref:manual:ROOT:getting-started.adoc[Getting Started]. You may also find the
+xref:manual:ROOT:architecture.adoc[Architecture] useful particularly the description
+of xref:manual:ROOT:endpoint.adoc[Endpoint] and xref:manual:ROOT:uris.adoc[URIs]. Then you could
+try out some of the xref:manual:ROOT:examples.adoc[Examples] first before trying
 this pattern out.

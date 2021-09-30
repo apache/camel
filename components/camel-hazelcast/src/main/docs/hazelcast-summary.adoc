@@ -25,7 +25,7 @@ http://www.hazelcast.com/docs.jsp[http://www.hazelcast.com/docs.jsp].
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={docTitle}',descriptionformat=description]
 
 == Installation
 

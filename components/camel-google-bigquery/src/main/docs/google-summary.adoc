@@ -11,4 +11,4 @@ drive . The main reason to use Google is the G Suite features.
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={docTitle}',descriptionformat=description]

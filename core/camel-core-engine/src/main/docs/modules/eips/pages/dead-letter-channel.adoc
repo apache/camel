@@ -6,7 +6,7 @@ http://www.enterpriseintegrationpatterns.com/DeadLetterChannel.html[Dead
 Letter Channel] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] using the
 https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/DeadLetterChannel.html[DeadLetterChannel]
-processor which is an xref:latest@manual:ROOT:error-handler.adoc[Error Handler].
+processor which is an xref:manual:ROOT:error-handler.adoc[Error Handler].
 
 image::eip/DeadLetterChannelSolution.gif[image]
 
@@ -68,11 +68,11 @@ forwarded to the dead letter queue.
 == About moving Exchange to dead letter queue and using handled
 
 When all attempts of redelivery have failed the
-xref:latest@manual:ROOT:exchange.adoc[Exchange] is moved to the dead letter queue (the dead
+xref:manual:ROOT:exchange.adoc[Exchange] is moved to the dead letter queue (the dead
 letter endpoint). The exchange is then complete and from the client
 point of view it was processed. As such the
 xref:dead-letter-channel.adoc[Dead Letter Channel] have handled the
-xref:latest@manual:ROOT:exchange.adoc[Exchange].
+xref:manual:ROOT:exchange.adoc[Exchange].
 
 For instance configuring the dead letter channel as:
 
@@ -103,8 +103,8 @@ And in XML:
 
 The xref:dead-letter-channel.adoc[Dead Letter Channel] above will clear
 the caused exception (`setException(null)`), by moving the caused
-exception to a property on the xref:latest@manual:ROOT:exchange.adoc[Exchange], with the
-key `Exchange.EXCEPTION_CAUGHT`. Then the xref:latest@manual:ROOT:exchange.adoc[Exchange]
+exception to a property on the xref:manual:ROOT:exchange.adoc[Exchange], with the
+key `Exchange.EXCEPTION_CAUGHT`. Then the xref:manual:ROOT:exchange.adoc[Exchange]
 is moved to the `"jms:queue:dead"` destination and the client will not
 notice the failure.
 
@@ -126,12 +126,12 @@ from("jms:queue:order:input")
 -----
 
 The route listen for JMS messages and validates, transforms and handle
-it. During this the xref:latest@manual:ROOT:exchange.adoc[Exchange] payload is
+it. During this the xref:manual:ROOT:exchange.adoc[Exchange] payload is
 transformed/modified. So in case something goes wrong and we want to
 move the message to another JMS destination, then we can configure our
 xref:dead-letter-channel.adoc[Dead Letter Channel] with the
 *useOriginalMessage* option. But when we move the
-xref:latest@manual:ROOT:exchange.adoc[Exchange] to this destination we do not know in which
+xref:manual:ROOT:exchange.adoc[Exchange] to this destination we do not know in which
 state the message is in. Did the error happen in before the
 transformOrder or after? So to be sure we want to move the original
 input message we received from `jms:queue:order:input`. So we can do
@@ -169,13 +169,13 @@ the parent original message.
 == OnRedelivery
 
 When xref:dead-letter-channel.adoc[Dead Letter Channel] is doing
-redeliver its possible to configure a xref:latest@manual:ROOT:processor.adoc[Processor]
+redeliver its possible to configure a xref:manual:ROOT:processor.adoc[Processor]
 that is executed just *before* every redelivery attempt. This can be
 used for the situations where you need to alter the message before its
 redelivered. See below for sample.
 
 TIP: *onException and onRedeliver*
-We also support for per xref:latest@manual:ROOT:exception-clause.adoc[*onException*] to set
+We also support for per xref:manual:ROOT:exception-clause.adoc[*onException*] to set
 a *onRedeliver*. That means you can do special on redelivery for
 different exceptions, as opposed to onRedelivery set on
 xref:dead-letter-channel.adoc[Dead Letter Channel] can be viewed as a
@@ -302,8 +302,8 @@ Is this header is absent, normal redelivery rules apply.
 *Since Camel 2.1*
 
 When Camel routes messages it will decorate the
-xref:latest@manual:ROOT:exchange.adoc[Exchange] with a property that contains the *last*
-endpoint Camel send the xref:latest@manual:ROOT:exchange.adoc[Exchange] to:
+xref:manual:ROOT:exchange.adoc[Exchange] with a property that contains the *last*
+endpoint Camel send the xref:manual:ROOT:exchange.adoc[Exchange] to:
 
 [source,java]
 ----
@@ -316,8 +316,8 @@ This information is updated when Camel sends a message to any endpoint.
 So if it exists its the *last* endpoint which Camel send the Exchange
 to.
 
-When for example processing the xref:latest@manual:ROOT:exchange.adoc[Exchange] at a given
-xref:latest@manual:ROOT:endpoint.adoc[Endpoint] and the message is to be moved into the
+When for example processing the xref:manual:ROOT:exchange.adoc[Exchange] at a given
+xref:manual:ROOT:endpoint.adoc[Endpoint] and the message is to be moved into the
 dead letter queue, then Camel also decorates the Exchange with another
 property that contains that *last* endpoint:
 
@@ -337,7 +337,7 @@ failed.
 
 These information is kept on the Exchange even if the message
 was successfully processed by a given endpoint, and then later fails for
-example in a local xref:components::bean-component.adoc[Bean] processing instead. So beware
+example in a local xref:ROOT:bean-component.adoc[Bean] processing instead. So beware
 that this is a hint that helps pinpoint errors.
 
 [source,java]
@@ -399,9 +399,9 @@ The onPrepare is also available using the default error handler.
 
 When Camel error handler handles an error such as
 xref:dead-letter-channel.adoc[Dead Letter Channel] or using
-xref:latest@manual:ROOT:exception-clause.adoc[Exception Clause] with handled=true, then
+xref:manual:ROOT:exception-clause.adoc[Exception Clause] with handled=true, then
 Camel will decorate +
- the xref:latest@manual:ROOT:exchange.adoc[Exchange] with the route id where the error
+ the xref:manual:ROOT:exchange.adoc[Exchange] with the route id where the error
 occurred.
 
 [source,java]
@@ -423,16 +423,16 @@ letter queue and use that for error reporting.
 Prior to Camel 2.10, Camel will perform redelivery while stopping a
 route, or shutting down Camel. This has improved a bit in Camel 2.10
 onwards, as Camel will not perform redelivery attempts when shutting
-down aggressively (eg during xref:latest@manual:ROOT:graceful-shutdown.adoc[Graceful
+down aggressively (eg during xref:manual:ROOT:graceful-shutdown.adoc[Graceful
 Shutdown] and timeout hit). From Camel 2.11 onwards there is a new
 option `allowRedeliveryWhileStopping` which you can use to control if
 redelivery is allowed or not; notice that any in progress redelivery
 will still be executed. This option can only disallow any redelivery to
 be executed *after* the stopping of a route/shutdown of Camel has been
 triggered. If a redelivery is disallowed then a
-`RejectedExecutionException` is set on the xref:latest@manual:ROOT:exchange.adoc[Exchange]
-and the processing of the xref:latest@manual:ROOT:exchange.adoc[Exchange] stops. This means
-any consumer will see the xref:latest@manual:ROOT:exchange.adoc[Exchange] as failed due the
+`RejectedExecutionException` is set on the xref:manual:ROOT:exchange.adoc[Exchange]
+and the processing of the xref:manual:ROOT:exchange.adoc[Exchange] stops. This means
+any consumer will see the xref:manual:ROOT:exchange.adoc[Exchange] as failed due the
 `RejectedExecutionException`.
 
 The default value is `true` to be backwards compatible as before. For
@@ -445,7 +445,7 @@ And the sample with XML DSL
 == Samples
 
 The following example shows how to configure the Dead Letter Channel
-configuration using the xref:latest@manual:ROOT:dsl.adoc[DSL]
+configuration using the xref:manual:ROOT:dsl.adoc[DSL]
 
 You can also configure the
 https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/RedeliveryPolicy.html[RedeliveryPolicy]
@@ -455,11 +455,11 @@ as this example shows
 == How can I modify the Exchange before redelivery?
 
 We support directly in xref:dead-letter-channel.adoc[Dead Letter
-Channel] to set a xref:latest@manual:ROOT:processor.adoc[Processor] that is executed
+Channel] to set a xref:manual:ROOT:processor.adoc[Processor] that is executed
 *before* each redelivery attempt.
 
 When xref:dead-letter-channel.adoc[Dead Letter Channel] is doing
-redeliver its possible to configure a xref:latest@manual:ROOT:processor.adoc[Processor]
+redeliver its possible to configure a xref:manual:ROOT:processor.adoc[Processor]
 that is executed just *before* every redelivery attempt. This can be
 used for the situations where you need to alter the message before its
 redelivered.
@@ -486,12 +486,12 @@ also http://stackoverflow.com/questions/13711462/logging-camel-exceptions-and-se
 === Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
-xref:latest@manual:ROOT:getting-started.adoc[Getting Started], you may also find the
-xref:latest@manual:ROOT:architecture.adoc[Architecture] useful particularly the description
-of xref:latest@manual:ROOT:endpoint.adoc[Endpoint] and xref:latest@manual:ROOT:uris.adoc[URIs]. Then you could
-try out some of the xref:latest@manual:ROOT:examples.adoc[Examples] first before trying
+xref:manual:ROOT:getting-started.adoc[Getting Started], you may also find the
+xref:manual:ROOT:architecture.adoc[Architecture] useful particularly the description
+of xref:manual:ROOT:endpoint.adoc[Endpoint] and xref:manual:ROOT:uris.adoc[URIs]. Then you could
+try out some of the xref:manual:ROOT:examples.adoc[Examples] first before trying
 this pattern out.
 
-* xref:latest@manual:ROOT:error-handler.adoc[Error Handler]
-* xref:latest@manual:ROOT:exception-clause.adoc[Exception Clause]
+* xref:manual:ROOT:error-handler.adoc[Error Handler]
+* xref:manual:ROOT:exception-clause.adoc[Exception Clause]
 

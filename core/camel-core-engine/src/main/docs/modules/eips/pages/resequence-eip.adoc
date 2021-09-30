@@ -5,7 +5,7 @@
 :since:
 :supportLevel: Stable
 
-The http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer] from the xref:components:eips:enterprise-integration-patterns.adoc[EIP patterns] allows you to reorganise messages based on some comparator. +
+The http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer] from the xref:eips:enterprise-integration-patterns.adoc[EIP patterns] allows you to reorganise messages based on some comparator. +
 By default in Camel we use an Expression to create the comparator; so that you can compare by a message header or the body or a piece of a message etc.
 
 image::eip/Resequencer.gif[image]

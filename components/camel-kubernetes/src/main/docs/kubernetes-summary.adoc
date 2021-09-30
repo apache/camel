@@ -15,7 +15,7 @@ The Kubernetes components integrate your application with Kubernetes standalone 
 
 See the following for usage of each component:
 
-indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+indexDescriptionList::[attributes='group={docTitle}',descriptionformat=description]
 
 == Installation
 
