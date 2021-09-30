@@ -17,6 +17,8 @@
 package org.apache.camel.processor.idempotent.kafka;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Stream;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -24,13 +26,18 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -43,7 +50,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTestSupport {
 
-    // Every instance of the repository must use a different topic to guarantee isolation between tests
     @BindToRegistry("kafkaIdempotentRepository")
     private final KafkaIdempotentRepository kafkaIdempotentRepository
             = new KafkaIdempotentRepository("TEST_PERSISTENCE", getBootstrapServers());
@@ -54,7 +60,6 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
     @EndpointInject("mock:before")
     private MockEndpoint mockBefore;
 
-    @BeforeEach
     void clearTopics() {
         kafkaAdminClient.deleteTopics(Arrays.asList("TEST_PERSISTENCE")).all();
     }
@@ -63,46 +68,111 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("mock:before").idempotentConsumer(header("id"))
                         .messageIdRepositoryRef("kafkaIdempotentRepository").to("mock:out").end();
             }
         };
     }
 
-    @Order(1)
-    @Test
-    public void testFirstPassFiltersAsExpected() {
-        for (int i = 0; i < 10; i++) {
+    private void sendMessages(long count) {
+        for (int i = 0; i < count; i++) {
             template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
         }
+    }
+
+    @Order(1)
+    @Test
+    @DisplayName("Checks that half of the messages pass and duplicates are blocked")
+    public void testFirstPassFiltersAsExpected() {
+        int count = 10;
+        sendMessages(count);
 
         // all records sent initially
-        assertEquals(10, mockBefore.getReceivedCounter());
+        assertEquals(count, mockBefore.getReceivedCounter());
 
         // filters second attempt with same value
         assertEquals(5, kafkaIdempotentRepository.getDuplicateCount());
 
-        // only first 1-4 records are received, the rest are filtered
+        // only first 5 records are received, the rest are filtered
         assertEquals(5, mockOut.getReceivedCounter());
     }
 
     @Order(2)
-    @Test
+    @RepeatedTest(3)
     @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "remote",
                               disabledReason = "Remote may not allow deleting the topic, may contain data, etc")
+    @DisplayName("Checks that resending the same messages causes no duplicate messages")
     public void testSecondPassFiltersEverything() {
-        for (int i = 0; i < 10; i++) {
-            template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
+        int count = 10;
+        sendMessages(count);
+
+        // all records sent initially
+        assertEquals(count, mockBefore.getReceivedCounter());
+
+        // the state from the previous test guarantees that all attempts now are blocked
+        assertEquals(count, kafkaIdempotentRepository.getDuplicateCount());
+
+        // nothing pass the idempotent consumer this time
+        assertEquals(0, mockOut.getReceivedCounter());
+    }
+
+    @Order(3)
+    @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "remote",
+                              disabledReason = "Remote may not allow deleting the topic, may contain data, etc")
+    @ParameterizedTest
+    @MethodSource("multiplePassesProvider")
+    @DisplayName("Checks that multiple passes in different ways yield the same result: no duplicate messages")
+    public void testThirdPassFiltersEverything(long count, long passes) {
+        for (int i = 0; i < passes; i++) {
+            sendMessages(count);
         }
 
         // all records sent initially
-        assertEquals(10, mockBefore.getReceivedCounter());
+        assertEquals(count * passes, mockBefore.getReceivedCounter());
 
         // the state from the previous test guarantees that all attempts now are blocked
-        assertEquals(10, kafkaIdempotentRepository.getDuplicateCount());
+        assertEquals(count * passes, kafkaIdempotentRepository.getDuplicateCount());
 
         // nothing gets passed the idempotent consumer this time
         assertEquals(0, mockOut.getReceivedCounter());
     }
+
+    private static Stream<Arguments> multiplePassesProvider() {
+        return Stream.of(Arguments.of(10, 2),
+                Arguments.of(ThreadLocalRandom.current().nextInt(11, 27), 2),
+                Arguments.of(ThreadLocalRandom.current().nextInt(1, 9), 4));
+    }
+
+    @Order(4)
+    @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "remote",
+                              disabledReason = "Remote may not allow deleting the topic, may contain data, etc")
+    @Test
+    @DisplayName("Checks that the remaining messages can finally go through")
+    public void testFourthPass() {
+        int count = 5;
+        for (int i = 5; i < 10; i++) {
+            template.sendBodyAndHeader("direct:in", "Test message", "id", i);
+        }
+
+        // all records sent initially
+        assertEquals(count, mockBefore.getReceivedCounter());
+
+        // there are no duplicate messages on this pass
+        assertEquals(0, kafkaIdempotentRepository.getDuplicateCount());
+
+        // so all of them should pass
+        assertEquals(count, mockOut.getReceivedCounter());
+    }
+
+    @Order(5)
+    @Test
+    @DisplayName("Checks that can be cleared after use")
+    public void testClear() {
+        assertDoesNotThrow(kafkaIdempotentRepository::clear,
+                "Clearing the idempotent repository should not throw exceptions");
+
+        clearTopics();
+    }
+
 }
