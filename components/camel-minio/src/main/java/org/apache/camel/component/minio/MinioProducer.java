@@ -55,7 +55,6 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,8 +67,6 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 public class MinioProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioProducer.class);
-
-    private transient String minioProducerToString;
 
     public MinioProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -508,14 +505,6 @@ public class MinioProducer extends DefaultProducer {
 
     protected MinioConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
-    }
-
-    @Override
-    public String toString() {
-        if (isEmpty(minioProducerToString)) {
-            minioProducerToString = "MinioProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
-        }
-        return minioProducerToString;
     }
 
     @Override
