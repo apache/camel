@@ -49,8 +49,8 @@ public interface MinaComponentBuilderFactory {
      */
     interface MinaComponentBuilder extends ComponentBuilder<MinaComponent> {
         /**
-         * Whether or not to disconnect(close) from Mina session right after
-         * use. Can be used for both consumer and producer.
+         * Whether to disconnect(close) from Mina session right after use. Can
+         * be used for both consumer and producer.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -167,23 +167,6 @@ public interface MinaComponentBuilderFactory {
             return this;
         }
         /**
-         * If sync is enabled then this option dictates MinaConsumer if it
-         * should disconnect where there is no reply to send back.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer (advanced)
-         * 
-         * @param disconnectOnNoReply the value to set
-         * @return the dsl builder
-         */
-        default MinaComponentBuilder disconnectOnNoReply(
-                boolean disconnectOnNoReply) {
-            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
-            return this;
-        }
-        /**
          * If sync is enabled this option dictates MinaConsumer which logging
          * level to use when logging a there is no reply to send back.
          * 
@@ -291,6 +274,23 @@ public interface MinaComponentBuilderFactory {
         default MinaComponentBuilder configuration(
                 org.apache.camel.component.mina.MinaConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * If sync is enabled then this option dictates MinaConsumer if it
+         * should disconnect where there is no reply to send back.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
+         */
+        default MinaComponentBuilder disconnectOnNoReply(
+                boolean disconnectOnNoReply) {
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
         }
         /**
@@ -560,13 +560,13 @@ public interface MinaComponentBuilderFactory {
             case "writeTimeout": getOrCreateConfiguration((MinaComponent) component).setWriteTimeout((long) value); return true;
             case "bridgeErrorHandler": ((MinaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientMode": getOrCreateConfiguration((MinaComponent) component).setClientMode((boolean) value); return true;
-            case "disconnectOnNoReply": getOrCreateConfiguration((MinaComponent) component).setDisconnectOnNoReply((boolean) value); return true;
             case "noReplyLogLevel": getOrCreateConfiguration((MinaComponent) component).setNoReplyLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "lazyStartProducer": ((MinaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "cachedAddress": getOrCreateConfiguration((MinaComponent) component).setCachedAddress((boolean) value); return true;
             case "lazySessionCreation": getOrCreateConfiguration((MinaComponent) component).setLazySessionCreation((boolean) value); return true;
             case "autowiredEnabled": ((MinaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((MinaComponent) component).setConfiguration((org.apache.camel.component.mina.MinaConfiguration) value); return true;
+            case "disconnectOnNoReply": getOrCreateConfiguration((MinaComponent) component).setDisconnectOnNoReply((boolean) value); return true;
             case "maximumPoolSize": getOrCreateConfiguration((MinaComponent) component).setMaximumPoolSize((int) value); return true;
             case "orderedThreadPoolExecutor": getOrCreateConfiguration((MinaComponent) component).setOrderedThreadPoolExecutor((boolean) value); return true;
             case "transferExchange": getOrCreateConfiguration((MinaComponent) component).setTransferExchange((boolean) value); return true;

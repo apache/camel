@@ -74,7 +74,7 @@ public class MinaConfiguration implements Cloneable {
     private boolean allowDefaultCodec = true;
     @UriParam
     private boolean disconnect;
-    @UriParam(label = "consumer,advanced", defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
     @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
@@ -324,8 +324,7 @@ public class MinaConfiguration implements Cloneable {
     }
 
     /**
-     * Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and
-     * producer.
+     * Whether to disconnect(close) from Mina session right after use. Can be used for both consumer and producer.
      */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;

@@ -172,6 +172,7 @@ public class MinaProducer extends DefaultProducer {
             LOG.debug("Waiting for response using timeout {} millis.", timeout);
             boolean done = responseLatch.await(timeout, TimeUnit.MILLISECONDS);
             if (!done) {
+                maybeDisconnectOnTimeout();
                 throw new ExchangeTimedOutException(exchange, timeout);
             }
 
@@ -180,6 +181,7 @@ public class MinaProducer extends DefaultProducer {
                 throw new CamelExchangeException("Error occurred in ResponseHandler", exchange, handler.getCause());
             } else if (!handler.isMessageReceived()) {
                 // no message received
+                maybeDisconnectOnTimeout();
                 throw new ExchangeTimedOutException(exchange, timeout);
             } else {
                 // set the result on either IN or OUT on the original exchange depending on its pattern
@@ -189,6 +191,16 @@ public class MinaProducer extends DefaultProducer {
                     MinaPayloadHelper.setIn(exchange, handler.getMessage());
                 }
             }
+        }
+    }
+
+    protected void maybeDisconnectOnTimeout() throws InterruptedException {
+        if (session == null) {
+            return;
+        }
+        if (configuration.isDisconnectOnNoReply()) {
+            LOG.debug("Closing session when timed out at address: {}", address);
+            closeSessionIfNeededAndAwaitCloseInHandler(session);
         }
     }
 

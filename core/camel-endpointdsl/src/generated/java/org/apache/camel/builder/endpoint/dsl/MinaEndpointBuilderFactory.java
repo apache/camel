@@ -44,8 +44,8 @@ public interface MinaEndpointBuilderFactory {
             return (AdvancedMinaEndpointConsumerBuilder) this;
         }
         /**
-         * Whether or not to disconnect(close) from Mina session right after
-         * use. Can be used for both consumer and producer.
+         * Whether to disconnect(close) from Mina session right after use. Can
+         * be used for both consumer and producer.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -60,8 +60,8 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not to disconnect(close) from Mina session right after
-         * use. Can be used for both consumer and producer.
+         * Whether to disconnect(close) from Mina session right after use. Can
+         * be used for both consumer and producer.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -617,41 +617,6 @@ public interface MinaEndpointBuilderFactory {
             return (MinaEndpointConsumerBuilder) this;
         }
         /**
-         * If sync is enabled then this option dictates MinaConsumer if it
-         * should disconnect where there is no reply to send back.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer (advanced)
-         * 
-         * @param disconnectOnNoReply the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMinaEndpointConsumerBuilder disconnectOnNoReply(
-                boolean disconnectOnNoReply) {
-            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
-            return this;
-        }
-        /**
-         * If sync is enabled then this option dictates MinaConsumer if it
-         * should disconnect where there is no reply to send back.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: consumer (advanced)
-         * 
-         * @param disconnectOnNoReply the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMinaEndpointConsumerBuilder disconnectOnNoReply(
-                String disconnectOnNoReply) {
-            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
-            return this;
-        }
-        /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
@@ -755,6 +720,41 @@ public interface MinaEndpointBuilderFactory {
         default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(
                 String noReplyLogLevel) {
             doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+        /**
+         * If sync is enabled then this option dictates MinaConsumer if it
+         * should disconnect where there is no reply to send back.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointConsumerBuilder disconnectOnNoReply(
+                boolean disconnectOnNoReply) {
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
+            return this;
+        }
+        /**
+         * If sync is enabled then this option dictates MinaConsumer if it
+         * should disconnect where there is no reply to send back.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointConsumerBuilder disconnectOnNoReply(
+                String disconnectOnNoReply) {
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
         }
         /**
@@ -879,8 +879,8 @@ public interface MinaEndpointBuilderFactory {
             return (AdvancedMinaEndpointProducerBuilder) this;
         }
         /**
-         * Whether or not to disconnect(close) from Mina session right after
-         * use. Can be used for both consumer and producer.
+         * Whether to disconnect(close) from Mina session right after use. Can
+         * be used for both consumer and producer.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -895,8 +895,8 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not to disconnect(close) from Mina session right after
-         * use. Can be used for both consumer and producer.
+         * Whether to disconnect(close) from Mina session right after use. Can
+         * be used for both consumer and producer.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1493,6 +1493,41 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
+         * If sync is enabled then this option dictates MinaConsumer if it
+         * should disconnect where there is no reply to send back.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointProducerBuilder disconnectOnNoReply(
+                boolean disconnectOnNoReply) {
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
+            return this;
+        }
+        /**
+         * If sync is enabled then this option dictates MinaConsumer if it
+         * should disconnect where there is no reply to send back.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointProducerBuilder disconnectOnNoReply(
+                String disconnectOnNoReply) {
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
+            return this;
+        }
+        /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -1615,8 +1650,8 @@ public interface MinaEndpointBuilderFactory {
             return (AdvancedMinaEndpointBuilder) this;
         }
         /**
-         * Whether or not to disconnect(close) from Mina session right after
-         * use. Can be used for both consumer and producer.
+         * Whether to disconnect(close) from Mina session right after use. Can
+         * be used for both consumer and producer.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1631,8 +1666,8 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not to disconnect(close) from Mina session right after
-         * use. Can be used for both consumer and producer.
+         * Whether to disconnect(close) from Mina session right after use. Can
+         * be used for both consumer and producer.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2106,6 +2141,41 @@ public interface MinaEndpointBuilderFactory {
                 AdvancedMinaEndpointProducerBuilder {
         default MinaEndpointBuilder basic() {
             return (MinaEndpointBuilder) this;
+        }
+        /**
+         * If sync is enabled then this option dictates MinaConsumer if it
+         * should disconnect where there is no reply to send back.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointBuilder disconnectOnNoReply(
+                boolean disconnectOnNoReply) {
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
+            return this;
+        }
+        /**
+         * If sync is enabled then this option dictates MinaConsumer if it
+         * should disconnect where there is no reply to send back.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointBuilder disconnectOnNoReply(
+                String disconnectOnNoReply) {
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
+            return this;
         }
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
