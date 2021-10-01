@@ -191,10 +191,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
                 }
                 getOperations().disconnect();
             }
-        } catch (GenericFileOperationFailedException e) {
-            // ignore just log a warning
-            LOG.warn("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
-                    remoteServer(), e.getMessage());
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(), e.getMessage(), e);
+            }
         }
     }
 
@@ -208,10 +209,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
                 LOG.debug("Force disconnecting from: {}", remoteServer());
             }
             getOperations().forceDisconnect();
-        } catch (GenericFileOperationFailedException e) {
-            // ignore just log a warning
-            LOG.warn("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
-                    remoteServer(), e.getMessage());
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(), e.getMessage(), e);
+            }
         }
     }
 
@@ -239,7 +241,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     /**
-     * Returns human readable server information for logging purpose
+     * Returns human-readable server information for logging purpose
      */
     protected String remoteServer() {
         return ((RemoteFileEndpoint<?>) endpoint).remoteServerInformation();
