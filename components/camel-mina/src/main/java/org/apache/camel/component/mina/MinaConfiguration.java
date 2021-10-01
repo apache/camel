@@ -324,8 +324,7 @@ public class MinaConfiguration implements Cloneable {
     }
 
     /**
-     * Whether to disconnect(close) from Mina session right after use. Can be used for both consumer and
-     * producer.
+     * Whether to disconnect(close) from Mina session right after use. Can be used for both consumer and producer.
      */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class MinaDisconnectOnTimeOutTest extends BaseMinaTest {
 
-    private static final String ENDPOINT =  "mina:tcp://localhost:%s?textline=true&sync=true&timeout=250&disconnectOnNoReply=%s";
+    private static final String ENDPOINT = "mina:tcp://localhost:%s?textline=true&sync=true&timeout=250&disconnectOnNoReply=%s";
     private static final String RESPONSE = "Slept %s ms";
 
     @Test
@@ -81,8 +81,7 @@ public class MinaDisconnectOnTimeOutTest extends BaseMinaTest {
     private static void assertThrowable(Class<? extends Throwable> expectedCause, Runnable runnable) {
         try {
             runnable.run();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             Throwable t2 = t;
             while (t2.getCause() != null) {
                 t2 = t2.getCause();
@@ -91,7 +90,8 @@ public class MinaDisconnectOnTimeOutTest extends BaseMinaTest {
                 }
             }
             UnrecoverableExceptions.rethrowIfUnrecoverable(t);
-            throw new AssertionError(String.format("Expected exception %s, but exception stack did not contain it", expectedCause), t);
+            throw new AssertionError(
+                    String.format("Expected exception %s, but exception stack did not contain it", expectedCause), t);
         }
         throw new AssertionError(String.format("Expected %s to be thrown, but nothing was thrown", expectedCause));
     }
