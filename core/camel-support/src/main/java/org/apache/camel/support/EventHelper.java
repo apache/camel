@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public final class EventHelper {
 
     // This implementation has been optimized to be as fast and not create unnecessary objects or lambdas.
-    // So therefore there is some code that seems duplicated. But this code is used frequently during routing and should
+    // Therefore there is some code that seems duplicated. But this code is used frequently during routing and should
     // be left as-is.
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHelper.class);
@@ -1299,19 +1299,13 @@ public final class EventHelper {
     }
 
     private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
-        // only notify if notifier is started
-        boolean started = true;
         if (notifier instanceof StatefulService) {
             // only notify if notifier is started (when stateful service)
-            started = ((StatefulService) notifier).isStarted();
+            boolean started = ((StatefulService) notifier).isStarted();
             if (!started) {
                 LOG.debug("Ignoring notifying event {}. The EventNotifier has not been started yet: {}", event, notifier);
                 return false;
             }
-        }
-        if (!started) {
-            LOG.debug("Ignoring notifying event {}. The EventNotifier has not been started yet: {}", event, notifier);
-            return false;
         }
 
         if (!notifier.isEnabled(event)) {
