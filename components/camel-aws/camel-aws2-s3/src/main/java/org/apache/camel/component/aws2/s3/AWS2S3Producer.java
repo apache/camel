@@ -264,10 +264,11 @@ public class AWS2S3Producer extends DefaultProducer {
                 obj = ((WrappedFile<?>) obj).getFile();
             }
             if (obj instanceof File) {
+                // optimize for file payload
                 filePayload = (File) obj;
-                inputStream = new FileInputStream(filePayload);
                 contentLength = filePayload.length();
             } else {
+                // okay we use input stream
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
                 if (contentLength <= 0) {
                     contentLength = AWS2S3Utils.determineLengthInputStream(inputStream);
@@ -282,12 +283,11 @@ public class AWS2S3Producer extends DefaultProducer {
                         inputStream = new ByteArrayInputStream(arr);
                     }
                 }
-                if (contentLength > 0) {
-                    objectMetadata.put(Exchange.CONTENT_LENGTH, String.valueOf(contentLength));
-                }
             }
-
-            doPutObject(exchange, putObjectRequest, objectMetadata, inputStream, contentLength);
+            if (contentLength > 0) {
+                objectMetadata.put(Exchange.CONTENT_LENGTH, String.valueOf(contentLength));
+            }
+            doPutObject(exchange, putObjectRequest, objectMetadata, filePayload, inputStream, contentLength);
         } finally {
             IOHelper.close(inputStream);
         }
@@ -299,7 +299,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
     private void doPutObject(
             Exchange exchange, PutObjectRequest.Builder putObjectRequest, Map<String, String> objectMetadata,
-            InputStream inputStream, long contentLength) {
+            File file, InputStream inputStream, long contentLength) {
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         final String key = AWS2S3Utils.determineKey(exchange, getConfiguration());
         putObjectRequest.bucket(bucketName).key(key).metadata(objectMetadata);
@@ -349,7 +349,12 @@ public class AWS2S3Producer extends DefaultProducer {
 
         LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);
 
-        RequestBody rb = RequestBody.fromInputStream(inputStream, contentLength);
+        RequestBody rb;
+        if (file != null) {
+            rb = RequestBody.fromFile(file);
+        } else {
+            rb = RequestBody.fromInputStream(inputStream, contentLength);
+        }
 
         PutObjectResponse putObjectResult = getEndpoint().getS3Client().putObject(putObjectRequest.build(), rb);
 
