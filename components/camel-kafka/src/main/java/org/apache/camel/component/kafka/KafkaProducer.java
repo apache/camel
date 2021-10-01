@@ -17,7 +17,6 @@
 package org.apache.camel.component.kafka;
 
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.producer.support.DelegatingCallback;
 import org.apache.camel.component.kafka.producer.support.KafkaProducerCallBack;
+import org.apache.camel.component.kafka.producer.support.KeyValueHolderIterator;
 import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -48,9 +48,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
-import org.apache.kafka.common.utils.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kafka.producer.support.ProducerUtil.tryConvertToSerializedType;
 
 public class KafkaProducer extends DefaultAsyncProducer {
 
@@ -168,7 +169,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         Object overrideTimeStamp = exchange.getIn().removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
-        if (overrideTimeStamp != null && overrideTimeStamp instanceof Long) {
+        if (overrideTimeStamp instanceof Long) {
             LOG.debug("Using override TimeStamp: {}", overrideTimeStamp);
             timeStamp = (Long) overrideTimeStamp;
         }
@@ -188,89 +189,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
         if (iterator != null) {
             final Iterator<Object> msgList = iterator;
             final String msgTopic = topic;
-            return new Iterator<KeyValueHolder<Object, ProducerRecord>>() {
-                @Override
-                public boolean hasNext() {
-                    return msgList.hasNext();
-                }
 
-                @Override
-                public KeyValueHolder<Object, ProducerRecord> next() {
-                    // must convert each entry of the iterator into the value
-                    // according to the serializer
-                    Object next = msgList.next();
-                    String innerTopic = msgTopic;
-                    Object innerKey = null;
-                    Integer innerPartitionKey = null;
-                    Long innerTimestamp = null;
-
-                    Object value = next;
-                    Exchange ex = null;
-                    Object body = next;
-
-                    if (next instanceof Exchange || next instanceof Message) {
-                        Exchange innerExchange = null;
-                        Message innerMmessage = null;
-                        if (next instanceof Exchange) {
-                            innerExchange = (Exchange) next;
-                            innerMmessage = innerExchange.getIn();
-                        } else {
-                            innerMmessage = (Message) next;
-                        }
-
-                        if (innerMmessage.getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
-                            innerTopic = (String) innerMmessage.removeHeader(KafkaConstants.OVERRIDE_TOPIC);
-                        }
-
-                        if (innerMmessage.getHeader(KafkaConstants.PARTITION_KEY) != null) {
-                            innerPartitionKey = getInnerPartitionKey(innerMmessage);
-                        }
-
-                        if (innerMmessage.getHeader(KafkaConstants.KEY) != null) {
-                            innerKey = getInnerKey(innerExchange, innerMmessage);
-                        }
-
-                        if (innerMmessage.getHeader(KafkaConstants.OVERRIDE_TIMESTAMP) != null) {
-                            if (innerMmessage.getHeader(KafkaConstants.OVERRIDE_TIMESTAMP) instanceof Long) {
-                                innerTimestamp
-                                        = (Long) innerMmessage.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
-                            }
-                        }
-                        ex = innerExchange == null ? exchange : innerExchange;
-                        value = tryConvertToSerializedType(ex, innerMmessage.getBody(),
-                                endpoint.getConfiguration().getValueSerializer());
-                    }
-
-                    return new KeyValueHolder(
-                            body,
-                            new ProducerRecord(
-                                    innerTopic, innerPartitionKey, innerTimestamp, innerKey, value, propagatedHeaders));
-                }
-
-                private Object getInnerKey(Exchange innerExchange, Message innerMmessage) {
-                    Object innerKey;
-                    innerKey = endpoint.getConfiguration().getKey() != null
-                            ? endpoint.getConfiguration().getKey() : innerMmessage.getHeader(KafkaConstants.KEY);
-                    if (innerKey != null) {
-                        innerKey = tryConvertToSerializedType(innerExchange, innerKey,
-                                endpoint.getConfiguration().getKeySerializer());
-                    }
-                    return innerKey;
-                }
-
-                private Integer getInnerPartitionKey(Message innerMmessage) {
-                    Integer innerPartitionKey;
-                    innerPartitionKey = endpoint.getConfiguration().getPartitionKey() != null
-                            ? endpoint.getConfiguration().getPartitionKey()
-                            : innerMmessage.getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
-                    return innerPartitionKey;
-                }
-
-                @Override
-                public void remove() {
-                    msgList.remove();
-                }
-            };
+            return new KeyValueHolderIterator(msgList, exchange, endpoint.getConfiguration(), msgTopic, propagatedHeaders);
         }
 
         // endpoint take precedence over header configuration
@@ -386,32 +306,4 @@ public class KafkaProducer extends DefaultAsyncProducer {
         callback.done(true);
         return true;
     }
-
-    /**
-     * Attempts to convert the object to the same type as the value serializer specified
-     */
-    protected Object tryConvertToSerializedType(Exchange exchange, Object object, String valueSerializer) {
-        Object answer = null;
-
-        if (exchange == null) {
-            return object;
-        }
-
-        if (KafkaConstants.KAFKA_DEFAULT_SERIALIZER.equals(valueSerializer)) {
-            answer = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, object);
-        } else if ("org.apache.kafka.common.serialization.ByteArraySerializer".equals(valueSerializer)) {
-            answer = exchange.getContext().getTypeConverter().tryConvertTo(byte[].class, exchange, object);
-        } else if ("org.apache.kafka.common.serialization.ByteBufferSerializer".equals(valueSerializer)) {
-            answer = exchange.getContext().getTypeConverter().tryConvertTo(ByteBuffer.class, exchange, object);
-        } else if ("org.apache.kafka.common.serialization.BytesSerializer".equals(valueSerializer)) {
-            // we need to convert to byte array first
-            byte[] array = exchange.getContext().getTypeConverter().tryConvertTo(byte[].class, exchange, object);
-            if (array != null) {
-                answer = new Bytes(array);
-            }
-        }
-
-        return answer != null ? answer : object;
-    }
-
 }
