@@ -195,7 +195,10 @@ public class JdbcProducer extends DefaultProducer {
         ResultSet rs = null;
         boolean shouldCloseResources = true;
 
-        try (Statement stmt = conn.createStatement()) {
+        try {
+            // We might need to leave it open to allow post-processing of the result set. This is why we
+            // are not using try-with-resources here.
+            Statement stmt = conn.createStatement();
 
             if (parameters != null && !parameters.isEmpty()) {
                 Map<String, Object> copy = new HashMap<>(parameters);
