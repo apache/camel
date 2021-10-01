@@ -168,12 +168,13 @@ public interface MinaComponentBuilderFactory {
         }
         /**
          * If sync is enabled then this option dictates MinaConsumer if it
-         * should disconnect where there is no reply to send back.
+         * should disconnect where there is no reply to send back and
+         * MinaProducer should disconnect when no reply was received in time.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
-         * Group: consumer (advanced)
+         * Group: advanced
          * 
          * @param disconnectOnNoReply the value to set
          * @return the dsl builder
