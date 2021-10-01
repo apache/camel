@@ -1302,7 +1302,12 @@ public final class EventHelper {
         // only notify if notifier is started
         boolean started = true;
         if (notifier instanceof StatefulService) {
+            // only notify if notifier is started (when stateful service)
             started = ((StatefulService) notifier).isStarted();
+            if (!started) {
+                LOG.debug("Ignoring notifying event {}. The EventNotifier has not been started yet: {}", event, notifier);
+                return false;
+            }
         }
         if (!started) {
             LOG.debug("Ignoring notifying event {}. The EventNotifier has not been started yet: {}", event, notifier);
