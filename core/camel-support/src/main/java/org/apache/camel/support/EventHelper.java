@@ -44,6 +44,7 @@ public final class EventHelper {
     // be left as-is.
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHelper.class);
+    private static volatile boolean started = true;
 
     private EventHelper() {
     }
@@ -1300,7 +1301,7 @@ public final class EventHelper {
 
     private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
         // only notify if notifier is started
-        boolean started = true;
+        started = true;
         if (notifier instanceof StatefulService) {
             started = ((StatefulService) notifier).isStarted();
         }
