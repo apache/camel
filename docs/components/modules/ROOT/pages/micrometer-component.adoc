@@ -232,8 +232,8 @@ tag `dynamic-key` with value `dynamic-value` in addition to the tag `key` with v
 All Metrics specific headers are removed from the message once the Micrometer endpoint finishes processing of exchange. While processing exchange
 Micrometer endpoint will catch all exceptions and write log entry using level `warn`.
 
-
-== [[MicrometerComponent-counter]]Counter
+[#MicrometerComponent-counter]
+== Counter
 
 [source]
 ----
