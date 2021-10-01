@@ -231,7 +231,8 @@ All Metrics specific headers are removed from the message once the Micrometer en
 Micrometer endpoint will catch all exceptions and write log entry using level `warn`.
 
 
-== [[MicrometerComponent-counter]]Counter
+[#MicrometerComponent-counter]
+== Counter
 
 [source]
 ----
