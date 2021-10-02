@@ -179,7 +179,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         PooledExchangeTask task = taskFactory.acquire(exchange, callback);
 
         if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleSync(task);
+            reactiveExecutor.scheduleQueue(task);
         } else {
             reactiveExecutor.scheduleMain(task);
         }

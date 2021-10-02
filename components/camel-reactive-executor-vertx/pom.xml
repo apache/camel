@@ -35,7 +35,7 @@
         <firstVersion>3.0.0</firstVersion>
         <label>reactive</label>
         <title>Reactive Executor Vert.x</title>
-        <supportLevel>experimental</supportLevel>
+        <supportLevel>Experimental</supportLevel>
     </properties>
 
     <dependencies>

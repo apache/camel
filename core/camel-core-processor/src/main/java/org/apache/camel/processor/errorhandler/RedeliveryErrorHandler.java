@@ -211,7 +211,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         // Run it
         if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleSync(task);
+            reactiveExecutor.scheduleQueue(task);
         } else {
             reactiveExecutor.scheduleMain(task);
         }
