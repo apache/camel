@@ -61,4 +61,4 @@ include::partial$component-endpoint-options.adoc[]
 
 Examples of webhook component are provided in the documentation of the delegate components that support it.
 
-include::{page-component-version}@camel-spring-boot::page$webhook-starter.adoc[]
+include::spring-boot:partial$webhook-starter.adoc[]

@@ -265,4 +265,4 @@ options:
 ---------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$log-starter.adoc[]
+include::spring-boot:partial$log-starter.adoc[]

@@ -89,4 +89,4 @@ fromF("kubernetes-namespaces://%s?oauthToken=%s&namespace=default", host, authTo
 
 This consumer will return a list of events on the namespace default.
 
-include::{page-component-version}@camel-spring-boot::page$kubernetes-starter.adoc[]
+include::spring-boot:partial$kubernetes-starter.adoc[]

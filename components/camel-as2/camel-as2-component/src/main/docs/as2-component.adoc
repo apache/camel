@@ -54,4 +54,4 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-include::{page-component-version}@camel-spring-boot::page$as2-starter.adoc[]
+include::spring-boot:partial$as2-starter.adoc[]

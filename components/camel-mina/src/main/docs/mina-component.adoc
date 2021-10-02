@@ -203,4 +203,4 @@ filters you may define are appended to the end of the filter chain; that
 is, after `codec` and `logger`.
 
 
-include::{page-component-version}@camel-spring-boot::page$mina-starter.adoc[]
+include::spring-boot:partial$mina-starter.adoc[]

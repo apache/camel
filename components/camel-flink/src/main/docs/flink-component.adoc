@@ -110,4 +110,4 @@ try {
     }
 -----------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$flink-starter.adoc[]
+include::spring-boot:partial$flink-starter.adoc[]

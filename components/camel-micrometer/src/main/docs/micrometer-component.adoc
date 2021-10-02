@@ -532,4 +532,4 @@ an MBean name.
 `camel-example-micrometer` provides an example how to set up Micrometer monitoring with
 Camel using Java configuration and a Prometheus backend.
 
-include::{page-component-version}@camel-spring-boot::page$micrometer-starter.adoc[]
+include::spring-boot:partial$micrometer-starter.adoc[]

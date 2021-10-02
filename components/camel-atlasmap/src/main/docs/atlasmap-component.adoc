@@ -80,4 +80,4 @@ from("activemq:My.Queue").
 where you can export an ADM archive file from AtlasMap Data Mapper UI.
 
 
-include::{page-component-version}@camel-spring-boot::page$atlasmap-starter.adoc[]
+include::spring-boot:partial$atlasmap-starter.adoc[]

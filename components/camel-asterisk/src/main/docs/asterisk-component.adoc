@@ -75,4 +75,4 @@ from("asterisk:myVoIP?hostname=hostname&username=username&password=password")
   .log("Received a message - ${body}");
 --------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$asterisk-starter.adoc[]
+include::spring-boot:partial$asterisk-starter.adoc[]

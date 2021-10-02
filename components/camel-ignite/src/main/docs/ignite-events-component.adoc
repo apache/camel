@@ -32,4 +32,4 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$ignite-starter.adoc[]
+include::spring-boot:partial$ignite-starter.adoc[]

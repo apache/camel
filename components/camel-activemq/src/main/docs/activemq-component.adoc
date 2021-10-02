@@ -84,4 +84,4 @@ from("activemq:queue:HELLO.WORLD")
 --------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$activemq-starter.adoc[]
+include::spring-boot:partial$activemq-starter.adoc[]

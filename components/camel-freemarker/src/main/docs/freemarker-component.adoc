@@ -197,4 +197,4 @@ ${body}
 ----------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$freemarker-starter.adoc[]
+include::spring-boot:partial$freemarker-starter.adoc[]

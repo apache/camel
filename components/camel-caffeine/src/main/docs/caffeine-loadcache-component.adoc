@@ -52,4 +52,4 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$caffeine-starter.adoc[]
+include::spring-boot:partial$caffeine-starter.adoc[]

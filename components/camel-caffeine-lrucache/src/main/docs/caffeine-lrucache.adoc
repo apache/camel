@@ -41,4 +41,4 @@ their `pom.xml` for this component:
 // endpoint options: START
 // endpoint options: END
 
-include::{page-component-version}@camel-spring-boot::page$caffeine-lrucache-starter.adoc[]
+include::spring-boot:partial$caffeine-lrucache-starter.adoc[]
