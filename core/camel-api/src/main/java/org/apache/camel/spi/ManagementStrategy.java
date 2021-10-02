@@ -85,6 +85,13 @@ public interface ManagementStrategy extends StaticService {
     List<EventNotifier> getEventNotifiers();
 
     /**
+     * Gets all the started event notifiers, which is ready to be used.
+     *
+     * @return started event notifiers
+     */
+    List<EventNotifier> getStartedEventNotifiers();
+
+    /**
      * Adds the event notifier to use.
      * <p/>
      * Ensure the event notifier has been started if its a {@link Service}, as otherwise it would not be used.

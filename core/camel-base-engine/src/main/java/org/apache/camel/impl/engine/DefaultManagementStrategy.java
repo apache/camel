@@ -50,6 +50,7 @@ import org.apache.camel.util.ObjectHelper;
 public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
 
     private final List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<>();
+    private final List<EventNotifier> startedEventNotifiers = new CopyOnWriteArrayList<>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementObjectNameStrategy managementObjectNameStrategy;
     private ManagementObjectStrategy managementObjectStrategy;
@@ -74,8 +75,17 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     }
 
     @Override
+    public List<EventNotifier> getStartedEventNotifiers() {
+        return startedEventNotifiers;
+    }
+
+    @Override
     public void addEventNotifier(EventNotifier eventNotifier) {
         this.eventNotifiers.add(eventNotifier);
+        if (isStarted()) {
+            // already started
+            this.startedEventNotifiers.add(eventNotifier);
+        }
         if (getCamelContext() != null) {
             // okay we have an event notifier that accepts exchange events so its applicable
             if (!eventNotifier.isIgnoreExchangeEvents()) {
@@ -86,6 +96,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     @Override
     public boolean removeEventNotifier(EventNotifier eventNotifier) {
+        startedEventNotifiers.remove(eventNotifier);
         return eventNotifiers.remove(eventNotifier);
     }
 
@@ -205,10 +216,12 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(eventNotifiers, managementAgent, managementObjectStrategy, managementObjectNameStrategy);
+        startedEventNotifiers.addAll(eventNotifiers);
     }
 
     @Override
     protected void doStop() throws Exception {
+        startedEventNotifiers.clear();
         ServiceHelper.stopService(managementObjectNameStrategy, managementObjectStrategy, managementAgent, eventNotifiers);
     }
 

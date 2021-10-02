@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.StatefulService;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -118,7 +117,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -157,7 +156,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -196,7 +195,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -235,7 +234,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -274,7 +273,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -313,7 +312,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -352,7 +351,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -391,7 +390,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -430,7 +429,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -469,7 +468,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -515,7 +514,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -561,7 +560,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -609,7 +608,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -657,7 +656,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -703,7 +702,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -749,7 +748,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -795,7 +794,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -841,7 +840,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -880,7 +879,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -919,7 +918,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -958,7 +957,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -997,7 +996,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1036,7 +1035,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1075,7 +1074,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1114,7 +1113,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1153,7 +1152,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1192,7 +1191,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1231,7 +1230,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1270,7 +1269,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1299,15 +1298,6 @@ public final class EventHelper {
     }
 
     private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
-        if (notifier instanceof StatefulService) {
-            // only notify if notifier is started (when stateful service)
-            boolean started = ((StatefulService) notifier).isStarted();
-            if (!started) {
-                LOG.debug("Ignoring notifying event {}. The EventNotifier has not been started yet: {}", event, notifier);
-                return false;
-            }
-        }
-
         if (!notifier.isEnabled(event)) {
             LOG.trace("Notifier: {} is not enabled for the event: {}", notifier, event);
             return false;
