@@ -19,6 +19,8 @@ The `ThroughputLogger` has changed the return type from `int` to `long` in the `
 Removed the `dataSonnet(Expression)` methods from `RouteBuilder` as they should not be used;
 use the methods that take `String` as type.
 
+Added method `getStartedEventNotifiers` to `org.apache.camel.spi.ManagementStrategy`;
+
 === Data Formats
 
 We had to fix all the data-formats options that take a Java classname to support
