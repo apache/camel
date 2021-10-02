@@ -447,6 +447,29 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition responseMessage(int code, String message) {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        RestOperationResponseMsgDefinition msg = responseMessage(verb);
+        msg.setCode(String.valueOf(code));
+        msg.setMessage(message);
+        return this;
+    }
+
+    public RestDefinition responseMessage(String code, String message) {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        RestOperationResponseMsgDefinition response = responseMessage(verb);
+        response.setCode(code);
+        response.setMessage(message);
+        verb.getResponseMsgs().add(response);
+        return this;
+    }
+
     /**
      * To configure security definitions.
      */

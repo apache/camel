@@ -40,8 +40,7 @@ public class FromRestExplicitComponentTest extends FromRestGetTest {
                         .defaultValue("b").collectionFormat(CollectionFormat.multi)
                         .name("header_letter").required(false).endParam().responseMessage().code(300).message("test msg")
                         .responseModel(Integer.class).header("rate")
-                        .description("Rate limit").dataType("integer").endHeader().endResponseMessage().responseMessage()
-                        .code("error").message("does not work").endResponseMessage()
+                        .description("Rate limit").dataType("integer").endHeader().endResponseMessage().responseMessage("error", "does not work")
                         .to("direct:bye").post().to("mock:update");
 
                 from("direct:hello").transform().constant("Hello World");
