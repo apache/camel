@@ -89,4 +89,4 @@ And you can invoke an AQL Query in this way
         });
 --------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$arangodb-starter.adoc[]
+include::spring-boot:partial$arangodb-starter.adoc[]

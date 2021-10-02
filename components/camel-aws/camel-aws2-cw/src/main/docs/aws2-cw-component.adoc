@@ -144,4 +144,4 @@ exchange.getIn().setHeader(Cw2Constants.METRIC_VALUE, "2.0");
 exchange.getIn().setHeader(Cw2Constants.METRIC_UNIT, "Count");
 -------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$aws2-cw-starter.adoc[]
+include::spring-boot:partial$aws2-cw-starter.adoc[]

@@ -144,4 +144,4 @@ The component uses `sshd-core` library which is based on either `bouncycastle` o
 -----------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$ssh-starter.adoc[]
+include::spring-boot:partial$ssh-starter.adoc[]

@@ -85,4 +85,4 @@ You could, of course, have used the `ref` attribute instead:
 
 Which is the more common way to write it.
 
-include::{page-component-version}@camel-spring-boot::page$ref-starter.adoc[]
+include::spring-boot:partial$ref-starter.adoc[]

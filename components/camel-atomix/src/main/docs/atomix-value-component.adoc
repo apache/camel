@@ -67,4 +67,4 @@ from("direct:start")
   .to("atomix-value:value");
 ----
 
-include::{page-component-version}@camel-spring-boot::page$atomix-starter.adoc[]
+include::spring-boot:partial$atomix-starter.adoc[]

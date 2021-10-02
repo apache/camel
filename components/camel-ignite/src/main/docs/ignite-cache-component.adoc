@@ -65,4 +65,4 @@ It does not allow you to dynamically change the cache against which a producer o
 This header carries the old cache value when passed in the incoming cache event (consumer).
 |=======================================================================
 
-include::{page-component-version}@camel-spring-boot::page$ignite-starter.adoc[]
+include::spring-boot:partial$ignite-starter.adoc[]

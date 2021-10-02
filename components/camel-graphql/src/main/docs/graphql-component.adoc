@@ -164,4 +164,4 @@ from("direct:start")
     .to("graphql://http://example.com/graphql?graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
 ----
 
-include::{page-component-version}@camel-spring-boot::page$graphql-starter.adoc[]
+include::spring-boot:partial$graphql-starter.adoc[]

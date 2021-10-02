@@ -76,4 +76,4 @@ http://relaxng.org/[RelaxNG XML Schema] (which is supplied on the
 classpath).
 
 
-include::{page-component-version}@camel-spring-boot::page$msv-starter.adoc[]
+include::spring-boot:partial$msv-starter.adoc[]

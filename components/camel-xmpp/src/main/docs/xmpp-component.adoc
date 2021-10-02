@@ -127,4 +127,4 @@ from("direct:start").
  
 
 
-include::{page-component-version}@camel-spring-boot::page$xmpp-starter.adoc[]
+include::spring-boot:partial$xmpp-starter.adoc[]

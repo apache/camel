@@ -98,4 +98,4 @@ include::partial$component-endpoint-options.adoc[]
 See the disruptor component for more information
 
 
-include::{page-component-version}@camel-spring-boot::page$disruptor-vm-starter.adoc[]
+include::spring-boot:partial$disruptor-vm-starter.adoc[]

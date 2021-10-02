@@ -404,4 +404,4 @@ For more information have a look at https://infinispan.org/docs/stable/titles/de
 ====
 
 
-include::{page-component-version}@camel-spring-boot::page$infinispan-starter.adoc[]
+include::spring-boot:partial$infinispan-starter.adoc[]

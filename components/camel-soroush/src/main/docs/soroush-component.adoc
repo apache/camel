@@ -210,4 +210,4 @@ One way to handle these exceptions is by using `onException` route definition:
 onException(CongestionException.class).log("Failed to processing ${id}")
 -------------
 
-include::{page-component-version}@camel-spring-boot::page$soroush-starter.adoc[]
+include::spring-boot:partial$soroush-starter.adoc[]

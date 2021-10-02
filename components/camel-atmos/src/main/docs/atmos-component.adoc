@@ -103,4 +103,4 @@ on ViPR object data service. In producers, operations(`Get`,`Del`,
 `Move`,`Put`) run on ViPR object data services and results are set 
 on headers of camel exchange.
 
-include::{page-component-version}@camel-spring-boot::page$atmos-starter.adoc[]
+include::spring-boot:partial$atmos-starter.adoc[]

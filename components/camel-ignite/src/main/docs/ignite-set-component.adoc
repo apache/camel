@@ -39,4 +39,4 @@ This endpoint uses the following headers:
 Allows you to dynamically change the set operation.
 |=======================================================================
 
-include::{page-component-version}@camel-spring-boot::page$ignite-starter.adoc[]
+include::spring-boot:partial$ignite-starter.adoc[]

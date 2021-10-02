@@ -84,4 +84,4 @@ At this time, `camel-wordpress` only supports Basic Authentication (more to come
 
 **It's not recommend to use Basic Authentication in production without TLS!!**
 
-include::{page-component-version}@camel-spring-boot::page$wordpress-starter.adoc[]
+include::spring-boot:partial$wordpress-starter.adoc[]

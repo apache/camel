@@ -74,4 +74,4 @@ And in XML DSL you do:
 </camelContext>
 ----
 
-include::{page-component-version}@camel-spring-boot::page$dataformat-starter.adoc[]
+include::spring-boot:partial$dataformat-starter.adoc[]

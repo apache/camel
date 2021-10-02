@@ -25,4 +25,4 @@ for this component:
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$lra-starter.adoc[]
+include::spring-boot:partial$lra-starter.adoc[]

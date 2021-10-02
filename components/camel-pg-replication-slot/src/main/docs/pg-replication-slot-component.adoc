@@ -69,4 +69,4 @@ this component to sync data from PostgreSQL to other database, make sure your op
 instead of INSERT,...). This will make sure repeated messages won't affect your system negatively.
 
 
-include::{page-component-version}@camel-spring-boot::page$pg-replication-slot-starter.adoc[]
+include::spring-boot:partial$pg-replication-slot-starter.adoc[]

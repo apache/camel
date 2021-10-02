@@ -142,4 +142,4 @@ e.g. to refer to a file on the classpath you can do:
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$spring-starter.adoc[]
+include::spring-boot:partial$spring-starter.adoc[]
