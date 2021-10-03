@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
@@ -50,7 +49,6 @@ import org.apache.camel.component.salesforce.dto.generated.QueryRecordsAccount;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsContact;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Task;
-import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
