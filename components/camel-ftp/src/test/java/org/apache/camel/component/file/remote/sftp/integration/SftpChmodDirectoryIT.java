@@ -30,13 +30,12 @@ public class SftpChmodDirectoryIT extends SftpServerTestSupport {
     @Test
     public void testSftpChmodDirectoryWriteable() {
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/testFolder1" +
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/folder" +
                                    "?username=admin&password=admin&chmod=777&chmodDirectory=770",
                 "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        //File file = ftpFile("testFolder/hello.txt").toFile();
-        File path = ftpFile("testFolder/hello.txt").getParent().toFile();
+        File path = ftpFile("folder/hello.txt").getParent().toFile();
         assertTrue(path.canRead(), "Path should have permission readable: " + path);
         assertTrue(path.canWrite(), "Path should have permission writeable: " + path);
     }
