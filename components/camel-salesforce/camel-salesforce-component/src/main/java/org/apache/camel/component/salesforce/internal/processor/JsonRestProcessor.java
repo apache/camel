@@ -181,7 +181,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         try {
             final Message out = exchange.getOut();
             final Message in = exchange.getIn();
-            out.copyFromWithNewBody(in, null);
+            out.copyFrom(in);
             out.getHeaders().putAll(headers);
 
             if (ex != null) {

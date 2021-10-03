@@ -330,7 +330,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             executorService.submit(() -> reactiveExecutor.schedule(state));
         } else {
             if (exchange.isTransacted()) {
-                reactiveExecutor.scheduleSync(state);
+                reactiveExecutor.scheduleQueue(state);
             } else {
                 reactiveExecutor.scheduleMain(state);
             }
