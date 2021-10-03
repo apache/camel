@@ -361,7 +361,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
-<!--                                <phase>pre-integration-test</phase>-->
+                                <phase>pre-integration-test</phase>
                                 <configuration>
                                     <target xmlns:if="ant:if" xmlns:unless="ant:unless">
                                         <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">

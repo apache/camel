@@ -70,6 +70,14 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     }
 
     @Override
+    public void scheduleQueue(Runnable runnable) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ScheduleQueue: {}", runnable);
+        }
+        workers.get().queue.add(runnable);
+    }
+
+    @Override
     public boolean executeFromQueue() {
         return workers.get().executeFromQueue();
     }

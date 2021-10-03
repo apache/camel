@@ -1,0 +1,23 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.12 to 3.13
+
+=== API changes
+
+Added method `getStartedEventNotifiers` to `org.apache.camel.spi.ManagementStrategy`.
+
+Added method `scheduleQueue` to `org.apache.camel.spi.ReactiveExecutor`.
+
+== Using transactions
+
+The routing engine has been changed to route exchanges in a different order
+when using transactions (`.transacted()`). When an `Exchange` is continued
+routed a task is scheduled to the `ReactiveExecutor`. This fixed issues
+with could lead to `StackOverflowException`.
+
+
+
