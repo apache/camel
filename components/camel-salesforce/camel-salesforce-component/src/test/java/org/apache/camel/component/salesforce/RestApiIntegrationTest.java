@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
@@ -49,6 +50,7 @@ import org.apache.camel.component.salesforce.dto.generated.QueryRecordsAccount;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsContact;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Task;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -215,11 +217,11 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         // also need to set the Id
         merchandise.setId(result.getId());
 
-        assertNull(template().requestBodyAndHeader("direct:updateSObject", merchandise, SalesforceEndpointConfig.SOBJECT_ID,
+        assertNotNull(template().requestBodyAndHeader("direct:updateSObject", merchandise, SalesforceEndpointConfig.SOBJECT_ID,
                 result.getId()));
 
         // delete the newly created SObject
-        assertNull(template().requestBody("direct:deleteSObject", result.getId()));
+        assertNotNull(template().requestBody("direct:deleteSObject", result.getId()));
     }
 
     @Test
@@ -266,7 +268,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         final Object updateAccountResult = template().requestBodyAndHeader("salesforce:updateSObject", account,
                 SalesforceEndpointConfig.SOBJECT_ID, account.getId());
-        assertNull(updateAccountResult);
+        assertNotNull(updateAccountResult);
 
         Account updatedAccount = (Account) template().requestBodyAndHeader("salesforce:getSObject?sObjectFields=Id,Name,Site",
                 account.getId(), "sObjectName", "Account");
@@ -301,7 +303,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         final Object updateContactResult = template().requestBodyAndHeader("salesforce:updateSObject", contact,
                 SalesforceEndpointConfig.SOBJECT_ID, contact.getId());
-        assertNull(updateContactResult);
+        assertNotNull(updateContactResult);
 
         // delete the Contact
         template().requestBodyAndHeader("direct:deleteSObject", contactResult.getId(), "sObjectName", "Contact");
@@ -324,11 +326,11 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         taken.setId(result.getId());
         taken.setActivityDate(ZonedDateTime.of(1991, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
 
-        assertNull(template().requestBodyAndHeader("direct:updateSObject", taken, SalesforceEndpointConfig.SOBJECT_ID,
+        assertNotNull(template().requestBodyAndHeader("direct:updateSObject", taken, SalesforceEndpointConfig.SOBJECT_ID,
                 result.getId()));
 
         // delete the newly created SObject
-        assertNull(template().requestBody("direct:deleteSObjectTaken", result.getId()));
+        assertNotNull(template().requestBody("direct:deleteSObjectTaken", result.getId()));
     }
 
     @Test
@@ -368,7 +370,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         assertNotNull(upsertResult);
 
         // delete the SObject with Name NEW_LINE_ITEM_ID
-        assertNull(template().requestBody("direct:deleteSObjectWithId", newLineItemId));
+        assertNotNull(template().requestBody("direct:deleteSObjectWithId", newLineItemId));
     }
 
     @Test
@@ -662,6 +664,15 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         assertFalse(globalObjects.getSobjects().isEmpty());
     }
 
+    @Test
+    public void testBodyIsPreservedAfterError() throws Exception {
+        Contact contact = new Contact();
+
+        final Object result = template.requestBody("direct:createSObjectContinueOnException", contact);
+        assertNotNull(result);
+        assertEquals(contact, result);
+    }
+
     @Override
     protected RouteBuilder doCreateRouteBuilder() throws Exception {
 
@@ -770,6 +781,9 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 from("direct:apexCallPatch").to("salesforce:apexCall/Merchandise/"
                                                 + "&apexMethod=PATCH&sObjectClass=" + MerchandiseResponse.class.getName());
+
+                from("direct:createSObjectContinueOnException").onException(Exception.class).continued(true).end()
+                        .to("salesforce:createSObject");
             }
         };
     }
