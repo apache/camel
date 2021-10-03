@@ -22,22 +22,23 @@ import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
-public class SftpChmodIT extends SftpServerTestSupport {
+public class SftpChmodDirectoryIT extends SftpServerTestSupport {
 
     @Test
-    public void testSftpChmod() {
+    public void testSftpChmodDirectoryWriteable() {
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&chmod=777",
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/testFolder1" +
+                                   "?username=admin&password=admin&chmod=777&chmodDirectory=770",
                 "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = ftpFile("hello.txt").toFile();
-        assertTrue(file.exists(), "File should exist: " + file);
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
+        //File file = ftpFile("testFolder/hello.txt").toFile();
+        File path = ftpFile("testFolder/hello.txt").getParent().toFile();
+        assertTrue(path.canRead(), "Path should have permission readable: " + path);
+        assertTrue(path.canWrite(), "Path should have permission writeable: " + path);
     }
 
 }
