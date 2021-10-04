@@ -122,7 +122,6 @@
         <maven-failsafe-plugin-version>3.0.0-M4</maven-failsafe-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
-        <formatter-maven-plugin.version>2.13.0</formatter-maven-plugin.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
         <maven-bundle-plugin-version>5.1.2</maven-bundle-plugin-version>
 
