@@ -46,6 +46,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bulkRequests": target.getConfiguration().setBulkRequests(property(camelContext, java.lang.Integer.class, value)); return true;
         case "charset": target.setCharset(property(camelContext, java.lang.String.class, value)); return true;
         case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
+        case "chmoddirectory":
+        case "chmodDirectory": target.getConfiguration().setChmodDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "ciphers": target.getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
         case "compression": target.getConfiguration().setCompression(property(camelContext, int.class, value)); return true;
         case "connecttimeout":
@@ -271,6 +273,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bulkRequests": return java.lang.Integer.class;
         case "charset": return java.lang.String.class;
         case "chmod": return java.lang.String.class;
+        case "chmoddirectory":
+        case "chmodDirectory": return java.lang.String.class;
         case "ciphers": return java.lang.String.class;
         case "compression": return int.class;
         case "connecttimeout":
@@ -497,6 +501,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bulkRequests": return target.getConfiguration().getBulkRequests();
         case "charset": return target.getCharset();
         case "chmod": return target.getConfiguration().getChmod();
+        case "chmoddirectory":
+        case "chmodDirectory": return target.getConfiguration().getChmodDirectory();
         case "ciphers": return target.getConfiguration().getCiphers();
         case "compression": return target.getConfiguration().getCompression();
         case "connecttimeout":
