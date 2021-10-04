@@ -69,7 +69,7 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
     private GitHubType type;
     @UriPath(label = "consumer")
     private String branchName;
-    @UriPath(label = "consumer", defaultValue = "last")
+    @UriParam(label = "consumer", defaultValue = "last")
     private String startingSha = "last";
     @UriParam(label = "security", secret = true)
     private String oauthToken;
