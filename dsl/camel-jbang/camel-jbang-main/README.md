@@ -80,10 +80,10 @@ Camel, all references to dependencies should use parameterized ones. Such as:
 ```
 
 After being processed by antrun, during the build, the aforementioned line would be transformed to something like (for 
-a Camel 3.12.0-SNAPSHOT build):
+a Camel 3.13.0-SNAPSHOT build):
 
 ```
-//DEPS org.apache.camel:camel-bom:3.12.0-SNAPSHOT@pom
+//DEPS org.apache.camel:camel-bom:3.13.0-SNAPSHOT@pom
 ```
 
 The same applies to Camel version references, which should rely on the `${camel.jbang.version}` parameter (such 
@@ -93,7 +93,7 @@ Despite this transformation, the code in `src/main/jbang` should be valid noneth
 and debugging purposes by correctly resolving the parameterized variables on the command line. Such as: 
 
 ```
-jbang -Dcamel.jbang.version=3.12.0-SNAPSHOT -Dcamel.jbang.log4j2.version=2.13.3 -Dcamel.jbang.picocli.version=4.5.0 CamelJBang.java
+jbang -Dcamel.jbang.version=3.13.0-SNAPSHOT -Dcamel.jbang.log4j2.version=2.13.3 -Dcamel.jbang.picocli.version=4.5.0 CamelJBang.java
 ```
 
 Alternatively, it is possible to just build the module and then execute the post-processed script on the `dist` directory.
