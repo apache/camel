@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriParam;
              syntax = "sftp:host:port/directoryName", label = "file")
 @Metadata(excludeProperties = "appendChars,bufferSize,siteCommand,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
-                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
+                              + "startingDirectoryMustHaveAccess,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy")
 public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 

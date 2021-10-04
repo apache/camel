@@ -75,6 +75,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private boolean existDirCheckUsingLs = true;
     @UriParam(label = "security")
     private String keyExchangeProtocols;
+    @UriParam(label = "producer, advanced")
+    private String chmodDirectory;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -247,6 +249,17 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public String getChmod() {
         return chmod;
+    }
+
+    /**
+     * Allows you to set chmod during path creation. For example chmod=640.
+     */
+    public void setChmodDirectory(String chmodDirectory) {
+        this.chmodDirectory = chmodDirectory;
+    }
+
+    public String getChmodDirectory() {
+        return chmodDirectory;
     }
 
     /**

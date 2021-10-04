@@ -553,6 +553,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     // so create the folder one by one
                     success = buildDirectoryChunks(directory);
                 }
+
+                // after creating directory, we may set chmod on the file
+                chmodOfDirectory(directory);
             }
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
@@ -592,6 +595,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 } catch (SftpException e) {
                     // ignore keep trying to create the rest of the path
                 }
+
+                // after creating directory, we may set chmod on the file
+                chmodOfDirectory(directory);
             }
         }
 
@@ -1197,6 +1203,24 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             // store client reply information after the operation
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, sftpException.id);
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, sftpException.getMessage());
+        }
+    }
+
+    /**
+     * Helper method which sets the path permissions
+     */
+    private void chmodOfDirectory(String directory) {
+
+        String chmodDirectory = endpoint.getConfiguration().getChmodDirectory();
+        if (ObjectHelper.isNotEmpty(chmodDirectory)) {
+            LOG.trace("Setting permission: {} on directory: {}", chmodDirectory, directory);
+            // parse to int using 8bit mode
+            int permissions = Integer.parseInt(chmodDirectory, 8);
+            try {
+                channel.chmod(permissions, directory);
+            } catch (SftpException e) {
+                throw new GenericFileOperationFailedException("Cannot set permission on directory: " + directory, e);
+            }
         }
     }
 }
