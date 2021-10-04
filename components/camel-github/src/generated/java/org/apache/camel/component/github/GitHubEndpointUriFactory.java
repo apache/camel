@@ -71,7 +71,6 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
 
         uri = buildPathParameter(syntax, uri, "type", null, true, copy);
         uri = buildPathParameter(syntax, uri, "branchName", null, false, copy);
-        uri = buildPathParameter(syntax, uri, "startingSha", "last", false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

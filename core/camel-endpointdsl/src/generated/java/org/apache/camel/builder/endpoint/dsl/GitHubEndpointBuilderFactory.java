@@ -157,6 +157,24 @@ public interface GitHubEndpointBuilderFactory {
             return this;
         }
         /**
+         * The starting sha to use for polling commits with the commit consumer.
+         * The value can either be a sha for the sha to start from, or use
+         * beginning to start from the beginning, or last to start from the last
+         * commit.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: last
+         * Group: consumer
+         * 
+         * @param startingSha the value to set
+         * @return the dsl builder
+         */
+        default GitHubEndpointConsumerBuilder startingSha(String startingSha) {
+            doSetProperty("startingSha", startingSha);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -1049,13 +1067,6 @@ public interface GitHubEndpointBuilderFactory {
          * Path parameter: branchName
          * Name of branch
          * 
-         * Path parameter: startingSha
-         * The starting sha to use for polling commits with the commit consumer.
-         * The value can either be a sha for the sha to start from, or use
-         * beginning to start from the beginning, or last to start from the last
-         * commit.
-         * Default value: last
-         * 
          * @param path type/branchName
          * @return the dsl builder
          */
@@ -1080,13 +1091,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: branchName
          * Name of branch
-         * 
-         * Path parameter: startingSha
-         * The starting sha to use for polling commits with the commit consumer.
-         * The value can either be a sha for the sha to start from, or use
-         * beginning to start from the beginning, or last to start from the last
-         * commit.
-         * Default value: last
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
