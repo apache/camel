@@ -3,7 +3,7 @@
 :shortname: json-patch
 :artifactid: camel-json-patch
 :description: JsonPatch component which transform JSON using JSON patch (RFC 6902).
-:since: 3.12.0-SNAPSHOT
+:since: 3.12
 :supportlevel: Preview
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/json-patch.adoc[opts=optional]

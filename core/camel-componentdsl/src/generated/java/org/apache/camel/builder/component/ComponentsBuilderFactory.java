@@ -2547,7 +2547,7 @@ public interface ComponentsBuilderFactory {
      * JsonPatch component which transform JSON using JSON patch (RFC 6902).
      * 
      * Category: transformation
-     * Since: 3.12.0-SNAPSHOT
+     * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-json-patch
      * 
      * @return the dsl builder

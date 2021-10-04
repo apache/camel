@@ -8695,7 +8695,7 @@ public class StaticEndpointBuilders {
      * JsonPatch component which transform JSON using JSON patch (RFC 6902).
      * 
      * Category: transformation
-     * Since: 3.12.0-SNAPSHOT
+     * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-json-patch
      * 
      * Syntax: <code>json-patch:resourceUri</code>
@@ -8719,7 +8719,7 @@ public class StaticEndpointBuilders {
      * JsonPatch component which transform JSON using JSON patch (RFC 6902).
      * 
      * Category: transformation
-     * Since: 3.12.0-SNAPSHOT
+     * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-json-patch
      * 
      * Syntax: <code>json-patch:resourceUri</code>

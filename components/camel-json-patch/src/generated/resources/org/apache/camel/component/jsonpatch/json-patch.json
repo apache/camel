@@ -5,7 +5,7 @@
     "title": "JsonPatch",
     "description": "JsonPatch component which transform JSON using JSON patch (RFC 6902).",
     "deprecated": false,
-    "firstVersion": "3.12.0-SNAPSHOT",
+    "firstVersion": "3.12.0",
     "label": "transformation",
     "javaType": "org.apache.camel.component.jsonpatch.JsonPatchComponent",
     "supportLevel": "Preview",
