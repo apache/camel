@@ -1142,13 +1142,13 @@ public interface KafkaEndpointBuilderFactory {
          * connecting or reconnecting). It allows implementations to customize
          * how to resume operations and serve as more flexible alternative to
          * the seekTo and the offsetRepository mechanisms. See the
-         * ResumeStrategy for implementation details. This option does not
-         * affect the auto commit setting. It is likely that implementations
-         * using this setting will also want to evaluate using the manual commit
-         * option along with this.
+         * KafkaConsumerResumeStrategy for implementation details. This option
+         * does not affect the auto commit setting. It is likely that
+         * implementations using this setting will also want to evaluate using
+         * the manual commit option along with this.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.kafka.consumer.support.ResumeStrategy&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -1166,13 +1166,13 @@ public interface KafkaEndpointBuilderFactory {
          * connecting or reconnecting). It allows implementations to customize
          * how to resume operations and serve as more flexible alternative to
          * the seekTo and the offsetRepository mechanisms. See the
-         * ResumeStrategy for implementation details. This option does not
-         * affect the auto commit setting. It is likely that implementations
-         * using this setting will also want to evaluate using the manual commit
-         * option along with this.
+         * KafkaConsumerResumeStrategy for implementation details. This option
+         * does not affect the auto commit setting. It is likely that
+         * implementations using this setting will also want to evaluate using
+         * the manual commit option along with this.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.kafka.consumer.support.ResumeStrategy&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy&lt;/code&gt; type.
          * 
          * Group: consumer
          * 

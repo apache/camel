@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.consumer.support.ResumeStrategy;
+import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.junit.jupiter.api.AfterEach;
@@ -33,22 +33,22 @@ import org.junit.jupiter.api.Timeout;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KafkaConsumerWithCustomResumeStrategyIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerWithResumeStrategyIT extends BaseEmbeddedKafkaTestSupport {
     private static final String TOPIC = "custom-resume";
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @BindToRegistry("resumeStrategy")
-    private TestResumeStrategy resumeStrategy;
+    private TestKafkaConsumerResumeStrategy resumeStrategy;
     private CountDownLatch messagesLatch;
 
-    private static class TestResumeStrategy implements ResumeStrategy {
+    private static class TestKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
         private final CountDownLatch messagesLatch;
         private boolean resumeCalled;
         private boolean consumerIsNull = true;
 
-        public TestResumeStrategy(CountDownLatch messagesLatch) {
+        public TestKafkaConsumerResumeStrategy(CountDownLatch messagesLatch) {
             this.messagesLatch = messagesLatch;
         }
 
@@ -75,7 +75,7 @@ public class KafkaConsumerWithCustomResumeStrategyIT extends BaseEmbeddedKafkaTe
     @Override
     protected void doPreSetup() {
         messagesLatch = new CountDownLatch(1);
-        resumeStrategy = new TestResumeStrategy(messagesLatch);
+        resumeStrategy = new TestKafkaConsumerResumeStrategy(messagesLatch);
     }
 
     @Test

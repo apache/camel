@@ -27,7 +27,7 @@ public final class ResumeStrategyFactory {
     /**
      * A NO-OP resume strategy that does nothing (i.e.: no resume)
      */
-    private static class NoOpResumeStrategy implements ResumeStrategy {
+    private static class NoOpKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
         @SuppressWarnings("unused")
         @Override
         public void resume(KafkaConsumer<?, ?> consumer) {
@@ -35,13 +35,13 @@ public final class ResumeStrategyFactory {
         }
     }
 
-    private static final NoOpResumeStrategy NO_OP_RESUME_STRATEGY = new NoOpResumeStrategy();
+    private static final NoOpKafkaConsumerResumeStrategy NO_OP_RESUME_STRATEGY = new NoOpKafkaConsumerResumeStrategy();
     private static final Logger LOG = LoggerFactory.getLogger(ResumeStrategyFactory.class);
 
     private ResumeStrategyFactory() {
     }
 
-    public static ResumeStrategy newResumeStrategy(KafkaConfiguration configuration) {
+    public static KafkaConsumerResumeStrategy newResumeStrategy(KafkaConfiguration configuration) {
 
         if (configuration.getResumeStrategy() != null) {
             return configuration.getResumeStrategy();
@@ -50,16 +50,16 @@ public final class ResumeStrategyFactory {
         return builtinResumeStrategies(configuration);
     }
 
-    private static ResumeStrategy builtinResumeStrategies(KafkaConfiguration configuration) {
+    private static KafkaConsumerResumeStrategy builtinResumeStrategies(KafkaConfiguration configuration) {
         StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
         String seekTo = configuration.getSeekTo();
 
         if (offsetRepository != null) {
             LOG.info("Using resume from offset strategy");
-            return new OffsetResumeStrategy(offsetRepository);
+            return new OffsetKafkaConsumerResumeStrategy(offsetRepository);
         } else if (seekTo != null) {
             LOG.info("Using resume from seek policy strategy with seeking from {}", seekTo);
-            return new SeekPolicyResumeStrategy(seekTo);
+            return new SeekPolicyKafkaConsumerResumeStrategy(seekTo);
         }
 
         LOG.info("Using NO-OP resume strategy");

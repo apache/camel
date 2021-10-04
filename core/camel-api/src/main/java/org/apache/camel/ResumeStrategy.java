@@ -15,21 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.consumer.support;
-
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+package org.apache.camel;
 
 /**
  * Defines a strategy for handling resume operations. Implementations can define different ways to handle how to resume
  * processing records.
  */
-public interface ResumeStrategy {
+public interface ResumeStrategy<T> {
+
     /**
-     * Perform the resume operation. This runs in the scope of the Kafka Consumer thread and may run concurrently with
-     * other consumer instances when the component is set up to use more than one of them. As such, implementations are
-     * responsible for ensuring the thread-safety of the operations within the resume method.
+     * A consumer, iterator or value class that can be used to set the index position from which to resume from. The
+     * type is specific to the component.
      *
-     * @param consumer an instance of the KafkaConsumer which is resuming the operation
+     * @param resumable A resumable object.
      */
-    void resume(KafkaConsumer<?, ?> consumer);
+    void resume(T resumable);
 }

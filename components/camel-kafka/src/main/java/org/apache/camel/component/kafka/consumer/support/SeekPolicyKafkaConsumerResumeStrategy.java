@@ -24,12 +24,12 @@ import org.slf4j.LoggerFactory;
 /**
  * A resume strategy that uses Camel's seekTo configuration for resuming
  */
-public class SeekPolicyResumeStrategy implements ResumeStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyResumeStrategy.class);
+public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
+    private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyKafkaConsumerResumeStrategy.class);
 
     private final String seekPolicy;
 
-    public SeekPolicyResumeStrategy(String seekPolicy) {
+    public SeekPolicyKafkaConsumerResumeStrategy(String seekPolicy) {
         this.seekPolicy = seekPolicy;
     }
 
