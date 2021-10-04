@@ -75,7 +75,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private boolean existDirCheckUsingLs = true;
     @UriParam(label = "security")
     private String keyExchangeProtocols;
-    @UriParam(label = "producer, advanced")
+    @UriParam(label = "producer,advanced")
     private String chmodDirectory;
 
     public SftpConfiguration() {
