@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 
+# a distributed part of the 'components' component mostly located under docs/components.
 name: components
-#title: Enterprise Integration Patterns
-version: latest
-#start_page: eips:enterprise-integration-patterns.adoc
-#nav:
-#- modules/eips/nav.adoc
+version: 3.12.x
