@@ -4,7 +4,7 @@
 :artifactid: camel-huaweicloud-functiongraph
 :description: To call serverless functions on Huawei Cloud
 :since: 3.11
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-functiongraph.adoc[opts=optional]
 //Manually maintained attributes

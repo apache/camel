@@ -7,9 +7,9 @@
     "deprecated": false,
     "firstVersion": "3.11.0",
     "label": "core",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-resourceresolver-github",
-    "version": "3.12.0-SNAPSHOT"
+    "version": "3.12.1-SNAPSHOT"
   }
 }

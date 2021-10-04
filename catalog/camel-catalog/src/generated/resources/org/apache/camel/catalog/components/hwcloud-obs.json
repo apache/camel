@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-huaweicloud-obs",
-    "version": "3.12.0-SNAPSHOT",
+    "version": "3.12.1-SNAPSHOT",
     "scheme": "hwcloud-obs",
     "extendsScheme": "",
     "syntax": "hwcloud-obs:operation",
