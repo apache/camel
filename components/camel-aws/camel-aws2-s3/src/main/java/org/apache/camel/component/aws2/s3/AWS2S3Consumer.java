@@ -386,8 +386,6 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 } catch (IOException e) {
                     throw new RuntimeCamelException(e);
                 }
-            } else {
-                message.setBody(s3Object);
             }
         }
 

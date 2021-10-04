@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
 
@@ -69,7 +69,7 @@ public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
 
         assertMockEndpointsSatisfied();
         assertEquals(3, result.getExchanges().size());
-        assertNotNull(result.getExchanges().get(0).getMessage().getBody());
+        assertNull(result.getExchanges().get(0).getMessage().getBody());
     }
 
     @Override
@@ -79,7 +79,7 @@ public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
             public void configure() throws Exception {
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true";
 
-                from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");
+                from("direct:putObject").startupOrder(1).to(awsEndpoint);
 
                 from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)&includeBody=false")
                         .startupOrder(2).to("mock:result");
