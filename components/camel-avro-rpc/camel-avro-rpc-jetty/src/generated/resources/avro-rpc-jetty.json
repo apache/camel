@@ -6,9 +6,9 @@
     "description": "Camel Avro  RPC Jetty",
     "deprecated": false,
     "firstVersion": "3.11.0",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-avro-rpc-jetty",
-    "version": "3.12.0-SNAPSHOT"
+    "version": "3.13.0-SNAPSHOT"
   }
 }
