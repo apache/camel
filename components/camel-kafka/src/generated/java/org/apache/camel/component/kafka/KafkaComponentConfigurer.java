@@ -161,7 +161,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "requesttimeoutms":
         case "requestTimeoutMs": getOrCreateConfiguration(target).setRequestTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "resumestrategy":
-        case "resumeStrategy": getOrCreateConfiguration(target).setResumeStrategy(property(camelContext, org.apache.camel.component.kafka.consumer.support.ResumeStrategy.class, value)); return true;
+        case "resumeStrategy": getOrCreateConfiguration(target).setResumeStrategy(property(camelContext, org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy.class, value)); return true;
         case "retries": getOrCreateConfiguration(target).setRetries(property(camelContext, java.lang.Integer.class, value)); return true;
         case "retrybackoffms":
         case "retryBackoffMs": getOrCreateConfiguration(target).setRetryBackoffMs(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -375,7 +375,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "requesttimeoutms":
         case "requestTimeoutMs": return java.lang.Integer.class;
         case "resumestrategy":
-        case "resumeStrategy": return org.apache.camel.component.kafka.consumer.support.ResumeStrategy.class;
+        case "resumeStrategy": return org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy.class;
         case "retries": return java.lang.Integer.class;
         case "retrybackoffms":
         case "retryBackoffMs": return java.lang.Integer.class;

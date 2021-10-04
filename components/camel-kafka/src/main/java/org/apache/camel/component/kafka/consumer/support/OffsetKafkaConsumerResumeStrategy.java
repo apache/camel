@@ -31,12 +31,12 @@ import static org.apache.camel.component.kafka.consumer.support.KafkaRecordProce
 /**
  * A resume strategy that uses Kafka's offset for resuming
  */
-public class OffsetResumeStrategy implements ResumeStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(OffsetResumeStrategy.class);
+public class OffsetKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
+    private static final Logger LOG = LoggerFactory.getLogger(OffsetKafkaConsumerResumeStrategy.class);
 
     private final StateRepository<String, String> offsetRepository;
 
-    public OffsetResumeStrategy(StateRepository<String, String> offsetRepository) {
+    public OffsetKafkaConsumerResumeStrategy(StateRepository<String, String> offsetRepository) {
         this.offsetRepository = offsetRepository;
     }
 

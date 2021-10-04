@@ -38,7 +38,7 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
     private final KafkaConfiguration configuration;
     private final KafkaConsumer consumer;
     private final Map<String, Long> lastProcessedOffset;
-    private final ResumeStrategy resumeStrategy;
+    private final KafkaConsumerResumeStrategy resumeStrategy;
     private Supplier<Boolean> stopStateSupplier;
 
     public PartitionAssignmentListener(String threadId, String topicName, KafkaConfiguration configuration,
