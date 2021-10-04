@@ -539,7 +539,7 @@
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
-        <weld3-version>3.1.1.Final</weld3-version>
+        <weld3-version>3.1.8.Final</weld3-version>
         <wildfly-elytron>1.11.4.Final</wildfly-elytron>
         <wiremock-version>2.27.2</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
