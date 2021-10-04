@@ -4918,6 +4918,21 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Allows you to set chmod during path creation. For example chmod=640.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  advanced
+         * 
+         * @param chmodDirectory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointProducerBuilder chmodDirectory(
+                String chmodDirectory) {
+            doSetProperty("chmodDirectory", chmodDirectory);
+            return this;
+        }
+        /**
          * Automatically create missing directories in the file's pathname. For
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
