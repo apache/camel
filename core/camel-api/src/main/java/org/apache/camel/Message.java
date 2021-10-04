@@ -33,7 +33,7 @@ import org.apache.camel.spi.HeadersMapFactory;
 public interface Message {
 
     /**
-     * Clears the message from user data so it may be reused.
+     * Clears the message from user data, so the message can be reused.
      * <p/>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
@@ -42,7 +42,7 @@ public interface Message {
     /**
      * Returns the id of the message.
      * <p/>
-     * By default the message uses the same id as {@link Exchange#getExchangeId()} as messages are associated with the
+     * By default, the message uses the same id as {@link Exchange#getExchangeId()} as messages are associated with the
      * exchange and using different IDs does not offer much value. Another reason is to optimize for performance to
      * avoid generating new IDs.
      * <p/>
