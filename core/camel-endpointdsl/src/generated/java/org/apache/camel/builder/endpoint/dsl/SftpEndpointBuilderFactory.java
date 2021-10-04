@@ -4704,6 +4704,21 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Allows you to set chmod during path creation. For example chmod=640.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param chmodDirectory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointProducerBuilder chmodDirectory(
+                String chmodDirectory) {
+            doSetProperty("chmodDirectory", chmodDirectory);
+            return this;
+        }
+        /**
          * Whether or not to disconnect from remote FTP server right after a
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
@@ -4915,21 +4930,6 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder sendNoop(String sendNoop) {
             doSetProperty("sendNoop", sendNoop);
-            return this;
-        }
-        /**
-         * Allows you to set chmod during path creation. For example chmod=640.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group:  advanced
-         * 
-         * @param chmodDirectory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSftpEndpointProducerBuilder chmodDirectory(
-                String chmodDirectory) {
-            doSetProperty("chmodDirectory", chmodDirectory);
             return this;
         }
         /**
