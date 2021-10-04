@@ -22,5 +22,6 @@ github:
     - camel
     - integration
     - java
+    - hacktoberfest
 notifications:
   pullrequests: commits@camel.apache.org
