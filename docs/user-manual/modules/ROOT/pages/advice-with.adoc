@@ -30,7 +30,7 @@ the most commonly used methods:
 | weaveByToString(pattern) | Manipulates the route at the node string representation(output from toString method) that matches the pattern.
 | weaveByType(Class) | Manipulates the route at the node type (class name) that matches the pattern.
 | weaveAddFirst | Easily weaves in new nodes at the beginning of the route.
-| weaveAddLast | Easily weaves in new nodes at the beginning of the route.
+| weaveAddLast | Easily weaves in new nodes at the end of the route.
 |=======================================================================
 
 === Pattern matching
