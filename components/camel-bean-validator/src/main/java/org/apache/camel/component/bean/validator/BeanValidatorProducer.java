@@ -40,13 +40,13 @@ public class BeanValidatorProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Object bean = exchange.getIn().getBody();
         Set<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
 
-        if (bean instanceof Iterable) {
-            ((Iterable) bean).forEach(b -> constraintViolations.addAll(getConstraintViolationsForSingleBean(b, this.group)));
+        if (exchange.getIn().getBody() instanceof Iterable) {
+            Iterable<?> body = exchange.getIn().getBody(Iterable.class);
+            body.forEach(b -> constraintViolations.addAll(getConstraintViolationsForSingleBean(b, this.group)));
         } else {
-            constraintViolations.addAll(getConstraintViolationsForSingleBean(bean, this.group));
+            constraintViolations.addAll(getConstraintViolationsForSingleBean(exchange.getIn().getBody(), this.group));
         }
 
         if (!constraintViolations.isEmpty()) {
