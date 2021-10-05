@@ -20,13 +20,14 @@ See message related documentation
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== Samples
+== Example
 
-The following example route demonstrates the use of a file consumer endpoint and a JMS producer endpoint.
+The following example route demonstrates the use of a xref:components::file-component.adoc[File] consumer endpoint and a xref:components::jms-component.adoc[JMS] producer endpoint,
+by their xref:latest@manual:ROOT:uris.adoc[URIs]:
 
 [source,java]
 ----
-from("file://local/router/messages/foo")
+from("file:messages/foo")
     .to("jms:queue:foo");
 ----
 
@@ -35,12 +36,12 @@ And in XML:
 [source,xml]
 ----
 <route>
-    <from uri="file://local/router/messages/foo"/>
+    <from uri="file:messages/foo"/>
     <to uri="jms:queue:foo"/>
 </route>
 ----
 
-== to-eip with pattern
+=== Using Exchange Pattern
 
 Instead of using `inOnly` and `inOut` you may want to keep using `to`
 where you can specify the exchange pattern as shown:

@@ -15,12 +15,27 @@ rather than directly using the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
 interface. It's then a responsibility of the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext]
-to create and activate the necessary Endpoint instances using the
-available
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Component.html[Component]
-implementations.
+to create and activate the necessary `Endpoint` instances using the
+available xref:components::index.adoc[Components].
 
 == Example
 
-See first example in xref:to-eip.adoc[To] EIP
+The following example route demonstrates the use of a xref:components::file-component.adoc[File] consumer endpoint and a xref:components::jms-component.adoc[JMS] producer endpoint,
+by their xref:latest@manual:ROOT:uris.adoc[URIs]:
+
+[source,java]
+----
+from("file:messages/foo")
+    .to("jms:queue:foo");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
 
