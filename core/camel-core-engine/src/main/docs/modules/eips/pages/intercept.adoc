@@ -203,7 +203,7 @@ applies for that particular route.
 
 So lets start with the logging example. We want to log all the
 incoming messages, so we use `interceptFrom` to route to the
-xref:components::log-component.adoc[Log] component.
+xref:ROOT:log-component.adoc[Log] component.
 
 [source,java]
 ----
@@ -296,7 +296,7 @@ the response message from the intended destination. This functionality
 was added later to the interceptor, in a form of sending to yet another xref:message-endpoint.adoc[endpoint].
 
 Let start with a basic example, where we want to intercept when a
-message is being sent to xref:components::kafka-component.adoc[kafka]:
+message is being sent to xref:ROOT:kafka-component.adoc[kafka]:
 
 [source,java]
 ----
@@ -369,7 +369,7 @@ And in XML:
 Sometimes you want to *intercept and skip* sending messages to a specific endpoint.
 
 For example to avoid sending any message to kafka, but detour them to a
-xref:components::mock-component.adoc[mock] endpoint, can be done as follows:
+xref:ROOT:mock-component.adoc[mock] endpoint, can be done as follows:
 
 [source,java]
 ----
@@ -464,7 +464,7 @@ interceptSendToEndpoint("jms:queue:cheese").to("log:smelly");
 === Intercepting when matching endpoints by wildcard
 
 Match by wildcard allows you to match a range of endpoint or all of a
-given type. For instance use `file:*` will match all xref:components::file-component.adoc[file] based endpoints.
+given type. For instance use `file:*` will match all xref:ROOT:file-component.adoc[file] based endpoints.
 
 [source,java]
 -------------------------------------

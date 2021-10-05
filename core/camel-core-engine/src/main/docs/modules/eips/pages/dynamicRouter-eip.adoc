@@ -52,7 +52,7 @@ And in XML:
 </route>
 ----
 
-Which will call a xref:components:languages:bean-language.adoc[Bean Method] to compute the slip
+Which will call a xref:languages:bean-language.adoc[Bean Method] to compute the slip
 _on-the-fly_. The bean could be implemented as follows:
 
 [source,java]

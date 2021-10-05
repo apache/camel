@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-huaweicloud-imagerecognition",
-    "version": "3.12.0-SNAPSHOT",
+    "version": "3.12.1-SNAPSHOT",
     "scheme": "hwcloud-imagerecognition",
     "extendsScheme": "",
     "syntax": "hwcloud-imagerecognition:operation",

@@ -5,8 +5,8 @@ https://www.enterpriseintegrationpatterns.com/patterns/messaging/DurableSubscrip
 from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
 
 Camel supports the Durable Subscriber from the EIP patterns
-using components, such as the xref:components::jms-component.adoc[JMS] or
-xref:components::kafka-component.adoc[Kafka] component, which supports publish & subscribe
+using components, such as the xref:ROOT:jms-component.adoc[JMS] or
+xref:ROOT:kafka-component.adoc[Kafka] component, which supports publish & subscribe
 using topics with support for non-durable and durable subscribers.
 
 image::eip/DurableSubscriptionSolution.gif[image]

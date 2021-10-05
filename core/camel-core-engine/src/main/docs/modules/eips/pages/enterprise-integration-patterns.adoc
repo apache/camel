@@ -292,7 +292,7 @@ and via non-messaging techniques?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/ControlBusIcon.gif[image]
-|xref:components::controlbus-component.adoc[ControlBus] |How can we effectively administer a
+|xref:ROOT:controlbus-component.adoc[ControlBus] |How can we effectively administer a
 messaging system that is distributed across multiple platforms and a
 wide geographic area?
 
