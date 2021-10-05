@@ -19,7 +19,7 @@ name: components
 title: Camel Components
 version: latest
 prerelease: true
-display-version: 3.12.0 (Prerelease)
+display-version: 3.13.x (Prerelease)
 
 nav:
   - modules/ROOT/nav.adoc
