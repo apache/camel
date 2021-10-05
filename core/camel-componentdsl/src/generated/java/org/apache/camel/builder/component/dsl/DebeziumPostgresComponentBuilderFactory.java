@@ -418,7 +418,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * The name of the database the connector should be monitoring.
+         * The name of the database from which the connector should capture
+         * changes.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1616,6 +1617,25 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify how TRUNCATE operations are handled for change events
+         * (supported only on pg11 pgoutput plugin), including: 'skip' to skip /
+         * ignore TRUNCATE events (default), 'include' to handle and include
+         * TRUNCATE events.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: skip
+         * Group: postgres
+         * 
+         * @param truncateHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder truncateHandlingMode(
+                java.lang.String truncateHandlingMode) {
+            doSetProperty("truncateHandlingMode", truncateHandlingMode);
+            return this;
+        }
+        /**
          * Specify how often (in ms) the xmin will be fetched from the
          * replication slot. This xmin value is exposed by the slot which gives
          * a lower bound of where a new replication slot could start from. The
@@ -1750,6 +1770,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "toastedValuePlaceholder": getOrCreateConfiguration((DebeziumPostgresComponent) component).setToastedValuePlaceholder((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTombstonesOnDelete((boolean) value); return true;
+            case "truncateHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTruncateHandlingMode((java.lang.String) value); return true;
             case "xminFetchIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setXminFetchIntervalMs((long) value); return true;
             default: return false;
             }

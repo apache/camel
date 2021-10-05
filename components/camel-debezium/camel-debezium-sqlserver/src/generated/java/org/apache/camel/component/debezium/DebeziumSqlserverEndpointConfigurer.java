@@ -62,14 +62,14 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseHostname": target.getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseinstance":
         case "databaseInstance": target.getConfiguration().setDatabaseInstance(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasenames":
+        case "databaseNames": target.getConfiguration().setDatabaseNames(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepassword":
         case "databasePassword": target.getConfiguration().setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
         case "databasePort": target.getConfiguration().setDatabasePort(property(camelContext, int.class, value)); return true;
         case "databaseservername":
         case "databaseServerName": target.getConfiguration().setDatabaseServerName(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseservertimezone":
-        case "databaseServerTimezone": target.getConfiguration().setDatabaseServerTimezone(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
         case "databaseUser": target.getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "datatypepropagatesourcetype":
@@ -214,14 +214,14 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseHostname": return java.lang.String.class;
         case "databaseinstance":
         case "databaseInstance": return java.lang.String.class;
+        case "databasenames":
+        case "databaseNames": return java.lang.String.class;
         case "databasepassword":
         case "databasePassword": return java.lang.String.class;
         case "databaseport":
         case "databasePort": return int.class;
         case "databaseservername":
         case "databaseServerName": return java.lang.String.class;
-        case "databaseservertimezone":
-        case "databaseServerTimezone": return java.lang.String.class;
         case "databaseuser":
         case "databaseUser": return java.lang.String.class;
         case "datatypepropagatesourcetype":
@@ -367,14 +367,14 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseHostname": return target.getConfiguration().getDatabaseHostname();
         case "databaseinstance":
         case "databaseInstance": return target.getConfiguration().getDatabaseInstance();
+        case "databasenames":
+        case "databaseNames": return target.getConfiguration().getDatabaseNames();
         case "databasepassword":
         case "databasePassword": return target.getConfiguration().getDatabasePassword();
         case "databaseport":
         case "databasePort": return target.getConfiguration().getDatabasePort();
         case "databaseservername":
         case "databaseServerName": return target.getConfiguration().getDatabaseServerName();
-        case "databaseservertimezone":
-        case "databaseServerTimezone": return target.getConfiguration().getDatabaseServerTimezone();
         case "databaseuser":
         case "databaseUser": return target.getConfiguration().getDatabaseUser();
         case "datatypepropagatesourcetype":

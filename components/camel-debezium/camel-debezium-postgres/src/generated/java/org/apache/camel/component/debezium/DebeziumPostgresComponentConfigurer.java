@@ -202,6 +202,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "toastedValuePlaceholder": getOrCreateConfiguration(target).setToastedValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": getOrCreateConfiguration(target).setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
+        case "truncatehandlingmode":
+        case "truncateHandlingMode": getOrCreateConfiguration(target).setTruncateHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "xminfetchintervalms":
         case "xminFetchIntervalMs": getOrCreateConfiguration(target).setXminFetchIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
@@ -385,6 +387,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "toastedValuePlaceholder": return java.lang.String.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
+        case "truncatehandlingmode":
+        case "truncateHandlingMode": return java.lang.String.class;
         case "xminfetchintervalms":
         case "xminFetchIntervalMs": return long.class;
         default: return null;
@@ -569,6 +573,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "toastedValuePlaceholder": return getOrCreateConfiguration(target).getToastedValuePlaceholder();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return getOrCreateConfiguration(target).isTombstonesOnDelete();
+        case "truncatehandlingmode":
+        case "truncateHandlingMode": return getOrCreateConfiguration(target).getTruncateHandlingMode();
         case "xminfetchintervalms":
         case "xminFetchIntervalMs": return getOrCreateConfiguration(target).getXminFetchIntervalMs();
         default: return null;

@@ -396,6 +396,25 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how binary (blob, binary, etc.) columns should be represented
+         * in change events, including:'bytes' represents binary data as byte
+         * array (default)'base64' represents binary data as base64-encoded
+         * string'hex' represents binary data as hex-encoded (base16) string.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: bytes
+         * Group: mysql
+         * 
+         * @param binaryHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder binaryHandlingMode(
+                String binaryHandlingMode) {
+            doSetProperty("binaryHandlingMode", binaryHandlingMode);
+            return this;
+        }
+        /**
          * The size of a look-ahead buffer used by the binlog reader to decide
          * whether the transaction in progress is going to be committed or
          * rolled back. Use 0 to disable look-ahead buffering. Defaults to 0
@@ -1734,6 +1753,44 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         default DebeziumMySqlEndpointBuilder messageKeyColumns(
                 String messageKeyColumns) {
             doSetProperty("messageKeyColumns", messageKeyColumns);
+            return this;
+        }
+        /**
+         * The number of rows a table must contain to stream results rather than
+         * pull all into memory during snapshots. Defaults to 1,000. Use 0 to
+         * stream all results and completely avoid checking the size of each
+         * table.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: mysql
+         * 
+         * @param minRowCountToStreamResults the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder minRowCountToStreamResults(
+                int minRowCountToStreamResults) {
+            doSetProperty("minRowCountToStreamResults", minRowCountToStreamResults);
+            return this;
+        }
+        /**
+         * The number of rows a table must contain to stream results rather than
+         * pull all into memory during snapshots. Defaults to 1,000. Use 0 to
+         * stream all results and completely avoid checking the size of each
+         * table.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: mysql
+         * 
+         * @param minRowCountToStreamResults the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder minRowCountToStreamResults(
+                String minRowCountToStreamResults) {
+            doSetProperty("minRowCountToStreamResults", minRowCountToStreamResults);
             return this;
         }
         /**

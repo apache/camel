@@ -25,6 +25,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": target.getConfiguration().setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": target.getConfiguration().setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binlogbuffersize":
         case "binlogBufferSize": target.getConfiguration().setBinlogBufferSize(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
@@ -140,6 +142,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "maxQueueSizeInBytes": target.getConfiguration().setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "minrowcounttostreamresults":
+        case "minRowCountToStreamResults": target.getConfiguration().setMinRowCountToStreamResults(property(camelContext, int.class, value)); return true;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": target.getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommittimeoutms":
@@ -215,6 +219,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "additionalProperties": return java.util.Map.class;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return java.lang.String.class;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return java.lang.String.class;
         case "binlogbuffersize":
         case "binlogBufferSize": return int.class;
         case "bridgeerrorhandler":
@@ -330,6 +336,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "maxQueueSizeInBytes": return long.class;
         case "messagekeycolumns":
         case "messageKeyColumns": return java.lang.String.class;
+        case "minrowcounttostreamresults":
+        case "minRowCountToStreamResults": return int.class;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return java.lang.String.class;
         case "offsetcommittimeoutms":
@@ -406,6 +414,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return target.getConfiguration().getBigintUnsignedHandlingMode();
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return target.getConfiguration().getBinaryHandlingMode();
         case "binlogbuffersize":
         case "binlogBufferSize": return target.getConfiguration().getBinlogBufferSize();
         case "bridgeerrorhandler":
@@ -521,6 +531,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "maxQueueSizeInBytes": return target.getConfiguration().getMaxQueueSizeInBytes();
         case "messagekeycolumns":
         case "messageKeyColumns": return target.getConfiguration().getMessageKeyColumns();
+        case "minrowcounttostreamresults":
+        case "minRowCountToStreamResults": return target.getConfiguration().getMinRowCountToStreamResults();
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return target.getConfiguration().getOffsetCommitPolicy();
         case "offsetcommittimeoutms":

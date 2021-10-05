@@ -324,6 +324,25 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify how binary (blob, binary, etc.) columns should be represented
+         * in change events, including:'bytes' represents binary data as byte
+         * array (default)'base64' represents binary data as base64-encoded
+         * string'hex' represents binary data as hex-encoded (base16) string.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: bytes
+         * Group: mysql
+         * 
+         * @param binaryHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder binaryHandlingMode(
+                java.lang.String binaryHandlingMode) {
+            doSetProperty("binaryHandlingMode", binaryHandlingMode);
+            return this;
+        }
+        /**
          * The size of a look-ahead buffer used by the binlog reader to decide
          * whether the transaction in progress is going to be committed or
          * rolled back. Use 0 to disable look-ahead buffering. Defaults to 0
@@ -1275,6 +1294,25 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * The number of rows a table must contain to stream results rather than
+         * pull all into memory during snapshots. Defaults to 1,000. Use 0 to
+         * stream all results and completely avoid checking the size of each
+         * table.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: mysql
+         * 
+         * @param minRowCountToStreamResults the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder minRowCountToStreamResults(
+                int minRowCountToStreamResults) {
+            doSetProperty("minRowCountToStreamResults", minRowCountToStreamResults);
+            return this;
+        }
+        /**
          * Time to wait for new change events to appear after receiving no
          * events, given in milliseconds. Defaults to 500 ms.
          * 
@@ -1761,6 +1799,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumMySqlComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "bigintUnsignedHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBigintUnsignedHandlingMode((java.lang.String) value); return true;
+            case "binaryHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
             case "binlogBufferSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogBufferSize((int) value); return true;
             case "columnBlacklist": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnBlacklist((java.lang.String) value); return true;
             case "columnExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnExcludeList((java.lang.String) value); return true;
@@ -1814,6 +1853,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxQueueSizeInBytes((long) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
+            case "minRowCountToStreamResults": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMinRowCountToStreamResults((int) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumMySqlComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setQueryFetchSize((int) value); return true;

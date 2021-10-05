@@ -407,6 +407,22 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * The maximum processing time in milliseconds to wait for the oplog
+         * cursor to process a single poll request.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param cursorMaxAwaitTimeMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder cursorMaxAwaitTimeMs(
+                int cursorMaxAwaitTimeMs) {
+            doSetProperty("cursorMaxAwaitTimeMs", cursorMaxAwaitTimeMs);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions that match the database
          * names for which changes are to be excluded.
          * 
@@ -492,8 +508,10 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'field.renames' description.
+         * A comma-separated list of the fully-qualified replacements of fields
+         * that should be used to rename fields in change event message values.
+         * Fully-qualified replacements for fields are of the form
+         * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName, where databaseName and collectionName may contain the wildcard () which matches any characters, the colon character (:) is used to determine rename mapping of field.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1091,6 +1109,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "connectBackoffMaxDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectBackoffMaxDelayMs((long) value); return true;
             case "connectMaxAttempts": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectMaxAttempts((int) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConverters((java.lang.String) value); return true;
+            case "cursorMaxAwaitTimeMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCursorMaxAwaitTimeMs((int) value); return true;
             case "databaseExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
             case "databaseIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;

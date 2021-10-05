@@ -535,6 +535,38 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum processing time in milliseconds to wait for the oplog
+         * cursor to process a single poll request.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param cursorMaxAwaitTimeMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder cursorMaxAwaitTimeMs(
+                int cursorMaxAwaitTimeMs) {
+            doSetProperty("cursorMaxAwaitTimeMs", cursorMaxAwaitTimeMs);
+            return this;
+        }
+        /**
+         * The maximum processing time in milliseconds to wait for the oplog
+         * cursor to process a single poll request.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param cursorMaxAwaitTimeMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder cursorMaxAwaitTimeMs(
+                String cursorMaxAwaitTimeMs) {
+            doSetProperty("cursorMaxAwaitTimeMs", cursorMaxAwaitTimeMs);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions that match the database
          * names for which changes are to be excluded.
          * 
@@ -620,8 +652,10 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'field.renames' description.
+         * A comma-separated list of the fully-qualified replacements of fields
+         * that should be used to rename fields in change event message values.
+         * Fully-qualified replacements for fields are of the form
+         * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName, where databaseName and collectionName may contain the wildcard () which matches any characters, the colon character (:) is used to determine rename mapping of field.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

@@ -19,6 +19,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int queryFetchSize = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean mongodbSslEnabled = false;
+    @UriParam(label = LABEL_NAME, javaType = "java.time.Duration")
+    private int cursorMaxAwaitTimeMs;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean mongodbMembersAutoDiscover = true;
     @UriParam(label = LABEL_NAME)
@@ -138,6 +140,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The maximum processing time in milliseconds to wait for the oplog cursor
+     * to process a single poll request
+     */
+    public void setCursorMaxAwaitTimeMs(int cursorMaxAwaitTimeMs) {
+        this.cursorMaxAwaitTimeMs = cursorMaxAwaitTimeMs;
+    }
+
+    public int getCursorMaxAwaitTimeMs() {
+        return cursorMaxAwaitTimeMs;
+    }
+
+    /**
      * Specifies whether the addresses in 'hosts' are seeds that should be used
      * to discover all members of the cluster or replica set ('true'), or
      * whether the address(es) in 'hosts' should be used as is ('false'). The
@@ -152,8 +166,13 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Description is not available here, please check Debezium website for
-     * corresponding key 'field.renames' description.
+     * A comma-separated list of the fully-qualified replacements of fields that
+     * should be used to rename fields in change event message values.
+     * Fully-qualified replacements for fields are of the form
+     * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName,
+     * where databaseName and collectionName may contain the wildcard (*) which
+     * matches any characters, the colon character (:) is used to determine
+     * rename mapping of field.
      */
     public void setFieldRenames(String fieldRenames) {
         this.fieldRenames = fieldRenames;
@@ -663,6 +682,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "mongodb.password", mongodbPassword);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.enabled", mongodbSslEnabled);
+        addPropertyIfNotNull(configBuilder, "cursor.max.await.time.ms", cursorMaxAwaitTimeMs);
         addPropertyIfNotNull(configBuilder, "mongodb.members.auto.discover", mongodbMembersAutoDiscover);
         addPropertyIfNotNull(configBuilder, "field.renames", fieldRenames);
         addPropertyIfNotNull(configBuilder, "mongodb.server.selection.timeout.ms", mongodbServerSelectionTimeoutMs);

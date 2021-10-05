@@ -490,7 +490,8 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of the database the connector should be monitoring.
+         * The name of the database from which the connector should capture
+         * changes.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -794,6 +795,22 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * The names of the databases from which the connector should capture
+         * changes.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param databaseNames the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder databaseNames(
+                String databaseNames) {
+            doSetProperty("databaseNames", databaseNames);
+            return this;
+        }
+        /**
          * Password of the database user to be used when connecting to the
          * database.
          * 
@@ -858,23 +875,6 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder databaseServerName(
                 String databaseServerName) {
             doSetProperty("databaseServerName", databaseServerName);
-            return this;
-        }
-        /**
-         * The timezone of the server used to correctly shift the commit
-         * transaction timestamp on the client sideOptions include: Any valid
-         * Java ZoneId.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param databaseServerTimezone the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverEndpointBuilder databaseServerTimezone(
-                String databaseServerTimezone) {
-            doSetProperty("databaseServerTimezone", databaseServerTimezone);
             return this;
         }
         /**

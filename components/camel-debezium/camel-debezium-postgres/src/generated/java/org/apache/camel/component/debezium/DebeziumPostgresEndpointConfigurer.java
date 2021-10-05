@@ -196,6 +196,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "toastedValuePlaceholder": target.getConfiguration().setToastedValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
+        case "truncatehandlingmode":
+        case "truncateHandlingMode": target.getConfiguration().setTruncateHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "xminfetchintervalms":
         case "xminFetchIntervalMs": target.getConfiguration().setXminFetchIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
@@ -380,6 +382,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "toastedValuePlaceholder": return java.lang.String.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
+        case "truncatehandlingmode":
+        case "truncateHandlingMode": return java.lang.String.class;
         case "xminfetchintervalms":
         case "xminFetchIntervalMs": return long.class;
         default: return null;
@@ -565,6 +569,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "toastedValuePlaceholder": return target.getConfiguration().getToastedValuePlaceholder();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
+        case "truncatehandlingmode":
+        case "truncateHandlingMode": return target.getConfiguration().getTruncateHandlingMode();
         case "xminfetchintervalms":
         case "xminFetchIntervalMs": return target.getConfiguration().getXminFetchIntervalMs();
         default: return null;

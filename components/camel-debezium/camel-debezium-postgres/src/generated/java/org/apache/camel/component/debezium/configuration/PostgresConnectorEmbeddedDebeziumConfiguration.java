@@ -125,6 +125,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME, defaultValue = "bytes")
     private String binaryHandlingMode = "bytes";
+    @UriParam(label = LABEL_NAME, defaultValue = "skip")
+    private String truncateHandlingMode = "skip";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -471,7 +473,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The name of the database the connector should be monitoring
+     * The name of the database from which the connector should capture changes
      */
     public void setDatabaseDbname(String databaseDbname) {
         this.databaseDbname = databaseDbname;
@@ -909,6 +911,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how TRUNCATE operations are handled for change events (supported
+     * only on pg11+ pgoutput plugin), including: 'skip' to skip / ignore
+     * TRUNCATE events (default), 'include' to handle and include TRUNCATE
+     * events
+     */
+    public void setTruncateHandlingMode(String truncateHandlingMode) {
+        this.truncateHandlingMode = truncateHandlingMode;
+    }
+
+    public String getTruncateHandlingMode() {
+        return truncateHandlingMode;
+    }
+
+    /**
      * Flag specifying whether built-in tables should be ignored.
      */
     public void setTableIgnoreBuiltin(boolean tableIgnoreBuiltin) {
@@ -1223,6 +1239,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "slot.retry.delay.ms", slotRetryDelayMs);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
+        addPropertyIfNotNull(configBuilder, "truncate.handling.mode", truncateHandlingMode);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "database.tcpKeepAlive", databaseTcpkeepalive);
         addPropertyIfNotNull(configBuilder, "schema.exclude.list", schemaExcludeList);

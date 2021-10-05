@@ -490,7 +490,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of the database the connector should be monitoring.
+         * The name of the database from which the connector should capture
+         * changes.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2082,6 +2083,25 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder tombstonesOnDelete(
                 String tombstonesOnDelete) {
             doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
+            return this;
+        }
+        /**
+         * Specify how TRUNCATE operations are handled for change events
+         * (supported only on pg11 pgoutput plugin), including: 'skip' to skip /
+         * ignore TRUNCATE events (default), 'include' to handle and include
+         * TRUNCATE events.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: skip
+         * Group: postgres
+         * 
+         * @param truncateHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder truncateHandlingMode(
+                String truncateHandlingMode) {
+            doSetProperty("truncateHandlingMode", truncateHandlingMode);
             return this;
         }
         /**

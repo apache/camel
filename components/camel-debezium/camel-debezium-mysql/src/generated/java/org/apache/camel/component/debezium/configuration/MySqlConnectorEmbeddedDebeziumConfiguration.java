@@ -78,6 +78,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String columnPropagateSourceType;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String inconsistentSchemaHandlingMode = "fail";
+    @UriParam(label = LABEL_NAME, defaultValue = "1000")
+    private int minRowCountToStreamResults = 1000;
     @UriParam(label = LABEL_NAME)
     private String tableExcludeList;
     @UriParam(label = LABEL_NAME)
@@ -121,6 +123,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean tombstonesOnDelete = false;
     @UriParam(label = LABEL_NAME, defaultValue = "precise")
     private String decimalHandlingMode = "precise";
+    @UriParam(label = LABEL_NAME, defaultValue = "bytes")
+    private String binaryHandlingMode = "bytes";
     @UriParam(label = LABEL_NAME, defaultValue = "off")
     private String snapshotNewTables = "off";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -631,6 +635,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The number of rows a table must contain to stream results rather than
+     * pull all into memory during snapshots. Defaults to 1,000. Use 0 to stream
+     * all results and completely avoid checking the size of each table.
+     */
+    public void setMinRowCountToStreamResults(int minRowCountToStreamResults) {
+        this.minRowCountToStreamResults = minRowCountToStreamResults;
+    }
+
+    public int getMinRowCountToStreamResults() {
+        return minRowCountToStreamResults;
+    }
+
+    /**
      * A comma-separated list of regular expressions that match the
      * fully-qualified names of tables to be excluded from monitoring
      */
@@ -905,6 +922,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getDecimalHandlingMode() {
         return decimalHandlingMode;
+    }
+
+    /**
+     * Specify how binary (blob, binary, etc.) columns should be represented in
+     * change events, including:'bytes' represents binary data as byte array
+     * (default)'base64' represents binary data as base64-encoded string'hex'
+     * represents binary data as hex-encoded (base16) string
+     */
+    public void setBinaryHandlingMode(String binaryHandlingMode) {
+        this.binaryHandlingMode = binaryHandlingMode;
+    }
+
+    public String getBinaryHandlingMode() {
+        return binaryHandlingMode;
     }
 
     /**
@@ -1285,6 +1316,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "enable.time.adjuster", enableTimeAdjuster);
         addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
         addPropertyIfNotNull(configBuilder, "inconsistent.schema.handling.mode", inconsistentSchemaHandlingMode);
+        addPropertyIfNotNull(configBuilder, "min.row.count.to.stream.results", minRowCountToStreamResults);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
         addPropertyIfNotNull(configBuilder, "database.exclude.list", databaseExcludeList);
@@ -1306,6 +1338,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "table.whitelist", tableWhitelist);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
+        addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.new.tables", snapshotNewTables);
         addPropertyIfNotNull(configBuilder, "database.history.skip.unparseable.ddl", databaseHistorySkipUnparseableDdl);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);

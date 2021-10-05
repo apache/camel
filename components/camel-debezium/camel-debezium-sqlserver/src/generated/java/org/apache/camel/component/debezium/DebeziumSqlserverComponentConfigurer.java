@@ -72,14 +72,14 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseinstance":
         case "databaseInstance": getOrCreateConfiguration(target).setDatabaseInstance(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasenames":
+        case "databaseNames": getOrCreateConfiguration(target).setDatabaseNames(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepassword":
         case "databasePassword": getOrCreateConfiguration(target).setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
         case "databasePort": getOrCreateConfiguration(target).setDatabasePort(property(camelContext, int.class, value)); return true;
         case "databaseservername":
         case "databaseServerName": getOrCreateConfiguration(target).setDatabaseServerName(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseservertimezone":
-        case "databaseServerTimezone": getOrCreateConfiguration(target).setDatabaseServerTimezone(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
         case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "datatypepropagatesourcetype":
@@ -223,14 +223,14 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databaseHostname": return java.lang.String.class;
         case "databaseinstance":
         case "databaseInstance": return java.lang.String.class;
+        case "databasenames":
+        case "databaseNames": return java.lang.String.class;
         case "databasepassword":
         case "databasePassword": return java.lang.String.class;
         case "databaseport":
         case "databasePort": return int.class;
         case "databaseservername":
         case "databaseServerName": return java.lang.String.class;
-        case "databaseservertimezone":
-        case "databaseServerTimezone": return java.lang.String.class;
         case "databaseuser":
         case "databaseUser": return java.lang.String.class;
         case "datatypepropagatesourcetype":
@@ -375,14 +375,14 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
         case "databaseinstance":
         case "databaseInstance": return getOrCreateConfiguration(target).getDatabaseInstance();
+        case "databasenames":
+        case "databaseNames": return getOrCreateConfiguration(target).getDatabaseNames();
         case "databasepassword":
         case "databasePassword": return getOrCreateConfiguration(target).getDatabasePassword();
         case "databaseport":
         case "databasePort": return getOrCreateConfiguration(target).getDatabasePort();
         case "databaseservername":
         case "databaseServerName": return getOrCreateConfiguration(target).getDatabaseServerName();
-        case "databaseservertimezone":
-        case "databaseServerTimezone": return getOrCreateConfiguration(target).getDatabaseServerTimezone();
         case "databaseuser":
         case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
         case "datatypepropagatesourcetype":

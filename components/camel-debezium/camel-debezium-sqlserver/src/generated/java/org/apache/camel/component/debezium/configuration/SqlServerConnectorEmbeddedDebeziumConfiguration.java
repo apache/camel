@@ -48,6 +48,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String databaseUser;
     @UriParam(label = LABEL_NAME)
     private String datatypePropagateSourceType;
+    @UriParam(label = LABEL_NAME)
+    private String databaseNames;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean sanitizeFieldNames = false;
     @UriParam(label = LABEL_NAME)
@@ -93,8 +95,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME)
     private String tableWhitelist;
-    @UriParam(label = LABEL_NAME)
-    private String databaseServerTimezone;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean tombstonesOnDelete = false;
     @UriParam(label = LABEL_NAME, defaultValue = "precise")
@@ -333,7 +333,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The name of the database the connector should be monitoring
+     * The name of the database from which the connector should capture changes
      */
     public void setDatabaseDbname(String databaseDbname) {
         this.databaseDbname = databaseDbname;
@@ -367,6 +367,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getDatatypePropagateSourceType() {
         return datatypePropagateSourceType;
+    }
+
+    /**
+     * The names of the databases from which the connector should capture
+     * changes
+     */
+    public void setDatabaseNames(String databaseNames) {
+        this.databaseNames = databaseNames;
+    }
+
+    public String getDatabaseNames() {
+        return databaseNames;
     }
 
     /**
@@ -658,18 +670,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The timezone of the server used to correctly shift the commit transaction
-     * timestamp on the client sideOptions include: Any valid Java ZoneId
-     */
-    public void setDatabaseServerTimezone(String databaseServerTimezone) {
-        this.databaseServerTimezone = databaseServerTimezone;
-    }
-
-    public String getDatabaseServerTimezone() {
-        return databaseServerTimezone;
-    }
-
-    /**
      * Whether delete operations should be represented by a delete event and a
      * subsquenttombstone event (true) or only by a delete event (false).
      * Emitting the tombstone event (the default behavior) allows Kafka to
@@ -943,6 +943,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
         addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
+        addPropertyIfNotNull(configBuilder, "database.names", databaseNames);
         addPropertyIfNotNull(configBuilder, "sanitize.field.names", sanitizeFieldNames);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
         addPropertyIfNotNull(configBuilder, "database.history.kafka.bootstrap.servers", databaseHistoryKafkaBootstrapServers);
@@ -965,7 +966,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.history.kafka.recovery.attempts", databaseHistoryKafkaRecoveryAttempts);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "table.whitelist", tableWhitelist);
-        addPropertyIfNotNull(configBuilder, "database.server.timezone", databaseServerTimezone);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);

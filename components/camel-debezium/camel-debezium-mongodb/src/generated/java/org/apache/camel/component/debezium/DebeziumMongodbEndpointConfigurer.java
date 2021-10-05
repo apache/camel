@@ -36,6 +36,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "connectmaxattempts":
         case "connectMaxAttempts": target.getConfiguration().setConnectMaxAttempts(property(camelContext, int.class, value)); return true;
         case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
+        case "cursormaxawaittimems":
+        case "cursorMaxAwaitTimeMs": target.getConfiguration().setCursorMaxAwaitTimeMs(property(camelContext, int.class, value)); return true;
         case "databaseexcludelist":
         case "databaseExcludeList": target.getConfiguration().setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistoryfilefilename":
@@ -158,6 +160,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "connectmaxattempts":
         case "connectMaxAttempts": return int.class;
         case "converters": return java.lang.String.class;
+        case "cursormaxawaittimems":
+        case "cursorMaxAwaitTimeMs": return int.class;
         case "databaseexcludelist":
         case "databaseExcludeList": return java.lang.String.class;
         case "databasehistoryfilefilename":
@@ -281,6 +285,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "connectmaxattempts":
         case "connectMaxAttempts": return target.getConfiguration().getConnectMaxAttempts();
         case "converters": return target.getConfiguration().getConverters();
+        case "cursormaxawaittimems":
+        case "cursorMaxAwaitTimeMs": return target.getConfiguration().getCursorMaxAwaitTimeMs();
         case "databaseexcludelist":
         case "databaseExcludeList": return target.getConfiguration().getDatabaseExcludeList();
         case "databasehistoryfilefilename":

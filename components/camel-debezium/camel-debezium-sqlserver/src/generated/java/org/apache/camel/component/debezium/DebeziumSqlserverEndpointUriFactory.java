@@ -38,7 +38,6 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("decimalHandlingMode");
         props.add("skippedOperations");
         props.add("sourceStructVersion");
-        props.add("databaseServerTimezone");
         props.add("binaryHandlingMode");
         props.add("databaseHostname");
         props.add("databaseHistorySkipUnparseableDdl");
@@ -54,6 +53,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("maxIterationTransactions");
         props.add("additionalProperties");
         props.add("offsetStorageReplicationFactor");
+        props.add("databaseNames");
         props.add("exceptionHandler");
         props.add("sourceTimestampMode");
         props.add("databasePort");

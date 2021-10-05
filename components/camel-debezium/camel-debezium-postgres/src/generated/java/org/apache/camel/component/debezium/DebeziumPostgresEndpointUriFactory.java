@@ -20,7 +20,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(90);
+        Set<String> props = new HashSet<>(91);
         props.add("slotDropOnStop");
         props.add("includeUnknownDatatypes");
         props.add("maxBatchSize");
@@ -84,6 +84,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("maxQueueSize");
         props.add("messageKeyColumns");
         props.add("timePrecisionMode");
+        props.add("truncateHandlingMode");
         props.add("columnWhitelist");
         props.add("pollIntervalMs");
         props.add("sanitizeFieldNames");

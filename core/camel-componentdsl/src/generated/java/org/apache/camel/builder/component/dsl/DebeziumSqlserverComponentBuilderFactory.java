@@ -418,7 +418,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * The name of the database the connector should be monitoring.
+         * The name of the database from which the connector should capture
+         * changes.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -625,6 +626,22 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * The names of the databases from which the connector should capture
+         * changes.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param databaseNames the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder databaseNames(
+                java.lang.String databaseNames) {
+            doSetProperty("databaseNames", databaseNames);
+            return this;
+        }
+        /**
          * Password of the database user to be used when connecting to the
          * database.
          * 
@@ -671,23 +688,6 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder databaseServerName(
                 java.lang.String databaseServerName) {
             doSetProperty("databaseServerName", databaseServerName);
-            return this;
-        }
-        /**
-         * The timezone of the server used to correctly shift the commit
-         * transaction timestamp on the client sideOptions include: Any valid
-         * Java ZoneId.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param databaseServerTimezone the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseServerTimezone(
-                java.lang.String databaseServerTimezone) {
-            doSetProperty("databaseServerTimezone", databaseServerTimezone);
             return this;
         }
         /**
@@ -1409,10 +1409,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "databaseHistoryStoreOnlyMonitoredTablesDdl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryStoreOnlyMonitoredTablesDdl((boolean) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHostname((java.lang.String) value); return true;
             case "databaseInstance": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseInstance((java.lang.String) value); return true;
+            case "databaseNames": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseNames((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabasePassword((java.lang.String) value); return true;
             case "databasePort": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabasePort((int) value); return true;
             case "databaseServerName": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseServerName((java.lang.String) value); return true;
-            case "databaseServerTimezone": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseServerTimezone((java.lang.String) value); return true;
             case "databaseUser": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseUser((java.lang.String) value); return true;
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
