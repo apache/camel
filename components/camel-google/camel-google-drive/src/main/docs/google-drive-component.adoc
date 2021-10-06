@@ -70,4 +70,4 @@ For more information on the endpoints and options see API documentation
 at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
 
 
-include::{page-component-version}@camel-spring-boot::page$google-drive-starter.adoc[]
+include::spring-boot:partial$google-drive-starter.adoc[]

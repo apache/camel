@@ -135,4 +135,4 @@ from("jetty:http://0.0.0.0:8080/service/endpoint").routeId("foo-1")
 ...
 ----
 
-include::{page-component-version}@camel-spring-boot::page$consul-starter.adoc[]
+include::spring-boot:partial$consul-starter.adoc[]

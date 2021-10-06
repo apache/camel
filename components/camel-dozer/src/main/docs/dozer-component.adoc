@@ -466,4 +466,4 @@ template.sendBody("direct:legacy-service-in", new org.apache.camel.converter.doz
 
 
 
-include::{page-component-version}@camel-spring-boot::page$dozer-starter.adoc[]
+include::spring-boot:partial$dozer-starter.adoc[]

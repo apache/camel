@@ -123,4 +123,4 @@ Then you can define your route as follows:
 
 Notice that component-scan is important to load resteasy servlet properly into container's runtime.
 
-include::{page-component-version}@camel-spring-boot::page$resteasy-starter.adoc[]
+include::spring-boot:partial$resteasy-starter.adoc[]

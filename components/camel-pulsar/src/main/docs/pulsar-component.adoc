@@ -45,4 +45,4 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$pulsar-starter.adoc[]
+include::spring-boot:partial$pulsar-starter.adoc[]

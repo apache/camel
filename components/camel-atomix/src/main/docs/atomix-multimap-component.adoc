@@ -57,4 +57,4 @@ from("direct:start")
   .to("atomix-multimap:multimap");
 ----
 
-include::{page-component-version}@camel-spring-boot::page$atomix-starter.adoc[]
+include::spring-boot:partial$atomix-starter.adoc[]

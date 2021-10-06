@@ -56,4 +56,4 @@ include::partial$component-endpoint-options.adoc[]
 
 
 
-include::{page-component-version}@camel-spring-boot::page$milo-starter.adoc[]
+include::spring-boot:partial$milo-starter.adoc[]

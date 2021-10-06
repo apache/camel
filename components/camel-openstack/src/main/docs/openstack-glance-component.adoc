@@ -107,4 +107,4 @@ include::partial$component-endpoint-options.adoc[]
 |=========================================================================
 
 
-include::{page-component-version}@camel-spring-boot::page$openstack-starter.adoc[]
+include::spring-boot:partial$openstack-starter.adoc[]

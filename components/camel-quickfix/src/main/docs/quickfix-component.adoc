@@ -470,4 +470,4 @@ from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$quickfix-starter.adoc[]
+include::spring-boot:partial$quickfix-starter.adoc[]

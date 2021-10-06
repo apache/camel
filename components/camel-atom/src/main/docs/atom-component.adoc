@@ -100,4 +100,4 @@ In this sample we want to filter only good blogs we like to a SEDA
 queue. The sample also shows how to setup Camel standalone, not running
 in any Container or using Spring.
 
-include::{page-component-version}@camel-spring-boot::page$atom-starter.adoc[]
+include::spring-boot:partial$atom-starter.adoc[]

@@ -177,4 +177,4 @@ If you need more precise server settings you can create new object of the type *
 |=========================================================================
 
 
-include::{page-component-version}@camel-spring-boot::page$openstack-starter.adoc[]
+include::spring-boot:partial$openstack-starter.adoc[]

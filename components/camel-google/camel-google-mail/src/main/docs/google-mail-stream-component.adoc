@@ -65,4 +65,4 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$google-mail-starter.adoc[]
+include::spring-boot:partial$google-mail-starter.adoc[]

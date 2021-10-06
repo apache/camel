@@ -104,4 +104,4 @@ from("direct:foo")
 
 See more details at the Box API reference: https://developer.box.com/reference
 
-include::{page-component-version}@camel-spring-boot::page$box-starter.adoc[]
+include::spring-boot:partial$box-starter.adoc[]

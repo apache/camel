@@ -180,4 +180,4 @@ from("azure-servicebus:test//?connectionString=test&consumerOperation=peekMessag
 --------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$azure-servicebus-starter.adoc[]
+include::spring-boot:partial$azure-servicebus-starter.adoc[]

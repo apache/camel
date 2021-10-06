@@ -154,4 +154,4 @@ Originally you would get the newest first and consume backward (message 3 => mes
 IMPORTANT: You can use the conversationType option to read history and messages from a channel that is not only public
 (`PUBLIC_CHANNEL`,`PRIVATE_CHANNEL`, `MPIM`, `IM`)
 
-include::{page-component-version}@camel-spring-boot::page$slack-starter.adoc[]
+include::spring-boot:partial$slack-starter.adoc[]

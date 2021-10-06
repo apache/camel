@@ -45,4 +45,4 @@ include::partial$component-endpoint-options.adoc[]
 
 For more information you can look at xref:ftp-component.adoc[FTP component]
 
-include::{page-component-version}@camel-spring-boot::page$ftp-starter.adoc[]
+include::spring-boot:partial$ftp-starter.adoc[]

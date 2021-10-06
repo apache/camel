@@ -229,4 +229,4 @@ The Avro RPC component offers the `org.apache.camel.component.avro.spi.AvroRpcHt
 The default implementation available in `org.apache.camel:camel-avro-jetty` is based on `org.apache.avro:avro-ipc-jetty`.
 
 
-include::{page-component-version}@camel-spring-boot::page$avro-starter.adoc[]
+include::spring-boot:partial$avro-starter.adoc[]

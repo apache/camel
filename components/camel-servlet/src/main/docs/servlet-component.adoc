@@ -418,4 +418,4 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
 -------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$servlet-starter.adoc[]
+include::spring-boot:partial$servlet-starter.adoc[]
