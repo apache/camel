@@ -161,4 +161,4 @@ fromF("kubernetes-nodes://%s?oauthToken=%s&resourceName=test", host, authToken).
 This consumer will return a list of events for the node test.
 
 
-include::{page-component-version}@camel-spring-boot::page$kubernetes-starter.adoc[]
+include::spring-boot:partial$kubernetes-starter.adoc[]

@@ -184,4 +184,4 @@ context.addService(service);
 from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$jgroups-raft-starter.adoc[]
+include::spring-boot:partial$jgroups-raft-starter.adoc[]

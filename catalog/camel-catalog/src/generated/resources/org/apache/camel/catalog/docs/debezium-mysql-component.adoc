@@ -315,4 +315,4 @@ from("debezium-mysql:[name]?[options]])
 
 *Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[handling failures].
 
-include::{page-component-version}@camel-spring-boot::page$debezium-mysql-starter.adoc[]
+include::spring-boot:partial$debezium-mysql-starter.adoc[]

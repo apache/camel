@@ -110,4 +110,4 @@ public void inspectReceivedOrders() {
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$browse-starter.adoc[]
+include::spring-boot:partial$browse-starter.adoc[]

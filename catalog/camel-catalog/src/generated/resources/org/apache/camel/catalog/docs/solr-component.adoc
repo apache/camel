@@ -230,4 +230,4 @@ Tutorial]
 https://lucene.apache.org/solr/guide/8_4/the-standard-query-parser.html[Solr Query Syntax]
 
 
-include::{page-component-version}@camel-spring-boot::page$solr-starter.adoc[]
+include::spring-boot:partial$solr-starter.adoc[]

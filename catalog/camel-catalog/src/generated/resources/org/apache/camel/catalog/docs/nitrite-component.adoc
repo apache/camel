@@ -191,4 +191,4 @@ from("direct:getByID")
     .to("log:result");
 ----
 
-include::{page-component-version}@camel-spring-boot::page$nitrite-starter.adoc[]
+include::spring-boot:partial$nitrite-starter.adoc[]

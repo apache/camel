@@ -263,4 +263,4 @@ template.send("direct:alias-verify", signed);
 -------------------------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$crypto-starter.adoc[]
+include::spring-boot:partial$crypto-starter.adoc[]

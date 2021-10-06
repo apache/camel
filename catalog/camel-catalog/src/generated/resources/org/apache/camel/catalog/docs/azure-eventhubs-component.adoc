@@ -252,4 +252,4 @@ mvn verify -PfullTests -DconnectionString=string -DblobAccountName=blob -DblobAc
 Whereby `blobAccountName` is your Azure account name and `blobAccessKey` is the access key being generated from Azure portal and `connectionString` is the eventHub connection string.
 
 
-include::{page-component-version}@camel-spring-boot::page$azure-eventhubs-starter.adoc[]
+include::spring-boot:partial$azure-eventhubs-starter.adoc[]

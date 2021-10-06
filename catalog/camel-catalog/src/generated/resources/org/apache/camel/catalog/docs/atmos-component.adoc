@@ -160,4 +160,4 @@ DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, D
 -------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$atmos-starter.adoc[]
+include::spring-boot:partial$atmos-starter.adoc[]
