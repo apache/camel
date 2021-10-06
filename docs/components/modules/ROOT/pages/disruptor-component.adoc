@@ -334,4 +334,4 @@ DisruptorEndpoint disruptor = context.getEndpoint("disruptor:xxxx");
 int size = disruptor.getBufferSize();
 --------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$disruptor-starter.adoc[]
+include::spring-boot:partial$disruptor-starter.adoc[]

@@ -221,4 +221,4 @@ The example illustrates the PubNub component subscribing to a infinite stream of
 
 
 
-include::{page-component-version}@camel-spring-boot::page$pubnub-starter.adoc[]
+include::spring-boot:partial$pubnub-starter.adoc[]

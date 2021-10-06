@@ -251,4 +251,4 @@ public class EhcacheAggregationRepositoryRoutesTest extends CamelTestSupport {
 }
 ---------------------------------------------------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$ehcache-starter.adoc[]
+include::spring-boot:partial$ehcache-starter.adoc[]

@@ -93,4 +93,4 @@ It also carries the topic on which a message was received (consumer).
 This header is filled in with the UUID of the subscription when a message arrives (consumer).
 |=======================================================================
 
-include::{page-component-version}@camel-spring-boot::page$ignite-starter.adoc[]
+include::spring-boot:partial$ignite-starter.adoc[]

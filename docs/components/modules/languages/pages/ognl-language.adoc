@@ -135,4 +135,4 @@ the download page for the latest versions).
 Otherwise, you'll also need
 https://repo1.maven.org/maven2/org/apache/servicemix/bundles/org.apache.servicemix.bundles.ognl/2.7.3_4/org.apache.servicemix.bundles.ognl-2.7.3_4.jar[OGNL]
 
-include::{page-component-version}@camel-spring-boot::page$ognl-starter.adoc[]
+include::spring-boot:partial$ognl-starter.adoc[]

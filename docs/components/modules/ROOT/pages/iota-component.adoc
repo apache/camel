@@ -153,4 +153,4 @@ The following route defined in Spring XML retrieve transfers data
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$iota-starter.adoc[]
+include::spring-boot:partial$iota-starter.adoc[]

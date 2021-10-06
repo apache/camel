@@ -201,4 +201,4 @@ from("direct:in").
 ------------------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$mvel-starter.adoc[]
+include::spring-boot:partial$mvel-starter.adoc[]

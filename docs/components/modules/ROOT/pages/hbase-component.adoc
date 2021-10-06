@@ -514,4 +514,4 @@ advantage it has over the header mapping strategy is that the HBaseData
 object can be easily converted to or from xml/json.
 
 
-include::{page-component-version}@camel-spring-boot::page$hbase-starter.adoc[]
+include::spring-boot:partial$hbase-starter.adoc[]

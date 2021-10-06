@@ -158,4 +158,4 @@ in `org.apache.camel.springldap.SpringLdapProducer`:
 * public static final String FUNCTION = "function";
 * public static final String REQUEST = "request";
 
-include::{page-component-version}@camel-spring-boot::page$spring-ldap-starter.adoc[]
+include::spring-boot:partial$spring-ldap-starter.adoc[]

@@ -101,4 +101,4 @@ with the following path and query parameters:
 
 
 
-include::{page-component-version}@camel-spring-boot::page$jmx-starter.adoc[]
+include::spring-boot:partial$jmx-starter.adoc[]

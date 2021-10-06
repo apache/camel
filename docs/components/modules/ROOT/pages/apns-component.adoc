@@ -322,4 +322,4 @@ from("apns:consumer?initialDelay=10&delay=3600&timeUnit=SECONDS")
 --------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$apns-starter.adoc[]
+include::spring-boot:partial$apns-starter.adoc[]

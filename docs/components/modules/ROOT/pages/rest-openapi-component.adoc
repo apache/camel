@@ -222,4 +222,4 @@ String getPetJsonById(int petId) {
 }
 ----
 
-include::{page-component-version}@camel-spring-boot::page$rest-openapi-starter.adoc[]
+include::spring-boot:partial$rest-openapi-starter.adoc[]

@@ -199,4 +199,4 @@ Regards Camel Riders Bookstore
 -------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$mustache-starter.adoc[]
+include::spring-boot:partial$mustache-starter.adoc[]

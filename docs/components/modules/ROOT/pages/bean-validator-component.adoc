@@ -307,4 +307,4 @@ Note that the body should include an instance of a class to validate.
 
 
 
-include::{page-component-version}@camel-spring-boot::page$bean-validator-starter.adoc[]
+include::spring-boot:partial$bean-validator-starter.adoc[]

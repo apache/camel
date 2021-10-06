@@ -280,4 +280,4 @@ Value value filled as array contents.
 
 This component is not supported in Karaf.
 
-include::{page-component-version}@camel-spring-boot::page$avro-starter.adoc[]
+include::spring-boot:partial$avro-starter.adoc[]

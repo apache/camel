@@ -96,4 +96,4 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-include::{page-component-version}@camel-spring-boot::page$chatscript-starter.adoc[]
+include::spring-boot:partial$chatscript-starter.adoc[]
