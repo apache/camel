@@ -49,6 +49,7 @@ public class JpaTest {
     private static final Logger LOG = LoggerFactory.getLogger(JpaTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;
+    protected JpaComponent component;
     protected JpaEndpoint endpoint;
     protected JpaEndpoint listEndpoint;
     protected EntityManager entityManager;
@@ -125,6 +126,8 @@ public class JpaTest {
         camelContext.start();
         template = camelContext.createProducerTemplate();
 
+        setUpComponent();
+
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull(value, "Could not find endpoint!");
         assertTrue(value instanceof JpaEndpoint, "Should be a JPA endpoint but was: " + value);
@@ -150,6 +153,10 @@ public class JpaTest {
 
     protected String getEndpointUri() {
         return "jpa://" + SendEmail.class.getName();
+    }
+
+    protected void setUpComponent() {
+        // no set up in this test
     }
 
     @AfterEach

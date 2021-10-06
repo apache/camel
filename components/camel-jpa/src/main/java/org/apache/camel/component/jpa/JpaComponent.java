@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -50,6 +51,8 @@ public class JpaComponent extends DefaultComponent {
     private boolean joinTransaction = true;
     @Metadata
     private boolean sharedEntityManager;
+    @Metadata
+    private Map<String, Class<?>> aliases = new HashMap<>();
 
     public JpaComponent() {
     }
@@ -103,6 +106,22 @@ public class JpaComponent extends DefaultComponent {
         this.sharedEntityManager = sharedEntityManager;
     }
 
+    public void addAlias(String alias, Class<?> clazz) {
+        this.aliases.put(alias, clazz);
+    }
+
+    /**
+     * Maps an alias to a JPA entity class. The alias can then be used in the endpoint URI (instead of the fully
+     * qualified class name).
+     */
+    public void setAliases(Map<String, Class<?>> aliases) {
+        this.aliases = aliases;
+    }
+
+    public Map<String, Class<?>> getAliases() {
+        return aliases;
+    }
+
     synchronized ExecutorService getOrCreatePollingConsumerExecutorService() {
         if (pollingConsumerExecutorService == null) {
             LOG.debug("Creating thread pool for JpaPollingConsumer to support polling using timeout");
@@ -126,11 +145,15 @@ public class JpaComponent extends DefaultComponent {
             endpoint.setParameters(params);
         }
 
-        // lets interpret the next string as a class
+        // lets interpret the next string as an alias or class
         if (ObjectHelper.isNotEmpty(path)) {
-            // provide the class loader of this component to work in OSGi environments as camel-jpa must be able
-            // to resolve the entity classes
-            Class<?> type = getCamelContext().getClassResolver().resolveClass(path, JpaComponent.class.getClassLoader());
+            Class<?> type = aliases.get(path);
+            if (type == null) {
+                // provide the class loader of this component to work in OSGi environments as camel-jpa must be able
+                // to resolve the entity classes
+                type = getCamelContext().getClassResolver().resolveClass(path, JpaComponent.class.getClassLoader());
+            }
+
             if (type != null) {
                 endpoint.setEntityType(type);
             }
