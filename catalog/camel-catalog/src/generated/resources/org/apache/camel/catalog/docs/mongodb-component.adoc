@@ -1044,4 +1044,4 @@ object to a `Map`, which is in turn used to initialise a new
 This type converter is auto-discovered, so you don't need to configure anything manually.
 
 
-include::{page-component-version}@camel-spring-boot::page$mongodb-starter.adoc[]
+include::spring-boot:partial$mongodb-starter.adoc[]

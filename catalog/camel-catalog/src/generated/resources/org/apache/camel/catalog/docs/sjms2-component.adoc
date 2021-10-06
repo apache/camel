@@ -323,4 +323,4 @@ responses messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
 
 
-include::{page-component-version}@camel-spring-boot::page$sjms2-starter.adoc[]
+include::spring-boot:partial$sjms2-starter.adoc[]

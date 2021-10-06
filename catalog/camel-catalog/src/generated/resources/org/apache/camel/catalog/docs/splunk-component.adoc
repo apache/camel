@@ -255,4 +255,4 @@ data with prebuilt apps for analyzing and displaying this.  +
 route and jvm metrics to Splunk, and displaying this on a dashboard.
 
 
-include::{page-component-version}@camel-spring-boot::page$splunk-starter.adoc[]
+include::spring-boot:partial$splunk-starter.adoc[]

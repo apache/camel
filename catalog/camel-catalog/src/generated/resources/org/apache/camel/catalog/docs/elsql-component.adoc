@@ -280,4 +280,4 @@ the simple expression you can use in the consumer are most useable for calling
 bean methods as in this example.
 
 
-include::{page-component-version}@camel-spring-boot::page$elsql-starter.adoc[]
+include::spring-boot:partial$elsql-starter.adoc[]

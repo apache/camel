@@ -161,4 +161,4 @@ fromF("kubernetes-replication-controllers://%s?oauthToken=%s&namespace=default&r
 This consumer will return a list of events on the namespace default for the rc test.
 
 
-include::{page-component-version}@camel-spring-boot::page$kubernetes-starter.adoc[]
+include::spring-boot:partial$kubernetes-starter.adoc[]

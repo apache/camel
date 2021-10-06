@@ -150,4 +150,4 @@ where `${camel-version`} must be replaced by the actual version of Camel
 (2.11 or higher).
 
 
-include::{page-component-version}@camel-spring-boot::page$cmis-starter.adoc[]
+include::spring-boot:partial$cmis-starter.adoc[]

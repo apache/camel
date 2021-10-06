@@ -148,4 +148,4 @@ from("direct:template")
 ----
 
 
-//include::{page-component-version}@camel-spring-boot::page$kamelet-starter.adoc[]
+//include::spring-boot:partial$kamelet-starter.adoc[]

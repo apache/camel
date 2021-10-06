@@ -236,4 +236,4 @@ template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPa
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$zookeeper-starter.adoc[]
+include::spring-boot:partial$zookeeper-starter.adoc[]

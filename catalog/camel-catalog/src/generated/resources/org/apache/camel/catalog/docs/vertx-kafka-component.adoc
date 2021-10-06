@@ -501,4 +501,4 @@ from("direct:start")
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$vertx-kafka-starter.adoc[]
+include::spring-boot:partial$vertx-kafka-starter.adoc[]

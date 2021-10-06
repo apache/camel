@@ -120,4 +120,4 @@ from("activemq:My.Queue").
 
 
 
-include::{page-component-version}@camel-spring-boot::page$jsonata-starter.adoc[]
+include::spring-boot:partial$jsonata-starter.adoc[]
