@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bean.validator;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -39,13 +40,13 @@ public class BeanValidatorProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Object bean = exchange.getIn().getBody();
-        Set<ConstraintViolation<Object>> constraintViolations;
+        Set<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
 
-        if (this.group != null) {
-            constraintViolations = validatorFactory.getValidator().validate(bean, group);
+        if (exchange.getIn().getBody() instanceof Iterable) {
+            Iterable<?> body = exchange.getIn().getBody(Iterable.class);
+            body.forEach(b -> constraintViolations.addAll(getConstraintViolationsForSingleBean(b, this.group)));
         } else {
-            constraintViolations = validatorFactory.getValidator().validate(bean);
+            constraintViolations.addAll(getConstraintViolationsForSingleBean(exchange.getIn().getBody(), this.group));
         }
 
         if (!constraintViolations.isEmpty()) {
@@ -67,6 +68,18 @@ public class BeanValidatorProducer extends DefaultProducer {
 
     public void setGroup(Class<?> group) {
         this.group = group;
+    }
+
+    private Set<ConstraintViolation<Object>> getConstraintViolationsForSingleBean(Object bean, Class<?> group) {
+        Set<ConstraintViolation<Object>> constraintViolations;
+
+        if (this.group != null) {
+            constraintViolations = validatorFactory.getValidator().validate(bean, group);
+        } else {
+            constraintViolations = validatorFactory.getValidator().validate(bean);
+        }
+
+        return constraintViolations;
     }
 
 }
