@@ -150,4 +150,4 @@ exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT,
   ack(AcknowledgmentCode.AR, "Server didn't accept this message", ErrorCode.UNKNOWN_KEY_IDENTIFIER).evaluate(exchange, Object.class)
 ----
 
-include::{page-component-version}@camel-spring-boot::page$hl7-starter.adoc[]
+include::spring-boot:partial$hl7-starter.adoc[]

@@ -69,4 +69,4 @@ For more information on the endpoints and options see API documentation
 at: https://developers.google.com/gmail/api/v1/reference/[https://developers.google.com/gmail/api/v1/reference/]
 
 
-include::{page-component-version}@camel-spring-boot::page$google-mail-starter.adoc[]
+include::spring-boot:partial$google-mail-starter.adoc[]

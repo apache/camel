@@ -104,4 +104,4 @@ You can refer to the resource similar to the
 other xref:language-component.adoc[Language]s in Camel by prefixing with
 `"resource:"` as shown below:
 
-include::{page-component-version}@camel-spring-boot::page$language-starter.adoc[]
+include::spring-boot:partial$language-starter.adoc[]

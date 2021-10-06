@@ -35,4 +35,4 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-include::{page-component-version}@camel-spring-boot::page$etcd-starter.adoc[]
+include::spring-boot:partial$etcd-starter.adoc[]

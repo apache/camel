@@ -111,4 +111,4 @@ In Camel on Spring XML you can declare a `<bean>` which Camel will automatic pic
 </beans>
 ----
 
-include::{page-component-version}@camel-spring-boot::page$nagios-starter.adoc[]
+include::spring-boot:partial$nagios-starter.adoc[]

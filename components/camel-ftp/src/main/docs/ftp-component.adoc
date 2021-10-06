@@ -617,4 +617,4 @@ This component has log level *TRACE* that can be helpful if you have
 problems.
 
 
-include::{page-component-version}@camel-spring-boot::page$ftp-starter.adoc[]
+include::spring-boot:partial$ftp-starter.adoc[]

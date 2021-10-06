@@ -84,4 +84,4 @@ from("vm:order.email").bean(MyOrderEmailSender.class);
 ----
 
 
-include::{page-component-version}@camel-spring-boot::page$vm-starter.adoc[]
+include::spring-boot:partial$vm-starter.adoc[]

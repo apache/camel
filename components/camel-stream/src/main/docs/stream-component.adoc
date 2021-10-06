@@ -110,4 +110,4 @@ from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDel
   .to("bean:logService?method=parseLogLine");
 ----
 
-include::{page-component-version}@camel-spring-boot::page$stream-starter.adoc[]
+include::spring-boot:partial$stream-starter.adoc[]

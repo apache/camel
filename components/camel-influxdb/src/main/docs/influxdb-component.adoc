@@ -74,4 +74,4 @@ from("direct:start")
 ------------------------------------------------------------------------------------
 
 
-include::{page-component-version}@camel-spring-boot::page$influxdb-starter.adoc[]
+include::spring-boot:partial$influxdb-starter.adoc[]

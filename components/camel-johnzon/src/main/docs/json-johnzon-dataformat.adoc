@@ -47,4 +47,4 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$johnzon-starter.adoc[]
+include::spring-boot:partial$johnzon-starter.adoc[]

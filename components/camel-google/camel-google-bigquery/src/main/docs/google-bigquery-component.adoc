@@ -127,4 +127,4 @@ query parameter `useAsInsertId`. As an insert id need to be specified per row in
 be used when the payload is a list - if the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
 be ignored. In that case use the query parameter `useAsInsertId`.
 
-include::{page-component-version}@camel-spring-boot::page$google-bigquery-starter.adoc[]
+include::spring-boot:partial$google-bigquery-starter.adoc[]

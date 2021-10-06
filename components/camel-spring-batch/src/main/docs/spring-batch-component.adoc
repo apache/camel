@@ -240,4 +240,4 @@ JMS queue.
 </batch:job>
 -----------------------------------------------------------------------------------------------------------------------
 
-include::{page-component-version}@camel-spring-boot::page$spring-batch-starter.adoc[]
+include::spring-boot:partial$spring-batch-starter.adoc[]

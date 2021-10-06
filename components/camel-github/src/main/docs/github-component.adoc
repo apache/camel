@@ -108,4 +108,4 @@ pull request discussion is assumed.
 |createIssue |String (issue body text) | - GitHubIssueTitle (String) (REQUIRED): Issue Title.
 |=======================================================================
 
-include::{page-component-version}@camel-spring-boot::page$github-starter.adoc[]
+include::spring-boot:partial$github-starter.adoc[]

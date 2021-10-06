@@ -79,4 +79,4 @@ from("direct:start")
     .to("corda://localhost:10006?username=user1&password=test&operation=NODE_INFO");
 ----
 
-include::{page-component-version}@camel-spring-boot::page$corda-starter.adoc[]
+include::spring-boot:partial$corda-starter.adoc[]

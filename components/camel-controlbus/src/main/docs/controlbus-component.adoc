@@ -157,4 +157,4 @@ message we sent to the control bus component.
 You can also use other languages such as xref:languages:groovy-language.adoc[Groovy], etc.
 ====
 
-include::{page-component-version}@camel-spring-boot::page$controlbus-starter.adoc[]
+include::spring-boot:partial$controlbus-starter.adoc[]

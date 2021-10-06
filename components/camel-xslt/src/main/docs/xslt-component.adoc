@@ -191,4 +191,4 @@ The exception is stored on the Exchange as a warning with the
 key `Exchange.XSLT_WARNING.`
 
 
-include::{page-component-version}@camel-spring-boot::page$xslt-starter.adoc[]
+include::spring-boot:partial$xslt-starter.adoc[]

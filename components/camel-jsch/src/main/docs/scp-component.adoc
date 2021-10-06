@@ -63,4 +63,4 @@ https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/P
 (i.e. copy files to another host). 
 
 
-include::{page-component-version}@camel-spring-boot::page$jsch-starter.adoc[]
+include::spring-boot:partial$jsch-starter.adoc[]

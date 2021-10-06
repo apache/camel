@@ -353,4 +353,4 @@ When using 1 consumer (the default), the order of items in the source stream is 
 When this value is increased, items will be processed concurrently by multiple threads (so not preserving the order).
 
 
-include::{page-component-version}@camel-spring-boot::page$reactive-streams-starter.adoc[]
+include::spring-boot:partial$reactive-streams-starter.adoc[]

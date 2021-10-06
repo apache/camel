@@ -71,4 +71,4 @@ Affinity cache name for the AFFINITY_CALL and AFFINITY_RUN operations.
 Affinity key for the AFFINITY_CALL and AFFINITY_RUN operations.
 |=======================================================================
 
-include::{page-component-version}@camel-spring-boot::page$ignite-starter.adoc[]
+include::spring-boot:partial$ignite-starter.adoc[]

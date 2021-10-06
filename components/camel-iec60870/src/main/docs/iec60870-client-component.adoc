@@ -70,4 +70,4 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-include::{page-component-version}@camel-spring-boot::page$iec60870-starter.adoc[]
+include::spring-boot:partial$iec60870-starter.adoc[]

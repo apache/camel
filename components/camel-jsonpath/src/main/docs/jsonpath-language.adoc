@@ -303,4 +303,4 @@ The same example in XML DSL would be:
 </route>
 ----
 
-include::{page-component-version}@camel-spring-boot::page$jsonpath-starter.adoc[]
+include::spring-boot:partial$jsonpath-starter.adoc[]

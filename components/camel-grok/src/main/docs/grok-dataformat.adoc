@@ -99,4 +99,4 @@ public class MyRouteBuilder extends RouteBuilder {
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
-include::{page-component-version}@camel-spring-boot::page$grok-starter.adoc[]
+include::spring-boot:partial$grok-starter.adoc[]

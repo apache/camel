@@ -387,4 +387,4 @@ Dropbox documentation,
 
  
 
-include::{page-component-version}@camel-spring-boot::page$dropbox-starter.adoc[]
+include::spring-boot:partial$dropbox-starter.adoc[]

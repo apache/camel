@@ -64,4 +64,4 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel (3.0 or higher).
 
 
-include::{page-component-version}@camel-spring-boot::page$kudu-starter.adoc[]
+include::spring-boot:partial$kudu-starter.adoc[]
